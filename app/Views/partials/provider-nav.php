@@ -1,0 +1,28 @@
+<?php
+/** @var \App\Core\View $this */
+/** @var string|null $active */
+$active = $active ?? '';
+$items = [
+    'dashboard'    => ['Dashboard', 'provider'],
+    'requests'     => ['Incoming requests', 'provider/requests'],
+    'analytics'    => ['Analytics', 'provider/analytics'],
+    'runs'         => ['Service runs', 'provider/runs'],
+    'profile'      => ['Business profile', 'provider/profile'],
+    'services'     => ['Services', 'provider/services'],
+    'areas'        => ['Service areas', 'provider/areas'],
+    'documents'    => ['Documents', 'provider/documents'],
+    'licences'     => ['Licences', 'provider/licences'],
+    'availability' => ['Availability', 'provider/availability'],
+];
+if (function_exists('provider_founding_promo_active') && provider_founding_promo_active()) {
+    $items['promotion'] = ['Promote', 'provider/promotion'];
+}
+if (\App\Billing\BillingManager::enabled()) {
+    $items['billing'] = ['Billing', 'provider/billing'];
+}
+?>
+<nav aria-label="Provider" class="btn-row" style="margin-bottom:1.5rem;border-bottom:1px solid #e3e0d8;padding-bottom:1rem">
+    <?php foreach ($items as $key => [$label, $href]): ?>
+        <a class="btn <?= $active === $key ? 'btn-secondary' : 'btn-ghost' ?>" href="<?= e(url($href)) ?>"><?= $this->e($label) ?></a>
+    <?php endforeach; ?>
+</nav>

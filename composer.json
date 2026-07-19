@@ -1,0 +1,52 @@
+{
+    "name": "assist-platform/core",
+    "description": "Assist Platform Core shared by VanAssist, TowWise and TrailerWise.",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": ">=8.1",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-mbstring": "*",
+        "ext-json": "*",
+        "ext-fileinfo": "*",
+        "ext-openssl": "*",
+        "phpmailer/phpmailer": "^6.9"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^10.5"
+    },
+    "suggest": {
+        "ext-gd": "Required for server-side image resizing, compression and thumbnail generation.",
+        "ext-exif": "Used to strip EXIF metadata from uploaded images.",
+        "endroid/qr-code": "Optional library for caravan park QR code generation (Phase 7)."
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": [
+            "app/Helpers/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "scripts": {
+        "migrate": "php scripts/migrate.php",
+        "seed": "php scripts/seed.php",
+        "test": "phpunit",
+        "analyse": "phpstan analyse --no-progress",
+        "check": [
+            "@analyse",
+            "@test"
+        ]
+    }
+}

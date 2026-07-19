@@ -1,0 +1,145 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit;
+
+use App\Core\Request;
+use App\Platform\Brand\BrandRegistry;
+use App\Platform\Brand\BrandResolver;
+use App\Platform\Feature\FeatureGate;
+use App\Platform\Feature\PlatformFeature;
+use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
+
+final class BrandRegistryTest extends TestCase
+{
+    public function testRegistryResolvesExactNormalizedHost(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+        ]);
+
+        self::assertSame('towwise', $registry->forHost('TOWWISE.TEST:8080')?->id());
+        self::assertNull($registry->forHost('unknown.test'));
+    }
+
+    public function testResolverPrefersExplicitDeploymentBrand(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+        ]);
+        $resolver = new BrandResolver($registry, 'vanassist', 'towwise');
+
+        self::assertSame('towwise', $resolver->resolve($this->request('vanassist.test'))->id());
+    }
+
+    public function testStrictProductionHostMustMatchExplicitDeploymentBrand(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+        ]);
+        $resolver = new BrandResolver($registry, 'vanassist', 'towwise', 'production', false, true);
+
+        $this->expectException(RuntimeException::class);
+        $resolver->resolve($this->request('vanassist.test'));
+    }
+
+    public function testResolverSupportsDevelopmentOnlyFallback(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+        ]);
+        $resolver = new BrandResolver($registry, 'vanassist', null, 'local', true);
+        $request = new Request(['_brand' => 'towwise'], [], [
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/',
+            'HTTP_HOST' => 'localhost',
+        ], []);
+
+        self::assertSame('towwise', $resolver->resolve($request)->id());
+    }
+
+    public function testUnknownProductionHostFailsWhenStrict(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+        ]);
+        $resolver = new BrandResolver($registry, 'vanassist', null, 'production', false, true);
+
+        $this->expectException(RuntimeException::class);
+        $resolver->resolve($this->request('unknown.example'));
+    }
+
+    public function testDuplicateDomainIsRejected(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'shared.test'),
+            'towwise' => $this->brandConfig('TowWise', 'shared.test'),
+        ]);
+    }
+
+    public function testDuplicateDatabaseIdIsRejected(): void
+    {
+        $towwise = $this->brandConfig('TowWise', 'towwise.test');
+        $towwise['database_id'] = 1;
+
+        $this->expectException(InvalidArgumentException::class);
+        BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+            'towwise' => $towwise,
+        ]);
+    }
+
+    public function testTypedFeatureGateUsesBrandConfiguration(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+        ]);
+        $brand = $registry->get('vanassist');
+
+        self::assertFalse(FeatureGate::enabled(PlatformFeature::Reviews, $brand));
+        self::assertTrue($brand->moduleEnabled('providers'));
+    }
+
+    private function request(string $host): Request
+    {
+        return new Request([], [], [
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/',
+            'HTTP_HOST' => $host,
+        ], []);
+    }
+
+    /** @return array<string,mixed> */
+    private function brandConfig(string $name, string $domain): array
+    {
+        return [
+            'database_id' => $name === 'VanAssist' ? 1 : 2,
+            'name' => $name,
+            'legal_name' => $name,
+            'short_name' => $name,
+            'status' => 'active',
+            'url' => 'https://' . $domain,
+            'domains' => ['primary' => $domain],
+            'assets' => ['logo' => '/logo.svg'],
+            'theme' => ['brand' => '#000000'],
+            'metadata' => ['description' => $name],
+            'contact' => ['support_email' => 'support@example.com'],
+            'legal' => ['privacy_path' => '/privacy'],
+            'navigation' => [],
+            'footer' => [],
+            'features' => ['reviews.enabled' => false],
+            'modules' => ['providers' => true],
+            'analytics' => [],
+            'search' => [],
+            'storage_namespace' => strtolower($name),
+        ];
+    }
+}

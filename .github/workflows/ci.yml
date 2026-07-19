@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php:
+    name: PHP 8.3 / MySQL 8
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: assist_platform_test
+          MYSQL_USER: assist_test
+          MYSQL_PASSWORD: assist_test
+          MYSQL_ROOT_PASSWORD: root_test_only
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uassist_test -passist_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    env:
+      APP_NAME: Assist Platform Test
+      APP_ENV: test
+      APP_DEBUG: "false"
+      APP_URL: http://vanassist.test
+      APP_KEY: ci-test-key-not-for-production
+      ASSIST_DEFAULT_BRAND: vanassist
+      VANASSIST_DOMAIN: vanassist.test
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: assist_platform_test
+      DB_USER: assist_test
+      DB_PASSWORD: assist_test
+      SESSION_SECURE: "false"
+      MAIL_DRIVER: log
+      ENABLE_BILLING: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, mbstring, fileinfo, gd, intl, curl, zip, dom
+          coverage: none
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Validate Composer metadata
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Check platform requirements
+        run: composer check-platform-reqs
+
+      - name: Check PHP syntax
+        run: git ls-files '*.php' -z | xargs -0 -n1 php -l
+
+      - name: Run static analysis
+        run: composer analyse
+
+      - name: Run unit tests
+        run: ./vendor/bin/phpunit --testsuite Unit
+
+      - name: Validate fresh migrations
+        run: |
+          php scripts/migrate.php
+          php scripts/migrate.php
+
+      - name: Validate seeds
+        run: php scripts/seed.php
+
+      - name: Validate encrypted database secrets
+        run: php scripts/encrypt-secrets.php --validate-only
+
+      - name: Validate platform backfill
+        run: |
+          php scripts/backfill-platform.php --batch=500
+          php scripts/backfill-platform.php --validate-only
+
+      - name: Run database integration tests
+        env:
+          RUN_INTEGRATION_TESTS: "1"
+        run: ./vendor/bin/phpunit --testsuite Integration
+
+      - name: Audit Composer dependencies
+        run: composer audit --no-interaction
+
+      - name: Validate production dependency build
+        run: composer install --no-dev --no-interaction --prefer-dist --classmap-authoritative

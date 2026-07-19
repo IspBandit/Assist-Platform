@@ -1,0 +1,14 @@
+parameters:
+    level: 3
+    paths:
+        - app
+        - bootstrap
+        - config
+        - routes
+        - scripts
+    bootstrapFiles:
+        - tests/bootstrap.php
+    excludePaths:
+        analyse:
+            - app/Views
+    tmpDir: storage/cache/phpstan

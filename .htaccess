@@ -1,0 +1,26 @@
+# =====================================================================
+# VanAssist project-root .htaccess
+#
+# Ideally the subdomain document root points at public/ (.../vanassist/public).
+# However, when the document root is the project root (.../vanassist) - as on
+# some shared hosts where the doc root cannot easily be changed - these rules
+# route every request into the public/ front controller. This is harmless when
+# the document root is already public/ (these rules simply never run).
+# =====================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Once a request has been rewritten into public/, stop and let
+    # public/.htaccess take over (prevents a public/public/... rewrite loop).
+    RewriteRule ^public/ - [L]
+
+    # Everything else is served from the public/ front controller directory.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Fallback for servers without mod_rewrite: deny direct access to the project
+# root rather than expose application files.
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

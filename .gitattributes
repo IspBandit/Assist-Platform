@@ -1,0 +1,4 @@
+# Apache reads .htaccess line-by-line; CRLF or stray bytes can cause a 500 on
+# Linux hosts (e.g. GoDaddy). Force LF so deploys never ship CRLF .htaccess.
+.htaccess text eol=lf
+**/.htaccess text eol=lf

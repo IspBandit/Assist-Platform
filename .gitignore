@@ -1,0 +1,42 @@
+# Environment / secrets
+.env
+*.key
+
+# Deployment credentials (FTP) — copy scripts/deploy.env.example to scripts/deploy.env
+/scripts/deploy.env
+
+# Composer
+/vendor/
+/.phpunit.cache/
+/.phpstan.cache/
+
+# Installation lock
+/storage/installed.lock
+
+# Runtime storage (keep folders via .gitkeep, ignore contents)
+/storage/cache/*
+/storage/logs/*
+/storage/sessions/*
+/storage/private/request-images/*
+/storage/private/provider-documents/*
+/storage/private/exports/*
+/storage/backups/*
+/storage/imports/*
+!**/.gitkeep
+
+# Public uploads
+/public/uploads-public/*
+!/public/uploads-public/.gitkeep
+
+# Cron locks
+/cron/*.lock
+
+# Overpass/OSM import cache (raw API responses; regenerable)
+/tools/.osm-cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
