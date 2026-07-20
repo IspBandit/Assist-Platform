@@ -72,13 +72,15 @@ TrailerWise must not be described as complete.
 | `vendor/bin/phpunit --testsuite Unit` | Passed: 60 tests, 151 assertions |
 | `composer audit` | Passed; no known advisories |
 | `git diff --check` | Passed |
-| Latest GitHub Actions run on audited commit | Passed |
+| GitHub Actions run for PR #1 | Passed on PHP 8.3 / MySQL 8 |
 
-The six skipped tests require a configured MySQL test database. No compatible
-local MySQL/MariaDB service was available during this audit, so migrations,
-seeds, backfill, and integration tests were not re-run locally. The latest
-GitHub Actions workflow completed those MySQL-backed checks successfully on the
-audited commit.
+No compatible local MySQL/MariaDB service was available during this audit.
+GitHub Actions therefore provided the authoritative database validation for the
+change branch. It applied all 35 migrations twice, seeded the disposable
+database, validated encrypted secrets, completed and validated the VanAssist
+platform backfill, and passed all eight database integration tests on MySQL 8.
+
+Draft pull request: `https://github.com/IspBandit/Assist-Platform/pull/1`
 
 ## Remaining production blockers
 
