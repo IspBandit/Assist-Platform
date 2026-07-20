@@ -9,6 +9,19 @@ cannot be declared until the critical/high findings below are remediated and the
 live VanAssist environment is tested. Existing production deployment should be
 treated as a compatibility constraint, not evidence that all controls are safe.
 
+### Brand deployment status
+
+| Brand | Domain | Current deployable state | Full product launch |
+|---|---|---|---|
+| VanAssist | `vanassist.com.au` | Implemented application, subject to the release blockers below | Not approved until production environment, backup, security, accessibility, and smoke checks pass |
+| TowSmart | `towsmart.com.au` | Branded, host-resolved coming-soon page only | Not ready: towing profiles, calculations, reports, education workflows, and their safety validation are not implemented |
+| TrailerWise | `trailerwise.com.au` | Branded, host-resolved coming-soon page only | Not ready: manufacturer/dealer/repairer marketplace workflows and trailer-specific domain features are not implemented |
+
+The three domains can be configured to the same release only if TowSmart and
+TrailerWise remain gated as `coming_soon`. Do not enable their public application
+modules or market them as operational products until their missing functionality
+has been built and accepted.
+
 ## Release-blocking items
 
 - [x] Installer cannot be remotely reused after partial or failed installation.
@@ -40,7 +53,7 @@ treated as a compatibility constraint, not evidence that all controls are safe.
 
 ### Tests
 
-- Unit tests: 55 passed, 139 assertions.
+- Unit tests: 56 passed, 141 assertions.
 - Current unit-test warnings: none.
 - Database integration tests: 6 passed, 21 assertions.
 - End-to-end tests: absent.

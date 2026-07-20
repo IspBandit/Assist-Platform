@@ -7,13 +7,21 @@ use App\Helpers\Env;
 use App\Services\SecretCipher;
 use App\Services\Settings;
 
+if (PHP_SAPI !== 'cli') {
+    fwrite(STDERR, "This script must be run from the command line.\n");
+    exit(1);
+}
+
 define('BASE_PATH', dirname(__DIR__));
 require BASE_PATH . '/bootstrap/autoload.php';
 
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
-$validateOnly = in_array('--validate-only', $argv, true);
+$arguments = isset($_SERVER['argv']) && is_array($_SERVER['argv'])
+    ? array_values(array_filter($_SERVER['argv'], 'is_string'))
+    : [];
+$validateOnly = in_array('--validate-only', $arguments, true);
 $stored = (string) Settings::get('mail_password', '');
 
 if ($stored === '') {
