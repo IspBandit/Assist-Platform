@@ -11,6 +11,10 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
         $router->get('/', 'Site\HomeController@index', 'home');
+        $router->get('/tools', 'Site\TowWiseController@index', 'towwise.tools');
+        $router->post('/tools', 'Site\TowWiseController@calculate', 'towwise.tools.calculate');
+        $router->get('/marketplace', 'Site\TrailerWiseController@index', 'trailerwise.marketplace');
+        $router->get('/marketplace/{slug}', 'Site\TrailerWiseController@show', 'trailerwise.marketplace.show');
 
         // Informational landing pages.
         $router->get('/how-it-works', 'Site\PageController@howItWorks', 'how-it-works');

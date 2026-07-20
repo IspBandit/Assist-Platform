@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Models\Provider;
 use App\Models\Town;
+use App\Platform\Brand\BrandContext;
 use App\Services\Settings;
 use Throwable;
 
@@ -17,6 +18,14 @@ final class HomeController extends Controller
 {
     public function index(Request $request): Response
     {
+        $brand = BrandContext::current();
+        if ($brand->id() !== 'vanassist') {
+            return $this->view('brands.home', [
+                'brand' => $brand,
+                'title' => $brand->metadata()['tagline'] ?? $brand->name(),
+            ]);
+        }
+
         $blocks = $this->safe(
             fn () => Database::select(
                 "SELECT * FROM content_blocks WHERE block_group = 'homepage' AND is_active = 1 ORDER BY sort_order"

@@ -6,6 +6,8 @@ use App\Helpers\Env;
 
 $appUrl = rtrim((string) Env::get('APP_URL', 'http://localhost'), '/');
 $appHost = (string) (parse_url($appUrl, PHP_URL_HOST) ?: 'localhost');
+$towWiseEnabled = (bool) Env::get('ENABLE_TOWWISE', false);
+$trailerWiseEnabled = (bool) Env::get('ENABLE_TRAILERWISE', false);
 
 return [
     'default' => (string) Env::get('ASSIST_DEFAULT_BRAND', 'vanassist'),
@@ -99,7 +101,7 @@ return [
             'name' => 'TowWise',
             'legal_name' => (string) Env::get('TOWWISE_LEGAL_NAME', 'TowWise'),
             'short_name' => 'TowWise',
-            'status' => (bool) Env::get('ENABLE_TOWWISE', false) ? 'private' : 'coming_soon',
+            'status' => $towWiseEnabled ? 'active' : 'coming_soon',
             'url' => rtrim((string) Env::get('TOWWISE_URL', 'https://towwise.example.com'), '/'),
             'domains' => [
                 'primary' => (string) Env::get('TOWWISE_DOMAIN', 'towwise.example.com'),
@@ -152,14 +154,14 @@ return [
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => false,
+                'public_application' => $towWiseEnabled,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
                 'parks' => false,
                 'cms' => true,
                 'admin' => true,
-                'towing_tools' => false,
+                'towing_tools' => $towWiseEnabled,
                 'trailer_marketplace' => false,
             ],
             'analytics' => [
@@ -176,7 +178,7 @@ return [
             'name' => 'TrailerWise',
             'legal_name' => (string) Env::get('TRAILERWISE_LEGAL_NAME', 'TrailerWise'),
             'short_name' => 'TrailerWise',
-            'status' => (bool) Env::get('ENABLE_TRAILERWISE', false) ? 'private' : 'coming_soon',
+            'status' => $trailerWiseEnabled ? 'active' : 'coming_soon',
             'url' => rtrim((string) Env::get('TRAILERWISE_URL', 'https://trailerwise.example.com'), '/'),
             'domains' => [
                 'primary' => (string) Env::get('TRAILERWISE_DOMAIN', 'trailerwise.example.com'),
@@ -229,7 +231,7 @@ return [
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => false,
+                'public_application' => $trailerWiseEnabled,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
@@ -237,7 +239,7 @@ return [
                 'cms' => true,
                 'admin' => true,
                 'towing_tools' => false,
-                'trailer_marketplace' => false,
+                'trailer_marketplace' => $trailerWiseEnabled,
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TRAILERWISE_ANALYTICS_ID', ''),

@@ -9,10 +9,10 @@ Audited commit: `b63343b` (`main`)
 ## Executive summary
 
 The repository is a substantial VanAssist application with an additive
-multi-brand platform foundation. It is not a completed three-product platform.
-VanAssist contains the operational marketplace; TowWise and TrailerWise remain
-deployable, disabled scaffolds. The existing documentation describes that state
-accurately.
+multi-brand platform foundation. It is not yet a completed three-product
+platform. VanAssist contains the operational marketplace; TowWise now has a
+feature-gated public towing-mass comparison MVP and TrailerWise has a
+feature-gated read-only marketplace MVP. Both remain disabled by default.
 
 The current core includes domain-based brand resolution, typed brand records,
 provider-brand listings, brand roles, additive migrations, security middleware,
@@ -35,6 +35,13 @@ revealed after static analysis could run successfully:
   were added without changing existing VanAssist IDs, slugs, or tables.
 - A reproducible ZIP release builder now records the commit and SHA-256 hash of
   every tracked file; CI validates that a clean commit can be packaged.
+- A fail-closed route policy prevents TowWise and TrailerWise hosts from
+  reaching VanAssist or each other's routes after activation.
+- TowWise now exposes a server-validated calculator UI with explicit safety,
+  engineering, legal and source-data limitations.
+- TrailerWise now exposes brand-scoped active listings, type filtering and
+  individual listing pages with an honest empty state.
+- Alternate-brand sitemaps only advertise routes implemented for that brand.
 
 ## Product completion status
 
@@ -49,16 +56,15 @@ browser testing.
 ### TowWise
 
 Brand configuration, safe coming-soon routing, calculation-domain foundation,
-asset/combination schema, and unit tests exist. Public workflows, sourced
-vehicle/trailer data, saved-combination application services, reports, and
-independent safety review remain incomplete. TowWise must not be described as
-complete.
+asset/combination schema, unit tests and a public calculation MVP exist. Sourced
+vehicle/trailer data, saved-combination services, reports and independent safety
+review remain incomplete. TowWise must not be described as complete.
 
 ### TrailerWise
 
 Brand configuration, safe coming-soon routing, trailer taxonomy, business-role
-profiles, and individual listing schema exist. Public/provider/admin workflows,
-search, enquiries, media moderation, and verification remain incomplete.
+profiles, individual listing schema and a read-only public marketplace exist.
+Provider/admin authoring, enquiries, media moderation and verification remain incomplete.
 TrailerWise must not be described as complete.
 
 ## Validation results
@@ -69,7 +75,7 @@ TrailerWise must not be described as complete.
 | `composer validate --strict` | Passed |
 | `composer check-platform-reqs` | Passed on PHP 8.5.8 |
 | `composer analyse` | Passed after fixes; no errors |
-| `vendor/bin/phpunit --testsuite Unit` | Passed: 60 tests, 151 assertions |
+| `vendor/bin/phpunit --testsuite Unit` | Passed: 63 tests, 160 assertions |
 | `composer audit` | Passed; no known advisories |
 | `git diff --check` | Passed |
 | GitHub Actions run for PR #1 | Passed on PHP 8.3 / MySQL 8 |
@@ -84,9 +90,9 @@ Draft pull request: `https://github.com/IspBandit/Assist-Platform/pull/1`
 
 ## Remaining production blockers
 
-1. Build full TowWise product functionality and have formulas/data reviewed by
+1. Have TowWise formulas, language and future source data reviewed by
    an appropriately qualified towing/engineering specialist.
-2. Build the TrailerWise domain and public/provider/admin workflows.
+2. Build TrailerWise provider/admin listing authoring, enquiries and moderation.
 3. Complete operational-table brand scoping and expand isolation integration
    tests before enabling additional brands.
 4. Add browser end-to-end, accessibility, and broken-link tests.

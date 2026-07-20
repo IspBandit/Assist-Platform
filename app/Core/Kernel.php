@@ -11,6 +11,7 @@ use App\Middleware\SecurityHeaders;
 use App\Platform\Brand\BrandContext;
 use App\Platform\Brand\BrandRegistry;
 use App\Platform\Brand\BrandResolver;
+use App\Platform\Brand\BrandRoutePolicy;
 use App\Platform\Support\EnvironmentValidator;
 use App\Platform\Support\RequestContext;
 use App\Services\Settings;
@@ -108,6 +109,12 @@ final class Kernel
                 ->withHeader('Cache-Control', 'no-store')
                 ->withHeader('Retry-After', '86400')
                 ->withHeader('X-Robots-Tag', 'noindex, nofollow');
+        }
+
+        // Alternate brand hosts are fail-closed: an enabled brand may only
+        // reach routes explicitly belonging to its implemented modules.
+        if (!(new BrandRoutePolicy())->allows($brand, $path)) {
+            throw new HttpException(404, 'Page not found');
         }
 
         // 1. Installation gating. Until the lock file exists, force the installer.

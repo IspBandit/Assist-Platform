@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Settings;
+use App\Platform\Brand\BrandContext;
 use Throwable;
 
 /**
@@ -22,6 +23,17 @@ final class SitemapController extends Controller
     public function xml(Request $request): Response
     {
         $urls = [];
+        $brand = BrandContext::current();
+        if ($brand->id() !== 'vanassist') {
+            $urls[] = ['loc' => url('/'), 'lastmod' => null, 'priority' => 1.0];
+            if ($brand->moduleEnabled('towing_tools')) {
+                $urls[] = ['loc' => url('/tools'), 'lastmod' => null, 'priority' => 0.9];
+            }
+            if ($brand->moduleEnabled('trailer_marketplace')) {
+                $urls[] = ['loc' => url('/marketplace'), 'lastmod' => null, 'priority' => 0.9];
+            }
+            return $this->sitemapResponse($urls);
+        }
         $this->addStatic($urls);
         $this->addRows($urls, "SELECT slug, updated_at FROM content_pages WHERE is_published = 1 AND noindex = 0", 'slug', 0.6);
         $this->addRows($urls, "SELECT slug, updated_at FROM service_categories WHERE is_active = 1", 'services/', 0.7);
@@ -43,6 +55,12 @@ final class SitemapController extends Controller
             return true;
         }));
 
+        return $this->sitemapResponse($urls);
+    }
+
+    /** @param array<int,array<string,mixed>> $urls */
+    private function sitemapResponse(array $urls): Response
+    {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
             . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
         foreach ($urls as $u) {
