@@ -17,6 +17,16 @@ final class AccountController extends Controller
 {
     public function dashboard(Request $request): Response
     {
+        if (current_brand()->id() === 'towsmart') {
+            $items = Database::select(
+                'SELECT id, label, result_status, created_at FROM towing_combinations WHERE user_id = ? AND brand_id = ? ORDER BY created_at DESC LIMIT 5',
+                [(int) (current_user()['id'] ?? 0), current_brand()->databaseId()]
+            );
+            return $this->view('account.towsmart-dashboard', ['title' => 'My TowSmart account', 'user' => current_user(), 'items' => $items]);
+        }
+        if (current_brand()->id() === 'trailerwise') {
+            return $this->view('account.trailerwise-dashboard', ['title' => 'My TrailerWise account', 'user' => current_user()]);
+        }
         $customerId = $this->customerId();
         $requests = $customerId ? ServiceRequest::forCustomer($customerId) : [];
 

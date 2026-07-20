@@ -3,8 +3,8 @@
 Shared platform core for:
 
 - **VanAssist** (`vanassist.com.au`) — the existing caravan/RV service marketplace and compatibility baseline.
-- **TowSmart** (`towsmart.com.au`) — configured, deployable coming-soon scaffold; towing tools are not yet built.
-- **TrailerWise** (`trailerwise.com.au`) — configured, deployable coming-soon scaffold; trailer marketplace features are not yet built.
+- **TowSmart** (`towsmart.com.au`) — towing mass-limit calculator with saved user combinations and safety guidance.
+- **TrailerWise** (`trailerwise.com.au`) — searchable trailer marketplace with provider-managed listings and admin moderation.
 
 This is an incremental evolution of VanAssist, not a mass rename or three copied
 applications. VanAssist routes, IDs, slugs, users, providers, and workflows remain
@@ -94,7 +94,7 @@ app/Platform/Brand       typed brand registry, resolver and context
 app/Controllers          public and portal/admin endpoints
 app/Models               lightweight PDO models
 app/Services             shared and legacy VanAssist business services
-app/Views                server-rendered templates and brand scaffolds
+app/Views                server-rendered, brand-aware application templates
 config                   environment-derived application and brand configuration
 database/migrations      authoritative ordered schema changes
 database/seeds           core/content/location/provider seed data

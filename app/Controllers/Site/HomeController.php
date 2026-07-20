@@ -17,6 +17,12 @@ final class HomeController extends Controller
 {
     public function index(Request $request): Response
     {
+        if (current_brand()->id() === 'towsmart') {
+            return (new TowSmartController())->home($request);
+        }
+        if (current_brand()->id() === 'trailerwise') {
+            return (new TrailerWiseController())->home($request);
+        }
         $blocks = $this->safe(
             fn () => Database::select(
                 "SELECT * FROM content_blocks WHERE block_group = 'homepage' AND is_active = 1 ORDER BY sort_order"

@@ -78,7 +78,7 @@ and permit `.htaccess` overrides. Suggested local hosts:
 127.0.0.1 admin.assist.test
 ```
 
-Only VanAssist is fully operational until the other brand scaffolds are enabled.
+All three brands are operational. Use the matching local hostname to exercise brand-specific routes and data isolation.
 
 ### PHP development server
 

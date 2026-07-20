@@ -50,8 +50,8 @@ return [
                 'sender_name' => (string) Env::get('MAIL_FROM_NAME', 'VanAssist'),
             ],
             'legal' => [
-                'privacy_path' => '/privacy',
-                'terms_path' => '/terms',
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
             ],
             'navigation' => [
                 ['label' => 'Find a provider', 'path' => '/providers'],
@@ -97,7 +97,7 @@ return [
             'name' => 'TowSmart',
             'legal_name' => (string) Env::get('TOWSMART_LEGAL_NAME', Env::get('TOWWISE_LEGAL_NAME', 'TowSmart')),
             'short_name' => 'TowSmart',
-            'status' => (bool) Env::get('ENABLE_TOWSMART', Env::get('ENABLE_TOWWISE', false)) ? 'private' : 'coming_soon',
+            'status' => 'active',
             'url' => rtrim((string) Env::get('TOWSMART_URL', Env::get('TOWWISE_URL', 'https://towsmart.com.au')), '/'),
             'domains' => [
                 'primary' => (string) Env::get('TOWSMART_DOMAIN', Env::get('TOWWISE_DOMAIN', 'towsmart.com.au')),
@@ -131,12 +131,13 @@ return [
                 'sender_name' => 'TowSmart',
             ],
             'legal' => [
-                'privacy_path' => '/privacy',
-                'terms_path' => '/terms',
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
             ],
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
-                ['label' => 'Towing tools', 'path' => '/tools'],
+                ['label' => 'Weight calculator', 'path' => '/calculator'],
+                ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],
@@ -152,14 +153,14 @@ return [
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => false,
+                'public_application' => true,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
                 'parks' => false,
                 'cms' => true,
                 'admin' => true,
-                'towing_tools' => false,
+                'towing_tools' => true,
                 'trailer_marketplace' => false,
             ],
             'analytics' => [
@@ -177,7 +178,7 @@ return [
             'name' => 'TrailerWise',
             'legal_name' => (string) Env::get('TRAILERWISE_LEGAL_NAME', 'TrailerWise'),
             'short_name' => 'TrailerWise',
-            'status' => (bool) Env::get('ENABLE_TRAILERWISE', false) ? 'private' : 'coming_soon',
+            'status' => 'active',
             'url' => rtrim((string) Env::get('TRAILERWISE_URL', 'https://trailerwise.com.au'), '/'),
             'domains' => [
                 'primary' => (string) Env::get('TRAILERWISE_DOMAIN', 'trailerwise.com.au'),
@@ -210,8 +211,8 @@ return [
                 'sender_name' => 'TrailerWise',
             ],
             'legal' => [
-                'privacy_path' => '/privacy',
-                'terms_path' => '/terms',
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
             ],
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
@@ -231,7 +232,7 @@ return [
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => false,
+                'public_application' => true,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
@@ -239,7 +240,7 @@ return [
                 'cms' => true,
                 'admin' => true,
                 'towing_tools' => false,
-                'trailer_marketplace' => false,
+                'trailer_marketplace' => true,
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TRAILERWISE_ANALYTICS_ID', ''),

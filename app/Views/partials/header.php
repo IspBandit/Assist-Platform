@@ -32,6 +32,16 @@ $headerBrandMeta = $headerBrand->metadata();
 
         <nav class="main-nav" id="main-nav" aria-label="Primary">
             <ul>
+                <?php if ($headerBrand->id() !== 'vanassist'): ?>
+                    <?php foreach ($headerBrand->navigation() as $link): ?>
+                        <li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li>
+                    <?php endforeach; ?>
+                    <?php if (auth()->check()): ?>
+                        <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
+                    <?php else: ?>
+                        <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
+                    <?php endif; ?>
+                <?php else: ?>
                 <li><a href="<?= e(url('find')) ?>">Find a service</a></li>
                 <li><a href="<?= e(url('services')) ?>">Services</a></li>
                 <li><a href="<?= e(url('service-runs')) ?>">Service runs</a></li>
@@ -45,6 +55,7 @@ $headerBrandMeta = $headerBrand->metadata();
                     <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                 <?php endif; ?>
                 <li><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request assistance</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
     </div>

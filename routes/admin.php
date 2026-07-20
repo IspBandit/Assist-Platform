@@ -76,6 +76,8 @@ return static function (Router $router): void {
         $router->post('/providers/send-claim-invite', 'Admin\ProvidersController@sendClaimInvite');
         $router->post('/providers/bulk-claim-invites', 'Admin\ProvidersController@bulkClaimInvites');
         $router->get('/promotions', 'Admin\PromotionsController@index', 'admin.promotions');
+        $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
+        $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
         $router->get('/promotions/show', 'Admin\PromotionsController@show', 'admin.promotions.show');
         $router->post('/promotions/in-progress', 'Admin\PromotionsController@markInProgress');
         $router->post('/promotions/deliver', 'Admin\PromotionsController@deliver');

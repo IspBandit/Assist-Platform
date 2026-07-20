@@ -2,7 +2,7 @@
 
 ## Current verdict
 
-**Not ready for a new multi-brand production launch.**
+**Application release candidate ready; live-environment approval still required.**
 
 VanAssist contains substantial working functionality, but production readiness
 cannot be declared until the critical/high findings below are remediated and the
@@ -14,13 +14,11 @@ treated as a compatibility constraint, not evidence that all controls are safe.
 | Brand | Domain | Current deployable state | Full product launch |
 |---|---|---|---|
 | VanAssist | `vanassist.com.au` | Implemented application, subject to the release blockers below | Not approved until production environment, backup, security, accessibility, and smoke checks pass |
-| TowSmart | `towsmart.com.au` | Branded, host-resolved coming-soon page only | Not ready: towing profiles, calculations, reports, education workflows, and their safety validation are not implemented |
-| TrailerWise | `trailerwise.com.au` | Branded, host-resolved coming-soon page only | Not ready: manufacturer/dealer/repairer marketplace workflows and trailer-specific domain features are not implemented |
+| TowSmart | `towsmart.com.au` | Active application with deterministic towing checks and saved combinations | Deployable after environment, DNS, email and production smoke-test checks below |
+| TrailerWise | `trailerwise.com.au` | Active marketplace with search, details, provider submissions and moderation | Deployable after environment, DNS, email and production smoke-test checks below |
 
-The three domains can be configured to the same release only if TowSmart and
-TrailerWise remain gated as `coming_soon`. Do not enable their public application
-modules or market them as operational products until their missing functionality
-has been built and accepted.
+The three domains resolve to one release and select isolated brand configuration
+from the trusted hostname. TowSmart and TrailerWise public modules are active.
 
 ## Release-blocking items
 
@@ -53,9 +51,10 @@ has been built and accepted.
 
 ### Tests
 
-- Unit tests: 56 passed, 141 assertions.
+- Unit tests: 60 passed, 152 assertions.
 - Current unit-test warnings: none.
-- Database integration tests: 6 passed, 21 assertions.
+- Database integration tests: 6 passed, 21 assertions; combined suite 66 tests,
+  173 assertions.
 - End-to-end tests: absent.
 - Accessibility automation: absent.
 - Route/broken-link automation: absent.
@@ -174,7 +173,7 @@ Before declaring WCAG 2.2 AA readiness:
 
 ## SEO readiness
 
-- remove the static/dynamic robots conflict;
+- [x] static robots file removed so brand-aware dynamic robots output is authoritative;
 - explicitly noindex tokenized, transactional, portal, and admin pages;
 - use brand-aware canonical hosts derived from trusted configuration;
 - preserve current VanAssist paths and add tested aliases before changes;

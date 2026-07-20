@@ -21,6 +21,6 @@ $this->extend('layouts.minimal');
         <button type="submit" class="btn btn-primary btn-block btn-lg">Sign in</button>
     </form>
     <p style="margin-top:1rem"><a href="<?= e(url('forgot-password')) ?>">Forgot your password?</a></p>
-    <p>New to VanAssist? <a href="<?= e(url('register')) ?>">Create an account</a></p>
+    <p>New to <?= $this->e(current_brand()->name()) ?>? <a href="<?= e(url('register')) ?>">Create an account</a></p>
 </div>
 <?php $this->endSection(); ?>

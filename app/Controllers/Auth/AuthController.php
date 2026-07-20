@@ -144,7 +144,7 @@ final class AuthController extends Controller
         AuditLog::record('user.register', 'user', (string) $userId);
 
         Auth::instance()->login($userId);
-        Session::flash('success', 'Welcome to VanAssist. Please check your email to verify your address.');
+        Session::flash('success', 'Welcome to ' . current_brand()->name() . '. Please check your email to verify your address.');
         return $this->redirect('account');
     }
 

@@ -136,7 +136,7 @@ Required post-deploy checks:
 - request submission without real production email in staging;
 - sitemap, robots, canonical, and error pages;
 - queue and cron status;
-- TowSmart/TrailerWise coming-soon behavior when deployed.
+- TowSmart calculator/save flows and TrailerWise marketplace/provider/moderation flows on their own domains.
 
 Health endpoints must not expose credentials, stack traces, private paths, or
 detailed dependency errors to unauthenticated users.

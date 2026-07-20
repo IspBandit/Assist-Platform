@@ -11,6 +11,12 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
         $router->get('/', 'Site\HomeController@index', 'home');
+        $router->get('/calculator', 'Site\TowSmartController@calculator', 'towsmart.calculator');
+        $router->group(['middleware' => ['rate:public.towing-calculator,30,3600,3600']], static function (Router $router): void {
+            $router->post('/calculator', 'Site\TowSmartController@calculate', 'towsmart.calculate');
+        });
+        $router->get('/marketplace', 'Site\TrailerWiseController@marketplace', 'trailerwise.marketplace');
+        $router->get('/trailers/{slug}', 'Site\TrailerWiseController@show', 'trailerwise.show');
 
         // Informational landing pages.
         $router->get('/how-it-works', 'Site\PageController@howItWorks', 'how-it-works');

@@ -10,6 +10,9 @@ return static function (Router $router): void {
         'middleware' => ['headers', 'csrf', 'auth', 'role:provider,administrator,super-administrator'],
     ], static function (Router $router): void {
         $router->get('', 'ProviderController@dashboard', 'provider');
+        $router->get('/trailer-listings', 'Provider\TrailerListingController@index', 'provider.trailer-listings');
+        $router->get('/trailer-listings/form', 'Provider\TrailerListingController@form', 'provider.trailer-listings.form');
+        $router->post('/trailer-listings/save', 'Provider\TrailerListingController@save', 'provider.trailer-listings.save');
 
         // Self-service profile management (Phase 3 part 2).
         $router->get('/profile', 'Provider\ProfileController@profile', 'provider.profile.edit');
