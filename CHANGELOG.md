@@ -2,6 +2,19 @@
 
 All notable changes to VanAssist are documented here.
 
+## [Unreleased] — TowSmart launch identity
+
+### Changed
+
+- Renamed the public TowWise brand to **TowSmart** while preserving its stable
+  database ID and legacy internal storage namespace.
+- Set `vanassist.com.au`, `towsmart.com.au`, and `trailerwise.com.au` as the
+  canonical purchased production domains.
+- Renamed TowSmart routes, code namespaces, assets, advertising placement,
+  environment variables, tests, and operator documentation.
+- Kept legacy `TOWWISE_*` environment variables as temporary deployment
+  fallbacks so an existing installation does not fail during rollout.
+
 ### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +
   `php scripts/coverage-report.php` (local 0 / 1–2 / 3+ and serving coverage by state;

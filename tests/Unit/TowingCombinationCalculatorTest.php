@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\TowWise\TowingCombinationCalculator;
-use App\TowWise\TowingCombinationInput;
+use App\TowSmart\TowingCombinationCalculator;
+use App\TowSmart\TowingCombinationInput;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 

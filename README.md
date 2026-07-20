@@ -3,7 +3,9 @@
 Shared platform core for:
 
 - **VanAssist** — the existing caravan/RV service marketplace and compatibility baseline.
-- **TowWise** — configured, deployable coming-soon scaffold; towing tools are not yet built.
+- **TowSmart** — free towing-combination assessment with transparent
+  calculations, result explanations, saved browser scenarios and contextual
+  advertising support.
 - **TrailerWise** — configured, deployable coming-soon scaffold; trailer marketplace features are not yet built.
 
 This is an incremental evolution of VanAssist, not a mass rename or three copied
@@ -16,7 +18,7 @@ Implemented foundation:
 
 - Existing VanAssist public, customer, provider, park, and admin functionality.
 - Typed brand registry, domain/environment resolution, and request brand context.
-- Disabled-brand gate that prevents TowWise/TrailerWise hosts from exposing
+- Disabled-brand gate that prevents TowSmart/TrailerWise hosts from exposing
   VanAssist routes.
 - Additive brand, provider-listing, brand-profile, brand-role, and provider-
   membership database migrations.
@@ -33,7 +35,8 @@ Not complete:
 
 - Full brand-scoping of every operational table/query.
 - Shared cross-domain sign-in.
-- TowWise towing functionality.
+- TowSmart account-based saved combinations, trusted vehicle specification data
+  and richer downloadable reports beyond the current browser-based assessment.
 - TrailerWise marketplace functionality.
 - Full integration/E2E/accessibility test coverage.
 - Production Stripe charging.

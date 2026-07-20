@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\TowWise;
+namespace App\TowSmart;
 
 /**
  * Informational mass comparison only. This service deliberately contains no

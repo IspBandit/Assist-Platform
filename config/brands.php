@@ -5,8 +5,7 @@ declare(strict_types=1);
 use App\Helpers\Env;
 
 $appUrl = rtrim((string) Env::get('APP_URL', 'http://localhost'), '/');
-$appHost = (string) (parse_url($appUrl, PHP_URL_HOST) ?: 'localhost');
-$towWiseEnabled = (bool) Env::get('ENABLE_TOWWISE', false);
+$towSmartEnabled = (bool) Env::get('ENABLE_TOWSMART', Env::get('ENABLE_TOWWISE', false));
 $trailerWiseEnabled = (bool) Env::get('ENABLE_TRAILERWISE', false);
 
 return [
@@ -24,7 +23,8 @@ return [
             'status' => 'active',
             'url' => $appUrl,
             'domains' => [
-                'primary' => (string) Env::get('VANASSIST_DOMAIN', $appHost),
+                'primary' => (string) Env::get('VANASSIST_DOMAIN', 'vanassist.com.au'),
+                'www' => 'www.vanassist.com.au',
                 'local' => 'vanassist.test',
                 'legacy' => 'vanassist.condrendigital.com.au',
             ],
@@ -96,21 +96,22 @@ return [
             'storage_namespace' => 'vanassist',
         ],
 
-        'towwise' => [
+        'towsmart' => [
             'database_id' => 2,
-            'name' => 'TowWise',
-            'legal_name' => (string) Env::get('TOWWISE_LEGAL_NAME', 'TowWise'),
-            'short_name' => 'TowWise',
-            'status' => $towWiseEnabled ? 'active' : 'coming_soon',
-            'url' => rtrim((string) Env::get('TOWWISE_URL', 'https://towwise.example.com'), '/'),
+            'name' => 'TowSmart',
+            'legal_name' => (string) Env::get('TOWSMART_LEGAL_NAME', 'TowSmart'),
+            'short_name' => 'TowSmart',
+            'status' => $towSmartEnabled ? 'active' : 'coming_soon',
+            'url' => rtrim((string) Env::get('TOWSMART_URL', Env::get('TOWWISE_URL', 'https://towsmart.com.au')), '/'),
             'domains' => [
-                'primary' => (string) Env::get('TOWWISE_DOMAIN', 'towwise.example.com'),
-                'local' => 'towwise.test',
+                'primary' => (string) Env::get('TOWSMART_DOMAIN', Env::get('TOWWISE_DOMAIN', 'towsmart.com.au')),
+                'www' => 'www.towsmart.com.au',
+                'local' => 'towsmart.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/towwise/mark.svg',
-                'icon' => '/assets/brands/towwise/mark.svg',
-                'favicon' => '/assets/brands/towwise/mark.svg',
+                'logo' => '/assets/brands/towsmart/mark.svg',
+                'icon' => '/assets/brands/towsmart/mark.svg',
+                'favicon' => '/assets/brands/towsmart/mark.svg',
             ],
             'theme' => [
                 'brand' => '#1d4ed8',
@@ -122,15 +123,15 @@ return [
             ],
             'metadata' => [
                 'wordmark_prefix' => 'Tow',
-                'wordmark_accent' => 'Wise',
+                'wordmark_accent' => 'Smart',
                 'tagline' => 'Tow with confidence.',
                 'description' => 'Towing calculations, compatibility, education and safety tools.',
-                'social_image' => '/assets/brands/towwise/mark.svg',
+                'social_image' => '/assets/brands/towsmart/mark.svg',
             ],
             'contact' => [
-                'support_email' => (string) Env::get('TOWWISE_SUPPORT_EMAIL', ''),
-                'sender_email' => (string) Env::get('TOWWISE_MAIL_FROM_ADDRESS', ''),
-                'sender_name' => 'TowWise',
+                'support_email' => (string) Env::get('TOWSMART_SUPPORT_EMAIL', Env::get('TOWWISE_SUPPORT_EMAIL', '')),
+                'sender_email' => (string) Env::get('TOWSMART_MAIL_FROM_ADDRESS', Env::get('TOWWISE_MAIL_FROM_ADDRESS', '')),
+                'sender_name' => 'TowSmart',
             ],
             'legal' => [
                 'privacy_path' => '/privacy',
@@ -149,27 +150,29 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => (bool) Env::get('ENABLE_TOWWISE_ADVERTISING', false),
+                'advertising.enabled' => (bool) Env::get('ENABLE_TOWSMART_ADVERTISING', Env::get('ENABLE_TOWWISE_ADVERTISING', false)),
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => $towWiseEnabled,
+                'public_application' => $towSmartEnabled,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
                 'parks' => false,
                 'cms' => true,
                 'admin' => true,
-                'towing_tools' => $towWiseEnabled,
+                'towing_tools' => $towSmartEnabled,
                 'trailer_marketplace' => false,
             ],
             'analytics' => [
-                'measurement_id' => (string) Env::get('TOWWISE_ANALYTICS_ID', ''),
+                'measurement_id' => (string) Env::get('TOWSMART_ANALYTICS_ID', Env::get('TOWWISE_ANALYTICS_ID', '')),
             ],
             'search' => [
-                'provider_index' => 'towwise_resources',
+                'provider_index' => 'towsmart_resources',
             ],
+            // Preserve the pre-rename namespace so existing private objects and
+            // references remain valid. This identifier is not user-facing.
             'storage_namespace' => 'towwise',
         ],
 
@@ -179,9 +182,10 @@ return [
             'legal_name' => (string) Env::get('TRAILERWISE_LEGAL_NAME', 'TrailerWise'),
             'short_name' => 'TrailerWise',
             'status' => $trailerWiseEnabled ? 'active' : 'coming_soon',
-            'url' => rtrim((string) Env::get('TRAILERWISE_URL', 'https://trailerwise.example.com'), '/'),
+            'url' => rtrim((string) Env::get('TRAILERWISE_URL', 'https://trailerwise.com.au'), '/'),
             'domains' => [
-                'primary' => (string) Env::get('TRAILERWISE_DOMAIN', 'trailerwise.example.com'),
+                'primary' => (string) Env::get('TRAILERWISE_DOMAIN', 'trailerwise.com.au'),
+                'www' => 'www.trailerwise.com.au',
                 'local' => 'trailerwise.test',
             ],
             'assets' => [

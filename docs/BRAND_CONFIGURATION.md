@@ -2,7 +2,7 @@
 
 ## Objective
 
-Brand configuration provides one authoritative source for VanAssist, TowWise,
+Brand configuration provides one authoritative source for VanAssist, TowSmart,
 and TrailerWise identity, presentation, enabled modules, and deployment
 behavior. Controllers and templates consume a `BrandContext`; they do not
 scatter string comparisons throughout the application.
@@ -87,7 +87,7 @@ domain API exposed to application code.
 - Provider, request, park, run, CMS, analytics, and current billing modules
   remain available according to existing feature flags.
 
-### TowWise
+### TowSmart
 
 - Status: coming soon until explicitly enabled.
 - Real brand/domain/theme/metadata/navigation/footer configuration.
@@ -122,7 +122,7 @@ denied by role, membership, ownership, or subscription policy.
 
 Initial typed keys include:
 
-- `towwise.enabled`
+- `towsmart.enabled`
 - `trailerwise.enabled`
 - `identity.shared`
 - `providers.messaging`
@@ -157,7 +157,7 @@ Brand context controls:
 - navigation/footer/legal links;
 - CMS page lookup and slug uniqueness.
 
-VanAssist canonical paths remain unchanged. TowWise and TrailerWise content
+VanAssist canonical paths remain unchanged. TowSmart and TrailerWise content
 cannot fall back to VanAssist legal or marketing copy in production.
 
 ## Background work

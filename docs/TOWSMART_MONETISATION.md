@@ -1,4 +1,4 @@
-# TowWise value and monetisation model
+# TowSmart value and monetisation model
 
 ## Product rule
 
@@ -32,6 +32,6 @@ Campaigns target a placement and a context such as `mobile_weighing`,
 approved creative and active advertiser may render. Destination URLs must use
 HTTPS and outbound clicks are attributed through a validated redirect.
 
-`ENABLE_TOWWISE_ADVERTISING` remains false by default. Do not enable it until
+`ENABLE_TOWSMART_ADVERTISING` remains false by default. Do not enable it until
 campaign administration, creative moderation, advertiser terms and privacy
 notices have received production acceptance.

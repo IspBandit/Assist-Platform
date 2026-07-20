@@ -2,7 +2,7 @@
     'use strict';
     const form = document.getElementById('tow-form');
     if (!form) return;
-    const storageKey = 'towwise:last-scenario:v1';
+    const storageKey = 'towsmart:last-scenario:v1';
     const status = document.getElementById('save-status');
     const numberAt = (selector) => Number(document.querySelector(selector)?.value || 0);
     const updatePlan = () => {

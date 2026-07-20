@@ -15,9 +15,9 @@ final class BrandRoutePolicyTest extends TestCase
         self::assertTrue((new BrandRoutePolicy())->allows($this->brand('vanassist', []), '/providers/example'));
     }
 
-    public function test_towwise_only_allows_implemented_public_paths(): void
+    public function test_towsmart_only_allows_implemented_public_paths(): void
     {
-        $brand = $this->brand('towwise', ['towing_tools' => true]);
+        $brand = $this->brand('towsmart', ['towing_tools' => true]);
         $policy = new BrandRoutePolicy();
 
         self::assertTrue($policy->allows($brand, '/'));
@@ -42,7 +42,7 @@ final class BrandRoutePolicyTest extends TestCase
     private function brand(string $id, array $modules): Brand
     {
         return Brand::fromArray($id, [
-            'database_id' => $id === 'vanassist' ? 1 : ($id === 'towwise' ? 2 : 3),
+            'database_id' => $id === 'vanassist' ? 1 : ($id === 'towsmart' ? 2 : 3),
             'name' => ucfirst($id), 'legal_name' => ucfirst($id), 'short_name' => ucfirst($id),
             'status' => 'active', 'url' => 'https://' . $id . '.test',
             'domains' => ['primary' => $id . '.test'], 'assets' => ['logo' => '/logo.svg'],

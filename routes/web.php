@@ -11,8 +11,8 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
         $router->get('/', 'Site\HomeController@index', 'home');
-        $router->get('/tools', 'Site\TowWiseController@index', 'towwise.tools');
-        $router->post('/tools', 'Site\TowWiseController@calculate', 'towwise.tools.calculate');
+        $router->get('/tools', 'Site\TowSmartController@index', 'towsmart.tools');
+        $router->post('/tools', 'Site\TowSmartController@calculate', 'towsmart.tools.calculate');
         $router->group(['middleware' => ['rate:public.ad-click,120,3600,300']], static function (Router $router): void {
             $router->get('/commercial/go/{campaign}/{creative}', 'Site\AdvertisingController@go', 'advertising.go');
         });

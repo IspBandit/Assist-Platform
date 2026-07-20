@@ -17,7 +17,7 @@ final class BrandRoutePolicy
             return true;
         }
 
-        if ($brand->id() === 'towwise' && $brand->moduleEnabled('towing_tools')) {
+        if ($brand->id() === 'towsmart' && $brand->moduleEnabled('towing_tools')) {
             return $path === '/tools' || str_starts_with($path, '/commercial/go/');
         }
 

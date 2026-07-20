@@ -23,7 +23,7 @@ final class ContextualCampaignService
             $campaigns = Database::select(
                 "SELECT c.id AS campaign_id, cr.id AS creative_id, c.context_key, c.destination_url, c.sponsorship_label, cr.headline, cr.body_text, cr.call_to_action, cr.image_path, cr.alt_text, a.business_name "
                 . "FROM advertising_campaigns c INNER JOIN advertisers a ON a.id=c.advertiser_id INNER JOIN advertising_creatives cr ON cr.campaign_id=c.id "
-                . "WHERE c.brand_id=? AND c.placement='towwise_result' AND c.context_key IN ({$marks}) AND c.status='active' AND c.deleted_at IS NULL AND a.status='active' AND a.deleted_at IS NULL AND cr.status='approved' "
+                . "WHERE c.brand_id=? AND c.placement='towsmart_result' AND c.context_key IN ({$marks}) AND c.status='active' AND c.deleted_at IS NULL AND a.status='active' AND a.deleted_at IS NULL AND cr.status='approved' "
                 . "AND (c.starts_at IS NULL OR c.starts_at<=NOW()) AND (c.ends_at IS NULL OR c.ends_at>=NOW()) ORDER BY c.priority DESC, c.id DESC LIMIT " . min(6, $limit),
                 array_merge([$brand->databaseId()], $contexts),
             );
@@ -43,7 +43,7 @@ final class ContextualCampaignService
         try {
             Database::query(
                 'INSERT INTO advertising_events (campaign_id, creative_id, brand_id, event_type, placement, context_key, session_hash, created_at) VALUES (?,?,?,?,?,?,?,NOW())',
-                [(int)$campaign['campaign_id'], (int)$campaign['creative_id'], $brand->databaseId(), $event, 'towwise_result', (string)$campaign['context_key'], session_id() !== '' ? hash('sha256', session_id()) : null],
+                [(int)$campaign['campaign_id'], (int)$campaign['creative_id'], $brand->databaseId(), $event, 'towsmart_result', (string)$campaign['context_key'], session_id() !== '' ? hash('sha256', session_id()) : null],
             );
         } catch (Throwable) {
         }

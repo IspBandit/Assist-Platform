@@ -1,12 +1,13 @@
-# TowWise Calculation Foundation
+# TowSmart Calculation Foundation
 
 ## Status
 
-The repository now contains a pure calculation foundation. It is not a complete
-TowWise user interface, vehicle database, legal assessment, or certification
-service.
+The repository contains a pure calculation engine and a polished, feature-gated
+public assessment interface. A trusted vehicle database and account-based saved
+combinations remain future work; the result is an estimate rather than legal or
+engineering certification.
 
-`App\TowWise\TowingCombinationCalculator` compares user-supplied masses with
+`App\TowSmart\TowingCombinationCalculator` compares user-supplied masses with
 user-supplied or separately sourced manufacturer limits. It deliberately has no
 jurisdiction-specific legal rules.
 
@@ -25,9 +26,9 @@ towball margin = maximum towball limit - actual towball mass
 
 Results are classified as:
 
-- `within_known_limits`
-- `near_known_limit` (a non-negative margin is at most 10% of its limit)
-- `exceeds_known_limit`
+- `within_entered_limits`
+- `close_to_entered_limit` (a non-negative margin is at most 10% of its limit)
+- `likely_exceeds_entered_limit`
 
 ## Input contract
 
@@ -63,7 +64,7 @@ measured where practical.
 
 ## Review position
 
-TowWise is not marketed as authoritative, certified engineering or legal
+TowSmart is not marketed as authoritative, certified engineering or legal
 advice. Independent specialist review is optional risk reduction rather than a
 launch requirement. Transparent formulas, source attribution, automated tests
 and careful non-authoritative wording remain mandatory.

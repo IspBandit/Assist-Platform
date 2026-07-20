@@ -9,11 +9,11 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Platform\Brand\BrandContext;
-use App\TowWise\TowingCombinationCalculator;
-use App\TowWise\TowingCombinationInput;
+use App\TowSmart\TowingCombinationCalculator;
+use App\TowSmart\TowingCombinationInput;
 use InvalidArgumentException;
 
-final class TowWiseController extends Controller
+final class TowSmartController extends Controller
 {
     public function index(Request $request): Response
     {
@@ -60,11 +60,11 @@ final class TowWiseController extends Controller
     private function render(array $values, ?object $result, ?string $error): Response
     {
         $brand = BrandContext::current();
-        if ($brand->id() !== 'towwise' || !$brand->moduleEnabled('towing_tools')) {
+        if ($brand->id() !== 'towsmart' || !$brand->moduleEnabled('towing_tools')) {
             $this->abort(404, 'Page not found');
         }
         $promotions = [];
-        if ($result instanceof \App\TowWise\TowingCombinationResult) {
+        if ($result instanceof \App\TowSmart\TowingCombinationResult) {
             $contexts = ['mobile_weighing'];
             foreach (['vehicle_gvm', 'rear_axle'] as $key) {
                 if (($result->checks[$key]['status'] ?? 'within') !== 'within') $contexts[] = 'suspension';
@@ -74,6 +74,6 @@ final class TowWiseController extends Controller
             }
             $promotions = (new ContextualCampaignService())->forResult($brand, $contexts);
         }
-        return $this->view('brands.towwise-tools', compact('brand', 'values', 'result', 'error', 'promotions'));
+        return $this->view('brands.towsmart-tools', compact('brand', 'values', 'result', 'error', 'promotions'));
     }
 }

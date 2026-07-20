@@ -3,7 +3,7 @@
 ## Deployment model
 
 Assist Platform uses one versioned codebase and may deploy the same immutable
-release artefact independently for VanAssist, TowWise, TrailerWise, and admin
+release artefact independently for VanAssist, TowSmart, TrailerWise, and admin
 hosts. VanAssist is the only fully enabled product during the initial migration.
 
 The deployment target remains PHP/Apache/MySQL-compatible hosting. cPanel is
@@ -102,7 +102,7 @@ ASSIST_ALLOW_BRAND_QUERY=false
 SESSION_SECURE=true
 ```
 
-Use the matching brand key for future TowWise and TrailerWise deployments.
+Use the matching brand key for future TowSmart and TrailerWise deployments.
 Hostname validation must agree with the brand registry. A release must not serve
 an unknown production host.
 
@@ -153,7 +153,7 @@ Required post-deploy checks:
 - request submission without real production email in staging;
 - sitemap, robots, canonical, and error pages;
 - queue and cron status;
-- TowWise/TrailerWise coming-soon behavior when deployed.
+- TowSmart/TrailerWise coming-soon behavior when deployed.
 
 Health endpoints must not expose credentials, stack traces, private paths, or
 detailed dependency errors to unauthenticated users.

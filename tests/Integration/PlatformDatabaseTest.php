@@ -40,15 +40,22 @@ final class PlatformDatabaseTest extends TestCase
     public function testPlatformBrandsAndBackfillIntegrity(): void
     {
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');
-        self::assertSame(['vanassist', 'towwise', 'trailerwise'], array_column($brands, 'brand_key'));
+        self::assertSame(['vanassist', 'towsmart', 'trailerwise'], array_column($brands, 'brand_key'));
+        self::assertSame([1, 2, 3], array_map('intval', array_column($brands, 'id')));
         self::assertSame('active', $brands[0]['status']);
+
+        $primaryDomains = Database::select('SELECT brand_id, hostname FROM brand_domains WHERE is_primary = 1 ORDER BY brand_id');
+        self::assertSame(
+            ['vanassist.com.au', 'towsmart.com.au', 'trailerwise.com.au'],
+            array_column($primaryDomains, 'hostname'),
+        );
 
         foreach ((new PlatformBackfill())->validate() as $check) {
             self::assertTrue($check['valid'], "Backfill count {$check['actual']} did not match {$check['expected']}");
         }
     }
 
-    public function testTowWiseAndTrailerWiseFoundationTablesExist(): void
+    public function testTowSmartAndTrailerWiseFoundationTablesExist(): void
     {
         $required = [
             'towing_assets',
@@ -161,7 +168,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testEmailQueuePersistsCurrentBrandContext(): void
     {
         $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
-        BrandContext::set($registry->get('towwise'));
+        BrandContext::set($registry->get('towsmart'));
         $queueId = null;
 
         try {

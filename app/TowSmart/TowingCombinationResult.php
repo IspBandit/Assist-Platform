@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\TowWise;
+namespace App\TowSmart;
 
 final readonly class TowingCombinationResult
 {

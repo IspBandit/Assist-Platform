@@ -197,4 +197,4 @@ Until completed and verified, do not claim:
 - automatic offsite recoverable backups;
 - WCAG 2.2 AA compliance;
 - fully safe no-downtime schema migration;
-- complete TowWise or TrailerWise functionality.
+- complete TowSmart or TrailerWise functionality.

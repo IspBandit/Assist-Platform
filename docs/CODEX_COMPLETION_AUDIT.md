@@ -10,7 +10,7 @@ Audited commit: `b63343b` (`main`)
 
 The repository is a substantial VanAssist application with an additive
 multi-brand platform foundation. It is not yet a completed three-product
-platform. VanAssist contains the operational marketplace; TowWise now has a
+platform. VanAssist contains the operational marketplace; TowSmart now has a
 feature-gated public towing-mass comparison MVP and TrailerWise has a
 feature-gated read-only marketplace MVP. Both remain disabled by default.
 
@@ -29,15 +29,15 @@ revealed after static analysis could run successfully:
 - The stale static `public/robots.txt` was removed. The registered dynamic
   `/robots.txt` endpoint is now the only source of robots policy and can honour
   brand launch state.
-- A pure, typed TowWise mass-comparison foundation was added with traceable
+- A pure, typed TowSmart mass-comparison foundation was added with traceable
   assumptions, explicit non-certification limitations, and boundary tests.
-- Additive TowWise asset/combination and TrailerWise business/listing migrations
+- Additive TowSmart asset/combination and TrailerWise business/listing migrations
   were added without changing existing VanAssist IDs, slugs, or tables.
 - A reproducible ZIP release builder now records the commit and SHA-256 hash of
   every tracked file; CI validates that a clean commit can be packaged.
-- A fail-closed route policy prevents TowWise and TrailerWise hosts from
+- A fail-closed route policy prevents TowSmart and TrailerWise hosts from
   reaching VanAssist or each other's routes after activation.
-- TowWise now exposes a server-validated calculator UI with explicit safety,
+- TowSmart now exposes a server-validated calculator UI with explicit safety,
   engineering, legal and source-data limitations.
 - TrailerWise now exposes brand-scoped active listings, type filtering and
   individual listing pages with an honest empty state.
@@ -53,7 +53,7 @@ analytics, billing foundations, imports, email queues, and operational controls.
 Live environment acceptance still requires production-shaped integration and
 browser testing.
 
-### TowWise
+### TowSmart
 
 Brand configuration, safe coming-soon routing, calculation-domain foundation,
 asset/combination schema, unit tests and a polished public assessment MVP exist.
@@ -91,7 +91,7 @@ Draft pull request: `https://github.com/IspBandit/Assist-Platform/pull/1`
 
 ## Remaining production blockers
 
-1. Build account-based named TowWise combinations, weighbridge history and reminders.
+1. Build account-based named TowSmart combinations, weighbridge history and reminders.
 2. Build advertiser campaign administration and provider lead workflows.
 3. Build TrailerWise provider/admin listing authoring, enquiries and moderation.
 4. Complete operational-table brand scoping and expand isolation integration
@@ -112,7 +112,7 @@ Draft pull request: `https://github.com/IspBandit/Assist-Platform/pull/1`
 1. Production-shaped MySQL integration and browser test harness.
 2. Brand-scope all operational reads/writes and prove isolation.
 3. TrailerWise relational domain plus manufacturer/dealer/provider workflows.
-4. TowWise sourced vehicle/caravan data, saved history and provider lead flows.
+4. TowSmart sourced vehicle/caravan data, saved history and provider lead flows.
 5. Secure artefact-based deployment, rollback, backups, and monitoring.
 6. Accessibility and SEO release gates for each enabled brand.
 

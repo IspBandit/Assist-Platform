@@ -2,8 +2,8 @@
 declare(strict_types=1);
 /** @var \App\Platform\Brand\Brand $brand */
 $meta = $brand->metadata(); $theme = $brand->theme();
-$destination = $brand->id() === 'towwise' ? '/tools' : '/marketplace';
-$action = $brand->id() === 'towwise' ? 'Check a towing combination' : 'Browse trailer listings';
+$destination = $brand->id() === 'towsmart' ? '/tools' : '/marketplace';
+$action = $brand->id() === 'towsmart' ? 'Check a towing combination' : 'Browse trailer listings';
 ?>
 <!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title><?= e($brand->name()) ?> | <?= e($meta['tagline'] ?? '') ?></title><meta name="description" content="<?= e($meta['description'] ?? '') ?>">
