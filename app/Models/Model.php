@@ -44,7 +44,7 @@ abstract class Model
     }
 
     /** @return array<int,array<string,mixed>> */
-    public static function all(string $orderBy = null): array
+    public static function all(?string $orderBy = null): array
     {
         $sql = 'SELECT * FROM ' . static::$table;
         if (static::$softDeletes) {

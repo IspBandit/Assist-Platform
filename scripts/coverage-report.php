@@ -26,11 +26,13 @@ use App\Services\TownCoverageService;
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
-$json = in_array('--json', $argv, true);
+/** @var array<int,string> $arguments */
+$arguments = $_SERVER['argv'] ?? [];
+$json = in_array('--json', $arguments, true);
 $thinLimit = 0;
-$thinIdx = array_search('--thin', $argv, true);
-if ($thinIdx !== false && isset($argv[$thinIdx + 1]) && ctype_digit((string) $argv[$thinIdx + 1])) {
-    $thinLimit = (int) $argv[$thinIdx + 1];
+$thinIdx = array_search('--thin', $arguments, true);
+if ($thinIdx !== false && isset($arguments[$thinIdx + 1]) && ctype_digit($arguments[$thinIdx + 1])) {
+    $thinLimit = (int) $arguments[$thinIdx + 1];
 }
 
 try {

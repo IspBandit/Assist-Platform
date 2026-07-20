@@ -20,13 +20,16 @@ treated as a compatibility constraint, not evidence that all controls are safe.
 - [x] Shared rate limiting protects login, reset, registration, and primary
       high-abuse public submission flows.
 - [x] Image dimensions are safely bounded before expensive decode.
-- [ ] Deployment uses encrypted transport and a manifest that detects changed
-      and removed files.
+- [ ] Production deployment uses encrypted transport and immutable release
+      directories. A SHA-256 release-manifest builder now exists and is checked
+      by CI, but the live hosting switch/rollback mechanism is not configured.
 - [ ] Backups are encrypted/offsite and restoration is tested.
 - [x] Unknown middleware and critical launch/maintenance checks fail closed.
 - [ ] Integration tests cover authentication, authorization, installer, uploads,
       migration, and brand isolation.
-- [ ] Brand resolution and repository scoping cannot leak private cross-brand data.
+- [ ] Brand resolution and repository scoping cannot leak private cross-brand
+      data. Registry, email attribution and provider-listing uniqueness tests
+      exist; operational-table coverage is not yet complete.
 
 ## Application readiness
 
@@ -161,7 +164,8 @@ Before declaring WCAG 2.2 AA readiness:
 
 ## SEO readiness
 
-- remove the static/dynamic robots conflict;
+- [x] Remove the static/dynamic robots conflict so launch-aware rules always
+      come from `SitemapController`.
 - explicitly noindex tokenized, transactional, portal, and admin pages;
 - use brand-aware canonical hosts derived from trusted configuration;
 - preserve current VanAssist paths and add tested aliases before changes;

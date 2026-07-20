@@ -23,7 +23,19 @@ supported, but deployment safety must not depend on FTP timestamp/size heuristic
 
 Build releases from a reviewed commit:
 
-```bash
+```powershell
+pwsh ./scripts/build-release.ps1 -OutputDirectory dist
+```
+
+The builder refuses a dirty working tree, exports the committed tree, records
+the full commit SHA, hashes every tracked file with SHA-256, writes
+`release-manifest.json`, and produces a versioned ZIP. CI validates this process
+on every pull request and main-branch push.
+
+Install production Composer dependencies in a controlled build stage or on the
+new release directory before it becomes active:
+
+```text
 composer install --no-dev --prefer-dist --classmap-authoritative
 composer check-platform-reqs --no-dev
 ```
@@ -39,6 +51,11 @@ Composer dependencies. It excludes:
 
 Record the commit SHA, Composer lock hash, migration version, build time, and
 artefact checksum.
+
+The receiving environment must verify the ZIP checksum before extraction and
+verify `release-manifest.json` before switching the active release. The manifest
+does not make legacy in-place FTP deployment atomic; use a new release directory
+and an atomic document-root/symlink switch where the host supports it.
 
 ## Pre-deployment checks
 

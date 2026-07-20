@@ -112,5 +112,8 @@ jobs:
       - name: Audit Composer dependencies
         run: composer audit --no-interaction
 
+      - name: Validate reproducible release artefact
+        run: pwsh ./scripts/build-release.ps1 -OutputDirectory dist
+
       - name: Validate production dependency build
         run: composer install --no-dev --no-interaction --prefer-dist --classmap-authoritative

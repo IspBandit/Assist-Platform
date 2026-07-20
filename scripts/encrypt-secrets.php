@@ -13,7 +13,9 @@ require BASE_PATH . '/bootstrap/autoload.php';
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
-$validateOnly = in_array('--validate-only', $argv, true);
+/** @var array<int,string> $arguments */
+$arguments = $_SERVER['argv'] ?? [];
+$validateOnly = in_array('--validate-only', $arguments, true);
 $stored = (string) Settings::get('mail_password', '');
 
 if ($stored === '') {

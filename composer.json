@@ -43,7 +43,7 @@
         "migrate": "php scripts/migrate.php",
         "seed": "php scripts/seed.php",
         "test": "phpunit",
-        "analyse": "phpstan analyse --no-progress",
+        "analyse": "phpstan analyse --no-progress --memory-limit=512M",
         "check": [
             "@analyse",
             "@test"

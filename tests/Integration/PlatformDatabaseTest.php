@@ -48,6 +48,39 @@ final class PlatformDatabaseTest extends TestCase
         }
     }
 
+    public function testTowWiseAndTrailerWiseFoundationTablesExist(): void
+    {
+        $required = [
+            'towing_assets',
+            'towing_combinations',
+            'trailer_types',
+            'trailer_business_profiles',
+            'trailer_business_types',
+            'trailer_listings',
+        ];
+        $placeholders = implode(',', array_fill(0, count($required), '?'));
+        $tables = Database::select(
+            "SELECT table_name FROM information_schema.tables "
+            . "WHERE table_schema = DATABASE() AND table_name IN ({$placeholders})",
+            $required
+        );
+
+        self::assertEqualsCanonicalizing($required, array_column($tables, 'table_name'));
+        self::assertGreaterThanOrEqual(15, (int) Database::scalar('SELECT COUNT(*) FROM trailer_types'));
+    }
+
+    public function testProviderListingSlugsAreUniqueWithinEachBrand(): void
+    {
+        $duplicates = (int) Database::scalar(
+            'SELECT COUNT(*) FROM ('
+            . 'SELECT brand_id, slug FROM provider_brand_listings '
+            . 'WHERE deleted_at IS NULL GROUP BY brand_id, slug HAVING COUNT(*) > 1'
+            . ') duplicate_slugs'
+        );
+
+        self::assertSame(0, $duplicates);
+    }
+
     public function testPersistentRateLimitBlocksAndClears(): void
     {
         $subjects = ['email:integration-rate-limit@example.com', 'ip:192.0.2.10'];

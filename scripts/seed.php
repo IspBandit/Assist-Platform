@@ -31,6 +31,9 @@ use App\Services\Seeder;
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
+/** @var array<int,string> $arguments */
+$arguments = $_SERVER['argv'] ?? [];
+
 $progress = static function (array $r): void {
     $next = (int) ($r['next'] ?? -1);
     $total = (int) ($r['total'] ?? 0);
@@ -47,33 +50,33 @@ $progress = static function (array $r): void {
 try {
     $runner = new ProviderImportRunner();
 
-    if (in_array('--national', $argv, true)) {
+    if (in_array('--national', $arguments, true)) {
         $summary = (new NationalImportSeeder())->seed();
         echo 'National import: ' . json_encode($summary) . "\n";
         exit(0);
     }
 
-    if (in_array('--towns', $argv, true)) {
+    if (in_array('--towns', $arguments, true)) {
         $summary = $runner->seedTowns();
         echo 'Towns: ' . json_encode($summary) . "\n";
         exit(isset($summary['error']) ? 1 : 0);
     }
 
-    if (in_array('--osm', $argv, true)) {
+    if (in_array('--osm', $arguments, true)) {
         echo "OpenStreetMap import (to completion)…\n";
         $summary = $runner->runOsmToCompletion($progress);
         echo 'OSM: ' . json_encode($summary) . "\n";
         exit(isset($summary['error']) ? 1 : 0);
     }
 
-    if (in_array('--locality', $argv, true)) {
+    if (in_array('--locality', $arguments, true)) {
         echo "Locality-provider import (to completion)…\n";
         $summary = $runner->runLocalityToCompletion($progress);
         echo 'Locality: ' . json_encode($summary) . "\n";
         exit(isset($summary['error']) ? 1 : 0);
     }
 
-    if (in_array('--providers', $argv, true)) {
+    if (in_array('--providers', $arguments, true)) {
         echo "1/5 Towns…\n";
         $t = $runner->seedTowns();
         echo '  ' . json_encode($t) . "\n";
@@ -116,7 +119,7 @@ try {
     (new Seeder())->seedAll();
     echo "Core seed data applied.\n";
 
-    if (in_array('--demo', $argv, true)) {
+    if (in_array('--demo', $arguments, true)) {
         (new DemoSeeder())->seed();
         echo "Demo data applied.\n";
     }
