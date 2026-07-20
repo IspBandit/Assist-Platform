@@ -65,7 +65,11 @@ final class PlatformDatabaseTest extends TestCase
             $required
         );
 
-        self::assertEqualsCanonicalizing($required, array_column($tables, 'table_name'));
+        $actual = array_map(
+            static fn (array $row): string => (string) array_values($row)[0],
+            $tables
+        );
+        self::assertEqualsCanonicalizing($required, $actual);
         self::assertGreaterThanOrEqual(15, (int) Database::scalar('SELECT COUNT(*) FROM trailer_types'));
     }
 
