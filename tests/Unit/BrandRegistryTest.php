@@ -19,10 +19,10 @@ final class BrandRegistryTest extends TestCase
     {
         $registry = BrandRegistry::fromArray([
             'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
-            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+            'towsmart' => $this->brandConfig('TowSmart', 'towsmart.test'),
         ]);
 
-        self::assertSame('towwise', $registry->forHost('TOWWISE.TEST:8080')?->id());
+        self::assertSame('towsmart', $registry->forHost('TOWSMART.TEST:8080')?->id());
         self::assertNull($registry->forHost('unknown.test'));
     }
 
@@ -30,20 +30,20 @@ final class BrandRegistryTest extends TestCase
     {
         $registry = BrandRegistry::fromArray([
             'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
-            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+            'towsmart' => $this->brandConfig('TowSmart', 'towsmart.test'),
         ]);
-        $resolver = new BrandResolver($registry, 'vanassist', 'towwise');
+        $resolver = new BrandResolver($registry, 'vanassist', 'towsmart');
 
-        self::assertSame('towwise', $resolver->resolve($this->request('vanassist.test'))->id());
+        self::assertSame('towsmart', $resolver->resolve($this->request('vanassist.test'))->id());
     }
 
     public function testStrictProductionHostMustMatchExplicitDeploymentBrand(): void
     {
         $registry = BrandRegistry::fromArray([
             'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
-            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+            'towsmart' => $this->brandConfig('TowSmart', 'towsmart.test'),
         ]);
-        $resolver = new BrandResolver($registry, 'vanassist', 'towwise', 'production', false, true);
+        $resolver = new BrandResolver($registry, 'vanassist', 'towsmart', 'production', false, true);
 
         $this->expectException(RuntimeException::class);
         $resolver->resolve($this->request('vanassist.test'));
@@ -53,16 +53,16 @@ final class BrandRegistryTest extends TestCase
     {
         $registry = BrandRegistry::fromArray([
             'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
-            'towwise' => $this->brandConfig('TowWise', 'towwise.test'),
+            'towsmart' => $this->brandConfig('TowSmart', 'towsmart.test'),
         ]);
         $resolver = new BrandResolver($registry, 'vanassist', null, 'local', true);
-        $request = new Request(['_brand' => 'towwise'], [], [
+        $request = new Request(['_brand' => 'towsmart'], [], [
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/',
             'HTTP_HOST' => 'localhost',
         ], []);
 
-        self::assertSame('towwise', $resolver->resolve($request)->id());
+        self::assertSame('towsmart', $resolver->resolve($request)->id());
     }
 
     public function testUnknownProductionHostFailsWhenStrict(): void
@@ -81,20 +81,30 @@ final class BrandRegistryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         BrandRegistry::fromArray([
             'vanassist' => $this->brandConfig('VanAssist', 'shared.test'),
-            'towwise' => $this->brandConfig('TowWise', 'shared.test'),
+            'towsmart' => $this->brandConfig('TowSmart', 'shared.test'),
         ]);
     }
 
     public function testDuplicateDatabaseIdIsRejected(): void
     {
-        $towwise = $this->brandConfig('TowWise', 'towwise.test');
-        $towwise['database_id'] = 1;
+        $towsmart = $this->brandConfig('TowSmart', 'towsmart.test');
+        $towsmart['database_id'] = 1;
 
         $this->expectException(InvalidArgumentException::class);
         BrandRegistry::fromArray([
             'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
-            'towwise' => $towwise,
+            'towsmart' => $towsmart,
         ]);
+    }
+
+    public function testLegacyTowWiseIdResolvesToTowSmart(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'towsmart' => $this->brandConfig('TowSmart', 'towsmart.test'),
+        ]);
+
+        self::assertSame('towsmart', $registry->get('towwise')->id());
+        self::assertSame('towsmart', $registry->find('towwise')?->id());
     }
 
     public function testTypedFeatureGateUsesBrandConfiguration(): void

@@ -40,7 +40,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testPlatformBrandsAndBackfillIntegrity(): void
     {
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');
-        self::assertSame(['vanassist', 'towwise', 'trailerwise'], array_column($brands, 'brand_key'));
+        self::assertSame(['vanassist', 'towsmart', 'trailerwise'], array_column($brands, 'brand_key'));
         self::assertSame('active', $brands[0]['status']);
 
         foreach ((new PlatformBackfill())->validate() as $check) {
@@ -120,7 +120,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testEmailQueuePersistsCurrentBrandContext(): void
     {
         $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
-        BrandContext::set($registry->get('towwise'));
+        BrandContext::set($registry->get('towsmart'));
         $queueId = null;
 
         try {

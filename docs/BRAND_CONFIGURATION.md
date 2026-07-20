@@ -2,7 +2,7 @@
 
 ## Objective
 
-Brand configuration provides one authoritative source for VanAssist, TowWise,
+Brand configuration provides one authoritative source for VanAssist, TowSmart,
 and TrailerWise identity, presentation, enabled modules, and deployment
 behavior. Controllers and templates consume a `BrandContext`; they do not
 scatter string comparisons throughout the application.
@@ -31,7 +31,7 @@ Each brand defines:
     'short_name' => 'VanAssist',
     'status' => 'active',
     'domains' => [
-        'primary' => 'vanassist.example.com',
+        'primary' => 'vanassist.com.au',
         'local' => ['vanassist.test'],
     ],
     'assets' => [
@@ -83,11 +83,14 @@ domain API exposed to application code.
 - Status: active.
 - Existing public routes and portal/admin functionality remain enabled.
 - Existing visual values and URLs are preserved.
+- Production domain: `vanassist.com.au`; `www.vanassist.com.au` resolves to the
+  same brand. The staging hostname `vanassist.condrendigital.com.au` remains a
+  legacy alias during transition.
 - Existing data is backfilled to the fixed VanAssist database brand.
 - Provider, request, park, run, CMS, analytics, and current billing modules
   remain available according to existing feature flags.
 
-### TowWise
+### TowSmart
 
 - Status: coming soon until explicitly enabled.
 - Real brand/domain/theme/metadata/navigation/footer configuration.
@@ -95,6 +98,15 @@ domain API exposed to application code.
 - Public homepage and future tool-route placeholders may be deployed.
 - Towing calculations, compliance guidance, reports, and saved combinations are
   not represented as complete production functionality.
+- Production domain: `towsmart.com.au`; `www.towsmart.com.au` resolves to the
+  same brand; local domain: `towsmart.test`.
+- The legacy `towwise` brand ID, `towwise.test` local hostname, and `TOWWISE_*`
+  environment variables remain accepted temporarily for backwards compatibility.
+- Database brand ID `2` is preserved. Migration `034` changes the persisted key
+  to `towsmart` without changing related foreign keys. The historical
+  `towwise` storage namespace is intentionally retained to avoid orphaning files.
+  The old `/assets/brands/towwise/` asset path also remains as a compatibility
+  copy while new pages use `/assets/brands/towsmart/`.
 
 ### TrailerWise
 
@@ -104,6 +116,8 @@ domain API exposed to application code.
 - Public homepage and future marketplace-route placeholders may be deployed.
 - Trailer listings, dealer/manufacturer workflows, parts, and compliance
   services are not represented as complete production functionality.
+- Production domain: `trailerwise.com.au`; `www.trailerwise.com.au` resolves to
+  the same brand; local domain: `trailerwise.test`.
 
 ## Feature flags
 
@@ -122,7 +136,7 @@ denied by role, membership, ownership, or subscription policy.
 
 Initial typed keys include:
 
-- `towwise.enabled`
+- `towsmart.enabled`
 - `trailerwise.enabled`
 - `identity.shared`
 - `providers.messaging`
@@ -157,7 +171,7 @@ Brand context controls:
 - navigation/footer/legal links;
 - CMS page lookup and slug uniqueness.
 
-VanAssist canonical paths remain unchanged. TowWise and TrailerWise content
+VanAssist canonical paths remain unchanged. TowSmart and TrailerWise content
 cannot fall back to VanAssist legal or marketing copy in production.
 
 ## Background work

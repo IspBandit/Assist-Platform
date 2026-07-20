@@ -4,14 +4,14 @@ This guide deploys VanAssist to a standard Linux cPanel account
 (Apache + PHP 8.1+ + MySQL/MariaDB). No SSH is required for normal operation.
 
 Throughout, replace `CPANEL_USERNAME` with your cPanel account username and
-`vanassist.example.com` with your real subdomain.
+`vanassist.com.au` with your production domain.
 
 ---
 
 ## 1. Create the subdomain
 
 1. cPanel → **Domains** (or **Subdomains**).
-2. Create `vanassist.example.com`.
+2. Create `vanassist.com.au`.
 3. Set the **Document Root** to:
    ```
    /home/CPANEL_USERNAME/vanassist/public
@@ -69,7 +69,7 @@ until PHPMailer is available. You can upload a `vendor/` folder built elsewhere.
 
 ## 7. Run the installer
 
-1. Visit `https://vanassist.example.com/` — you'll be redirected to `/install`.
+1. Visit `https://vanassist.com.au/` — you'll be redirected to `/install`.
 2. **Step 1** confirms PHP version, extensions and folder permissions.
 3. **Step 2** collects database, site, email (SMTP) and super-administrator
    details. On submit it tests the DB connection, writes `.env`, runs
@@ -139,9 +139,9 @@ File Manager, and keep cPanel's own account backups enabled.
 
 ## 13. Harden & launch
 
-- Confirm `https://vanassist.example.com/.env` returns **403/404** (never the
+- Confirm `https://vanassist.com.au/.env` returns **403/404** (never the
   file contents).
-- Confirm `https://vanassist.example.com/storage/logs/app.log` is **not**
+- Confirm `https://vanassist.com.au/storage/logs/app.log` is **not**
   accessible.
 - Change the super-administrator password if anyone else saw the install.
 - Set the **launch mode** in admin settings (private → provider-onboarding →

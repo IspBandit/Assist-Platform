@@ -153,7 +153,7 @@ After deployment verify:
 - queue and cron status;
 - private/public media;
 - canonical URL, sitemap, robots, structured data, and 404/500 pages;
-- TowWise and TrailerWise coming-soon response until enabled;
+- TowSmart and TrailerWise coming-soon response until enabled;
 - no unexpected VanAssist route exposure on disabled brands.
 
 ## Test safety

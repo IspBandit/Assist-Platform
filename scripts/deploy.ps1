@@ -176,7 +176,7 @@ exit
 Write-Host ""
 if ($code -eq 0 -and $verifyOk) {
     Write-Host "Deploy complete: $fileCount files ($branch @ $commit) -> $RemotePath" -ForegroundColor Green
-    Write-Host "Live: https://vanassist.condrendigital.com.au/" -ForegroundColor Green
+    Write-Host "Live: https://vanassist.com.au/" -ForegroundColor Green
 } elseif ($code -eq 0 -and -not $verifyOk) {
     Fail "WinSCP finished but the remote site does not have the expected code (Kernel.php check failed). See $env:TEMP\vanassist_deploy_$commit.log"
 } else {
