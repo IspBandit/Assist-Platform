@@ -13,6 +13,7 @@ $nav = [
         ['Customers', '/admin/customers'],
         ['Providers', '/admin/providers'],
         ['Ad graphics', '/admin/promotions'],
+        ['Advertising campaigns', '/admin/advertising'],
         ['Provider prospects', '/admin/prospects'],
         ['Caravan parks', '/admin/parks'],
     ],

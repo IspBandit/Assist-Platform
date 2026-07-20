@@ -56,9 +56,10 @@ browser testing.
 ### TowWise
 
 Brand configuration, safe coming-soon routing, calculation-domain foundation,
-asset/combination schema, unit tests and a public calculation MVP exist. Sourced
-vehicle/trailer data, saved-combination services, reports and independent safety
-review remain incomplete. TowWise must not be described as complete.
+asset/combination schema, unit tests and a polished public assessment MVP exist.
+The MVP includes a load planner, up to eleven mass/component checks, local saved
+scenarios, printable results, education and contextual advertising foundations.
+Sourced vehicle/trailer data and account-based history remain incomplete.
 
 ### TrailerWise
 
@@ -75,7 +76,7 @@ TrailerWise must not be described as complete.
 | `composer validate --strict` | Passed |
 | `composer check-platform-reqs` | Passed on PHP 8.5.8 |
 | `composer analyse` | Passed after fixes; no errors |
-| `vendor/bin/phpunit --testsuite Unit` | Passed: 63 tests, 160 assertions |
+| `vendor/bin/phpunit --testsuite Unit` | Passed: 65 tests, 168 assertions |
 | `composer audit` | Passed; no known advisories |
 | `git diff --check` | Passed |
 | GitHub Actions run for PR #1 | Passed on PHP 8.3 / MySQL 8 |
@@ -90,20 +91,20 @@ Draft pull request: `https://github.com/IspBandit/Assist-Platform/pull/1`
 
 ## Remaining production blockers
 
-1. Have TowWise formulas, language and future source data reviewed by
-   an appropriately qualified towing/engineering specialist.
-2. Build TrailerWise provider/admin listing authoring, enquiries and moderation.
-3. Complete operational-table brand scoping and expand isolation integration
+1. Build account-based named TowWise combinations, weighbridge history and reminders.
+2. Build advertiser campaign administration and provider lead workflows.
+3. Build TrailerWise provider/admin listing authoring, enquiries and moderation.
+4. Complete operational-table brand scoping and expand isolation integration
    tests before enabling additional brands.
-4. Add browser end-to-end, accessibility, and broken-link tests.
-5. Replace the legacy FTP deployment with an encrypted, immutable release
+5. Add browser end-to-end, accessibility, and broken-link tests.
+6. Replace the legacy FTP deployment with an encrypted, immutable release
    artefact/manifest process that handles removed files and supports rollback.
-6. Configure encrypted offsite backups and rehearse restoration.
-7. Add administrative MFA or a documented step-up-authentication plan.
-8. Complete privacy inventory, retention, export, and deletion/anonymisation
+7. Configure encrypted offsite backups and rehearse restoration.
+8. Add administrative MFA or a documented step-up-authentication plan.
+9. Complete privacy inventory, retention, export, and deletion/anonymisation
    workflows with legal review.
-9. Configure error monitoring, uptime checks, and cron-failure alerting.
-10. Validate production environment values, SMTP, storage permissions, cron,
+10. Configure error monitoring, uptime checks, and cron-failure alerting.
+11. Validate production environment values, SMTP, storage permissions, cron,
     DNS, canonical hosts, and post-deployment smoke tests.
 
 ## Recommended next implementation order
@@ -111,8 +112,7 @@ Draft pull request: `https://github.com/IspBandit/Assist-Platform/pull/1`
 1. Production-shaped MySQL integration and browser test harness.
 2. Brand-scope all operational reads/writes and prove isolation.
 3. TrailerWise relational domain plus manufacturer/dealer/provider workflows.
-4. TowWise calculation domain, source attribution, pure formula library, and
-   independent safety review.
+4. TowWise sourced vehicle/caravan data, saved history and provider lead flows.
 5. Secure artefact-based deployment, rollback, backups, and monitoring.
 6. Accessibility and SEO release gates for each enabled brand.
 

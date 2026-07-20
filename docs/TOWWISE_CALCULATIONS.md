@@ -45,10 +45,10 @@ whether each value was entered, measured, imported, or independently verified.
 
 ## Important limitations
 
-The current calculation does not assess:
+The current calculation optionally assesses entered towbar, coupling, front
+axle, rear axle and trailer axle-group limits. It does not independently assess:
 
-- vehicle or trailer individual axle limits;
-- tyre, wheel, coupling, towbar, or chain limits;
+- tyre, wheel or chain limits;
 - brake and breakaway requirements;
 - dimensional restrictions;
 - licence requirements;
@@ -57,13 +57,21 @@ The current calculation does not assess:
 - the effect of unrecorded accessories, occupants, cargo, fluids, or
   modifications.
 
-The user interface must always explain that the result is informational, values
-must be confirmed, actual loaded masses should be measured, and professional
-legal/engineering advice may be required.
+The user interface must always explain that the result is an estimate based on
+entered values, values must be confirmed, and actual loaded masses should be
+measured where practical.
 
-## Independent review requirement
+## Review position
 
-Before public launch, a suitably qualified Australian towing or automotive
-engineer must review formulas, terminology, examples, boundary behaviour,
-source policy, and disclaimers. That review is an external release gate and
-cannot be replaced by automated tests.
+TowWise is not marketed as authoritative, certified engineering or legal
+advice. Independent specialist review is optional risk reduction rather than a
+launch requirement. Transparent formulas, source attribution, automated tests
+and careful non-authoritative wording remain mandatory.
+
+## Public assessment experience
+
+The feature-gated checker includes a local-browser load planner, actual mass
+inputs, eleven possible component checks, a completeness indicator, visual
+headroom, local scenario persistence, printable results, educational guidance
+and contextual sponsored-placement support. The core checker remains free and
+requires no account.

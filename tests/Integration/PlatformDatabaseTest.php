@@ -57,6 +57,10 @@ final class PlatformDatabaseTest extends TestCase
             'trailer_business_profiles',
             'trailer_business_types',
             'trailer_listings',
+            'advertisers',
+            'advertising_campaigns',
+            'advertising_creatives',
+            'advertising_events',
         ];
         $placeholders = implode(',', array_fill(0, count($required), '?'));
         $tables = Database::select(

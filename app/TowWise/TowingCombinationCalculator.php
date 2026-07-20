@@ -15,38 +15,54 @@ final class TowingCombinationCalculator
     public function calculate(TowingCombinationInput $input): TowingCombinationResult
     {
         $vehicleWithTowball = $input->loadedVehicleKg + $input->actualTowballKg;
-        $combinationMass = $vehicleWithTowball + $input->trailerGtmKg;
+        $actualTrailerMass = $input->actualTrailerMass();
+        $actualTrailerAxle = $input->actualTrailerAxleMass();
+        $combinationMass = $vehicleWithTowball + $actualTrailerAxle;
 
-        $margins = [
-            'vehicle_gvm' => $input->vehicleGvmKg - $vehicleWithTowball,
-            'vehicle_gcm' => $input->vehicleGcmKg - $combinationMass,
-            'braked_towing_capacity' => $input->maximumBrakedTowingKg - $input->trailerAtmKg,
-            'towball_limit' => $input->maximumTowballKg - $input->actualTowballKg,
+        $definitions = [
+            'vehicle_gvm' => [$vehicleWithTowball, $input->vehicleGvmKg],
+            'vehicle_gcm' => [$combinationMass, $input->vehicleGcmKg],
+            'braked_towing_capacity' => [$actualTrailerMass, $input->maximumBrakedTowingKg],
+            'trailer_atm' => [$actualTrailerMass, $input->trailerAtmKg],
+            'trailer_gtm' => [$actualTrailerAxle, $input->trailerGtmKg],
+            'towball_limit' => [$input->actualTowballKg, $input->maximumTowballKg],
         ];
+        if ($input->towbarLimitKg !== null) $definitions['towbar_rating'] = [$actualTrailerMass, $input->towbarLimitKg];
+        if ($input->couplingLimitKg !== null) $definitions['coupling_rating'] = [$actualTrailerMass, $input->couplingLimitKg];
+        if ($input->frontAxleLimitKg !== null && $input->actualFrontAxleKg !== null) $definitions['front_axle'] = [$input->actualFrontAxleKg, $input->frontAxleLimitKg];
+        if ($input->rearAxleLimitKg !== null && $input->actualRearAxleKg !== null) $definitions['rear_axle'] = [$input->actualRearAxleKg, $input->rearAxleLimitKg];
+        if ($input->trailerAxleLimitKg !== null) $definitions['trailer_axle_group'] = [$actualTrailerAxle, $input->trailerAxleLimitKg];
+
+        $margins = [];
+        $checks = [];
+        foreach ($definitions as $key => [$actual, $limit]) {
+            $margin = $limit - $actual;
+            $margins[$key] = $margin;
+            $checks[$key] = ['actual' => $actual, 'limit' => $limit, 'margin' => $margin, 'status' => $margin < 0 ? 'exceeds' : ($limit > 0 && $margin <= $limit * self::NEAR_LIMIT_PERCENT ? 'near' : 'within')];
+        }
 
         $warnings = [];
         $nearLimit = false;
-        $limits = [
-            'vehicle_gvm' => $input->vehicleGvmKg,
-            'vehicle_gcm' => $input->vehicleGcmKg,
-            'braked_towing_capacity' => $input->maximumBrakedTowingKg,
-            'towball_limit' => $input->maximumTowballKg,
-        ];
-
-        foreach ($margins as $key => $margin) {
+        foreach ($checks as $key => $check) {
+            $margin = $check['margin'];
             if ($margin < 0) {
                 $warnings[] = $key . ' is exceeded by ' . self::formatKg(abs($margin)) . '.';
                 continue;
             }
-            if ($limits[$key] > 0 && $margin <= ($limits[$key] * self::NEAR_LIMIT_PERCENT)) {
+            if ($check['status'] === 'near') {
                 $nearLimit = true;
                 $warnings[] = $key . ' has only ' . self::formatKg($margin) . ' remaining.';
             }
         }
 
         $status = array_filter($margins, static fn (float $margin): bool => $margin < 0) !== []
-            ? 'exceeds_known_limit'
-            : ($nearLimit ? 'near_known_limit' : 'within_known_limits');
+            ? 'likely_exceeds_entered_limit'
+            : ($nearLimit ? 'close_to_entered_limit' : 'within_entered_limits');
+
+        $missing = [];
+        foreach (['towbarLimitKg' => 'Towbar rating', 'couplingLimitKg' => 'Trailer coupling rating', 'frontAxleLimitKg' => 'Front axle measurement and limit', 'rearAxleLimitKg' => 'Rear axle measurement and limit', 'trailerAxleLimitKg' => 'Trailer axle-group rating'] as $property => $label) {
+            if ($input->{$property} === null) $missing[] = $label;
+        }
 
         return new TowingCombinationResult(
             $status,
@@ -59,9 +75,12 @@ final class TowingCombinationCalculator
                 'Loaded vehicle mass excludes towball download; towball download is added by this calculation.',
                 'Combination mass is loaded vehicle mass plus towball download plus trailer GTM.',
                 'ATM is compared with the vehicle maximum braked towing capacity.',
-                'Actual axle loads, tyre limits, coupling limits and jurisdiction-specific rules are not assessed.',
-                'Results are informational and are not legal certification or engineering approval.',
+                'Tyre and wheel ratings, dimensions, registration, modifications and jurisdiction-specific road rules are not assessed.',
+                'The result estimates whether the combination is likely to be within the limits entered; it is not a legal determination.',
             ],
+            $checks,
+            $missing,
+            $missing === [] ? 'high_for_entered_mass_limits' : (count($missing) <= 2 ? 'medium' : 'basic'),
         );
     }
 

@@ -13,6 +13,9 @@ return static function (Router $router): void {
         $router->get('/', 'Site\HomeController@index', 'home');
         $router->get('/tools', 'Site\TowWiseController@index', 'towwise.tools');
         $router->post('/tools', 'Site\TowWiseController@calculate', 'towwise.tools.calculate');
+        $router->group(['middleware' => ['rate:public.ad-click,120,3600,300']], static function (Router $router): void {
+            $router->get('/commercial/go/{campaign}/{creative}', 'Site\AdvertisingController@go', 'advertising.go');
+        });
         $router->get('/marketplace', 'Site\TrailerWiseController@index', 'trailerwise.marketplace');
         $router->get('/marketplace/{slug}', 'Site\TrailerWiseController@show', 'trailerwise.marketplace.show');
 

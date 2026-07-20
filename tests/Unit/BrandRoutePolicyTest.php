@@ -22,6 +22,7 @@ final class BrandRoutePolicyTest extends TestCase
 
         self::assertTrue($policy->allows($brand, '/'));
         self::assertTrue($policy->allows($brand, '/tools'));
+        self::assertTrue($policy->allows($brand, '/commercial/go/1/2'));
         self::assertFalse($policy->allows($brand, '/providers/example'));
         self::assertFalse($policy->allows($brand, '/marketplace'));
     }

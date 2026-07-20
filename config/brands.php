@@ -149,7 +149,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => (bool) Env::get('ENABLE_TOWWISE_ADVERTISING', false),
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
