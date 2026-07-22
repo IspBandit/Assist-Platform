@@ -88,6 +88,12 @@ final class BrandRegistry
         return $id !== null ? $this->brands[$id] : null;
     }
 
+    public function forDatabaseId(int $databaseId): ?Brand
+    {
+        $id = $this->databaseIds[$databaseId] ?? null;
+        return $id !== null ? $this->brands[$id] : null;
+    }
+
     /** @return array<string,Brand> */
     public function all(): array
     {

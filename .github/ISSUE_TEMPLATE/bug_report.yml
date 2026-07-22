@@ -1,0 +1,37 @@
+name: Bug report
+description: Report a reproducible Assist Platform problem
+title: "[Bug]: "
+labels: ["type:bug"]
+body:
+  - type: dropdown
+    id: brand
+    attributes:
+      label: Brand or area
+      options: [VanAssist, TowSmart, TrailerWise, Shared platform, Admin, Infrastructure]
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options: [Production, Staging, Local development, Unknown]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Problem
+      description: Include expected and actual behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Security, privacy or data impact
+

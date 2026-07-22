@@ -1,8 +1,14 @@
 # Production Readiness
 
+> Historical release-gate assessment. For the verified live state as at
+> 22 July 2026, use `PRODUCTION_CURRENT_STATE.md`. Open gates below remain useful
+> requirements, but statements that the production environment was unverified
+> have been superseded by the production-state record.
+
 ## Current verdict
 
-**Application release candidate ready; live-environment approval still required.**
+**Application deployed in provider-onboarding mode; full indexed/commercial
+launch approval is still required.**
 
 VanAssist contains substantial working functionality, but production readiness
 cannot be declared until the critical/high findings below are remediated and the
@@ -31,8 +37,8 @@ from the trusted hostname. TowSmart and TrailerWise public modules are active.
 - [x] Shared rate limiting protects login, reset, registration, and primary
       high-abuse public submission flows.
 - [x] Image dimensions are safely bounded before expensive decode.
-- [ ] Deployment uses encrypted transport and a manifest that detects changed
-      and removed files.
+- [x] Deployment uses encrypted SSH transport, immutable release directories,
+      SHA-256 verification and an atomic current-release symlink.
 - [ ] Backups are encrypted/offsite and restoration is tested.
 - [x] Unknown middleware and critical launch/maintenance checks fail closed.
 - [ ] Integration tests cover authentication, authorization, installer, uploads,
@@ -47,7 +53,8 @@ from the trusted hostname. TowSmart and TrailerWise public modules are active.
 - Composer platform requirements: verified.
 - Apache rewrite module: verified locally.
 - MariaDB: installed and active locally.
-- Production `.env`, database, storage permissions, cron, and SMTP: not verified.
+- Production database, shared-storage permissions and cron: verified on the
+  BinaryLane runtime. Transactional SMTP remains unconfigured/unverified.
 
 ### Tests
 
@@ -123,13 +130,14 @@ No destructive migration may run as part of an automatic deploy.
 - [x] Readiness endpoint fails for exposed installer, unavailable database, or
       unwritable required storage.
 - [x] Structured logs include request ID and brand key when request context exists.
-- [ ] Error monitoring and uptime hooks are configured.
-- [ ] Cron task failures alert an operator.
+- [x] Five-minute container health monitoring is configured.
+- [ ] External uptime/error alert delivery is configured.
+- [ ] Cron task failures alert an operator externally.
 - [x] Email queue has atomic claim/retry/recovery behavior.
 - [ ] Backup restore is tested on a schedule.
-- [ ] Deployment records artefact version and migration version.
-- [ ] Previous artefact and rollback procedure are available.
-- [ ] Removed remote files are handled explicitly.
+- [x] Deployment records release commit and artefact checksum; health exposes the configured release safely.
+- [x] Immutable releases and symlink rollback procedure are available.
+- [x] New complete release directories prevent removed files persisting into the active release.
 
 ## Performance readiness
 

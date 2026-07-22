@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Config;
 use App\Core\Database;
 use App\Core\Logger;
+use App\Platform\Brand\BrandRegistry;
 use PHPMailer\PHPMailer\PHPMailer;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -192,7 +195,7 @@ final class Mailer
      *
      * @return array<string,mixed>
      */
-    public static function config(): array
+    public static function config(?int $brandDatabaseId = null): array
     {
         $env = config('mail');
         $db = static fn (string $key, string $envKey): string =>
@@ -216,6 +219,23 @@ final class Mailer
             $fromAddress = $username;
         }
 
+        $fromName = $db('mail_from_name', 'from_name') ?: 'Assist Platform';
+
+        if ($brandDatabaseId !== null) {
+            $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+            $brand = $registry->forDatabaseId($brandDatabaseId);
+            if ($brand === null) {
+                throw new RuntimeException("Email queue references unknown brand database ID {$brandDatabaseId}");
+            }
+
+            $contact = $brand->contact();
+            $fromAddress = trim((string) ($contact['sender_email'] ?? ''));
+            $fromName = trim((string) ($contact['sender_name'] ?? '')) ?: $brand->name();
+            if ($fromAddress === '') {
+                throw new RuntimeException("Outbound sender is not configured for {$brand->name()}");
+            }
+        }
+
         return [
             'host'         => $db('mail_host', 'host'),
             'port'         => (int) ($db('mail_port', 'port') ?: 587),
@@ -223,14 +243,14 @@ final class Mailer
             'password'     => SecretCipher::decrypt($db('mail_password', 'password')),
             'encryption'   => $encryption,
             'from_address' => $fromAddress,
-            'from_name'    => $db('mail_from_name', 'from_name') ?: 'VanAssist',
+            'from_name'    => $fromName,
             'max_attempts' => (int) ($env['max_attempts'] ?? 3),
         ];
     }
 
     private static function send(array $row): void
     {
-        $cfg = self::config();
+        $cfg = self::config((int) $row['brand_id']);
 
         // Prefer PHPMailer when installed; otherwise use the built-in SMTP client
         // so delivery works on hosts without Composer dependencies.

@@ -107,6 +107,17 @@ final class BrandRegistryTest extends TestCase
         self::assertSame('towsmart', $registry->find('towwise')?->id());
     }
 
+    public function testRegistryResolvesBrandByDatabaseId(): void
+    {
+        $registry = BrandRegistry::fromArray([
+            'vanassist' => $this->brandConfig('VanAssist', 'vanassist.test'),
+            'towsmart' => $this->brandConfig('TowSmart', 'towsmart.test'),
+        ]);
+
+        self::assertSame('towsmart', $registry->forDatabaseId(2)?->id());
+        self::assertNull($registry->forDatabaseId(999));
+    }
+
     public function testTypedFeatureGateUsesBrandConfiguration(): void
     {
         $registry = BrandRegistry::fromArray([
@@ -141,7 +152,11 @@ final class BrandRegistryTest extends TestCase
             'assets' => ['logo' => '/logo.svg'],
             'theme' => ['brand' => '#000000'],
             'metadata' => ['description' => $name],
-            'contact' => ['support_email' => 'support@example.com'],
+            'contact' => [
+                'support_email' => 'support@example.com',
+                'sender_email' => 'support@' . $domain,
+                'sender_name' => $name,
+            ],
             'legal' => ['privacy_path' => '/privacy'],
             'navigation' => [],
             'footer' => [],

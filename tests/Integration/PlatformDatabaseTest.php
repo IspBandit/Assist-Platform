@@ -144,4 +144,17 @@ final class PlatformDatabaseTest extends TestCase
             BrandContext::clear();
         }
     }
+
+    public function testQueuedBrandsUseTheirOwnSenderDomains(): void
+    {
+        $towSmart = Mailer::config(2);
+        $trailerWise = Mailer::config(3);
+
+        self::assertSame('support@towsmart.com.au', $towSmart['from_address']);
+        self::assertSame('TowSmart', $towSmart['from_name']);
+        self::assertSame('support@trailerwise.com.au', $trailerWise['from_address']);
+        self::assertSame('TrailerWise', $trailerWise['from_name']);
+        self::assertStringNotContainsString('vanassist.com.au', (string) $towSmart['from_address']);
+        self::assertStringNotContainsString('vanassist.com.au', (string) $trailerWise['from_address']);
+    }
 }

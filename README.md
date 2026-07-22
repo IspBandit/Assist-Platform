@@ -4,7 +4,7 @@ Shared platform core for:
 
 - **VanAssist** (`vanassist.com.au`) — the existing caravan/RV service marketplace and compatibility baseline.
 - **TowSmart** (`towsmart.com.au`) — towing mass-limit calculator with saved user combinations and safety guidance.
-- **TrailerWise** (`trailerwise.com.au`) — searchable trailer marketplace with provider-managed listings and admin moderation.
+- **TrailerWise** (`trailerwise.com.au`) — trailer-industry business and service platform. Its current sales/hire listing MVP is secondary and requires product correction before full launch.
 
 This is an incremental evolution of VanAssist, not a mass rename or three copied
 applications. VanAssist routes, IDs, slugs, users, providers, and workflows remain
@@ -119,6 +119,9 @@ was removed so fresh installs cannot accidentally bypass later migrations.
 
 ## Architecture and operations
 
+- [Start here](docs/START_HERE.md)
+- [Products and feature status](docs/PRODUCT_AND_FEATURES.md)
+- [Verified production state](docs/PRODUCTION_CURRENT_STATE.md)
 - [Current architecture](docs/CURRENT_ARCHITECTURE.md)
 - [Target architecture](docs/TARGET_ARCHITECTURE.md)
 - [Migration plan](docs/MIGRATION_PLAN.md)
@@ -130,6 +133,14 @@ was removed so fresh installs cannot accidentally bypass later migrations.
 - [Testing](docs/TESTING.md)
 - [Local development](docs/LOCAL_DEVELOPMENT.md)
 - [Deployment](docs/DEPLOYMENT.md)
+- [Routes and permissions](docs/ROUTES_AND_PERMISSIONS.md)
+- [Database dictionary](docs/DATABASE_DICTIONARY.md)
+- [Administrator guide](docs/ADMINISTRATOR_GUIDE.md)
+- [Operations runbook](docs/OPERATIONS_RUNBOOK.md)
+- [Backup and restore](docs/BACKUP_AND_RESTORE.md)
+
+AI coding agents must also follow [`AGENTS.md`](AGENTS.md) and the permanent
+Cursor rules under `.cursor/rules/`.
 
 Legacy VanAssist implementation notes remain under `docs/` for historical
 context. Where they conflict, the Assist Platform documents above are current.
