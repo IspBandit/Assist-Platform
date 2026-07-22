@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://vanassist.com.au/contact
+    about: Do not disclose vulnerabilities or sensitive data in a public issue.
+

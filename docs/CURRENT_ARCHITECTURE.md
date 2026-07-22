@@ -1,5 +1,11 @@
 # Assist Platform: Current Architecture
 
+> Historical baseline captured before the TowSmart and TrailerWise launch
+> increments. Use `START_HERE.md`, `PRODUCT_AND_FEATURES.md` and the executable
+> code for current product status. Architectural descriptions of the original
+> VanAssist core remain useful; claims that VanAssist is the only implemented
+> brand are superseded.
+
 ## Purpose
 
 This document records the verified architecture inherited from VanAssist before

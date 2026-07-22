@@ -20,7 +20,7 @@ $qs = static function (array $extra) use ($search, $townId, $categoryId): string
 <section class="section">
     <div class="container">
         <h1>Find a service provider</h1>
-        <p class="muted">Browse caravan and RV service providers in the VanAssist network. Verified providers display a verification badge.</p>
+        <p class="muted">Browse relevant Australian service providers in the <?= $this->e($brand->name()) ?> network. Verified providers display a verification badge; discovered listings remain clearly marked until claimed.</p>
 
         <form method="get" action="<?= e(url('providers')) ?>" class="grid grid-3" style="margin:1.5rem 0;align-items:flex-end">
             <div class="form-group mb-0">
@@ -50,8 +50,7 @@ $qs = static function (array $extra) use ($search, $townId, $categoryId): string
 
         <?php if ($providers === []): ?>
             <div class="card text-center">
-                <p class="muted">No providers match your search yet. Try widening your filters, or
-                    <a href="<?= e(url('request-assistance')) ?>">register a request</a> to attract providers to your area.</p>
+                <p class="muted">No providers match this search yet. Try widening your filters or <a href="<?= e(url('for-providers/register')) ?>">suggest a relevant business</a>.</p>
             </div>
         <?php else: ?>
             <div class="grid grid-3">

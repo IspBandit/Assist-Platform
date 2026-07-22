@@ -1,5 +1,9 @@
 # Assist Platform Repository Audit
 
+> Historical audit baseline. Findings describe the repository at the audit date;
+> they are not a current feature inventory. See `PRODUCT_AND_FEATURES.md` and
+> `PRODUCTION_CURRENT_STATE.md` for the present state.
+
 ## Scope and method
 
 This audit covers the imported VanAssist codebase at source commit

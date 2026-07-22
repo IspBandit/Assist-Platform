@@ -1,5 +1,9 @@
 # VanAssist to Assist Platform Migration Plan
 
+> Historical phased plan. Several brand-foundation and deployment steps are now
+> implemented. Use `PRODUCTION_CURRENT_STATE.md` for verified completion and this
+> document for migration rationale and rollback principles.
+
 ## Safety position
 
 The migration is additive and release-based. Existing VanAssist primary keys,

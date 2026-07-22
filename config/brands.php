@@ -127,7 +127,7 @@ return [
             ],
             'contact' => [
                 'support_email' => (string) Env::get('TOWSMART_SUPPORT_EMAIL', Env::get('TOWWISE_SUPPORT_EMAIL', '')),
-                'sender_email' => (string) Env::get('TOWSMART_MAIL_FROM_ADDRESS', Env::get('TOWWISE_MAIL_FROM_ADDRESS', '')),
+                'sender_email' => (string) Env::get('TOWSMART_MAIL_FROM_ADDRESS', 'support@towsmart.com.au'),
                 'sender_name' => 'TowSmart',
             ],
             'legal' => [
@@ -137,6 +137,7 @@ return [
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Weight calculator', 'path' => '/calculator'],
+                ['label' => 'Towing specialists', 'path' => '/providers'],
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
             'footer' => [
@@ -154,7 +155,7 @@ return [
             ],
             'modules' => [
                 'public_application' => true,
-                'providers' => false,
+                'providers' => true,
                 'requests' => false,
                 'service_runs' => false,
                 'parks' => false,
@@ -207,7 +208,7 @@ return [
             ],
             'contact' => [
                 'support_email' => (string) Env::get('TRAILERWISE_SUPPORT_EMAIL', ''),
-                'sender_email' => (string) Env::get('TRAILERWISE_MAIL_FROM_ADDRESS', ''),
+                'sender_email' => (string) Env::get('TRAILERWISE_MAIL_FROM_ADDRESS', 'support@trailerwise.com.au'),
                 'sender_name' => 'TrailerWise',
             ],
             'legal' => [
@@ -216,7 +217,8 @@ return [
             ],
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
-                ['label' => 'Trailer marketplace', 'path' => '/marketplace'],
+                ['label' => 'Find trailer services', 'path' => '/providers'],
+                ['label' => 'Trailers for sale', 'path' => '/marketplace'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],
@@ -233,7 +235,7 @@ return [
             ],
             'modules' => [
                 'public_application' => true,
-                'providers' => false,
+                'providers' => true,
                 'requests' => false,
                 'service_runs' => false,
                 'parks' => false,

@@ -6,6 +6,8 @@
 37 * * * * root /usr/local/sbin/assist-cron expire_requests >> /var/log/assist-platform/cron.log 2>&1
 47 * * * * root /usr/local/sbin/assist-cron customer_followups >> /var/log/assist-platform/cron.log 2>&1
 7 2 * * * root /usr/local/sbin/assist-cron database_backup >> /var/log/assist-platform/cron.log 2>&1
+37 2 * * * root /opt/assist-platform/runtime/ops/assist-offsite-backup.sh >> /var/log/assist-platform/offsite-backup.log 2>&1
+17 4 * * 0 root /opt/assist-platform/runtime/ops/assist-offsite-restore-drill.sh >> /var/log/assist-platform/restore-drill.log 2>&1
 17 2 * * * root /usr/local/sbin/assist-cron clean_temp >> /var/log/assist-platform/cron.log 2>&1
 27 2 * * * root /usr/local/sbin/assist-cron clean_logs >> /var/log/assist-platform/cron.log 2>&1
 37 2 * * * root /usr/local/sbin/assist-cron analytics_retention >> /var/log/assist-platform/cron.log 2>&1

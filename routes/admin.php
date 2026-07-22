@@ -126,6 +126,13 @@ return static function (Router $router): void {
         $router->post('/content/faqs/save', 'Admin\ContentController@saveFaq');
         $router->post('/content/faqs/delete', 'Admin\ContentController@deleteFaq');
 
+        // Brand-aware social campaign artwork and post-copy studio.
+        $router->get('/social-media', 'Admin\SocialMediaController@index', 'admin.social-media');
+        $router->post('/social-media/generate', 'Admin\SocialMediaController@generate');
+        $router->post('/social-media/status', 'Admin\SocialMediaController@status');
+        $router->get('/social-media/preview', 'Admin\SocialMediaController@preview');
+        $router->get('/social-media/download', 'Admin\SocialMediaController@download');
+
         // SEO settings (Phase 8): site meta, social image and the indexing switch.
         $router->get('/seo', 'Admin\SeoController@index', 'admin.seo');
         $router->post('/seo', 'Admin\SeoController@save');

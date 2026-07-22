@@ -1,0 +1,23 @@
+CREATE TABLE social_media_assets (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    brand_id INT UNSIGNED NOT NULL,
+    platform ENUM('instagram','facebook') NOT NULL,
+    format_key VARCHAR(40) NOT NULL,
+    intention VARCHAR(60) NOT NULL,
+    headline VARCHAR(160) NOT NULL,
+    caption TEXT NOT NULL,
+    image_path VARCHAR(255) NOT NULL,
+    width SMALLINT UNSIGNED NOT NULL,
+    height SMALLINT UNSIGNED NOT NULL,
+    status ENUM('draft','approved','archived') NOT NULL DEFAULT 'draft',
+    created_by INT UNSIGNED NULL,
+    approved_by INT UNSIGNED NULL,
+    approved_at DATETIME NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NULL,
+    PRIMARY KEY (id),
+    KEY idx_social_assets_brand (brand_id, status, platform, intention),
+    CONSTRAINT fk_social_assets_brand FOREIGN KEY (brand_id) REFERENCES brands (id) ON DELETE RESTRICT,
+    CONSTRAINT fk_social_assets_creator FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL,
+    CONSTRAINT fk_social_assets_approver FOREIGN KEY (approved_by) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

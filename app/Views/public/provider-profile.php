@@ -73,8 +73,8 @@ $mapsUrl = $navDest !== '' ? 'https://www.google.com/maps/dir/?api=1&destination
 
         <?php if (!empty($provider['is_unclaimed'])): ?>
             <div class="card stack" style="margin-top:1rem;border-left:4px solid #c9a227">
-                <p style="margin:0"><strong>This is an unclaimed listing.</strong> The details were compiled from publicly available sources to help travellers, and the business has not yet verified them with VanAssist.</p>
-                <p class="muted" style="margin:.25rem 0 0">Is this your business? Ask VanAssist to <a href="<?= e(url('contact')) ?>">send you a claim link</a> to verify and manage this profile.</p>
+                <p style="margin:0"><strong>This is an unclaimed listing.</strong> The details were compiled from publicly available sources and the business has not yet verified them with <?= $this->e($brand->name()) ?>.</p>
+                <p class="muted" style="margin:.25rem 0 0">Is this your business? Ask <?= $this->e($brand->name()) ?> to <a href="<?= e(url('contact')) ?>">send you a claim link</a> to verify and manage this profile.</p>
             </div>
         <?php endif; ?>
 

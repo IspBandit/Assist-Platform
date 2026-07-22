@@ -1,0 +1,24 @@
+---
+description: Permanent Assist Platform architecture, safety and completion rules
+alwaysApply: true
+---
+
+# Assist Platform rules
+
+Read `AGENTS.md` and `docs/START_HERE.md` before editing.
+
+- One shared PHP/MariaDB application serves VanAssist, TowSmart and TrailerWise.
+- Use the typed brand registry and request brand context; never infer a tenant
+  from an arbitrary production query parameter.
+- Preserve VanAssist compatibility and all existing production data.
+- Use forward-only migrations. Never edit applied migrations or reset production.
+- Enforce permissions, brand scope and ownership server-side.
+- Never reveal or commit secrets, passwords, tokens, private documents or dumps.
+- Keep TowSmart formulas pure, tested and non-authoritative.
+- Do not represent planned or partial functionality as complete.
+- Every behavioural change needs tests and documentation proportional to risk.
+- Before completion run the checks in `docs/TESTING.md` and report skipped or
+  unavailable checks honestly.
+- Production deployments follow `docs/OPERATIONS_RUNBOOK.md`; application code
+  changes alone do not authorise deployment, DNS changes or live migrations.
+
