@@ -4,6 +4,7 @@ $user = current_user();
 $adminBrand = current_brand();
 $adminBrandMeta = $adminBrand->metadata();
 $adminBrandTheme = $adminBrand->theme();
+$adminBrandAssets = $adminBrand->assets();
 $nav = [
     'Overview' => [
         ['Dashboard', '/admin'],
@@ -74,7 +75,10 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
 <body>
 <div class="admin-body">
     <aside class="admin-sidebar">
-        <a class="brand" href="<?= e(url('admin')) ?>"><?= $this->e($adminBrandMeta['wordmark_prefix'] ?? $adminBrand->name()) ?><span class="assist"><?= $this->e($adminBrandMeta['wordmark_accent'] ?? '') ?></span></a>
+        <a class="brand brand-admin" href="<?= e(url('admin')) ?>">
+            <img class="brand-mark" src="<?= e(url(ltrim($adminBrandAssets['logo'] ?? '/assets/brands/vanassist/mark.svg', '/'))) ?>" alt="" width="40" height="40">
+            <span class="brand-name"><?= $this->e($adminBrandMeta['wordmark_prefix'] ?? $adminBrand->name()) ?><span class="assist"><?= $this->e($adminBrandMeta['wordmark_accent'] ?? '') ?></span></span>
+        </a>
         <button type="button" class="admin-nav-toggle" aria-controls="admin-nav" aria-expanded="false">Menu</button>
         <p style="font-size:.8rem;color:#9fd0cd;margin:.25rem 0 1rem">Admin portal</p>
         <nav id="admin-nav" aria-label="Admin">

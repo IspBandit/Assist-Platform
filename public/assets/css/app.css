@@ -61,11 +61,17 @@ select:focus-visible, textarea:focus-visible {
 }
 
 /* ---------- Header / nav ---------- */
-.site-header { background: var(--white); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 50; }
-.site-header .container { display: flex; align-items: center; justify-content: space-between; min-height: 64px; gap: 1rem; flex-wrap: wrap; }
-.brand { display: inline-flex; align-items: center; gap: .5rem; font-weight: 800; font-size: 1.3rem; color: var(--teal-dark); text-decoration: none; }
-.brand .brand-mark { width: 30px; height: 30px; }
-.brand span.assist { color: var(--amber); }
+.site-header { background: rgba(255,255,255,.97); border-bottom: 1px solid color-mix(in srgb, var(--brand-primary) 15%, #e5e7eb); box-shadow: 0 8px 30px rgba(15,23,42,.055); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); }
+.site-header .container { display: flex; align-items: center; justify-content: space-between; min-height: 76px; gap: 1rem; flex-wrap: wrap; }
+.brand { display: inline-flex; align-items: center; gap: .72rem; color: var(--brand-primary-emphasis); text-decoration: none; min-width: 0; }
+.brand .brand-mark { width: 42px; height: 42px; flex: 0 0 42px; display: block; filter: drop-shadow(0 5px 9px rgba(15,23,42,.12)); }
+.brand-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1; }
+.brand-name { font-size: 1.38rem; font-weight: 790; letter-spacing: -.035em; white-space: nowrap; }
+.brand span.assist { color: var(--brand-primary-emphasis); }
+.brand-descriptor { margin-top: .38rem; color: var(--muted); font-size: .59rem; font-weight: 750; letter-spacing: .145em; white-space: nowrap; }
+.brand-auth { justify-content: center; text-align: left; }
+.brand-admin { color: #fff; }
+.brand-admin .brand-name, .brand-admin span.assist { color: #fff; }
 
 .header-actions { display: flex; align-items: center; gap: .5rem; }
 .nav-toggle { display: inline-flex; background: none; border: 1px solid var(--line); border-radius: 8px; padding: .5rem .7rem; font-size: 1rem; cursor: pointer; }
@@ -84,6 +90,10 @@ select:focus-visible, textarea:focus-visible {
 @media (max-width: 400px) {
     .account-link span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
     .account-link { padding: .5rem .6rem; }
+    .brand { gap: .5rem; }
+    .brand .brand-mark { width: 34px; height: 34px; flex-basis: 34px; }
+    .brand-name { font-size: 1.05rem; }
+    .brand-descriptor { display: none; }
 }
 
 .main-nav { display: none; }

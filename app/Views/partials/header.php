@@ -6,13 +6,11 @@ $headerBrandMeta = $headerBrand->metadata();
 <header class="site-header">
     <div class="container">
         <a class="brand" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
-            <svg class="brand-mark" viewBox="0 0 48 48" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 30h36a4 4 0 0 0 4-4v-6a8 8 0 0 0-8-8H16L4 22z" fill="var(--brand-primary)"/>
-                <circle cx="16" cy="32" r="4" fill="var(--brand-text)"/>
-                <circle cx="32" cy="32" r="4" fill="var(--brand-text)"/>
-                <path d="M2 34h44" stroke="var(--brand-accent)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span>
+            <img class="brand-mark" src="<?= e(url(ltrim($headerBrand->assets()['logo'] ?? '/assets/brands/vanassist/mark.svg', '/'))) ?>" alt="" width="44" height="44">
+            <span class="brand-copy">
+                <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>
+                <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?></span>
+            </span>
         </a>
 
         <div class="header-actions">

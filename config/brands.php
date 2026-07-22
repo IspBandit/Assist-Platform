@@ -40,6 +40,7 @@ return [
             'metadata' => [
                 'wordmark_prefix' => 'Van',
                 'wordmark_accent' => 'Assist',
+                'header_descriptor' => 'RV SERVICE NETWORK',
                 'tagline' => 'Caravan help, wherever you travel.',
                 'description' => 'Find caravan and RV service providers across regional Australia.',
                 'social_image' => '/assets/img/hero-home.jpg',
@@ -121,6 +122,7 @@ return [
             'metadata' => [
                 'wordmark_prefix' => 'Tow',
                 'wordmark_accent' => 'Smart',
+                'header_descriptor' => 'TOWING SAFETY & GUIDANCE',
                 'tagline' => 'Tow smarter. Tow safer.',
                 'description' => 'Towing calculations, compatibility, education and safety tools.',
                 'social_image' => '/assets/brands/towsmart/mark.svg',
@@ -202,6 +204,7 @@ return [
             'metadata' => [
                 'wordmark_prefix' => 'Trailer',
                 'wordmark_accent' => 'Wise',
+                'header_descriptor' => 'TRAILER SERVICE NETWORK',
                 'tagline' => 'Smarter trailer ownership.',
                 'description' => 'Trailer businesses, services, listings and compliance resources.',
                 'social_image' => '/assets/brands/trailerwise/mark.svg',

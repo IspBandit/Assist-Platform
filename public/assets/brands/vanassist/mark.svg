@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title id="title">VanAssist</title>
-  <rect width="64" height="64" rx="14" fill="#0f6e6e"/>
-  <path d="M10 38h44V27c0-7-5-12-12-12H25L10 27v11Z" fill="#fff"/>
-  <circle cx="24" cy="42" r="6" fill="#2b2f33"/>
-  <circle cx="46" cy="42" r="6" fill="#2b2f33"/>
-  <path d="M8 51h48" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>
+  <title id="title">VanAssist brand mark</title>
+  <defs><linearGradient id="va" x1="10" y1="7" x2="54" y2="57" gradientUnits="userSpaceOnUse"><stop stop-color="#126f70"/><stop offset="1" stop-color="#074a4c"/></linearGradient></defs>
+  <rect x="4" y="4" width="56" height="56" rx="17" fill="url(#va)"/>
+  <path d="M17 18.5 32 48l15-29.5" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 24v16" stroke="#d99a2b" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="32" cy="18" r="3" fill="#f6d28e"/>
 </svg>
