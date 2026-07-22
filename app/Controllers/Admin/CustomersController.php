@@ -52,7 +52,7 @@ final class CustomersController extends Controller
             'perPage' => $perPage,
             'q'       => $q,
             'townId'  => $townId,
-            'towns'   => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'   => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
         ]);
     }
 
@@ -66,7 +66,7 @@ final class CustomersController extends Controller
             'title'     => (string) $customer['name'],
             'customer'  => $customer,
             'contacts'  => self::CONTACT,
-            'towns'     => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'     => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'saved'     => Database::select(
                 'SELECT csl.label, t.name AS town_name FROM customer_saved_locations csl '
                 . 'JOIN towns t ON t.id = csl.town_id WHERE csl.customer_id = ? ORDER BY csl.id DESC',

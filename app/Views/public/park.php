@@ -4,6 +4,7 @@
 /** @var array<int,array<string,mixed>> $runs */
 $this->extend('layouts.public');
 $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path']) : null;
+$stayLabels = ['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','showground'=>'Showground','rest_area'=>'Rest area','farm_stay'=>'Farm stay','other'=>'Place to stay'];
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -17,7 +18,8 @@ $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path
         <div class="btn-row" style="justify-content:space-between;align-items:flex-start">
             <div>
                 <h1 style="margin-bottom:.25rem"><?= $this->e((string) $park['name']) ?></h1>
-                <?php if ($park['town_name']): ?><p class="muted">Caravan park in <?= $this->e((string) $park['town_name']) ?><?php if ($park['region_name']): ?>, <?= $this->e((string) $park['region_name']) ?><?php endif; ?></p><?php endif; ?>
+                <div class="badge-row"><?php if (($park['verification_type'] ?? '') === 'authority'): ?><span class="badge badge-verified">Authority confirmed</span><?php elseif (($park['verification_type'] ?? '') === 'operator'): ?><span class="badge badge-verified">Operator verified</span><?php else: ?><span class="badge badge-neutral">Confirm before arrival</span><?php endif; ?><?php if (!empty($park['is_featured'])): ?><span class="badge badge-sponsored">Sponsored</span><?php endif; ?></div>
+                <?php if ($park['town_name']): ?><p class="muted"><?= $this->e($stayLabels[$park['stay_type'] ?? 'caravan_park'] ?? 'Place to stay') ?> in <?= $this->e((string) $park['town_name']) ?><?php if ($park['region_name']): ?>, <?= $this->e((string) $park['region_name']) ?><?php endif; ?></p><?php endif; ?>
             </div>
             <?php if ($logo !== null): ?><img src="<?= e($logo) ?>" alt="<?= e_attr((string) $park['name']) ?> logo" style="max-height:90px;border-radius:8px"><?php endif; ?>
         </div>
@@ -41,6 +43,10 @@ $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path
                 <?php if ($park['phone']): ?><p style="margin:0"><strong>Phone:</strong> <?= $this->e((string) $park['phone']) ?></p><?php endif; ?>
                 <?php if ($park['website']): ?><p style="margin:0"><strong>Website:</strong> <a href="<?= e((string) $park['website']) ?>" target="_blank" rel="noopener nofollow"><?= $this->e((string) $park['website']) ?></a></p><?php endif; ?>
                 <?php if ($park['number_of_sites']): ?><p style="margin:0"><strong>Sites:</strong> <?= (int) $park['number_of_sites'] ?></p><?php endif; ?>
+                <?php foreach (['powered_sites'=>'Powered sites','unpowered_sites'=>'Unpowered sites','toilets'=>'Toilets','showers'=>'Showers','potable_water'=>'Drinking water','dump_point'=>'Dump point','pets_allowed'=>'Pets considered'] as $field => $label): ?><?php if ((int) ($park[$field] ?? 0) === 1): ?><p style="margin:0">✓ <?= $this->e($label) ?></p><?php endif; ?><?php endforeach; ?>
+                <?php if (!empty($park['max_stay'])): ?><p style="margin:0"><strong>Maximum stay:</strong> <?= $this->e((string) $park['max_stay']) ?></p><?php endif; ?>
+                <?php if (!empty($park['source_url'])): ?><p class="muted small">Source: <a href="<?= e_attr((string) $park['source_url']) ?>" target="_blank" rel="noopener noreferrer"><?= ($park['verification_type'] ?? '') === 'authority' ? 'Council or road authority' : 'Directory source' ?></a></p><?php endif; ?>
+                <?php if (empty($isManaged)): ?><hr><p class="muted">Own or manage this location?</p><a class="btn btn-secondary" href="<?= e(url('caravan-parks/' . $park['slug'] . '/claim')) ?>">Claim and update this listing</a><?php endif; ?>
             </div>
         </div>
 

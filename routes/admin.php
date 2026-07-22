@@ -160,6 +160,7 @@ return static function (Router $router): void {
         $router->post('/parks/save', 'Admin\ParksController@save');
         $router->post('/parks/status', 'Admin\ParksController@setStatus');
         $router->post('/parks/service-day', 'Admin\ParksController@serviceDayStatus');
+        $router->post('/parks/claim', 'Admin\ParksController@reviewClaim');
         $router->get('/parks/document/download', 'Admin\ParksController@downloadDocument');
 
         // Service runs (Phase 6): create/edit, status, stops, services, link requests, registrations.

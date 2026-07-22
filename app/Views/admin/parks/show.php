@@ -4,6 +4,7 @@
 /** @var array<int,array<string,mixed>> $documents */
 /** @var array<int,array<string,mixed>> $serviceDays */
 /** @var array<int,array<string,mixed>> $managers */
+/** @var array<int,array<string,mixed>> $claims */
 /** @var int $requestCount */
 /** @var array<string,string> $statuses */
 $this->extend('layouts.admin');
@@ -28,6 +29,20 @@ $sdrStatuses = ['open' => 'Open', 'reviewing' => 'Reviewing', 'arranged' => 'Arr
             <a class="btn btn-secondary" href="<?= e(url('admin/parks/form?id=' . $id)) ?>">Edit</a>
         </div>
     </div>
+</div>
+
+<div class="card stack">
+    <h2 style="margin-top:0">Listing claims</h2>
+    <?php if ($claims === []): ?><p class="muted">No listing claims.</p><?php else: ?>
+        <div class="table-wrap"><table class="data"><thead><tr><th>Claimant</th><th>Role and evidence</th><th>Status</th><th>Decision</th></tr></thead><tbody>
+        <?php foreach ($claims as $claim): ?><tr>
+            <td><strong><?= $this->e((string) $claim['claimant_name']) ?></strong><br><a href="mailto:<?= e_attr((string) $claim['claimant_email']) ?>"><?= $this->e((string) $claim['claimant_email']) ?></a><br><?= $this->e((string) $claim['claimant_phone']) ?></td>
+            <td><?= $this->e((string) $claim['relationship_to_park']) ?><br><span class="muted"><?= nl2br($this->e((string) $claim['evidence_notes'])) ?></span></td>
+            <td><span class="badge badge-neutral"><?= $this->e(ucfirst((string) $claim['status'])) ?></span></td>
+            <td><?php if ($claim['status'] === 'pending'): ?><form method="post" action="<?= e(url('admin/parks/claim')) ?>" class="btn-row"><?= csrf_field() ?><input type="hidden" name="claim_id" value="<?= (int) $claim['id'] ?>"><button class="btn btn-primary" name="decision" value="approved">Approve</button><button class="btn btn-ghost" name="decision" value="rejected">Reject</button></form><?php else: ?>Reviewed<?php endif; ?></td>
+        </tr><?php endforeach; ?>
+        </tbody></table></div>
+    <?php endif; ?>
 </div>
 
 <div class="grid grid-2" style="align-items:flex-start">

@@ -584,7 +584,8 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
     .product-cta .btn { width: 100%; }
     .mobile-action-dock { display: grid; position: fixed; z-index: 60; bottom: 0; left: 0; right: 0; padding: .65rem max(.75rem, env(safe-area-inset-right)) calc(.65rem + env(safe-area-inset-bottom)) max(.75rem, env(safe-area-inset-left)); background: rgba(255,255,255,.96); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px rgba(15,23,42,.12); }
     .mobile-action-dock a { display: grid; place-items: center; min-height: 50px; padding: .7rem 1rem; border-radius: 11px; background: var(--brand-primary); color: #fff; text-decoration: none; font-weight: 800; }
-    .mobile-action-dock--vanassist { grid-template-columns: 1fr 1fr; gap: .5rem; }
+    .mobile-action-dock--vanassist { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
+    .mobile-action-dock--vanassist a { padding:.65rem .35rem; font-size:.8rem; text-align:center; }
     .mobile-action-dock--dual { grid-template-columns: 1fr 1fr; gap: .5rem; }
     .mobile-action-dock--vanassist a:last-child { background: var(--brand-accent); color: #171717; }
     .hero-photo { aspect-ratio: 4 / 5; object-position: center top; }

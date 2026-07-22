@@ -76,7 +76,7 @@ final class ProspectsController extends Controller
         return $this->view('admin.prospects.form', [
             'title'    => $prospect ? 'Edit prospect' : 'New prospect',
             'prospect' => $prospect,
-            'towns'    => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'    => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'regions'  => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'statuses' => self::STATUSES,
             'sources'  => ['google', 'facebook', 'referral', 'caravan_park', 'club', 'other'],

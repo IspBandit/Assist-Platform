@@ -30,7 +30,7 @@ final class ProfileController extends Controller
         return $this->view('provider.profile', [
             'title'    => 'Business profile',
             'provider' => $provider,
-            'towns'    => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'    => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'regions'  => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'errors'   => Session::errors(),
         ]);
@@ -130,7 +130,7 @@ final class ProfileController extends Controller
                 . 'WHERE a.provider_id = ? ORDER BY a.area_type',
                 [$id]
             ),
-            'towns'    => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name LIMIT 500'),
+            'towns'    => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation LIMIT 500"),
             'regions'  => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'states'   => Database::select('SELECT id, name, abbreviation FROM states WHERE is_active = 1 ORDER BY name'),
         ]);

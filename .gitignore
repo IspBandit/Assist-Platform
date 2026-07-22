@@ -33,6 +33,7 @@
 
 # Overpass/OSM import cache (raw API responses; regenerable)
 /tools/.osm-cache/
+/tools/.osm-stays-cache/
 
 # OS / editor
 .DS_Store

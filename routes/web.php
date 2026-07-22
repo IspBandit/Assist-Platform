@@ -73,7 +73,12 @@ return static function (Router $router): void {
         $router->group(['middleware' => ['rate:public.park-application,5,3600,3600']], static function (Router $router): void {
             $router->post('/caravan-parks/apply', 'Site\ParkController@applyStore', 'caravan-parks.apply.store');
         });
+        $router->get('/caravan-parks/{slug}/claim', 'Site\ParkController@claim', 'caravan-parks.claim');
+        $router->group(['middleware' => ['rate:public.park-claim,5,3600,3600']], static function (Router $router): void {
+            $router->post('/caravan-parks/{slug}/claim', 'Site\ParkController@claimStore', 'caravan-parks.claim.store');
+        });
         $router->get('/caravan-parks/{slug}', 'Site\ParkController@show', 'caravan-parks.show');
+        $router->get('/stays', 'Site\ParkController@directory', 'stays');
 
         // Customer service-request flow (Phase 4).
         $router->get('/request-assistance', 'Site\RequestController@form', 'request-assistance');

@@ -34,7 +34,7 @@ $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path
                         <select id="town_id" name="town_id">
                             <option value="">Select…</option>
                             <?php foreach ($towns as $t): ?>
-                                <option value="<?= (int) $t['id'] ?>" <?= (int) $park['town_id'] === (int) $t['id'] ? 'selected' : '' ?>><?= $this->e((string) $t['name']) ?></option>
+                                <option value="<?= (int) $t['id'] ?>" <?= (int) $park['town_id'] === (int) $t['id'] ? 'selected' : '' ?>><?= $this->e((string) $t['name']) ?> / <?= $this->e((string) $t['state_abbr']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -47,6 +47,12 @@ $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path
                     <label for="description">Description</label>
                     <textarea id="description" name="description" rows="4"><?= e((string) ($park['description'] ?? '')) ?></textarea>
                 </div>
+                <div class="grid grid-2">
+                    <div class="form-group"><label for="stay_type">Stay type</label><select id="stay_type" name="stay_type"><?php foreach (['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','showground'=>'Showground','rest_area'=>'Rest area','farm_stay'=>'Farm stay','other'=>'Other'] as $v=>$l): ?><option value="<?= e_attr($v) ?>" <?= ($park['stay_type'] ?? 'caravan_park') === $v ? 'selected' : '' ?>><?= $this->e($l) ?></option><?php endforeach; ?></select></div>
+                    <div class="form-group"><label for="price_type">Cost type</label><select id="price_type" name="price_type"><?php foreach (['free'=>'Free','donation'=>'Donation','low_cost'=>'Low cost','paid'=>'Paid','unknown'=>'Check with venue'] as $v=>$l): ?><option value="<?= e_attr($v) ?>" <?= ($park['price_type'] ?? 'unknown') === $v ? 'selected' : '' ?>><?= $this->e($l) ?></option><?php endforeach; ?></select></div>
+                </div>
+                <div class="form-group"><label for="max_stay">Maximum stay or restrictions</label><input id="max_stay" name="max_stay" maxlength="80" value="<?= e_attr((string) ($park['max_stay'] ?? '')) ?>" placeholder="For example: 48 hours"></div>
+                <fieldset><legend>Facilities</legend><div class="grid grid-3"><?php foreach (['powered_sites'=>'Powered sites','unpowered_sites'=>'Unpowered sites','toilets'=>'Toilets','showers'=>'Showers','potable_water'=>'Drinking water','dump_point'=>'Dump point','pets_allowed'=>'Pets considered'] as $field=>$label): ?><label class="checkbox"><input type="checkbox" name="<?= e_attr($field) ?>" value="1" <?= !empty($park[$field]) ? 'checked' : '' ?>> <?= $this->e($label) ?></label><?php endforeach; ?></div></fieldset>
             </div>
 
             <div class="card stack">
@@ -59,6 +65,7 @@ $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path
                     <div class="form-group"><label for="website">Website</label><input type="text" id="website" name="website" value="<?= e_attr((string) ($park['website'] ?? '')) ?>"></div>
                     <div class="form-group"><label for="facebook_url">Facebook</label><input type="text" id="facebook_url" name="facebook_url" value="<?= e_attr((string) ($park['facebook_url'] ?? '')) ?>"></div>
                 </div>
+                <div class="form-group"><label for="booking_url">Booking link</label><input type="url" id="booking_url" name="booking_url" value="<?= e_attr((string) ($park['booking_url'] ?? '')) ?>"></div>
                 <div class="form-group">
                     <label for="guest_request_contact">Guest-request contact email</label>
                     <input type="email" id="guest_request_contact" name="guest_request_contact" value="<?= e_attr((string) ($park['guest_request_contact'] ?? '')) ?>">
