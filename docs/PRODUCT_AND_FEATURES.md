@@ -13,6 +13,9 @@ Implemented/live foundations include provider/location search, provider pages,
 service categories, assistance requests, matching, customer/provider/admin
 accounts, provider onboarding/claims, service runs, caravan-park partnerships,
 reviews foundations, CMS, demand analytics and provider promotion foundations.
+The stays directory adds GPS/town search across 8,457 caravan parks,
+campgrounds and free/low-cost stays, evidence-based trust labels, operator
+claims, Park Partner management and clearly labelled sponsored placement.
 
 Billing is dormant and must not be described as live charging. Provider coverage,
 content quality, transactional email and public-launch acceptance remain business
@@ -23,23 +26,29 @@ and operational work.
 Purpose: help Australian users understand a loaded tow combination before travel.
 It is educational guidance, not certification, engineering or legal advice.
 
-Implemented/live MVP:
+Implemented/live:
 
-- eight manual inputs in kilograms;
-- five limit checks: vehicle GVM, vehicle GCM, braked towing capacity, trailer
-  ATM and maximum towball download;
-- calculated vehicle loaded mass, trailer GTM, combination mass and remaining
-  vehicle/trailer capacity;
-- within/near/exceeds status and safety disclaimer;
-- authenticated saved result snapshots, isolated to TowSmart.
+- searchable recovered TowWise catalogue with 151 tow-vehicle specifications
+  and 3,769 caravan/camper/hybrid specifications;
+- manual vehicle/trailer entry when a model is absent;
+- vehicle GVM/GCM/towing/towball and axle inputs;
+- passengers, cargo, vehicle accessories and fuel;
+- trailer tare/ATM/GTM/ball mass, axle configuration and cargo;
+- two water tanks with position, plus repeatable accessories with weight,
+  quantity and trailer position;
+- loaded vehicle/trailer/combination calculations, limit status and safety
+  disclaimers;
+- towing guide, persistent trip checklist and authoritative source links;
+- authenticated saved result snapshots isolated to TowSmart.
 
 Partial/planned:
 
-- vehicle and towable-asset tables exist, but profile CRUD is not connected;
-- saved combinations cannot yet be edited, deleted, reopened or compared;
-- axle-group checks, towball percentage guidance, detailed payload composition,
-  manufacturer-data sourcing, trip checklists, reports and education library are
-  not complete;
+- catalogue expansion requires licensed or manufacturer-sourced specifications
+  with model-year provenance; it must not be represented as every Australian
+  model ever sold;
+- saved combinations still need richer edit/delete/compare/report workflows;
+- axle load calculations require adequate manufacturer data and domain-expert
+  review before stronger claims;
 - formulas require domain-expert review before stronger safety claims.
 
 ## TrailerWise
@@ -55,12 +64,12 @@ evaluate:
 - specialists by trailer type, location and service area;
 - useful ownership, maintenance, registration and compliance information.
 
-The current implementation drifted from this intent: its homepage and marketplace
-are centred on `trailer_listings` for new, used and hire trailers. That sales/hire
-capability is **partial and secondary**. It must not be treated as TrailerWise's
-primary product. Business/service discovery, category/location search, business
-profiles and appropriate content are the next product correction. Sales listings
-should remain disabled or secondary until the owner explicitly approves them.
+The live homepage, navigation and metadata are service-first. Nationwide shared
+provider enrichment supplies trailer repairers, auto electricians, tyre and
+mechanical businesses, parts suppliers and roadworthy/compliance categories with
+brand-scoped listings. The `trailer_listings` sales/hire module remains partial
+and secondary; it must not displace service discovery without explicit owner
+approval.
 
 ## Shared platform
 
