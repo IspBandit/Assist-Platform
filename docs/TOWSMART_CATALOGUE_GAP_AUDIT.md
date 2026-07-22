@@ -4,7 +4,7 @@ Updated: 23 July 2026
 
 ## Current catalogue
 
-- 157 tow-vehicle reference records after adding the Australian Prado 250 Series grades.
+- 163 tow-vehicle reference records after adding separate 2025 and 2026-current Australian Prado 250 Series grades.
 - 3,769 caravan, camper, hybrid and trailer reference records recovered from the original TowWise application.
 - Catalogue values are starting points only. Users must confirm the exact vehicle plate, handbook and manufacturer documentation.
 
