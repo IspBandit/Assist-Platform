@@ -73,8 +73,8 @@ final class LocationController extends Controller
     }
 
     /**
-     * Claimed providers near a town for the homepage spotlight (JSON).
-     * Accepts town_id and/or lat/lng (GPS). Unclaimed imports are excluded.
+     * Providers near a town for the homepage spotlight (JSON).
+     * Accepts town_id and/or lat/lng (GPS). Discovered listings are labelled.
      */
     public function nearbyProviders(Request $request): Response
     {
@@ -161,6 +161,7 @@ final class LocationController extends Controller
                 'service_model' => (string) ($p['service_model'] ?? ''),
                 'is_verified'   => !empty($p['is_verified']),
                 'is_featured'   => !empty($p['is_featured']),
+                'is_unclaimed'  => !empty($p['is_unclaimed']),
                 'slot'          => (string) ($p['slot'] ?? 'local'),
                 'town_name'     => $p['town_name'] ?? null,
                 'state_abbr'    => $p['state_abbr'] ?? null,

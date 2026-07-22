@@ -75,6 +75,15 @@ final class HomeController extends Controller
             )
         );
 
+        $providerDirectoryCount = 0;
+        try {
+            $providerDirectoryCount = (int) Database::scalar(
+                "SELECT COUNT(*) FROM providers WHERE status = 'active' AND deleted_at IS NULL"
+            );
+        } catch (Throwable) {
+            $providerDirectoryCount = 0;
+        }
+
         return $this->view('public.home', [
             'title'         => 'Caravan help, wherever you travel',
             'canonical'     => url('/'),
@@ -86,6 +95,7 @@ final class HomeController extends Controller
             'nearbyFindUrl'     => $nearbyFindUrl,
             'nearbyEndpoint'    => url('locations/nearby-providers'),
             'categories'        => $categories,
+            'providerDirectoryCount' => $providerDirectoryCount,
             'freeMessage'   => Settings::get('free_launch_message', ''),
             'jsonLd'        => $this->organisationSchema(),
         ]);

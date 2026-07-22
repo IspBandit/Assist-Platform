@@ -320,7 +320,7 @@
         img.loading = 'lazy';
     });
 
-    // Homepage "Providers near you" — GPS or saved town, claimed listings only.
+    // Homepage "Providers near you" — GPS or saved town, with discovered listings labelled.
     var nearbySection = document.querySelector('[data-nearby-providers]');
     if (nearbySection) {
         var endpoint = nearbySection.getAttribute('data-endpoint') || '/locations/nearby-providers';
@@ -356,6 +356,7 @@
             var badges = '';
             if (isFeatured) { badges += '<span class="badge badge-sponsored">Featured</span> '; }
             if (p.is_verified) { badges += '<span class="badge badge-verified">Verified</span> '; }
+            if (p.is_unclaimed) { badges += '<span class="badge badge-neutral">Unclaimed</span> '; }
             if (p.service_model) {
                 badges += '<span class="badge badge-neutral">' + escapeHtml(p.service_model.charAt(0).toUpperCase() + p.service_model.slice(1)) + '</span>';
             }
@@ -380,7 +381,7 @@
             var providers = (data && data.providers) || [];
 
             if (subtitle && town && town.label) {
-                subtitle.innerHTML = 'Serving travellers in <strong>' + escapeHtml(town.label) + '</strong> — claimed listings only.';
+                subtitle.innerHTML = 'Showing relevant listings serving <strong>' + escapeHtml(town.label) + '</strong>.';
             }
 
             if (findLink && data && data.find_url) {
@@ -393,8 +394,8 @@
 
             if (!providers.length) {
                 grid.innerHTML = '<div class="nearby-empty card" data-nearby-empty>'
-                    + '<p style="margin:0"><strong>No claimed providers in this area yet.</strong> '
-                    + '<a href="/find">Search by town</a> or <a href="/for-providers">list your business</a> to be first.</p></div>';
+                    + '<p style="margin:0"><strong>No matching providers in this area yet.</strong> '
+                    + '<a href="/providers">Browse the national directory</a> or <a href="/for-providers">list your business</a>.</p></div>';
                 return;
             }
 

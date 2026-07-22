@@ -324,9 +324,9 @@ final class Provider extends Model
     }
 
     /**
-     * Claimed providers serving a town for the homepage "near you" module.
-     * Featured listings first (max $maxFeatured), then other local claimed
-     * providers. Unclaimed directory imports are never included.
+     * Providers serving a town for the homepage "near you" module.
+     * Featured and claimed listings appear first. Discovered directory entries
+     * fill otherwise-empty coverage and remain explicitly marked unclaimed.
      *
      * @return array<int,array<string,mixed>>
      */
@@ -340,9 +340,14 @@ final class Provider extends Model
             return [];
         }
 
+        $all = self::inTown($townId, $regionId, 60);
         $claimed = array_values(array_filter(
-            self::inTown($townId, $regionId, 60),
+            $all,
             static fn (array $p): bool => (int) ($p['is_unclaimed'] ?? 0) === 0,
+        ));
+        $discovered = array_values(array_filter(
+            $all,
+            static fn (array $p): bool => (int) ($p['is_unclaimed'] ?? 0) === 1,
         ));
 
         $out = [];
@@ -371,6 +376,19 @@ final class Provider extends Model
             }
             $seen[$id] = true;
             $row['slot'] = 'local';
+            $out[] = $row;
+        }
+
+        foreach ($discovered as $row) {
+            if (count($out) >= $maxTotal) {
+                break;
+            }
+            $id = (int) $row['id'];
+            if (isset($seen[$id])) {
+                continue;
+            }
+            $seen[$id] = true;
+            $row['slot'] = 'discovered';
             $out[] = $row;
         }
 

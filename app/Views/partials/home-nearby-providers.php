@@ -4,6 +4,7 @@
 /** @var array<int,array<string,mixed>> $nearbyProviders */
 /** @var string $nearbyFindUrl */
 /** @var string $nearbyEndpoint */
+/** @var int $providerDirectoryCount */
 
 $townLabel = '';
 if ($nearbyTown !== null) {
@@ -22,6 +23,9 @@ $renderCard = static function (array $p): string {
     }
     if (!empty($p['is_verified'])) {
         $badges .= '<span class="badge badge-verified">Verified</span> ';
+    }
+    if (!empty($p['is_unclaimed'])) {
+        $badges .= '<span class="badge badge-neutral">Unclaimed</span> ';
     }
     $model = (string) ($p['service_model'] ?? '');
     if ($model !== '') {
@@ -60,9 +64,9 @@ $renderCard = static function (array $p): string {
                 <h2 id="nearby-providers-heading">Providers near you</h2>
                 <p class="muted nearby-subtitle" data-nearby-subtitle>
                     <?php if ($nearbyTown !== null && $nearbyProviders !== []): ?>
-                        Serving travellers in <strong><?= $this->e($townLabel) ?></strong> — claimed listings only.
+                        Showing relevant listings serving <strong><?= $this->e($townLabel) ?></strong>.
                     <?php else: ?>
-                        See claimed local specialists once we know your town.
+                        Search <?= number_format((int) ($providerDirectoryCount ?? 0)) ?> Australian service listings by town or current location.
                     <?php endif; ?>
                 </p>
             </div>
@@ -84,13 +88,13 @@ $renderCard = static function (array $p): string {
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="nearby-empty card" data-nearby-empty>
-                    <p style="margin:0"><strong>No claimed providers to show yet.</strong> Tap <em>Use my location</em> or <a href="<?= e(url('find')) ?>">search by town</a> to find services. Providers can <a href="<?= e(url('for-providers')) ?>">join VanAssist</a> to appear here.</p>
+                    <p style="margin:0"><strong>Choose your location to see nearby help.</strong> Tap <em>Use my location</em>, <a href="<?= e(url('find')) ?>">search by town</a>, or <a href="<?= e(url('providers')) ?>">browse all <?= number_format((int) ($providerDirectoryCount ?? 0)) ?> service listings</a>.</p>
                 </div>
             <?php endif; ?>
         </div>
 
         <p class="muted nearby-footnote" style="font-size:.85rem;margin:1rem 0 0">
-            Featured listings are shown first for providers serving your area. Unclaimed directory entries are not promoted here.
+            Featured and verified providers are shown first. Discovered listings are clearly marked unclaimed; confirm their details before booking.
         </p>
     </div>
 </section>
