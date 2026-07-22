@@ -83,18 +83,4 @@ $this->extend('layouts.public');
         </div>
     </div>
 </section>
-<script>
-(function () {
-    var type = document.getElementById('area_type');
-    if (!type) { return; }
-    var sync = function () {
-        var v = type.value;
-        document.querySelectorAll('[data-area-field]').forEach(function (el) {
-            el.hidden = el.getAttribute('data-area-field') !== v;
-        });
-    };
-    type.addEventListener('change', sync);
-    sync();
-})();
-</script>
 <?php $this->endSection(); ?>

@@ -462,4 +462,18 @@
             });
         }
     }
+
+    // Provider service-area form. Keep this behaviour in the trusted external
+    // bundle so production's strict Content Security Policy remains effective.
+    var areaType = document.getElementById('area_type');
+    if (areaType) {
+        var syncAreaFields = function () {
+            var selected = areaType.value;
+            document.querySelectorAll('[data-area-field]').forEach(function (field) {
+                field.hidden = field.getAttribute('data-area-field') !== selected;
+            });
+        };
+        areaType.addEventListener('change', syncAreaFields);
+        syncAreaFields();
+    }
 })();
