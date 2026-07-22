@@ -8,8 +8,8 @@ Last verified: 23 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `515b3f6`.
-- Release directory: `/opt/assist-platform/releases/515b3f6`.
+- Production code commit: `3ededee`.
+- Release directory: `/opt/assist-platform/releases/3ededee`.
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
 - All migrations through `040_caravan_stay_directory.sql` are applied; the
@@ -30,6 +30,13 @@ credentials in this file or Git.
 - VanAssist, TowSmart and TrailerWise homepages, contact pages, provider
   directories and mobile hero artwork returned 200. TowSmart's calculator and
   TrailerWise's secondary marketplace also returned 200.
+- TowSmart contains 179 tow-vehicle reference records and 3,769 caravan,
+  camper, hybrid and trailer records. Its current-vehicle pass now includes
+  separate 2025/2026 Prado 250 grades, Kia Tasman, BYD Shark 6, JAC T9,
+  LDV Terron 9 and GWM Cannon Alpha variants with source metadata on new data.
+- The calculator clears every mapped field before applying a selected catalogue
+  record, preventing an unavailable value from being inherited from the
+  previously selected vehicle.
 - Public support addresses resolve to `support@vanassist.com.au`,
   `support@towsmart.com.au` and `support@trailerwise.com.au` respectively.
 - Production contains 7,304 providers, 10,912 brand listings and 22,115
