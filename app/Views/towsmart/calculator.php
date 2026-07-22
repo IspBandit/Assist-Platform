@@ -1,6 +1,6 @@
 <?php
 $this->extend('layouts.public');
-$errors = errors();
+$errors = $errors ?? [];
 $field = static fn(string $key): string => (string) ($values[$key] ?? old($key, ''));
 $labels = ['vehicle_gvm'=>'Vehicle GVM','vehicle_gcm'=>'Vehicle GCM','vehicle_max_braked_towing'=>'Maximum braked towing capacity','vehicle_max_towball'=>'Maximum towball download','vehicle_mass_before_ball'=>'Loaded vehicle mass before towball','trailer_atm'=>'Trailer ATM','trailer_loaded_mass'=>'Actual loaded trailer mass','towball_mass'=>'Actual towball mass'];
 ?>

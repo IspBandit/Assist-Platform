@@ -37,6 +37,7 @@ final class TowSmartController extends Controller
             'canonical' => current_brand()->url() . '/calculator',
             'values' => [],
             'result' => null,
+            'errors' => Session::errors(),
         ]);
     }
 
@@ -57,6 +58,7 @@ final class TowSmartController extends Controller
             'canonical' => current_brand()->url() . '/calculator',
             'values' => $values,
             'result' => $result,
+            'errors' => Session::errors(),
         ]);
     }
 
