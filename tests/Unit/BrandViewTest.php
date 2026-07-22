@@ -51,6 +51,21 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('property="og:url" content="https://towsmart.com.au/calculator"', $html);
     }
 
+    public function testNonVanAssistFooterUsesBrandSupportAddress(): void
+    {
+        $this->setSettingsCache([
+            'site_name' => 'VanAssist',
+            'launch_mode' => 'private',
+            'contact_email' => 'support@vanassist.com.au',
+        ]);
+        BrandContext::set($this->brand());
+
+        $html = View::render('partials.footer');
+
+        self::assertStringContainsString('mailto:support@towsmart.com.au', $html);
+        self::assertStringNotContainsString('mailto:support@vanassist.com.au', $html);
+    }
+
     private function brand(): \App\Platform\Brand\Brand
     {
         return BrandRegistry::fromArray([

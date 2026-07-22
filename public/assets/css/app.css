@@ -277,7 +277,7 @@ ol.steps-list li::before {
 .town-suggest .muted { color: var(--muted); font-size: .85rem; }
 label { display: block; font-weight: 600; margin-bottom: .35rem; }
 .required { color: var(--red); }
-input[type=text], input[type=email], input[type=password], input[type=tel],
+input:not([type]), input[type=text], input[type=email], input[type=password], input[type=tel],
 input[type=number], input[type=url], input[type=date], select, textarea {
     width: 100%; padding: .8rem .9rem; font-size: 1rem; border: 1px solid #c9c5ba;
     border-radius: 10px; background: #fff; color: var(--charcoal); min-height: 48px;
