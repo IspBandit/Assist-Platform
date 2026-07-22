@@ -101,7 +101,7 @@ final class CategoryController extends Controller
             'townId'          => $townId,
             'selectedTown'    => $selectedTown,
             'selectedTownLabel' => $selectedTown !== null
-                ? trim($selectedTown['name'] . (!empty($selectedTown['state_abbr']) ? ', ' . $selectedTown['state_abbr'] : ''))
+                ? trim($selectedTown['name'] . (!empty($selectedTown['state_abbr']) ? ' / ' . $selectedTown['state_abbr'] : ''))
                 : '',
             'maxDistance'     => $maxDistance,
             'distanceScope'   => $distanceFilter['scope'],

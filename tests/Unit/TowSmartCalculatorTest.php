@@ -10,6 +10,23 @@ use PHPUnit\Framework\TestCase;
 
 final class TowSmartCalculatorTest extends TestCase
 {
+    public function testDetailedTowWiseStyleLoadConfigurationIsDerived(): void
+    {
+        $result = TowSmartCalculator::calculate([
+            'vehicle_kerb_mass' => 2200, 'vehicle_gvm' => 3200, 'vehicle_gcm' => 6500,
+            'vehicle_max_braked_towing' => 3500, 'vehicle_max_towball' => 350,
+            'passengers_mass' => 160, 'vehicle_cargo_mass' => 100, 'vehicle_accessories_mass' => 80, 'fuel_mass' => 0,
+            'trailer_tare_mass' => 2400, 'trailer_atm' => 3200, 'trailer_tare_ball_mass' => 220,
+            'trailer_cargo_mass' => 200, 'trailer_accessories_mass' => 50,
+            'trailer_front_accessories_mass' => 20, 'trailer_rear_accessories_mass' => 20,
+            'tank_1_litres' => 100, 'tank_1_position' => 'front', 'tank_2_litres' => 0, 'tank_2_position' => 'middle',
+        ]);
+
+        self::assertSame(2815.0, $result['calculated']['vehicle_loaded_mass']);
+        self::assertSame(2515.0, $result['calculated']['trailer_gtm']);
+        self::assertSame(5330.0, $result['calculated']['combination_mass']);
+    }
+
     public function testCalculatesACombinationWithinAllKnownLimits(): void
     {
         $result = TowSmartCalculator::calculate($this->validInput());

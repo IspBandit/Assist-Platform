@@ -1,8 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title id="title">TrailerWise brand mark</title>
-  <defs><linearGradient id="tw" x1="10" y1="6" x2="54" y2="58" gradientUnits="userSpaceOnUse"><stop stop-color="#8247e5"/><stop offset="1" stop-color="#43118f"/></linearGradient></defs>
-  <path d="M32 4 56 17v30L32 60 8 47V17Z" fill="url(#tw)"/>
-  <path d="m16 22 8 23 8-16 8 16 8-23" fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M45 48h9" stroke="#f06a24" stroke-width="3.5" stroke-linecap="round"/>
-  <circle cx="57" cy="48" r="3" fill="#f06a24"/>
+  <title id="title">TrailerWise utility trailer</title>
+  <defs><linearGradient id="tw" x1="7" y1="5" x2="57" y2="59" gradientUnits="userSpaceOnUse"><stop stop-color="#9558ec"/><stop offset="1" stop-color="#41117f"/></linearGradient></defs>
+  <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#tw)"/>
+  <path d="M10 25h36l-3 18H15l-5-18Z" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M12 31h32M18 25v18M40 25v18M43 43h7l8 5" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="22" cy="46" r="5" fill="#351064" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="37" cy="46" r="5" fill="#351064" stroke="#fff" stroke-width="2.5"/>
+  <circle cx="58" cy="48" r="2" fill="#f6a337"/>
+  <path d="M14 54h34" stroke="#f6a337" stroke-width="2.5" stroke-linecap="round"/>
 </svg>

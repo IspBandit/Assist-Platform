@@ -83,7 +83,7 @@ final class RequestController extends Controller
                 [$townId]
             );
             if ($row) {
-                return (string) $row['name'] . (!empty($row['state_abbr']) ? ', ' . $row['state_abbr'] : '');
+                return (string) $row['name'] . (!empty($row['state_abbr']) ? ' / ' . $row['state_abbr'] : '');
             }
         }
         return trim((string) $request->input('location', ''));

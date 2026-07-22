@@ -12,6 +12,10 @@ return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
         $router->get('/', 'Site\HomeController@index', 'home');
         $router->get('/calculator', 'Site\TowSmartController@calculator', 'towsmart.calculator');
+        $router->get('/calculator/catalogue/{type}', 'Site\TowSmartController@catalogue', 'towsmart.catalogue');
+        $router->get('/calculator/catalogue/{type}/{id}', 'Site\TowSmartController@catalogueItem', 'towsmart.catalogue.item');
+        $router->get('/tow-guide', 'Site\TowSmartController@guide', 'towsmart.guide');
+        $router->get('/checklist', 'Site\TowSmartController@checklist', 'towsmart.checklist');
         $router->group(['middleware' => ['rate:public.towing-calculator,30,3600,3600']], static function (Router $router): void {
             $router->post('/calculator', 'Site\TowSmartController@calculate', 'towsmart.calculate');
         });
