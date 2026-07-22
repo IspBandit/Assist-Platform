@@ -53,7 +53,12 @@ final class CronRunner
             return 2;
         }
 
-        $lockFile = base_path('cron/' . preg_replace('/[^a-z0-9_]/', '', $task) . '.lock');
+        $lockDir = base_path('storage/locks');
+        if (!is_dir($lockDir) && !mkdir($lockDir, 0750, true) && !is_dir($lockDir)) {
+            Logger::error("Unable to create cron lock directory for {$task}.", [], 'cron');
+            return 1;
+        }
+        $lockFile = $lockDir . '/cron-' . preg_replace('/[^a-z0-9_]/', '', $task) . '.lock';
         $fp = fopen($lockFile, 'c');
         if ($fp === false || !flock($fp, LOCK_EX | LOCK_NB)) {
             Logger::warning("Cron task {$task} already running; skipped.", [], 'cron');

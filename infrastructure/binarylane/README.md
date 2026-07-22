@@ -9,6 +9,7 @@ the three-domain Assist Platform.
 - One PHP-FPM application resolves the brand from the trusted request host.
 - MariaDB is reachable only on the internal Docker network.
 - Runtime storage and public uploads survive immutable release switches.
+- Cron locks live in shared writable storage, never inside immutable releases.
 - Cloudflare proxies public DNS to the VPS.
 
 ## Safe deployment

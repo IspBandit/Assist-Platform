@@ -33,7 +33,7 @@ fi
 
 install -d -o root -g root -m 0750 \
   "$TARGET"/runtime "$TARGET"/releases \
-  "$TARGET"/shared/storage/{cache,logs,sessions,private,backups,imports} \
+  "$TARGET"/shared/storage/{cache,logs,locks,sessions,private,backups,imports} \
   "$TARGET"/shared/uploads-public "$TARGET"/backups/database "$TARGET"/logs
 
 install -o root -g root -m 0640 "$SOURCE_DIR/docker-compose.yml" "$TARGET/docker-compose.yml"
