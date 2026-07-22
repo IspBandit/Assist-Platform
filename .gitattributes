@@ -2,3 +2,5 @@
 # Linux hosts (e.g. GoDaddy). Force LF so deploys never ship CRLF .htaccess.
 .htaccess text eol=lf
 **/.htaccess text eol=lf
+infrastructure/binarylane/*.sh text eol=lf
+infrastructure/binarylane/ops/*.sh text eol=lf
