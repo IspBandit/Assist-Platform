@@ -28,7 +28,8 @@ It is educational guidance, not certification, engineering or legal advice.
 
 Implemented/live:
 
-- searchable recovered TowWise catalogue with 151 tow-vehicle specifications
+- searchable TowWise/TowSmart catalogue with 157 tow-vehicle specifications,
+  including grade-specific Australian Prado 250 Series records
   and 3,769 caravan/camper/hybrid specifications;
 - manual vehicle/trailer entry when a model is absent;
 - vehicle GVM/GCM/towing/towball and axle inputs;
