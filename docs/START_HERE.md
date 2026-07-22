@@ -11,6 +11,7 @@ This is the authoritative orientation page for developers and AI agents.
 5. `docs/DATABASE_DICTIONARY.md` and `docs/ROUTES_AND_PERMISSIONS.md`.
 6. `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
 7. For releases, `docs/OPERATIONS_RUNBOOK.md` and `docs/BACKUP_AND_RESTORE.md`.
+8. For product-specific data, `docs/TOWSMART_CATALOGUE.md` and `docs/VANASSIST_STAYS.md`.
 
 ## Sources of truth
 
