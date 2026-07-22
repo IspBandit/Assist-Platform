@@ -34,7 +34,7 @@ It is not yet a production-ready multi-brand core. The principal blockers are:
 - insecure SMTP fallback behavior;
 - weak automated integration and deployment assurance.
 
-No TowWise, TrailerWise, or existing multi-brand implementation was found.
+No TowSmart, TrailerWise, or existing multi-brand implementation was found.
 
 ## Critical
 
@@ -224,7 +224,7 @@ Evidence:
 ## Future enhancements
 
 - Central cross-domain identity using a standards-based authorization flow.
-- TowWise calculations, safety checks, and reports.
+- TowSmart calculations, safety checks, and reports.
 - TrailerWise manufacturer/dealer/listing workflows.
 - External search index when MySQL search thresholds are exceeded.
 - Malware-scanning adapter for uploaded documents.
@@ -259,4 +259,4 @@ Evidence:
 4. Add brand registry/context with VanAssist as the default.
 5. Add additive brand/provider membership schema and backfills.
 6. Extract brand presentation, SEO, and notification identity.
-7. Add TowWise and TrailerWise scaffolds only after isolation tests pass.
+7. Add TowSmart and TrailerWise scaffolds only after isolation tests pass.

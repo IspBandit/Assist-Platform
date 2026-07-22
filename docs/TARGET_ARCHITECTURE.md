@@ -37,7 +37,7 @@ Shared Domain Services
   Notifications | Billing | Analytics | Media | Audit
         |
 Brand Policies and Brand Modules
-  VanAssist | TowWise | TrailerWise
+  VanAssist | TowSmart | TrailerWise
         |
 PDO Repositories / Database
 ```
@@ -54,7 +54,7 @@ app/
     Support/
   Brands/
     VanAssist/
-    TowWise/
+    TowSmart/
     TrailerWise/
   Services/
   Views/
@@ -109,7 +109,7 @@ brand. Each deployment sets an explicit brand key and canonical host while still
 using domain resolution for validation.
 
 - VanAssist: enabled, all existing routes and workflows.
-- TowWise: deployable scaffold and coming-soon public module; shared identity
+- TowSmart: deployable scaffold and coming-soon public module; shared identity
   support prepared, towing calculations not yet implemented.
 - TrailerWise: deployable scaffold and coming-soon public module; shared
   provider/listing support prepared, marketplace expansion not yet implemented.
@@ -195,7 +195,7 @@ Brand-aware contracts are introduced around:
 - service history and reminders.
 
 Current implementations remain behind these contracts until replacement is
-tested. TowWise and TrailerWise modules may contribute brand-specific policies,
+tested. TowSmart and TrailerWise modules may contribute brand-specific policies,
 routes, schemas, and templates without adding conditionals throughout shared
 services.
 
@@ -235,7 +235,7 @@ The design system remains server-rendered and CSS-based:
 
 - base tokens: spacing, typography, radii, breakpoints, focus, and status;
 - semantic tokens: surfaces, text, borders, actions, success, warning, danger;
-- brand token maps: VanAssist, TowWise, TrailerWise;
+- brand token maps: VanAssist, TowSmart, TrailerWise;
 - reusable PHP partials for forms, errors, cards, breadcrumbs, notices,
   navigation, tables, pagination, empty/loading states, and provider results.
 
@@ -256,7 +256,7 @@ mail dependencies without exposing secrets.
 The following are intentionally deferred until the shared foundations are
 stable:
 
-- TowWise towing calculators and compliance reports;
+- TowSmart towing calculators and compliance reports;
 - TrailerWise listing and manufacturer workflows;
 - external search infrastructure;
 - OAuth or a central cross-domain identity service;

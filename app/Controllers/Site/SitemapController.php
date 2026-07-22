@@ -22,6 +22,15 @@ final class SitemapController extends Controller
     public function xml(Request $request): Response
     {
         $urls = [];
+        if (current_brand()->id() === 'towsmart') {
+            $urls = [['loc' => url(''), 'lastmod' => null, 'priority' => 1.0], ['loc' => url('calculator'), 'lastmod' => null, 'priority' => 0.9]];
+            return $this->response($urls);
+        }
+        if (current_brand()->id() === 'trailerwise') {
+            $urls = [['loc' => url(''), 'lastmod' => null, 'priority' => 1.0], ['loc' => url('marketplace'), 'lastmod' => null, 'priority' => 0.9]];
+            $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = 3 AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.8);
+            return $this->response($urls);
+        }
         $this->addStatic($urls);
         $this->addRows($urls, "SELECT slug, updated_at FROM content_pages WHERE is_published = 1 AND noindex = 0", 'slug', 0.6);
         $this->addRows($urls, "SELECT slug, updated_at FROM service_categories WHERE is_active = 1", 'services/', 0.7);
@@ -43,6 +52,12 @@ final class SitemapController extends Controller
             return true;
         }));
 
+        return $this->response($urls);
+    }
+
+    /** @param array<int,array<string,mixed>> $urls */
+    private function response(array $urls): Response
+    {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
             . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
         foreach ($urls as $u) {

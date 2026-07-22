@@ -1,0 +1,45 @@
+{
+	email admin@vanassist.com.au
+	servers {
+		protocols h1 h2 h3
+	}
+}
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+		-Server
+	}
+}
+
+(assist_site) {
+	import security_headers
+	root * /var/www/html/public
+	encode zstd gzip
+	route {
+		@unfinishedInstaller path /install /install/*
+		respond @unfinishedInstaller "Installation is restricted to the server administrator." 403
+		php_fastcgi app:9000 {
+			env HTTP_HOST {http.request.host}
+			env HTTPS on
+		}
+		file_server
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+vanassist.com.au, www.vanassist.com.au {
+	import assist_site
+}
+towsmart.com.au, www.towsmart.com.au {
+	import assist_site
+}
+trailerwise.com.au, www.trailerwise.com.au {
+	import assist_site
+}

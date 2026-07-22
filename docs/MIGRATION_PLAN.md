@@ -74,7 +74,7 @@ Add:
 - exact hostname and explicit environment resolution;
 - VanAssist configuration matching current presentation and behavior.
 
-TowWise and TrailerWise rows/configurations are created as disabled or
+TowSmart and TrailerWise rows/configurations are created as disabled or
 coming-soon brands. Existing routing still defaults to VanAssist during this
 phase.
 
@@ -179,7 +179,7 @@ are additive and never imply platform-wide access.
 - Extract reusable partials without changing established VanAssist rendering.
 - Scope content, email identity, metadata, sitemaps, robots, storage paths, and
   analytics to brand.
-- Add TowWise and TrailerWise coming-soon layouts and metadata.
+- Add TowSmart and TrailerWise coming-soon layouts and metadata.
 - Preserve all existing VanAssist paths; add URL aliases and redirects before
   changing any slug.
 

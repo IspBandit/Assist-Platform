@@ -219,7 +219,7 @@ final class InstallController extends Controller
             $errors['admin_name'] = 'Administrator name is required.';
         }
         if (!filter_var($request->input('app_url'), FILTER_VALIDATE_URL)) {
-            $errors['app_url'] = 'A valid site URL is required (e.g. https://vanassist.example.com).';
+            $errors['app_url'] = 'A valid site URL is required (e.g. https://vanassist.com.au).';
         }
         return $errors;
     }

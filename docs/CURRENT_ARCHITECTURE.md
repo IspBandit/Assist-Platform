@@ -168,7 +168,7 @@ single-brand and do not currently carry immutable brand attribution.
 
 ## Existing brand state
 
-VanAssist is the only implemented brand. No TowWise, TrailerWise, brand registry,
+VanAssist is the only implemented brand. No TowSmart, TrailerWise, brand registry,
 brand resolver, hostname mapping, brand-scoped roles, or brand-scoped data model
 exists. VanAssist names, domains, contact details, colours, assets, email
 identity, CMS content, and cookies are hard-coded in multiple layers.

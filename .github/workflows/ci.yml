@@ -43,6 +43,8 @@ jobs:
       APP_KEY: ci-test-key-not-for-production
       ASSIST_DEFAULT_BRAND: vanassist
       VANASSIST_DOMAIN: vanassist.test
+      TOWSMART_DOMAIN: towsmart.test
+      TRAILERWISE_DOMAIN: trailerwise.test
       DB_HOST: 127.0.0.1
       DB_PORT: 3306
       DB_NAME: assist_platform_test

@@ -10,6 +10,8 @@ return static function (Router $router): void {
         'middleware' => ['headers', 'csrf', 'auth'],
     ], static function (Router $router): void {
         $router->get('', 'AccountController@dashboard', 'account');
+        $router->get('/towing-combinations', 'Site\TowSmartController@combinations', 'account.towing-combinations');
+        $router->post('/towing-combinations', 'Site\TowSmartController@save', 'account.towing-combinations.save');
 
         // Saved providers (Phase 11).
         $router->get('/saved', 'AccountController@saved', 'account.saved');

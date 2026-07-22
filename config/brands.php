@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 use App\Helpers\Env;
 
-$appUrl = rtrim((string) Env::get('APP_URL', 'http://localhost'), '/');
-$appHost = (string) (parse_url($appUrl, PHP_URL_HOST) ?: 'localhost');
-
 return [
     'default' => (string) Env::get('ASSIST_DEFAULT_BRAND', 'vanassist'),
     'explicit' => Env::get('ASSIST_BRAND'),
@@ -20,9 +17,10 @@ return [
             'legal_name' => (string) Env::get('VANASSIST_LEGAL_NAME', 'VanAssist'),
             'short_name' => 'VanAssist',
             'status' => 'active',
-            'url' => $appUrl,
+            'url' => rtrim((string) Env::get('VANASSIST_URL', 'https://vanassist.com.au'), '/'),
             'domains' => [
-                'primary' => (string) Env::get('VANASSIST_DOMAIN', $appHost),
+                'primary' => (string) Env::get('VANASSIST_DOMAIN', 'vanassist.com.au'),
+                'www' => 'www.vanassist.com.au',
                 'local' => 'vanassist.test',
                 'legacy' => 'vanassist.condrendigital.com.au',
             ],
@@ -52,8 +50,8 @@ return [
                 'sender_name' => (string) Env::get('MAIL_FROM_NAME', 'VanAssist'),
             ],
             'legal' => [
-                'privacy_path' => '/privacy',
-                'terms_path' => '/terms',
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
             ],
             'navigation' => [
                 ['label' => 'Find a provider', 'path' => '/providers'],
@@ -94,21 +92,23 @@ return [
             'storage_namespace' => 'vanassist',
         ],
 
-        'towwise' => [
+        'towsmart' => [
             'database_id' => 2,
-            'name' => 'TowWise',
-            'legal_name' => (string) Env::get('TOWWISE_LEGAL_NAME', 'TowWise'),
-            'short_name' => 'TowWise',
-            'status' => (bool) Env::get('ENABLE_TOWWISE', false) ? 'private' : 'coming_soon',
-            'url' => rtrim((string) Env::get('TOWWISE_URL', 'https://towwise.example.com'), '/'),
+            'name' => 'TowSmart',
+            'legal_name' => (string) Env::get('TOWSMART_LEGAL_NAME', Env::get('TOWWISE_LEGAL_NAME', 'TowSmart')),
+            'short_name' => 'TowSmart',
+            'status' => 'active',
+            'url' => rtrim((string) Env::get('TOWSMART_URL', Env::get('TOWWISE_URL', 'https://towsmart.com.au')), '/'),
             'domains' => [
-                'primary' => (string) Env::get('TOWWISE_DOMAIN', 'towwise.example.com'),
-                'local' => 'towwise.test',
+                'primary' => (string) Env::get('TOWSMART_DOMAIN', Env::get('TOWWISE_DOMAIN', 'towsmart.com.au')),
+                'www' => 'www.towsmart.com.au',
+                'local' => 'towsmart.test',
+                'legacy_local' => 'towwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/towwise/mark.svg',
-                'icon' => '/assets/brands/towwise/mark.svg',
-                'favicon' => '/assets/brands/towwise/mark.svg',
+                'logo' => '/assets/brands/towsmart/mark.svg',
+                'icon' => '/assets/brands/towsmart/mark.svg',
+                'favicon' => '/assets/brands/towsmart/mark.svg',
             ],
             'theme' => [
                 'brand' => '#1d4ed8',
@@ -120,23 +120,24 @@ return [
             ],
             'metadata' => [
                 'wordmark_prefix' => 'Tow',
-                'wordmark_accent' => 'Wise',
-                'tagline' => 'Tow with confidence.',
+                'wordmark_accent' => 'Smart',
+                'tagline' => 'Tow smarter. Tow safer.',
                 'description' => 'Towing calculations, compatibility, education and safety tools.',
-                'social_image' => '/assets/brands/towwise/mark.svg',
+                'social_image' => '/assets/brands/towsmart/mark.svg',
             ],
             'contact' => [
-                'support_email' => (string) Env::get('TOWWISE_SUPPORT_EMAIL', ''),
-                'sender_email' => (string) Env::get('TOWWISE_MAIL_FROM_ADDRESS', ''),
-                'sender_name' => 'TowWise',
+                'support_email' => (string) Env::get('TOWSMART_SUPPORT_EMAIL', Env::get('TOWWISE_SUPPORT_EMAIL', '')),
+                'sender_email' => (string) Env::get('TOWSMART_MAIL_FROM_ADDRESS', Env::get('TOWWISE_MAIL_FROM_ADDRESS', '')),
+                'sender_name' => 'TowSmart',
             ],
             'legal' => [
-                'privacy_path' => '/privacy',
-                'terms_path' => '/terms',
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
             ],
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
-                ['label' => 'Towing tools', 'path' => '/tools'],
+                ['label' => 'Weight calculator', 'path' => '/calculator'],
+                ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],
@@ -152,22 +153,23 @@ return [
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => false,
+                'public_application' => true,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
                 'parks' => false,
                 'cms' => true,
                 'admin' => true,
-                'towing_tools' => false,
+                'towing_tools' => true,
                 'trailer_marketplace' => false,
             ],
             'analytics' => [
-                'measurement_id' => (string) Env::get('TOWWISE_ANALYTICS_ID', ''),
+                'measurement_id' => (string) Env::get('TOWSMART_ANALYTICS_ID', Env::get('TOWWISE_ANALYTICS_ID', '')),
             ],
             'search' => [
-                'provider_index' => 'towwise_resources',
+                'provider_index' => 'towsmart_resources',
             ],
+            // Retained to avoid orphaning any files written before the rename.
             'storage_namespace' => 'towwise',
         ],
 
@@ -176,10 +178,11 @@ return [
             'name' => 'TrailerWise',
             'legal_name' => (string) Env::get('TRAILERWISE_LEGAL_NAME', 'TrailerWise'),
             'short_name' => 'TrailerWise',
-            'status' => (bool) Env::get('ENABLE_TRAILERWISE', false) ? 'private' : 'coming_soon',
-            'url' => rtrim((string) Env::get('TRAILERWISE_URL', 'https://trailerwise.example.com'), '/'),
+            'status' => 'active',
+            'url' => rtrim((string) Env::get('TRAILERWISE_URL', 'https://trailerwise.com.au'), '/'),
             'domains' => [
-                'primary' => (string) Env::get('TRAILERWISE_DOMAIN', 'trailerwise.example.com'),
+                'primary' => (string) Env::get('TRAILERWISE_DOMAIN', 'trailerwise.com.au'),
+                'www' => 'www.trailerwise.com.au',
                 'local' => 'trailerwise.test',
             ],
             'assets' => [
@@ -208,8 +211,8 @@ return [
                 'sender_name' => 'TrailerWise',
             ],
             'legal' => [
-                'privacy_path' => '/privacy',
-                'terms_path' => '/terms',
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
             ],
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
@@ -229,7 +232,7 @@ return [
                 'reminders.enabled' => false,
             ],
             'modules' => [
-                'public_application' => false,
+                'public_application' => true,
                 'providers' => false,
                 'requests' => false,
                 'service_runs' => false,
@@ -237,7 +240,7 @@ return [
                 'cms' => true,
                 'admin' => true,
                 'towing_tools' => false,
-                'trailer_marketplace' => false,
+                'trailer_marketplace' => true,
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TRAILERWISE_ANALYTICS_ID', ''),

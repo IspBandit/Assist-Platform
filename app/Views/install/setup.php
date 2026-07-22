@@ -52,7 +52,7 @@ $err = static fn (string $k) => isset($errors[$k]) ? '<p class="field-error">' .
             </div>
             <div class="form-group">
                 <label for="app_url">Site URL <span class="required">*</span></label>
-                <input type="url" id="app_url" name="app_url" placeholder="https://vanassist.example.com" value="<?= e_attr((string) old('app_url')) ?>" required>
+                <input type="url" id="app_url" name="app_url" placeholder="https://vanassist.com.au" value="<?= e_attr((string) old('app_url')) ?>" required>
                 <?= $err('app_url') ?>
             </div>
             <div class="form-group">

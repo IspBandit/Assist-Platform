@@ -73,12 +73,12 @@ and permit `.htaccess` overrides. Suggested local hosts:
 
 ```text
 127.0.0.1 vanassist.test
-127.0.0.1 towwise.test
+127.0.0.1 towsmart.test
 127.0.0.1 trailerwise.test
 127.0.0.1 admin.assist.test
 ```
 
-Only VanAssist is fully operational until the other brand scaffolds are enabled.
+All three brands are operational. Use the matching local hostname to exercise brand-specific routes and data isolation.
 
 ### PHP development server
 
@@ -139,7 +139,7 @@ Private files must not be served directly by the web server.
 - Resolve brands by local hostname.
 - Use explicit `ASSIST_BRAND` for cron/CLI commands where required.
 - Do not emulate cross-domain authentication with an overly broad cookie.
-- Keep TowWise and TrailerWise fixtures clearly marked as development-only.
+- Keep TowSmart and TrailerWise fixtures clearly marked as development-only.
 - Test that a brand-scoped user/resource cannot be accessed through another
   brand host.
 

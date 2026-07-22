@@ -24,6 +24,14 @@ final class PageController extends Controller
     public function cms(Request $request): Response
     {
         $slug = (string) ($request->route('page') ?? ltrim($request->path(), '/'));
+        if (current_brand()->id() !== 'vanassist') {
+            return $this->view('brands.page', [
+                'title' => $this->brandPageTitle($slug),
+                'slug' => $slug,
+                'brand' => current_brand(),
+                'canonical' => current_brand()->url() . '/' . $slug,
+            ]);
+        }
         $page = $this->findPage($slug);
 
         if ($page === null) {
@@ -37,6 +45,22 @@ final class PageController extends Controller
         ]);
     }
 
+    private function brandPageTitle(string $slug): string
+    {
+        return match ($slug) {
+            'about' => 'About ' . current_brand()->name(),
+            'contact' => 'Contact ' . current_brand()->name(),
+            'privacy-policy' => 'Privacy policy',
+            'terms-of-use' => 'Terms of use',
+            'provider-terms' => 'Provider terms',
+            'disclaimer' => 'Important disclaimer',
+            'safety-information' => 'Safety information',
+            'complaints-process' => 'Complaints process',
+            'accessibility-statement' => 'Accessibility statement',
+            default => current_brand()->name(),
+        };
+    }
+
     public function howItWorks(Request $request): Response
     {
         return $this->view('public.how-it-works', ['title' => 'How VanAssist works']);
@@ -44,6 +68,9 @@ final class PageController extends Controller
 
     public function forProviders(Request $request): Response
     {
+        if (current_brand()->id() !== 'vanassist') {
+            return $this->view('brands.for-providers', ['title' => 'For ' . current_brand()->name() . ' businesses']);
+        }
         return $this->view('public.for-providers', [
             'title' => 'For providers — turn regional demand into organised runs',
         ]);
@@ -52,6 +79,9 @@ final class PageController extends Controller
     /** Provider "register interest" form (captures a warm prospect for the CRM). */
     public function providerInterest(Request $request): Response
     {
+        if (current_brand()->id() !== 'vanassist') {
+            return $this->view('brands.provider-interest', ['title' => 'Register your business with ' . current_brand()->name(), 'errors' => Session::errors()]);
+        }
         return $this->view('public.provider-interest', [
             'title'  => 'Register your interest — VanAssist for providers',
             'errors' => Session::errors(),
@@ -111,7 +141,7 @@ final class PageController extends Controller
             $based = $town !== '' ? $town . ' (' . $region . ')' : $region;
         }
 
-        $noteParts = ['Registered interest via the website (For providers page).'];
+        $noteParts = ['Registered interest via the ' . current_brand()->name() . ' website (For providers page).'];
         if ($based !== '') {
             $noteParts[] = 'Based in: ' . $based;
         }
@@ -175,7 +205,7 @@ final class PageController extends Controller
         $text .= "\nSaved to Admin > Provider prospects (status: interested).";
 
         try {
-            EmailQueue::queueRaw($to, 'VanAssist', 'New provider interest: ' . $business, $html, $text, 'provider_interest');
+            EmailQueue::queueRaw($to, current_brand()->name(), current_brand()->name() . ' provider interest: ' . $business, $html, $text, 'provider_interest');
         } catch (Throwable) {
             // Non-fatal: the prospect is already stored for follow-up.
         }

@@ -8,6 +8,9 @@ use InvalidArgumentException;
 
 final class BrandRegistry
 {
+    /** @var array<string,string> retired brand ID => current brand ID */
+    private const LEGACY_IDS = ['towwise' => 'towsmart'];
+
     /** @var array<string,Brand> */
     private array $brands = [];
 
@@ -66,6 +69,7 @@ final class BrandRegistry
 
     public function get(string $id): Brand
     {
+        $id = self::LEGACY_IDS[$id] ?? $id;
         if (!isset($this->brands[$id])) {
             throw new InvalidArgumentException("Unknown brand: {$id}");
         }
@@ -74,6 +78,7 @@ final class BrandRegistry
 
     public function find(string $id): ?Brand
     {
+        $id = self::LEGACY_IDS[$id] ?? $id;
         return $this->brands[$id] ?? null;
     }
 

@@ -2,9 +2,9 @@
 
 Shared platform core for:
 
-- **VanAssist** — the existing caravan/RV service marketplace and compatibility baseline.
-- **TowWise** — configured, deployable coming-soon scaffold; towing tools are not yet built.
-- **TrailerWise** — configured, deployable coming-soon scaffold; trailer marketplace features are not yet built.
+- **VanAssist** (`vanassist.com.au`) — the existing caravan/RV service marketplace and compatibility baseline.
+- **TowSmart** (`towsmart.com.au`) — towing mass-limit calculator with saved user combinations and safety guidance.
+- **TrailerWise** (`trailerwise.com.au`) — searchable trailer marketplace with provider-managed listings and admin moderation.
 
 This is an incremental evolution of VanAssist, not a mass rename or three copied
 applications. VanAssist routes, IDs, slugs, users, providers, and workflows remain
@@ -16,7 +16,7 @@ Implemented foundation:
 
 - Existing VanAssist public, customer, provider, park, and admin functionality.
 - Typed brand registry, domain/environment resolution, and request brand context.
-- Disabled-brand gate that prevents TowWise/TrailerWise hosts from exposing
+- Disabled-brand gate that prevents TowSmart/TrailerWise hosts from exposing
   VanAssist routes.
 - Additive brand, provider-listing, brand-profile, brand-role, and provider-
   membership database migrations.
@@ -29,15 +29,22 @@ Implemented foundation:
 - PHPUnit unit/database integration tests, PHPStan, Composer audit, and fresh
   MySQL migration/seed/backfill CI checks.
 
-Not complete:
+Implemented brand applications:
+
+- TowSmart towing calculator, saved combinations, safety explanations, and
+  brand-isolated public routes.
+- TrailerWise searchable trailer marketplace, provider listing management, and
+  admin moderation foundations.
+- BinaryLane Docker production runtime for the shared three-domain deployment.
+
+Future expansion:
 
 - Full brand-scoping of every operational table/query.
 - Shared cross-domain sign-in.
-- TowWise towing functionality.
-- TrailerWise marketplace functionality.
 - Full integration/E2E/accessibility test coverage.
 - Production Stripe charging.
-- Completion of all production-readiness blockers.
+- Transactional production email, off-server application backups, and final
+  public-launch acceptance testing.
 
 Do not treat the current branch as production-ready without following
 [`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md).
@@ -50,8 +57,9 @@ Do not treat the current branch as production-ready without following
 - Composer 2
 - Server-rendered PHP and vanilla JavaScript
 
-The application continues to support conventional Linux/cPanel hosting. Only
-`public/` should be web-accessible.
+Production runs on the documented BinaryLane Docker runtime. The application
+also supports conventional Linux/cPanel hosting. Only `public/` should be
+web-accessible.
 
 ## Local setup
 
@@ -94,7 +102,7 @@ app/Platform/Brand       typed brand registry, resolver and context
 app/Controllers          public and portal/admin endpoints
 app/Models               lightweight PDO models
 app/Services             shared and legacy VanAssist business services
-app/Views                server-rendered templates and brand scaffolds
+app/Views                server-rendered, brand-aware application templates
 config                   environment-derived application and brand configuration
 database/migrations      authoritative ordered schema changes
 database/seeds           core/content/location/provider seed data
@@ -102,6 +110,7 @@ public                   only web-accessible directory
 storage                  private runtime data
 routes                   route registrars
 scripts                  migration, seed, backfill and deployment tools
+infrastructure/binarylane production Docker, Caddy, monitoring and backup tooling
 tests                    unit and database integration tests
 ```
 
