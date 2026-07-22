@@ -35,6 +35,7 @@ $nav = [
     ],
     'Content' => [
         ['Pages & blocks', '/admin/content'],
+        ['Social studio', '/admin/social-media'],
         ['Email templates', '/admin/email-templates'],
         ['Notifications', '/admin/notifications'],
         ['SEO', '/admin/seo'],

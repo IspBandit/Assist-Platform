@@ -89,9 +89,12 @@ $this->extend('layouts.public');
             </div>
 
             <div class="hero-art">
-                <img class="hero-photo" src="<?= e(asset('img/hero-home.jpg')) ?>" width="1536" height="1024"
-                     alt="Mobile caravan technician servicing a touring caravan at a regional Australian campsite at sunset"
-                     loading="eager" fetchpriority="high">
+                <picture>
+                    <source media="(max-width: 719px)" srcset="<?= e(asset('img/vanassist-hero-mobile.webp')) ?>">
+                    <img class="hero-photo" src="<?= e(asset('img/vanassist-hero-desktop.webp')) ?>" width="1824" height="864"
+                         alt="Mobile caravan technician helping travellers with their caravan in regional Australia"
+                         loading="eager" fetchpriority="high">
+                </picture>
             </div>
         </div>
     </div>
@@ -185,5 +188,9 @@ $this->extend('layouts.public');
         <a class="btn btn-primary btn-lg" href="<?= e(url('request-assistance')) ?>">Request assistance</a>
     </div>
 </section>
+
+<nav class="mobile-action-dock mobile-action-dock--vanassist" aria-label="VanAssist primary actions">
+    <a href="<?= e(url('find')) ?>">Find help</a><a href="<?= e(url('request-assistance')) ?>">Request assistance</a>
+</nav>
 
 <?php $this->endSection(); ?>

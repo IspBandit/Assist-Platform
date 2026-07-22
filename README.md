@@ -137,6 +137,7 @@ was removed so fresh installs cannot accidentally bypass later migrations.
 - [Database dictionary](docs/DATABASE_DICTIONARY.md)
 - [Administrator guide](docs/ADMINISTRATOR_GUIDE.md)
 - [Operations runbook](docs/OPERATIONS_RUNBOOK.md)
+- [Transactional email](docs/TRANSACTIONAL_EMAIL.md)
 - [Backup and restore](docs/BACKUP_AND_RESTORE.md)
 
 AI coding agents must also follow [`AGENTS.md`](AGENTS.md) and the permanent

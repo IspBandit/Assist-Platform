@@ -15,7 +15,7 @@ TARGET=/opt/assist-platform
 
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  ca-certificates curl gnupg ufw fail2ban unattended-upgrades openssl
+  ca-certificates curl gnupg ufw fail2ban unattended-upgrades openssl restic
 
 if ! command -v docker >/dev/null 2>&1; then
   install -m 0755 -d /etc/apt/keyrings
@@ -41,6 +41,8 @@ install -o root -g root -m 0640 "$SOURCE_DIR/Dockerfile" "$TARGET/runtime/Docker
 install -o root -g root -m 0640 "$SOURCE_DIR/Caddyfile" "$TARGET/runtime/Caddyfile"
 install -o root -g root -m 0640 "$SOURCE_DIR/php.ini" "$TARGET/runtime/php.ini"
 install -o root -g root -m 0750 "$SOURCE_DIR/firewall.sh" "$TARGET/runtime/firewall.sh"
+install -d -o root -g root -m 0750 "$TARGET/runtime/ops"
+find "$SOURCE_DIR/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$TARGET/runtime/ops/" \;
 chown -R 82:82 "$TARGET/shared/storage" "$TARGET/shared/uploads-public"
 find "$TARGET/shared/storage" "$TARGET/shared/uploads-public" -type d -exec chmod 0750 {} +
 

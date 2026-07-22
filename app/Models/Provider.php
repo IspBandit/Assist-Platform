@@ -141,6 +141,64 @@ final class Provider extends Model
         return ['rows' => $rows, 'total' => $total];
     }
 
+    /** @return array{rows:array<int,array<string,mixed>>,total:int} */
+    public static function brandDirectory(int $brandId, ?int $townId, ?int $categoryId, string $search, int $limit, int $offset): array
+    {
+        $where = ["pbl.status = 'active'", 'pbl.search_visible = 1', 'pbl.deleted_at IS NULL', "p.status = 'active'", 'p.deleted_at IS NULL', 'pbl.brand_id = ?'];
+        $params = [$brandId];
+        $joins = ' JOIN provider_brand_listings pbl ON pbl.provider_id = p.id LEFT JOIN towns t ON t.id = p.base_town_id ';
+        if ($categoryId !== null && $categoryId > 0) {
+            $joins .= ' JOIN provider_brand_category_assignments pbca ON pbca.listing_id = pbl.id AND pbca.category_id = ? ';
+            array_unshift($params, $categoryId);
+        }
+        if ($townId !== null && $townId > 0) {
+            $where[] = ProviderCoverage::sqlServesTown();
+            array_push($params, ...ProviderCoverage::servesTownParams($townId));
+        }
+        if ($search !== '') {
+            $where[] = '(pbl.display_name LIKE ? OR p.business_name LIKE ? OR p.description LIKE ?)';
+            $like = '%' . $search . '%';
+            array_push($params, $like, $like, $like);
+        }
+        $clause = ' WHERE ' . implode(' AND ', $where);
+        $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $joins . $clause, $params);
+        $rows = Database::select(
+            'SELECT DISTINCT p.id, pbl.slug, pbl.display_name AS business_name, p.description, p.service_model, '
+            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name '
+            . 'FROM providers p ' . $joins . $clause
+            . ' ORDER BY pbl.is_featured DESC, pbl.is_verified DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
+            $params
+        );
+        return ['rows' => $rows, 'total' => $total];
+    }
+
+    /** @return array<string,mixed>|null */
+    public static function findPublicBrandBySlug(int $brandId, string $slug): ?array
+    {
+        return Database::selectOne(
+            'SELECT p.*, pbl.slug AS brand_slug, pbl.display_name AS brand_display_name, pbl.is_verified AS brand_verified, '
+            . 'pbl.is_featured AS brand_featured, pbl.seo_title AS brand_seo_title, pbl.seo_description AS brand_seo_description, '
+            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, t.latitude AS town_lat, t.longitude AS town_lng, '
+            . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
+            . 'FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id '
+            . 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = p.region_id '
+            . "WHERE pbl.brand_id = ? AND pbl.slug = ? AND pbl.status = 'active' AND pbl.search_visible = 1 AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL",
+            [$brandId, $slug]
+        );
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    public static function brandServices(int $brandId, int $providerId): array
+    {
+        return Database::select(
+            'SELECT c.id AS category_id, c.name, c.category_key AS slug, a.is_verified, a.confidence '
+            . 'FROM provider_brand_listings l JOIN provider_brand_category_assignments a ON a.listing_id = l.id '
+            . 'JOIN brand_provider_categories c ON c.id = a.category_id '
+            . 'WHERE l.brand_id = ? AND l.provider_id = ? AND c.is_active = 1 ORDER BY c.sort_order, c.name',
+            [$brandId, $providerId]
+        );
+    }
+
     /** @return array<string,mixed>|null Active provider profile by slug. */
     public static function findPublicBySlug(string $slug): ?array
     {

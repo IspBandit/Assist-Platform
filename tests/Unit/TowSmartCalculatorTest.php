@@ -19,6 +19,7 @@ final class TowSmartCalculatorTest extends TestCase
         self::assertSame(2250.0, $result['calculated']['trailer_gtm']);
         self::assertSame(5000.0, $result['calculated']['combination_mass']);
         self::assertSame(350.0, $result['calculated']['vehicle_payload_remaining']);
+        self::assertSame(10.0, $result['calculated']['towball_percentage']);
     }
 
     public function testReportsTheOverallResultWhenAnyLimitIsExceeded(): void
@@ -50,6 +51,24 @@ final class TowSmartCalculatorTest extends TestCase
         $input = $this->validInput();
         unset($input['vehicle_gcm']);
 
+        $this->expectException(InvalidArgumentException::class);
+        TowSmartCalculator::calculate($input);
+    }
+
+    public function testRejectsImpossibleTowballAndZeroRatedLimits(): void
+    {
+        $input = $this->validInput();
+        $input['towball_mass'] = 2600;
+
+        try {
+            TowSmartCalculator::calculate($input);
+            self::fail('Impossible towball mass was accepted');
+        } catch (InvalidArgumentException $e) {
+            self::assertStringContainsString('Towball mass', $e->getMessage());
+        }
+
+        $input = $this->validInput();
+        $input['vehicle_gvm'] = 0;
         $this->expectException(InvalidArgumentException::class);
         TowSmartCalculator::calculate($input);
     }

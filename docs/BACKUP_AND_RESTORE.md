@@ -14,6 +14,21 @@ required application backup.
 Never commit backups or copy production personal data into an unprotected local
 development environment.
 
+## Independent off-site automation
+
+The BinaryLane runtime includes `assist-offsite-backup.sh` and
+`assist-offsite-restore-drill.sh`. They use restic with a private
+S3-compatible bucket. Database, private media, public media and production
+configuration are encrypted before upload. Retention and repository integrity
+are checked automatically, and the newest database is restored into a
+disposable MariaDB container each week without touching production.
+
+Copy `infrastructure/binarylane/ops/backup.env.example` to
+`/opt/assist-platform/config/backup.env`, set mode `0600`, and supply the
+independent bucket endpoint, access key, secret and a unique restic password.
+Until those credentials exist, onsite backups do not satisfy the independent
+off-server launch control.
+
 ## Restore rehearsal
 
 1. Provision an isolated non-public environment.
@@ -27,4 +42,3 @@ development environment.
 
 Perform a rehearsal after material schema/storage changes and on a regular
 schedule. A backup is not considered recoverable until restoration is proven.
-

@@ -35,6 +35,18 @@ final class TowSmartCalculator
             }
         }
 
+        foreach (['vehicle_gvm', 'vehicle_gcm', 'vehicle_max_braked_towing', 'vehicle_max_towball', 'trailer_atm'] as $limit) {
+            if ($values[$limit] <= 0) {
+                throw new InvalidArgumentException("Rated limits must be greater than zero: {$limit}");
+            }
+        }
+        if ($values['trailer_loaded_mass'] <= 0) {
+            throw new InvalidArgumentException('Actual loaded trailer mass must be greater than zero');
+        }
+        if ($values['towball_mass'] > $values['trailer_loaded_mass']) {
+            throw new InvalidArgumentException('Towball mass cannot exceed the actual loaded trailer mass');
+        }
+
         $vehicleLoaded = $values['vehicle_mass_before_ball'] + $values['towball_mass'];
         $trailerGtm = $values['trailer_loaded_mass'] - $values['towball_mass'];
         $combinationMass = $values['vehicle_mass_before_ball'] + $values['trailer_loaded_mass'];
@@ -66,6 +78,7 @@ final class TowSmartCalculator
                 'combination_mass' => $combinationMass,
                 'vehicle_payload_remaining' => $values['vehicle_gvm'] - $vehicleLoaded,
                 'trailer_payload_remaining' => $values['trailer_atm'] - $values['trailer_loaded_mass'],
+                'towball_percentage' => round(($values['towball_mass'] / $values['trailer_loaded_mass']) * 100, 1),
             ],
             'checks' => $checks,
             'disclaimer' => 'Informational estimate only. Confirm the exact vehicle and trailer specifications and obtain actual loaded weights. Requirements can vary by jurisdiction and modification.',

@@ -35,6 +35,7 @@ return [
         'park_documents'     => 'storage/private/park-documents',
         'park_logos'         => 'public/uploads-public/park-logos',
         'provider_promotions' => 'public/uploads-public/provider-promotions',
+        'social_media_assets' => 'storage/private/social-media-assets',
         'exports'            => 'storage/private/exports',
         'public_uploads'     => 'public/uploads-public',
     ],

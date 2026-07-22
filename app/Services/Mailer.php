@@ -29,7 +29,11 @@ final class Mailer
         // missing SMTP host means we genuinely cannot send — leave the queue
         // pending in that case rather than burning delivery attempts.
         $cfg = self::config();
-        if (trim((string) $cfg['host']) === '') {
+        $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
+        $transportReady = $driver === 'graph'
+            ? trim((string) ($cfg['graph_tenant_id'] ?? '')) !== '' && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
+            : trim((string) $cfg['host']) !== '';
+        if (!$transportReady) {
             Logger::warning('SMTP host not configured; email queue left pending. Set mail settings in Admin → Settings.', [], 'email');
             return $result;
         }
@@ -37,10 +41,10 @@ final class Mailer
         $maxAttempts = (int) config('mail.max_attempts', 3);
         $rows = self::claimBatch($batch, $maxAttempts);
 
-        $transport = class_exists(PHPMailer::class) ? 'PHPMailer' : 'SmtpClient (built-in)';
+        $transport = $driver === 'graph' ? 'Microsoft Graph' : (class_exists(PHPMailer::class) ? 'PHPMailer' : 'SmtpClient (built-in)');
         Logger::info('Processing email queue: ' . count($rows) . ' pending item(s).', [
             'transport'  => $transport,
-            'host'       => $cfg['host'],
+            'host'       => $driver === 'graph' ? 'graph.microsoft.com' : $cfg['host'],
             'port'       => $cfg['port'],
             'encryption' => $cfg['encryption'] !== '' ? $cfg['encryption'] : 'plain',
             'username'   => $cfg['username'],
@@ -237,6 +241,7 @@ final class Mailer
         }
 
         return [
+            'driver'       => strtolower((string) ($env['driver'] ?? 'smtp')),
             'host'         => $db('mail_host', 'host'),
             'port'         => (int) ($db('mail_port', 'port') ?: 587),
             'username'     => $username,
@@ -245,12 +250,30 @@ final class Mailer
             'from_address' => $fromAddress,
             'from_name'    => $fromName,
             'max_attempts' => (int) ($env['max_attempts'] ?? 3),
+            'graph_tenant_id' => (string) ($env['graph']['tenant_id'] ?? ''),
+            'graph_client_id' => (string) ($env['graph']['client_id'] ?? ''),
+            'graph_certificate_path' => (string) ($env['graph']['certificate_path'] ?? ''),
+            'graph_private_key_path' => (string) ($env['graph']['private_key_path'] ?? ''),
+            'graph_private_key_password' => (string) ($env['graph']['private_key_password'] ?? ''),
+            'graph_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
         ];
     }
 
     private static function send(array $row): void
     {
         $cfg = self::config((int) $row['brand_id']);
+
+        if (($cfg['driver'] ?? 'smtp') === 'graph') {
+            MicrosoftGraphMailClient::send(
+                $cfg,
+                (string) $row['recipient_email'],
+                (string) ($row['recipient_name'] ?? ''),
+                (string) $row['subject'],
+                (string) $row['html_body'],
+                (string) ($row['text_body'] ?? '')
+            );
+            return;
+        }
 
         // Prefer PHPMailer when installed; otherwise use the built-in SMTP client
         // so delivery works on hosts without Composer dependencies.
