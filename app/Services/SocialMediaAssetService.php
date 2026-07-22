@@ -169,8 +169,8 @@ final class SocialMediaAssetService
     private static function font(bool $bold): string
     {
         $paths = $bold
-            ? ['/usr/share/fonts/ttf-dejavu/DejaVuSans-Bold.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 'C:/Windows/Fonts/arialbd.ttf']
-            : ['/usr/share/fonts/ttf-dejavu/DejaVuSans.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 'C:/Windows/Fonts/arial.ttf'];
+            ? ['/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf', '/usr/share/fonts/ttf-dejavu/DejaVuSans-Bold.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf', 'C:/Windows/Fonts/arialbd.ttf']
+            : ['/usr/share/fonts/dejavu/DejaVuSans.ttf', '/usr/share/fonts/ttf-dejavu/DejaVuSans.ttf', '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', 'C:/Windows/Fonts/arial.ttf'];
         foreach ($paths as $path) { if (is_file($path)) { return $path; } }
         throw new RuntimeException('A supported TrueType font is unavailable.');
     }
