@@ -208,7 +208,7 @@ return [
                 'wordmark_accent' => 'Wise',
                 'header_descriptor' => 'TRAILER SERVICE NETWORK',
                 'tagline' => 'Smarter trailer ownership.',
-                'description' => 'Trailer businesses, services, listings and compliance resources.',
+                'description' => 'Trailer repairers, service centres, parts, inspections, compliance and ownership resources.',
                 'social_image' => '/assets/brands/trailerwise/mark.svg',
             ],
             'contact' => [
@@ -223,7 +223,7 @@ return [
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Find trailer services', 'path' => '/providers'],
-                ['label' => 'Trailers for sale', 'path' => '/marketplace'],
+                ['label' => 'Service categories', 'path' => '/services'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],

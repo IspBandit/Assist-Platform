@@ -17,7 +17,7 @@ final class TrailerWiseController extends Controller
         $featured = $this->listings('', '', '', 6);
         return $this->view('trailerwise.home', [
             'title' => 'Smarter trailer ownership',
-            'metaDescription' => 'Find Australian trailer businesses, services and trailers for sale or hire.',
+            'metaDescription' => 'Find Australian trailer repairers, service centres, parts suppliers, inspectors, certifiers and specialist businesses.',
             'canonical' => current_brand()->url() . '/',
             'listings' => $featured,
         ]);
