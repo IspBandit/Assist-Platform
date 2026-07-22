@@ -8,10 +8,12 @@ Last verified: 22 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production commit: `2e62a6876759b837ea7e8c691920793d7d316605`.
-- Release directory: `/opt/assist-platform/releases/2e62a6876759`.
-- Artefact SHA-256: `e2ac93a331725bf13cf18f1efc43c898cbfb0dcfe0229d8b1345e73b57a25cc2`.
-- All 37 migrations were applied; the installer is locked.
+- Production code commit: `2f7ef9f`.
+- Release directory: `/opt/assist-platform/releases/2f7ef9f`.
+- The deployed Social Studio service file was verified against the GitHub copy
+  with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
+- All migrations through `039_social_media_studio.sql` are applied; the
+  installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
 credentials in this file or Git.
@@ -25,8 +27,19 @@ credentials in this file or Git.
 - Scheduled application jobs were installed and manual notification, cleanup and
   database-backup runs succeeded after writable lock storage was corrected.
 - Brand-specific canonical URLs, robots and sitemaps were verified.
-- VanAssist representative pages, TowSmart calculator/login and TrailerWise
-  homepage/marketplace returned 200.
+- VanAssist, TowSmart and TrailerWise homepages, contact pages, provider
+  directories and mobile hero artwork returned 200. TowSmart's calculator and
+  TrailerWise's secondary marketplace also returned 200.
+- Public support addresses resolve to `support@vanassist.com.au`,
+  `support@towsmart.com.au` and `support@trailerwise.com.au` respectively.
+- Production contains 1,399 active providers, 2,600 TowSmart/TrailerWise brand
+  listings and 5,341 brand-category assignments. Imported evidence remains
+  explicitly unverified until a business is verified.
+- Social Studio contains 30 reviewable/downloadable draft assets for each brand
+  (90 total), covering Instagram and Facebook posts, stories, profiles and
+  covers across five campaign intentions.
+- A fresh database backup from 22 July passed its SHA-256 check and restored
+  into a disposable MariaDB 11.4 instance with 135 tables and 1,399 providers.
 - A super-administrator login reached `/admin` successfully.
 - GitHub CI passed for the production commit.
 
@@ -37,19 +50,21 @@ disabled. This is not the same as full commercial/public launch approval.
 
 Before full indexed launch:
 
-1. Configure and test transactional SMTP.
-2. Ensure TowSmart and TrailerWise use their own sender domains.
-3. Establish encrypted independent off-server application/media/database backups
-   and perform a restore rehearsal.
-4. Install owner-controlled SSH keys, disable password/root SSH as appropriate,
+1. Complete the Microsoft Entra application registration, certificate and
+   mailbox policy, then activate and test Microsoft Graph transactional email.
+2. Supply an independent S3-compatible repository (for example Cloudflare R2)
+   and credentials so the tested backup set can be copied off-server and the
+   repository-based restore drill can run.
+3. Install owner-controlled SSH keys, disable password/root SSH as appropriate,
    and rotate previously exposed temporary passwords.
-5. Change any exposed application administrator password.
-6. Correct TrailerWise product positioning and content.
-7. Complete owner acceptance of content, providers and critical journeys.
+4. Change any exposed application administrator password.
+5. Complete owner acceptance of content, providers and critical journeys.
 
 ## Known product limitations
 
-See `PRODUCT_AND_FEATURES.md`. In particular, TowSmart is an MVP and TrailerWise
-currently over-emphasises sales/hire listings. Never infer product completion
-from an HTTP 200 response.
+See `PRODUCT_AND_FEATURES.md`. TowSmart remains an MVP whose calculations are
+general guidance, and provider records still require progressive owner/business
+verification. TrailerWise is now service-first; trailer sales remain a clearly
+secondary module. Never infer commercial launch completion from an HTTP 200
+response.
 
