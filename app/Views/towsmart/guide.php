@@ -22,11 +22,11 @@
     <section id="rules" class="section"><div class="section-heading"><h2>Regulations and authoritative sources</h2><p>Towing requirements change and differ by jurisdiction. TowSmart does not replace a road authority, manufacturer, licensed weighbridge or qualified engineer.</p></div><div class="grid grid-3">
         <?php foreach ([
             ['National vehicle standards','https://www.infrastructure.gov.au/infrastructure-transport-vehicles/vehicles/vehicle-design-regulation'],
-            ['Queensland towing guidance','https://www.qld.gov.au/transport/safety/rules/road/towing'],
-            ['NSW towing guidance','https://www.nsw.gov.au/driving-boating-and-transport/vehicle-registration/how-to-register/towing-a-trailer'],
+            ['Queensland towing guidance','https://www.qld.gov.au/transport/vehicle-safety/towing/towing-vehicles-and-trailers'],
+            ['NSW towing guidance','https://www.nsw.gov.au/driving-boating-and-transport/roads-safety-and-rules/vehicle-safety-and-compliance/towing-a-caravan'],
             ['Victoria towing guidance','https://transport.vic.gov.au/road-rules-and-safety/caravans-and-towing'],
             ['South Australia towing','https://www.sa.gov.au/topics/driving-and-transport/vehicles/vehicle-standards-and-modifications/towing'],
-            ['Western Australia towing','https://www.transport.wa.gov.au/licensing/towing-a-trailer.asp'],
+            ['Western Australia towing','https://transport.wa.gov.au/licensing/vehicle/safety-standards-security/towing'],
         ] as $source): ?><a class="card" href="<?= e_attr($source[1]) ?>" rel="noopener noreferrer" target="_blank"><strong><?= $this->e($source[0]) ?></strong><p class="muted">Open official guidance ↗</p></a><?php endforeach; ?>
     </div></section>
     <section class="product-cta"><div class="container"><div><h2>Ready to build your combination?</h2><p>Select your actual vehicle and trailer, then add the load you carry.</p></div><a class="btn btn-primary btn-lg" href="<?= e(url('calculator')) ?>">Open calculator</a></div></section>

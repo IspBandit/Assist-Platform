@@ -41,6 +41,7 @@ $headerBrandMeta = $headerBrand->metadata();
                     <?php endif; ?>
                 <?php else: ?>
                 <li><a href="<?= e(url('find')) ?>">Find a service</a></li>
+                <li><a href="<?= e(url('stays')) ?>">Find a stay</a></li>
                 <li><a href="<?= e(url('services')) ?>">Services</a></li>
                 <li><a href="<?= e(url('service-runs')) ?>">Service runs</a></li>
                 <li><a href="<?= e(url('providers')) ?>">Providers</a></li>

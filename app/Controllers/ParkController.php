@@ -61,7 +61,7 @@ final class ParkController extends Controller
         return $this->view('park.profile', [
             'title'   => 'Park profile',
             'park'    => $park,
-            'towns'   => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'   => Database::select('SELECT t.id, t.name, s.abbreviation AS state_abbr FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active = 1 ORDER BY t.name, s.abbreviation'),
             'regions' => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'errors'  => Session::errors(),
         ]);
@@ -82,8 +82,9 @@ final class ParkController extends Controller
 
         Database::query(
             'UPDATE caravan_parks SET name = ?, address = ?, town_id = ?, region_id = ?, state_id = ?, phone = ?, '
-            . 'email = ?, website = ?, facebook_url = ?, description = ?, number_of_sites = ?, guest_request_contact = ?, '
-            . 'public_page_enabled = ?, seo_title = ?, seo_description = ?, updated_at = NOW() WHERE id = ?',
+            . 'email = ?, website = ?, booking_url = ?, facebook_url = ?, description = ?, number_of_sites = ?, guest_request_contact = ?, '
+            . 'stay_type = ?, price_type = ?, powered_sites = ?, unpowered_sites = ?, toilets = ?, showers = ?, potable_water = ?, dump_point = ?, pets_allowed = ?, max_stay = ?, '
+            . 'public_page_enabled = ?, verification_type = ?, verified_at = NOW(), seo_title = ?, seo_description = ?, updated_at = NOW() WHERE id = ?',
             [
                 $name,
                 trim((string) $request->input('address')) ?: null,
@@ -93,11 +94,19 @@ final class ParkController extends Controller
                 trim((string) $request->input('phone')) ?: null,
                 trim((string) $request->input('email')) ?: null,
                 trim((string) $request->input('website')) ?: null,
+                trim((string) $request->input('booking_url')) ?: null,
                 trim((string) $request->input('facebook_url')) ?: null,
                 trim((string) $request->input('description')) ?: null,
                 (int) $request->input('number_of_sites') ?: null,
                 trim((string) $request->input('guest_request_contact')) ?: null,
+                in_array($request->input('stay_type'), ['caravan_park','campground','free_camp','showground','rest_area','farm_stay','other'], true) ? $request->input('stay_type') : 'caravan_park',
+                in_array($request->input('price_type'), ['free','donation','low_cost','paid','unknown'], true) ? $request->input('price_type') : 'unknown',
+                $request->input('powered_sites') ? 1 : 0, $request->input('unpowered_sites') ? 1 : 0,
+                $request->input('toilets') ? 1 : 0, $request->input('showers') ? 1 : 0,
+                $request->input('potable_water') ? 1 : 0, $request->input('dump_point') ? 1 : 0,
+                $request->input('pets_allowed') ? 1 : 0, trim((string) $request->input('max_stay')) ?: null,
                 $request->input('public_page_enabled') ? 1 : 0,
+                'operator',
                 trim((string) $request->input('seo_title')) ?: null,
                 trim((string) $request->input('seo_description')) ?: null,
                 $id,
@@ -186,7 +195,7 @@ final class ParkController extends Controller
         return $this->view('park.register-request', [
             'title'      => 'Register a guest request',
             'park'       => $park,
-            'towns'      => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'      => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'categories' => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
             'errors'     => Session::errors(),
         ]);

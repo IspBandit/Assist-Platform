@@ -109,6 +109,9 @@ final class SitemapController extends Controller
             ['faqs', 0.5],
             ['caravan-parks/apply', 0.4],
         ];
+        if (current_brand()->id() === 'vanassist') {
+            $static[] = ['stays', 0.9];
+        }
         foreach ($static as [$path, $priority]) {
             $urls[] = ['loc' => url($path), 'lastmod' => null, 'priority' => $priority];
         }

@@ -106,6 +106,13 @@ $this->extend('layouts.public');
 
 <?php $this->include('partials.home-nearby-providers'); ?>
 
+<section class="section section-sand">
+    <div class="container"><div class="product-cta">
+        <div><div class="eyebrow">Plan a safe stop</div><h2>Getting tired? Find a place to stay.</h2><p>Use your location or search a town for caravan parks, campgrounds, showgrounds and free or low-cost stays nearby.</p></div>
+        <a class="btn btn-primary btn-lg" href="<?= e(url('stays')) ?>">Find a stay near me</a>
+    </div></div>
+</section>
+
 <?php if (!empty($freeMessage)): ?>
 <section class="section section-sand" style="padding:1.25rem 0">
     <div class="container"><div class="alert alert-info mb-0"><?= $this->e($freeMessage) ?></div></div>
@@ -190,7 +197,7 @@ $this->extend('layouts.public');
 </section>
 
 <nav class="mobile-action-dock mobile-action-dock--vanassist" aria-label="VanAssist primary actions">
-    <a href="<?= e(url('find')) ?>">Find help</a><a href="<?= e(url('request-assistance')) ?>">Request assistance</a>
+    <a href="<?= e(url('find')) ?>">Find help</a><a href="<?= e(url('stays')) ?>">Find a stay</a><a href="<?= e(url('request-assistance')) ?>">Request help</a>
 </nav>
 
 <?php $this->endSection(); ?>

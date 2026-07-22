@@ -108,8 +108,8 @@ final class RunController extends Controller
             'bookings'   => ServiceRun::bookings($id),
             'statuses'   => array_intersect_key(RunWorkflow::LABELS, array_flip(self::PROVIDER_STATUSES)),
             'allTowns'   => Database::select(
-                'SELECT t.id, t.name, r.name AS region_name FROM towns t '
-                . 'LEFT JOIN regions r ON r.id = t.region_id WHERE t.is_active = 1 ORDER BY r.name, t.name'
+                "SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name, r.name AS region_name FROM towns t "
+                . 'JOIN states s ON s.id=t.state_id LEFT JOIN regions r ON r.id = t.region_id WHERE t.is_active = 1 ORDER BY r.name, t.name'
             ),
             'categories' => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
         ]);

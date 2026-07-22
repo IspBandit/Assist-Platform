@@ -23,7 +23,7 @@ $this->extend('layouts.admin');
                 <select id="town_id" name="town_id">
                     <option value="">None</option>
                     <?php foreach ($towns as $t): ?>
-                        <option value="<?= (int) $t['id'] ?>" <?= (int) $park['town_id'] === (int) $t['id'] ? 'selected' : '' ?>><?= $this->e((string) $t['name']) ?></option>
+                        <option value="<?= (int) $t['id'] ?>" <?= (int) $park['town_id'] === (int) $t['id'] ? 'selected' : '' ?>><?= $this->e((string) $t['name']) ?> / <?= $this->e((string) $t['state_abbr']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -33,7 +33,10 @@ $this->extend('layouts.admin');
             <div class="form-group"><label for="phone">Phone</label><input type="text" id="phone" name="phone" value="<?= e_attr((string) ($park['phone'] ?? '')) ?>"></div>
             <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" value="<?= e_attr((string) ($park['email'] ?? '')) ?>"></div>
         </div>
-        <div class="form-group"><label for="website">Website</label><input type="text" id="website" name="website" value="<?= e_attr((string) ($park['website'] ?? '')) ?>"></div>
+        <div class="grid grid-2"><div class="form-group"><label for="website">Website</label><input type="url" id="website" name="website" value="<?= e_attr((string) ($park['website'] ?? '')) ?>"></div><div class="form-group"><label for="booking_url">Booking link</label><input type="url" id="booking_url" name="booking_url" value="<?= e_attr((string) ($park['booking_url'] ?? '')) ?>"></div></div>
+        <div class="grid grid-2"><div class="form-group"><label for="stay_type">Stay type</label><select id="stay_type" name="stay_type"><?php foreach (['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','showground'=>'Showground','rest_area'=>'Rest area','farm_stay'=>'Farm stay','other'=>'Other'] as $v=>$l): ?><option value="<?= e_attr($v) ?>" <?= ($park['stay_type'] ?? '')===$v?'selected':'' ?>><?= $this->e($l) ?></option><?php endforeach; ?></select></div><div class="form-group"><label for="price_type">Cost</label><select id="price_type" name="price_type"><?php foreach (['free'=>'Free','donation'=>'Donation','low_cost'=>'Low cost','paid'=>'Paid','unknown'=>'Unknown'] as $v=>$l): ?><option value="<?= e_attr($v) ?>" <?= ($park['price_type'] ?? '')===$v?'selected':'' ?>><?= $this->e($l) ?></option><?php endforeach; ?></select></div></div>
+        <div class="grid grid-2"><div class="form-group"><label for="verification_type">Verification</label><select id="verification_type" name="verification_type"><?php foreach (['unverified'=>'Unverified','community'=>'Community sourced','authority'=>'Council / authority confirmed','operator'=>'Operator verified'] as $v=>$l): ?><option value="<?= e_attr($v) ?>" <?= ($park['verification_type'] ?? '')===$v?'selected':'' ?>><?= $this->e($l) ?></option><?php endforeach; ?></select></div><div class="form-group"><label for="listing_plan">Listing plan</label><select id="listing_plan" name="listing_plan"><?php foreach (['free'=>'Free','verified'=>'Verified','premium'=>'Premium','featured'=>'Featured'] as $v=>$l): ?><option value="<?= e_attr($v) ?>" <?= ($park['listing_plan'] ?? '')===$v?'selected':'' ?>><?= $this->e($l) ?></option><?php endforeach; ?></select></div></div>
+        <label><input type="checkbox" name="is_featured" value="1" <?= !empty($park['is_featured']) ? 'checked' : '' ?>> Sponsored/featured placement (must display the Sponsored label)</label>
         <label><input type="checkbox" name="public_page_enabled" value="1" <?= $park['public_page_enabled'] ? 'checked' : '' ?>> Public page enabled</label>
 
         <div class="btn-row"><button type="submit" class="btn btn-primary">Save changes</button></div>

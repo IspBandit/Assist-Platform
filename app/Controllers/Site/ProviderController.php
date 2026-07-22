@@ -42,7 +42,7 @@ final class ProviderController extends Controller
             'search' => $search,
             'townId' => $townId,
             'categoryId' => $categoryId,
-            'towns' => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns' => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'categories' => $categories,
             'brand' => $brand,
         ]);

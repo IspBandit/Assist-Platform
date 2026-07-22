@@ -76,7 +76,7 @@ final class ProvidersController extends Controller
                 [$id]
             ),
             'allCategories' => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
-            'allTowns'      => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'allTowns'      => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'allRegions'    => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'foundingPromo' => $foundingPromo,
             'promoImageUrls' => $foundingPromo !== null ? FoundingGraphicService::imageUrls($foundingPromo) : ['desktop' => null, 'mobile' => null],
@@ -92,7 +92,7 @@ final class ProvidersController extends Controller
         return $this->view('admin.providers.form', [
             'title'    => $provider ? 'Edit provider' : 'New provider',
             'provider' => $provider,
-            'towns'    => Database::select('SELECT id, name FROM towns WHERE is_active = 1 ORDER BY name'),
+            'towns'    => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'regions'  => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
         ]);
     }
