@@ -4,10 +4,14 @@
 
 Assist Platform uses one versioned codebase and may deploy the same immutable
 release artefact independently for VanAssist, TowSmart, TrailerWise, and admin
-hosts. VanAssist is the only fully enabled product during the initial migration.
+hosts. All three brands have enabled public application modules; launch mode and
+feature flags control which capabilities are exposed in each environment.
 
-The deployment target remains PHP/Apache/MySQL-compatible hosting. cPanel is
-supported, but deployment safety must not depend on FTP timestamp/size heuristics.
+The production deployment runs on an Ubuntu 24.04 BinaryLane VPS using Docker
+Compose, PHP-FPM, MariaDB, and Caddy. The reproducible host/runtime files live
+under `infrastructure/binarylane/`. PHP/Apache/MySQL-compatible cPanel hosting
+remains supported, but deployment safety must not depend on FTP timestamp/size
+heuristics.
 
 ## Required production topology
 
@@ -72,22 +76,34 @@ Do not run production migrations concurrently from installer, admin, and CLI.
 
 ## Multi-brand configuration
 
-Each deployment sets:
+The shared multi-domain production deployment sets:
 
 ```dotenv
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://brand.example.com
-ASSIST_BRAND=vanassist
+ASSIST_BRAND=
 ASSIST_DEFAULT_BRAND=vanassist
 ASSIST_STRICT_BRAND_HOSTS=true
 ASSIST_ALLOW_BRAND_QUERY=false
 SESSION_SECURE=true
 ```
 
-Use the matching brand key for future TowSmart and TrailerWise deployments.
-Hostname validation must agree with the brand registry. A release must not serve
-an unknown production host.
+Leaving `ASSIST_BRAND` empty enables trusted hostname resolution for VanAssist,
+TowSmart, and TrailerWise in the same process. An independently deployed
+single-brand process may instead set the matching brand key. Hostname validation
+must agree with the brand registry. A release must not serve an unknown
+production host.
+
+## BinaryLane production runtime
+
+The committed runtime under `infrastructure/binarylane/` includes Ubuntu and
+Docker bootstrap, host protection, isolated Docker networks, PHP and database
+health checks, Caddy HTTPS, explicit FastCGI host propagation, service
+monitoring, scheduled tasks, and checksum-verified database backups.
+
+Copy environment values into root-owned production configuration files. Never
+commit passwords, application keys, SMTP credentials, or payment secrets.
 
 `APP_KEY` is also the key-encryption key for database-held SMTP credentials.
 Back it up in the deployment secret manager. Do not rotate it until stored

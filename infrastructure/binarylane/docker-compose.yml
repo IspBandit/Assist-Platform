@@ -1,0 +1,69 @@
+name: assist-platform
+
+services:
+  app:
+    build:
+      context: ./runtime
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: ./config/app.env
+    volumes:
+      - ./current:/var/www/html:ro
+      - ./shared/storage:/var/www/html/storage
+      - ./shared/uploads-public:/var/www/html/public/uploads-public
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "SCRIPT_NAME=/healthz SCRIPT_FILENAME=/var/www/html/public/index.php REQUEST_METHOD=GET REQUEST_URI=/healthz cgi-fcgi -bind -connect 127.0.0.1:9000 >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    networks: [frontend, backend]
+    security_opt: [no-new-privileges:true]
+
+  mariadb:
+    image: mariadb:11.4
+    restart: unless-stopped
+    env_file: ./config/infra.env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "healthcheck.sh --connect --innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [backend]
+    security_opt: [no-new-privileges:true]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./current:/var/www/html:ro
+      - ./shared/uploads-public:/var/www/html/public/uploads-public:ro
+      - ./runtime/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    networks: [frontend]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+
+networks:
+  frontend:
+  backend:
+    internal: true
+
+volumes:
+  mariadb_data:
+  caddy_data:
+  caddy_config:

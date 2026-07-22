@@ -1,0 +1,8 @@
+[Unit]
+Description=Assist Platform container health check
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/assist-healthcheck

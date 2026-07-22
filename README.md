@@ -29,15 +29,22 @@ Implemented foundation:
 - PHPUnit unit/database integration tests, PHPStan, Composer audit, and fresh
   MySQL migration/seed/backfill CI checks.
 
-Not complete:
+Implemented brand applications:
+
+- TowSmart towing calculator, saved combinations, safety explanations, and
+  brand-isolated public routes.
+- TrailerWise searchable trailer marketplace, provider listing management, and
+  admin moderation foundations.
+- BinaryLane Docker production runtime for the shared three-domain deployment.
+
+Future expansion:
 
 - Full brand-scoping of every operational table/query.
 - Shared cross-domain sign-in.
-- TowSmart towing functionality.
-- TrailerWise marketplace functionality.
 - Full integration/E2E/accessibility test coverage.
 - Production Stripe charging.
-- Completion of all production-readiness blockers.
+- Transactional production email, off-server application backups, and final
+  public-launch acceptance testing.
 
 Do not treat the current branch as production-ready without following
 [`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md).
@@ -50,8 +57,9 @@ Do not treat the current branch as production-ready without following
 - Composer 2
 - Server-rendered PHP and vanilla JavaScript
 
-The application continues to support conventional Linux/cPanel hosting. Only
-`public/` should be web-accessible.
+Production runs on the documented BinaryLane Docker runtime. The application
+also supports conventional Linux/cPanel hosting. Only `public/` should be
+web-accessible.
 
 ## Local setup
 
@@ -102,6 +110,7 @@ public                   only web-accessible directory
 storage                  private runtime data
 routes                   route registrars
 scripts                  migration, seed, backfill and deployment tools
+infrastructure/binarylane production Docker, Caddy, monitoring and backup tooling
 tests                    unit and database integration tests
 ```
 
