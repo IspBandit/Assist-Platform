@@ -11,7 +11,7 @@ final class TowSmartCatalogTest extends TestCase
 {
     public function testRecoveredCatalogueCountsAreStable(): void
     {
-        self::assertSame(['vehicles' => 157, 'trailers' => 3769], TowSmartCatalog::counts());
+        self::assertSame(['vehicles' => 163, 'trailers' => 3769], TowSmartCatalog::counts());
     }
 
     public function testVehicleSearchReturnsReferenceSpecification(): void
@@ -35,7 +35,7 @@ final class TowSmartCatalogTest extends TestCase
     public function testCurrentPrado250SeriesGradesAreSearchableWithDistinctPayloads(): void
     {
         $matches = TowSmartCatalog::search('vehicles', 'Prado 250 Series', 20);
-        self::assertCount(6, $matches);
+        self::assertCount(12, $matches);
 
         $labels = array_column($matches, 'label');
         self::assertNotEmpty(array_filter($labels, static fn (string $label): bool => str_contains($label, 'GXL 5-seat')));
@@ -47,5 +47,10 @@ final class TowSmartCatalogTest extends TestCase
         self::assertSame(2510, $altitude['kerb_weight']);
         self::assertSame(590, $altitude['payload']);
         self::assertSame(3500, $altitude['towing_capacity']);
+
+        $altitude2025Match = array_values(array_filter($matches, static fn (array $match): bool => str_contains((string) $match['label'], 'Altitude') && str_ends_with((string) $match['label'], '2025')))[0];
+        $altitude2025 = TowSmartCatalog::find('vehicles', (int) $altitude2025Match['id']);
+        self::assertSame(2520, $altitude2025['kerb_weight']);
+        self::assertSame(580, $altitude2025['payload']);
     }
 }

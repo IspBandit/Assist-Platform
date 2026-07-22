@@ -1813,7 +1813,7 @@
   },
   {
     "name": "Toyota LandCruiser Prado 250 Series GX 5-seat",
-    "years": "2025-current",
+    "years": "2026-current",
     "gvm": 3100,
     "front_axle_limit": 1605,
     "rear_axle_limit": 1860,
@@ -1825,7 +1825,7 @@
   },
   {
     "name": "Toyota LandCruiser Prado 250 Series GXL 5-seat",
-    "years": "2025-current",
+    "years": "2026-current",
     "gvm": 3100,
     "front_axle_limit": 1605,
     "rear_axle_limit": 1860,
@@ -1837,7 +1837,7 @@
   },
   {
     "name": "Toyota LandCruiser Prado 250 Series GXL 7-seat",
-    "years": "2025-current",
+    "years": "2026-current",
     "gvm": 3150,
     "front_axle_limit": 1605,
     "rear_axle_limit": 1860,
@@ -1849,7 +1849,7 @@
   },
   {
     "name": "Toyota LandCruiser Prado 250 Series VX 7-seat",
-    "years": "2025-current",
+    "years": "2026-current",
     "gvm": 3180,
     "front_axle_limit": 1605,
     "rear_axle_limit": 1860,
@@ -1861,7 +1861,7 @@
   },
   {
     "name": "Toyota LandCruiser Prado 250 Series Altitude 5-seat",
-    "years": "2025-current",
+    "years": "2026-current",
     "gvm": 3100,
     "front_axle_limit": 1605,
     "rear_axle_limit": 1860,
@@ -1873,7 +1873,7 @@
   },
   {
     "name": "Toyota LandCruiser Prado 250 Series Kakadu 7-seat",
-    "years": "2025-current",
+    "years": "2026-current",
     "gvm": 3200,
     "front_axle_limit": 1605,
     "rear_axle_limit": 1860,
@@ -1882,5 +1882,77 @@
     "towing_capacity": 3500,
     "towball_download_max": 350,
     "payload": 610
+  },
+  {
+    "name": "Toyota LandCruiser Prado 250 Series GX 5-seat",
+    "years": "2025",
+    "gvm": 3100,
+    "front_axle_limit": 1605,
+    "rear_axle_limit": 1860,
+    "kerb_weight": 2495,
+    "gcm": 6600,
+    "towing_capacity": 3500,
+    "towball_download_max": 350,
+    "payload": 605
+  },
+  {
+    "name": "Toyota LandCruiser Prado 250 Series GXL 5-seat",
+    "years": "2025",
+    "gvm": 3100,
+    "front_axle_limit": 1605,
+    "rear_axle_limit": 1860,
+    "kerb_weight": 2495,
+    "gcm": 6600,
+    "towing_capacity": 3500,
+    "towball_download_max": 350,
+    "payload": 605
+  },
+  {
+    "name": "Toyota LandCruiser Prado 250 Series GXL 7-seat",
+    "years": "2025",
+    "gvm": 3150,
+    "front_axle_limit": 1605,
+    "rear_axle_limit": 1860,
+    "kerb_weight": 2535,
+    "gcm": 6600,
+    "towing_capacity": 3500,
+    "towball_download_max": 350,
+    "payload": 615
+  },
+  {
+    "name": "Toyota LandCruiser Prado 250 Series VX 7-seat",
+    "years": "2025",
+    "gvm": 3180,
+    "front_axle_limit": 1605,
+    "rear_axle_limit": 1860,
+    "kerb_weight": 2570,
+    "gcm": 6600,
+    "towing_capacity": 3500,
+    "towball_download_max": 350,
+    "payload": 610
+  },
+  {
+    "name": "Toyota LandCruiser Prado 250 Series Altitude 5-seat",
+    "years": "2025",
+    "gvm": 3100,
+    "front_axle_limit": 1605,
+    "rear_axle_limit": 1860,
+    "kerb_weight": 2520,
+    "gcm": 6600,
+    "towing_capacity": 3500,
+    "towball_download_max": 350,
+    "payload": 580
+  },
+  {
+    "name": "Toyota LandCruiser Prado 250 Series Kakadu 7-seat",
+    "years": "2025",
+    "gvm": 3200,
+    "front_axle_limit": 1605,
+    "rear_axle_limit": 1860,
+    "kerb_weight": 2595,
+    "gcm": 6600,
+    "towing_capacity": 3500,
+    "towball_download_max": 350,
+    "payload": 605
   }
 ]
