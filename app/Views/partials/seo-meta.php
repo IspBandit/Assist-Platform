@@ -12,7 +12,9 @@ $page = $page ?? null;
 $seoBrand = current_brand();
 $seoBrandMeta = $seoBrand->metadata();
 
-$siteName = (string) Settings::get('site_name', $seoBrand->name());
+$siteName = $seoBrand->id() === 'vanassist'
+    ? (string) Settings::get('site_name', $seoBrand->name())
+    : $seoBrand->name();
 
 // Title: prefer an explicit page seo_title, then $title; append the site name
 // once (avoid double-suffixing titles that already include it).
