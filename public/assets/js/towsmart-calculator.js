@@ -25,7 +25,11 @@
     };
 
     var applyItem = function (type, item) {
-        Object.keys(maps[type]).forEach(function (key) { setValue(maps[type][key], item[key]); });
+        Object.keys(maps[type]).forEach(function (key) {
+            var field = document.getElementById(maps[type][key]);
+            if (field) { field.value = ''; }
+            setValue(maps[type][key], item[key]);
+        });
         var idField = document.getElementById((type === 'vehicles' ? 'vehicle' : 'trailer') + '_catalogue_id');
         if (idField) { idField.value = item.id; }
         var search = form.querySelector('[data-catalogue-search="' + type + '"]');
@@ -35,8 +39,9 @@
         var summary = form.querySelector('[data-selected-summary="' + (type === 'vehicles' ? 'vehicle' : 'trailer') + '"]');
         if (summary) {
             var stats = type === 'vehicles'
-                ? ['GVM ' + item.gvm + ' kg', 'GCM ' + item.gcm + ' kg', 'Tow ' + item.towing_capacity + ' kg']
-                : ['Tare ' + item.tare_weight + ' kg', 'ATM ' + item.atm + ' kg', (item.type || 'Trailer')];
+                ? [item.gvm ? 'GVM ' + item.gvm + ' kg' : '', item.gcm ? 'GCM ' + item.gcm + ' kg' : '', item.towing_capacity ? 'Tow ' + item.towing_capacity + ' kg' : '']
+                : [item.tare_weight ? 'Tare ' + item.tare_weight + ' kg' : '', item.atm ? 'ATM ' + item.atm + ' kg' : '', (item.type || 'Trailer')];
+            stats = stats.filter(Boolean);
             summary.innerHTML = '<strong>Selected: ' + search.value + '</strong><span>' + stats.join(' · ') + '</span><small>Advertised reference specification—confirm against your exact plate and handbook.</small>';
             summary.hidden = false;
         }
