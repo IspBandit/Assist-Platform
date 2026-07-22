@@ -34,6 +34,7 @@ final class BrandViewTest extends TestCase
 
         self::assertStringContainsString('<title>Sign in — TowSmart</title>', $html);
         self::assertStringContainsString('aria-label="TowSmart home"', $html);
+        self::assertStringContainsString('href="https://towsmart.com.au/"', $html);
         self::assertStringContainsString('Tow<span class="assist">Smart</span>', $html);
         self::assertStringNotContainsString('— VanAssist</title>', $html);
     }
@@ -47,6 +48,7 @@ final class BrandViewTest extends TestCase
 
         self::assertStringContainsString('<title>Towing weight calculator — TowSmart</title>', $html);
         self::assertStringContainsString('property="og:site_name" content="TowSmart"', $html);
+        self::assertStringContainsString('property="og:url" content="https://towsmart.com.au/calculator"', $html);
     }
 
     private function brand(): \App\Platform\Brand\Brand

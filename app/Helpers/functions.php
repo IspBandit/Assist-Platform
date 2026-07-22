@@ -69,6 +69,14 @@ if (!function_exists('app_base_url')) {
      */
     function app_base_url(): string
     {
+        // Once the request/command has resolved a trusted brand, its configured
+        // canonical URL is authoritative. This keeps links, assets, redirects,
+        // sitemaps and queued brand email URLs on the correct domain while
+        // avoiding direct trust in an arbitrary Host header.
+        if (BrandContext::hasCurrent()) {
+            return BrandContext::current()->url();
+        }
+
         $configured = rtrim((string) config('app.url', ''), '/');
         if ($configured !== '' && $configured !== 'http://localhost') {
             return $configured;
