@@ -4,7 +4,7 @@ Updated: 23 July 2026
 
 ## Current catalogue
 
-- 163 tow-vehicle reference records after adding separate 2025 and 2026-current Australian Prado 250 Series grades.
+- 179 tow-vehicle reference records after adding separate Prado model years plus current Tasman, Shark 6, JAC T9, Terron 9 and Cannon Alpha variants.
 - 3,769 caravan, camper, hybrid and trailer reference records recovered from the original TowWise application.
 - Catalogue values are starting points only. Users must confirm the exact vehicle plate, handbook and manufacturer documentation.
 
@@ -22,14 +22,14 @@ Updated: 23 July 2026
 
 The next manufacturer-verification pass should prioritise current high-interest tow vehicles and every Australian grade/body configuration, including:
 
-- BYD Shark 6 and Shark 6 variants;
+- BYD Shark 6 2026 Performance and cab-chassis variants once final Australian manufacturer specifications are published;
 - Ford Ranger PHEV and current Ranger/Everest grade-specific payloads;
-- GWM Cannon Alpha and current Cannon variants;
+- current GWM Cannon variants;
 - Isuzu D-MAX and MU-X current grade/body configurations;
-- JAC T9;
-- Kia Tasman;
+- newer JAC T9 cab-chassis and Osprey variants;
+- Kia Tasman cab-chassis variants by tray configuration;
 - KGM Musso and Rexton naming/current variants;
-- LDV Terron 9 and current T60/D90 variants;
+- current LDV T60/D90 variants;
 - Mazda BT-50 current grade/body configurations;
 - Mitsubishi Triton MV and current Pajero Sport variants;
 - Nissan Navara current grade/body configurations;

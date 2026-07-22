@@ -11,7 +11,7 @@ final class TowSmartCatalogTest extends TestCase
 {
     public function testRecoveredCatalogueCountsAreStable(): void
     {
-        self::assertSame(['vehicles' => 163, 'trailers' => 3769], TowSmartCatalog::counts());
+        self::assertSame(['vehicles' => 179, 'trailers' => 3769], TowSmartCatalog::counts());
     }
 
     public function testVehicleSearchReturnsReferenceSpecification(): void
@@ -52,5 +52,20 @@ final class TowSmartCatalogTest extends TestCase
         $altitude2025 = TowSmartCatalog::find('vehicles', (int) $altitude2025Match['id']);
         self::assertSame(2520, $altitude2025['kerb_weight']);
         self::assertSame(580, $altitude2025['payload']);
+    }
+
+    public function testCurrentAustralianUteGapBatchIsSearchable(): void
+    {
+        self::assertCount(6, TowSmartCatalog::search('vehicles', 'Kia Tasman', 20));
+        self::assertCount(1, TowSmartCatalog::search('vehicles', 'BYD Shark 6', 20));
+        self::assertCount(2, TowSmartCatalog::search('vehicles', 'JAC T9', 20));
+        self::assertCount(2, TowSmartCatalog::search('vehicles', 'LDV Terron 9', 20));
+        self::assertCount(5, TowSmartCatalog::search('vehicles', 'GWM Cannon Alpha', 20));
+
+        $xProMatch = TowSmartCatalog::search('vehicles', 'Tasman X-Pro', 5)[0];
+        $xPro = TowSmartCatalog::find('vehicles', (int) $xProMatch['id']);
+        self::assertSame(2002, $xPro['rear_axle_limit']);
+        self::assertSame(1013, $xPro['payload']);
+        self::assertArrayHasKey('source_url', $xPro);
     }
 }
