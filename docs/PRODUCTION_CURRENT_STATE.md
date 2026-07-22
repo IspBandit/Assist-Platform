@@ -8,8 +8,8 @@ Last verified: 22 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `2f7ef9f`.
-- Release directory: `/opt/assist-platform/releases/2f7ef9f`.
+- Production code commit: `edbb26e`.
+- Release directory: `/opt/assist-platform/releases/edbb26e`.
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
 - All migrations through `039_social_media_studio.sql` are applied; the
@@ -42,6 +42,10 @@ credentials in this file or Git.
   into a disposable MariaDB 11.4 instance with 135 tables and 1,399 providers.
 - A super-administrator login reached `/admin` successfully.
 - GitHub CI passed for the production commit.
+- A rendered acceptance pass covered 72 public pages and 70 authenticated
+  provider pages across desktop and mobile viewports with no HTTP failures,
+  broken images, horizontal overflow, browser errors or cross-brand email
+  mismatches. See `RENDERED_ACCEPTANCE_2026-07-22.md`.
 
 ## Current launch posture
 
