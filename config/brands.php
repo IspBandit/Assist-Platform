@@ -139,6 +139,8 @@ return [
             'navigation' => [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Weight calculator', 'path' => '/calculator'],
+                ['label' => 'Tow guide', 'path' => '/tow-guide'],
+                ['label' => 'Checklist', 'path' => '/checklist'],
                 ['label' => 'Towing specialists', 'path' => '/providers'],
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],

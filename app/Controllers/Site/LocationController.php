@@ -64,7 +64,7 @@ final class LocationController extends Controller
 
         $label = (string) $town['name'];
         if (!empty($town['state_abbr'])) {
-            $label .= ', ' . $town['state_abbr'];
+            $label .= ' / ' . $town['state_abbr'];
         }
 
         return $this->json([
@@ -122,7 +122,7 @@ final class LocationController extends Controller
     {
         $label = (string) $town['name'];
         if (!empty($town['state_abbr'])) {
-            $label .= ', ' . $town['state_abbr'];
+            $label .= ' / ' . $town['state_abbr'];
         }
 
         return $label;

@@ -245,7 +245,7 @@
         var hide = function () { box.hidden = true; box.innerHTML = ''; active = -1; };
 
         var choose = function (t) {
-            var label = t.name + (t.state_abbr ? ', ' + t.state_abbr : '');
+            var label = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
             if (input.name === 'location' || input.id === 'location') {
                 input.value = label;
                 hide();
@@ -268,8 +268,9 @@
                 btn.type = 'button';
                 btn.setAttribute('role', 'option');
                 btn.dataset.index = i;
-                var sub = [t.region_name, t.state_abbr].filter(Boolean).join(', ');
-                btn.innerHTML = '<strong>' + t.name + '</strong>' + (sub ? ' <span class="muted">' + sub + '</span>' : '');
+                var sub = [t.postcode, t.region_name].filter(Boolean).join(' · ');
+                var primary = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
+                btn.innerHTML = '<strong>' + primary + '</strong>' + (sub ? ' <span class="muted">' + sub + '</span>' : '');
                 btn.addEventListener('click', function () { choose(t); input.focus(); });
                 box.appendChild(btn);
             });

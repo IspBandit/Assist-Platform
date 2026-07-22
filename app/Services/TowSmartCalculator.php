@@ -24,6 +24,7 @@ final class TowSmartCalculator
     /** @param array<string,int|float|string> $input @return array<string,mixed> */
     public static function calculate(array $input): array
     {
+        $input = self::deriveLoadedCombination($input);
         $values = [];
         foreach (self::REQUIRED as $key) {
             if (!array_key_exists($key, $input) || !is_numeric($input[$key])) {
@@ -83,6 +84,49 @@ final class TowSmartCalculator
             'checks' => $checks,
             'disclaimer' => 'Informational estimate only. Confirm the exact vehicle and trailer specifications and obtain actual loaded weights. Requirements can vary by jurisdiction and modification.',
         ];
+    }
+
+    /**
+     * Convert the detailed TowWise-style load configuration into the headline
+     * values used by the limit checker. Existing eight-field submissions remain
+     * fully compatible.
+     *
+     * @param array<string,int|float|string> $input
+     * @return array<string,int|float|string>
+     */
+    private static function deriveLoadedCombination(array $input): array
+    {
+        if (!isset($input['vehicle_kerb_mass'], $input['trailer_tare_mass'])) {
+            return $input;
+        }
+
+        $number = static fn(string $key): float => isset($input[$key]) && is_numeric($input[$key]) ? max(0.0, (float) $input[$key]) : 0.0;
+        $vehicleExtras = $number('passengers_mass') + $number('vehicle_cargo_mass') + $number('vehicle_accessories_mass') + $number('fuel_mass');
+        $trailerExtras = $number('trailer_cargo_mass') + $number('trailer_accessories_mass')
+            + $number('trailer_front_accessories_mass') + $number('trailer_rear_accessories_mass')
+            + $number('tank_1_litres') + $number('tank_2_litres');
+        $trailerLoaded = $number('trailer_tare_mass') + $trailerExtras;
+
+        $baseBall = $number('trailer_tare_ball_mass');
+        $positionEffect = static function (float $mass, string $position): float {
+            return match ($position) {
+                'front' => $mass * 0.50,
+                'middle', 'over' => 0.0,
+                'behind' => -$mass * 0.25,
+                default => 0.0,
+            };
+        };
+        $ball = $baseBall
+            + $positionEffect($number('tank_1_litres'), (string) ($input['tank_1_position'] ?? 'middle'))
+            + $positionEffect($number('tank_2_litres'), (string) ($input['tank_2_position'] ?? 'middle'))
+            + $positionEffect($number('trailer_front_accessories_mass'), 'front')
+            + $positionEffect($number('trailer_rear_accessories_mass'), 'behind');
+        $ball = max(0.0, min($trailerLoaded, $ball));
+
+        $input['vehicle_mass_before_ball'] = $number('vehicle_kerb_mass') + $vehicleExtras;
+        $input['trailer_loaded_mass'] = $trailerLoaded;
+        $input['towball_mass'] = $ball;
+        return $input;
     }
 
     /** @return array{key:string,label:string,actual:float,limit:float,remaining:float,utilisation_percent:float,status:string} */
