@@ -34,12 +34,21 @@
 	}
 }
 
-vanassist.com.au, www.vanassist.com.au {
+www.vanassist.com.au {
+	redir https://vanassist.com.au{uri} permanent
+}
+vanassist.com.au {
 	import assist_site
 }
-towsmart.com.au, www.towsmart.com.au {
+www.towsmart.com.au {
+	redir https://towsmart.com.au{uri} permanent
+}
+towsmart.com.au {
 	import assist_site
 }
-trailerwise.com.au, www.trailerwise.com.au {
+www.trailerwise.com.au {
+	redir https://trailerwise.com.au{uri} permanent
+}
+trailerwise.com.au {
 	import assist_site
 }
