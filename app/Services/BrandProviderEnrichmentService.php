@@ -34,9 +34,38 @@ final class BrandProviderEnrichmentService
                     foreach ((array) $keywords as $keyword) { if (str_contains($haystack, mb_strtolower((string) $keyword))) { $hits++; } }
                     if ($hits > 0) { $matches[(string) $categoryKey] = min(95, 68 + ($hits * 9)); }
                 }
-                if ($matches === [] || $dryRun) { continue; }
+                if ($matches === []) { continue; }
 
                 $listingId = (int) Database::scalar('SELECT id FROM provider_brand_listings WHERE brand_id = ? AND provider_id = ?', [$brandId, $provider['id']]);
+                if ($dryRun) {
+                    if ($listingId === 0) {
+                        $counts['listings_created']++;
+                        foreach (array_keys($matches) as $categoryKey) {
+                            if ((int) Database::scalar('SELECT id FROM brand_provider_categories WHERE brand_id = ? AND category_key = ?', [$brandId, $categoryKey]) > 0) {
+                                $counts['assignments_created']++;
+                            }
+                        }
+                    } else {
+                        foreach (array_keys($matches) as $categoryKey) {
+                            $exists = (int) Database::scalar(
+                                'SELECT COUNT(*) FROM provider_brand_category_assignments a '
+                                . 'JOIN brand_provider_categories c ON c.id = a.category_id '
+                                . 'WHERE a.listing_id = ? AND c.brand_id = ? AND c.category_key = ?',
+                                [$listingId, $brandId, $categoryKey]
+                            );
+                            if ($exists === 0 && (int) Database::scalar('SELECT id FROM brand_provider_categories WHERE brand_id = ? AND category_key = ?', [$brandId, $categoryKey]) > 0) {
+                                $counts['assignments_created']++;
+                            }
+                        }
+                    }
+                    $evidenceExists = (int) Database::scalar(
+                        "SELECT COUNT(*) FROM provider_discovery_evidence WHERE provider_id = ? AND brand_id = ? AND source_type = 'existing_catalogue' AND source_reference = 'canonical-provider'",
+                        [$provider['id'], $brandId]
+                    );
+                    if ($evidenceExists === 0) { $counts['evidence_created']++; }
+                    continue;
+                }
+
                 if ($listingId === 0) {
                     $listingId = Database::insert(
                         "INSERT INTO provider_brand_listings (brand_id, provider_id, slug, display_name, status, is_featured, is_verified, search_visible, created_at) VALUES (?, ?, ?, ?, 'active', 0, 0, 1, NOW())",
