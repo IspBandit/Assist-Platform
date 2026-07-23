@@ -27,7 +27,8 @@ $this->extend('layouts.public');
 <?php $this->section('content'); ?>
 <section class="section">
     <div class="container">
-        <h1><?= $this->e($heading) ?></h1>
+        <span class="directory-eyebrow">VanAssist search</span>
+        <h1 class="results-heading"><?= $this->e($heading) ?></h1>
         <?php if (!empty($usedLocation) && $town !== null): ?>
             <p class="muted" style="margin:0 0 .5rem">Showing results near your current location — closest area: <strong><?= $this->e((string) $town['name']) ?><?= !empty($town['state_abbr']) ? ', ' . $this->e((string) $town['state_abbr']) : '' ?></strong>.</p>
         <?php elseif (!empty($hasOrigin) && !empty($originLabel)): ?>
@@ -39,7 +40,7 @@ $this->extend('layouts.public');
         <?php endif; ?>
 
         <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" style="margin:1rem 0 1.5rem">
-            <div class="grid grid-3">
+            <div class="grid grid-2 home-search-primary">
                 <div class="form-group mb-0">
                     <label for="category">Service category</label>
                     <select id="category" name="category">
@@ -58,27 +59,15 @@ $this->extend('layouts.public');
                     <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
                     <p class="location-status muted" role="status" aria-live="polite" hidden></p>
                 </div>
-                <div class="form-group mb-0">
-                    <label for="timeframe">Preferred timeframe</label>
-                    <select id="timeframe" name="timeframe">
-                        <option value="">Any time</option>
-                        <option value="2weeks" <?= ($timeframe ?? '') === '2weeks' ? 'selected' : '' ?>>Within 2 weeks</option>
-                        <option value="month" <?= ($timeframe ?? '') === 'month' ? 'selected' : '' ?>>Within a month</option>
-                        <option value="flexible" <?= ($timeframe ?? '') === 'flexible' ? 'selected' : '' ?>>Flexible</option>
-                    </select>
-                </div>
             </div>
-            <div class="grid grid-3" style="margin-top:.75rem">
-                <?php $this->include('partials.search-distance-filter', [
-                    'selected' => $distanceSelection ?? 'town',
-                    'townName' => $town['name'] ?? null,
-                    'disabled' => empty($hasOrigin),
-                ]); ?>
-                <div class="form-group mb-0 location-actions" style="align-self:end">
-                    <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary']); ?>
-                    <button type="submit" class="btn btn-primary btn-lg">Find a service</button>
+            <details class="search-options" <?= ($timeframe ?? '') !== '' || !empty($maxDistance) ? 'open' : '' ?>>
+                <summary>Timeframe and distance</summary>
+                <div class="grid grid-2">
+                    <div class="form-group mb-0"><label for="timeframe">Preferred timeframe</label><select id="timeframe" name="timeframe"><option value="">Any time</option><option value="2weeks" <?= ($timeframe ?? '') === '2weeks' ? 'selected' : '' ?>>Within 2 weeks</option><option value="month" <?= ($timeframe ?? '') === 'month' ? 'selected' : '' ?>>Within a month</option><option value="flexible" <?= ($timeframe ?? '') === 'flexible' ? 'selected' : '' ?>>Flexible</option></select></div>
+                    <?php $this->include('partials.search-distance-filter', ['selected' => $distanceSelection ?? 'town', 'townName' => $town['name'] ?? null, 'disabled' => empty($hasOrigin)]); ?>
                 </div>
-            </div>
+            </details>
+            <div class="search-submit-row"><?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary']); ?><button type="submit" class="btn btn-primary btn-lg">Update results</button></div>
         </form>
 
         <?php if ($locationNotFound): ?>
@@ -107,7 +96,7 @@ $this->extend('layouts.public');
         <?php if ($matches !== []): ?>
             <p class="muted" style="margin-top:.5rem"><strong>Direct matches</strong> explicitly offer the service you searched for. Unclaimed listings were compiled from public sources — confirm details before booking.</p>
             <h2 style="margin-top:1.5rem">Providers<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($matches as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]); ?>
                 <?php endforeach; ?>
@@ -117,7 +106,7 @@ $this->extend('layouts.public');
         <?php if ($possible !== []): ?>
             <h2 style="margin-top:1.5rem">Businesses that may offer this service<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
             <p class="muted">These work in a related trade and <em>may</em> be able to help — they are not verified for this exact service. Confirm before booking; contact details may be limited for unclaimed listings.</p>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($possible as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true]); ?>
                 <?php endforeach; ?>
@@ -139,15 +128,17 @@ $this->extend('layouts.public');
         <?php endif; ?>
 
         <?php if (!$locationNotFound && $matches === [] && $possible === []): ?>
-            <div class="card">
+            <div class="empty-state">
+                <span class="empty-state-icon" aria-hidden="true">⌕</span>
+                <h2>No suitable provider found</h2>
                 <?php if ($town === null && $location === ''): ?>
-                    <p style="margin:0">Enter a town or postcode above to find providers near you.</p>
+                    <p>Enter a town or postcode above to find providers near you.</p>
                 <?php elseif (!empty($maxDistance) && !empty($hasOrigin)): ?>
-                    <p style="margin:0">No providers are listed within <?= (int) $maxDistance ?> km<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' near ' . $this->e((string) $town['name']) : '' ?>. Try a larger distance or <a href="<?= e(url('find?' . http_build_query(array_filter(['location' => $location, 'category' => $categorySlug ?: null])))) ?>">clear the distance filter</a>.</p>
+                    <p>No providers are listed within <?= (int) $maxDistance ?> km<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' near ' . $this->e((string) $town['name']) : '' ?>. Try a larger distance or <a href="<?= e(url('find?' . http_build_query(array_filter(['location' => $location, 'category' => $categorySlug ?: null])))) ?>">clear the distance filter</a>.</p>
                 <?php else: ?>
-                    <p style="margin:0">No providers are listed<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?> yet.</p>
+                    <p>No providers are listed<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?> yet.</p>
                 <?php endif; ?>
-                <p class="muted" style="margin:.5rem 0 0"><a href="<?= e($requestUrl) ?>">Register a request</a> and we'll notify relevant providers, or <a href="<?= e(url('providers')) ?>">browse the full directory</a>.</p>
+                <div class="btn-row"><a class="btn btn-primary" href="<?= e($requestUrl) ?>">Register a request</a><a class="btn btn-secondary" href="<?= e(url('providers')) ?>">Browse full directory</a></div>
             </div>
 
             <?php if ($town !== null || $category !== null): ?>

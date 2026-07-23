@@ -1,46 +1,31 @@
 <?php
 /** @var array<string,mixed> $p */
-/** @var bool $isPossible */
 $isPossible = !empty($isPossible);
 $model = (string) ($p['service_model'] ?? '');
 $isMobile = in_array($model, ['mobile', 'both'], true);
-
-$badges = '';
-if (!empty($p['is_verified'])) {
-    $badges .= '<span class="badge badge-verified">Verified</span> ';
-}
-if (!empty($p['is_founding_provider'])) {
-    $badges .= '<span class="badge badge-confirmed">Founding</span> ';
-}
-if (!empty($p['is_unclaimed'])) {
-    $badges .= '<span class="badge badge-neutral">Unclaimed</span> ';
-}
-if ($isPossible) {
-    $badges .= '<span class="badge badge-neutral">May offer this service</span> ';
-}
-if ($isMobile) {
-    $label = $model === 'both' ? 'Mobile &amp; workshop' : 'Mobile service';
-    $badges .= '<span class="badge badge-confirmed" title="Comes to you">&#128666; ' . $label . '</span>';
-} elseif ($model !== '') {
-    $badges .= '<span class="badge badge-neutral">Workshop</span>';
-}
-
-$loc = '';
-if (!empty($p['town_name'])) {
-    $dist = '';
-    if (isset($p['distance_km']) && $p['distance_km'] !== null) {
-        $km = (float) $p['distance_km'];
-        $dist = $km < 1
-            ? ' &middot; <strong>in this area</strong>'
-            : ' &middot; <strong>~' . (int) $km . ' km away</strong>';
-    }
-    $loc = '<p class="muted" style="margin:0">' . e((string) $p['town_name'])
-        . (!empty($p['state_abbr']) ? ', ' . e((string) $p['state_abbr']) : '') . $dist . '</p>';
-}
+$name = (string) ($p['business_name'] ?? 'Business');
+$initial = mb_strtoupper(mb_substr(trim($name), 0, 1));
+$profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'providers/';
+$location = trim((string) ($p['town_name'] ?? ''));
+if ($location !== '' && !empty($p['state_abbr'])) { $location .= ', ' . $p['state_abbr']; }
+$description = trim((string) ($p['description'] ?? ''));
 ?>
-<?php $profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'providers/'; ?>
-<a class="card stack" href="<?= e(url($profilePath . $p['slug'])) ?>" style="text-decoration:none;color:inherit">
-    <h3 style="margin:0"><?= e((string) $p['business_name']) ?></h3>
-    <div><?= $badges ?></div>
-    <?= $loc ?>
-</a>
+<article class="provider-card<?= !empty($p['is_featured']) ? ' provider-card--featured' : '' ?>">
+    <?php if (!empty($p['is_featured'])): ?><span class="provider-featured-label">Featured</span><?php endif; ?>
+    <a class="provider-card-main" href="<?= e(url($profilePath . $p['slug'])) ?>">
+        <span class="provider-avatar" aria-hidden="true"><?= e($initial) ?></span>
+        <span class="provider-card-content">
+            <span class="provider-card-title"><?= e($name) ?></span>
+            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · approximately <?= max(1, (int) $p['distance_km']) ?> km away<?php endif; ?></span><?php endif; ?>
+        </span>
+        <span class="provider-card-arrow" aria-hidden="true">→</span>
+    </a>
+    <div class="provider-card-badges">
+        <?php if (!empty($p['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
+        <?php if (!empty($p['is_unclaimed'])): ?><span class="badge badge-neutral">Details not yet claimed</span><?php endif; ?>
+        <?php if ($isPossible): ?><span class="badge badge-neutral">Related service</span><?php endif; ?>
+        <?php if ($isMobile): ?><span class="badge badge-confirmed"><?= $model === 'both' ? 'Mobile and workshop' : 'Mobile service' ?></span><?php elseif ($model !== ''): ?><span class="badge badge-neutral">Workshop</span><?php endif; ?>
+    </div>
+    <?php if ($description !== ''): ?><p class="provider-card-description"><?= e(mb_substr($description, 0, 150)) ?><?= mb_strlen($description) > 150 ? '…' : '' ?></p><?php endif; ?>
+    <a class="provider-card-link" href="<?= e(url($profilePath . $p['slug'])) ?>">View services and contact details</a>
+</article>

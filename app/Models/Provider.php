@@ -113,7 +113,7 @@ final class Provider extends Model
     {
         $where = ["p.status = 'active'", 'p.deleted_at IS NULL'];
         $params = [];
-        $join = 'LEFT JOIN towns t ON t.id = p.base_town_id';
+        $join = 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id';
 
         if ($categoryId !== null) {
             $join .= ' INNER JOIN provider_services ps ON ps.provider_id = p.id AND ps.category_id = ?';
@@ -132,7 +132,7 @@ final class Provider extends Model
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $join . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.description, p.service_model, '
-            . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name '
+            . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name, s.abbreviation AS state_abbr '
             . 'FROM providers p ' . $join . $clause
             . ' ORDER BY p.is_featured DESC, p.is_verified DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
@@ -146,7 +146,7 @@ final class Provider extends Model
     {
         $where = ["pbl.status = 'active'", 'pbl.search_visible = 1', 'pbl.deleted_at IS NULL', "p.status = 'active'", 'p.deleted_at IS NULL', 'pbl.brand_id = ?'];
         $params = [$brandId];
-        $joins = ' JOIN provider_brand_listings pbl ON pbl.provider_id = p.id LEFT JOIN towns t ON t.id = p.base_town_id ';
+        $joins = ' JOIN provider_brand_listings pbl ON pbl.provider_id = p.id LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id ';
         if ($categoryId !== null && $categoryId > 0) {
             $joins .= ' JOIN provider_brand_category_assignments pbca ON pbca.listing_id = pbl.id AND pbca.category_id = ? ';
             array_unshift($params, $categoryId);
@@ -164,7 +164,7 @@ final class Provider extends Model
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $joins . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, pbl.slug, pbl.display_name AS business_name, p.description, p.service_model, '
-            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name '
+            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name, s.abbreviation AS state_abbr '
             . 'FROM providers p ' . $joins . $clause
             . ' ORDER BY pbl.is_featured DESC, pbl.is_verified DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
