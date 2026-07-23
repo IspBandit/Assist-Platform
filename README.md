@@ -1,4 +1,10 @@
-# Assist Platform Core
+# Assist Platform Enterprise
+
+Assist Platform Enterprise is the primary commercial product. VanAssist,
+TowSmart, TrailerWise and LocalTorque are brands running on its shared runtime,
+data and administration platform. Start with
+[`docs/START_HERE.md`](docs/START_HERE.md) and the
+[`Enterprise architecture specification`](docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md).
 
 Shared platform core for:
 

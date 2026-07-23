@@ -1,5 +1,10 @@
 # LocalTorque
 
+LocalTorque is a first-class Assist Platform Enterprise brand. Its implementation
+is tracked by LOC-001 through LOC-003 in `PRODUCT_BACKLOG.md`. Build and test it
+as production-capable while keeping public launch fail-closed until the external
+prerequisites below are confirmed.
+
 LocalTorque is the automotive business-directory brand within the Assist Platform. It reuses the canonical provider, location, account, claim, verification, review, membership, advertising and administration foundations. It does not duplicate provider businesses that already participate in VanAssist, TowSmart or TrailerWise.
 
 ## Current implementation

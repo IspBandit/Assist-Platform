@@ -1,8 +1,16 @@
 # Unified Assist Platform
 
+> This is the concise implemented-model companion to
+> `ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`, which governs product direction.
+
 Assist Platform is the saleable product. VanAssist, TowSmart, TrailerWise and
 LocalTorque are domain-resolved brands running on its shared application,
 database, operational services and administration portal.
+
+Current and future work is organised through `PRODUCT_BACKLOG.md`, material
+decisions use the ADR process, and production candidates must pass the Platform
+Quality Gate. The current UX redesign is the foundation of the official Platform
+Design System.
 
 ## Product boundaries
 

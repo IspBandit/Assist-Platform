@@ -1,9 +1,17 @@
 # Social Studio design system
 
+This is a specialised extension of `PLATFORM_DESIGN_SYSTEM.md`. The current UX
+redesign and shared brand tokens are authoritative; Social Studio must consume
+them rather than create a parallel visual language.
+
 Social Studio produces channel-specific campaign artwork from controlled brand
 systems rather than generic one-off graphics. Each asset records its brand,
 campaign, purpose, template, target platform, dimensions, copy and approval
 state.
+
+Exports are individual production files at exact target dimensions. Contact
+sheets, combined presentation boards, contaminated crops and mock-up layouts are
+not valid deliverables.
 
 ## Templates
 
