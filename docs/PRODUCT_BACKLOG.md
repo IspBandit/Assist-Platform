@@ -21,7 +21,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| EXP-001 | Promote current UX redesign into shared tokens/components | in progress | Component inventory, docs and regression renders |
+| EXP-001 | Promote current UX redesign into shared tokens/components | in progress | Component inventory documented; semantic-token migration and regression renders remain |
 | EXP-002 | Unified admin information architecture and brand switcher | in progress | Desktop/mobile rendered acceptance and keyboard tests |
 | EXP-003 | Production-grade Social Studio templates and individual exports | in progress | Exact-size assets, editorial approval and no mock-up/crop contamination |
 | EXP-004 | WCAG 2.2 AA critical journeys | ready | Automated checks plus manual keyboard/screen-reader review |

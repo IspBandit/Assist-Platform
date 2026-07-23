@@ -5,14 +5,16 @@ This is the authoritative orientation page for developers and AI agents.
 ## Read in this order
 
 1. `AGENTS.md` — mandatory safety and engineering rules.
-2. `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` and
-   `docs/PLATFORM_CHARTER.md` — primary product direction and principles.
+2. `docs/PRODUCT_BIBLE.md`, `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`
+   and `docs/PLATFORM_CHARTER.md` — primary product direction, architecture and
+   principles.
 3. `docs/PRODUCT_AND_FEATURES.md` — intended products versus implemented scope.
 4. `docs/PRODUCTION_CURRENT_STATE.md` — what is actually live and what is pending.
 5. `docs/CURRENT_ARCHITECTURE.md`, `docs/TARGET_ARCHITECTURE.md` and
    `docs/UNIFIED_ASSIST_PLATFORM.md`.
-6. `docs/PLATFORM_DESIGN_SYSTEM.md`, `docs/PRODUCT_BACKLOG.md`,
-   `docs/ARCHITECTURE_DECISION_RECORDS.md` and `docs/PLATFORM_QUALITY_GATE.md`.
+6. `docs/PLATFORM_DESIGN_SYSTEM.md`, `docs/UX_COMPONENT_INVENTORY.md`,
+   `docs/PRODUCT_BACKLOG.md`, `docs/ARCHITECTURE_DECISION_RECORDS.md` and
+   `docs/PLATFORM_QUALITY_GATE.md`.
 7. `docs/DATABASE_DICTIONARY.md` and `docs/ROUTES_AND_PERMISSIONS.md`.
 8. `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
 9. For releases, `docs/OPERATIONS_RUNBOOK.md` and `docs/BACKUP_AND_RESTORE.md`.
@@ -25,8 +27,8 @@ When documents disagree, use this precedence:
 
 1. Executable code, ordered migrations and automated tests.
 2. `PRODUCTION_CURRENT_STATE.md` for the last verified live state.
-3. `ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` for product direction and
-   future architecture.
+3. `PRODUCT_BIBLE.md` and `ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` for
+   product direction and future architecture.
 4. Current architecture/product documents listed above.
 5. Historical audit, migration and implementation notes.
 
