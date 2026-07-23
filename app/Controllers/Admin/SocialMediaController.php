@@ -24,6 +24,7 @@ final class SocialMediaController extends Controller
             'assets' => SocialMediaAssetService::listForBrand($brand->databaseId()),
             'formats' => SocialMediaAssetService::formats(),
             'intentions' => SocialMediaAssetService::intentions(),
+            'templates' => SocialMediaAssetService::templates(),
             'brand' => $brand,
         ]);
     }
@@ -37,9 +38,11 @@ final class SocialMediaController extends Controller
         }
         $format = trim((string) $request->input('format_key'));
         $intention = trim((string) $request->input('intention'));
+        $template = trim((string) $request->input('template_key', 'editorial'));
+        $campaign = trim((string) $request->input('campaign_name', ''));
         try {
-            SocialMediaAssetService::generate($brand->id(), $brand->databaseId(), $format, $intention, (int) (current_user()['id'] ?? 0) ?: null);
-            AuditLog::record('social_asset.generated', 'brand', (string) $brand->databaseId(), null, $format . ':' . $intention);
+            SocialMediaAssetService::generate($brand->id(), $brand->databaseId(), $format, $intention, (int) (current_user()['id'] ?? 0) ?: null, $template, $campaign !== '' ? $campaign : null);
+            AuditLog::record('social_asset.generated', 'brand', (string) $brand->databaseId(), null, $format . ':' . $intention . ':' . $template);
         } catch (Throwable $e) {
             return $this->redirectWith('/admin/social-media', 'error', $e->getMessage());
         }
