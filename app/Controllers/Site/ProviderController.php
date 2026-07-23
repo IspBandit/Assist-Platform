@@ -9,7 +9,9 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Provider;
+use App\Models\Town;
 use App\Services\Demand\DemandRecorder;
+use App\Services\DirectoryPresentation;
 use App\Services\FoundingGraphicService;
 
 final class ProviderController extends Controller
@@ -20,13 +22,21 @@ final class ProviderController extends Controller
         $page = max(1, (int) $request->input('page', 1));
         $perPage = 18;
         $townId = (int) $request->input('town') ?: null;
+        $location = trim((string) $request->input('location', ''));
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location);
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+        }
+        $locationFound = $location === '' || $townId !== null;
         $categoryId = (int) $request->input('category') ?: null;
         $brand = current_brand();
         $brandScoped = $brand->id() !== 'vanassist';
 
-        $result = $brandScoped
-            ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
-            : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage);
+        $result = !$locationFound
+            ? ['rows' => [], 'total' => 0]
+            : ($brandScoped
+                ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
+                : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage));
         $categories = $brandScoped
             ? Database::select('SELECT id, name FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name', [$brand->databaseId()])
             : Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name');
@@ -40,11 +50,13 @@ final class ProviderController extends Controller
             'page' => $page,
             'perPage' => $perPage,
             'search' => $search,
+            'location' => $location,
+            'locationFound' => $locationFound,
             'townId' => $townId,
             'categoryId' => $categoryId,
-            'towns' => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'categories' => $categories,
             'brand' => $brand,
+            'directoryCopy' => DirectoryPresentation::copyFor($brand->id()),
         ]);
     }
 
@@ -90,6 +102,7 @@ final class ProviderController extends Controller
             'jsonLd' => $this->providerSchema($provider, $publicSlug),
             'promotionAd' => $brand->id() === 'vanassist' ? FoundingGraphicService::deliveredAd($id) : null,
             'brand' => $brand,
+            'requestsEnabled' => $brand->moduleEnabled('requests'),
         ]);
     }
 
