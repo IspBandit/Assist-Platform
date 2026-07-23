@@ -11,7 +11,7 @@ final class TowSmartCatalogTest extends TestCase
 {
     public function testRecoveredCatalogueCountsAreStable(): void
     {
-        self::assertSame(['vehicles' => 179, 'trailers' => 3769], TowSmartCatalog::counts());
+        self::assertSame(['vehicles' => 199, 'trailers' => 3769], TowSmartCatalog::counts());
     }
 
     public function testVehicleSearchReturnsReferenceSpecification(): void
@@ -67,5 +67,27 @@ final class TowSmartCatalogTest extends TestCase
         self::assertSame(2002, $xPro['rear_axle_limit']);
         self::assertSame(1013, $xPro['payload']);
         self::assertArrayHasKey('source_url', $xPro);
+    }
+
+    public function testCurrentBt50FamilyContainsAllPublishedConfigurations(): void
+    {
+        $matches = TowSmartCatalog::search('vehicles', 'Mazda BT-50', 50);
+        $current = array_values(array_filter($matches, static fn (array $match): bool => str_contains((string) $match['label'], '2026-current')));
+        self::assertCount(20, $current);
+
+        foreach ($current as $match) {
+            $vehicle = TowSmartCatalog::find('vehicles', (int) $match['id']);
+            self::assertNotNull($vehicle);
+            self::assertSame($vehicle['gvm'] - $vehicle['kerb_weight'], $vehicle['payload']);
+            self::assertSame(3500, $vehicle['towing_capacity']);
+            self::assertSame(350, $vehicle['towball_download_max']);
+            self::assertArrayHasKey('source_url', $vehicle);
+        }
+
+        $thunderMatch = TowSmartCatalog::search('vehicles', 'BT-50 Thunder', 5)[0];
+        $thunder = TowSmartCatalog::find('vehicles', (int) $thunderMatch['id']);
+        self::assertSame(2213, $thunder['kerb_weight']);
+        self::assertSame(887, $thunder['payload']);
+        self::assertSame(6000, $thunder['gcm']);
     }
 }

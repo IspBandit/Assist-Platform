@@ -4,7 +4,7 @@
 
 TowSmart includes the structured catalogue recovered from the original TowWise Android application:
 
-- 151 Australian tow-vehicle reference records
+- 199 Australian tow-vehicle reference records
 - 3,769 caravan, camper, hybrid and trailer reference records
 
 The source files are `resources/towsmart/catalog/vehicles.json` and
@@ -19,6 +19,10 @@ Every future specification source must record the source organisation, source
 URL or document reference, publication/model year, retrieval date, units and
 verification status. A model name without a variant and model year is not
 sufficient where ratings differ.
+
+Recent additions carry `source_url` and `source_as_at` fields directly in the
+JSON record. The recovered legacy records predate this rule and remain queued
+for provenance and grade/body replacement work.
 
 Preferred sources are manufacturer handbooks, official brochures, compliance
 information and properly licensed commercial datasets. Do not bulk-copy a
