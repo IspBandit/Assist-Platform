@@ -31,6 +31,17 @@ final class SitemapController extends Controller
             $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = 3 AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.8);
             return $this->response($urls);
         }
+        if (current_brand()->id() === 'localtorque') {
+            $urls = [
+                ['loc' => url(''), 'lastmod' => null, 'priority' => 1.0],
+                ['loc' => url('providers'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('services'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
+            ];
+            $this->addRows($urls, "SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE brand_id = 4 AND is_active = 1", 'category/', 0.7);
+            $this->addRows($urls, "SELECT slug, updated_at FROM provider_brand_listings WHERE brand_id = 4 AND status = 'active' AND search_visible = 1 AND deleted_at IS NULL", 'business/', 0.8);
+            return $this->response($urls);
+        }
         $this->addStatic($urls);
         $this->addRows($urls, "SELECT slug, updated_at FROM content_pages WHERE is_published = 1 AND noindex = 0", 'slug', 0.6);
         $this->addRows($urls, "SELECT slug, updated_at FROM service_categories WHERE is_active = 1", 'services/', 0.7);

@@ -78,7 +78,7 @@ final class ProviderController extends Controller
         return $this->view('public.provider-profile', [
             'title' => ($provider['brand_seo_title'] ?? $provider['seo_title'] ?? null) ?: ($provider['business_name'] . ' — ' . $brand->name()),
             'metaDescription' => ($provider['brand_seo_description'] ?? $provider['seo_description'] ?? null) ?: ('Services from ' . $provider['business_name'] . ' on ' . $brand->name() . '.'),
-            'canonical' => url('providers/' . $publicSlug),
+            'canonical' => url($brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug),
             'provider' => $provider,
             'services' => $brandScoped ? Provider::brandServices($brand->databaseId(), $id) : Provider::services($id),
             'areas' => Provider::areas($id),
@@ -100,7 +100,7 @@ final class ProviderController extends Controller
             '@context' => 'https://schema.org',
             '@type' => 'LocalBusiness',
             'name' => (string) ($provider['brand_display_name'] ?? $provider['business_name']),
-            'url' => url('providers/' . $publicSlug),
+            'url' => url(current_brand()->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug),
         ];
         if (!empty($provider['description'])) { $data['description'] = mb_substr(strip_tags((string) $provider['description']), 0, 300); }
         if (!empty($provider['show_public_phone']) && !empty($provider['public_phone'])) { $data['telephone'] = (string) $provider['public_phone']; }

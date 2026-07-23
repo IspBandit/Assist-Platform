@@ -38,7 +38,8 @@ if (!empty($p['town_name'])) {
         . (!empty($p['state_abbr']) ? ', ' . e((string) $p['state_abbr']) : '') . $dist . '</p>';
 }
 ?>
-<a class="card stack" href="<?= e(url('providers/' . $p['slug'])) ?>" style="text-decoration:none;color:inherit">
+<?php $profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'providers/'; ?>
+<a class="card stack" href="<?= e(url($profilePath . $p['slug'])) ?>" style="text-decoration:none;color:inherit">
     <h3 style="margin:0"><?= e((string) $p['business_name']) ?></h3>
     <div><?= $badges ?></div>
     <?= $loc ?>

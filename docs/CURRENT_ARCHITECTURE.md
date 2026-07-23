@@ -174,10 +174,4 @@ single-brand and do not currently carry immutable brand attribution.
 
 ## Existing brand state
 
-VanAssist is the only implemented brand. No TowSmart, TrailerWise, brand registry,
-brand resolver, hostname mapping, brand-scoped roles, or brand-scoped data model
-exists. VanAssist names, domains, contact details, colours, assets, email
-identity, CMS content, and cookies are hard-coded in multiple layers.
-
-This baseline requires an additive migration. A duplicated application or a
-mass rename would increase risk and is not the selected approach.
+VanAssist, TowSmart and TrailerWise are active configurations served by the shared hostname-aware runtime. LocalTorque is the fourth configured brand and remains private on `localtorque.test` until its production domain and launch controls are supplied. Shared providers use brand-specific listings and category assignments; brand-aware email, SEO, roles and feature gates prevent public presentation from falling back silently to another brand.

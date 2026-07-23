@@ -35,6 +35,7 @@ final class EmailQueue
             return false;
         }
 
+        $placeholders = array_merge(self::brandPlaceholders(), $placeholders);
         $subject = self::replace((string) $template['subject'], $placeholders);
         $html = self::replace((string) $template['html_body'], $placeholders);
         $text = self::replace((string) ($template['text_body'] ?? ''), $placeholders);
@@ -80,5 +81,22 @@ final class EmailQueue
         }
 
         return (int) $configured;
+    }
+
+    /** @return array<string,string> */
+    private static function brandPlaceholders(): array
+    {
+        if (BrandContext::hasCurrent()) {
+            $brand = BrandContext::current();
+            $contact = $brand->contact();
+            return [
+                'brand_name' => $brand->name(),
+                'brand_domain' => $brand->primaryDomain(),
+                'site_url' => $brand->url(),
+                'support_email' => (string) ($contact['support_email'] ?? ''),
+            ];
+        }
+
+        return [];
     }
 }

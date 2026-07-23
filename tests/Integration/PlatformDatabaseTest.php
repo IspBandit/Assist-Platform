@@ -40,7 +40,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testPlatformBrandsAndBackfillIntegrity(): void
     {
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');
-        self::assertSame(['vanassist', 'towsmart', 'trailerwise'], array_column($brands, 'brand_key'));
+        self::assertSame(['vanassist', 'towsmart', 'trailerwise', 'localtorque'], array_column($brands, 'brand_key'));
         self::assertSame('active', $brands[0]['status']);
 
         foreach ((new PlatformBackfill())->validate() as $check) {
@@ -156,5 +156,32 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame('TrailerWise', $trailerWise['from_name']);
         self::assertStringNotContainsString('vanassist.com.au', (string) $towSmart['from_address']);
         self::assertStringNotContainsString('vanassist.com.au', (string) $trailerWise['from_address']);
+    }
+
+    public function testTemplateQueueInjectsCurrentBrandIdentity(): void
+    {
+        $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+        BrandContext::set($registry->get('towsmart'));
+        $templateKey = 'integration_brand_placeholders';
+        $queueId = null;
+        Database::query(
+            "INSERT INTO email_templates (template_key, name, subject, html_body, text_body, is_enabled, created_at) VALUES (?, 'Integration', '{{brand_name}} notice', '<p>{{brand_domain}} {{support_email}}</p>', '{{site_url}}', 1, NOW())",
+            [$templateKey]
+        );
+
+        try {
+            self::assertTrue(EmailQueue::queueTemplate($templateKey, 'brand-template@example.com'));
+            $row = Database::selectOne('SELECT * FROM email_queue WHERE template_key = ? ORDER BY id DESC LIMIT 1', [$templateKey]);
+            self::assertNotNull($row);
+            $queueId = (int) $row['id'];
+            self::assertSame(2, (int) $row['brand_id']);
+            self::assertSame('TowSmart notice', $row['subject']);
+            self::assertStringContainsString($registry->get('towsmart')->primaryDomain(), (string) $row['html_body']);
+            self::assertStringNotContainsString('vanassist.com.au', (string) $row['html_body']);
+        } finally {
+            if ($queueId !== null) { Database::query('DELETE FROM email_queue WHERE id = ?', [$queueId]); }
+            Database::query('DELETE FROM email_templates WHERE template_key = ?', [$templateKey]);
+            BrandContext::clear();
+        }
     }
 }

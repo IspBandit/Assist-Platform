@@ -5,11 +5,12 @@ repository. Read `docs/START_HERE.md` before changing code.
 
 ## Product boundary
 
-This repository contains one PHP application serving three brands:
+This repository contains one PHP application serving four brands:
 
 - VanAssist (`vanassist.com.au`): caravan/RV provider marketplace and assistance workflows.
 - TowSmart (`towsmart.com.au`): towing calculator, saved combinations and safety guidance.
 - TrailerWise (`trailerwise.com.au`): trailer marketplace and listing management.
+- LocalTorque (private until its production domain is confirmed): Australian automotive business directory.
 
 NDTFlow and SignConsole are separate products. Never add them here.
 

@@ -461,6 +461,12 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .product-hero-media img { object-fit: cover; object-position: center; }
 .product-hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(5,15,30,.94) 0%, rgba(5,15,30,.78) 38%, rgba(5,15,30,.18) 70%, rgba(5,15,30,.05) 100%); }
 .product-hero--trailerwise .product-hero-shade { background: linear-gradient(90deg, rgba(24,12,40,.94) 0%, rgba(24,12,40,.76) 38%, rgba(24,12,40,.10) 72%); }
+.product-hero--localtorque {
+    background:
+        radial-gradient(circle at 78% 24%, rgba(240,154,35,.30), transparent 28%),
+        linear-gradient(120deg, #071722 0%, #123747 58%, #204f5f 100%);
+}
+.product-hero--localtorque .product-hero-shade { background: linear-gradient(90deg, rgba(4,18,27,.96) 0%, rgba(4,18,27,.76) 48%, rgba(4,18,27,.18) 82%); }
 .product-hero-content { position: relative; z-index: 2; padding-top: clamp(4rem, 8vw, 7rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
 .product-hero-copy { max-width: 670px; }
 .product-kicker { display: inline-block; color: #f6c86d; font-size: .78rem; line-height: 1.2; letter-spacing: .13em; text-transform: uppercase; font-weight: 800; }
@@ -566,7 +572,7 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
     body { padding-bottom: 70px; }
     .product-hero { min-height: calc(100svh - 64px); align-items: end; }
     .product-hero-media img { object-position: center 35%; }
-    .product-hero-shade, .product-hero--trailerwise .product-hero-shade { background: linear-gradient(0deg, rgba(7,13,24,.98) 0%, rgba(7,13,24,.88) 48%, rgba(7,13,24,.12) 82%); }
+    .product-hero-shade, .product-hero--trailerwise .product-hero-shade, .product-hero--localtorque .product-hero-shade { background: linear-gradient(0deg, rgba(7,13,24,.98) 0%, rgba(7,13,24,.88) 48%, rgba(7,13,24,.12) 82%); }
     .product-hero-content { padding-top: 16rem; padding-bottom: 2.2rem; }
     .product-hero h1 { font-size: clamp(2.35rem, 11vw, 3.4rem); max-width: 11ch; }
     .product-hero p { font-size: 1.02rem; }

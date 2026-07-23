@@ -17,7 +17,7 @@ final class BrandProviderEnrichmentService
             if (!Database::tableExists($table)) { throw new RuntimeException('Run migration 038 before provider enrichment.'); }
         }
         $rules = (array) config('provider_discovery', []);
-        $brandIds = ['towsmart' => 2, 'trailerwise' => 3];
+        $brandIds = ['towsmart' => 2, 'trailerwise' => 3, 'localtorque' => 4];
         $providers = Database::select(
             "SELECT p.id, p.business_name, p.slug, p.description, p.is_unclaimed, GROUP_CONCAT(DISTINCT c.name SEPARATOR ' ') AS service_names "
             . 'FROM providers p LEFT JOIN provider_services ps ON ps.provider_id = p.id LEFT JOIN service_categories c ON c.id = ps.category_id '

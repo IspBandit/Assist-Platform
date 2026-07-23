@@ -19,6 +19,9 @@ final class CategoryController extends Controller
 {
     public function index(Request $request): Response
     {
+        if (current_brand()->id() === 'localtorque') {
+            return $this->localTorqueIndex();
+        }
         $categories = ServiceCategory::activeTopLevel();
 
         return $this->view('public.services-index', [
@@ -32,6 +35,9 @@ final class CategoryController extends Controller
     public function show(Request $request): Response
     {
         $slug = (string) $request->route('slug');
+        if (current_brand()->id() === 'localtorque') {
+            return $this->localTorqueShow($request, $slug);
+        }
         $category = ServiceCategory::findActiveBySlug($slug);
         if ($category === null) {
             $this->abort(404, 'Service category not found.');
@@ -107,6 +113,49 @@ final class CategoryController extends Controller
             'distanceScope'   => $distanceFilter['scope'],
             'distanceSelection' => $distanceSelection,
             'hasOrigin'       => $originLat !== null && $originLng !== null,
+        ]);
+    }
+
+    private function localTorqueIndex(): Response
+    {
+        $brand = current_brand();
+        $categories = Database::select(
+            'SELECT id, category_key AS slug, name, description AS short_description '
+            . 'FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name',
+            [$brand->databaseId()]
+        );
+
+        return $this->view('localtorque.categories', [
+            'title' => 'Automotive business categories — LocalTorque',
+            'metaDescription' => 'Browse Australian mechanics, workshops, mobile repairers and automotive specialists by category.',
+            'canonical' => url('services'),
+            'categories' => $categories,
+            'category' => null,
+            'providers' => [],
+        ]);
+    }
+
+    private function localTorqueShow(Request $request, string $slug): Response
+    {
+        $brand = current_brand();
+        $category = Database::selectOne(
+            'SELECT id, category_key AS slug, name, description AS short_description '
+            . 'FROM brand_provider_categories WHERE brand_id = ? AND category_key = ? AND is_active = 1',
+            [$brand->databaseId(), $slug]
+        );
+        if ($category === null) {
+            $this->abort(404, 'Automotive category not found.');
+        }
+        $townId = (int) $request->input('town') ?: null;
+        $providers = Provider::brandDirectory($brand->databaseId(), $townId, (int) $category['id'], '', 60, 0)['rows'];
+
+        return $this->view('localtorque.categories', [
+            'title' => $category['name'] . ' — LocalTorque',
+            'metaDescription' => $category['short_description'],
+            'canonical' => url('category/' . $category['slug']),
+            'categories' => [],
+            'category' => $category,
+            'providers' => $providers,
         ]);
     }
 }
