@@ -12,6 +12,8 @@ use App\Core\Response;
 use App\Platform\Brand\BrandRegistry;
 use App\Services\AdminBrandAccess;
 use App\Services\AuditLog;
+use App\Services\BrandBlueprintService;
+use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
 
@@ -44,6 +46,49 @@ final class PlatformController extends Controller
             ],
             'tasks' => $this->safe(fn () => Database::select('SELECT task_key, last_status, last_run_at FROM scheduled_tasks ORDER BY task_key')),
             'migrations' => $this->safe(fn () => Database::select('SELECT migration, batch, status, completed_at FROM migrations ORDER BY id DESC LIMIT 8')),
+        ]);
+    }
+
+    public function brandBuilder(Request $request): Response
+    {
+        $this->requirePlatformAdministrator();
+
+        return $this->view('admin.platform.brand-builder', [
+            'title' => 'Brand Builder',
+            'moduleOptions' => BrandBlueprintService::MODULES,
+            'blueprint' => null,
+            'values' => [],
+            'error' => null,
+        ]);
+    }
+
+    public function previewBrand(Request $request): Response
+    {
+        $this->requirePlatformAdministrator();
+        $values = [
+            'brand_key' => $request->input('brand_key'),
+            'name' => $request->input('name'),
+            'domain' => $request->input('domain'),
+            'primary_colour' => $request->input('primary_colour'),
+            'accent_colour' => $request->input('accent_colour'),
+            'modules' => $request->input('modules', []),
+        ];
+        $blueprint = null;
+        $error = null;
+        try {
+            $registry = BrandRegistry::fromArray((array) config('brands.registry', []));
+            $blueprint = (new BrandBlueprintService())->build($values, $registry);
+            AuditLog::record('admin.brand_blueprint_previewed', 'brand_blueprint', (string) $blueprint['brand_key']);
+        } catch (InvalidArgumentException $exception) {
+            $error = $exception->getMessage();
+        }
+
+        return $this->view('admin.platform.brand-builder', [
+            'title' => 'Brand Builder',
+            'moduleOptions' => BrandBlueprintService::MODULES,
+            'blueprint' => $blueprint,
+            'values' => $values,
+            'error' => $error,
         ]);
     }
 
@@ -86,5 +131,12 @@ final class PlatformController extends Controller
     private function safe(callable $callback): array
     {
         try { return $callback(); } catch (Throwable) { return []; }
+    }
+
+    private function requirePlatformAdministrator(): void
+    {
+        if (!auth()->isSuperAdmin() && !auth()->hasAnyRole('administrator', 'platform-administrator')) {
+            $this->abort(403);
+        }
     }
 }

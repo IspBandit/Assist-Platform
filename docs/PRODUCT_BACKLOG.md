@@ -15,7 +15,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-005 | Shared provider launch email templates and campaign segmentation | ready | Preview/test-send, consent, unsubscribe and queue tests |
 | CORE-006 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner selects/configures gateway and legal/tax acceptance passes |
 | CORE-007 | Platform Control Centre for domains, launch state, features and operational status | in progress | Super-admin-only acceptance and audit coverage |
-| CORE-008 | Controlled Brand Builder over validated configuration | discovery | ADR, scope and safe preview workflow |
+| CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
 
 ## Experience
 

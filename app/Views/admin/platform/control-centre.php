@@ -5,6 +5,7 @@ $this->extend('layouts.admin');
 <?php $this->section('content'); ?>
 <div class="page-heading platform-heading">
     <div><p class="eyebrow">All brands</p><h1>Assist Platform control centre</h1><p class="lead">One operational view of the saleable platform, its four brands and shared services.</p></div>
+    <a class="btn btn-secondary" href="<?= e(url('admin/brand-builder')) ?>">Open Brand Builder</a>
 </div>
 
 <div class="stat-grid">
@@ -29,7 +30,7 @@ $this->extend('layouts.admin');
 </section>
 
 <div class="grid grid-2 section-compact">
-    <section class="card"><h2>Shared platform services</h2><ul class="control-centre-list"><li>Identity, sessions and scoped RBAC</li><li>Canonical provider records and per-brand listings</li><li>Memberships, entitlements, billing and finance</li><li>Reviews, search, maps and analytics</li><li>CMS, email campaigns, notifications and Social Studio</li><li>Deployments, backups, queues, logs and audits</li></ul></section>
+    <section class="card"><h2>Shared platform services</h2><ul class="control-centre-list"><li>Identity, sessions and scoped RBAC</li><li>Canonical provider records and per-brand listings</li><li>Memberships, entitlements, billing and finance</li><li>Reviews, search, maps and analytics</li><li>CMS, email campaigns, notifications and Social Studio</li><li>Deployments, backups, queues, logs and audits</li></ul><p><a href="<?= e(url('admin/brand-builder')) ?>">Validate a private brand blueprint</a></p></section>
     <section class="card"><h2>Scheduled operations</h2><?php if ($tasks === []): ?><p class="muted">No task status is available.</p><?php else: ?><div class="table-wrap"><table class="data"><thead><tr><th>Task</th><th>Status</th><th>Last run</th></tr></thead><tbody><?php foreach ($tasks as $task): ?><tr><td><?= $this->e($task['task_key']) ?></td><td><?= $this->e($task['last_status']) ?></td><td><?= $this->e((string) ($task['last_run_at'] ?? 'Never')) ?></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?></section>
 </div>
 <?php $this->endSection(); ?>

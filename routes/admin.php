@@ -16,6 +16,8 @@ return static function (Router $router): void {
         $router->get('', 'Admin\AdminController@dashboard', 'admin');
         $router->get('/control-centre', 'Admin\PlatformController@controlCentre', 'admin.control-centre');
         $router->post('/switch-brand', 'Admin\PlatformController@switchBrand', 'admin.switch-brand');
+        $router->get('/brand-builder', 'Admin\PlatformController@brandBuilder', 'admin.brand-builder');
+        $router->post('/brand-builder/preview', 'Admin\PlatformController@previewBrand', 'admin.brand-builder.preview');
 
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).
