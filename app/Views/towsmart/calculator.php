@@ -1,7 +1,7 @@
 <?php
 $this->extend('layouts.public');
 $errors = $errors ?? [];
-$counts = $catalogueCounts ?? ['vehicles' => 179, 'trailers' => 3769];
+$counts = $catalogueCounts ?? ['vehicles' => 199, 'trailers' => 3769];
 $field = static fn(string $key, string $default = ''): string => (string) ($values[$key] ?? old($key, $default));
 $number = static function (string $name, string $label, string $help, string $value = '') use ($field): string {
     return '<div class="form-group"><label for="' . e_attr($name) . '">' . e($label) . '</label><input id="' . e_attr($name) . '" name="' . e_attr($name) . '" type="number" min="0" step="0.1" inputmode="decimal" value="' . e_attr($field($name, $value)) . '"><p class="help">' . e($help) . '</p></div>';

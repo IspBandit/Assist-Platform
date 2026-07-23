@@ -2170,5 +2170,125 @@
     "payload": 685,
     "source_url": "https://assets.gwmanz.com/f/256395/x/43c46a95d0/cannon-alpha-brochure-au.pdf",
     "source_as_at": "29 May 2025"
+  },
+  {
+    "name": "Mazda BT-50 XS Single Cab Chassis 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1643, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1357,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Single Cab Chassis 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1684, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1316,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Freestyle Cab Chassis 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1755, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1245,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Dual Cab Chassis 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1806, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1194,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XS Dual Cab Pickup 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1888, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1112,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Dual Cab Pickup 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1929, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1071,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XTR Dual Cab Pickup 4x2",
+    "years": "2026-current", "gvm": 3000, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2012, "gcm": 5850, "towing_capacity": 3500, "towball_download_max": 350, "payload": 988,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Single Cab Chassis 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1770, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1330,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Freestyle Cab Chassis 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1841, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1259,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XS Dual Cab Chassis 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1852, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1248,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Dual Cab Chassis 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1892, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1208,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XTR Dual Cab Chassis 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1956, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1144,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 GT Dual Cab Chassis 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1959, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1141,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XS Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 1961, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1139,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XT Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2015, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1085,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 BOSS Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2067, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1033,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 XTR Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2098, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 1002,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 GT Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2102, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 998,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 SP Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2176, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 924,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
+  },
+  {
+    "name": "Mazda BT-50 Thunder Dual Cab Pickup 4x4",
+    "years": "2026-current", "gvm": 3100, "front_axle_limit": 1450, "rear_axle_limit": 1910,
+    "kerb_weight": 2213, "gcm": 6000, "towing_capacity": 3500, "towball_download_max": 350, "payload": 887,
+    "source_url": "https://www.mazda.com.au/4ab332/globalassets/brochures/mazda-new-bt-50-digital-brochure.pdf", "source_as_at": "2026"
   }
 ]

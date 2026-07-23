@@ -4,7 +4,7 @@ Updated: 23 July 2026
 
 ## Current catalogue
 
-- 179 tow-vehicle reference records after adding separate Prado model years plus current Tasman, Shark 6, JAC T9, Terron 9 and Cannon Alpha variants.
+- 199 tow-vehicle reference records after adding separate Prado model years plus current Tasman, Shark 6, JAC T9, Terron 9, Cannon Alpha and all 20 published BT-50 configurations.
 - 3,769 caravan, camper, hybrid and trailer reference records recovered from the original TowWise application.
 - Catalogue values are starting points only. Users must confirm the exact vehicle plate, handbook and manufacturer documentation.
 
@@ -30,7 +30,6 @@ The next manufacturer-verification pass should prioritise current high-interest 
 - Kia Tasman cab-chassis variants by tray configuration;
 - KGM Musso and Rexton naming/current variants;
 - current LDV T60/D90 variants;
-- Mazda BT-50 current grade/body configurations;
 - Mitsubishi Triton MV and current Pajero Sport variants;
 - Nissan Navara current grade/body configurations;
 - Toyota HiLux current grade/body configurations, LandCruiser 70/300 grades and Tundra;
