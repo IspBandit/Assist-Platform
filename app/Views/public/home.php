@@ -26,9 +26,9 @@ $this->extend('layouts.public');
                 <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                        Search providers and service runs
+                        Find caravan and RV help near you
                     </div>
-                    <div class="grid grid-3">
+                    <div class="grid grid-2 home-search-primary">
                         <div class="form-group mb-0">
                             <label for="category">Service category</label>
                             <select id="category" name="category">
@@ -47,28 +47,29 @@ $this->extend('layouts.public');
                             <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
                             <p class="location-status muted" role="status" aria-live="polite" hidden></p>
                         </div>
-                        <div class="form-group mb-0">
-                            <label for="timeframe">Preferred timeframe</label>
-                            <select id="timeframe" name="timeframe">
-                                <option value="">Any time</option>
-                                <option value="2weeks">Within 2 weeks</option>
-                                <option value="month">Within a month</option>
-                            <option value="flexible">Flexible</option>
-                        </select>
-                        <p class="muted" style="font-size:.8rem;margin:.25rem 0 0">Prefills urgency when you register a request from search results.</p>
                     </div>
-                    </div>
-                    <div class="grid grid-3" style="margin-top:.75rem">
-                        <?php $this->include('partials.search-distance-filter', [
-                            'selected' => null,
-                            'disabled' => true,
-                        ]); ?>
-                    </div>
+                    <details class="search-options">
+                        <summary>More search options</summary>
+                        <div class="grid grid-2">
+                            <div class="form-group mb-0">
+                                <label for="timeframe">Preferred timeframe</label>
+                                <select id="timeframe" name="timeframe">
+                                    <option value="">Any time</option>
+                                    <option value="2weeks">Within 2 weeks</option>
+                                    <option value="month">Within a month</option>
+                                    <option value="flexible">Flexible</option>
+                                </select>
+                            </div>
+                            <?php $this->include('partials.search-distance-filter', [
+                                'selected' => null,
+                                'disabled' => true,
+                            ]); ?>
+                        </div>
+                    </details>
                     <div class="btn-row" style="margin-top:1rem">
                         <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary btn-lg']); ?>
-                        <button type="submit" class="btn btn-primary btn-lg">Find a service</button>
-                        <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">Request assistance</a>
-                        <a class="btn btn-ghost btn-lg" href="<?= e(url('for-providers')) ?>">Join as a provider</a>
+                        <button type="submit" class="btn btn-primary btn-lg">Show nearby help</button>
+                        <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
                 </form>
 
@@ -161,7 +162,13 @@ $this->extend('layouts.public');
     <div class="container">
         <h2>How VanAssist works</h2>
         <div class="grid grid-3">
+            <?php $seenBlocks = []; ?>
             <?php foreach ($blocks as $block): ?>
+                <?php
+                $blockKey = strtolower(trim((string) ($block['title'] ?? ''))) . '|' . strtolower(trim((string) ($block['body'] ?? '')));
+                if ($blockKey === '|' || isset($seenBlocks[$blockKey])) { continue; }
+                $seenBlocks[$blockKey] = true;
+                ?>
                 <div class="card">
                     <h3><?= $this->e($block['title']) ?></h3>
                     <?php if (!empty($block['subtitle'])): ?><p class="muted"><strong><?= $this->e($block['subtitle']) ?></strong></p><?php endif; ?>
@@ -195,9 +202,5 @@ $this->extend('layouts.public');
         <a class="btn btn-primary btn-lg" href="<?= e(url('request-assistance')) ?>">Request assistance</a>
     </div>
 </section>
-
-<nav class="mobile-action-dock mobile-action-dock--vanassist" aria-label="VanAssist primary actions">
-    <a href="<?= e(url('find')) ?>">Find help</a><a href="<?= e(url('stays')) ?>">Find a stay</a><a href="<?= e(url('request-assistance')) ?>">Request help</a>
-</nav>
 
 <?php $this->endSection(); ?>

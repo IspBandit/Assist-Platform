@@ -54,5 +54,4 @@
 <?php endif; ?>
 
 <section class="section product-cta"><div class="container"><div><span class="product-kicker dark">Know the trailer industry?</span><h2>Help people find your business.</h2><p>Repairers, suppliers, inspectors, manufacturers and specialist trades can register interest now.</p></div><a class="btn btn-primary btn-lg" href="<?= e(url('for-providers')) ?>">Register a business</a></div></section>
-<nav class="mobile-action-dock" aria-label="TrailerWise primary action"><a href="<?= e(url('providers')) ?>">Find trailer services</a></nav>
 <?php $this->endSection(); ?>

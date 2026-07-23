@@ -40,20 +40,16 @@ $headerBrandMeta = $headerBrand->metadata();
                         <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                     <?php endif; ?>
                 <?php else: ?>
-                <li><a href="<?= e(url('find')) ?>">Find a service</a></li>
-                <li><a href="<?= e(url('stays')) ?>">Find a stay</a></li>
-                <li><a href="<?= e(url('services')) ?>">Services</a></li>
-                <li><a href="<?= e(url('service-runs')) ?>">Service runs</a></li>
-                <li><a href="<?= e(url('providers')) ?>">Providers</a></li>
-                <li><a href="<?= e(url('for-providers')) ?>">For providers</a></li>
-                <li><a href="<?= e(url('for-caravan-parks')) ?>">For parks</a></li>
+                <li><a href="<?= e(url('find')) ?>">Find help</a></li>
+                <li><a href="<?= e(url('stays')) ?>">Places to stay</a></li>
                 <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
+                <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>
                 <?php if (auth()->check()): ?>
                     <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
                 <?php else: ?>
                     <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                 <?php endif; ?>
-                <li><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request assistance</a></li>
+                <li><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a></li>
                 <?php endif; ?>
             </ul>
         </nav>
