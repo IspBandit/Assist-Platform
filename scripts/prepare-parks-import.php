@@ -32,6 +32,7 @@ fputcsv($out, $target);
 $accepted = 0;
 $rejectedCommercial = 0;
 $rejectedInvalid = 0;
+$rejectedMalformed = 0;
 $missingCoordinates = 0;
 $bySource = [];
 while (($values = fgetcsv($in)) !== false) {
@@ -49,6 +50,15 @@ while (($values = fgetcsv($in)) !== false) {
     }
     $name = trim((string) ($row['name'] ?? ''));
     $state = strtoupper(trim((string) ($row['state'] ?? '')));
+    // Some upstream scraper failures placed HTML fragments and a truncated URL
+    // in the name field. Never truncate and publish those as real park names.
+    $looksMalformed = mb_strlen($name) > 190
+        || strlen($url) > 500
+        || preg_match('/(?:href\s*=|link-list__|<\/?[a-z][^>]*>|&#\d+;)/i', $name) === 1;
+    if ($looksMalformed) {
+        $rejectedMalformed++;
+        continue;
+    }
     $rawLat = trim((string) ($row['latitude'] ?? ''));
     $rawLng = trim((string) ($row['longitude'] ?? ''));
     $lat = $rawLat !== '' ? filter_var($rawLat, FILTER_VALIDATE_FLOAT) : null;
@@ -101,6 +111,7 @@ echo json_encode([
     'accepted_authority_records' => $accepted,
     'rejected_unlicensed_or_non_authority_records' => $rejectedCommercial,
     'rejected_invalid_records' => $rejectedInvalid,
+    'rejected_malformed_source_records' => $rejectedMalformed,
     'accepted_missing_coordinates_review_queue' => $missingCoordinates,
     'by_source' => $bySource,
     'output' => $output,
