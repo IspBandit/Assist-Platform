@@ -72,6 +72,12 @@ brand-scoped listings. The `trailer_listings` sales/hire module remains partial
 and secondary; it must not displace service discovery without explicit owner
 approval.
 
+## LocalTorque
+
+Intended core purpose: Australia's searchable automotive workshop and specialist directory. It shares canonical businesses and memberships with the other Assist brands while using its own data-driven categories, relevance assignments, public presentation and SEO paths.
+
+Implemented foundation includes the private brand configuration, forty automotive categories, directory and category pages, claimable business profiles, provider enrichment rules, LocalBusiness structured data and a brand sitemap. The production domain, mailbox and public-launch acceptance remain pending; therefore LocalTorque is not represented as live.
+
 ## Shared platform
 
 Shared capabilities include identity, provider entities, locations, email queue,

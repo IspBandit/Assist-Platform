@@ -37,6 +37,7 @@ return static function (Router $router): void {
         // Service-category pages (Phase 2), generated from the database.
         $router->get('/services', 'Site\CategoryController@index', 'services');
         $router->get('/services/{slug}', 'Site\CategoryController@show', 'services.show');
+        $router->get('/category/{slug}', 'Site\CategoryController@show', 'categories.show');
 
         // Location pages (Phase 2): region index/detail and town detail.
         $router->get('/regions', 'Site\LocationController@regionsIndex', 'regions');
@@ -51,6 +52,7 @@ return static function (Router $router): void {
         // Provider directory and profiles (Phase 3), generated from the database.
         $router->get('/providers', 'Site\ProviderController@index', 'providers');
         $router->get('/providers/{slug}', 'Site\ProviderController@show', 'providers.show');
+        $router->get('/business/{slug}', 'Site\ProviderController@show', 'business.show');
 
         // Attributable provider contact actions (Phase 11): record then redirect
         // to phone/email/website/directions. GET-only; recording is best-effort.

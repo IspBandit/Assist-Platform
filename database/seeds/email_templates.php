@@ -11,7 +11,7 @@ $wrap = static function (string $title, string $body): string {
     return "<div style=\"font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;color:#2b2f33\">"
         . "<h2 style=\"color:#0f6e6e\">{$title}</h2>{$body}"
         . "<hr style=\"border:none;border-top:1px solid #e3e0d8;margin:24px 0\">"
-        . "<p style=\"font-size:12px;color:#8a8f94\">VanAssist &middot; Caravan help, wherever you travel.</p></div>";
+        . "<p style=\"font-size:12px;color:#8a8f94\">{{brand_name}} &middot; {{brand_domain}} &middot; {{support_email}}</p></div>";
 };
 
 return [
@@ -218,5 +218,47 @@ return [
         'subject' => 'Action needed: no auto-match for {{request_reference}}',
         'html_body' => $wrap('A request needs you', '<p>Request <strong>{{request_reference}}</strong> near {{town_name}} could not be auto-matched.</p><p>Reason: {{reason}}</p><p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Open the matching console</a></p>'),
         'text_body' => "Request {{request_reference}} near {{town_name}} could not be auto-matched.\nReason: {{reason}}\nMatch it manually: {{action_url}}",
+    ],
+    [
+        'template_key' => 'provider_welcome',
+        'name' => 'Provider welcome',
+        'subject' => 'Welcome to {{brand_name}}',
+        'html_body' => $wrap('Welcome to {{brand_name}}', '<p>Hi {{provider_name}},</p><p>Your shared Assist Platform provider account is ready. Review your business details, services and coverage before publishing.</p><p><a href="{{action_url}}">Open your provider dashboard</a></p><p>Help: {{support_email}}</p>'),
+        'text_body' => "Hi {{provider_name}},\n\nWelcome to {{brand_name}}. Review your profile: {{action_url}}\nHelp: {{support_email}}",
+    ],
+    [
+        'template_key' => 'founding_member_invitation',
+        'name' => 'Founding member invitation',
+        'subject' => 'Founding member invitation from {{brand_name}}',
+        'html_body' => $wrap('Founding member invitation', '<p>Hi {{provider_name}},</p><p>You are invited to join the Assist Platform founding-member programme. Membership benefits apply across participating brands under the shared membership policy.</p><p><a href="{{action_url}}">Review the invitation</a></p>'),
+        'text_body' => "Hi {{provider_name}},\n\nReview your {{brand_name}} founding-member invitation: {{action_url}}",
+    ],
+    [
+        'template_key' => 'profile_completion_reminder',
+        'name' => 'Profile completion reminder',
+        'subject' => 'Complete your {{brand_name}} business profile',
+        'html_body' => $wrap('Finish your business profile', '<p>Hi {{provider_name}},</p><p>Your profile is {{completion_percent}}% complete. Add current contact, service, location and verification details so customers can make an informed choice.</p><p><a href="{{action_url}}">Complete the profile</a></p>'),
+        'text_body' => "Hi {{provider_name}},\n\nYour {{brand_name}} profile is {{completion_percent}}% complete: {{action_url}}",
+    ],
+    [
+        'template_key' => 'payment_succeeded',
+        'name' => 'Payment succeeded',
+        'subject' => 'Your Assist Platform payment was received',
+        'html_body' => $wrap('Payment received', '<p>Hi {{provider_name}},</p><p>We received your payment of {{amount}} for {{plan_name}}. Your receipt is available in the billing area.</p><p><a href="{{action_url}}">View billing</a></p>'),
+        'text_body' => "Hi {{provider_name}},\n\nPayment received: {{amount}} for {{plan_name}}. {{action_url}}",
+    ],
+    [
+        'template_key' => 'payment_failed',
+        'name' => 'Payment failed',
+        'subject' => 'Action required for your Assist Platform membership',
+        'html_body' => $wrap('Payment needs attention', '<p>Hi {{provider_name}},</p><p>We could not process the payment for {{plan_name}}. Update the billing method to prevent paid features being paused after the configured grace period.</p><p><a href="{{action_url}}">Update billing</a></p>'),
+        'text_body' => "Hi {{provider_name}},\n\nPayment failed for {{plan_name}}. Update billing: {{action_url}}",
+    ],
+    [
+        'template_key' => 'membership_cancelled',
+        'name' => 'Membership cancelled',
+        'subject' => 'Your Assist Platform membership has been cancelled',
+        'html_body' => $wrap('Membership cancelled', '<p>Hi {{provider_name}},</p><p>Your paid membership has been cancelled. Your core business record remains available subject to the current free-listing policy.</p><p><a href="{{action_url}}">Review your account</a></p>'),
+        'text_body' => "Hi {{provider_name}},\n\nYour paid membership has been cancelled. Review your account: {{action_url}}",
     ],
 ];

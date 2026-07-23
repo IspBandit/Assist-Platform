@@ -11,7 +11,7 @@ This is the authoritative orientation page for developers and AI agents.
 5. `docs/DATABASE_DICTIONARY.md` and `docs/ROUTES_AND_PERMISSIONS.md`.
 6. `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
 7. For releases, `docs/OPERATIONS_RUNBOOK.md` and `docs/BACKUP_AND_RESTORE.md`.
-8. For product-specific data, `docs/TOWSMART_CATALOGUE.md` and `docs/VANASSIST_STAYS.md`.
+8. For product-specific data, `docs/TOWSMART_CATALOGUE.md`, `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
 
 ## Sources of truth
 
@@ -28,7 +28,7 @@ that a feature remains incomplete or has since been delivered.
 ## Platform summary
 
 One server-rendered PHP application, one MariaDB database and one production
-deployment serve three independently branded domains. The hostname resolves a
+deployment serves three public brands and one private LocalTorque foundation. The hostname resolves a
 trusted `Brand` object. Brand context affects presentation, links, email,
 features, modules, SEO and data scoping.
 

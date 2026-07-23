@@ -1,6 +1,6 @@
 {
     "name": "assist-platform/core",
-    "description": "Assist Platform Core shared by VanAssist, TowSmart and TrailerWise.",
+    "description": "Assist Platform Core shared by VanAssist, TowSmart, TrailerWise and LocalTorque.",
     "type": "project",
     "license": "proprietary",
     "require": {

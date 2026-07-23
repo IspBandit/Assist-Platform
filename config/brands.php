@@ -257,5 +257,88 @@ return [
             ],
             'storage_namespace' => 'trailerwise',
         ],
+
+        'localtorque' => [
+            'database_id' => 4,
+            'name' => 'LocalTorque',
+            'legal_name' => (string) Env::get('LOCALTORQUE_LEGAL_NAME', 'LocalTorque'),
+            'short_name' => 'LocalTorque',
+            // Remains private until an owner-controlled production domain is supplied and verified.
+            'status' => (string) Env::get('LOCALTORQUE_STATUS', 'private'),
+            'url' => rtrim((string) Env::get('LOCALTORQUE_URL', 'https://localtorque.test'), '/'),
+            'domains' => [
+                'primary' => (string) Env::get('LOCALTORQUE_DOMAIN', 'localtorque.test'),
+                'www' => (string) Env::get('LOCALTORQUE_WWW_DOMAIN', ''),
+                'local' => 'localtorque.test',
+            ],
+            'assets' => [
+                'logo' => '/assets/brands/localtorque/mark.svg',
+                'icon' => '/assets/brands/localtorque/mark.svg',
+                'favicon' => '/assets/brands/localtorque/mark.svg',
+            ],
+            'theme' => [
+                'brand' => '#0f3b4c',
+                'brand_emphasis' => '#082b39',
+                'accent' => '#e56b2f',
+                'surface' => '#f5f8fa',
+                'text' => '#14232b',
+                'focus' => '#c54f1c',
+            ],
+            'metadata' => [
+                'wordmark_prefix' => 'Local',
+                'wordmark_accent' => 'Torque',
+                'header_descriptor' => 'AUTOMOTIVE BUSINESS DIRECTORY',
+                'tagline' => 'Local automotive expertise, easier to find.',
+                'description' => 'Search Australian automotive workshops, mobile mechanics and specialist vehicle businesses.',
+                'social_image' => '/assets/brands/localtorque/mark.svg',
+            ],
+            'contact' => [
+                'support_email' => (string) Env::get('LOCALTORQUE_SUPPORT_EMAIL', ''),
+                'sender_email' => (string) Env::get('LOCALTORQUE_MAIL_FROM_ADDRESS', ''),
+                'sender_name' => 'LocalTorque',
+            ],
+            'legal' => [
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
+            ],
+            'navigation' => [
+                ['label' => 'Find a business', 'path' => '/providers'],
+                ['label' => 'Categories', 'path' => '/services'],
+                ['label' => 'List your business', 'path' => '/for-providers'],
+            ],
+            'footer' => [
+                ['label' => 'Privacy', 'path' => '/privacy-policy'],
+                ['label' => 'Terms', 'path' => '/terms-of-use'],
+                ['label' => 'Contact', 'path' => '/contact'],
+            ],
+            'features' => [
+                'identity.shared' => true,
+                'providers.messaging' => false,
+                'reviews.enabled' => (bool) Env::get('ENABLE_REVIEWS', false),
+                'billing.enabled' => (bool) Env::get('ENABLE_BILLING', false),
+                'advertising.enabled' => true,
+                'service_history.enabled' => false,
+                'reminders.enabled' => false,
+            ],
+            'modules' => [
+                'public_application' => true,
+                'providers' => true,
+                'requests' => false,
+                'service_runs' => false,
+                'parks' => false,
+                'cms' => true,
+                'admin' => true,
+                'towing_tools' => false,
+                'trailer_marketplace' => false,
+                'automotive_directory' => true,
+            ],
+            'analytics' => [
+                'measurement_id' => (string) Env::get('LOCALTORQUE_ANALYTICS_ID', ''),
+            ],
+            'search' => [
+                'provider_index' => 'localtorque_businesses',
+            ],
+            'storage_namespace' => 'localtorque',
+        ],
     ],
 ];
