@@ -176,7 +176,7 @@ final class PlatformDatabaseTest extends TestCase
             $queueId = (int) $row['id'];
             self::assertSame(2, (int) $row['brand_id']);
             self::assertSame('TowSmart notice', $row['subject']);
-            self::assertStringContainsString('towsmart.com.au', (string) $row['html_body']);
+            self::assertStringContainsString($registry->get('towsmart')->primaryDomain(), (string) $row['html_body']);
             self::assertStringNotContainsString('vanassist.com.au', (string) $row['html_body']);
         } finally {
             if ($queueId !== null) { Database::query('DELETE FROM email_queue WHERE id = ?', [$queueId]); }
