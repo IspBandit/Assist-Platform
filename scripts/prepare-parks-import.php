@@ -32,6 +32,7 @@ fputcsv($out, $target);
 $accepted = 0;
 $rejectedCommercial = 0;
 $rejectedInvalid = 0;
+$missingCoordinates = 0;
 $bySource = [];
 while (($values = fgetcsv($in)) !== false) {
     $row = array_combine($headers, array_pad($values, count($headers), ''));
@@ -48,12 +49,19 @@ while (($values = fgetcsv($in)) !== false) {
     }
     $name = trim((string) ($row['name'] ?? ''));
     $state = strtoupper(trim((string) ($row['state'] ?? '')));
-    $lat = filter_var($row['latitude'] ?? null, FILTER_VALIDATE_FLOAT);
-    $lng = filter_var($row['longitude'] ?? null, FILTER_VALIDATE_FLOAT);
+    $rawLat = trim((string) ($row['latitude'] ?? ''));
+    $rawLng = trim((string) ($row['longitude'] ?? ''));
+    $lat = $rawLat !== '' ? filter_var($rawLat, FILTER_VALIDATE_FLOAT) : null;
+    $lng = $rawLng !== '' ? filter_var($rawLng, FILTER_VALIDATE_FLOAT) : null;
     if ($name === '' || !in_array($state, ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'], true)
-        || $lat === false || $lng === false || $lat > -9 || $lat < -44 || $lng < 112 || $lng > 154) {
+        || $lat === false || $lng === false
+        || ($lat !== null && ($lat > -9 || $lat < -44))
+        || ($lng !== null && ($lng < 112 || $lng > 154))) {
         $rejectedInvalid++;
         continue;
+    }
+    if ($lat === null || $lng === null) {
+        $missingCoordinates++;
     }
 
     $source = trim((string) ($row['source'] ?? 'authority'));
@@ -93,6 +101,7 @@ echo json_encode([
     'accepted_authority_records' => $accepted,
     'rejected_unlicensed_or_non_authority_records' => $rejectedCommercial,
     'rejected_invalid_records' => $rejectedInvalid,
+    'accepted_missing_coordinates_review_queue' => $missingCoordinates,
     'by_source' => $bySource,
     'output' => $output,
     'important' => 'Preparation does not prove current operator details. The database importer records the official source and check date.',
