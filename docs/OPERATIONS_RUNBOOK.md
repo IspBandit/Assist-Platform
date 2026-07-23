@@ -23,6 +23,19 @@
    sitemap, robots and authentication checks.
 10. Monitor; retain the preceding release for rollback.
 
+The `Production release` GitHub workflow implements this sequence for a reviewed
+commit on `main`. Protect the `production` environment with a required owner
+reviewer. Configure `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` and pinned
+`VPS_KNOWN_HOSTS` as production-environment secrets. The deploy user requires
+write access only to `/opt/assist-platform/incoming` and narrowly scoped sudo
+permission for `/opt/assist-platform/incoming/release-remote.sh`.
+
+The workflow cannot run from a pull request or feature branch. A human must type
+`DEPLOY`, approve the protected environment and allow the complete reusable CI
+workflow to pass before upload. The remote release script verifies the archive,
+takes a backup, uses an immutable commit directory, applies forward migrations,
+checks all live brands and restores the previous symlink on application failure.
+
 ## Rollback
 
 For additive compatible migrations, switch the current symlink to the previous
