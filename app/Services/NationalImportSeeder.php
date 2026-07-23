@@ -22,6 +22,12 @@ final class NationalImportSeeder
     /** @var array<string,array<string,array<string,mixed>>> state abbr => town name => {pc,lat,lng} */
     private array $townDetails = [];
 
+    /** @var array<string,array<string,array<string,mixed>>> state => lower-case locality => details */
+    private array $nationalTownIndex = [];
+
+    /** @var array<string,array<int,array<string,mixed>>> lower-case locality => candidates */
+    private array $nationalTownCandidates = [];
+
     /**
      * Trade bucket => the service that is a DIRECT match for that trade (the
      * business's headline service).
@@ -289,6 +295,7 @@ final class NationalImportSeeder
         $this->ensureCategoriesExist();
         $categoryIds = $this->categoryMap();
         $this->townDetails = $this->loadTownDetails();
+        $this->nationalTownIndex = $this->loadNationalTownIndex();
 
         return [$regionIds, $regionState, $stateIds, $categoryIds];
     }
@@ -537,14 +544,13 @@ final class NationalImportSeeder
         ];
         $townId = $this->ensureTown($townName, $stateId, $stateAbbr, $regionId, $townCache, $counters, $coords);
 
-        $baseName = trim((string) ($biz['base'] ?? $townName));
-        $baseRegionId = $regionId;
-        if ($baseName !== '' && $baseName !== $townName) {
-            $baseRegionCanvas = $regionCanvasId;
-            $baseTownId = $this->ensureTown($baseName, $stateId, $stateAbbr, $baseRegionId, $townCache, $counters);
-        } else {
-            $baseTownId = $townId;
-        }
+        $baseName = trim((string) ($biz['base'] ?? ''));
+        [$baseTownId, $baseRegionId] = $this->resolveLocalityBusinessBase(
+            $biz,
+            $stateIds,
+            $townCache,
+            $counters
+        );
 
         $slug = $this->providerSlug((string) ($biz['id'] ?? ''), (string) ($biz['name'] ?? ''));
         $providerId = (int) Database::scalar('SELECT id FROM providers WHERE slug = ?', [$slug]);
@@ -573,6 +579,14 @@ final class NationalImportSeeder
             if ($this->enrichProvider($providerId, $enrich)) {
                 $counters['providers_enriched']++;
             }
+            // Repair only unclaimed locality imports. Service-area records remain
+            // untouched: a business can legitimately service another state while
+            // retaining its real home locality.
+            Database::query(
+                'UPDATE providers SET base_town_id = ?, region_id = ?, updated_at = NOW() '
+                . "WHERE id = ? AND is_unclaimed = 1 AND source_type = 'locality'",
+                [$baseTownId ?: null, $baseRegionId ?: null, $providerId]
+            );
         }
 
         if ($providerId <= 0) {
@@ -621,6 +635,80 @@ final class NationalImportSeeder
         return $data;
     }
 
+    /** @return array<string,array<string,array<string,mixed>>> */
+    private function loadNationalTownIndex(): array
+    {
+        $file = base_path('database/seeds/towns_national.json');
+        if (!is_file($file)) {
+            return [];
+        }
+        $decoded = json_decode((string) file_get_contents($file), true);
+        $rows = is_array($decoded) ? (array) ($decoded['towns'] ?? []) : [];
+        $index = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $state = strtoupper(trim((string) ($row['state'] ?? '')));
+            $name = trim((string) ($row['name'] ?? ''));
+            if ($state !== '' && $name !== '') {
+                $key = mb_strtolower($name);
+                $index[$state][$key] = $row;
+                $this->nationalTownCandidates[$key][] = $row;
+            }
+        }
+        return $index;
+    }
+
+    /**
+     * Resolve a locality business independently of the coverage row currently
+     * being processed. Unknown/pseudo localities are left unlocated for review;
+     * they are never manufactured as towns.
+     *
+     * @param array<string,mixed> $biz
+     * @param array<string,int> $stateIds
+     * @param array<string,int> $townCache
+     * @param array<string,int> $counters
+     * @return array{0:int,1:int}
+     */
+    private function resolveLocalityBusinessBase(
+        array $biz,
+        array $stateIds,
+        array &$townCache,
+        array &$counters
+    ): array {
+        $base = trim((string) ($biz['base'] ?? ''));
+        if ($base === '' || strcasecmp($base, 'Statewide') === 0) {
+            return [0, 0];
+        }
+
+        $state = strtoupper(trim((string) ($biz['state'] ?? '')));
+        $key = mb_strtolower($base);
+        $detail = $this->nationalTownIndex[$state][$key] ?? null;
+        // The legacy locality workbook assigned some border businesses to the
+        // state of a service-area row. If an exact official locality exists in
+        // one Australian state only, use that canonical state. Ambiguous names
+        // stay unlocated and enter the review queue instead of being guessed.
+        if ($detail === null) {
+            $candidates = $this->nationalTownCandidates[$key] ?? [];
+            if (count($candidates) === 1) {
+                $detail = $candidates[0];
+                $state = strtoupper((string) ($detail['state'] ?? ''));
+            }
+        }
+        $stateId = $stateIds[$state] ?? 0;
+        if ($stateId === 0 || $detail === null) {
+            return [0, 0];
+        }
+
+        $regionSlug = str_slug((string) ($detail['region'] ?? ''));
+        $regionId = $regionSlug !== ''
+            ? (int) Database::scalar('SELECT id FROM regions WHERE state_id = ? AND slug = ?', [$stateId, $regionSlug])
+            : 0;
+        $townId = $this->ensureTown($base, $stateId, $state, $regionId, $townCache, $counters, $detail);
+        return [$townId, $regionId];
+    }
+
     // ---- providers ---------------------------------------------------------
 
     /** @param array<string,mixed> $b */
@@ -641,7 +729,7 @@ final class NationalImportSeeder
         $email = trim((string) ($b['email'] ?? '')) ?: null;
         $address = trim((string) ($b['address'] ?? '')) ?: null;
         $desc = $this->buildDescription($b);
-        $sourceUrl = trim((string) ($b['source_url'] ?? '')) ?: $website;
+        $sourceUrl = ImportProvenance::sourceUrl($b);
 
         // Unclaimed listings are opted OUT of automated invite emails: they are
         // public-source businesses that have not opted in, so they are never
@@ -701,6 +789,7 @@ final class NationalImportSeeder
         $phone = trim((string) ($b['phone'] ?? ''));
         $email = trim((string) ($b['email'] ?? '')) ?: null;
         $website = trim((string) ($b['website'] ?? '')) ?: null;
+        $sourceUrl = ImportProvenance::sourceUrl($b);
         $address = trim((string) ($b['address'] ?? '')) ?: null;
         $desc = $this->buildDescription($b);
 
@@ -712,10 +801,11 @@ final class NationalImportSeeder
             . 'show_public_phone = GREATEST(show_public_phone, ?), '
             . "email          = COALESCE(NULLIF(email, ''), ?), "
             . "website        = COALESCE(NULLIF(website, ''), ?), "
+            . "source_url     = COALESCE(NULLIF(source_url, ''), ?), "
             . 'description     = ?, '
             . 'updated_at = NOW() '
             . 'WHERE id = ? AND is_unclaimed = 1',
-            [$address, $phone ?: null, $phone ?: null, $phone !== '' ? 1 : 0, $email, $website, $desc, $providerId]
+            [$address, $phone ?: null, $phone ?: null, $phone !== '' ? 1 : 0, $email, $website, $sourceUrl, $desc, $providerId]
         )->rowCount();
 
         return $affected > 0;
