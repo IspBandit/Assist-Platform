@@ -33,7 +33,7 @@ php scripts/prepare-parks-import.php \
 Observed preparation result:
 
 - 2,246 well-formed official-source park/camp records accepted.
-- 684 accepted records have coordinates.
+- 683 accepted records have coordinates.
 - 1,563 accepted records require geocoding/review before GPS search is reliable.
 - 1,000 malformed official-source scraper rows quarantined (the complete broken
   Parks Victoria batch, primarily HTML fragments in names/URLs).
