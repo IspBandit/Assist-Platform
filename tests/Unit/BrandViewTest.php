@@ -66,6 +66,19 @@ final class BrandViewTest extends TestCase
         self::assertStringNotContainsString('mailto:support@vanassist.com.au', $html);
     }
 
+    public function testBrandThemePublishesPlatformSemanticTokens(): void
+    {
+        BrandContext::set($this->brand());
+
+        $html = View::render('partials.brand-theme');
+
+        self::assertStringContainsString('--brand-primary: #1d4ed8;', $html);
+        self::assertStringContainsString('--color-brand: var(--brand-primary);', $html);
+        self::assertStringContainsString('--color-surface: var(--brand-surface);', $html);
+        self::assertStringContainsString('--color-focus: var(--brand-focus);', $html);
+        self::assertStringContainsString('--teal: var(--brand-primary);', $html);
+    }
+
     private function brand(): \App\Platform\Brand\Brand
     {
         return BrandRegistry::fromArray([

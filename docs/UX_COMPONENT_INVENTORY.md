@@ -120,7 +120,9 @@ Every promoted or materially changed component is checked in these states:
 
 ## Sequencing
 
-1. Stabilise semantic token aliases without visible redesign.
+1. Stabilise semantic token aliases without visible redesign. **Started:** core
+   colour aliases and base/button consumers now use the official names; legacy
+   aliases remain for unmigrated components.
 2. Verify shared public and admin shells across all brands.
 3. Promote buttons, fields, cards, statuses and feedback patterns.
 4. Promote brand-specific domain patterns with shared primitives.
@@ -133,4 +135,3 @@ Every promoted or materially changed component is checked in these states:
 A component is part of the official Design System only when its public contract,
 variants, responsive behaviour, accessibility requirements and owning source are
 documented and verified. Merely sharing a CSS class does not qualify.
-
