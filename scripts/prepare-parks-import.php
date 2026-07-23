@@ -75,6 +75,13 @@ while (($values = fgetcsv($in)) !== false) {
     }
 
     $source = trim((string) ($row['source'] ?? 'authority'));
+    // The July 2026 Parks Victoria scraper batch is structurally corrupted
+    // (HTML fragments were parsed as names/URLs). Quarantine the whole source
+    // until it is regenerated from a clean API/export and reviewed.
+    if ($source === 'Parks Victoria') {
+        $rejectedMalformed++;
+        continue;
+    }
     $sourceId = trim((string) ($row['source_id'] ?? ''));
     $externalId = substr(preg_replace('/[^a-z0-9]+/', '-', strtolower($source)) . ':' . $sourceId, 0, 100);
     if ($sourceId === '') {
