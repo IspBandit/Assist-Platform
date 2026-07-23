@@ -8,11 +8,11 @@ Last verified: 23 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `d04bf41`.
-- Release directory: `/opt/assist-platform/releases/d04bf41`.
+- Production code commit: `434ede3`.
+- Release directory: `/opt/assist-platform/releases/434ede3`.
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `040_caravan_stay_directory.sql` are applied; the
+- All migrations through `041_localtorque_foundation.sql` are applied; the
   installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
@@ -40,9 +40,10 @@ credentials in this file or Git.
   previously selected vehicle.
 - Public support addresses resolve to `support@vanassist.com.au`,
   `support@towsmart.com.au` and `support@trailerwise.com.au` respectively.
-- Production contains 7,304 providers, 10,912 brand listings and 22,115
+- Production contains 7,304 providers, 20,272 brand listings and 54,133
   brand-category assignments. Imported evidence remains
   explicitly unverified until a business is verified.
+- LocalTorque is installed as a private fourth brand with 40 data-driven automotive categories, 6,760 relevant brand listings and 26,677 category assignments. Its private homepage, directory, category, sitemap and robots responses passed direct application checks. It has no public production domain and is not publicly launched.
 - VanAssist contains 8,457 community-sourced Australian stay listings across all
   states and territories: caravan parks, campgrounds and 853 identified free
   stays. Council/authority and operator verification use distinct evidence-based
