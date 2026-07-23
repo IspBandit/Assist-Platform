@@ -6,7 +6,8 @@ if (PHP_SAPI !== 'cli') { exit(1); }
 define('BASE_PATH', dirname(__DIR__)); require BASE_PATH.'/bootstrap/autoload.php';
 use App\Core\Config; use App\Core\Database; use App\Helpers\Env; use App\Models\CaravanPark;
 Env::load(BASE_PATH.'/.env'); Config::load(BASE_PATH.'/config');
-$path=$argv[1]??'';$apply=in_array('--apply',$argv,true); if(!is_file($path)){fwrite(STDERR,"Usage: php scripts/import-authority-stays.php authority-stays.csv [--apply]\nDefault is a transactionally rolled-back dry run.\n");exit(1);}
+$arguments=isset($_SERVER['argv'])&&is_array($_SERVER['argv'])?array_values(array_filter($_SERVER['argv'],'is_string')):[];
+$path=$arguments[1]??'';$apply=in_array('--apply',$arguments,true); if(!is_file($path)){fwrite(STDERR,"Usage: php scripts/import-authority-stays.php authority-stays.csv [--apply]\nDefault is a transactionally rolled-back dry run.\n");exit(1);}
 $pdo=Database::connection();$pdo->beginTransaction();
 $fh=fopen($path,'rb'); $headers=fgetcsv($fh); if(!is_array($headers)){exit(1);} $headers=array_map('trim',$headers);
 $created=0;$updated=0;$rejected=0;
