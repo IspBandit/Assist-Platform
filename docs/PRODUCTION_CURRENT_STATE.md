@@ -8,8 +8,8 @@ Last verified: 23 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `9352928`.
-- Release directory: `/opt/assist-platform/releases/9352928`.
+- Production code commit: `d04bf41`.
+- Release directory: `/opt/assist-platform/releases/d04bf41`.
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
 - All migrations through `040_caravan_stay_directory.sql` are applied; the
@@ -47,9 +47,10 @@ credentials in this file or Git.
   states and territories: caravan parks, campgrounds and 853 identified free
   stays. Council/authority and operator verification use distinct evidence-based
   labels. Town/GPS search and operator claims are live.
-- Social Studio contains 30 reviewable/downloadable draft assets for each brand
-  (90 total), covering Instagram and Facebook posts, stories, profiles and
-  covers across five campaign intentions.
+- Social Studio contains 33 reviewable/downloadable draft assets for each brand
+  (99 total), covering Instagram and Facebook posts, stories, profiles and
+  covers across five campaign intentions. The latest nine launch assets use the
+  corrected responsive wide-cover layout and have been visually reviewed.
 - A post-import database backup from 23 July was downloaded off-server, passed
   SHA-256 verification and restored into an isolated MariaDB database with 136
   tables, 7,304 providers, 8,457 stays and 17,615 towns. The test database was
