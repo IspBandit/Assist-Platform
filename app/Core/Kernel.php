@@ -101,7 +101,11 @@ final class Kernel
         // Disabled/coming-soon brands must never fall through to VanAssist
         // routes. Their real configuration is deployable, but product modules
         // remain explicitly unavailable until implemented and tested.
-        if (!$brand->moduleEnabled('public_application')) {
+        if (
+            !$brand->moduleEnabled('public_application')
+            && !str_starts_with($path, '/admin')
+            && !self::isAuthPath($path)
+        ) {
             return Response::html(View::render('brands.coming-soon', [
                 'brand' => $brand,
             ]), 503)
@@ -206,7 +210,7 @@ final class Kernel
      */
     private static function isAuthPath(string $path): bool
     {
-        foreach (['/login', '/logout', '/forgot-password', '/reset-password', '/verify-email'] as $prefix) {
+        foreach (['/login', '/logout', '/forgot-password', '/reset-password', '/verify-email', '/admin/brand-handoff'] as $prefix) {
             if ($path === $prefix || str_starts_with($path, $prefix . '/') || str_starts_with($path, $prefix . '?')) {
                 return true;
             }

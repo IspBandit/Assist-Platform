@@ -11,9 +11,11 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group([
         'prefix'     => '/admin',
-        'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator'],
+        'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator,platform-administrator,brand-administrator,editor,support,finance,marketing'],
     ], static function (Router $router): void {
         $router->get('', 'Admin\AdminController@dashboard', 'admin');
+        $router->get('/control-centre', 'Admin\PlatformController@controlCentre', 'admin.control-centre');
+        $router->post('/switch-brand', 'Admin\PlatformController@switchBrand', 'admin.switch-brand');
 
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).

@@ -31,6 +31,16 @@ final class User extends Model
         return array_column(self::roles($userId), 'slug');
     }
 
+    /** @return array<int,string> global and brand-scoped role slugs */
+    public static function roleSlugsForBrand(int $userId, int $brandId): array
+    {
+        $sql = 'SELECT DISTINCT r.slug FROM roles r '
+            . 'LEFT JOIN user_roles ur ON ur.role_id = r.id AND ur.user_id = ? '
+            . 'LEFT JOIN user_brand_roles ubr ON ubr.role_id = r.id AND ubr.user_id = ? AND ubr.brand_id = ? '
+            . 'WHERE ur.user_id IS NOT NULL OR ubr.user_id IS NOT NULL';
+        return array_column(Database::select($sql, [$userId, $userId, $brandId]), 'slug');
+    }
+
     /** @return array<int,string> distinct permission slugs across the user's roles */
     public static function permissions(int $userId): array
     {
@@ -39,6 +49,18 @@ final class User extends Model
             . 'INNER JOIN user_roles ur ON ur.role_id = rp.role_id '
             . 'WHERE ur.user_id = ?';
         return array_column(Database::select($sql, [$userId]), 'slug');
+    }
+
+    /** @return array<int,string> permissions granted globally or for one brand */
+    public static function permissionsForBrand(int $userId, int $brandId): array
+    {
+        $sql = 'SELECT DISTINCT p.slug FROM permissions p '
+            . 'INNER JOIN role_permissions rp ON rp.permission_id = p.id '
+            . 'INNER JOIN roles r ON r.id = rp.role_id '
+            . 'LEFT JOIN user_roles ur ON ur.role_id = r.id AND ur.user_id = ? '
+            . 'LEFT JOIN user_brand_roles ubr ON ubr.role_id = r.id AND ubr.user_id = ? AND ubr.brand_id = ? '
+            . 'WHERE ur.user_id IS NOT NULL OR ubr.user_id IS NOT NULL';
+        return array_column(Database::select($sql, [$userId, $userId, $brandId]), 'slug');
     }
 
     public static function assignRole(int $userId, int $roleId): void

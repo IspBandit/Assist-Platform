@@ -48,6 +48,29 @@ final class PlatformDatabaseTest extends TestCase
         }
     }
 
+    public function testUnifiedAdministrationSchemaAndRolesAreInstalled(): void
+    {
+        self::assertTrue(Database::tableExists('admin_brand_handoff_tokens'));
+        foreach (['template_key', 'campaign_name'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?',
+                ['social_media_assets', $column]
+            ));
+        }
+
+        $roles = array_column(Database::select(
+            "SELECT slug FROM roles WHERE slug IN ('super-administrator','platform-administrator','brand-administrator','moderator','editor','support','finance','marketing')"
+        ), 'slug');
+        sort($roles);
+        $expected = ['brand-administrator', 'editor', 'finance', 'marketing', 'moderator', 'platform-administrator', 'super-administrator', 'support'];
+        sort($expected);
+        self::assertSame($expected, $roles);
+
+        self::assertGreaterThan(0, (int) Database::scalar(
+            "SELECT COUNT(*) FROM role_permissions rp INNER JOIN roles r ON r.id = rp.role_id WHERE r.slug = 'brand-administrator'"
+        ));
+    }
+
     public function testPersistentRateLimitBlocksAndClears(): void
     {
         $subjects = ['email:integration-rate-limit@example.com', 'ip:192.0.2.10'];
