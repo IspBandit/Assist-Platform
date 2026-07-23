@@ -107,7 +107,9 @@ final class SocialMediaAssetService
         $overlay = imagecolorallocatealpha($canvas, 4, 12, 24, 35);
         imagefilledrectangle($canvas, 0, 0, $format['width'], $format['height'], $overlay);
         $panel = imagecolorallocatealpha($canvas, ...array_merge(self::hexRgb($brand['dark']), [18]));
-        $panelTop = (int) ($format['height'] * ($format['height'] > $format['width'] ? .48 : .34));
+        $isPortrait = $format['height'] > $format['width'];
+        $isWide = ($format['width'] / $format['height']) > 1.4;
+        $panelTop = (int) ($format['height'] * ($isPortrait ? .48 : ($isWide ? .27 : .34)));
         imagefilledrectangle($canvas, 0, $panelTop, $format['width'], $format['height'], $panel);
         $accent = imagecolorallocate($canvas, ...self::hexRgb($brand['accent']));
         imagefilledrectangle($canvas, 0, $panelTop, max(14, (int) ($format['width'] * .012)), $format['height'], $accent);
@@ -116,9 +118,9 @@ final class SocialMediaAssetService
         $muted = imagecolorallocate($canvas, 224, 231, 240);
         $bold = self::font(true);
         $regular = self::font(false);
-        $pad = (int) ($format['width'] * .075);
+        $pad = (int) ($format['width'] * ($isWide ? .06 : .075));
         $brandSize = max(28, (int) ($format['width'] * .035));
-        $headlineSize = max(42, (int) ($format['width'] * ($format['height'] > $format['width'] ? .065 : .05)));
+        $headlineSize = max(42, (int) ($format['width'] * ($isPortrait ? .065 : ($isWide ? .038 : .05))));
         imagettftext($canvas, $brandSize, 0, $pad, $panelTop + $pad, $accent, $bold, strtoupper($brand['name']));
         self::drawWrapped($canvas, $copy['headline'], $headlineSize, $pad, $panelTop + $pad + $brandSize + 34, $format['width'] - ($pad * 2), $white, $bold, 1.12);
         $domainY = $format['height'] - $pad;
