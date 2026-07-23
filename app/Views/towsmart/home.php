@@ -61,5 +61,4 @@
 
 <section class="section product-cta"><div class="container"><div><span class="product-kicker dark">Ready before the road</span><h2>Check your towing combination now.</h2><p>It takes only a few minutes when you have the figures ready.</p></div><a class="btn btn-primary btn-lg" href="<?= e(url('calculator')) ?>">Start the calculator</a></div></section>
 
-<nav class="mobile-action-dock mobile-action-dock--dual" aria-label="TowSmart primary actions"><a href="<?= e(url('calculator')) ?>">Check combination</a><a href="<?= e(url('providers')) ?>">Find a specialist</a></nav>
 <?php $this->endSection(); ?>
