@@ -76,12 +76,15 @@ disabled. This is not the same as full commercial/public launch approval.
 
 Before full indexed launch:
 
-1. Supply an independent automated S3-compatible repository (for example
+1. Correct Microsoft Graph brand attribution so recipients see the appropriate
+   VanAssist, TowSmart or TrailerWise support address rather than the shared
+   operations mailbox; then repeat external delivery acceptance.
+2. Supply an independent automated S3-compatible repository (for example
    Cloudflare R2) and credentials. A manual off-server restore drill has passed;
    scheduled off-site replication is not active without these credentials.
-2. Rotate previously exposed temporary server and application administrator
+3. Rotate previously exposed temporary server and application administrator
    passwords through their owner-controlled consoles.
-3. Complete owner acceptance of content, providers and critical journeys.
+4. Complete owner acceptance of content, providers and critical journeys.
 
 ## Known product limitations
 

@@ -30,17 +30,19 @@ expiry and remaining days without exposing paths or private-key material.
 
 Acceptance evidence:
 
-- Graph accepted direct sends from `support@vanassist.com.au`,
-  `support@towsmart.com.au` and `support@trailerwise.com.au` through
-  `operations@vanassist.com.au`.
-- All three direct messages arrived with the correct brand identity.
+- Graph accepted direct delivery requests containing the three configured
+  support addresses through `operations@vanassist.com.au`.
 - The production queue processed three isolated acceptance messages: three
   sent, zero failed, one attempt each.
-- All three queued messages arrived in the operations mailbox with the correct
-  brand sender; receipt was also confirmed by the owner.
+- All three queued messages arrived and receipt was confirmed by the owner, but
+  the visible sender for every message was `operations@vanassist.com.au`.
 - MX, SPF, DMARC and both Microsoft DKIM selector records resolve for all three
   public domains.
 
-This accepts Microsoft Graph transport and queued delivery. External-recipient
-bounce ingestion, suppression and consent-aware bulk campaign acceptance remain
-separate COM-001/COM-002 work and must not be inferred from successful transport.
+This accepts Microsoft Graph authentication, transport and queued delivery, but
+not brand-attributed sending. App-only Graph sending uses the mailbox targeted
+by `/users/{mailbox}/sendMail`; message-body `from` values did not produce the
+required visible aliases. Configure dedicated/shared brand mailboxes and target
+the correct mailbox per immutable `brand_id` before full acceptance. External
+bounce ingestion, suppression and consent-aware bulk campaign acceptance also
+remain separate COM-001/COM-002 work.
