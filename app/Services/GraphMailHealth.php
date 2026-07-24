@@ -51,6 +51,6 @@ final class GraphMailHealth
             return '';
         }
 
-        return preg_match('/^(?:[A-Za-z]:[\\\/]|\/)/', $path) ? $path : base_path($path);
+        return preg_match('/^(?:[A-Za-z]:[\\\\\/]|\/)/', $path) ? $path : base_path($path);
     }
 }
