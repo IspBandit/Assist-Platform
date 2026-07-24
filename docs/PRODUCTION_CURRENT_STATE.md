@@ -76,14 +76,12 @@ disabled. This is not the same as full commercial/public launch approval.
 
 Before full indexed launch:
 
-1. Complete the Microsoft Entra application registration, certificate and
-   mailbox policy, then activate and test Microsoft Graph transactional email.
-2. Supply an independent automated S3-compatible repository (for example
+1. Supply an independent automated S3-compatible repository (for example
    Cloudflare R2) and credentials. A manual off-server restore drill has passed;
    scheduled off-site replication is not active without these credentials.
-3. Rotate previously exposed temporary server and application administrator
+2. Rotate previously exposed temporary server and application administrator
    passwords through their owner-controlled consoles.
-4. Complete owner acceptance of content, providers and critical journeys.
+3. Complete owner acceptance of content, providers and critical journeys.
 
 ## Known product limitations
 
