@@ -76,8 +76,9 @@ disabled. This is not the same as full commercial/public launch approval.
 
 Before full indexed launch:
 
-1. Complete the Microsoft Entra application registration, certificate and
-   mailbox policy, then activate and test Microsoft Graph transactional email.
+1. Correct Microsoft Graph brand attribution so recipients see the appropriate
+   VanAssist, TowSmart or TrailerWise support address rather than the shared
+   operations mailbox; then repeat external delivery acceptance.
 2. Supply an independent automated S3-compatible repository (for example
    Cloudflare R2) and credentials. A manual off-server restore drill has passed;
    scheduled off-site replication is not active without these credentials.
