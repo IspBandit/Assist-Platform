@@ -15,9 +15,8 @@ final class MicrosoftGraphMailClient
     /** @param array<string,mixed> $cfg */
     public static function send(array $cfg, string $to, string $recipientName, string $subject, string $html, string $text): void
     {
-        $mailbox = trim((string) ($cfg['graph_mailbox'] ?? ''));
         $from = trim((string) ($cfg['from_address'] ?? ''));
-        if ($mailbox === '' || $from === '') { throw new RuntimeException('Microsoft Graph mailbox or brand sender is not configured.'); }
+        if ($from === '') { throw new RuntimeException('Microsoft Graph brand sender mailbox is not configured.'); }
         $payload = [
             'message' => [
                 'subject' => $subject,
@@ -29,11 +28,16 @@ final class MicrosoftGraphMailClient
             'saveToSentItems' => false,
         ];
         self::request(
-            'https://graph.microsoft.com/v1.0/users/' . rawurlencode($mailbox) . '/sendMail',
+            self::sendingEndpoint($from),
             json_encode($payload, JSON_THROW_ON_ERROR),
             ['Authorization: Bearer ' . self::token($cfg), 'Content-Type: application/json'],
             [202]
         );
+    }
+
+    private static function sendingEndpoint(string $from): string
+    {
+        return 'https://graph.microsoft.com/v1.0/users/' . rawurlencode($from) . '/sendMail';
     }
 
     /** @param array<string,mixed> $cfg */
