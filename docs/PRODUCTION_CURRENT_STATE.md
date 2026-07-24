@@ -1,6 +1,6 @@
 # Production current state
 
-Last verified: 23 July 2026 (Australia/Brisbane).
+Last verified: 24 July 2026 (Australia/Brisbane).
 
 ## Deployment
 
@@ -8,11 +8,11 @@ Last verified: 23 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `434ede3`.
-- Release directory: `/opt/assist-platform/releases/434ede3`.
+- Production code commit: `14f818c082fcde30c7a823ba3f116cd9d97650a0`.
+- Release directory: `/opt/assist-platform/releases/14f818c082fcde30c7a823ba3f116cd9d97650a0`.
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `041_localtorque_foundation.sql` are applied; the
+- All migrations through `045_membership_entitlements.sql` are applied; the
   installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
@@ -21,6 +21,12 @@ credentials in this file or Git.
 ## Verified live controls
 
 - All three `/healthz` and `/readyz` endpoints returned 200.
+- All three `/readyz` endpoints reported release
+  `14f818c082fcde30c7a823ba3f116cd9d97650a0` after protected production
+  workflow run `30064747345` completed successfully.
+- Production deployment uses the restricted `assistdeploy` SSH account,
+  pinned host keys and a root-owned release command. Remote root login and
+  password authentication are disabled.
 - `/install` returned 403.
 - UFW, Fail2ban, unattended upgrades and a five-minute container health monitor
   were active.
@@ -75,10 +81,9 @@ Before full indexed launch:
 2. Supply an independent automated S3-compatible repository (for example
    Cloudflare R2) and credentials. A manual off-server restore drill has passed;
    scheduled off-site replication is not active without these credentials.
-3. Install owner-controlled SSH keys, disable password/root SSH as appropriate,
-   and rotate previously exposed temporary passwords.
-4. Change any exposed application administrator password.
-5. Complete owner acceptance of content, providers and critical journeys.
+3. Rotate previously exposed temporary server and application administrator
+   passwords through their owner-controlled consoles.
+4. Complete owner acceptance of content, providers and critical journeys.
 
 ## Known product limitations
 
