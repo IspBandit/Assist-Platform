@@ -4,6 +4,7 @@ set -euo pipefail
 root="/opt/assist-platform"
 archive="${1:-}"
 release="${2:-}"
+app_env="$root/config/app.env"
 
 if [[ ! "$release" =~ ^[a-f0-9]{40}$ ]]; then
   echo "Release must be a full Git commit SHA." >&2
@@ -25,11 +26,25 @@ if [[ ! -d "$target" ]]; then
 fi
 
 previous="$(readlink -f "$root/current" || true)"
+previous_app_release="$(sed -n 's/^APP_RELEASE=//p' "$app_env" | tail -n 1)"
 ln -sfn "$target" "$root/current.next"
 mv -Tf "$root/current.next" "$root/current"
 
+set_app_release() {
+  local value="$1"
+  if grep -q '^APP_RELEASE=' "$app_env"; then
+    sed -i "s/^APP_RELEASE=.*/APP_RELEASE=$value/" "$app_env"
+  else
+    printf '\nAPP_RELEASE=%s\n' "$value" >> "$app_env"
+  fi
+}
+set_app_release "$release"
+
 rollback() {
   if [[ -n "$previous" && -d "$previous" ]]; then
+    if [[ -n "$previous_app_release" ]]; then
+      set_app_release "$previous_app_release"
+    fi
     ln -sfn "$previous" "$root/current.next"
     mv -Tf "$root/current.next" "$root/current"
     docker compose up -d --build app caddy
