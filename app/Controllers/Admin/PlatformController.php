@@ -13,6 +13,7 @@ use App\Platform\Brand\BrandRegistry;
 use App\Services\AdminBrandAccess;
 use App\Services\AuditLog;
 use App\Services\BrandBlueprintService;
+use App\Services\GraphMailHealth;
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
@@ -46,6 +47,7 @@ final class PlatformController extends Controller
             ],
             'tasks' => $this->safe(fn () => Database::select('SELECT task_key, last_status, last_run_at FROM scheduled_tasks ORDER BY task_key')),
             'migrations' => $this->safe(fn () => Database::select('SELECT migration, batch, status, completed_at FROM migrations ORDER BY id DESC LIMIT 8')),
+            'graphMail' => GraphMailHealth::inspect((array) config('mail')),
         ]);
     }
 
