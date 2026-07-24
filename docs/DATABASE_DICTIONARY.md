@@ -46,3 +46,9 @@ a domain map, not a substitute for reading the relevant ordered migration.
 - `data_intelligence_sources`: registry for pluggable metric providers.
 - `locality_population_statistics`: sourced, dated population facts by town.
 - `data_intelligence_tasks`: brand-scoped coverage, verification and quality actions that hand off to Data Sources.
+
+# Membership catalogue (migration 045)
+
+- Adds the shared Launch Access, Free Listing, Founding Verified, Verified Provider and Featured Provider catalogue.
+- Preserves existing provider assignments and legacy rows for referential integrity; legacy plans cannot accept new signups.
+- Seeds plan entitlements, limits and descriptive AUD pricing without enabling billing, checkout or a gateway.

@@ -91,6 +91,27 @@ final class PlatformDatabaseTest extends TestCase
         self::assertGreaterThanOrEqual(2,(int)Database::scalar("SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON r.id=rp.role_id JOIN permissions p ON p.id=rp.permission_id WHERE r.slug='platform-administrator' AND p.slug LIKE 'data_intelligence.%'"));
     }
 
+    public function testAgreedMembershipCatalogueIsInstalledWithoutActivatingBilling(): void
+    {
+        $plans = Database::select(
+            "SELECT slug, public_name, monthly_price_cents, annual_price_cents FROM billing_plans "
+            . "WHERE slug IN ('launch_access','free_listing','founding_verified','verified_provider','featured_provider') ORDER BY display_order"
+        );
+
+        self::assertSame(
+            ['launch_access', 'free_listing', 'founding_verified', 'verified_provider', 'featured_provider'],
+            array_column($plans, 'slug')
+        );
+        self::assertSame(1000, (int) $plans[2]['monthly_price_cents']);
+        self::assertSame(15000, (int) $plans[3]['annual_price_cents']);
+        self::assertSame(29000, (int) $plans[4]['annual_price_cents']);
+        self::assertSame(50, (int) Database::scalar(
+            "SELECT COUNT(*) FROM billing_plan_features f JOIN billing_plans p ON p.id=f.plan_id "
+            . "WHERE p.slug IN ('launch_access','free_listing','founding_verified','verified_provider','featured_provider')"
+        ));
+        self::assertFalse((bool) Config::get('billing.enabled', false));
+    }
+
     public function testPersistentRateLimitBlocksAndClears(): void
     {
         $subjects = ['email:integration-rate-limit@example.com', 'ip:192.0.2.10'];

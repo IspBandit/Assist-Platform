@@ -11,6 +11,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\FoundingGraphicService;
+use App\Services\MembershipPresentationService;
 use App\Services\PlanEntitlementService;
 use App\Services\UsageMeteringService;
 
@@ -45,6 +46,10 @@ final class ProviderController extends Controller
             ];
         }
 
+        $membershipPlan = $provider !== null && !empty($provider['plan_id'])
+            ? Database::selectOne('SELECT slug FROM billing_plans WHERE id = ?', [(int) $provider['plan_id']])
+            : null;
+
         return $this->view('provider.dashboard', [
             'title'          => 'Provider dashboard',
             'user'           => current_user(),
@@ -52,6 +57,13 @@ final class ProviderController extends Controller
             'counts'         => $counts,
             'checklist'      => $checklist,
             'billingEnabled' => BillingManager::enabled(),
+            'membershipState' => $provider !== null
+                ? (new MembershipPresentationService())->forProvider(
+                    $provider,
+                    BillingManager::enabled(),
+                    isset($membershipPlan['slug']) ? (string) $membershipPlan['slug'] : null
+                )
+                : null,
             'foundingPromo'  => $provider !== null
                 ? FoundingGraphicService::dashboardCard((int) $provider['id'], $provider)
                 : null,

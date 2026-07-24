@@ -4,6 +4,7 @@
 /** @var array<string,int> $counts */
 /** @var array<string,bool> $checklist */
 /** @var array<string,mixed>|null $foundingPromo */
+/** @var array{slug:string,name:string,charging_enabled:bool,summary:string}|null $membershipState */
 $this->extend('layouts.public');
 $statusBadge = ['active' => 'badge-verified', 'pending' => 'badge-confirmed', 'suspended' => 'badge-neutral', 'rejected' => 'badge-neutral', 'draft' => 'badge-neutral'];
 $done = $checklist ? count(array_filter($checklist)) : 0;
@@ -39,6 +40,17 @@ $totalChecks = $checklist ? count($checklist) : 0;
                     <?= $provider['insurance_verified'] ? '<span class="badge badge-verified">Insured</span> ' : '' ?>
                 </p>
             </div>
+
+            <?php if ($membershipState !== null): ?>
+                <div class="card" style="margin-top:1rem">
+                    <span class="badge badge-confirmed">Membership</span>
+                    <h2 style="margin-bottom:.35rem"><?= $this->e($membershipState['name']) ?></h2>
+                    <p class="muted" style="margin:0"><?= $this->e($membershipState['summary']) ?></p>
+                    <?php if (!$membershipState['charging_enabled']): ?>
+                        <p style="margin-bottom:0"><strong>Billing is not active.</strong> Paid membership selection and checkout remain unavailable.</p>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <?php if ($foundingPromo !== null): ?>
                 <div class="card" style="margin-top:1rem;border-left:4px solid #0f6e6e">
