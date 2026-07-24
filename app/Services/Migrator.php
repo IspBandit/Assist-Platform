@@ -80,13 +80,15 @@ final class Migrator
         $ran = [];
         foreach ($files as $file) {
             $name = basename($file);
-            $checksum = hash_file('sha256', $file);
-            if ($checksum === false) {
+            $contents = file_get_contents($file);
+            if ($contents === false) {
                 throw new RuntimeException("Unable to checksum migration {$name}");
             }
+            $checksums = self::checksumVariants($contents);
+            $checksum = $checksums[0];
 
             if (isset($history[$name])) {
-                $this->validateAppliedMigration($name, $checksum, $history[$name]);
+                $this->validateAppliedMigration($name, $checksum, $checksums, $history[$name]);
                 continue;
             }
 
@@ -118,8 +120,16 @@ final class Migrator
         return $ran;
     }
 
-    /** @param array<string,mixed> $history */
-    private function validateAppliedMigration(string $name, string $checksum, array $history): void
+    /**
+     * @param array<int,string> $equivalentChecksums
+     * @param array<string,mixed> $history
+     */
+    private function validateAppliedMigration(
+        string $name,
+        string $checksum,
+        array $equivalentChecksums,
+        array $history
+    ): void
     {
         $status = (string) ($history['status'] ?? 'succeeded');
         if ($status !== 'succeeded') {
@@ -139,11 +149,33 @@ final class Migrator
             return;
         }
 
-        if (!hash_equals($stored, $checksum)) {
+        $matches = false;
+        foreach ($equivalentChecksums as $candidate) {
+            $matches = $matches || hash_equals($stored, $candidate);
+        }
+        if (!$matches) {
             throw new RuntimeException(
                 "Applied migration {$name} has changed (checksum mismatch). Restore the original file."
             );
         }
+    }
+
+    /**
+     * Preserve strict migration integrity while tolerating archives produced
+     * with Unix or Windows newlines. Older manual Windows deployments stored
+     * the raw CRLF checksum; immutable Git archives use LF.
+     *
+     * @return array<int,string>
+     */
+    private static function checksumVariants(string $contents): array
+    {
+        $normalised = str_replace(["\r\n", "\r"], "\n", $contents);
+
+        return array_values(array_unique([
+            hash('sha256', $contents),
+            hash('sha256', $normalised),
+            hash('sha256', str_replace("\n", "\r\n", $normalised)),
+        ]));
     }
 
     private function runFile(string $file): void
