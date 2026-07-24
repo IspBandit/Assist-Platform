@@ -39,5 +39,8 @@ try {
     exit(0);
 } catch (Throwable $e) {
     fwrite(STDERR, 'Migration failed: ' . $e->getMessage() . "\n");
+    if ((string) Env::get('APP_ENV', 'production') !== 'production' && $e->getPrevious() !== null) {
+        fwrite(STDERR, 'Cause: ' . $e->getPrevious()->getMessage() . "\n");
+    }
     exit(1);
 }
