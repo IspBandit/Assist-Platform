@@ -24,7 +24,6 @@ if [[ ! -d "$target" ]]; then
   tar --extract --gzip --file "$archive" --directory "$target" --no-same-owner
 fi
 
-php -l "$target/public/index.php" >/dev/null
 previous="$(readlink -f "$root/current" || true)"
 ln -sfn "$target" "$root/current.next"
 mv -Tf "$root/current.next" "$root/current"
