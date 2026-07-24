@@ -24,8 +24,8 @@ if (\App\Billing\BillingManager::enabled()) {
     $items['billing'] = ['Billing', 'provider/billing'];
 }
 ?>
-<nav aria-label="Provider" class="btn-row" style="margin-bottom:1.5rem;border-bottom:1px solid #e3e0d8;padding-bottom:1rem">
+<nav aria-label="Provider" class="provider-nav">
     <?php foreach ($items as $key => [$label, $href]): ?>
-        <a class="btn <?= $active === $key ? 'btn-secondary' : 'btn-ghost' ?>" href="<?= e(url($href)) ?>"><?= $this->e($label) ?></a>
+        <a class="<?= $active === $key ? 'active' : '' ?>" href="<?= e(url($href)) ?>"<?= $active === $key ? ' aria-current="page"' : '' ?>><?= $this->e($label) ?></a>
     <?php endforeach; ?>
 </nav>

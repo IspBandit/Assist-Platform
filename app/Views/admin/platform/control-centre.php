@@ -41,9 +41,9 @@ $this->extend('layouts.admin');
 <section class="section-compact">
     <div class="section-heading"><div><p class="eyebrow">Brand portfolio</p><h2>Operate every tenant without signing in again</h2></div></div>
     <div class="platform-brand-grid">
-        <?php foreach ($brands as $key => $brand): $theme = $brand->theme(); $assets = $brand->assets(); ?>
+        <?php foreach ($brands as $key => $brand): $theme = $brand->theme(); ?>
         <article class="card platform-brand-card" style="--tenant-colour:<?= e($theme['brand'] ?? '#0f6e6e') ?>">
-            <div class="platform-brand-title"><img src="<?= e($assets['logo'] ?? '/assets/brands/vanassist/mark.svg') ?>" alt="" width="48" height="48"><div><h3><?= $this->e($brand->name()) ?></h3><p class="muted"><?= $this->e($brand->status()) ?> · <?= $this->e($brand->primaryDomain()) ?></p></div></div>
+            <div class="platform-brand-title"><div><h3><?= $this->e($brand->name()) ?></h3><p class="muted"><?= $this->e($brand->status()) ?> · <?= $this->e($brand->primaryDomain()) ?></p></div></div>
             <dl class="platform-brand-metrics"><div><dt>Listings</dt><dd><?= (int) $brandStats[$key]['providers'] ?></dd></div><div><dt>Categories</dt><dd><?= (int) $brandStats[$key]['categories'] ?></dd></div><div><dt>Social assets</dt><dd><?= (int) $brandStats[$key]['assets'] ?></dd></div></dl>
             <form method="post" action="<?= e(url('admin/switch-brand')) ?>"><?= csrf_field() ?><input type="hidden" name="brand" value="<?= e($key) ?>"><input type="hidden" name="return_path" value="/admin"><button class="btn btn-primary" type="submit">Open <?= $this->e($brand->name()) ?> dashboard</button></form>
         </article>

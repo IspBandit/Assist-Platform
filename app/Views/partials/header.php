@@ -6,7 +6,6 @@ $headerBrandMeta = $headerBrand->metadata();
 <header class="site-header">
     <div class="container">
         <a class="brand" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
-            <img class="brand-mark" src="<?= e(url(ltrim($headerBrand->assets()['logo'] ?? '/assets/brands/vanassist/mark.svg', '/'))) ?>" alt="" width="44" height="44">
             <span class="brand-copy">
                 <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>
                 <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?></span>

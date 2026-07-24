@@ -132,12 +132,15 @@ Every promoted or materially changed component is checked in these states:
 
 ### 2026-07 enterprise shell increment
 
-- Four brand marks now share one tested SVG geometry contract.
+- Provisional brand illustrations were removed from product navigation in
+  favour of typography-first wordmarks and restrained colour accents.
 - Admin presentation rules moved out of the layout into reusable shell classes.
 - Current navigation exposes `aria-current`; the workspace selector supports
   keyboard traversal and retains server-side brand access/scoping.
 - Representative acceptance widths are 360px and 1280px, with 768px included
   in the full component acceptance matrix.
+- The public discovery hero and provider dashboard now use the Experience v2
+  immersive-task and command-centre patterns.
 
 ## Definition of done
 
