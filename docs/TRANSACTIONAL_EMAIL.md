@@ -15,11 +15,13 @@ Required production settings:
 
 The private key must exist only in server-side private storage with restrictive
 permissions. It must not enter Git, documentation, logs, screenshots or chat.
-The queue chooses the sender from its immutable `brand_id`: VanAssist uses
+The queue chooses the sender mailbox from its immutable `brand_id`: VanAssist uses
 `support@vanassist.com.au`, TowSmart uses `support@towsmart.com.au`, and
-TrailerWise uses `support@trailerwise.com.au`. Microsoft 365 must have sending
-from aliases enabled. Test all three identities externally before enabling the
-queue worker.
+TrailerWise uses `support@trailerwise.com.au`. Each address must be a real
+Exchange Online mailbox (a shared mailbox is sufficient), not merely an alias
+on `operations@vanassist.com.au`. App-only Graph sends through
+`/users/{brand-mailbox}/sendMail`. Test all three identities externally before
+enabling bulk queue work.
 
 ## Production acceptance — 24 July 2026
 
