@@ -23,6 +23,21 @@ $this->extend('layouts.admin');
     <div class="stat"><div class="num"><?= (int) $totals['failed_email'] ?></div><div class="label">Failed email</div></div>
 </div>
 
+<section class="card section-compact">
+    <div class="page-header">
+        <div><p class="eyebrow">Transactional email</p><h2>Microsoft Graph certificate</h2><p class="muted">Private key material stays server-side and is never available through the admin console.</p></div>
+        <span class="badge"><?= $this->e(ucfirst((string) $graphMail['status'])) ?></span>
+    </div>
+    <dl class="platform-brand-metrics">
+        <div><dt>Transport</dt><dd><?= $this->e(strtoupper((string) $graphMail['driver'])) ?></dd></div>
+        <div><dt>Sending mailbox</dt><dd><?= $this->e((string) $graphMail['mailbox']) ?></dd></div>
+        <div><dt>Certificate expires</dt><dd><?= $this->e($graphMail['expires_at'] ? date('j M Y', (int) strtotime((string) $graphMail['expires_at'])) : 'Unavailable') ?></dd></div>
+        <div><dt>Days remaining</dt><dd><?= $graphMail['days_remaining'] === null ? '—' : (int) $graphMail['days_remaining'] ?></dd></div>
+    </dl>
+    <?php if ($graphMail['fingerprint']): ?><p class="muted"><strong>SHA-256 fingerprint:</strong> <code><?= $this->e((string) $graphMail['fingerprint']) ?></code></p><?php endif; ?>
+    <?php if ($graphMail['status'] !== 'healthy'): ?><div class="alert alert-warning">Renew or repair the Graph certificate before transactional delivery is affected.</div><?php endif; ?>
+</section>
+
 <section class="section-compact">
     <div class="section-heading"><div><p class="eyebrow">Brand portfolio</p><h2>Operate every tenant without signing in again</h2></div></div>
     <div class="platform-brand-grid">
