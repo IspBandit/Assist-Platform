@@ -22,7 +22,7 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO billing_plan_prices (plan_id, billing_interval, amount_cents, currency, gst_inclusive, is_active, created_at)
 SELECT p.id, price.billing_interval, price.amount_cents, 'AUD', 1, 1, NOW()
 FROM billing_plans p
-JOIN (
+CROSS JOIN (
     SELECT 'launch_access' slug, 'monthly' billing_interval, 0 amount_cents UNION ALL
     SELECT 'launch_access', 'annual', 0 UNION ALL SELECT 'free_listing', 'monthly', 0 UNION ALL
     SELECT 'free_listing', 'annual', 0 UNION ALL SELECT 'founding_verified', 'monthly', 1000 UNION ALL
@@ -47,7 +47,7 @@ SELECT p.id, limits.limit_key,
     END,
     NOW()
 FROM billing_plans p
-JOIN (
+CROSS JOIN (
     SELECT 'maximum_active_runs' limit_key UNION ALL SELECT 'maximum_service_categories' UNION ALL
     SELECT 'maximum_service_areas' UNION ALL SELECT 'maximum_provider_users' UNION ALL SELECT 'maximum_branches'
 ) limits
