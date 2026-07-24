@@ -1,11 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title id="title">TrailerWise utility trailer</title>
-  <defs><linearGradient id="tw" x1="7" y1="5" x2="57" y2="59" gradientUnits="userSpaceOnUse"><stop stop-color="#9558ec"/><stop offset="1" stop-color="#41117f"/></linearGradient></defs>
-  <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#tw)"/>
-  <path d="M10 25h36l-3 18H15l-5-18Z" fill="none" stroke="#fff" stroke-width="3.5" stroke-linejoin="round"/>
-  <path d="M12 31h32M18 25v18M40 25v18M43 43h7l8 5" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="22" cy="46" r="5" fill="#351064" stroke="#fff" stroke-width="2.5"/>
-  <circle cx="37" cy="46" r="5" fill="#351064" stroke="#fff" stroke-width="2.5"/>
-  <circle cx="58" cy="48" r="2" fill="#f6a337"/>
-  <path d="M14 54h34" stroke="#f6a337" stroke-width="2.5" stroke-linecap="round"/>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- TrailerWise: Trailer ownership, inspection and capable management -->
+  <defs>
+    <style>
+      .tw-stroke { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+      .tw-fill { fill: currentColor; opacity: 0.75; }
+    </style>
+  </defs>
+  <!-- Trailer body: robust cargo profile -->
+  <path class="tw-stroke" d="M 18 24 L 18 36 Q 18 40 22 40 L 42 40 Q 46 40 46 36 L 46 24 Z"/>
+  <!-- Cargo section division -->
+  <line x1="30" y1="24" x2="30" y2="40" class="tw-stroke" stroke-width="1" opacity="0.4"/>
+  <!-- Front wheel -->
+  <circle cx="24" cy="42" r="3.5" class="tw-stroke"/>
+  <circle cx="24" cy="42" r="1.2" class="tw-fill"/>
+  <!-- Rear wheel -->
+  <circle cx="40" cy="42" r="3.5" class="tw-stroke"/>
+  <circle cx="40" cy="42" r="1.2" class="tw-fill"/>
+  <!-- Inspection checkmark: compliance symbol -->
+  <path class="tw-stroke" d="M 35 30 L 37 32 L 41 28" stroke-width="2"/>
+  <!-- Tow coupling -->
+  <circle cx="16" cy="32" r="1.8" class="tw-fill"/>
+  <line x1="14" y1="32" x2="18" y2="32" class="tw-stroke"/>
+  <!-- Ground -->
+  <line x1="12" y1="47" x2="50" y2="47" class="tw-stroke" stroke-width="1.2" opacity="0.5"/>
 </svg>
