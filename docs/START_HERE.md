@@ -13,11 +13,13 @@ This is the authoritative orientation page for developers and AI agents.
 5. `docs/CURRENT_ARCHITECTURE.md`, `docs/TARGET_ARCHITECTURE.md` and
    `docs/UNIFIED_ASSIST_PLATFORM.md`.
 6. `docs/PLATFORM_DESIGN_SYSTEM.md`, `docs/UX_COMPONENT_INVENTORY.md`,
-   `docs/PRODUCT_BACKLOG.md`, `docs/ARCHITECTURE_DECISION_RECORDS.md` and
-   `docs/PLATFORM_QUALITY_GATE.md`.
+   `docs/UX_DECISIONS.md`, `docs/PRODUCT_BACKLOG.md`, `docs/ROADMAP.md`,
+   `docs/ARCHITECTURE_DECISION_RECORDS.md` and `docs/PLATFORM_QUALITY_GATE.md`.
 7. `docs/DATABASE_DICTIONARY.md` and `docs/ROUTES_AND_PERMISSIONS.md`.
-8. `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
-9. For releases, `docs/OPERATIONS_RUNBOOK.md` and `docs/BACKUP_AND_RESTORE.md`.
+8. `docs/DEVELOPER_GUIDE.md`, `docs/CODING_STANDARDS.md`,
+   `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
+9. For releases, `docs/OPERATIONS_MANUAL.md`, `docs/OPERATIONS_RUNBOOK.md`,
+   `docs/BACKUP_AND_RESTORE.md` and `docs/RELEASE_NOTES.md`.
 10. For product-specific data, `docs/TOWSMART_CATALOGUE.md`,
     `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
 

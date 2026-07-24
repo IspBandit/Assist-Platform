@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+See [ADR 0007](DECISIONS/0007-modular-data-intelligence-sources.md) for the modular Data Intelligence source and workflow decision.
+
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
 
@@ -38,5 +40,8 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0002: forward-only migrations.
 - 0003: brand-attributed email.
 - 0004: Assist Platform Enterprise as primary product and governance model.
+- 0005: Brand Builder uses reviewed private blueprints.
+- 0006: Connector-based, review-first data ingestion.
+- 0007: Modular Data Intelligence sources and workflow actions.
 
 The index must be updated whenever an ADR is accepted.

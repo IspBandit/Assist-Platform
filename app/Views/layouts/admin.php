@@ -26,6 +26,7 @@ $nav = [
         ['Service runs', '/admin/runs'],
     ],
     'Analytics' => [
+        ['Data Intelligence', '/admin/data-intelligence'],
         ['Demand overview', '/admin/demand'],
         ['Provider usage', '/admin/demand/providers'],
         ['Conversion funnel', '/admin/demand/funnel'],
@@ -35,6 +36,8 @@ $nav = [
     'Catalogue' => [
         ['Locations', '/admin/locations'],
         ['Service categories', '/admin/categories'],
+        ['Data sources', '/admin/data-sources'],
+        ['Import review', '/admin/data-sources/review'],
     ],
     'Content' => [
         ['Pages & blocks', '/admin/content'],

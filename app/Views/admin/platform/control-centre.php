@@ -8,6 +8,13 @@ $this->extend('layouts.admin');
     <a class="btn btn-secondary" href="<?= e(url('admin/brand-builder')) ?>">Open Brand Builder</a>
 </div>
 
+<section class="card">
+    <div class="page-header">
+        <div><p class="eyebrow">Platform data</p><h2>Data Intelligence</h2><p class="muted">Prioritise national coverage gaps, then send actionable recommendations into connector ingestion and review.</p></div>
+        <div class="btn-row"><a class="btn btn-primary" href="<?= e(url('admin/data-intelligence')) ?>">Open Data Intelligence</a><a class="btn btn-secondary" href="<?= e(url('admin/data-sources')) ?>">Manage Data Sources</a></div>
+    </div>
+</section>
+
 <div class="stat-grid">
     <div class="stat"><div class="num"><?= (int) $totals['users'] ?></div><div class="label">Platform users</div></div>
     <div class="stat"><div class="num"><?= (int) $totals['providers'] ?></div><div class="label">Canonical providers</div></div>

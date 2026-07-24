@@ -225,8 +225,8 @@ Cross-brand review reuse requires actual service relevance.
 ## 12. Delivery governance
 
 All initiatives are organised into the workstreams in
-`docs/PRODUCT_BACKLOG.md`: Platform Core, Experience, Brand Development, Data &
-Integrations, and Operations.
+`docs/PRODUCT_BACKLOG.md`: Platform, Experience, Brands, Data, Infrastructure,
+Operations and Commercial.
 
 Material architectural decisions use the ADR process in
 `docs/ARCHITECTURE_DECISION_RECORDS.md`. Production candidates must pass

@@ -71,6 +71,26 @@ final class PlatformDatabaseTest extends TestCase
         ));
     }
 
+    public function testDataSourceSchemaAndPlatformPermissionsAreInstalled(): void
+    {
+        foreach (['data_source_connectors','data_source_credentials','data_source_category_mappings','data_source_import_jobs','data_source_import_candidates','data_source_usage_daily','data_source_schedules'] as $table) {
+            self::assertTrue(Database::tableExists($table), $table.' was not installed');
+        }
+        self::assertSame(1,(int)Database::scalar("SELECT COUNT(*) FROM data_source_connectors WHERE connector_key='google_places'"));
+        self::assertSame(4,(int)Database::scalar("SELECT COUNT(*) FROM permissions WHERE slug LIKE 'data_sources.%'"));
+        self::assertGreaterThanOrEqual(4,(int)Database::scalar("SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON r.id=rp.role_id JOIN permissions p ON p.id=rp.permission_id WHERE r.slug='platform-administrator' AND p.slug LIKE 'data_sources.%'"));
+    }
+
+    public function testDataIntelligenceSchemaAndPlatformPermissionsAreInstalled(): void
+    {
+        foreach (['data_intelligence_sources','locality_population_statistics','data_intelligence_tasks'] as $table) {
+            self::assertTrue(Database::tableExists($table), $table.' was not installed');
+        }
+        self::assertSame(1,(int)Database::scalar("SELECT COUNT(*) FROM data_intelligence_sources WHERE source_key='provider_coverage'"));
+        self::assertSame(2,(int)Database::scalar("SELECT COUNT(*) FROM permissions WHERE slug LIKE 'data_intelligence.%'"));
+        self::assertGreaterThanOrEqual(2,(int)Database::scalar("SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON r.id=rp.role_id JOIN permissions p ON p.id=rp.permission_id WHERE r.slug='platform-administrator' AND p.slug LIKE 'data_intelligence.%'"));
+    }
+
     public function testPersistentRateLimitBlocksAndClears(): void
     {
         $subjects = ['email:integration-rate-limit@example.com', 'ip:192.0.2.10'];
