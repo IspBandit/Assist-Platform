@@ -16,6 +16,8 @@ may remain as dated files and are linked here rather than copied.
   Operations and Commercial streams.
 - Continued unified admin, Data Sources and Data Intelligence work without
   creating a competing implementation.
+- Completed CORE-004's shared membership catalogue and honest provider dashboard
+  state. Paid selection and charging remain disabled pending COM-004 acceptance.
 
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.

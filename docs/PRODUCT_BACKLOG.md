@@ -11,7 +11,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-001 | One typed brand registry and trusted host resolution | done | Brand/domain tests and current production checks |
 | CORE-002 | Unified admin, global view and permission-scoped brand switching | in progress | Cross-domain handoff, RBAC and rendered acceptance |
 | CORE-003 | Canonical providers with relevant per-brand listings | in progress | Isolation, relevance and duplicate tests |
-| CORE-004 | Shared membership entitlements for Launch, Free, Founding, Verified and Featured | ready | Entitlement tests, dashboard states and billing-disabled acceptance |
+| CORE-004 | Shared membership entitlements for Launch, Free, Founding, Verified and Featured | done | Migration 045 catalogue, entitlement tests, provider dashboard states and billing-disabled acceptance |
 | CORE-005 | Shared provider launch email templates and campaign segmentation | ready | Preview/test-send, consent, unsubscribe and queue tests |
 | CORE-007 | Platform Control Centre for domains, launch state, features and operational status | in progress | Super-admin-only acceptance and audit coverage |
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |

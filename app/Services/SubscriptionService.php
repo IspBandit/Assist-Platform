@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Billing\Entitlements;
+use App\Billing\MembershipCatalogue;
 use App\Core\Database;
 use App\Core\Logger;
 use Throwable;
@@ -48,9 +49,9 @@ final class SubscriptionService
         try {
             $founding = (bool) ($options['founding'] ?? false);
             $planSlug = $options['plan_slug']
-                ?? ($founding ? 'founding_free' : (string) config('billing.default_free_plan', 'founding_free'));
+                ?? ($founding ? MembershipCatalogue::FOUNDING_VERIFIED : (string) config('billing.default_free_plan', MembershipCatalogue::FREE_LISTING));
 
-            $planId = $this->planIdBySlug($planSlug) ?? $this->planIdBySlug((string) config('billing.default_free_plan', 'founding_free'));
+            $planId = $this->planIdBySlug($planSlug) ?? $this->planIdBySlug((string) config('billing.default_free_plan', MembershipCatalogue::FREE_LISTING));
 
             $state = 'complimentary';
 
