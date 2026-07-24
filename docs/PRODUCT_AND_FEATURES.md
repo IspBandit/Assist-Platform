@@ -1,5 +1,10 @@
 # Products and feature status
 
+Assist Platform Enterprise is the primary product. These sections describe its
+current brand implementations and must be read with
+`ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` and
+`PRODUCTION_CURRENT_STATE.md`.
+
 Status terms: **live** means verified on production; **implemented** means code
 exists and is tested but may not be publicly launched; **partial** means an MVP
 or foundation exists; **planned** means it must not be advertised as available.

@@ -30,3 +30,19 @@ a domain map, not a substitute for reading the relevant ordered migration.
 - Add foreign keys, uniqueness and indexes that match real ownership and queries.
 - Test on a disposable database and production-shaped restore before live use.
 
+# Data source ingestion (migration 043)
+
+- `data_source_connectors`: connector registry, state and cost/quota guardrails.
+- `data_source_credentials`: encrypted connector secrets and non-sensitive hints.
+- `data_source_category_mappings`: brand category to connector query mapping.
+- `data_source_import_jobs`: immutable execution summaries and failures.
+- `data_source_import_candidates`: temporary normalized review records.
+- `data_source_usage_daily`: platform-side request/cost estimates.
+- `data_source_schedules`: due-scan definitions for the trusted CLI runner.
+- `provider_discovery_evidence.connector_key`: generic source provenance.
+
+# Data intelligence (migration 044)
+
+- `data_intelligence_sources`: registry for pluggable metric providers.
+- `locality_population_statistics`: sourced, dated population facts by town.
+- `data_intelligence_tasks`: brand-scoped coverage, verification and quality actions that hand off to Data Sources.

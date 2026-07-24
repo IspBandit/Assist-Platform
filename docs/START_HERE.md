@@ -5,13 +5,23 @@ This is the authoritative orientation page for developers and AI agents.
 ## Read in this order
 
 1. `AGENTS.md` — mandatory safety and engineering rules.
-2. `docs/PRODUCT_AND_FEATURES.md` — intended products versus implemented scope.
-3. `docs/PRODUCTION_CURRENT_STATE.md` — what is actually live and what is pending.
-4. `docs/CURRENT_ARCHITECTURE.md` and `docs/TARGET_ARCHITECTURE.md`.
-5. `docs/DATABASE_DICTIONARY.md` and `docs/ROUTES_AND_PERMISSIONS.md`.
-6. `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
-7. For releases, `docs/OPERATIONS_RUNBOOK.md` and `docs/BACKUP_AND_RESTORE.md`.
-8. For product-specific data, `docs/TOWSMART_CATALOGUE.md`, `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
+2. `docs/PRODUCT_BIBLE.md`, `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`
+   and `docs/PLATFORM_CHARTER.md` — primary product direction, architecture and
+   principles.
+3. `docs/PRODUCT_AND_FEATURES.md` — intended products versus implemented scope.
+4. `docs/PRODUCTION_CURRENT_STATE.md` — what is actually live and what is pending.
+5. `docs/CURRENT_ARCHITECTURE.md`, `docs/TARGET_ARCHITECTURE.md` and
+   `docs/UNIFIED_ASSIST_PLATFORM.md`.
+6. `docs/PLATFORM_DESIGN_SYSTEM.md`, `docs/UX_COMPONENT_INVENTORY.md`,
+   `docs/UX_DECISIONS.md`, `docs/PRODUCT_BACKLOG.md`, `docs/ROADMAP.md`,
+   `docs/ARCHITECTURE_DECISION_RECORDS.md` and `docs/PLATFORM_QUALITY_GATE.md`.
+7. `docs/DATABASE_DICTIONARY.md` and `docs/ROUTES_AND_PERMISSIONS.md`.
+8. `docs/DEVELOPER_GUIDE.md`, `docs/CODING_STANDARDS.md`,
+   `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
+9. For releases, `docs/OPERATIONS_MANUAL.md`, `docs/OPERATIONS_RUNBOOK.md`,
+   `docs/BACKUP_AND_RESTORE.md` and `docs/RELEASE_NOTES.md`.
+10. For product-specific data, `docs/TOWSMART_CATALOGUE.md`,
+    `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
 
 ## Sources of truth
 
@@ -19,16 +29,19 @@ When documents disagree, use this precedence:
 
 1. Executable code, ordered migrations and automated tests.
 2. `PRODUCTION_CURRENT_STATE.md` for the last verified live state.
-3. Current architecture/product documents listed above.
-4. Historical audit, migration and implementation notes.
+3. `PRODUCT_BIBLE.md` and `ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` for
+   product direction and future architecture.
+4. Current architecture/product documents listed above.
+5. Historical audit, migration and implementation notes.
 
 Historical documents describe what was true when written; they are not proof
 that a feature remains incomplete or has since been delivered.
 
 ## Platform summary
 
-One server-rendered PHP application, one MariaDB database and one production
-deployment serves three public brands and one private LocalTorque foundation. The hostname resolves a
+Assist Platform Enterprise is the primary product. One server-rendered PHP
+application, one MariaDB database and one production deployment serves three
+public brands and one private LocalTorque foundation. The hostname resolves a
 trusted `Brand` object. Brand context affects presentation, links, email,
 features, modules, SEO and data scoping.
 

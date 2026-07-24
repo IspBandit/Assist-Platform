@@ -28,6 +28,14 @@ final class SocialMediaAssetService
         'community' => 'Community engagement',
     ];
 
+    /** @var array<string,string> */
+    private const TEMPLATES = [
+        'editorial' => 'Premium editorial',
+        'field-guide' => 'Field guide / educational',
+        'provider-spotlight' => 'Provider spotlight',
+        'launch-impact' => 'Launch impact',
+    ];
+
     public static function schemaReady(): bool
     {
         return Database::tableExists('social_media_assets');
@@ -38,6 +46,9 @@ final class SocialMediaAssetService
 
     /** @return array<string,string> */
     public static function intentions(): array { return self::INTENTIONS; }
+
+    /** @return array<string,string> */
+    public static function templates(): array { return self::TEMPLATES; }
 
     /** @return list<array<string,mixed>> */
     public static function listForBrand(int $brandId): array
@@ -81,6 +92,13 @@ final class SocialMediaAssetService
                 'education-safety' => ['Service it before you tow it', "Check tyres, wheel bearings, brakes, lights, coupling and safety chains before every trip. Use qualified providers for inspections and repairs.\n\n#TrailerSafety #Roadworthy #TrailerWise"],
                 'community' => ['Built for every kind of trailer', "Boat, horse, box, plant or commercial: what type of trailer do you rely on? Tell the TrailerWise community.\n\n#TrailerOwners #TrailerWise #MadeForAustralia"],
             ],
+            'localtorque' => [
+                'launch' => ['Local automotive expertise, easier to find', "LocalTorque connects Australians with workshops, mobile mechanics and automotive specialists nationwide.\n\n#LocalTorque #AutomotiveAustralia #LocalBusiness"],
+                'provider-recruitment' => ['Put your workshop on Australia’s automotive map', "Mechanics, auto electricians, tyre shops, fabricators and specialists: claim your LocalTorque listing and help local customers find you.\n\n#LocalTorque #WorkshopAustralia #AutomotiveBusiness"],
+                'service-discovery' => ['Find the right automotive specialist nearby', "Search workshops, mobile mechanics and specialist automotive businesses by service, location and availability.\n\n#LocalMechanic #LocalTorque #AutomotiveServices"],
+                'education-safety' => ['Good maintenance starts with the right specialist', "Use qualified automotive businesses, verify the work required and keep clear service records for your vehicle.\n\n#VehicleMaintenance #LocalTorque #RoadSafety"],
+                'community' => ['Built around local automotive knowledge', "Which local workshop has earned your trust? Share the specialist skill that keeps your vehicle moving.\n\n#LocalTorqueCommunity #SupportLocal #AutomotiveAustralia"],
+            ],
         ];
         if (!isset($copy[$brand][$intention])) { throw new RuntimeException('Unknown social campaign intention.'); }
         $selected = $copy[$brand][$intention];
@@ -88,10 +106,10 @@ final class SocialMediaAssetService
     }
 
     /** @return array<string,mixed> */
-    public static function generate(string $brandKey, int $brandId, string $formatKey, string $intention, ?int $userId): array
+    public static function generate(string $brandKey, int $brandId, string $formatKey, string $intention, ?int $userId, string $templateKey = 'editorial', ?string $campaignName = null): array
     {
         $format = self::FORMATS[$formatKey] ?? null;
-        if ($format === null || !isset(self::INTENTIONS[$intention])) { throw new RuntimeException('Choose a valid platform format and intention.'); }
+        if ($format === null || !isset(self::INTENTIONS[$intention]) || !isset(self::TEMPLATES[$templateKey])) { throw new RuntimeException('Choose a valid platform format, purpose and template.'); }
         if (!extension_loaded('gd')) { throw new RuntimeException('The image-generation extension is not installed.'); }
         $brand = self::brandStyle($brandKey);
         $copy = self::copyFor($brandKey, $intention);
@@ -104,12 +122,18 @@ final class SocialMediaAssetService
         self::coverImage($canvas, $background, $format['width'], $format['height']);
         imagedestroy($background);
 
-        $overlay = imagecolorallocatealpha($canvas, 4, 12, 24, 35);
+        $overlayAlpha = $templateKey === 'launch-impact' ? 48 : 35;
+        $overlay = imagecolorallocatealpha($canvas, 4, 12, 24, $overlayAlpha);
         imagefilledrectangle($canvas, 0, 0, $format['width'], $format['height'], $overlay);
         $panel = imagecolorallocatealpha($canvas, ...array_merge(self::hexRgb($brand['dark']), [18]));
         $isPortrait = $format['height'] > $format['width'];
         $isWide = ($format['width'] / $format['height']) > 1.4;
-        $panelTop = (int) ($format['height'] * ($isPortrait ? .48 : ($isWide ? .27 : .34)));
+        $panelTop = (int) ($format['height'] * match ($templateKey) {
+            'field-guide' => ($isPortrait ? .42 : .22),
+            'provider-spotlight' => ($isPortrait ? .55 : .38),
+            'launch-impact' => ($isPortrait ? .38 : .18),
+            default => ($isPortrait ? .48 : ($isWide ? .27 : .34)),
+        });
         imagefilledrectangle($canvas, 0, $panelTop, $format['width'], $format['height'], $panel);
         $accent = imagecolorallocate($canvas, ...self::hexRgb($brand['accent']));
         imagefilledrectangle($canvas, 0, $panelTop, max(14, (int) ($format['width'] * .012)), $format['height'], $accent);
@@ -121,8 +145,19 @@ final class SocialMediaAssetService
         $pad = (int) ($format['width'] * ($isWide ? .06 : .075));
         $brandSize = max(28, (int) ($format['width'] * .035));
         $headlineSize = max(42, (int) ($format['width'] * ($isPortrait ? .065 : ($isWide ? .038 : .05))));
-        imagettftext($canvas, $brandSize, 0, $pad, $panelTop + $pad, $accent, $bold, strtoupper($brand['name']));
+        $markPath = base_path('public/assets/brands/' . $brandKey . '/mark.svg');
+        $kicker = strtoupper($brand['name'] . ' · ' . self::TEMPLATES[$templateKey]);
+        imagettftext($canvas, $brandSize, 0, $pad, $panelTop + $pad, $accent, $bold, $kicker);
         self::drawWrapped($canvas, $copy['headline'], $headlineSize, $pad, $panelTop + $pad + $brandSize + 34, $format['width'] - ($pad * 2), $white, $bold, 1.12);
+        if ($templateKey === 'field-guide') {
+            $ruleY = $panelTop + (int) ($pad * .45);
+            imagefilledrectangle($canvas, $pad, $ruleY, $format['width'] - $pad, $ruleY + max(3, (int) ($format['height'] * .005)), $accent);
+        }
+        if ($templateKey === 'provider-spotlight') {
+            $badge = imagecolorallocatealpha($canvas, 255, 255, 255, 18);
+            imagefilledellipse($canvas, $format['width'] - $pad - 38, $panelTop + $pad - 8, 76, 76, $badge);
+            imagettftext($canvas, max(18, (int) ($brandSize * .65)), 0, $format['width'] - $pad - 58, $panelTop + $pad, $brand['dark'] === '#073f43' ? $accent : $white, $bold, 'PRO');
+        }
         $domainY = $format['height'] - $pad;
         imagettftext($canvas, max(24, (int) ($format['width'] * .026)), 0, $pad, $domainY, $muted, $regular, $brand['domain']);
 
@@ -135,8 +170,8 @@ final class SocialMediaAssetService
         @chmod($path, 0640);
 
         $id = Database::insert(
-            'INSERT INTO social_media_assets (brand_id, platform, format_key, intention, headline, caption, image_path, width, height, status, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
-            [$brandId, $format['platform'], $formatKey, $intention, $copy['headline'], $copy['caption'], $filename, $format['width'], $format['height'], 'draft', $userId]
+            'INSERT INTO social_media_assets (brand_id, platform, format_key, intention, template_key, campaign_name, headline, caption, image_path, width, height, status, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+            [$brandId, $format['platform'], $formatKey, $intention, $templateKey, $campaignName !== null ? mb_substr(trim($campaignName), 0, 120) : null, $copy['headline'], $copy['caption'], $filename, $format['width'], $format['height'], 'draft', $userId]
         );
         return self::find($id, $brandId) ?? [];
     }
@@ -157,6 +192,7 @@ final class SocialMediaAssetService
             'vanassist' => ['name' => 'VanAssist', 'domain' => 'vanassist.com.au', 'dark' => '#073f43', 'accent' => '#f5a623'],
             'towsmart' => ['name' => 'TowSmart', 'domain' => 'towsmart.com.au', 'dark' => '#10275c', 'accent' => '#f5a623'],
             'trailerwise' => ['name' => 'TrailerWise', 'domain' => 'trailerwise.com.au', 'dark' => '#35135f', 'accent' => '#ff7a1a'],
+            'localtorque' => ['name' => 'LocalTorque', 'domain' => 'localtorque.com.au', 'dark' => '#0f3b4c', 'accent' => '#e56b2f'],
             default => throw new RuntimeException('Unknown brand.'),
         };
     }

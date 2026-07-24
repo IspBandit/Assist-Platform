@@ -6,6 +6,7 @@ use App\Core\Router;
 
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
+        $router->get('/admin/brand-handoff', 'Admin\PlatformController@consumeHandoff', 'admin.brand-handoff');
         // Guest-only pages.
         $router->group(['middleware' => ['guest']], static function (Router $router): void {
             $router->get('/login', 'Auth\AuthController@showLogin', 'login');

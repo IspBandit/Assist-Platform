@@ -7,7 +7,7 @@ body:
     id: brand
     attributes:
       label: Brand or area
-      options: [VanAssist, TowSmart, TrailerWise, Shared platform, Admin, Infrastructure]
+      options: [VanAssist, TowSmart, TrailerWise, LocalTorque, Shared platform, Admin, Infrastructure]
     validations:
       required: true
   - type: textarea
@@ -20,6 +20,20 @@ body:
     id: outcome
     attributes:
       label: Desired outcome and acceptance criteria
+    validations:
+      required: true
+  - type: dropdown
+    id: workstream
+    attributes:
+      label: Owning workstream
+      options: [Platform, Experience, Brands, Data, Infrastructure, Operations, Commercial]
+    validations:
+      required: true
+  - type: textarea
+    id: charter
+    attributes:
+      label: Platform Charter and Quality Gate impact
+      description: Explain UX, platform, brand, commercial, maintainability and release-gate effects.
     validations:
       required: true
   - type: textarea

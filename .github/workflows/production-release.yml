@@ -1,0 +1,60 @@
+name: Production release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type DEPLOY to release the selected main-branch commit
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-release
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    if: github.event.inputs.confirm == 'DEPLOY' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, mbstring, fileinfo, gd, intl, curl, zip, dom
+          coverage: none
+      - name: Build immutable production release
+        run: |
+          mkdir release
+          git archive HEAD | tar -x -C release
+          composer install --working-dir=release --no-dev --no-interaction --prefer-dist --classmap-authoritative
+          tar -C release -czf "assist-platform-${GITHUB_SHA}.tar.gz" .
+          sha256sum "assist-platform-${GITHUB_SHA}.tar.gz" > "assist-platform-${GITHUB_SHA}.sha256"
+      - name: Configure verified SSH host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Upload and release
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" scripts/release-remote.sh "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
+          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && chmod 0750 release-remote.sh && sudo /opt/assist-platform/incoming/release-remote.sh /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+      - name: Record release summary
+        run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

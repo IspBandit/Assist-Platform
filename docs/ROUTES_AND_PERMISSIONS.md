@@ -26,3 +26,21 @@ roles require an assigned permission.
 Adding a route requires appropriate middleware, controller ownership checks,
 brand isolation tests and an update here when it creates a new surface.
 
+# Data Sources
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/data-sources` | `data_sources.view` | Platform Admin only |
+| `POST /admin/data-sources/connector` | `data_sources.manage` | Platform Admin only |
+| `POST /admin/data-sources/mapping` | `data_sources.manage` | Platform Admin only |
+| `POST /admin/data-sources/run` | `data_sources.run` | Platform Admin only |
+| `GET/POST /admin/data-sources/review` | `data_sources.review` | Platform Admin only |
+| `POST /admin/data-sources/schedule` | `data_sources.manage` | Platform Admin only |
+
+# Data Intelligence
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/data-intelligence` | `data_intelligence.view` | Platform Admin only, selected brand |
+| `POST /admin/data-intelligence/tasks` | `data_intelligence.manage` | Platform Admin only, selected brand |
+| `POST /admin/data-intelligence/tasks/status` | `data_intelligence.manage` | Platform Admin only, selected brand |

@@ -6,6 +6,7 @@ namespace App\Auth;
 
 use App\Core\Session;
 use App\Models\User;
+use App\Platform\Brand\BrandContext;
 
 /**
  * Session-backed authentication and role-based access control.
@@ -126,7 +127,12 @@ final class Auth
             return $this->roleSlugs;
         }
         $id = $this->id();
-        return $this->roleSlugs = $id !== null ? User::roleSlugs($id) : [];
+        if ($id === null) {
+            return $this->roleSlugs = [];
+        }
+        return $this->roleSlugs = BrandContext::hasCurrent()
+            ? User::roleSlugsForBrand($id, BrandContext::current()->databaseId())
+            : User::roleSlugs($id);
     }
 
     public function hasRole(string $slug): bool
@@ -151,7 +157,12 @@ final class Auth
             return $this->permissions;
         }
         $id = $this->id();
-        return $this->permissions = $id !== null ? User::permissions($id) : [];
+        if ($id === null) {
+            return $this->permissions = [];
+        }
+        return $this->permissions = BrandContext::hasCurrent()
+            ? User::permissionsForBrand($id, BrandContext::current()->databaseId())
+            : User::permissions($id);
     }
 
     public function can(string $permission): bool

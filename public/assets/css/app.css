@@ -1,9 +1,32 @@
 /* =====================================================================
-   VanAssist core stylesheet — mobile-first, accessible, lightweight.
-   Palette: deep teal primary, warm sand/cream backgrounds, charcoal text.
+   Assist Platform Design System — mobile-first, accessible, lightweight.
+   Runtime brand values are injected by partials/brand-theme.php. Legacy
+   VanAssist aliases remain temporarily while components migrate safely.
    ===================================================================== */
 
 :root {
+    --brand-primary: #0f6e6e;
+    --brand-primary-emphasis: #0b5757;
+    --brand-accent: #b45309;
+    --brand-surface: #fbf8f1;
+    --brand-text: #2b2f33;
+    --brand-focus: #b45309;
+
+    /* Official semantic tokens. Components should migrate to these names. */
+    --color-brand: var(--brand-primary);
+    --color-brand-emphasis: var(--brand-primary-emphasis);
+    --color-accent: var(--brand-accent);
+    --color-surface: var(--brand-surface);
+    --color-surface-raised: #ffffff;
+    --color-text: var(--brand-text);
+    --color-text-muted: #6b7177;
+    --color-border: #e3e0d8;
+    --color-focus: var(--brand-focus);
+    --color-success: #4f8a5b;
+    --color-warning: #d99a2b;
+    --color-danger: #c0392b;
+
+    /* Compatibility aliases; remove only after repository-wide migration. */
     --teal: #0f6e6e;
     --teal-dark: #0b5757;
     --teal-light: #e3f0ef;
@@ -30,18 +53,18 @@ body {
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     font-size: 17px;
     line-height: 1.6;
-    color: var(--charcoal);
-    background: var(--cream);
+    color: var(--color-text);
+    background: var(--color-surface);
 }
 
-h1, h2, h3, h4 { line-height: 1.25; color: var(--charcoal); margin: 0 0 .5em; font-weight: 700; }
+h1, h2, h3, h4 { line-height: 1.25; color: var(--color-text); margin: 0 0 .5em; font-weight: 700; }
 h1 { font-size: 2rem; }
 h2 { font-size: 1.5rem; }
 h3 { font-size: 1.2rem; }
 p { margin: 0 0 1rem; }
 
-a { color: var(--teal-dark); }
-a:hover { color: var(--teal); }
+a { color: var(--color-brand-emphasis); }
+a:hover { color: var(--color-brand); }
 
 img { max-width: 100%; height: auto; }
 
@@ -49,7 +72,7 @@ img { max-width: 100%; height: auto; }
 
 /* Skip link for accessibility */
 .skip-link {
-    position: absolute; left: -999px; top: 0; background: var(--teal); color: #fff;
+    position: absolute; left: -999px; top: 0; background: var(--color-brand); color: #fff;
     padding: .75rem 1rem; z-index: 1000; border-radius: 0 0 8px 0;
 }
 .skip-link:focus { left: 0; }
@@ -57,7 +80,7 @@ img { max-width: 100%; height: auto; }
 /* Focus visibility */
 a:focus-visible, button:focus-visible, input:focus-visible,
 select:focus-visible, textarea:focus-visible {
-    outline: 3px solid var(--amber); outline-offset: 2px;
+    outline: 3px solid var(--color-focus); outline-offset: 2px;
 }
 
 /* ---------- Header / nav ---------- */
@@ -129,12 +152,12 @@ select:focus-visible, textarea:focus-visible {
     transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
 }
 .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(15,23,42,.12); }
-.btn-primary { background: var(--teal); color: #fff; }
-.btn-primary:hover { background: var(--teal-dark); color: #fff; }
-.btn-secondary { background: #fff; color: var(--teal-dark); border-color: var(--teal); }
+.btn-primary { background: var(--color-brand); color: #fff; }
+.btn-primary:hover { background: var(--color-brand-emphasis); color: #fff; }
+.btn-secondary { background: #fff; color: var(--color-brand-emphasis); border-color: var(--color-brand); }
 .btn-secondary:hover { background: var(--teal-light); }
-.btn-ghost { background: transparent; color: var(--charcoal); border-color: var(--line); }
-.btn-danger { background: var(--red); color: #fff; }
+.btn-ghost { background: transparent; color: var(--color-text); border-color: var(--color-border); }
+.btn-danger { background: var(--color-danger); color: #fff; }
 .btn-block { width: 100%; }
 .btn-lg { font-size: 1.1rem; padding: 1rem 1.6rem; }
 .btn-sm { font-size: .9rem; padding: .5rem .85rem; min-height: 40px; }
@@ -144,6 +167,15 @@ select:focus-visible, textarea:focus-visible {
 .card + .card { margin-top: 1rem; }
 
 .grid { display: grid; gap: 1.25rem; }
+.grid > * { min-width: 0; }
+.intelligence-map { overflow:auto; border-radius:var(--radius-md,12px); background:linear-gradient(180deg,#e8f2f4,#f7f4ec); border:1px solid var(--border); }
+.intelligence-map svg { display:block; width:100%; min-height:320px; }
+.intelligence-map circle { fill:var(--brand); stroke:color-mix(in srgb,var(--brand) 75%,#000); stroke-width:.7; }
+.metric-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; margin:0; }
+.metric-list div,.task-card { border:1px solid var(--border); border-radius:var(--radius-md,12px); padding:1rem; background:var(--surface); }
+.metric-list dt { color:var(--muted); font-size:.85rem; }.metric-list dd { margin:.2rem 0 0; font-size:1.35rem; font-weight:750; }
+.task-card { display:flex; flex-direction:column; justify-content:space-between; gap:1rem; }.task-card h3 { margin:.5rem 0; }
+.status-critical { background:#fee2e2;color:#991b1b }.status-high { background:#ffedd5;color:#9a3412 }.status-medium { background:#fef3c7;color:#92400e }.status-low { background:#e0f2fe;color:#075985 }
 @media (min-width: 560px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
 @media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } .grid-3 { grid-template-columns: repeat(3, 1fr); } }
 @media (min-width: 980px) { .grid-4 { grid-template-columns: repeat(4, 1fr); } }

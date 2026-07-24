@@ -11,9 +11,28 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group([
         'prefix'     => '/admin',
-        'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator'],
+        'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator,platform-administrator,brand-administrator,editor,support,finance,marketing'],
     ], static function (Router $router): void {
         $router->get('', 'Admin\AdminController@dashboard', 'admin');
+        $router->get('/control-centre', 'Admin\PlatformController@controlCentre', 'admin.control-centre');
+        $router->post('/switch-brand', 'Admin\PlatformController@switchBrand', 'admin.switch-brand');
+        $router->get('/brand-builder', 'Admin\PlatformController@brandBuilder', 'admin.brand-builder');
+        $router->post('/brand-builder/preview', 'Admin\PlatformController@previewBrand', 'admin.brand-builder.preview');
+
+        // Platform-owned connector ingestion, quota controls and review queue.
+        $router->get('/data-sources', 'Admin\DataSourcesController@index', 'admin.data-sources');
+        $router->post('/data-sources/connector', 'Admin\DataSourcesController@saveConnector', 'admin.data-sources.connector');
+        $router->post('/data-sources/mapping', 'Admin\DataSourcesController@saveMapping', 'admin.data-sources.mapping');
+        $router->post('/data-sources/run', 'Admin\DataSourcesController@run', 'admin.data-sources.run');
+        $router->get('/data-sources/review', 'Admin\DataSourcesController@queue', 'admin.data-sources.review');
+        $router->post('/data-sources/review', 'Admin\DataSourcesController@review');
+        $router->post('/data-sources/schedule', 'Admin\DataSourcesController@saveSchedule', 'admin.data-sources.schedule');
+
+        // Platform intelligence derived from canonical provider, demand and
+        // optional population sources. Recommendations feed Data Sources.
+        $router->get('/data-intelligence', 'Admin\DataIntelligenceController@index', 'admin.data-intelligence');
+        $router->post('/data-intelligence/tasks', 'Admin\DataIntelligenceController@createTask', 'admin.data-intelligence.tasks');
+        $router->post('/data-intelligence/tasks/status', 'Admin\DataIntelligenceController@updateTask', 'admin.data-intelligence.tasks.status');
 
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).

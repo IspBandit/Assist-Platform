@@ -1,9 +1,14 @@
-# Assist Platform agent instructions
+# Assist Platform Enterprise agent instructions
 
 These instructions apply to every AI coding agent and every directory in this
 repository. Read `docs/START_HERE.md` before changing code.
 
-## Product boundary
+## Product and governance boundary
+
+Assist Platform Enterprise is the primary saleable product. Before planning or
+implementing work, read `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`,
+`docs/PLATFORM_CHARTER.md`, `docs/PRODUCT_BACKLOG.md` and
+`docs/PLATFORM_QUALITY_GATE.md`.
 
 This repository contains one PHP application serving four brands:
 
@@ -31,18 +36,27 @@ NDTFlow and SignConsole are separate products. Never add them here.
   never certification or legal advice.
 - Sponsored content must be labelled and must not silently alter organic results.
 - Do not claim a feature, compliance status or deployment is complete without evidence.
+- Preserve the UX redesign already present in the repository. Extend it through
+  `docs/PLATFORM_DESIGN_SYSTEM.md`; do not create a competing design system.
+- Assign new work to one backlog workstream and reference its backlog ID.
+- Create an ADR for material decisions described in
+  `docs/ARCHITECTURE_DECISION_RECORDS.md`.
+- A production release requires Architecture, UX, Engineering and Business
+  evidence under the Platform Quality Gate.
 
 ## Required workflow
 
 1. Inspect Git status and preserve unrelated work.
 2. Read the relevant architecture, product, schema, permissions and operations docs.
-3. Make the smallest coherent change.
-4. Add or update tests for changed behaviour.
-5. Run `composer validate --strict`, `composer analyse`, relevant PHPUnit tests,
+3. Identify the owning backlog item and whether an ADR is required.
+4. Make the smallest coherent change without disrupting parallel UX work.
+5. Add or update tests for changed behaviour.
+6. Run `composer validate --strict`, `composer analyse`, relevant PHPUnit tests,
    PHP syntax checks and a production dependency build when applicable.
-6. Document migrations, environment changes, security implications, deployment
+7. Document migrations, environment changes, security implications, deployment
    steps and rollback.
-7. Use a feature/fix branch and pull request. Do not push directly to production.
+8. Record all four Quality Gate results in the pull request.
+9. Use a feature/fix branch and pull request. Do not push directly to production.
 
 ## Production safety
 
