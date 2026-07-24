@@ -18,6 +18,8 @@ may remain as dated files and are linked here rather than copied.
   creating a competing implementation.
 - Completed CORE-004's shared membership catalogue and honest provider dashboard
   state. Paid selection and charging remain disabled pending COM-004 acceptance.
+- Completed INF-003's fail-closed environment and integration configuration
+  contract, corrected the free-plan example and documented secret rotation.
 
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.

@@ -19,7 +19,8 @@ This is the authoritative orientation page for developers and AI agents.
 8. `docs/DEVELOPER_GUIDE.md`, `docs/CODING_STANDARDS.md`,
    `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
 9. For releases, `docs/OPERATIONS_MANUAL.md`, `docs/OPERATIONS_RUNBOOK.md`,
-   `docs/BACKUP_AND_RESTORE.md` and `docs/RELEASE_NOTES.md`.
+   `docs/BACKUP_AND_RESTORE.md`, `docs/ENVIRONMENT_CONFIGURATION.md` and
+   `docs/RELEASE_NOTES.md`.
 10. For product-specific data, `docs/TOWSMART_CATALOGUE.md`,
     `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
 
