@@ -54,7 +54,7 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" scripts/release-remote.sh "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
-          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && chmod 0750 release-remote.sh && sudo /opt/assist-platform/incoming/release-remote.sh /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+          scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
+          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

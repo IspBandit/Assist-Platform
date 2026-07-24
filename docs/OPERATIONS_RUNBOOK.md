@@ -28,7 +28,9 @@ commit on `main`. Protect the `production` environment with a required owner
 reviewer. Configure `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` and pinned
 `VPS_KNOWN_HOSTS` as production-environment secrets. The deploy user requires
 write access only to `/opt/assist-platform/incoming` and narrowly scoped sudo
-permission for `/opt/assist-platform/incoming/release-remote.sh`.
+permission for the root-owned `/usr/local/sbin/assist-platform-release`
+command. The deploy user must not be able to replace or modify that command;
+release archives and checksum files are the only writable incoming artefacts.
 
 The workflow cannot run from a pull request or feature branch. A human must type
 `DEPLOY`, approve the protected environment and allow the complete reusable CI
