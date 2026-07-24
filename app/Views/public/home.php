@@ -12,7 +12,7 @@ $this->extend('layouts.public');
 ?>
 <?php $this->section('content'); ?>
 
-<section class="hero">
+<section class="hero hero-v2">
     <div class="container">
         <div class="hero-grid">
             <div class="hero-copy">

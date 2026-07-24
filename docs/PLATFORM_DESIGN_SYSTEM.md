@@ -47,26 +47,33 @@ The system must include and document:
 Brand expression changes tokens, imagery, voice and relevant content—not basic
 usability conventions.
 
-### Brand mark family
+### Typography-first brand identity
 
-The four platform marks use a shared 64 × 64 SVG contract: open geometry, a
-3px rounded stroke, no enclosing tile, no gradient or shadow, and at most one
-restrained accent. VanAssist combines an RV outline with location confidence;
-TowSmart shows a measured towing connection; TrailerWise combines trailer
-capability with inspection; LocalTorque combines automotive service with a
-specialist tool. Marks must be checked at 24, 32, 40 and 64px. Decorative
-images use an empty `alt`; a standalone mark retains its SVG title or receives
-an accessible name from its consumer.
+Public, authentication, provider and admin navigation use typographic wordmarks
+without illustrative vehicle or service icons. Brand colour is a restrained
+wordmark accent; product purpose is carried by a compact descriptor. No generic
+or provisional mark is presented as finished brand identity. A future symbol
+requires professionally reviewed identity work, distinctive geometry, small-size
+testing and explicit owner approval before it enters a product surface.
 
 ### Enterprise admin shell
 
 The admin shell uses a neutral charcoal navigation surface and raised white
 work surfaces. Brand colour is limited to active/focus accents. The workspace
-selector shows the active brand icon, name and platform context; available
+selector shows the active brand name and platform context; available
 brands keep server-authorised POST switching. It supports Escape, Home, End and
 arrow-key movement, visible focus and 44px-class touch targets. At 720px and
 below navigation collapses and top-bar actions remain horizontally reachable.
 Motion is restrained and disabled when `prefers-reduced-motion` is requested.
+
+### Immersive discovery and provider command centre
+
+High-intent public pages use editorial-scale type, strong photography and a
+single dominant task surface. VanAssist places location-aware discovery over an
+immersive service scene while preserving the complete accessible form. Provider
+pages use a command-centre hierarchy: business status, demand indicators,
+market intelligence and clearly ranked management actions. Responsive layouts
+collapse to one task per row without hiding core data or actions.
 
 ## UX change workflow
 
