@@ -58,7 +58,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | --- | --- | --- | --- |
 | INF-001 | One versioned deployment pipeline and immutable release artefact | done | CI/release workflow, checksum and rollback evidence |
 | INF-002 | Domain, proxy, canonical host and brand resolution parity | in progress | All-brand DNS/proxy/asset/sitemap smoke tests |
-| INF-003 | Environment, secret and integration configuration contract | in progress | Validated startup, documented variables and rotation procedure |
+| INF-003 | Environment, secret and integration configuration contract | done | Fail-closed startup validation, complete variable inventory and documented rotation procedure |
 | INF-004 | Capacity, storage and performance baseline | ready | Measured PHP/DB/storage/traffic thresholds and upgrade triggers |
 
 ## Operations
