@@ -1,26 +1,8 @@
-<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <!-- LocalTorque: Automotive specialist discovery and local service -->
-  <defs>
-    <style>
-      .lt-stroke { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-      .lt-fill { fill: currentColor; opacity: 0.75; }
-    </style>
-  </defs>
-  <!-- Wrench: primary tool and expertise symbol -->
-  <path class="lt-stroke" d="M 20 30 Q 22 28 26 28 Q 30 28 32 32 L 42 42" stroke-width="2"/>
-  <!-- Wrench head -->
-  <circle cx="20" cy="30" r="2.5" class="lt-stroke"/>
-  <!-- Socket/adjustment nut: technical capability -->
-  <circle cx="28" cy="36" r="3" class="lt-stroke"/>
-  <circle cx="28" cy="36" r="1.5" class="lt-fill"/>
-  <!-- Tool tip: technical point -->
-  <circle cx="42" cy="42" r="2.8" class="lt-stroke"/>
-  <circle cx="42" cy="42" r="1" class="lt-fill"/>
-  <!-- Location pin: local service discovery -->
-  <path class="lt-stroke" d="M 48 20 Q 48 18 50 18 Q 52 18 52 20 L 50 26 Q 50 26 48 26 Z"/>
-  <circle cx="50" cy="20" r="1.2" class="lt-fill"/>
-  <!-- Local service beacon: availability -->
-  <circle cx="50" cy="20" r="6" class="lt-stroke" fill="none" opacity="0.6"/>
-  <!-- Ground -->
-  <line x1="16" y1="48" x2="56" y2="48" class="lt-stroke" stroke-width="1.2" opacity="0.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="lt-title">
+  <title id="lt-title">LocalTorque</title>
+  <g fill="none" stroke="#0f3b4c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M14 42h36v-8l-4-10H23l-5 10h-4v8ZM20 34h24"/>
+    <circle cx="21" cy="45" r="4" fill="#fff"/><circle cx="43" cy="45" r="4" fill="#fff"/>
+    <path d="M38 17a7 7 0 0 1 9-8l-5 5 4 4 5-5a7 7 0 0 1-8 9L30 35" stroke="#e56b2f"/>
+  </g>
 </svg>

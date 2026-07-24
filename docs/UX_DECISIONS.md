@@ -32,3 +32,16 @@ backlog ID. Promote architectural decisions to `docs/DECISIONS/`.
 Current component evidence lives in `UX_COMPONENT_INVENTORY.md`; shared contracts
 live in `PLATFORM_DESIGN_SYSTEM.md`. New interface work extends those documents
 instead of creating a parallel design language.
+
+## 2026-07-24 — Cohesive brand marks and enterprise workspace selector
+
+**Context:** EXP-001/002/004/005. Gradient vehicle tiles lacked a shared visual
+grammar and the admin brand dropdown did not communicate platform context.
+**Decision:** adopt a 64 × 64, 3px rounded-stroke mark family and promote the
+existing admin switcher into a branded, keyboard-operable workspace selector
+inside the shared shell. **Affected journeys:** public identity and all admin
+navigation. **Alternatives:** retaining coloured tiles or introducing an icon
+dependency were rejected as visually noisy and unnecessary. **Accessibility:**
+marks keep titles, decorative consumers use empty alternatives, current pages
+use `aria-current`, and the selector supports focus, Escape and directional
+keys. **Evidence:** BrandAssetTest, PHP/static checks and representative renders.

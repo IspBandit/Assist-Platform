@@ -21,7 +21,7 @@ and remove VanAssist-specific presentation assumptions gradually.
 | --- | --- | --- | --- |
 | Theme injection | `partials/brand-theme.php`, brand registry theme maps | shared | Rename legacy tokens and document semantic aliases |
 | Public shell | `layouts/public.php`, header, footer, SEO partials | shared | Verify all four brands and private-brand behaviour |
-| Admin shell | `layouts/admin.php` | shared | Complete keyboard/mobile brand switcher acceptance |
+| Admin shell | `layouts/admin.php`, `admin-platform.js` | shared | Enterprise workspace selector implemented; rendered desktop/mobile and assistive-technology acceptance remains release evidence |
 | Minimal/auth shell | `layouts/minimal.php` | shared | Verify brand sender/support/legal states |
 | Navigation | shared header plus configuration-driven links | shared | Add active/current semantics and overflow tests |
 | Buttons | `.btn` variants and sizes | reusable | Replace brand-colour legacy references with semantic tokens |
@@ -129,6 +129,15 @@ Every promoted or materially changed component is checked in these states:
 5. Remove obsolete selectors only after usage and render verification.
 6. Add a maintained component preview/catalogue when the shared component set is
    stable enough to make it useful rather than another parallel UI.
+
+### 2026-07 enterprise shell increment
+
+- Four brand marks now share one tested SVG geometry contract.
+- Admin presentation rules moved out of the layout into reusable shell classes.
+- Current navigation exposes `aria-current`; the workspace selector supports
+  keyboard traversal and retains server-side brand access/scoping.
+- Representative acceptance widths are 360px and 1280px, with 768px included
+  in the full component acceptance matrix.
 
 ## Definition of done
 

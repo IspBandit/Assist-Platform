@@ -47,6 +47,27 @@ The system must include and document:
 Brand expression changes tokens, imagery, voice and relevant content—not basic
 usability conventions.
 
+### Brand mark family
+
+The four platform marks use a shared 64 × 64 SVG contract: open geometry, a
+3px rounded stroke, no enclosing tile, no gradient or shadow, and at most one
+restrained accent. VanAssist combines an RV outline with location confidence;
+TowSmart shows a measured towing connection; TrailerWise combines trailer
+capability with inspection; LocalTorque combines automotive service with a
+specialist tool. Marks must be checked at 24, 32, 40 and 64px. Decorative
+images use an empty `alt`; a standalone mark retains its SVG title or receives
+an accessible name from its consumer.
+
+### Enterprise admin shell
+
+The admin shell uses a neutral charcoal navigation surface and raised white
+work surfaces. Brand colour is limited to active/focus accents. The workspace
+selector shows the active brand icon, name and platform context; available
+brands keep server-authorised POST switching. It supports Escape, Home, End and
+arrow-key movement, visible focus and 44px-class touch targets. At 720px and
+below navigation collapses and top-bar actions remain horizontally reachable.
+Motion is restrained and disabled when `prefers-reduced-motion` is requested.
+
 ## UX change workflow
 
 1. Inventory the existing implementation before editing.

@@ -1,14 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title id="title">TowSmart tow vehicle and caravan</title>
-  <defs><linearGradient id="ts" x1="7" y1="5" x2="57" y2="59" gradientUnits="userSpaceOnUse"><stop stop-color="#326fe9"/><stop offset="1" stop-color="#132862"/></linearGradient></defs>
-  <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#ts)"/>
-  <path d="M7 38h25v8H7v-8Zm3-7h13l6 7H7l3-7Z" fill="#fff" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
-  <path d="M32 42h5" stroke="#f8bd35" stroke-width="2.5" stroke-linecap="round"/>
-  <circle cx="37" cy="42" r="2" fill="#f8bd35"/>
-  <path d="M39 46V28c0-4 3-7 7-7h5c4 0 7 3 7 7v18H39Z" fill="none" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
-  <path d="M44 27h9v7h-9" fill="#9ebcff" stroke="#fff" stroke-width="1.5"/>
-  <circle cx="14" cy="47" r="4" fill="#102552" stroke="#fff" stroke-width="2"/>
-  <circle cx="26" cy="47" r="4" fill="#102552" stroke="#fff" stroke-width="2"/>
-  <circle cx="49" cy="47" r="4" fill="#102552" stroke="#fff" stroke-width="2"/>
-  <path d="M10 53h44" stroke="#f8bd35" stroke-width="2.5" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="ts-title">
+  <title id="ts-title">TowSmart</title>
+  <g fill="none" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 42h19V31H14l-6 7v4ZM27 39h8M39 42V24a6 6 0 0 1 6-6h5a6 6 0 0 1 6 6v18H39Z"/>
+    <path d="M44 25h7v8h-7M35 36v6"/>
+    <circle cx="16" cy="45" r="4" fill="#fff"/><circle cx="48" cy="45" r="4" fill="#fff"/>
+    <path d="m28 18 3-3 3 3M31 15v11" stroke="#f59e0b"/>
+  </g>
 </svg>
