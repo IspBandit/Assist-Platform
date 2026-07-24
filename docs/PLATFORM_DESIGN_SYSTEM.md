@@ -75,6 +75,43 @@ pages use a command-centre hierarchy: business status, demand indicators,
 market intelligence and clearly ranked management actions. Responsive layouts
 collapse to one task per row without hiding core data or actions.
 
+### Conversion-led experience architecture
+
+Premium presentation is not accepted as a substitute for a useful journey.
+High-intent marketplace pages establish, in order: product purpose, primary
+action, real evidence, available paths, operating process and trust limitations.
+Public evidence uses current database values and disappears when a value is
+unavailable or zero; templates never backfill proof with invented numbers.
+
+VanAssist public discovery separates three intents rather than placing every
+feature in one generic directory flow:
+
+1. find a relevant RV service provider by need and location;
+2. find an appropriate place to stay;
+3. register an unmet assistance need so it can be matched or recorded as a
+   coverage gap.
+
+Provider acquisition is a distinct commercial journey. It explains provider
+control, evidence review, demand visibility, cross-brand eligibility and the
+absence of guaranteed-lead or silent-billing promises before requesting
+registration. Provider operations use an action-led workspace: one ranked next
+step, relevant open demand, precisely described activity measures and grouped
+business controls. Counts never imply confirmed revenue or completed work.
+
+### Editorial layout rules
+
+- Use composed editorial sections and ruled information layouts for major
+  journeys; avoid solving every hierarchy problem with another rounded card.
+- Serif accent type is limited to short emotional emphasis in marketing heroes;
+  controls, evidence and operational content retain the shared sans-serif face.
+- Photography supports a real customer or provider context and must retain a
+  readable text treatment at 360px without becoming essential to task completion.
+- Warm accent surfaces carry evidence or transparency content, not decoration.
+- Dark sections signal a deliberate change of narrative or audience; they do
+  not change control meaning.
+- Full-page mobile acceptance includes the complete content order, not only the
+  first viewport.
+
 ## UX change workflow
 
 1. Inventory the existing implementation before editing.

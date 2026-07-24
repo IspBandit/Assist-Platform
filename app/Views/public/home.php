@@ -1,205 +1,201 @@
 <?php
 /** @var \App\Core\View $this */
-/** @var array $blocks */
-/** @var array $confirmedRuns */
-/** @var array $formingRuns */
-/** @var array $categories */
+/** @var array<int,array<string,mixed>> $blocks */
+/** @var array<int,array<string,mixed>> $confirmedRuns */
+/** @var array<int,array<string,mixed>> $formingRuns */
+/** @var array<int,array<string,mixed>> $categories */
 /** @var array<string,mixed>|null $nearbyTown */
 /** @var array<int,array<string,mixed>> $nearbyProviders */
 /** @var string $nearbyFindUrl */
 /** @var string $nearbyEndpoint */
+/** @var array<string,int> $homeEvidence */
 $this->extend('layouts.public');
+$evidence = $homeEvidence ?? [];
+$directoryCount = (int) ($evidence['directory_listings'] ?? 0);
+$verifiedCount = (int) ($evidence['verified_providers'] ?? 0);
+$townCount = (int) ($evidence['provider_towns'] ?? 0);
+$categoryCount = (int) ($evidence['service_categories'] ?? 0);
 ?>
 <?php $this->section('content'); ?>
 
-<section class="hero hero-v2">
-    <div class="container">
-        <div class="hero-grid">
-            <div class="hero-copy">
-                <span class="hero-eyebrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Right across regional Australia
-                </span>
-                <h1>Caravan help, <span class="accent">wherever you travel.</span></h1>
-                <p class="lead">Find caravan and RV specialists coming to your area, or register the service you need to help bring a provider to town.</p>
-
-                <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
-                    <div class="search-head">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                        Find caravan and RV help near you
-                    </div>
-                    <div class="grid grid-2 home-search-primary">
-                        <div class="form-group mb-0">
-                            <label for="category">Service category</label>
-                            <select id="category" name="category">
-                                <option value="">Any service</option>
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= e_attr($cat['slug']) ?>"><?= $this->e($cat['name']) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="form-group mb-0 location-field">
-                            <label for="location">Town, suburb or postcode</label>
-                            <input type="text" id="location" name="location" placeholder="e.g. Parramatta or 2150" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
-                            <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
-                            <input type="hidden" name="lat" value="">
-                            <input type="hidden" name="lng" value="">
-                            <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
-                            <p class="location-status muted" role="status" aria-live="polite" hidden></p>
-                        </div>
-                    </div>
-                    <details class="search-options">
-                        <summary>More search options</summary>
-                        <div class="grid grid-2">
-                            <div class="form-group mb-0">
-                                <label for="timeframe">Preferred timeframe</label>
-                                <select id="timeframe" name="timeframe">
-                                    <option value="">Any time</option>
-                                    <option value="2weeks">Within 2 weeks</option>
-                                    <option value="month">Within a month</option>
-                                    <option value="flexible">Flexible</option>
-                                </select>
-                            </div>
-                            <?php $this->include('partials.search-distance-filter', [
-                                'selected' => null,
-                                'disabled' => true,
-                            ]); ?>
-                        </div>
-                    </details>
-                    <div class="btn-row" style="margin-top:1rem">
-                        <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary btn-lg']); ?>
-                        <button type="submit" class="btn btn-primary btn-lg">Show nearby help</button>
-                        <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
-                    </div>
-                </form>
-
-                <ul class="hero-trust">
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Verified local providers
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Coverage in remote towns
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Free, no-obligation requests
-                    </li>
-                </ul>
-            </div>
-
-            <div class="hero-art">
-                <picture>
-                    <source media="(max-width: 719px)" srcset="<?= e(asset('img/vanassist-hero-mobile.webp')) ?>">
-                    <img class="hero-photo" src="<?= e(asset('img/vanassist-hero-desktop.webp')) ?>" width="1824" height="864"
-                         alt="Mobile caravan technician helping travellers with their caravan in regional Australia"
-                         loading="eager" fetchpriority="high">
-                </picture>
-            </div>
+<section class="experience-hero" aria-labelledby="home-heading">
+    <picture class="experience-hero-media">
+        <source media="(max-width: 719px)" srcset="<?= e(asset('img/vanassist-hero-mobile.webp')) ?>">
+        <img src="<?= e(asset('img/vanassist-hero-desktop.webp')) ?>" width="1824" height="864"
+             alt="A mobile caravan technician helping travellers in regional Australia"
+             loading="eager" fetchpriority="high">
+    </picture>
+    <div class="experience-hero-shade" aria-hidden="true"></div>
+    <div class="container experience-hero-layout">
+        <div class="experience-hero-copy">
+            <p class="experience-kicker">Help for the road ahead</p>
+            <h1 id="home-heading">Find the right caravan help, <em>wherever the journey takes you.</em></h1>
+            <p>Search local and mobile RV specialists, find places to stay, or tell us what you need when the right help is not listed yet.</p>
         </div>
-    </div>
 
-    <div class="hero-wave" aria-hidden="true">
-        <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 42 C 240 84 480 4 720 26 C 960 48 1200 82 1440 40 L1440 80 L0 80 Z" fill="#fbf8f1"/></svg>
+        <form class="discovery-panel" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+            <div class="discovery-panel-head">
+                <div><span>Start here</span><h2>What help do you need?</h2></div>
+                <span class="discovery-step">01</span>
+            </div>
+            <div class="discovery-fields">
+                <div class="form-group">
+                    <label for="category">Service</label>
+                    <select id="category" name="category">
+                        <option value="">Choose a service</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= e_attr($cat['slug']) ?>"><?= $this->e($cat['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group location-field">
+                    <label for="location">Town, suburb or postcode</label>
+                    <input type="search" id="location" name="location" placeholder="Where do you need help?" autocomplete="off"
+                           data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
+                    <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
+                    <input type="hidden" name="lat" value="">
+                    <input type="hidden" name="lng" value="">
+                    <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
+                    <p class="location-status muted" role="status" aria-live="polite" hidden></p>
+                </div>
+            </div>
+            <div class="discovery-actions">
+                <button type="submit" class="btn btn-primary btn-lg">Find nearby help</button>
+                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary btn-lg']); ?>
+            </div>
+            <p class="discovery-fallback">No suitable listing? <a href="<?= e(url('request-assistance')) ?>">Register what you need</a> so the request can be matched or used to identify a coverage gap.</p>
+        </form>
+    </div>
+</section>
+
+<section class="evidence-ribbon" aria-label="Current VanAssist directory evidence">
+    <div class="container evidence-ribbon-grid">
+        <?php if ($directoryCount > 0): ?><div><strong><?= number_format($directoryCount) ?></strong><span>active service listings</span></div><?php endif; ?>
+        <?php if ($verifiedCount > 0): ?><div><strong><?= number_format($verifiedCount) ?></strong><span>verified providers</span></div><?php endif; ?>
+        <?php if ($townCount > 0): ?><div><strong><?= number_format($townCount) ?></strong><span>provider base towns</span></div><?php endif; ?>
+        <?php if ($categoryCount > 0): ?><div><strong><?= number_format($categoryCount) ?></strong><span>service categories</span></div><?php endif; ?>
+        <div class="evidence-ribbon-note"><strong>Clear listing labels</strong><span>Verified, featured and unclaimed mean different things</span></div>
+    </div>
+</section>
+
+<?php if (!empty($freeMessage)): ?>
+<section class="launch-note"><div class="container"><div class="alert alert-info mb-0"><?= $this->e($freeMessage) ?></div></div></section>
+<?php endif; ?>
+
+<section class="section journey-section" aria-labelledby="choose-path-heading">
+    <div class="container">
+        <div class="editorial-heading">
+            <p class="experience-kicker dark">One platform, three useful paths</p>
+            <h2 id="choose-path-heading">Start with what matters now.</h2>
+            <p>VanAssist separates urgent service discovery, trip planning and unmatched requests so you can move forward without learning the platform first.</p>
+        </div>
+        <div class="journey-grid">
+            <a class="journey-card journey-card-primary" href="<?= e(url('find')) ?>">
+                <span class="journey-number">01</span>
+                <div><p>Service discovery</p><h3>Find caravan and RV help</h3><span>Search mobile and workshop providers by service and location.</span></div>
+                <strong>Search providers <span aria-hidden="true">→</span></strong>
+            </a>
+            <a class="journey-card" href="<?= e(url('stays')) ?>">
+                <span class="journey-number">02</span>
+                <div><p>Trip planning</p><h3>Find somewhere to stay</h3><span>Explore caravan parks, campgrounds, rest areas and low-cost stops.</span></div>
+                <strong>Explore stays <span aria-hidden="true">→</span></strong>
+            </a>
+            <a class="journey-card" href="<?= e(url('request-assistance')) ?>">
+                <span class="journey-number">03</span>
+                <div><p>Coverage request</p><h3>Tell us what is missing</h3><span>Register a real service need when the right local option is not available.</span></div>
+                <strong>Request assistance <span aria-hidden="true">→</span></strong>
+            </a>
+        </div>
     </div>
 </section>
 
 <?php $this->include('partials.home-nearby-providers'); ?>
 
-<section class="section section-sand">
-    <div class="container"><div class="product-cta">
-        <div><div class="eyebrow">Plan a safe stop</div><h2>Getting tired? Find a place to stay.</h2><p>Use your location or search a town for caravan parks, campgrounds, showgrounds and free or low-cost stays nearby.</p></div>
-        <a class="btn btn-primary btn-lg" href="<?= e(url('stays')) ?>">Find a stay near me</a>
-    </div></div>
-</section>
-
-<?php if (!empty($freeMessage)): ?>
-<section class="section section-sand" style="padding:1.25rem 0">
-    <div class="container"><div class="alert alert-info mb-0"><?= $this->e($freeMessage) ?></div></div>
-</section>
-<?php endif; ?>
-
-<section class="section">
-    <div class="container">
-        <h2>Upcoming confirmed service runs</h2>
-        <?php if ($confirmedRuns === []): ?>
-            <p class="muted">No confirmed runs yet. <a href="<?= e(url('request-assistance')) ?>">Register your request</a> to help one form.</p>
-        <?php else: ?>
-            <div class="grid grid-2">
-                <?php foreach ($confirmedRuns as $run): ?>
-                    <div class="card">
-                        <span class="badge badge-confirmed">Confirmed</span>
-                        <h3 style="margin-top:.5rem"><a href="<?= e(url('service-runs/' . $run['slug'])) ?>"><?= $this->e($run['title']) ?></a></h3>
-                        <p class="muted mb-0"><?= $this->e($run['business_name']) ?> &middot; from <?= $this->e((string) $run['start_date']) ?></p>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
-
-<section class="section section-sand">
-    <div class="container">
-        <h2>Runs currently forming</h2>
-        <?php if ($formingRuns === []): ?>
-            <p class="muted">No runs forming right now.</p>
-        <?php else: ?>
-            <div class="grid grid-2">
-                <?php foreach ($formingRuns as $run): ?>
-                    <div class="card">
-                        <span class="badge badge-forming">Forming</span>
-                        <h3 style="margin-top:.5rem"><a href="<?= e(url('service-runs/' . $run['slug'])) ?>"><?= $this->e($run['title']) ?></a></h3>
-                        <p class="muted mb-0"><?= (int) $run['bookings_count'] ?> of <?= (int) $run['min_bookings'] ?> required bookings registered</p>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-</section>
-
-<section class="section">
-    <div class="container">
-        <h2>How VanAssist works</h2>
-        <div class="grid grid-3">
-            <?php $seenBlocks = []; ?>
-            <?php foreach ($blocks as $block): ?>
-                <?php
-                $blockKey = strtolower(trim((string) ($block['title'] ?? ''))) . '|' . strtolower(trim((string) ($block['body'] ?? '')));
-                if ($blockKey === '|' || isset($seenBlocks[$blockKey])) { continue; }
-                $seenBlocks[$blockKey] = true;
-                ?>
-                <div class="card">
-                    <h3><?= $this->e($block['title']) ?></h3>
-                    <?php if (!empty($block['subtitle'])): ?><p class="muted"><strong><?= $this->e($block['subtitle']) ?></strong></p><?php endif; ?>
-                    <p><?= $this->e($block['body']) ?></p>
-                    <?php if (!empty($block['button_label'])): ?>
-                        <a class="btn btn-secondary" href="<?= e(url(ltrim((string) $block['button_url'], '/'))) ?>"><?= $this->e($block['button_label']) ?></a>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
+<section class="section process-section" aria-labelledby="process-heading">
+    <div class="container process-layout">
+        <div class="process-intro">
+            <p class="experience-kicker">Designed for real travel problems</p>
+            <h2 id="process-heading">From “who can help?” to a useful next step.</h2>
+            <p>VanAssist is a discovery and demand-matching platform. It shows what is known, labels what has been checked, and gives you a path forward when coverage is incomplete.</p>
+            <a class="text-link" href="<?= e(url('how-it-works')) ?>">Understand the complete process <span aria-hidden="true">→</span></a>
         </div>
+        <ol class="process-list">
+            <li><span>01</span><div><h3>Describe the need and location</h3><p>Choose a service and search by town, postcode or your current location.</p></div></li>
+            <li><span>02</span><div><h3>Review the listing evidence</h3><p>Compare service model, location and clearly labelled verification or listing status.</p></div></li>
+            <li><span>03</span><div><h3>Contact, request or register demand</h3><p>Contact a suitable business, lodge a request, or record a local coverage gap.</p></div></li>
+        </ol>
     </div>
 </section>
 
 <?php if ($categories !== []): ?>
-<section class="section section-sand">
+<section class="section service-index-section" aria-labelledby="services-heading">
     <div class="container">
-        <h2>Popular service categories</h2>
-        <div class="btn-row">
-            <?php foreach ($categories as $cat): ?>
-                <a class="btn btn-ghost" href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
+        <div class="editorial-heading editorial-heading-row">
+            <div><p class="experience-kicker dark">Explore by need</p><h2 id="services-heading">Specialist help for life on the road.</h2></div>
+            <a class="text-link" href="<?= e(url('services')) ?>">View all services <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="service-index-grid">
+            <?php foreach (array_slice($categories, 0, 8) as $index => $cat): ?>
+                <a href="<?= e(url('services/' . $cat['slug'])) ?>"><span><?= str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) ?></span><strong><?= $this->e($cat['name']) ?></strong><i aria-hidden="true">↗</i></a>
             <?php endforeach; ?>
         </div>
     </div>
 </section>
 <?php endif; ?>
 
-<section class="section text-center">
+<?php if ($confirmedRuns !== [] || $formingRuns !== []): ?>
+<section class="section run-section" aria-labelledby="runs-heading">
     <div class="container">
-        <h2>Can't find a provider for your area?</h2>
-        <p class="muted">No suitable provider is currently listed for some areas. Register your request and VanAssist will notify relevant providers when assistance becomes available.</p>
-        <a class="btn btn-primary btn-lg" href="<?= e(url('request-assistance')) ?>">Request assistance</a>
+        <div class="editorial-heading editorial-heading-row">
+            <div><p class="experience-kicker dark">Regional service movement</p><h2 id="runs-heading">Service runs taking shape.</h2></div>
+            <a class="text-link" href="<?= e(url('service-runs')) ?>">View all service runs <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="run-grid">
+            <?php foreach (array_slice(array_merge($confirmedRuns, $formingRuns), 0, 4) as $run): ?>
+                <?php $isConfirmed = (string) ($run['status'] ?? '') === 'confirmed'; ?>
+                <a class="run-card" href="<?= e(url('service-runs/' . $run['slug'])) ?>">
+                    <span class="badge <?= $isConfirmed ? 'badge-confirmed' : 'badge-neutral' ?>"><?= $isConfirmed ? 'Confirmed' : 'Forming' ?></span>
+                    <h3><?= $this->e($run['title']) ?></h3>
+                    <p><?= $this->e($run['business_name']) ?></p>
+                    <strong><?= $isConfirmed ? 'View confirmed run' : 'View forming run' ?> <span aria-hidden="true">→</span></strong>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<section class="section trust-section" aria-labelledby="trust-heading">
+    <div class="container trust-layout">
+        <div>
+            <p class="experience-kicker">Trust through transparency</p>
+            <h2 id="trust-heading">Know what each listing label actually means.</h2>
+            <p>We do not present discovered businesses, paid visibility and reviewed provider evidence as though they are the same thing.</p>
+        </div>
+        <dl class="trust-definitions">
+            <div><dt>Verified</dt><dd>Provider evidence has been reviewed for the status displayed. Always confirm suitability for your particular work.</dd></div>
+            <div><dt>Featured</dt><dd>A clearly labelled promotional position. It does not replace service or location relevance.</dd></div>
+            <div><dt>Unclaimed</dt><dd>Directory information has not yet been controlled by the business. Confirm details directly before relying on them.</dd></div>
+        </dl>
+    </div>
+</section>
+
+<section class="provider-conversion" aria-labelledby="provider-cta-heading">
+    <div class="container provider-conversion-layout">
+        <div class="provider-conversion-copy">
+            <p class="experience-kicker">For Australian RV service businesses</p>
+            <h2 id="provider-cta-heading">Turn scattered regional demand into a clearer service opportunity.</h2>
+            <p>Build a credible profile, define where you work, review matched requests and plan service runs around demand you can actually assess.</p>
+            <div class="provider-conversion-actions">
+                <a class="btn btn-light btn-lg" href="<?= e(url('for-providers')) ?>">See the provider experience</a>
+                <a class="btn btn-glass btn-lg" href="<?= e(url('for-providers/register')) ?>">Register your business</a>
+            </div>
+        </div>
+        <div class="provider-conversion-proof" aria-label="Provider platform capabilities">
+            <span>01</span><p><strong>Control your presence</strong>Manage services, coverage, credentials and public information.</p>
+            <span>02</span><p><strong>Review real demand</strong>Assess matched requests without a promise of guaranteed work.</p>
+            <span>03</span><p><strong>Measure useful activity</strong>See profile interest, contact actions and service outcomes.</p>
+        </div>
     </div>
 </section>
 

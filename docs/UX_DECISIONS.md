@@ -47,3 +47,36 @@ adding an icon dependency were rejected. **Accessibility:** identity no longer
 depends on an unlabeled image; current navigation retains `aria-current`, and
 all task surfaces preserve names, focus and responsive order. **Evidence:**
 PHP/static checks and representative desktop/mobile renders.
+
+## 2026-07-24 — Conversion architecture replaces cosmetic Experience v2
+
+**Context:** EXP-001/004/005 with COM-003. Full-page review showed that an
+immersive hero and restyled dashboard did not materially change how a traveller
+found help, how a provider understood the commercial proposition, or how a
+provider prioritised work. External research was used as directional evidence:
+professional presentation is an initial credibility threshold, while useful
+information structure, verifiable organisational evidence, findability,
+accessibility and performance determine whether the experience continues to
+earn confidence.
+
+**Decision:** structure the VanAssist homepage around three explicit customer
+intents, database-backed evidence, operating-process explanation and listing
+status transparency. Make provider acquisition a dedicated journey. Replace the
+dashboard summary-card hierarchy with one ranked next action, current matched
+demand, precisely named activity measures and grouped business controls. Retain
+typography-first brand identity and remove decorative brand symbols from product
+surfaces.
+
+**Affected journeys:** VanAssist discovery, stays/request recovery paths, all
+brand provider acquisition, authenticated provider operations and the shared
+credibility footer. **Alternatives:** another hero/card visual pass was rejected
+because it would not change user comprehension or task success. Introducing a
+client-side framework was rejected because the server-rendered platform already
+supports the required experience and a new dependency would increase delivery
+and performance risk. **Accessibility:** content order follows task order;
+interactive elements remain native links, fields and buttons; evidence is not
+colour-only; layouts collapse to one column; reduced motion removes the new
+transitions. **Measurement:** search, provider profile, contact, request and
+outcome events continue through the existing first-party demand analytics
+vocabulary. **Evidence:** unit/static analysis, desktop/mobile full-page renders
+and quality-gate results recorded in the pull request.

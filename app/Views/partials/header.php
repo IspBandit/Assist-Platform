@@ -39,16 +39,16 @@ $headerBrandMeta = $headerBrand->metadata();
                         <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                     <?php endif; ?>
                 <?php else: ?>
-                <li><a href="<?= e(url('find')) ?>">Find help</a></li>
-                <li><a href="<?= e(url('stays')) ?>">Places to stay</a></li>
-                <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
-                <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>
+                <li><a href="<?= e(url('find')) ?>">Find RV help</a></li>
+                <li><a href="<?= e(url('stays')) ?>">Plan a stay</a></li>
+                <li><a href="<?= e(url('how-it-works')) ?>">How VanAssist works</a></li>
+                <li><a href="<?= e(url('for-providers')) ?>">For providers</a></li>
                 <?php if (auth()->check()): ?>
                     <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
                 <?php else: ?>
                     <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                 <?php endif; ?>
-                <li><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a></li>
+                <li><a class="btn btn-primary nav-primary-action" href="<?= e(url('request-assistance')) ?>">Request assistance</a></li>
                 <?php endif; ?>
             </ul>
         </nav>

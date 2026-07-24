@@ -142,6 +142,25 @@ Every promoted or materially changed component is checked in these states:
 - The public discovery hero and provider dashboard now use the Experience v2
   immersive-task and command-centre patterns.
 
+### 2026-07 conversion architecture increment
+
+| Pattern | Owning source | Contract |
+| --- | --- | --- |
+| Editorial discovery hero | `public/home.php`, `.experience-hero` | One value promise and one compact service/location task; mobile media remains supporting content |
+| Evidence ribbon | `HomeController`, `.evidence-ribbon` | Brand-scoped live counts only; zero values are omitted and labels describe records precisely |
+| Journey selector | `.journey-grid` | Three visibly distinct customer intents with complete link targets and meaningful link text |
+| Process narrative | `.process-layout` | Explains discovery, evidence and next steps without implying fulfilment or guaranteed availability |
+| Listing-status definitions | `.trust-definitions` | Verified, featured and unclaimed remain distinct and are explained in plain language |
+| Provider acquisition | `public/for-providers.php` | Separate commercial journey covering value, onboarding, limitations and an explicit registration action |
+| Provider priority workspace | `provider/dashboard.php` | Open demand outranks profile completion, expiring evidence and analytics in that order |
+| Activity ledger | `.performance-ledger` | Describes profile views, contact actions, requests and runs without converting them into estimated revenue |
+| Credibility footer | `partials/footer.php` | Organisation context, direct support details, legal/accessibility routes and task recovery |
+
+The conversion increment intentionally replaces generic rounded-card repetition
+with ruled editorial grids and flat task surfaces. Existing `.card` remains valid
+for secondary forms and records; it is no longer the default composition for a
+marketing or command-centre page.
+
 ## Definition of done
 
 A component is part of the official Design System only when its public contract,
