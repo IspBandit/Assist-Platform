@@ -75,7 +75,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| COM-001 | Transactional email transport and sender reputation | in progress | Graph fallback and three-brand probes pass; per-brand mailbox selection is implemented behind blank-safe environment settings; create, scope and externally accept the three Exchange shared mailboxes before activation; bounce/suppression acceptance remains |
+| COM-001 | Transactional email transport and sender reputation | in progress | Three shared mailboxes are owner-confirmed and activated with explicit 403/404 operations fallback; migration 049 external sender-name acceptance plus bounce/suppression acceptance remain |
 | COM-002 | Consent-aware bulk provider campaign sending | blocked | COM-001 plus consent, throttling and unsubscribe acceptance |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |

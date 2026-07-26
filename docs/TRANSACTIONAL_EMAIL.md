@@ -27,6 +27,14 @@ from interrupting transactional delivery. Activate and externally test one
 brand at a time. A dedicated mailbox supplies the visible Exchange display name
 and address, while the queue's immutable `brand_id` selects it server-side.
 
+On 27 July 2026 the owner supplied Microsoft 365 Admin evidence that the three
+public support addresses exist as shared mailboxes. Those addresses are now the
+safe configuration defaults. A dedicated mailbox request rejected explicitly
+with Graph HTTP 403 or 404 is retried once through the proven operations mailbox;
+timeouts and server errors are not retried through another sender because the
+first request may have been accepted. Migration 049 supplies one controlled
+acceptance message per public brand.
+
 The private key must exist only in server-side private storage with restrictive
 permissions. It must not enter Git, documentation, logs, screenshots or chat.
 The queue chooses the sender address from its immutable `brand_id`: VanAssist uses

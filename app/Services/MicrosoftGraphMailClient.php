@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Logger;
 use RuntimeException;
 
 /** App-only Microsoft Graph mail transport using a certificate credential. */
@@ -19,12 +20,32 @@ final class MicrosoftGraphMailClient
         $mailbox = self::sendingMailbox($cfg, $replyTo);
         if ($replyTo === '') { throw new RuntimeException('Microsoft Graph brand sender address is not configured.'); }
         $payload = self::messagePayload($cfg, $mailbox, $replyTo, $to, $recipientName, $subject, $html, $text);
-        self::request(
-            self::sendingEndpoint($mailbox),
-            json_encode($payload, JSON_THROW_ON_ERROR),
-            ['Authorization: Bearer ' . self::token($cfg), 'Content-Type: application/json'],
-            [202]
-        );
+        $headers = ['Authorization: Bearer ' . self::token($cfg), 'Content-Type: application/json'];
+        try {
+            self::request(
+                self::sendingEndpoint($mailbox),
+                json_encode($payload, JSON_THROW_ON_ERROR),
+                $headers,
+                [202]
+            );
+        } catch (RuntimeException $e) {
+            $fallback = trim((string) ($cfg['graph_fallback_mailbox'] ?? ''));
+            if (!self::shouldFallback($e, $mailbox, $fallback)) {
+                throw $e;
+            }
+
+            Logger::warning('Dedicated Graph mailbox was rejected; using the approved operations fallback.', [
+                'mailbox' => $mailbox,
+                'fallback' => $fallback,
+            ], 'email');
+            $fallbackPayload = self::messagePayload($cfg, $fallback, $replyTo, $to, $recipientName, $subject, $html, $text);
+            self::request(
+                self::sendingEndpoint($fallback),
+                json_encode($fallbackPayload, JSON_THROW_ON_ERROR),
+                $headers,
+                [202]
+            );
+        }
     }
 
     /** @param array<string,mixed> $cfg @return array<string,mixed> */
@@ -55,6 +76,13 @@ final class MicrosoftGraphMailClient
     {
         $configured = trim((string) ($cfg['graph_mailbox'] ?? ''));
         return $configured !== '' ? $configured : $from;
+    }
+
+    private static function shouldFallback(RuntimeException $error, string $mailbox, string $fallback): bool
+    {
+        return $fallback !== ''
+            && strcasecmp($mailbox, $fallback) !== 0
+            && preg_match('/Microsoft Graph request failed with HTTP (?:403|404):/', $error->getMessage()) === 1;
     }
 
     /** @param array<string,mixed> $cfg */
