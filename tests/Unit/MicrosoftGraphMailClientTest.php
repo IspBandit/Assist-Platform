@@ -29,4 +29,29 @@ final class MicrosoftGraphMailClientTest extends TestCase
             $method->invoke(null, ['graph_mailbox' => 'operations@vanassist.com.au'], 'support@towsmart.com.au')
         );
     }
+
+    public function testFallbackUsesRealMailboxAsFromAndBrandAliasAsReplyTo(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'messagePayload');
+        $payload = $method->invoke(
+            null,
+            ['from_name' => 'TowSmart'],
+            'operations@vanassist.com.au',
+            'support@towsmart.com.au',
+            'customer@example.com',
+            'Customer',
+            'Test',
+            '<p>Test</p>',
+            'Test'
+        );
+
+        $this->assertSame(
+            'operations@vanassist.com.au',
+            $payload['message']['from']['emailAddress']['address']
+        );
+        $this->assertSame(
+            'support@towsmart.com.au',
+            $payload['message']['replyTo'][0]['emailAddress']['address']
+        );
+    }
 }

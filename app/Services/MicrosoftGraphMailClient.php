@@ -15,25 +15,34 @@ final class MicrosoftGraphMailClient
     /** @param array<string,mixed> $cfg */
     public static function send(array $cfg, string $to, string $recipientName, string $subject, string $html, string $text): void
     {
-        $from = trim((string) ($cfg['from_address'] ?? ''));
-        $mailbox = self::sendingMailbox($cfg, $from);
-        if ($from === '') { throw new RuntimeException('Microsoft Graph brand sender address is not configured.'); }
-        $payload = [
-            'message' => [
-                'subject' => $subject,
-                'body' => ['contentType' => 'HTML', 'content' => $html !== '' ? $html : nl2br(htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'))],
-                'from' => ['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $from]],
-                'replyTo' => [['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $from]]],
-                'toRecipients' => [['emailAddress' => ['name' => $recipientName, 'address' => $to]]],
-            ],
-            'saveToSentItems' => false,
-        ];
+        $replyTo = trim((string) ($cfg['from_address'] ?? ''));
+        $mailbox = self::sendingMailbox($cfg, $replyTo);
+        if ($replyTo === '') { throw new RuntimeException('Microsoft Graph brand sender address is not configured.'); }
+        $payload = self::messagePayload($cfg, $mailbox, $replyTo, $to, $recipientName, $subject, $html, $text);
         self::request(
             self::sendingEndpoint($mailbox),
             json_encode($payload, JSON_THROW_ON_ERROR),
             ['Authorization: Bearer ' . self::token($cfg), 'Content-Type: application/json'],
             [202]
         );
+    }
+
+    /** @param array<string,mixed> $cfg @return array<string,mixed> */
+    private static function messagePayload(array $cfg, string $mailbox, string $replyTo, string $to, string $recipientName, string $subject, string $html, string $text): array
+    {
+        return [
+            'message' => [
+                'subject' => $subject,
+                'body' => ['contentType' => 'HTML', 'content' => $html !== '' ? $html : nl2br(htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'))],
+                // App-only Graph sending must use the real mailbox targeted by
+                // /users/{mailbox}/sendMail. Brand aliases remain Reply-To until
+                // they are provisioned and accepted as Exchange mailboxes.
+                'from' => ['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $mailbox]],
+                'replyTo' => [['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $replyTo]]],
+                'toRecipients' => [['emailAddress' => ['name' => $recipientName, 'address' => $to]]],
+            ],
+            'saveToSentItems' => false,
+        ];
     }
 
     private static function sendingEndpoint(string $mailbox): string

@@ -75,7 +75,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| COM-001 | Transactional email transport and sender reputation | in progress | Graph delivery recovered through operations mailbox; visible brand From identity plus external bounce/suppression acceptance remain |
+| COM-001 | Transactional email transport and sender reputation | in progress | Graph fallback sends from the proven operations mailbox with brand Reply-To; migration 047 delivery probe and external receipt acceptance required; visible brand From identity plus bounce/suppression acceptance remain |
 | COM-002 | Consent-aware bulk provider campaign sending | blocked | COM-001 plus consent, throttling and unsubscribe acceptance |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
