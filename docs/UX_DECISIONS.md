@@ -80,3 +80,19 @@ transitions. **Measurement:** search, provider profile, contact, request and
 outcome events continue through the existing first-party demand analytics
 vocabulary. **Evidence:** unit/static analysis, desktop/mobile full-page renders
 and quality-gate results recorded in the pull request.
+
+## 2026-07-26 — GPS location resolves to a reusable locality
+
+**Context:** DATA-007 and EXP-005. “Use my current location” could resolve a GPS
+coordinate but then submit an older `Town / STATE` label that some directory
+paths could not parse. The directory also ignored otherwise valid GPS fields,
+and manual edits could leave stale coordinates attached to a new town name.
+**Decision:** GPS coordinates take precedence only for the location action that
+created them; resolved labels use the canonical `Town, STATE` format; legacy
+slash labels remain accepted; choosing or typing a town clears stale resolution
+data; and equal-distance postcode centroids prefer recognisable geographic
+localities over postal-delivery records. **Affected journeys:** homepage search,
+provider directory, stays and assistance requests. **Accessibility:** existing
+native controls and live status remain unchanged; manual entry remains the
+fallback when location permission or resolution fails. **Evidence:** unit tests,
+JavaScript syntax validation and relevant PHP/static checks.

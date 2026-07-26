@@ -23,11 +23,26 @@ final class ProviderController extends Controller
         $perPage = 18;
         $townId = (int) $request->input('town') ?: null;
         $location = trim((string) $request->input('location', ''));
-        if ($location !== '') {
+        $latRaw = $request->input('lat');
+        $lngRaw = $request->input('lng');
+        $lat = is_numeric($latRaw) ? (float) $latRaw : null;
+        $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
+        $hasCoords = $lat !== null && $lng !== null
+            && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
+        if ($hasCoords) {
+            $gpsTown = Town::nearestActive($lat, $lng);
+            $townId = isset($gpsTown['id']) ? (int) $gpsTown['id'] : null;
+            if ($gpsTown !== null) {
+                $location = (string) $gpsTown['name'];
+                if (!empty($gpsTown['state_abbr'])) {
+                    $location .= ', ' . $gpsTown['state_abbr'];
+                }
+            }
+        } elseif ($location !== '') {
             $townMatches = Town::searchActive($location);
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
-        $locationFound = $location === '' || $townId !== null;
+        $locationFound = ($location === '' && !$hasCoords) || $townId !== null;
         $categoryId = (int) $request->input('category') ?: null;
         $brand = current_brand();
         $brandScoped = $brand->id() !== 'vanassist';
@@ -51,6 +66,8 @@ final class ProviderController extends Controller
             'perPage' => $perPage,
             'search' => $search,
             'location' => $location,
+            'lat' => $hasCoords ? $lat : null,
+            'lng' => $hasCoords ? $lng : null,
             'locationFound' => $locationFound,
             'townId' => $townId,
             'categoryId' => $categoryId,

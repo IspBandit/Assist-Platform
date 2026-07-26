@@ -37,8 +37,8 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
                 <label for="location">Where?</label>
                 <input type="text" id="location" name="location" value="<?= e_attr($location) ?>" placeholder="Town, suburb or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                 <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
-                <input type="hidden" name="lat" value="">
-                <input type="hidden" name="lng" value="">
+                <input type="hidden" name="lat" value="<?= e_attr((string) ($lat ?? '')) ?>">
+                <input type="hidden" name="lng" value="<?= e_attr((string) ($lng ?? '')) ?>">
                 <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
                 <p class="location-status muted" role="status" aria-live="polite" hidden></p>
             </div>

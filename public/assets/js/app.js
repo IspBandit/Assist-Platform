@@ -245,15 +245,15 @@
         var hide = function () { box.hidden = true; box.innerHTML = ''; active = -1; };
 
         var choose = function (t) {
-            var label = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
+            var label = t.name + (t.state_abbr ? ', ' + t.state_abbr : '');
+            var townId = form ? form.querySelector('#town_id, input[name="town"]') : null;
+            if (townId) { townId.value = t.id; }
             if (input.name === 'location' || input.id === 'location') {
                 input.value = label;
                 hide();
                 return;
             }
             input.value = label;
-            var townId = form ? form.querySelector('#town_id, input[name="town"]') : null;
-            if (townId) { townId.value = t.id; }
             if (regionField) { regionField.value = t.region_name || ''; }
             if (regionId) { regionId.value = t.region_id || ''; }
             hide();
@@ -269,7 +269,7 @@
                 btn.setAttribute('role', 'option');
                 btn.dataset.index = i;
                 var sub = [t.postcode, t.region_name].filter(Boolean).join(' · ');
-                var primary = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
+                var primary = t.name + (t.state_abbr ? ', ' + t.state_abbr : '');
                 btn.innerHTML = '<strong>' + primary + '</strong>' + (sub ? ' <span class="muted">' + sub + '</span>' : '');
                 btn.addEventListener('click', function () { choose(t); input.focus(); });
                 box.appendChild(btn);
@@ -286,7 +286,14 @@
         };
 
         input.addEventListener('input', function () {
-            // Typing invalidates any previously resolved region.
+            // Typing invalidates any previously resolved town, region or GPS
+            // fix so a manual correction always takes precedence.
+            var resolvedTown = form ? form.querySelector('#town_id, input[name="town"]') : null;
+            var resolvedLat = form ? form.querySelector('input[name="lat"]') : null;
+            var resolvedLng = form ? form.querySelector('input[name="lng"]') : null;
+            if (resolvedTown) { resolvedTown.value = ''; }
+            if (resolvedLat) { resolvedLat.value = ''; }
+            if (resolvedLng) { resolvedLng.value = ''; }
             if (regionField) { regionField.value = ''; }
             if (regionId) { regionId.value = ''; }
             var q = input.value.trim();

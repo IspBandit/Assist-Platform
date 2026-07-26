@@ -86,8 +86,9 @@ final class Town extends Model
      * Resolve a free-text town, suburb or postcode query to active localities,
      * best match first. Postcodes match primary_postcode or the postcodes table;
      * names match exactly, then by prefix, then anywhere in the name (so suburbs
-     * and partial typing work). An optional state suffix ("Parramatta, NSW") is
-     * recognised.
+     * and partial typing work). Optional state suffixes produced by either the
+     * current UI ("Parramatta, NSW") or older UI versions ("Parramatta / NSW")
+     * are recognised.
      *
      * @return array<int,array<string,mixed>>
      */
@@ -149,7 +150,7 @@ final class Town extends Model
     {
         $query = trim($query);
         $state = null;
-        if (preg_match('/,\s*([A-Za-z]{2,3})\s*$/', $query, $m)) {
+        if (preg_match('/\s*(?:,|\/)\s*([A-Za-z]{2,3})\s*$/', $query, $m)) {
             $state = strtoupper($m[1]);
             $query = trim(substr($query, 0, -strlen($m[0])));
         }
@@ -178,7 +179,12 @@ final class Town extends Model
             . '+ sin(radians(?)) * sin(radians(t.latitude))))) AS distance_km '
             . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
             . 'WHERE t.is_active = 1 AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL ';
-        $orderLimit = ' ORDER BY distance_km ASC LIMIT 1';
+        // Several postal localities can share one postcode centroid. Keep the
+        // result deterministic and prefer a recognisable geographic locality
+        // over postal-delivery records when distances are identical.
+        $orderLimit = " ORDER BY distance_km ASC, "
+            . "CASE WHEN LOWER(t.name) REGEXP '( dc| mc| bc| po|delivery centre|mail centre|business centre)$' THEN 1 ELSE 0 END ASC, "
+            . 't.is_launch_town DESC, t.is_featured DESC, LENGTH(t.name) ASC, t.name ASC LIMIT 1';
 
         // ~5 degrees (~550 km) bounding box first.
         $box = 5.0;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use App\Helpers\Geo;
+use App\Models\Town;
 use PHPUnit\Framework\TestCase;
 
 final class HelpersTest extends TestCase
@@ -57,5 +58,17 @@ final class HelpersTest extends TestCase
     {
         $this->assertSame('http://localhost/', safe_back_url('https://attacker.example/phish'));
         $this->assertSame('http://localhost/account', safe_back_url('http://localhost/account'));
+    }
+
+    public function testTownSearchAcceptsCurrentAndLegacyStateLabels(): void
+    {
+        $this->assertSame(
+            ['term' => 'Gladstone', 'state' => 'QLD'],
+            Town::parseSearchQuery('Gladstone, QLD')
+        );
+        $this->assertSame(
+            ['term' => 'Gladstone', 'state' => 'QLD'],
+            Town::parseSearchQuery('Gladstone / QLD')
+        );
     }
 }
