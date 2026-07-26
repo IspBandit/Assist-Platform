@@ -60,3 +60,10 @@ without an SMTP host, and re-queues only rows whose recorded failure came from
 Microsoft Graph. Visible From attribution remains a named COM-001 limitation;
 transactional delivery takes priority until dedicated shared mailboxes pass
 external acceptance.
+
+The follow-up recovery makes that fallback explicit in the Graph payload: the
+real `operations@vanassist.com.au` mailbox is both the endpoint and message From
+identity, while the immutable brand sender remains Reply-To. Migration 047
+retries only Graph-rejected rows and queues one idempotent delivery probe to the
+owner-controlled operations mailbox. The probe is acceptance evidence, not a
+customer campaign.
