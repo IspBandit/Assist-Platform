@@ -105,6 +105,18 @@ final class EnvironmentValidator
             if (filter_var((string) Config::get('mail.graph.mailbox', ''), FILTER_VALIDATE_EMAIL) === false) {
                 $errors[] = 'MICROSOFT_GRAPH_SENDING_MAILBOX must be a valid email address';
             }
+            $brandMailboxLabels = [
+                'vanassist' => 'MICROSOFT_GRAPH_VANASSIST_MAILBOX',
+                'towsmart' => 'MICROSOFT_GRAPH_TOWSMART_MAILBOX',
+                'trailerwise' => 'MICROSOFT_GRAPH_TRAILERWISE_MAILBOX',
+                'localtorque' => 'MICROSOFT_GRAPH_LOCALTORQUE_MAILBOX',
+            ];
+            foreach ($brandMailboxLabels as $brand => $label) {
+                $mailbox = trim((string) Config::get('mail.graph.mailboxes.' . $brand, ''));
+                if ($mailbox !== '' && filter_var($mailbox, FILTER_VALIDATE_EMAIL) === false) {
+                    $errors[] = $label . ' must be a valid email address when configured';
+                }
+            }
         }
 
         if ((bool) Config::get('security.turnstile.enabled', false)) {
