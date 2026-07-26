@@ -56,8 +56,8 @@ final class EmailTemplatesController extends Controller
             'pendingCount' => (int) Database::scalar("SELECT COUNT(*) FROM email_queue WHERE status IN ('pending','processing')"),
             'failedCount'  => (int) Database::scalar("SELECT COUNT(*) FROM email_queue WHERE status = 'failed'"),
             'sentCount'    => (int) Database::scalar("SELECT COUNT(*) FROM email_queue WHERE status = 'sent'"),
-            'mailConfigured' => trim((string) $cfg['host']) !== '',
-            'mailHost'     => (string) $cfg['host'],
+            'mailConfigured' => Mailer::transportConfigured($cfg),
+            'mailTransport' => strtolower((string) ($cfg['driver'] ?? 'smtp')) === 'graph' ? 'Microsoft Graph' : (string) $cfg['host'],
             'recentFailures' => $recentFailures,
         ]);
     }
@@ -72,8 +72,8 @@ final class EmailTemplatesController extends Controller
         $this->requirePermission('email.manage');
 
         $cfg = Mailer::config();
-        if (trim((string) $cfg['host']) === '') {
-            return $this->redirectWith('/admin/email-templates', 'error', 'SMTP is not configured yet. Add your mail host, username and password in Admin → Settings first.');
+        if (!Mailer::transportConfigured($cfg)) {
+            return $this->redirectWith('/admin/email-templates', 'error', 'Outgoing email is not configured yet. Check the mail transport in Admin → Settings.');
         }
 
         // Re-queue recently failed messages (resetting attempts) so a manual run retries them.
@@ -192,8 +192,8 @@ final class EmailTemplatesController extends Controller
         $this->requirePermission('email.manage');
 
         $cfg = Mailer::config();
-        if (trim((string) $cfg['host']) === '') {
-            return $this->redirectWith('/admin/email-templates', 'error', 'SMTP is not configured. Set host, username and password in Admin → Settings (Outgoing email).');
+        if (!Mailer::transportConfigured($cfg)) {
+            return $this->redirectWith('/admin/email-templates', 'error', 'Outgoing email is not configured. Check the mail transport in Admin → Settings.');
         }
 
         $to = trim((string) $request->input('test_email')) ?: (string) (current_user()['email'] ?? '');

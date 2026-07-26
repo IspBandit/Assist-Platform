@@ -24,17 +24,12 @@ final class Mailer
     {
         $result = ['processed' => 0, 'sent' => 0, 'failed' => 0];
 
-        // Email can be delivered either via PHPMailer (when Composer deps are
-        // installed) or the built-in dependency-free SmtpClient fallback. Only a
-        // missing SMTP host means we genuinely cannot send — leave the queue
-        // pending in that case rather than burning delivery attempts.
+        // Leave the queue pending when the selected transport is incomplete
+        // rather than burning delivery attempts.
         $cfg = self::config();
         $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
-        $transportReady = $driver === 'graph'
-            ? trim((string) ($cfg['graph_tenant_id'] ?? '')) !== '' && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
-            : trim((string) $cfg['host']) !== '';
-        if (!$transportReady) {
-            Logger::warning('SMTP host not configured; email queue left pending. Set mail settings in Admin → Settings.', [], 'email');
+        if (!self::transportConfigured($cfg)) {
+            Logger::warning('Outgoing email transport is not configured; email queue left pending.', [], 'email');
             return $result;
         }
 
@@ -77,6 +72,19 @@ final class Mailer
         }
 
         return $result;
+    }
+
+    /** @param array<string,mixed> $cfg */
+    public static function transportConfigured(array $cfg): bool
+    {
+        $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
+        if ($driver === 'graph') {
+            return trim((string) ($cfg['graph_tenant_id'] ?? '')) !== ''
+                && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
+                && trim((string) ($cfg['graph_mailbox'] ?? '')) !== '';
+        }
+
+        return trim((string) ($cfg['host'] ?? '')) !== '';
     }
 
     /** @return array<int,array<string,mixed>> */

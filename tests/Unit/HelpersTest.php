@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use App\Helpers\Geo;
+use App\Services\Mailer;
 use PHPUnit\Framework\TestCase;
 
 final class HelpersTest extends TestCase
@@ -57,5 +58,16 @@ final class HelpersTest extends TestCase
     {
         $this->assertSame('http://localhost/', safe_back_url('https://attacker.example/phish'));
         $this->assertSame('http://localhost/account', safe_back_url('http://localhost/account'));
+    }
+
+    public function testGraphTransportDoesNotRequireAnSmtpHost(): void
+    {
+        $this->assertTrue(Mailer::transportConfigured([
+            'driver' => 'graph',
+            'graph_tenant_id' => 'tenant',
+            'graph_client_id' => 'client',
+            'graph_mailbox' => 'operations@vanassist.com.au',
+            'host' => '',
+        ]));
     }
 }
