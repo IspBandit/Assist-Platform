@@ -67,3 +67,9 @@ identity, while the immutable brand sender remains Reply-To. Migration 047
 retries only Graph-rejected rows and queues one idempotent delivery probe to the
 owner-controlled operations mailbox. The probe is acceptance evidence, not a
 customer campaign.
+
+Migration 048 closes the remaining evidence gap by queuing three separate,
+idempotent probes through the normal worker: one row each for VanAssist,
+TowSmart and TrailerWise. Every probe targets the owner-controlled operations
+mailbox, retains its own immutable `brand_id`, and therefore exercises the same
+brand sender-name and Reply-To resolution used by transactional customer mail.
