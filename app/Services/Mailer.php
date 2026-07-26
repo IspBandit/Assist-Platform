@@ -210,6 +210,7 @@ final class Mailer
     public static function config(?int $brandDatabaseId = null): array
     {
         $env = config('mail');
+        $graphMailbox = (string) ($env['graph']['mailbox'] ?? '');
         $db = static fn (string $key, string $envKey): string =>
             trim((string) Settings::get($key, '')) !== ''
                 ? trim((string) Settings::get($key, ''))
@@ -246,6 +247,11 @@ final class Mailer
             if ($fromAddress === '') {
                 throw new RuntimeException("Outbound sender is not configured for {$brand->name()}");
             }
+
+            $graphMailbox = self::graphMailboxForBrand(
+                (array) ($env['graph'] ?? []),
+                $brand->id()
+            );
         }
 
         return [
@@ -263,8 +269,22 @@ final class Mailer
             'graph_certificate_path' => (string) ($env['graph']['certificate_path'] ?? ''),
             'graph_private_key_path' => (string) ($env['graph']['private_key_path'] ?? ''),
             'graph_private_key_password' => (string) ($env['graph']['private_key_password'] ?? ''),
-            'graph_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
+            'graph_mailbox' => $graphMailbox,
         ];
+    }
+
+    /** @param array<string,mixed> $graph */
+    public static function graphMailboxForBrand(array $graph, ?string $brandId): string
+    {
+        $fallback = trim((string) ($graph['mailbox'] ?? ''));
+        if ($brandId === null) {
+            return $fallback;
+        }
+
+        $mailboxes = is_array($graph['mailboxes'] ?? null) ? $graph['mailboxes'] : [];
+        $brandMailbox = trim((string) ($mailboxes[$brandId] ?? ''));
+
+        return $brandMailbox !== '' ? $brandMailbox : $fallback;
     }
 
     private static function send(array $row): void

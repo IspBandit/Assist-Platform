@@ -13,6 +13,20 @@ Required production settings:
 - `MICROSOFT_GRAPH_PRIVATE_KEY_PASSWORD` when the key is encrypted
 - `MICROSOFT_GRAPH_SENDING_MAILBOX=operations@vanassist.com.au`
 
+Optional dedicated mailbox settings become active only after the corresponding
+Exchange shared mailbox and application scope have passed external acceptance:
+
+- `MICROSOFT_GRAPH_VANASSIST_MAILBOX=support@vanassist.com.au`
+- `MICROSOFT_GRAPH_TOWSMART_MAILBOX=support@towsmart.com.au`
+- `MICROSOFT_GRAPH_TRAILERWISE_MAILBOX=support@trailerwise.com.au`
+- `MICROSOFT_GRAPH_LOCALTORQUE_MAILBOX=` remains empty while the brand is private
+
+When a brand setting is blank, the worker continues using
+`MICROSOFT_GRAPH_SENDING_MAILBOX`; this prevents a partially provisioned mailbox
+from interrupting transactional delivery. Activate and externally test one
+brand at a time. A dedicated mailbox supplies the visible Exchange display name
+and address, while the queue's immutable `brand_id` selects it server-side.
+
 The private key must exist only in server-side private storage with restrictive
 permissions. It must not enter Git, documentation, logs, screenshots or chat.
 The queue chooses the sender address from its immutable `brand_id`: VanAssist uses

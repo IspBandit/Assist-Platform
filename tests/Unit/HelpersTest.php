@@ -70,4 +70,25 @@ final class HelpersTest extends TestCase
             'host' => '',
         ]));
     }
+
+    public function testBrandGraphMailboxOverridesFallbackWhenProvisioned(): void
+    {
+        $graph = [
+            'mailbox' => 'operations@vanassist.com.au',
+            'mailboxes' => [
+                'vanassist' => 'support@vanassist.com.au',
+                'towsmart' => 'support@towsmart.com.au',
+                'trailerwise' => '',
+            ],
+        ];
+
+        $this->assertSame(
+            'support@towsmart.com.au',
+            Mailer::graphMailboxForBrand($graph, 'towsmart')
+        );
+        $this->assertSame(
+            'operations@vanassist.com.au',
+            Mailer::graphMailboxForBrand($graph, 'trailerwise')
+        );
+    }
 }
