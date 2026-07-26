@@ -5,7 +5,7 @@
 /** @var int $failedCount */
 /** @var int $sentCount */
 /** @var bool $mailConfigured */
-/** @var string $mailHost */
+/** @var string $mailTransport */
 /** @var array<int,array<string,mixed>> $recentFailures */
 $this->extend('layouts.admin');
 ?>
@@ -24,11 +24,11 @@ $this->extend('layouts.admin');
     </details>
     <?php if (!$mailConfigured): ?>
         <p style="margin:0;padding:.75rem;border-left:4px solid #c0392b;background:#fdf3f2">
-            <strong>SMTP is not configured.</strong> No emails can be delivered until you set the mail host, username and password in
-            <a href="<?= e(url('admin/settings')) ?>">Admin → Settings</a> (Outgoing email).
+            <strong>Outgoing email is not configured.</strong> No emails can be delivered until the selected transport is configured in
+            <a href="<?= e(url('admin/settings')) ?>">Admin → Settings</a>.
         </p>
     <?php else: ?>
-        <p class="muted" style="margin:0 0 .5rem">Outgoing server: <code><?= $this->e($mailHost) ?></code></p>
+        <p class="muted" style="margin:0 0 .5rem">Outgoing transport: <code><?= $this->e($mailTransport) ?></code></p>
         <p style="margin:0 0 1rem">
             <span class="badge badge-neutral">Waiting: <?= (int) $pendingCount ?></span>
             <span class="badge <?= $failedCount > 0 ? 'badge-neutral' : 'badge-neutral' ?>" style="<?= $failedCount > 0 ? 'background:#fdecea;color:#c0392b' : '' ?>">Failed: <?= (int) $failedCount ?></span>

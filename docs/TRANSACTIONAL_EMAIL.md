@@ -15,13 +15,14 @@ Required production settings:
 
 The private key must exist only in server-side private storage with restrictive
 permissions. It must not enter Git, documentation, logs, screenshots or chat.
-The queue chooses the sender mailbox from its immutable `brand_id`: VanAssist uses
+The queue chooses the sender address from its immutable `brand_id`: VanAssist uses
 `support@vanassist.com.au`, TowSmart uses `support@towsmart.com.au`, and
-TrailerWise uses `support@trailerwise.com.au`. Each address must be a real
-Exchange Online mailbox (a shared mailbox is sufficient), not merely an alias
-on `operations@vanassist.com.au`. App-only Graph sends through
-`/users/{brand-mailbox}/sendMail`. Test all three identities externally before
-enabling bulk queue work.
+TrailerWise uses `support@trailerwise.com.au`. Until each address is provisioned
+as a real Exchange Online shared mailbox, the transport sends through the
+configured `MICROSOFT_GRAPH_SENDING_MAILBOX` and keeps the relevant brand
+support address as Reply-To. This preserves delivery without treating an alias
+as a Graph mailbox. Test all three identities externally before enabling bulk
+queue work.
 
 ## Production acceptance — 24 July 2026
 
@@ -48,3 +49,14 @@ required visible aliases. Configure dedicated/shared brand mailboxes and target
 the correct mailbox per immutable `brand_id` before full acceptance. External
 bounce ingestion, suppression and consent-aware bulk campaign acceptance also
 remain separate COM-001/COM-002 work.
+
+## Production incident recovery — 26 July 2026
+
+The brand-mailbox endpoint change caused transactional failures because the
+support addresses had not been proven as Exchange mailbox objects. The recovery
+routes delivery through the already accepted operations mailbox, preserves
+brand Reply-To addresses, teaches the admin queue controls to recognise Graph
+without an SMTP host, and re-queues only rows whose recorded failure came from
+Microsoft Graph. Visible From attribution remains a named COM-001 limitation;
+transactional delivery takes priority until dedicated shared mailboxes pass
+external acceptance.
