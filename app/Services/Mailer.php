@@ -270,6 +270,7 @@ final class Mailer
             'graph_private_key_path' => (string) ($env['graph']['private_key_path'] ?? ''),
             'graph_private_key_password' => (string) ($env['graph']['private_key_password'] ?? ''),
             'graph_mailbox' => $graphMailbox,
+            'graph_fallback_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
         ];
     }
 

@@ -54,4 +54,22 @@ final class MicrosoftGraphMailClientTest extends TestCase
             $payload['message']['replyTo'][0]['emailAddress']['address']
         );
     }
+
+    public function testExplicitMailboxRejectionCanUseOperationsFallback(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'shouldFallback');
+
+        $this->assertTrue($method->invoke(
+            null,
+            new \RuntimeException('Microsoft Graph request failed with HTTP 404: mailbox not found'),
+            'support@towsmart.com.au',
+            'operations@vanassist.com.au'
+        ));
+        $this->assertFalse($method->invoke(
+            null,
+            new \RuntimeException('Microsoft Graph request failed with HTTP 500: service unavailable'),
+            'support@towsmart.com.au',
+            'operations@vanassist.com.au'
+        ));
+    }
 }
