@@ -43,6 +43,7 @@ $headerBrandMeta = $headerBrand->metadata();
                 <li><a href="<?= e(url('find')) ?>">Find help</a></li>
                 <li><a href="<?= e(url('stays')) ?>">Places to stay</a></li>
                 <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
+                <li><a href="<?= e(url('rules')) ?>">Rules & safety</a></li>
                 <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>
                 <?php if (auth()->check()): ?>
                     <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>

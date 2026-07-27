@@ -15,6 +15,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-005 | Shared provider launch email templates and campaign segmentation | ready | Preview/test-send, consent, unsubscribe and queue tests |
 | CORE-007 | Platform Control Centre for domains, launch state, features and operational status | in progress | Super-admin-only acceptance and audit coverage |
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
+| CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | ready | Owner isolation, mobile asset wallet, document storage, brand-aware actions and account acceptance |
+| CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | ready | Explicit consent, preserved context, source-brand labels and analytics |
 
 ## Experience
 
@@ -25,6 +27,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | EXP-003 | Production-grade Social Studio templates and individual exports | in progress | Exact-size assets, editorial approval and no mock-up/crop contamination |
 | EXP-004 | WCAG 2.2 AA critical journeys | ready | Automated checks plus manual keyboard/screen-reader review |
 | EXP-005 | Mobile-first provider, search, calculator and admin journeys | in progress | Rendered acceptance on representative widths |
+| EXP-006 | Guided rule-to-action journeys from official requirement to compliant next step | ready | Vehicle/jurisdiction questions, official citations, limitations, saved outcome and relevant provider handoff |
+| EXP-007 | Mobile trip and compliance wallet | ready | Offline-tolerant document access, expiry reminders and representative owner journeys |
 
 ## Brands
 
@@ -51,6 +55,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-005 | Data Intelligence, opportunity scoring and action queue | in progress | Modular metric sources, population-aware scoring, verification/import quality and direct Data Sources hand-off |
 | DATA-006 | Connector-based discovery, encrypted credentials and review-first imports | done | Migration, connector contract, Google adapter, admin workflow, audit and tests |
 | DATA-007 | Maps/geocoding production limits and fallback | ready | Quota, failure and list-view acceptance |
+| DATA-008 | Four-brand authoritative Australian vehicle rules library | in progress | All-jurisdiction official-source catalogue, brand relevance, genuine downloads, source-change review, mobile filters and labelled local sponsorship |
+| DATA-009 | Regulatory change alerts and freshness control centre | ready | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and stale-source fail-closed acceptance |
 
 ## Infrastructure
 
@@ -80,6 +86,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
 | COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |
+| COM-006 | Verified provider capability credentials | ready | Evidence, expiry, reviewer audit, public labels and misleading-claim controls |
+| COM-007 | Provider campaign relevance and performance workspace | ready | Self-service local/context targeting, transparent sponsorship, budgets, conversion reporting and anti-ranking-influence tests |
 
 ## Backlog rules
 

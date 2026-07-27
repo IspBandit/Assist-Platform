@@ -141,6 +141,7 @@ return [
                 ['label' => 'Weight calculator', 'path' => '/calculator'],
                 ['label' => 'Tow guide', 'path' => '/tow-guide'],
                 ['label' => 'Checklist', 'path' => '/checklist'],
+                ['label' => 'Rules & compliance', 'path' => '/rules'],
                 ['label' => 'Towing specialists', 'path' => '/providers'],
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
@@ -153,7 +154,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => true,
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
@@ -224,6 +225,7 @@ return [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Find trailer services', 'path' => '/providers'],
                 ['label' => 'Service categories', 'path' => '/services'],
+                ['label' => 'Rules & compliance', 'path' => '/rules'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],
@@ -234,7 +236,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => true,
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
@@ -304,6 +306,7 @@ return [
             'navigation' => [
                 ['label' => 'Find a business', 'path' => '/providers'],
                 ['label' => 'Categories', 'path' => '/services'],
+                ['label' => 'Rules & modifications', 'path' => '/rules'],
                 ['label' => 'List your business', 'path' => '/for-providers'],
             ],
             'footer' => [

@@ -31,6 +31,8 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Location controls | `use-location-btn`, distance filter | shared domain component | Document permission-denied and unavailable states |
 | Status badges | verified/confirmed/neutral and related styles | partially shared | Define one semantic status matrix |
 | Social assets | Social Studio templates and brand assets | in progress | Exact-size export and editorial gate remain mandatory |
+| Regulatory source card | `localtorque/regulatory-library.php`, `.rule-card` | LocalTorque domain pattern | Desktop/mobile render, official-link and long-title acceptance |
+| Contextual sponsor rail | `.rules-sponsors` over shared advertising campaigns | reusable commercial pattern | Always labelled; explicit location only; must not alter organic or authority results |
 
 ### Current token debt
 
@@ -93,6 +95,7 @@ search and representative rendered regression show no consumers.
 - TowSmart calculator input, assumptions, warning and result summary;
 - TrailerWise service/business and ownership-content result;
 - LocalTorque workshop/specialist result and category/location search;
+- LocalTorque official-rule result, source-freshness state and contextual sponsor rail;
 - claimed/verified provider profile;
 - membership comparison and entitlement explanation;
 - campaign preview and Social Studio export.

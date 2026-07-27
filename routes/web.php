@@ -38,6 +38,7 @@ return static function (Router $router): void {
         $router->get('/services', 'Site\CategoryController@index', 'services');
         $router->get('/services/{slug}', 'Site\CategoryController@show', 'services.show');
         $router->get('/category/{slug}', 'Site\CategoryController@show', 'categories.show');
+        $router->get('/rules', 'Site\RegulatoryLibraryController@index', 'rules.index');
 
         // Location pages (Phase 2): region index/detail and town detail.
         $router->get('/regions', 'Site\LocationController@regionsIndex', 'regions');

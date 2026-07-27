@@ -28,7 +28,7 @@
     <div class="container quick-paths-grid">
         <a href="<?= e(url('providers')) ?>"><span class="quick-icon">01</span><span><strong>Find a workshop</strong><small>Search by business, service or location</small></span></a>
         <a href="<?= e(url('services')) ?>"><span class="quick-icon">02</span><span><strong>Browse specialists</strong><small>From mechanics to vehicle inspections</small></span></a>
-        <a href="<?= e(url('for-providers')) ?>"><span class="quick-icon">03</span><span><strong>List your business</strong><small>Claim or create a shared provider profile</small></span></a>
+        <a href="<?= e(url('rules')) ?>"><span class="quick-icon">03</span><span><strong>Rules & modifications</strong><small>Official roadworthy and modification sources</small></span></a>
     </div>
 </section>
 

@@ -91,6 +91,26 @@ final class PlatformDatabaseTest extends TestCase
         self::assertGreaterThanOrEqual(2,(int)Database::scalar("SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON r.id=rp.role_id JOIN permissions p ON p.id=rp.permission_id WHERE r.slug='platform-administrator' AND p.slug LIKE 'data_intelligence.%'"));
     }
 
+    public function testRegulatoryLibraryCoversEveryBrandAndJurisdiction(): void
+    {
+        foreach (['regulatory_authorities', 'regulatory_documents', 'regulatory_document_brands', 'regulatory_source_checks'] as $table) {
+            self::assertTrue(Database::tableExists($table), $table . ' was not installed');
+        }
+        self::assertSame(
+            ['ACT', 'AUS', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'],
+            array_column(Database::select('SELECT DISTINCT jurisdiction_code FROM regulatory_documents ORDER BY jurisdiction_code'), 'jurisdiction_code')
+        );
+        self::assertSame(
+            [1, 2, 3, 4],
+            array_map('intval', array_column(Database::select('SELECT DISTINCT brand_id FROM regulatory_document_brands ORDER BY brand_id'), 'brand_id'))
+        );
+        self::assertGreaterThanOrEqual(30, (int) Database::scalar('SELECT COUNT(*) FROM regulatory_documents'));
+        self::assertGreaterThanOrEqual(8, (int) Database::scalar("SELECT COUNT(*) FROM regulatory_documents WHERE download_url IS NOT NULL"));
+        self::assertSame(0, (int) Database::scalar(
+            "SELECT COUNT(*) FROM regulatory_documents WHERE is_public=1 AND official_document<>1"
+        ));
+    }
+
     public function testAgreedMembershipCatalogueIsInstalledWithoutActivatingBilling(): void
     {
         $plans = Database::select(
