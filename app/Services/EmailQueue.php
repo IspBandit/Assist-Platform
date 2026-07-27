@@ -25,7 +25,8 @@ final class EmailQueue
         string $recipientEmail,
         ?string $recipientName = null,
         array $placeholders = [],
-        ?string $scheduledAt = null
+        ?string $scheduledAt = null,
+        string $messageType = 'transactional'
     ): bool {
         $template = Database::selectOne(
             'SELECT * FROM email_templates WHERE template_key = ? AND is_enabled = 1',
@@ -40,7 +41,7 @@ final class EmailQueue
         $html = self::replace((string) $template['html_body'], $placeholders);
         $text = self::replace((string) ($template['text_body'] ?? ''), $placeholders);
 
-        return self::queueRaw($recipientEmail, $recipientName, $subject, $html, $text, $templateKey, $scheduledAt);
+        return self::queueRaw($recipientEmail, $recipientName, $subject, $html, $text, $templateKey, $scheduledAt, $messageType);
     }
 
     public static function queueRaw(
@@ -96,6 +97,7 @@ final class EmailQueue
             $contact = $brand->contact();
             return [
                 'brand_name' => $brand->name(),
+                'legal_name' => $brand->legalName(),
                 'brand_domain' => $brand->primaryDomain(),
                 'site_url' => $brand->url(),
                 'support_email' => (string) ($contact['support_email'] ?? ''),

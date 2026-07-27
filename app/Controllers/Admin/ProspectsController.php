@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
+use App\Services\EmailSuppression;
 
 /**
  * Provider prospect CRM: track outreach to potential providers, log contact
@@ -138,6 +139,9 @@ final class ProspectsController extends Controller
         if ($prospect === null) {
             $this->abort(404);
         }
+        if (empty($prospect['consent_recorded'])) {
+            return $this->redirectWith('/admin/prospects/show?id=' . $id, 'error', 'Documented promotional-email consent is required before sending an invitation.');
+        }
 
         return $this->view('admin.prospects.show', [
             'title'       => $prospect['business_name'],
@@ -193,23 +197,30 @@ final class ProspectsController extends Controller
             . 'VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), ?, NOW())',
             [$id, $email, hash('sha256', $token), $days, current_user()['id'] ?? null]
         );
-        Database::query("UPDATE provider_prospects SET outreach_status = 'invited', updated_at = NOW() WHERE id = ?", [$id]);
-
         $acceptUrl = url('provider/join/' . $token);
         $queued = EmailQueue::queueTemplate('provider_invitation', $email, (string) $prospect['business_name'], [
             'provider_name' => (string) $prospect['business_name'],
             'action_url'    => $acceptUrl,
-        ]);
+            'unsubscribe_url' => EmailSuppression::unsubscribeUrl($email),
+        ], null, 'marketing');
         if (!$queued) {
-            EmailQueue::queueRaw(
+            $queued = EmailQueue::queueRaw(
                 $email,
                 (string) $prospect['business_name'],
                 'You are invited to join VanAssist',
                 '<p>Hi ' . e((string) $prospect['business_name']) . ',</p><p>You are invited to create your VanAssist provider profile.</p>'
                 . '<p><a href="' . e($acceptUrl) . '">Accept your invitation</a></p>',
-                "You are invited to join VanAssist: {$acceptUrl}"
+                "You are invited to join VanAssist: {$acceptUrl}",
+                null,
+                null,
+                'marketing'
             );
         }
+        if (!$queued) {
+            Database::query('DELETE FROM provider_invitations WHERE token_hash=? AND accepted_at IS NULL', [hash('sha256', $token)]);
+            return $this->redirectWith('/admin/prospects/show?id=' . $id, 'error', 'The recipient has unsubscribed or is suppressed from email delivery.');
+        }
+        Database::query("UPDATE provider_prospects SET outreach_status = 'invited', updated_at = NOW() WHERE id = ?", [$id]);
 
         AuditLog::record('prospect.invited', 'provider_prospect', (string) $id, null, $email);
         return $this->redirectWith('/admin/prospects/show?id=' . $id, 'success', 'Invitation sent to ' . $email . '.');

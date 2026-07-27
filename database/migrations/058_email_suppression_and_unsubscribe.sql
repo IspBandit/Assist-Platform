@@ -35,3 +35,9 @@ ALTER TABLE providers
     ADD COLUMN marketing_consented_at DATETIME NULL AFTER marketing_opt_in,
     ADD COLUMN marketing_consent_source VARCHAR(80) NULL AFTER marketing_consented_at,
     ADD KEY idx_provider_marketing_consent (status, marketing_opt_in);
+
+UPDATE email_templates
+SET html_body=CONCAT(html_body,'<p style="font-size:12px"><a href="{{unsubscribe_url}}">Unsubscribe from promotional email</a></p>'),
+    text_body=CONCAT(COALESCE(text_body,''),'\n\nUnsubscribe: {{unsubscribe_url}}'),
+    updated_at=NOW()
+WHERE template_key IN ('provider_claim_invite','provider_invitation') AND html_body NOT LIKE '%{{unsubscribe_url}}%';

@@ -95,7 +95,11 @@ final class NotificationService
     public static function wrap(string $title, string $body, string $recipientEmail): string
     {
         $safeTitle = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
-        $brandName = htmlspecialchars(current_brand()->name(), ENT_QUOTES, 'UTF-8');
+        $brand = current_brand();
+        $brandName = htmlspecialchars($brand->name(), ENT_QUOTES, 'UTF-8');
+        $legalName = htmlspecialchars($brand->legalName(), ENT_QUOTES, 'UTF-8');
+        $supportEmail = htmlspecialchars((string) ($brand->contact()['support_email'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $website = htmlspecialchars($brand->url(), ENT_QUOTES, 'UTF-8');
         $unsubscribeUrl = htmlspecialchars(EmailSuppression::unsubscribeUrl($recipientEmail), ENT_QUOTES, 'UTF-8');
         // Body is trusted admin-authored HTML.
         return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;color:#2b2f33">'
@@ -103,6 +107,9 @@ final class NotificationService
             . '<div>' . $body . '</div>'
             . '<hr style="border:none;border-top:1px solid #e3e0d8;margin:24px 0">'
             . '<p style="font-size:12px;color:#8a8f94">You are receiving this ' . $brandName . ' update because you opted in or are an active provider. '
-            . '<a href="' . $unsubscribeUrl . '">Unsubscribe from marketing email</a>.</p></div>';
+            . '<a href="' . $unsubscribeUrl . '">Unsubscribe from marketing email</a>.</p>'
+            . '<p style="font-size:12px;color:#8a8f94">Sent by ' . $legalName . '. '
+            . ($supportEmail !== '' ? 'Contact: <a href="mailto:' . $supportEmail . '">' . $supportEmail . '</a> · ' : '')
+            . '<a href="' . $website . '">' . $brandName . ' website</a></p></div>';
     }
 }

@@ -37,4 +37,20 @@ final class EmailTemplateSeedTest extends TestCase
             self::assertStringNotContainsString('VanAssist', $copy, "Template {$key} contains stale VanAssist copy");
         }
     }
+
+    public function testProviderOutreachTemplatesContainOneClickUnsubscribe(): void
+    {
+        /** @var array<int,array<string,mixed>> $templates */
+        $templates = require dirname(__DIR__, 2) . '/database/seeds/email_templates.php';
+        $byKey = [];
+        foreach ($templates as $template) {
+            $byKey[(string) $template['template_key']] = $template;
+        }
+
+        foreach (['provider_claim_invite', 'provider_invitation'] as $key) {
+            self::assertArrayHasKey($key, $byKey);
+            self::assertStringContainsString('{{unsubscribe_url}}', (string) $byKey[$key]['html_body']);
+            self::assertStringContainsString('{{unsubscribe_url}}', (string) $byKey[$key]['text_body']);
+        }
+    }
 }
