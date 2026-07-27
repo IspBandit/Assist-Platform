@@ -177,7 +177,7 @@ final class PageController extends Controller
 
     private function notifyInterest(string $business, string $contact, string $email, string $phone, string $town, string $region, string $services, string $message, string $model): void
     {
-        $to = (string) Settings::get('contact_email', 'vanassist@condrendigital.com.au');
+        $to = (string) Settings::get('contact_email', 'support@vanassist.com.au');
         if ($to === '') {
             return;
         }
