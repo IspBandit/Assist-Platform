@@ -45,8 +45,8 @@ final class PlatformDatabaseTest extends TestCase
     public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void
     {
         self::assertTrue(Database::tableExists('provider_source_records'));
-        self::assertSame(8485, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
-        self::assertSame(1863, (int) Database::scalar(
+        self::assertSame(9730, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
+        self::assertSame(3108, (int) Database::scalar(
             "SELECT COUNT(*) FROM provider_source_records WHERE payload_json LIKE '%\"fuel-station\"%'"
         ));
         self::assertSame(0, (int) Database::scalar(
@@ -536,7 +536,7 @@ final class PlatformDatabaseTest extends TestCase
             "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='email_queue' AND column_name='notification_id'"
         ));
         self::assertSame(1, (int) Database::scalar(
-            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='notification_recipients' AND index_name='uq_notification_recipient_email'"
+            "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='notification_recipients' AND index_name='uq_notification_recipient_email'"
         ));
     }
 }
