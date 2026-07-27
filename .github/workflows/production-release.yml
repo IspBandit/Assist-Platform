@@ -79,5 +79,18 @@ jobs:
             curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
               --output /dev/null "$url"
           done
+          homepage="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
+          grep -q '/runtime-assets/css/app.css' <<<"$homepage"
+          grep -q '/runtime-assets/js/app.js' <<<"$homepage"
+          grep -q '/runtime-assets/brands/vanassist/symbol-v2.svg' <<<"$homepage"
+
+          symbol="$(curl --fail --silent --show-error --location --max-time 20 \
+            https://vanassist.com.au/runtime-assets/brands/vanassist/symbol-v2.svg)"
+          grep -q 'viewBox="0 0 64 64"' <<<"$symbol"
+          app_js="$(curl --fail --silent --show-error --location --max-time 20 \
+            https://vanassist.com.au/runtime-assets/js/app.js)"
+          grep -q 'A manually entered town or postcode' <<<"$app_js"
+          curl --fail --silent --show-error --location --max-time 20 \
+            --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

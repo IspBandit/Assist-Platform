@@ -108,7 +108,11 @@ if (!function_exists('asset')) {
         if (str_starts_with($rel, 'assets/')) {
             $rel = substr($rel, 7);
         }
-        $url = url('assets/' . $rel);
+        // Serve release-owned assets through the application so the HTML and
+        // its CSS/JS/images always come from the same immutable release. This
+        // also protects deployments where a long-running web-server container
+        // still has the previous symlink target mounted.
+        $url = url('runtime-assets/' . $rel);
 
         // Cache-bust with the file's modification time so browsers (and phones)
         // pick up CSS/JS changes immediately after a deploy.
