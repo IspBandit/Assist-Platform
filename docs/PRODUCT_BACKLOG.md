@@ -25,6 +25,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | EXP-001 | Promote current UX redesign into shared tokens/components | in progress | Component inventory documented; semantic-token migration and regression renders remain |
 | EXP-002 | Unified admin information architecture and brand switcher | in progress | Desktop/mobile rendered acceptance and keyboard tests |
 | EXP-003 | Production-grade Social Studio templates and individual exports | in progress | Exact-size assets, editorial approval and no mock-up/crop contamination |
+| EXP-008 | Review-first Facebook Page publishing from Social Studio | in progress | Approved-asset publishing, brand/page isolation and post audit implemented; Meta Page credentials and live publish acceptance remain |
 | EXP-004 | WCAG 2.2 AA critical journeys | ready | Automated checks plus manual keyboard/screen-reader review |
 | EXP-005 | Mobile-first provider, search, calculator and admin journeys | in progress | Rendered acceptance on representative widths |
 | EXP-006 | Guided rule-to-action journeys from official requirement to compliant next step | done | Vehicle/jurisdiction/job guide, official citations, limitations, saved outcome and consented provider handoff |

@@ -47,3 +47,11 @@ SET html_body=CONCAT(html_body,'<p style="font-size:12px"><a href="{{unsubscribe
     text_body=CONCAT(COALESCE(text_body,''),'\n\nUnsubscribe: {{unsubscribe_url}}'),
     updated_at=NOW()
 WHERE template_key IN ('provider_claim_invite','provider_invitation') AND html_body NOT LIKE '%{{unsubscribe_url}}%';
+
+ALTER TABLE social_media_assets
+    ADD COLUMN facebook_post_id VARCHAR(190) NULL AFTER status,
+    ADD COLUMN facebook_publish_error VARCHAR(500) NULL AFTER facebook_post_id,
+    ADD COLUMN facebook_published_at DATETIME NULL AFTER facebook_publish_error,
+    ADD COLUMN facebook_published_by INT UNSIGNED NULL AFTER facebook_published_at,
+    ADD KEY idx_social_facebook_post (brand_id, facebook_post_id),
+    ADD CONSTRAINT fk_social_facebook_publisher FOREIGN KEY (facebook_published_by) REFERENCES users (id) ON DELETE SET NULL;

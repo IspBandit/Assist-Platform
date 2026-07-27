@@ -9,6 +9,8 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\FileStorage;
+use App\Services\FacebookPagePublisher;
+use App\Core\Database;
 use App\Services\SocialMediaAssetService;
 use Throwable;
 
@@ -26,6 +28,7 @@ final class SocialMediaController extends Controller
             'intentions' => SocialMediaAssetService::intentions(),
             'templates' => SocialMediaAssetService::templates(),
             'brand' => $brand,
+            'facebookConnected' => FacebookPagePublisher::configured($brand->id()),
         ]);
     }
 
@@ -73,6 +76,26 @@ final class SocialMediaController extends Controller
     public function download(Request $request): Response
     {
         return $this->assetResponse($request, false);
+    }
+
+    public function publishFacebook(Request $request): Response
+    {
+        $this->requirePermission('content.manage');
+        $brand = current_brand();
+        $id = (int) $request->input('id');
+        $asset = SocialMediaAssetService::find($id, $brand->databaseId());
+        if ($asset === null) { $this->abort(404); }
+        try {
+            $result = FacebookPagePublisher::publish($brand->id(), $asset);
+            Database::query('UPDATE social_media_assets SET facebook_post_id=?,facebook_publish_error=NULL,facebook_published_at=NOW(),facebook_published_by=?,updated_at=NOW() WHERE id=? AND brand_id=?', [
+                $result['post_id'], current_user()['id'] ?? null, $id, $brand->databaseId(),
+            ]);
+            AuditLog::record('social_asset.facebook_published', 'social_media_asset', (string) $id, null, $result['post_id']);
+            return $this->redirectWith('/admin/social-media', 'success', 'Published to the ' . $brand->name() . ' Facebook Page.');
+        } catch (Throwable $e) {
+            Database::query('UPDATE social_media_assets SET facebook_publish_error=?,updated_at=NOW() WHERE id=? AND brand_id=?', [mb_substr($e->getMessage(), 0, 500), $id, $brand->databaseId()]);
+            return $this->redirectWith('/admin/social-media', 'error', $e->getMessage());
+        }
     }
 
     private function assetResponse(Request $request, bool $inline): Response

@@ -413,6 +413,16 @@ final class PlatformDatabaseTest extends TestCase
         ));
     }
 
+    public function testFacebookPublishingAuditColumnsAreInstalled(): void
+    {
+        foreach (['facebook_post_id','facebook_publish_error','facebook_published_at','facebook_published_by'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'social_media_assets\' AND column_name=?',
+                [$column]
+            ));
+        }
+    }
+
     public function testTemplateQueueInjectsCurrentBrandIdentity(): void
     {
         $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
