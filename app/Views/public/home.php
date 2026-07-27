@@ -12,7 +12,14 @@ $this->extend('layouts.public');
 ?>
 <?php $this->section('content'); ?>
 
-<section class="hero">
+<section class="hero hero--visual">
+    <picture class="hero-media" aria-hidden="true">
+        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/vanassist-hero-mobile.avif')) ?>">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/vanassist-hero-mobile.webp')) ?>">
+        <source type="image/avif" srcset="<?= e(asset('img/vanassist-hero-desktop.avif')) ?>">
+        <img src="<?= e(asset('img/vanassist-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
+    </picture>
+    <div class="hero-media-shade" aria-hidden="true"></div>
     <div class="container">
         <div class="hero-grid">
             <div class="hero-copy">
@@ -89,14 +96,6 @@ $this->extend('layouts.public');
                 </ul>
             </div>
 
-            <div class="hero-art">
-                <picture>
-                    <source media="(max-width: 719px)" srcset="<?= e(asset('img/vanassist-hero-mobile.webp')) ?>">
-                    <img class="hero-photo" src="<?= e(asset('img/vanassist-hero-desktop.webp')) ?>" width="1824" height="864"
-                         alt="Mobile caravan technician helping travellers with their caravan in regional Australia"
-                         loading="eager" fetchpriority="high">
-                </picture>
-            </div>
         </div>
     </div>
 

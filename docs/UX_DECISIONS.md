@@ -58,3 +58,32 @@ implicit behavioural location were rejected because they weaken trust.
 **Accessibility:** semantic cards and sponsor landmark, text status labels,
 keyboard-native links and responsive single-column layouts. **Evidence:** unit,
 static, database and representative render checks under DATA-008.
+
+## 2026-07-27 — One Garage follows the owner across brands
+
+**Context:** CORE-009 and EXP-007. Owners should not recreate a tow vehicle,
+trailer, caravan or motorcycle when moving between specialist Assist brands.
+**Decision:** My Garage is a shared account capability. Brand origin is visible
+context, not a silo. Basic identity fields come first; plate ratings are optional
+progressive disclosure. The detail page starts with useful brand-aware actions,
+then the private wallet and editing. Registration numbers and VINs are not
+collected in the first release. **Accessibility:** mobile uses one asset column,
+stacked actions and full-width document controls; no essential action depends on
+hover or a horizontal table. **Evidence:** CORE-009 owner-isolation, upload,
+responsive-render and static checks.
+
+## 2026-07-27 — Subject-specific premium hero imagery
+
+**Context:** EXP-001. Brand pages need immediate emotional and practical
+relevance without turning the platform into a slow image gallery. **Decision:**
+use an original art-directed hero family for each brand and high-value section,
+with separate mobile crops, AVIF/WebP sources and live HTML content. The image
+communicates the current job: roadside travel for VanAssist, measured towing for
+TowSmart, trailer inspection for TrailerWise, workshop discovery for
+LocalTorque, mixed ownership for My Garage and technical authority for rules.
+Generic stock scenes, baked-in text, third-party logos and decorative imagery
+with no page relevance are rejected. **Accessibility:** contextual hero media is
+decorative when the adjacent live heading carries the meaning; forms and safety
+messages retain contrast and keyboard order. **Evidence:** exact-dimension and
+byte-budget tests plus 1440 px and true 390 px render/overflow inspection. Asset
+provenance and budgets are recorded in `PREMIUM_VISUAL_ASSETS.md`.

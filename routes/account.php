@@ -10,6 +10,14 @@ return static function (Router $router): void {
         'middleware' => ['headers', 'csrf', 'auth'],
     ], static function (Router $router): void {
         $router->get('', 'AccountController@dashboard', 'account');
+        $router->get('/garage', 'GarageController@index', 'account.garage');
+        $router->post('/garage', 'GarageController@create', 'account.garage.create');
+        $router->get('/garage/document', 'GarageController@downloadDocument', 'account.garage.document');
+        $router->post('/garage/document/remove', 'GarageController@removeDocument', 'account.garage.document.remove');
+        $router->get('/garage/{id}', 'GarageController@show', 'account.garage.show');
+        $router->post('/garage/{id}', 'GarageController@update', 'account.garage.update');
+        $router->post('/garage/{id}/remove', 'GarageController@remove', 'account.garage.remove');
+        $router->post('/garage/{id}/documents', 'GarageController@uploadDocument', 'account.garage.documents.upload');
         $router->get('/towing-combinations', 'Site\TowSmartController@combinations', 'account.towing-combinations');
         $router->post('/towing-combinations', 'Site\TowSmartController@save', 'account.towing-combinations.save');
 
