@@ -41,6 +41,29 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(0, $missingChecksums);
     }
 
+    public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void
+    {
+        self::assertTrue(Database::tableExists('provider_source_records'));
+        self::assertSame(8485, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
+        self::assertSame(1863, (int) Database::scalar(
+            "SELECT COUNT(*) FROM provider_source_records WHERE payload_json LIKE '%\"fuel-station\"%'"
+        ));
+        self::assertSame(0, (int) Database::scalar(
+            'SELECT COUNT(*) FROM provider_brand_category_assignments a '
+            . 'JOIN brand_provider_categories c ON c.id=a.category_id '
+            . 'JOIN brands b ON b.id=c.brand_id '
+            . "WHERE c.category_key IN ('fuel-station','ev-charging') "
+            . "AND b.brand_key NOT IN ('localtorque','vanassist')"
+        ));
+        self::assertSame(0, (int) Database::scalar(
+            'SELECT COUNT(DISTINCT l.id) FROM provider_source_records psr '
+            . 'JOIN providers p ON p.id=psr.provider_id JOIN provider_brand_listings l ON l.provider_id=p.id '
+            . "WHERE p.is_unclaimed=1 AND psr.needs_review=1 AND l.status='active' AND l.search_visible=1 "
+            . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records good WHERE good.provider_id=p.id '
+            . 'AND good.publishable=1 AND good.needs_review=0)'
+        ));
+    }
+
     public function testPlatformBrandsAndBackfillIntegrity(): void
     {
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');

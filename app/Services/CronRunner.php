@@ -45,6 +45,7 @@ final class CronRunner
             'refresh_osm'              => fn () => $this->refreshOsm(),
             'import_osm'               => static fn () => (new ProviderImportRunner())->cronOsm(45.0),
             'import_locality'          => static fn () => (new ProviderImportRunner())->cronLocality(45.0),
+            'import_localtorque_pack'  => static fn () => (new ProviderImportRunner())->cronLocalTorque(45.0),
         ];
     }
 

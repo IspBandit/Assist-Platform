@@ -61,12 +61,12 @@ $renderCard = static function (array $p): string {
     <div class="container">
         <div class="nearby-head">
             <div>
-                <h2 id="nearby-providers-heading">Providers near you</h2>
+                <h2 id="nearby-providers-heading">Service providers by location</h2>
                 <p class="muted nearby-subtitle" data-nearby-subtitle>
                     <?php if ($nearbyTown !== null && $nearbyProviders !== []): ?>
-                        Showing relevant listings serving <strong><?= $this->e($townLabel) ?></strong>.
+                        Showing a starting selection of relevant listings serving <strong><?= $this->e($townLabel) ?></strong>. Choose your location for nearby results.
                     <?php else: ?>
-                        Search <?= number_format((int) ($providerDirectoryCount ?? 0)) ?> Australian service listings by town or current location.
+                        Search<?= (int) ($providerDirectoryCount ?? 0) > 0 ? ' ' . number_format((int) $providerDirectoryCount) : '' ?> Australian service listings by town or current location.
                     <?php endif; ?>
                 </p>
             </div>
@@ -88,12 +88,12 @@ $renderCard = static function (array $p): string {
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="nearby-empty card" data-nearby-empty>
-                    <p style="margin:0"><strong>Choose your location to see nearby help.</strong> Tap <em>Use my location</em>, <a href="<?= e(url('find')) ?>">search by town</a>, or <a href="<?= e(url('providers')) ?>">browse all <?= number_format((int) ($providerDirectoryCount ?? 0)) ?> service listings</a>.</p>
+                    <p class="mb-0"><strong>Choose your location to see nearby help.</strong> Tap <em>Use my location</em>, <a href="<?= e(url('find')) ?>">search by town</a>, or <a href="<?= e(url('providers')) ?>">browse the full service directory</a>.</p>
                 </div>
             <?php endif; ?>
         </div>
 
-        <p class="muted nearby-footnote" style="font-size:.85rem;margin:1rem 0 0">
+        <p class="muted nearby-footnote">
             Featured and verified providers are shown first. Discovered listings are clearly marked unclaimed; confirm their details before booking.
         </p>
     </div>

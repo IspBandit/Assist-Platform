@@ -154,9 +154,11 @@ final class SearchController extends Controller
             $heading .= ' in ' . $town['name'];
         }
 
+        $categories = ServiceCategory::activeAll();
+
         return $this->view('public.search-results', [
             'title'            => $heading . ' — VanAssist',
-            'metaDescription'  => 'Search caravan and RV service providers across the VanAssist network.',
+            'metaDescription'  => 'Find caravan and RV services, roadside help, fuel, EV charging and traveller essentials through VanAssist.',
             'metaRobots'       => 'noindex,follow',
             'heading'          => $heading,
             'location'         => $locationDisplay,
@@ -176,7 +178,8 @@ final class SearchController extends Controller
             'possible'         => $possible,
             'requestUrl'       => $requestUrl,
             'searchId'         => $searchId,
-            'categories'       => ServiceCategory::activeAll(),
+            'categories'       => $categories,
+            'categoryGroups'   => ServiceCategory::groupedForVanAssist($categories),
             'lat'              => $hasCoords ? $lat : null,
             'lng'              => $hasCoords ? $lng : null,
             'nearbyRuns'       => $nearbyRuns,

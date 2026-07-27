@@ -153,6 +153,12 @@ Every promoted or materially changed component is checked in these states:
   in the full component acceptance matrix.
 - Provider acquisition heroes now preserve relevant imagery and conversion
   actions on both desktop and phone widths across all four brands.
+- VanAssist uses a shared intent-launcher pattern immediately after its hero to
+  expose repairs, fuel, EV charging and stays without expanding the primary
+  form. The service directory uses the same destinations, grouped category
+  cards and one-column phone layouts. Trust copy distinguishes claimed,
+  verified, featured and unclaimed records instead of implying that every
+  listing or remote locality has been verified.
 
 ## Definition of done
 

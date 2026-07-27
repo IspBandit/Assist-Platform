@@ -178,7 +178,7 @@ final class Provider extends Model
         return Database::selectOne(
             'SELECT p.*, pbl.slug AS brand_slug, pbl.display_name AS brand_display_name, pbl.is_verified AS brand_verified, '
             . 'pbl.is_featured AS brand_featured, pbl.seo_title AS brand_seo_title, pbl.seo_description AS brand_seo_description, '
-            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, t.latitude AS town_lat, t.longitude AS town_lng, '
+            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
             . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
             . 'FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id '
             . 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = p.region_id '
@@ -204,7 +204,7 @@ final class Provider extends Model
     {
         return Database::selectOne(
             'SELECT p.*, t.name AS town_name, t.slug AS town_slug, '
-            . 't.primary_postcode AS town_postcode, t.latitude AS town_lat, t.longitude AS town_lng, '
+            . 't.primary_postcode AS town_postcode, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
             . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
             . 'FROM providers p LEFT JOIN towns t ON t.id = p.base_town_id '
             . 'LEFT JOIN states s ON s.id = t.state_id '
@@ -248,7 +248,7 @@ final class Provider extends Model
         return Database::select(
             'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
             . 'p.is_founding_provider, p.is_unclaimed, ps.is_inferred, '
-            . 't.name AS town_name, t.slug AS town_slug, t.latitude AS town_lat, t.longitude AS town_lng, '
+            . 't.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
             . 's.abbreviation AS state_abbr '
             . 'FROM provider_services ps '
             . 'JOIN providers p ON p.id = ps.provider_id '
@@ -289,7 +289,7 @@ final class Provider extends Model
         return Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, '
             . 'p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.description, p.street_address, '
-            . 't.name AS town_name, t.latitude AS town_lat, t.longitude AS town_lng, s.abbreviation AS state_abbr, '
+            . 't.name AS town_name, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
             . 'CASE WHEN ' . $covers . ' THEN 0 '
             . "WHEN p.service_model IN ('mobile','both') THEN 1 ELSE 2 END AS relevance "
             . 'FROM providers p '

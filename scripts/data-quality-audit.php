@@ -108,7 +108,34 @@ try {
                 . "(LOWER(p.business_name) REGEXP 'supercheap|autopro|auto parts|parts store|parts centre' AND c.slug<>'vehicle-parts-and-accessories') OR "
                 . "(LOWER(p.business_name) REGEXP 'tyre|tire|tyrepower|bob jane|bridgestone|goodyear' AND c.slug<>'tyres-and-wheels') OR "
                 . "(LOWER(p.business_name) REGEXP 'petroleum|service station|fuel stop|ampol|caltex|7-eleven' AND c.slug<>'fuel-and-travel-stops') OR "
-                . "(LOWER(p.business_name) REGEXP 'elgas|lpg refill|gas bottle|bottle exchange' AND c.slug<>'lpg-refills-and-bottle-exchange'))"
+                . "(LOWER(p.business_name) REGEXP 'elgas|lpg refill|gas bottle|bottle exchange' AND c.slug<>'lpg-refills-and-bottle-exchange')) "
+                . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records psr WHERE psr.provider_id=p.id '
+                . 'AND psr.publishable=1 AND psr.needs_review=0)'
+            ),
+        ],
+        'localtorque_pack' => [
+            'source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records'),
+            'public_source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records WHERE publishable=1 AND needs_review=0'),
+            'review_source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records WHERE needs_review=1'),
+            'missing_required_source_licence' => $scalar(
+                "SELECT COUNT(*) FROM provider_source_records WHERE "
+                . "(source_key='geoscience-australia' OR source_key='openstreetmap') "
+                . "AND (source_licence IS NULL OR source_licence='')"
+            ),
+            'unclaimed_review_rows_publicly_visible' => $scalar(
+                'SELECT COUNT(DISTINCT pbl.id) FROM provider_source_records psr '
+                . 'JOIN providers p ON p.id=psr.provider_id JOIN provider_brand_listings pbl ON pbl.provider_id=p.id '
+                . "WHERE p.is_unclaimed=1 AND psr.needs_review=1 AND pbl.status='active' AND pbl.search_visible=1 "
+                . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records good WHERE good.provider_id=p.id '
+                . 'AND good.publishable=1 AND good.needs_review=0)'
+            ),
+            'legacy_fuel_rows_presented_as_gas_certifiers' => $scalar(
+                'SELECT COUNT(DISTINCT pbl.id) FROM provider_source_records psr '
+                . 'JOIN providers p ON p.id=psr.provider_id JOIN provider_brand_listings pbl ON pbl.provider_id=p.id '
+                . 'JOIN provider_brand_category_assignments a ON a.listing_id=pbl.id '
+                . 'JOIN brand_provider_categories c ON c.id=a.category_id '
+                . "WHERE p.is_unclaimed=1 AND psr.source_key='vanassist-osm' "
+                . "AND psr.payload_json LIKE '%\"fuel-station\"%' AND c.category_key='gas-certification'"
             ),
         ],
     ];
@@ -122,5 +149,12 @@ echo ($json === false ? '{"error":"report encoding failed"}' : $json) . PHP_EOL;
 if (in_array('--strict', $argv ?? [], true) && isset($report['database']['provider_service_classification'])) {
     $classification = $report['database']['provider_service_classification'];
     $violations = array_sum(array_map('intval', is_array($classification) ? $classification : []));
+    $pack = $report['database']['localtorque_pack'] ?? [];
+    if (is_array($pack)) {
+        $violations += (int) ($pack['missing_required_source_licence'] ?? 0);
+        $violations += (int) ($pack['unclaimed_review_rows_publicly_visible'] ?? 0);
+        $violations += (int) ($pack['legacy_fuel_rows_presented_as_gas_certifiers'] ?? 0);
+        $violations += (int) (($pack['source_records'] ?? 0) === 0);
+    }
     exit($violations === 0 ? 0 : 2);
 }
