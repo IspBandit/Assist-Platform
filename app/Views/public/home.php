@@ -4,6 +4,8 @@
 /** @var array $confirmedRuns */
 /** @var array $formingRuns */
 /** @var array $categories */
+/** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
+/** @var array $popularCategories */
 /** @var array<string,mixed>|null $nearbyTown */
 /** @var array<int,array<string,mixed>> $nearbyProviders */
 /** @var string $nearbyFindUrl */
@@ -40,8 +42,12 @@ $this->extend('layouts.public');
                             <label for="category">Service category</label>
                             <select id="category" name="category">
                                 <option value="">Any service</option>
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= e_attr($cat['slug']) ?>"><?= $this->e($cat['name']) ?></option>
+                                <?php foreach ($categoryGroups as $groupName => $groupCategories): ?>
+                                    <optgroup label="<?= e_attr($groupName) ?>">
+                                        <?php foreach ($groupCategories as $cat): ?>
+                                            <option value="<?= e_attr($cat['slug']) ?>"><?= $this->e($cat['name']) ?></option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -181,12 +187,12 @@ $this->extend('layouts.public');
     </div>
 </section>
 
-<?php if ($categories !== []): ?>
+<?php if ($popularCategories !== []): ?>
 <section class="section section-sand">
     <div class="container">
         <h2>Popular service categories</h2>
         <div class="btn-row">
-            <?php foreach ($categories as $cat): ?>
+            <?php foreach ($popularCategories as $cat): ?>
                 <a class="btn btn-ghost" href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
             <?php endforeach; ?>
         </div>

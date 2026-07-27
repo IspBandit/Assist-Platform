@@ -91,6 +91,26 @@ try {
             'provider_brand_duplicates' => $scalar('SELECT COUNT(*) FROM (SELECT provider_id, brand_id FROM provider_brand_listings GROUP BY provider_id, brand_id HAVING COUNT(*) > 1) x'),
             'orphan_provider_services' => $scalar('SELECT COUNT(*) FROM provider_services ps LEFT JOIN providers p ON p.id=ps.provider_id LEFT JOIN service_categories sc ON sc.id=ps.category_id WHERE p.id IS NULL OR sc.id IS NULL'),
         ],
+        'provider_service_classification' => [
+            'unclaimed_inferred_services' => $scalar(
+                'SELECT COUNT(*) FROM provider_services ps INNER JOIN providers p ON p.id=ps.provider_id '
+                . 'WHERE p.is_unclaimed=1 AND ps.is_inferred=1'
+            ),
+            'battery_world_wrong_services' => $scalar(
+                "SELECT COUNT(*) FROM provider_services ps INNER JOIN providers p ON p.id=ps.provider_id "
+                . "INNER JOIN service_categories c ON c.id=ps.category_id WHERE p.is_unclaimed=1 "
+                . "AND LOWER(p.business_name) LIKE 'battery world%' AND c.slug<>'auto-electrical-and-batteries'"
+            ),
+            'specialist_name_wrong_services' => $scalar(
+                "SELECT COUNT(*) FROM provider_services ps INNER JOIN providers p ON p.id=ps.provider_id "
+                . "INNER JOIN service_categories c ON c.id=ps.category_id WHERE p.is_unclaimed=1 AND ("
+                . "(LOWER(p.business_name) REGEXP 'windscreen|auto glass|automotive glass' AND c.slug<>'windscreen-and-auto-glass') OR "
+                . "(LOWER(p.business_name) REGEXP 'supercheap|autopro|auto parts|parts store|parts centre' AND c.slug<>'vehicle-parts-and-accessories') OR "
+                . "(LOWER(p.business_name) REGEXP 'tyre|tire|tyrepower|bob jane|bridgestone|goodyear' AND c.slug<>'tyres-and-wheels') OR "
+                . "(LOWER(p.business_name) REGEXP 'petroleum|service station|fuel stop|ampol|caltex|7-eleven' AND c.slug<>'fuel-and-travel-stops') OR "
+                . "(LOWER(p.business_name) REGEXP 'elgas|lpg refill|gas bottle|bottle exchange' AND c.slug<>'lpg-refills-and-bottle-exchange'))"
+            ),
+        ],
     ];
 } catch (Throwable $error) {
     $report['database_unavailable'] = $error->getMessage();
@@ -98,3 +118,9 @@ try {
 
 $json = json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 echo ($json === false ? '{"error":"report encoding failed"}' : $json) . PHP_EOL;
+
+if (in_array('--strict', $argv ?? [], true) && isset($report['database']['provider_service_classification'])) {
+    $classification = $report['database']['provider_service_classification'];
+    $violations = array_sum(array_map('intval', is_array($classification) ? $classification : []));
+    exit($violations === 0 ? 0 : 2);
+}

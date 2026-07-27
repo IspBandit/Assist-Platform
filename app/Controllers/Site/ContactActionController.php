@@ -104,7 +104,7 @@ final class ContactActionController extends Controller
         $address = trim((string) ($p['street_address'] ?? ''));
         $model = (string) ($p['service_model'] ?? '');
         $isWorkshop = in_array($model, ['workshop', 'both'], true);
-        if (!$isWorkshop || $address === '' || stripos($address, 'mobile') !== false) {
+        if (!$isWorkshop || !is_navigable_street_address($address)) {
             return '';
         }
         $dest = $address;

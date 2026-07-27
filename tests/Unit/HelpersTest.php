@@ -57,6 +57,28 @@ final class HelpersTest extends TestCase
         $this->assertNull($filter['km']);
     }
 
+    public function testStayDistanceDefaultsToOneHundredAndFiftyKilometres(): void
+    {
+        $this->assertSame(150, Geo::stayDistance(null));
+        $this->assertSame(50, Geo::stayDistance('50'));
+        $this->assertSame(150, Geo::stayDistance('not-valid'));
+    }
+
+    public function testMapDirectionsPreferCoordinatesAndKeepAddressFallback(): void
+    {
+        $this->assertSame('-27.47,153.025', map_destination(-27.47, 153.025, ['Brisbane']));
+        $this->assertSame('1 Main Street, Gympie, QLD', map_destination(null, null, ['1 Main Street', 'Gympie', 'QLD']));
+        $this->assertStringContainsString('destination=1%20Main%20Street', map_directions_url('1 Main Street'));
+    }
+
+    public function testDirectionsRequireARoutableStreetAddress(): void
+    {
+        $this->assertFalse(is_navigable_street_address('Sydney'));
+        $this->assertFalse(is_navigable_street_address('Mobile service only'));
+        $this->assertTrue(is_navigable_street_address('10 Main Street'));
+        $this->assertTrue(is_navigable_street_address('Bruce Highway'));
+    }
+
     public function testRedirectLocationAllowsContactSchemesAndRejectsScriptUrls(): void
     {
         $this->assertSame('tel:+61712345678', redirect_location('tel:+61712345678'));

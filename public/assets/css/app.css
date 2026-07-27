@@ -945,3 +945,10 @@ linear-gradient(135deg,#071c27 0%,#0f3b4c 58%,#092834 100%)}
 .admin-page-intro{display:flex;justify-content:space-between;gap:2rem;align-items:end;margin-bottom:2rem}.admin-page-intro h1{margin:.4rem 0}.admin-page-intro p{max-width:760px;color:var(--muted)}.trust-metrics{grid-template-columns:repeat(5,minmax(0,1fr))}.trust-metrics article{display:grid;gap:.5rem}.trust-metrics span{color:var(--muted);font-size:.8rem}.trust-metrics strong{font-size:2rem}.admin-trust-section{margin-top:1.5rem;padding:1.5rem}.coverage-strip{display:grid;grid-template-columns:repeat(9,minmax(5rem,1fr));gap:.5rem;margin:1rem 0 1.5rem;overflow-x:auto}.coverage-strip>div{display:grid;min-width:5.5rem;gap:.15rem;padding:.75rem;border-radius:var(--radius-sm);background:var(--sand)}.coverage-strip span,.coverage-strip small{color:var(--muted);font-size:.72rem}.admin-review-list{display:grid;gap:.7rem}.admin-review-list>article{display:flex;justify-content:space-between;gap:1.5rem;align-items:center;padding:1rem;border:1px solid var(--line);border-radius:var(--radius-sm)}.admin-review-list h3{margin:.35rem 0}.admin-review-list p{margin:.2rem 0;color:var(--muted)}.admin-review-list>article>form{display:flex;gap:.5rem;align-items:end;flex-wrap:wrap}.admin-review-list>article>form label{font-size:.72rem}.admin-review-list>article>form input{max-width:11rem;margin-top:.25rem}.admin-trust-columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
 @media(max-width:1100px){.trust-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-trust-columns{grid-template-columns:1fr}.campaign-report-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.growth-intro,.growth-grid,.campaign-report-grid{grid-template-columns:1fr}.admin-page-intro,.admin-review-list>article{align-items:flex-start;flex-direction:column}.trust-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-review-list>article>form{width:100%}.admin-review-list>article>form .btn{flex:1}}
+.service-category-group {
+    margin-top: 2.5rem;
+}
+
+.service-category-group > h2 {
+    margin-bottom: 1rem;
+}
