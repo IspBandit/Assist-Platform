@@ -77,12 +77,13 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
     <?php $this->include('partials.brand-theme'); ?>
     <meta name="theme-color" content="<?= e($adminBrandTheme['brand'] ?? '#0f6e6e') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= e(asset($adminBrandAssets['favicon'] ?? '/assets/brands/vanassist/mark.svg')) ?>">
 </head>
 <body>
 <div class="admin-body">
     <aside class="admin-sidebar">
         <a class="brand brand-admin" href="<?= e(url('admin')) ?>" aria-label="Assist Platform admin home">
-            <img class="brand-mark" src="<?= e(url(ltrim($adminBrandAssets['logo'] ?? '/assets/brands/vanassist/mark.svg', '/'))) ?>" alt="" width="40" height="40">
+            <img class="brand-mark" src="<?= e(asset($adminBrandAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="40" height="40">
             <span class="brand-copy"><span class="brand-name">Assist Platform</span><span class="admin-brand-context"><?= $this->e($adminBrand->name()) ?> workspace</span></span>
         </a>
         <button type="button" class="admin-nav-toggle" aria-controls="admin-nav" aria-expanded="false">Menu</button>
@@ -105,7 +106,7 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
                 <?php if (count($adminBrands) > 1): ?>
                     <div class="admin-brand-switcher">
                         <button class="btn btn-ghost admin-brand-switcher__trigger" type="button" aria-expanded="false" aria-controls="admin-brand-menu">
-                            <img src="<?= e(url(ltrim($adminBrandAssets['icon'] ?? $adminBrandAssets['logo'] ?? '', '/'))) ?>" alt="" width="28" height="28">
+                            <img src="<?= e(asset($adminBrandAssets['icon'] ?? $adminBrandAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="28" height="28">
                             <span class="admin-brand-trigger-copy"><small>Workspace</small><strong><?= $this->e($adminBrand->name()) ?></strong></span><span class="admin-chevron" aria-hidden="true">⌄</span>
                         </button>
                         <div class="admin-brand-menu" id="admin-brand-menu" hidden>
@@ -113,8 +114,8 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
                             <?php if (auth()->hasAnyRole('super-administrator', 'administrator', 'platform-administrator')): ?><a href="<?= e(url('admin/control-centre')) ?>"><span class="admin-platform-icon" aria-hidden="true">AP</span><span><strong>All brands</strong><small>Platform control centre</small></span></a><?php endif; ?>
                             <?php foreach ($adminBrands as $brandKey => $switchBrand): ?>
                                 <?php $switchAssets = $switchBrand->assets(); ?>
-                                <?php if ($switchBrand->id() === $adminBrand->id()): ?><span class="is-current" aria-current="true"><img src="<?= e(url(ltrim($switchAssets['icon'] ?? $switchAssets['logo'] ?? '', '/'))) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small>Current workspace</small></span><span class="admin-current-mark" aria-hidden="true">✓</span></span>
-                                <?php else: ?><form method="post" action="<?= e(url('admin/switch-brand')) ?>"><?= csrf_field() ?><input type="hidden" name="brand" value="<?= e($brandKey) ?>"><input type="hidden" name="return_path" value="<?= e($current) ?>"><button type="submit"><img src="<?= e(url(ltrim($switchAssets['icon'] ?? $switchAssets['logo'] ?? '', '/'))) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small><?= $this->e(ucfirst($switchBrand->status())) ?> workspace</small></span></button></form><?php endif; ?>
+                                <?php if ($switchBrand->id() === $adminBrand->id()): ?><span class="is-current" aria-current="true"><img src="<?= e(asset($switchAssets['icon'] ?? $switchAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small>Current workspace</small></span><span class="admin-current-mark" aria-hidden="true">✓</span></span>
+                                <?php else: ?><form method="post" action="<?= e(url('admin/switch-brand')) ?>"><?= csrf_field() ?><input type="hidden" name="brand" value="<?= e($brandKey) ?>"><input type="hidden" name="return_path" value="<?= e($current) ?>"><button type="submit"><img src="<?= e(asset($switchAssets['icon'] ?? $switchAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small><?= $this->e(ucfirst($switchBrand->status())) ?> workspace</small></span></button></form><?php endif; ?>
                             <?php endforeach; ?>
                         </div>
                     </div>

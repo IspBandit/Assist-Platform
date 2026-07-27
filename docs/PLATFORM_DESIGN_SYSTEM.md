@@ -134,14 +134,28 @@ usability conventions.
 
 ### Brand mark family
 
-The four platform marks use a shared 64 × 64 SVG contract: open geometry, a
-3px rounded stroke, no enclosing tile, no gradient or shadow, and at most one
-restrained accent. VanAssist combines an RV outline with location confidence;
-TowSmart shows a measured towing connection; TrailerWise combines trailer
-capability with inspection; LocalTorque combines automotive service with a
-specialist tool. Marks must be checked at 24, 32, 40 and 64px. Decorative
-images use an empty `alt`; a standalone mark retains its SVG title or receives
-an accessible name from its consumer.
+The four platform marks use a shared 64 × 64 solid-geometry SVG contract. They
+are abstract brand symbols, not vehicle illustrations: no depicted cars,
+caravans, trailers, tools, wheels, gradients, enclosing app tiles or decorative
+scenery. A deep neutral primary form and one restrained brand accent preserve
+clarity at favicon size. VanAssist combines a V with location confidence;
+TowSmart combines a T with an engineered connection; TrailerWise combines a W
+with verification; LocalTorque combines a torque aperture with a directional
+load. Marks must be checked at 16, 24, 32, 40 and 64px. Decorative consumers
+use an empty `alt`; a standalone mark retains its SVG title or receives an
+accessible name from its consumer. All mark URLs use file-version cache busting
+so a replaced identity cannot leave a stale browser-tab or shell asset behind.
+
+### Provider acquisition contract
+
+Provider landing pages receive the same visual priority as customer journeys.
+Each brand uses its responsive AVIF/WebP hero family, a legible directional
+overlay, one primary acquisition action, a returning-provider sign-in and a
+short proof row. Mobile retains the subject image above live copy rather than
+hiding the artwork. Benefits and onboarding steps follow the hero in a single
+column at phone width and may expand to three columns on desktop. One provider
+identity is explained as a reduction in administration, never as automatic or
+irrelevant cross-brand exposure.
 
 ### Enterprise admin shell
 

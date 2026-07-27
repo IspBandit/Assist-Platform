@@ -29,8 +29,10 @@ final class BrandAssetTest extends TestCase
         self::assertStringContainsString('viewBox="0 0 64 64"', $svg);
         self::assertStringContainsString('role="img"', $svg);
         self::assertStringContainsString('<title ', $svg);
-        self::assertStringContainsString('stroke-width="3"', $svg);
+        self::assertStringContainsString('<path ', $svg);
         self::assertStringNotContainsString('linearGradient', $svg);
         self::assertStringNotContainsString('<rect', $svg);
+        self::assertStringNotContainsString('stroke=', $svg);
+        self::assertLessThan(1200, strlen($svg));
     }
 }
