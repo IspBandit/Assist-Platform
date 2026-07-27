@@ -42,6 +42,7 @@ final class CronRunner
             // Automated request -> provider matching (no-op unless auto_matching flag is on).
             'update_match_suggestions' => static fn () => (new AutoMatchService())->runBatch(),
             // Provider directory imports (resume from seed fingerprint; no-op when up to date).
+            'refresh_osm'              => fn () => $this->refreshOsm(),
             'import_osm'               => static fn () => (new ProviderImportRunner())->cronOsm(45.0),
             'import_locality'          => static fn () => (new ProviderImportRunner())->cronLocality(45.0),
         ];
@@ -492,6 +493,24 @@ final class CronRunner
         );
 
         return ['events_purged' => $events, 'sessions_purged' => $sessions];
+    }
+
+    /**
+     * Advance one state/city OSM refresh step. Completed scans cool down for
+     * seven days so a frequent cron safely provides fresh national coverage.
+     */
+    private function refreshOsm(): array
+    {
+        $service = new OsmRefreshService();
+        if (!$service->isActive()) {
+            $completedAt = strtotime((string) Settings::get('osm_refresh_last_completed_at', ''));
+            if ($completedAt !== false && $completedAt >= strtotime('-7 days')) {
+                return ['skipped' => true, 'reason' => 'National OSM refresh completed within the last seven days.'];
+            }
+            $service->begin();
+        }
+
+        return $service->runNextStep();
     }
 
     private function markRunning(string $task): void

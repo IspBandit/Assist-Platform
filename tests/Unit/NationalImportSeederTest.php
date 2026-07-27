@@ -34,6 +34,10 @@ final class NationalImportSeederTest extends TestCase
     public function testGenericImportsReceiveOnlyTheirDirectSourceServices(): void
     {
         self::assertSame(
+            ['Fuel and travel stops'],
+            NationalImportSeeder::serviceNamesForImport(['name' => 'Outback Fuel'], ['fuel'])
+        );
+        self::assertSame(
             ['Mechanical repairs', '12-volt electrical'],
             NationalImportSeeder::serviceNamesForImport(['name' => 'Regional Automotive'], ['mechanical', 'autoelec'])
         );

@@ -41,6 +41,7 @@ final class NationalImportSeeder
         'gasfitter'  => 'Gas appliance servicing',
         'roadside'   => 'Roadside assistance',
         'roadworthy' => 'Roadworthy inspection',
+        'fuel'       => 'Fuel and travel stops',
     ];
 
     private const SPECIALIST_SERVICE_NAMES = [

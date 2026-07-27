@@ -20,7 +20,7 @@ $mapDestination = $isWorkshop && is_navigable_street_address($p['street_address'
         <span class="provider-avatar" aria-hidden="true"><?= e($initial) ?></span>
         <span class="provider-card-content">
             <span class="provider-card-title"><?= e($name) ?></span>
-            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · approximately <?= max(1, (int) $p['distance_km']) ?> km away<?php endif; ?></span><?php endif; ?>
+            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · <?= max(1, (int) $p['distance_km']) ?> km straight-line<?php endif; ?></span><?php endif; ?>
         </span>
         <span class="provider-card-arrow" aria-hidden="true">→</span>
     </a>
