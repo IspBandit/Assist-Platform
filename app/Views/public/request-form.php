@@ -37,7 +37,7 @@ $maxImages = (int) config('uploads.max_request_images', 6);
                 <h2>1. Location</h2>
                 <div class="form-group">
                     <label for="town_search">Nearest town or suburb <span class="required">*</span></label>
-                    <input type="text" id="town_search" value="<?= e_attr((string) old('town_label', $prefillTownLabel ?? '')) ?>" placeholder="Start typing town, suburb or postcode…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
+                    <input type="text" id="town_search" name="town_label" value="<?= e_attr((string) old('town_label', $prefillTownLabel ?? '')) ?>" placeholder="Start typing town, suburb or postcode…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                     <input type="hidden" id="town_id" name="town_id" value="<?= e_attr((string) old('town_id', (string) ($prefillTownId ?? ''))) ?>" required>
                     <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
                     <?= $err('town_id') ?>

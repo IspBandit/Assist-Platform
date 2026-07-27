@@ -19,7 +19,7 @@
                 <input id="localtorque-business" name="q" type="search" placeholder="Business or service" autocomplete="off">
                 <label class="sr-only" for="localtorque-location">Town, suburb or postcode</label>
                 <span class="location-field">
-                    <input id="localtorque-location" type="search" placeholder="Town / State or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
+                    <input id="localtorque-location" name="location" type="search" placeholder="Town / State or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                     <input type="hidden" id="town_id" name="town" value="">
                     <span id="town-suggest" class="town-suggest" role="listbox" hidden></span>
                 </span>

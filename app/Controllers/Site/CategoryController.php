@@ -11,6 +11,7 @@ use App\Core\Response;
 use App\Helpers\Geo;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
+use App\Models\Town;
 
 /**
  * Public service-category pages generated from the database.
@@ -52,6 +53,11 @@ final class CategoryController extends Controller
 
         // Optional area filter (e.g. "Brakes & bearings in Gympie").
         $townId = (int) $request->input('town') ?: null;
+        $location = trim((string) $request->input('location', ''));
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location, 1);
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+        }
         $selectedTown = null;
         if ($townId !== null) {
             $selectedTown = Database::selectOne(

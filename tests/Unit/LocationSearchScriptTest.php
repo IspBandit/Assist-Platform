@@ -17,5 +17,8 @@ final class LocationSearchScriptTest extends TestCase
         self::assertStringContainsString("setFormField(form, 'lat', '');", $script);
         self::assertStringContainsString("setFormField(form, 'lng', '');", $script);
         self::assertStringContainsString("setLocationStatus(form, '', false);", $script);
+        self::assertStringContainsString('input[type="hidden"][name="town"]', $script);
+        self::assertStringContainsString("if (resolvedTown) { resolvedTown.value = ''; }", $script);
+        self::assertStringNotContainsString("form.querySelector('#town_id, input[name=\"town\"]')", $script);
     }
 }

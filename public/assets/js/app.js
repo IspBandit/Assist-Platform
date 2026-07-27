@@ -245,6 +245,7 @@
         var box = form ? form.querySelector('#town-suggest') : null;
         var regionField = form ? form.querySelector('#region') : null;
         var regionId = form ? form.querySelector('#region_id') : null;
+        var resolvedTown = form ? form.querySelector('#town_id, input[type="hidden"][name="town"]') : null;
         if (!box) { return; }
         var timer = null;
         var items = [];
@@ -254,14 +255,13 @@
 
         var choose = function (t) {
             var label = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
+            if (resolvedTown) { resolvedTown.value = t.id; }
             if (input.name === 'location' || input.id === 'location') {
                 input.value = label;
                 hide();
                 return;
             }
             input.value = label;
-            var townId = form ? form.querySelector('#town_id, input[name="town"]') : null;
-            if (townId) { townId.value = t.id; }
             if (regionField) { regionField.value = t.region_name || ''; }
             if (regionId) { regionId.value = t.region_id || ''; }
             hide();
@@ -297,6 +297,7 @@
             // Typing invalidates any previously resolved region.
             if (regionField) { regionField.value = ''; }
             if (regionId) { regionId.value = ''; }
+            if (resolvedTown) { resolvedTown.value = ''; }
             var q = input.value.trim();
             window.clearTimeout(timer);
             if (q.length < 2) { hide(); return; }
