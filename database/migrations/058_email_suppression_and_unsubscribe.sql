@@ -31,7 +31,7 @@ UPDATE notifications SET brand_id=1 WHERE brand_id IS NULL;
 ALTER TABLE notifications MODIFY COLUMN brand_id INT UNSIGNED NOT NULL;
 
 ALTER TABLE providers
-    ADD COLUMN marketing_opt_in TINYINT(1) NOT NULL DEFAULT 0 AFTER consent_recorded,
+    ADD COLUMN marketing_opt_in TINYINT(1) NOT NULL DEFAULT 0 AFTER show_public_email,
     ADD COLUMN marketing_consented_at DATETIME NULL AFTER marketing_opt_in,
     ADD COLUMN marketing_consent_source VARCHAR(80) NULL AFTER marketing_consented_at,
     ADD KEY idx_provider_marketing_consent (status, marketing_opt_in);
