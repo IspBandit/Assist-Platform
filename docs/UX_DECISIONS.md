@@ -53,11 +53,29 @@ providers have a legitimate paid-acquisition opportunity. **Decision:** official
 sources remain the uninterrupted primary result; active paid campaigns appear
 afterwards in a labelled sponsor rail and match only explicit location and rule
 context. **Affected journeys:** VanAssist, TowSmart, TrailerWise and LocalTorque
-rule discovery and provider acquisition. **Alternatives:** interleaving ads with government sources and
-implicit behavioural location were rejected because they weaken trust.
-**Accessibility:** semantic cards and sponsor landmark, text status labels,
-keyboard-native links and responsive single-column layouts. **Evidence:** unit,
-static, database and representative render checks under DATA-008.
+rule discovery and provider acquisition. **Alternatives:** interleaving ads with
+government sources and implicit behavioural location were rejected because they
+weaken trust. **Accessibility:** semantic cards and sponsor landmark, text status
+labels, keyboard-native links and responsive single-column layouts. **Evidence:**
+unit, static, database and representative render checks under DATA-008.
+
+## 2026-07-27 — Explicit motorsport taxonomy and source-owned calendars
+
+**Context:** DATA-010 / LOC-004. “Motorsport” is too broad to be a useful
+filter, while copying event dates creates stale-calendar risk. **Decision:**
+LocalTorque exposes named disciplines grouped into nine families and always
+shows the sanctioning-body, discipline/class, state/series and event/venue rule
+layers. Venue cards distinguish permanent, temporary, route-based and club
+locations, show the venue website when available and link the official venue,
+club or governing-body calendar separately. Mobile collapses family, source and
+venue grids to one column. The family cards are closed initially and disclose
+their named disciplines on demand, avoiding a wall of more than fifty choices.
+The commercial step follows the official answer and venue information, using a
+single relevant provider action rather than interruptive advertising.
+**Affected journey:** `/motorsport`. **Accessibility:** native `details` and
+`summary` controls retain keyboard operation, focus visibility and reduced-motion
+support. **Evidence:** catalogue and asset tests, static and database analysis,
+plus desktop and phone-width rendering.
 
 ## 2026-07-27 — One Garage follows the owner across brands
 

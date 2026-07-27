@@ -2,6 +2,7 @@
 
 See [ADR 0008](DECISIONS/0008-authoritative-regulatory-library.md) for the authoritative vehicle regulatory source and monitoring decision.
 See [ADR 0009](DECISIONS/0009-shared-owner-garage.md) for the shared owner Garage and private compliance wallet decision.
+See [ADR 0011](DECISIONS/0011-separate-motorsport-rule-and-venue-catalogue.md) for the motorsport rule, discipline, venue and calendar catalogue decision.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -47,5 +48,6 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0008: Authority-linked, monitored vehicle regulatory library.
 - 0009: Shared owner Garage and private compliance wallet.
 - 0010: Separate authority, owner consent, provider evidence and paid relevance.
+- 0011: Separate motorsport rule, discipline, venue and calendar catalogue.
 
 The index must be updated whenever an ADR is accepted.

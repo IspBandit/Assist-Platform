@@ -19,6 +19,13 @@ final class HeroAssetTest extends TestCase
             'LocalTorque home' => ['localtorque-hero'],
             'My Garage' => ['garage-hero'],
             'Rules library' => ['rules-hero'],
+            'Rules — car' => ['rules-car-hero'],
+            'Rules — 4WD' => ['rules-4wd-hero'],
+            'Rules — ute and light truck' => ['rules-light-truck-hero'],
+            'Rules — heavy vehicle' => ['rules-heavy-vehicle-hero'],
+            'Rules — motorcycle' => ['rules-motorcycle-hero'],
+            'Rules — street rod' => ['rules-street-rod-hero'],
+            'LocalTorque motorsport' => ['motorsport-hero'],
         ];
     }
 

@@ -17,16 +17,48 @@ Brand views are:
 - VanAssist: caravans, motorhomes, camper trailers, towing and travel safety;
 - TowSmart: towing, mass, loading, braking, coupling and combinations;
 - TrailerWise: trailer construction, registration, inspection and modification;
-- LocalTorque: broad roadworthy and modification coverage for cars, trucks,
-  motorcycles, trailers and street rods.
+- LocalTorque: broad roadworthy and modification coverage for cars, 4WDs,
+  utes, trucks, motorcycles, trailers and street rods. Vehicle-filtered
+  journeys use subject-specific, art-directed responsive hero photography.
 
 Shared source coverage includes:
 - Commonwealth Australian Design Rules, VSB 14 and national street-rod guidance;
 - NHVR VSB 6 and the National Heavy Vehicle Inspection Manual;
 - ACT, NSW, Victoria, Queensland, South Australia, Western Australia, Tasmania
   and Northern Territory inspection and modification resources;
-- cars, utes/light trucks, heavy vehicles, motorcycles, trailers, individually
+- cars, 4WDs, utes/light trucks, heavy vehicles, motorcycles, trailers, individually
   constructed vehicles and street rods where the authority material applies.
+
+Street-rod coverage deliberately separates the nationally endorsed construction
+manual from each jurisdiction's approval and registration pathway. Migration 054
+adds official ACT, NSW, Victoria, Queensland, South Australia, Western Australia,
+Tasmania and Northern Territory sources, including genuine authority-hosted PDF
+downloads where one is published. A national manual never substitutes for a
+state or territory registration decision.
+
+## Motorsport rules, venues and calendars
+
+Backlog: **DATA-010 / LOC-004**. Architecture: **ADR 0011**.
+
+Competition eligibility is separate from road legality. `/motorsport` uses a
+dedicated catalogue for Motorsport Australia, AASA, ANDRA, Speedway Australia,
+Karting Australia and Motorcycling Australia material. Nine families expose
+more than 50 named car, kart and motorcycle disciplines rather than hiding them
+behind one generic racing label.
+
+Results identify national/sanctioning-body rules, discipline and class
+technical rules, state or series rules, and event supplementary regulations.
+The venue register distinguishes permanent facilities, temporary locations,
+route-based competition and club networks. It stores the venue website when
+known and a separate venue, club or governing-body calendar URL when published.
+Dates remain on the official source because an event may change or be cancelled
+after publication.
+
+Run `php scripts/check-motorsport-sources.php 20` on the trusted scheduler. It
+checks due rulebook and calendar sources with conditional HTTP requests. Changed
+rule documents move to review; changed venue/calendar records leave the public
+list pending review. Failures retry after six hours and never create substitute
+rules or event dates.
 
 ## Source contract
 

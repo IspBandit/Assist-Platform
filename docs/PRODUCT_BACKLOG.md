@@ -43,6 +43,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | LOC-001 | LocalTorque first-class private brand foundation | done | Private render, categories, sitemap and enrichment report |
 | LOC-002 | LocalTorque national coverage, claims and search readiness | in progress | Coverage report, duplicate review and claim acceptance |
 | LOC-003 | LocalTorque production launch | blocked | Domain purchase, DNS, email, legal and launch acceptance |
+| LOC-004 | LocalTorque complete motorsport rule, venue and calendar discovery | in progress | Explicit national discipline taxonomy, official rule layers, verified venue websites/calendars, source freshness and mobile journey acceptance |
 
 ## Data
 
@@ -57,6 +58,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-007 | Maps/geocoding production limits and fallback | ready | Quota, failure and list-view acceptance |
 | DATA-008 | Four-brand authoritative Australian vehicle rules library | done | All-jurisdiction official-source catalogue, brand relevance, genuine downloads, source-change review, mobile filters and labelled local sponsorship |
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
+| DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
 
 ## Infrastructure
 

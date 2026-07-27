@@ -21,10 +21,13 @@ final class RegulatoryLibraryController extends Controller
     ];
 
     private const VEHICLES = [
-        'car' => 'Cars', 'light-truck' => 'Utes & light trucks',
+        'car' => 'Cars', '4wd' => '4WDs & off-road vehicles',
+        'light-truck' => 'Utes & light trucks',
         'heavy-vehicle' => 'Heavy vehicles', 'motorcycle' => 'Motorcycles',
         'trailer' => 'Trailers', 'street-rod' => 'Street rods & hot rods',
     ];
+
+    private const VISUAL_VEHICLES = ['car', '4wd', 'light-truck', 'heavy-vehicle', 'motorcycle', 'street-rod'];
 
     private const KINDS = [
         'roadworthiness' => 'Roadworthy requirements',
@@ -55,7 +58,10 @@ final class RegulatoryLibraryController extends Controller
         ];
         $sponsors = new RegulatorySponsor();
         $selectedTown = $sponsors->town($filters['town']);
-        $page = $this->pageCopy($brand->id(), $brand->name());
+        $page = $this->pageCopy($brand->id(), $brand->name(), $filters['vehicle']);
+        $heroAsset = $brand->id() === 'localtorque' && in_array($filters['vehicle'], self::VISUAL_VEHICLES, true)
+            ? 'rules-' . $filters['vehicle'] . '-hero'
+            : 'rules-hero';
 
         return $this->view('localtorque.regulatory-library', [
             'title' => $page['title'],
@@ -69,6 +75,7 @@ final class RegulatoryLibraryController extends Controller
             'filters' => $filters,
             'selectedTown' => $selectedTown,
             'page' => $page,
+            'heroAsset' => $heroAsset,
             'sponsoredCampaigns' => $sponsors->campaigns(
                 $selectedTown,
                 $filters['jurisdiction'],
@@ -120,7 +127,7 @@ final class RegulatoryLibraryController extends Controller
     }
 
     /** @return array{title:string,metaDescription:string,kicker:string,heading:string,intro:string,vehicleSummary:string} */
-    private function pageCopy(string $brandId, string $brandName): array
+    private function pageCopy(string $brandId, string $brandName, string $vehicle = ''): array
     {
         if ($brandId === 'vanassist') {
             return [
@@ -150,6 +157,26 @@ final class RegulatoryLibraryController extends Controller
                 'heading' => 'The official rules for building, registering and keeping a trailer roadworthy.',
                 'intro' => 'Authoritative trailer construction, registration, inspection, towing and modification resources from national and jurisdiction authorities.',
                 'vehicleSummary' => 'Trailers, caravans, campers and their tow combinations',
+            ];
+        }
+
+        $vehicleJourneys = [
+            'car' => ['Cars', 'Car roadworthy and modification rules', 'Know what applies before you modify or inspect your car.', 'Official roadworthy, inspection and modification sources for Australian passenger vehicles.'],
+            '4wd' => ['4WDs', 'Australian 4WD modification and roadworthy rules', 'Build a capable 4WD. Keep it legal.', 'Official sources covering suspension, tyres, wheels, steering, body, seating, lighting, inspection and certification for Australian 4WDs.'],
+            'light-truck' => ['Utes & light trucks', 'Ute and light-truck modification rules', 'Plan the work before your ute goes under the spanner.', 'Official roadworthy, modification, load and inspection sources for Australian utes and light commercial vehicles.'],
+            'heavy-vehicle' => ['Heavy vehicles', 'Heavy-vehicle inspection and modification rules', 'Keep serious machinery compliant and on the road.', 'Official heavy-vehicle inspection, modification, load-restraint and design sources from national and jurisdiction authorities.'],
+            'motorcycle' => ['Motorcycles', 'Motorcycle roadworthy and modification rules', 'Know the rule before you change the bike.', 'Official motorcycle inspection, registration and modification sources for every Australian state and territory.'],
+            'street-rod' => ['Street rods & hot rods', 'Street rod and hot rod rules', 'Craftsmanship deserves an approval pathway as considered as the build.', 'Official national and jurisdiction sources for street-rod construction, modification, inspection, certification and registration.'],
+        ];
+        if (isset($vehicleJourneys[$vehicle])) {
+            [$summary, $title, $heading, $intro] = $vehicleJourneys[$vehicle];
+            return [
+                'title' => $title . ' — ' . $brandName,
+                'metaDescription' => $intro,
+                'kicker' => $summary . ' · official rules',
+                'heading' => $heading,
+                'intro' => $intro,
+                'vehicleSummary' => $summary,
             ];
         }
 

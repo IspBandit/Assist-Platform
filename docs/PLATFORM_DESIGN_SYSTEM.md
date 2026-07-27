@@ -35,6 +35,11 @@ tests enforce dimensions, formats and transfer budgets. Above-the-fold heroes
 use `fetchpriority="high"`; below-the-fold editorial images must be lazy-loaded.
 Images never replace a usable text, list, map-fallback or form experience.
 
+LocalTorque motorsport uses the same art-directed contract. Its hero may
+combine several credible competition disciplines but carries no sanctioning-body
+marks, sponsor liveries or implication that one authority governs every sport.
+Disciplines, rulebooks, venues and calendars remain live HTML below the image.
+
 ## Foundations
 
 Shared tokens cover typography, spacing, breakpoints, radii, elevation, focus,
@@ -74,6 +79,18 @@ authority source or download. Changed/unreviewed records are unavailable rather
 than shown with a weak warning. Sponsored local specialists appear only after
 the official results in a separately bordered region with a persistent
 `Sponsored` label and disclosure; they never appear inside a rule card.
+
+### Motorsport rule and venue pattern
+
+The LocalTorque motorsport journey starts with explicit discipline families and
+named disciplines, then presents the four rule layers: sanctioning body,
+discipline/class, state/series and event/venue. Cards identify the authority,
+version, jurisdictions, applicable families and source check. Venue cards
+identify permanent, temporary, route-based or club-network status, locality,
+official venue website where available, and a separately labelled official
+calendar source. A calendar link never implies that entries remain open. At
+680px and below family, rule and venue grids form one column and actions use
+touch-sized full-width controls where needed.
 
 ### Shared Garage contract
 

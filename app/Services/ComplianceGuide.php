@@ -15,7 +15,7 @@ final class ComplianceGuide
 
     /** @var array<string,string> */
     public const VEHICLES = [
-        'car' => 'Car or ute', 'light-truck' => 'Light truck',
+        'car' => 'Car', '4wd' => '4WD or off-road vehicle', 'light-truck' => 'Ute or light truck',
         'heavy-vehicle' => 'Heavy vehicle', 'motorcycle' => 'Motorcycle',
         'trailer' => 'Trailer or caravan', 'street-rod' => 'Street rod or hot rod',
     ];

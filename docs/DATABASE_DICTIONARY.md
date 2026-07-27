@@ -21,6 +21,7 @@ a domain map, not a substitute for reading the relevant ordered migration.
 | TowSmart | `tow_vehicles`, `towable_assets`, `towing_combinations` | User-owned and TowSmart brand-scoped |
 | TrailerWise | `trailer_listings` | Provider-owned, TrailerWise-scoped, currently secondary product capability |
 | Vehicle regulation | `regulatory_authorities`, `regulatory_documents`, `regulatory_source_checks`, `regulatory_document_brands` | Shared official-source register with brand-relevance mapping for all four platforms; issuing authorities retain document ownership |
+| Motorsport | `motorsport_authorities`, `motorsport_families`, `motorsport_disciplines`, `motorsport_documents`, document-family links, `motorsport_venues`, venue-family links, `motorsport_source_checks` | LocalTorque competition-rule and venue catalogue with fail-closed source fingerprints; sanctioning bodies and venue/calendar publishers retain source ownership |
 | Owner Garage | `garage_assets`, `garage_documents`, `garage_reminder_preferences`, `garage_brand_activity` | User-scoped vehicles/towables and private compliance wallet shared across brands; origin brand is context, never an access boundary |
 | Compliance journeys | `regulatory_journeys`, `regulatory_alert_subscriptions`, `regulatory_alert_deliveries`, `regulatory_provider_handoffs` | Owner-scoped saved pathways, explicit alert/handoff consent and auditable limited context |
 | Provider trust | `provider_capability_credentials` | Evidence-backed, expiring capability claims; only reviewed current rows may display publicly |

@@ -114,6 +114,19 @@ final class PlatformDatabaseTest extends TestCase
         ));
     }
 
+    public function testMotorsportLibraryHasCompleteTaxonomyRulesAndVenueLayers(): void
+    {
+        foreach (['motorsport_authorities','motorsport_families','motorsport_disciplines','motorsport_documents','motorsport_document_families','motorsport_venues','motorsport_venue_families','motorsport_source_checks'] as $table) {
+            self::assertTrue(Database::tableExists($table), $table . ' was not installed');
+        }
+        self::assertSame(9, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_families'));
+        self::assertGreaterThanOrEqual(55, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_disciplines'));
+        self::assertGreaterThanOrEqual(15, (int) Database::scalar("SELECT COUNT(*) FROM motorsport_documents WHERE is_public=1 AND publication_status='current'"));
+        self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_families f WHERE NOT EXISTS (SELECT 1 FROM motorsport_document_families df WHERE df.family_key=f.family_key)'));
+        self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_families f WHERE NOT EXISTS (SELECT 1 FROM motorsport_venue_families vf WHERE vf.family_key=f.family_key)'));
+        self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_venues WHERE website_url IS NULL AND calendar_url IS NULL'));
+    }
+
     public function testSharedGarageSchemaUsesUserOwnershipInsteadOfBrandIsolation(): void
     {
         foreach (['garage_assets', 'garage_documents', 'garage_reminder_preferences', 'garage_brand_activity'] as $table) {
