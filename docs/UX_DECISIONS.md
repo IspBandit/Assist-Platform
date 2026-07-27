@@ -45,3 +45,16 @@ dependency were rejected as visually noisy and unnecessary. **Accessibility:**
 marks keep titles, decorative consumers use empty alternatives, current pages
 use `aria-current`, and the selector supports focus, Escape and directional
 keys. **Evidence:** BrandAssetTest, PHP/static checks and representative renders.
+
+## 2026-07-27 — Authority-first rules and separated provider sponsorship
+
+**Context:** DATA-008. Readers need official vehicle rules while relevant local
+providers have a legitimate paid-acquisition opportunity. **Decision:** official
+sources remain the uninterrupted primary result; active paid campaigns appear
+afterwards in a labelled sponsor rail and match only explicit location and rule
+context. **Affected journeys:** VanAssist, TowSmart, TrailerWise and LocalTorque
+rule discovery and provider acquisition. **Alternatives:** interleaving ads with government sources and
+implicit behavioural location were rejected because they weaken trust.
+**Accessibility:** semantic cards and sponsor landmark, text status labels,
+keyboard-native links and responsive single-column layouts. **Evidence:** unit,
+static, database and representative render checks under DATA-008.

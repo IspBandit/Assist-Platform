@@ -15,6 +15,8 @@ components only after rendered, responsive and accessibility verification.
 - Provider and admin tasks work on mobile, not only desktop.
 - Empty, loading, success and error states are designed states.
 - Paid and sponsored content is visibly labelled.
+- Regulatory content identifies its issuing authority and status; paid provider
+  placements are visually separated from official-source cards.
 - No fake counts, reviews, urgency, availability or endorsements.
 
 ## Foundations
@@ -36,6 +38,26 @@ The system must include and document:
 - loading, empty, error and unavailable states;
 - content, calculator and data-entry patterns;
 - Social Studio templates and export-safe areas.
+
+### Four-brand mobile rule-library contract
+
+The shared rule library is a required mobile journey for VanAssist, TowSmart,
+TrailerWise and LocalTorque. At 619px and below filters form one column, document
+metadata forms one column, download actions occupy the available width and
+sponsor disclosures precede sponsor cards. Jurisdiction navigation may scroll
+horizontally without clipping labels. At 979px and below authority cards and
+sponsor cards form a single column. Core official-source access must not depend
+on JavaScript; town autocomplete is an optional enhancement.
+
+### Regulatory library pattern
+
+Regulatory results use an authority-first card with jurisdiction, current or
+upcoming state, document type, applicable vehicle chips, issuer, version,
+effective date and last source check. The primary action opens the official
+authority source or download. Changed/unreviewed records are unavailable rather
+than shown with a weak warning. Sponsored local specialists appear only after
+the official results in a separately bordered region with a persistent
+`Sponsored` label and disclosure; they never appear inside a rule card.
 
 ## Brand expression
 

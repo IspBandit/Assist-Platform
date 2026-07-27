@@ -1,7 +1,7 @@
 # LocalTorque
 
 LocalTorque is a first-class Assist Platform Enterprise brand. Its implementation
-is tracked by LOC-001 through LOC-003 in `PRODUCT_BACKLOG.md`. Build and test it
+is tracked by LOC-001 through LOC-003 and DATA-008 in `PRODUCT_BACKLOG.md`. Build and test it
 as production-capable while keeping public launch fail-closed until the external
 prerequisites below are confirmed.
 
@@ -17,6 +17,9 @@ LocalTorque is the automotive business-directory brand within the Assist Platfor
 - Dedicated LocalBusiness structured data, canonical URLs and sitemap entries.
 - Automatic, restartable classification of relevant canonical providers into LocalTorque, with unverified heuristic assignments requiring business or administrator review.
 - Shared provider claim, verification, membership and administration workflows.
+- Authority-linked roadworthy, inspection and modification library at `/rules`, covering national material and every state and territory.
+- Daily source fingerprinting with current/upcoming effective states and review-before-republish when official material changes.
+- Clearly labelled, context-matched provider sponsorship after rule results; sponsorship never changes official sources or organic rankings.
 
 ## Data integrity and verification
 

@@ -20,6 +20,7 @@ a domain map, not a substitute for reading the relevant ordered migration.
 | Owner finance | accounts, tax codes, periods, journal entries/lines, source/audit events | Platform owner ledger, never provider bookkeeping |
 | TowSmart | `tow_vehicles`, `towable_assets`, `towing_combinations` | User-owned and TowSmart brand-scoped |
 | TrailerWise | `trailer_listings` | Provider-owned, TrailerWise-scoped, currently secondary product capability |
+| Vehicle regulation | `regulatory_authorities`, `regulatory_documents`, `regulatory_source_checks`, `regulatory_document_brands` | Shared official-source register with brand-relevance mapping for all four platforms; issuing authorities retain document ownership |
 | Operations | migrations, audit/system logs, tasks, health, exports, rate limits | Administrative/operational data |
 
 ## Migration rules
@@ -46,6 +47,13 @@ a domain map, not a substitute for reading the relevant ordered migration.
 - `data_intelligence_sources`: registry for pluggable metric providers.
 - `locality_population_statistics`: sourced, dated population facts by town.
 - `data_intelligence_tasks`: brand-scoped coverage, verification and quality actions that hand off to Data Sources.
+
+# Vehicle regulatory library (migration 050)
+
+- `regulatory_authorities`: issuing government or national-regulator identity and jurisdiction.
+- `regulatory_documents`: official source URL/download, vehicle applicability, version, effective dates, publication state and current fingerprint.
+- `regulatory_document_brands`: explicit per-brand relevance mapping for the four public rule-library views.
+- `regulatory_source_checks`: append-only HTTP/checksum observations. A changed source moves its document to review before further public display.
 
 # Membership catalogue (migration 045)
 
