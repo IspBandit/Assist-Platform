@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\RegulatoryDocument;
+use App\Services\ComplianceGuide;
 use App\Services\RegulatorySponsor;
 
 final class RegulatoryLibraryController extends Controller
@@ -75,6 +76,40 @@ final class RegulatoryLibraryController extends Controller
                 $filters['vehicle'],
                 $filters['q']
             ),
+        ]);
+    }
+
+    public function guide(Request $request): Response
+    {
+        $selection = ComplianceGuide::selections(
+            strtoupper(trim((string) $request->query('jurisdiction', ''))),
+            trim((string) $request->query('vehicle', '')),
+            trim((string) $request->query('intention', ''))
+        );
+        $documents = [];
+        if ($selection !== null) {
+            $filters = [
+                'jurisdiction' => $selection['jurisdiction'],
+                'vehicle' => $selection['vehicle'],
+                'kind' => $selection['kind'],
+                'q' => '',
+            ];
+            $documents = RegulatoryDocument::publicLibrary(current_brand()->databaseId(), $filters);
+            if ($documents === [] && $selection['kind'] !== '') {
+                $filters['kind'] = '';
+                $documents = RegulatoryDocument::publicLibrary(current_brand()->databaseId(), $filters);
+            }
+        }
+
+        return $this->view('localtorque.guided-rules', [
+            'title' => 'Guided compliance check — ' . current_brand()->name(),
+            'selection' => $selection,
+            'documents' => $documents,
+            'jurisdictions' => ComplianceGuide::JURISDICTIONS,
+            'vehicles' => ComplianceGuide::VEHICLES,
+            'intentions' => ComplianceGuide::INTENTIONS,
+            'steps' => $selection === null ? [] : ComplianceGuide::steps($selection['intention']),
+            'limitation' => ComplianceGuide::limitation(),
         ]);
     }
 

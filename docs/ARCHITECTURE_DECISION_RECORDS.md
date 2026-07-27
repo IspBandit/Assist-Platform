@@ -46,5 +46,6 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0007: Modular Data Intelligence sources and workflow actions.
 - 0008: Authority-linked, monitored vehicle regulatory library.
 - 0009: Shared owner Garage and private compliance wallet.
+- 0010: Separate authority, owner consent, provider evidence and paid relevance.
 
 The index must be updated whenever an ADR is accepted.

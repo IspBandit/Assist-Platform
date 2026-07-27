@@ -26,6 +26,7 @@ $nav = [
         ['Service runs', '/admin/runs'],
     ],
     'Analytics' => [
+        ['Trust, rules & growth', '/admin/trust-growth'],
         ['Data Intelligence', '/admin/data-intelligence'],
         ['Demand overview', '/admin/demand'],
         ['Provider usage', '/admin/demand/providers'],

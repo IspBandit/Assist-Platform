@@ -68,14 +68,19 @@ final class RegulatorySponsor
             . 'LEFT JOIN brand_provider_categories cat ON cat.id=t.category_id '
             . 'LEFT JOIN provider_brand_listings pbl ON pbl.provider_id=c.advertiser_provider_id '
             . 'AND pbl.brand_id=c.brand_id AND pbl.status=\'active\' AND pbl.deleted_at IS NULL '
-            . 'WHERE ' . implode(' AND ', $where) . ' ORDER BY c.starts_at DESC, c.id DESC LIMIT 3',
+            . 'WHERE ' . implode(' AND ', $where) . ' '
+            . 'AND (c.total_budget_cents IS NULL OR COALESCE((SELECT SUM(am.spend_cents) FROM advertising_campaign_daily_metrics am WHERE am.campaign_id=c.id),0)<c.total_budget_cents) '
+            . 'AND (c.daily_budget_cents IS NULL OR COALESCE((SELECT dm.spend_cents FROM advertising_campaign_daily_metrics dm WHERE dm.campaign_id=c.id AND dm.metric_date=CURRENT_DATE),0)<c.daily_budget_cents) '
+            . 'ORDER BY c.starts_at DESC, c.id DESC LIMIT 3',
             $params
         );
 
-        return array_values(array_filter(
+        $campaigns = array_values(array_filter(
             $campaigns,
             static fn (array $campaign): bool => self::safeDestination((string) $campaign['destination_url'])
         ));
+        CampaignMetrics::impressions(array_map(static fn (array $campaign): int => (int) $campaign['id'], $campaigns));
+        return $campaigns;
     }
 
     /** @return array<int,string> */

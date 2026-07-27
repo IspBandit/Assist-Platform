@@ -49,6 +49,10 @@ return static function (Router $router): void {
 
         // Provider analytics dashboard (Phase 11). Own data only.
         $router->get('/analytics', 'Provider\AnalyticsController@index', 'provider.analytics');
+        $router->get('/growth', 'Provider\GrowthController@index', 'provider.growth');
+        $router->post('/growth/credential', 'Provider\GrowthController@saveCredential', 'provider.growth.credential');
+        $router->post('/growth/credential/withdraw', 'Provider\GrowthController@withdrawCredential', 'provider.growth.credential.withdraw');
+        $router->post('/growth/campaign', 'Provider\GrowthController@saveCampaign', 'provider.growth.campaign');
 
         $router->get('/promotion', 'Provider\PromotionController@index', 'provider.promotion');
         $router->post('/promotion', 'Provider\PromotionController@store');

@@ -7,7 +7,9 @@ namespace App\Controllers\Site;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
 use App\Models\Provider;
+use App\Services\CampaignMetrics;
 use App\Services\Demand\DemandRecorder;
 
 /**
@@ -42,6 +44,15 @@ final class ContactActionController extends Controller
             'search_id' => (int) $request->input('s') ?: null,
             'route'     => 'providers/' . $provider['slug'],
         ]);
+        $attribution = Session::get('sponsored_attribution');
+        if (is_array($attribution)
+            && (int) ($attribution['provider_id'] ?? 0) === (int) $provider['id']
+            && (int) ($attribution['campaign_id'] ?? 0) > 0
+            && (int) ($attribution['expires_at'] ?? 0) >= time()
+        ) {
+            CampaignMetrics::conversion((int) $attribution['campaign_id']);
+            Session::forget('sponsored_attribution');
+        }
 
         return $this->redirect($target);
     }

@@ -77,6 +77,10 @@ if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .
                 <section class="profile-panel"><h2>Verified credentials</h2><ul class="credential-list"><?php foreach ($licences as $l): ?><li><span aria-hidden="true">✓</span><div><strong><?= $this->e((string) $l['licence_type']) ?></strong><?php if ($l['issuing_authority']): ?><small><?= $this->e((string) $l['issuing_authority']) ?></small><?php endif; ?></div></li><?php endforeach; ?></ul></section>
             <?php endif; ?>
 
+            <?php if ($capabilities !== []): ?>
+                <section class="profile-panel"><h2>Verified specialist capabilities</h2><p class="muted">Evidence reviewed by <?= $this->e($brand->name()) ?>. This is not government endorsement; confirm suitability for the exact job.</p><ul class="credential-list"><?php foreach ($capabilities as $capability): ?><li><span aria-hidden="true">✓</span><div><strong><?= $this->e((string) $capability['capability_label']) ?></strong><small><?= $this->e((string) ($capability['jurisdiction_code'] ?: 'Australia-wide')) ?><?= $capability['valid_until'] ? ' · valid to ' . $this->e((string) $capability['valid_until']) : '' ?></small></div></li><?php endforeach; ?></ul></section>
+            <?php endif; ?>
+
             <?php if ($runs !== []): ?>
                 <section class="profile-panel"><h2>Upcoming service runs</h2><div class="grid grid-2"><?php foreach ($runs as $r): ?><a class="mini-result" href="<?= e(url('service-runs/' . $r['slug'])) ?>"><strong><?= $this->e((string) $r['title']) ?></strong><span><?= $this->e(ucfirst((string) $r['status'])) ?><?php if ($r['start_date']): ?> · from <?= $this->e((string) $r['start_date']) ?><?php endif; ?></span></a><?php endforeach; ?></div></section>
             <?php endif; ?>
