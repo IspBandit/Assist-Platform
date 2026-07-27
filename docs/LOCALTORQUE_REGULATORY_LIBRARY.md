@@ -36,6 +36,12 @@ Tasmania and Northern Territory sources, including genuine authority-hosted PDF
 downloads where one is published. A national manual never substitutes for a
 state or territory registration decision.
 
+Ordinary vehicle modification filters never return street-rod construction
+material. Street rods and hot rods use the dedicated `street-rod` vehicle scope
+and `street_rods` document kind; My Garage, guided checks, specialist handoffs
+and sponsored-provider relevance preserve that distinction. VanAssist,
+TowSmart and TrailerWise do not expose street-rod filters or sources.
+
 ## Motorsport rules, venues and calendars
 
 Backlog: **DATA-010 / LOC-004**. Architecture: **ADR 0011**.

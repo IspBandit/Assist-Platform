@@ -11,6 +11,7 @@ use App\Models\RegulatoryDocument;
 use App\Models\Town;
 use App\Services\ComplianceGuide;
 use App\Services\RegulatorySponsor;
+use App\Services\RegulatoryTaxonomy;
 
 final class RegulatoryLibraryController extends Controller
 {
@@ -21,27 +22,7 @@ final class RegulatoryLibraryController extends Controller
         'TAS' => 'Tasmania', 'NT' => 'Northern Territory',
     ];
 
-    private const VEHICLES = [
-        'car' => 'Cars', '4wd' => '4WDs & off-road vehicles',
-        'light-truck' => 'Utes & light trucks',
-        'heavy-vehicle' => 'Heavy vehicles', 'motorcycle' => 'Motorcycles',
-        'trailer' => 'Trailers', 'street-rod' => 'Street rods & hot rods',
-    ];
-
     private const VISUAL_VEHICLES = ['car', '4wd', 'light-truck', 'heavy-vehicle', 'motorcycle', 'street-rod'];
-
-    private const KINDS = [
-        'roadworthiness' => 'Roadworthy requirements',
-        'inspection_manual' => 'Inspection manuals',
-        'modifications' => 'Modification rules',
-        'code_of_practice' => 'Codes of practice',
-        'design_rules' => 'Design rules',
-        'street_rods' => 'Street rod rules',
-        'towing' => 'Towing rules',
-        'trailer_construction' => 'Trailer construction',
-        'load_restraint' => 'Load restraint',
-        'registration' => 'Registration',
-    ];
 
     public function index(Request $request): Response
     {
@@ -49,6 +30,8 @@ final class RegulatoryLibraryController extends Controller
         if (!in_array($brand->id(), ['vanassist', 'localtorque', 'towsmart', 'trailerwise'], true)) {
             $this->abort(404, 'Rules library not found.');
         }
+        $vehicles = RegulatoryTaxonomy::vehiclesForBrand($brand->id());
+        $kinds = RegulatoryTaxonomy::kindsForBrand($brand->id());
 
         $townId = max(0, (int) $request->query('town', 0));
         $location = trim((string) $request->query('location', ''));
@@ -58,11 +41,14 @@ final class RegulatoryLibraryController extends Controller
         }
         $filters = [
             'jurisdiction' => $this->allowed((string) $request->query('jurisdiction', ''), self::JURISDICTIONS),
-            'vehicle' => $this->allowed((string) $request->query('vehicle', ''), self::VEHICLES),
-            'kind' => $this->allowed((string) $request->query('kind', ''), self::KINDS),
+            'vehicle' => $this->allowed((string) $request->query('vehicle', ''), $vehicles),
+            'kind' => $this->allowed((string) $request->query('kind', ''), $kinds),
             'q' => mb_substr(trim((string) $request->query('q', '')), 0, 100),
             'town' => $townId,
         ];
+        $normalized = RegulatoryTaxonomy::normalize($filters['vehicle'], $filters['kind']);
+        $filters['vehicle'] = $normalized['vehicle'];
+        $filters['kind'] = $normalized['kind'];
         $sponsors = new RegulatorySponsor();
         $selectedTown = $sponsors->town($filters['town']);
         $page = $this->pageCopy($brand->id(), $brand->name(), $filters['vehicle']);
@@ -77,8 +63,8 @@ final class RegulatoryLibraryController extends Controller
             'documents' => RegulatoryDocument::publicLibrary($brand->databaseId(), $filters),
             'coverage' => RegulatoryDocument::publicCoverage($brand->databaseId()),
             'jurisdictions' => self::JURISDICTIONS,
-            'vehicles' => self::VEHICLES,
-            'kinds' => self::KINDS,
+            'vehicles' => $vehicles,
+            'kinds' => $kinds,
             'filters' => $filters,
             'selectedTown' => $selectedTown,
             'page' => $page,
@@ -98,7 +84,8 @@ final class RegulatoryLibraryController extends Controller
         $selection = ComplianceGuide::selections(
             strtoupper(trim((string) $request->query('jurisdiction', ''))),
             trim((string) $request->query('vehicle', '')),
-            trim((string) $request->query('intention', ''))
+            trim((string) $request->query('intention', '')),
+            current_brand()->id()
         );
         $documents = [];
         if ($selection !== null) {
@@ -120,9 +107,9 @@ final class RegulatoryLibraryController extends Controller
             'selection' => $selection,
             'documents' => $documents,
             'jurisdictions' => ComplianceGuide::JURISDICTIONS,
-            'vehicles' => ComplianceGuide::VEHICLES,
+            'vehicles' => RegulatoryTaxonomy::vehiclesForBrand(current_brand()->id()),
             'intentions' => ComplianceGuide::INTENTIONS,
-            'steps' => $selection === null ? [] : ComplianceGuide::steps($selection['intention']),
+            'steps' => $selection === null ? [] : ComplianceGuide::steps($selection['intention'], $selection['vehicle']),
             'limitation' => ComplianceGuide::limitation(),
         ]);
     }

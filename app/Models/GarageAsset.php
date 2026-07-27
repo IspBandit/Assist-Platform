@@ -90,6 +90,7 @@ final class GarageAsset
         return match ($type) {
             'motorcycle' => 'motorcycle',
             'heavy_vehicle' => 'heavy-vehicle',
+            'street_rod' => 'street-rod',
             'trailer', 'boat_trailer', 'horse_float', 'caravan', 'camper_trailer' => 'trailer',
             default => 'car',
         };
