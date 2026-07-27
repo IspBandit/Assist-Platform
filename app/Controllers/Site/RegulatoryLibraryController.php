@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\RegulatoryDocument;
+use App\Models\Town;
 use App\Services\ComplianceGuide;
 use App\Services\RegulatorySponsor;
 
@@ -49,12 +50,18 @@ final class RegulatoryLibraryController extends Controller
             $this->abort(404, 'Rules library not found.');
         }
 
+        $townId = max(0, (int) $request->query('town', 0));
+        $location = trim((string) $request->query('location', ''));
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location, 1);
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : 0;
+        }
         $filters = [
             'jurisdiction' => $this->allowed((string) $request->query('jurisdiction', ''), self::JURISDICTIONS),
             'vehicle' => $this->allowed((string) $request->query('vehicle', ''), self::VEHICLES),
             'kind' => $this->allowed((string) $request->query('kind', ''), self::KINDS),
             'q' => mb_substr(trim((string) $request->query('q', '')), 0, 100),
-            'town' => max(0, (int) $request->query('town', 0)),
+            'town' => $townId,
         ];
         $sponsors = new RegulatorySponsor();
         $selectedTown = $sponsors->town($filters['town']);

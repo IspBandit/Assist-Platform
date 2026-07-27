@@ -61,7 +61,7 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
         <form method="get" action="<?= e(url('services/' . $category['slug'])) ?>" class="btn-row" style="margin:.5rem 0 1rem;align-items:flex-end;gap:.5rem;flex-wrap:wrap">
             <div class="form-group mb-0 location-field" style="min-width:280px">
                 <label for="town_search">Filter by town, suburb or postcode</label>
-                <input type="text" id="town_search" value="<?= e_attr($selectedTownLabel ?? '') ?>" placeholder="Start typing…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
+                <input type="text" id="town_search" name="location" value="<?= e_attr($selectedTownLabel ?? '') ?>" placeholder="Start typing…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                 <input type="hidden" id="town_id" name="town" value="<?= $townId ? (int) $townId : '' ?>">
                 <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
             </div>

@@ -23,7 +23,7 @@ final class BrandAssetTest extends TestCase
     #[DataProvider('brands')]
     public function testBrandMarkUsesSharedAccessibleSvgContract(string $brand): void
     {
-        $svg = file_get_contents(dirname(__DIR__, 2) . '/public/assets/brands/' . $brand . '/mark.svg');
+        $svg = file_get_contents(dirname(__DIR__, 2) . '/public/assets/brands/' . $brand . '/symbol-v2.svg');
 
         self::assertIsString($svg);
         self::assertStringContainsString('viewBox="0 0 64 64"', $svg);

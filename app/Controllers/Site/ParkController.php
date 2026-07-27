@@ -11,6 +11,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Models\CaravanPark;
+use App\Models\Town;
 use App\Models\User;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
@@ -47,13 +48,22 @@ final class ParkController extends Controller
             $this->abort(404, 'Page not found.');
         }
 
+        $location = trim((string) $request->input('location', ''));
         $townId = filter_var($request->input('town_id'), FILTER_VALIDATE_INT) ?: null;
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location, 1);
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+        }
         $lat = is_numeric($request->input('lat')) ? (float) $request->input('lat') : null;
         $lng = is_numeric($request->input('lng')) ? (float) $request->input('lng') : null;
         if ($lat !== null && ($lat < -90 || $lat > 90)) {
             $lat = null;
         }
         if ($lng !== null && ($lng < -180 || $lng > 180)) {
+            $lng = null;
+        }
+        if ($townId !== null) {
+            $lat = null;
             $lng = null;
         }
         $stayType = (string) $request->input('stay_type', '');
@@ -69,7 +79,7 @@ final class ParkController extends Controller
             'stayTypes' => self::STAY_TYPES,
             'priceTypes' => self::PRICE_TYPES,
             'selectedTownId' => $townId,
-            'selectedLocation' => trim((string) $request->input('location', '')),
+            'selectedLocation' => $location,
             'selectedStayType' => $stayType,
             'selectedPriceType' => $priceType,
             'searched' => $townId !== null || ($lat !== null && $lng !== null) || $stayType !== null || $priceType !== null,

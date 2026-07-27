@@ -25,9 +25,9 @@ return [
                 'legacy' => 'vanassist.condrendigital.com.au',
             ],
             'assets' => [
-                'logo' => '/assets/brands/vanassist/mark.svg',
-                'icon' => '/assets/brands/vanassist/mark.svg',
-                'favicon' => '/assets/brands/vanassist/mark.svg',
+                'logo' => '/assets/brands/vanassist/symbol-v2.svg',
+                'icon' => '/assets/brands/vanassist/symbol-v2.svg',
+                'favicon' => '/assets/brands/vanassist/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#0f6e6e',
@@ -107,9 +107,9 @@ return [
                 'legacy_local' => 'towwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/towsmart/mark.svg',
-                'icon' => '/assets/brands/towsmart/mark.svg',
-                'favicon' => '/assets/brands/towsmart/mark.svg',
+                'logo' => '/assets/brands/towsmart/symbol-v2.svg',
+                'icon' => '/assets/brands/towsmart/symbol-v2.svg',
+                'favicon' => '/assets/brands/towsmart/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#1d4ed8',
@@ -192,9 +192,9 @@ return [
                 'local' => 'trailerwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/trailerwise/mark.svg',
-                'icon' => '/assets/brands/trailerwise/mark.svg',
-                'favicon' => '/assets/brands/trailerwise/mark.svg',
+                'logo' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'icon' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'favicon' => '/assets/brands/trailerwise/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#7c3aed',
@@ -274,9 +274,9 @@ return [
                 'local' => 'localtorque.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/localtorque/mark.svg',
-                'icon' => '/assets/brands/localtorque/mark.svg',
-                'favicon' => '/assets/brands/localtorque/mark.svg',
+                'logo' => '/assets/brands/localtorque/symbol-v2.svg',
+                'icon' => '/assets/brands/localtorque/symbol-v2.svg',
+                'favicon' => '/assets/brands/localtorque/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#0f3b4c',

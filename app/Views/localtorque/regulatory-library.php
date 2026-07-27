@@ -101,7 +101,7 @@ $this->extend('layouts.public');
             <label class="rules-filter-location">
                 <span>Your area <small>for local sponsors</small></span>
                 <span class="location-field">
-                    <input id="rules-town-search" type="search" value="<?= $this->e($selectedTown !== null ? trim((string) $selectedTown['name'] . ' / ' . (string) $selectedTown['state_abbr']) : '') ?>" placeholder="Town, suburb or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="rules-town-suggest">
+                    <input id="rules-town-search" name="location" type="search" value="<?= $this->e($selectedTown !== null ? trim((string) $selectedTown['name'] . ' / ' . (string) $selectedTown['state_abbr']) : '') ?>" placeholder="Town, suburb or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="rules-town-suggest">
                     <input type="hidden" id="town_id" name="town" value="<?= $selectedTown !== null ? (int) $selectedTown['id'] : '' ?>">
                     <span id="rules-town-suggest" class="town-suggest" role="listbox" hidden></span>
                 </span>
