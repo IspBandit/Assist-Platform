@@ -220,7 +220,15 @@
         syncDistanceFilter(form);
         var loc = form.querySelector('input[name="location"]');
         if (loc) {
-            loc.addEventListener('input', function () { syncDistanceFilter(form); });
+            loc.addEventListener('input', function () {
+                // A manually entered town or postcode must replace a previous
+                // GPS lookup. Otherwise the hidden coordinates win on the
+                // server and the typed location appears to be ignored.
+                setFormField(form, 'lat', '');
+                setFormField(form, 'lng', '');
+                setLocationStatus(form, '', false);
+                syncDistanceFilter(form);
+            });
         }
         var town = form.querySelector('select[name="town"]');
         if (town) {
