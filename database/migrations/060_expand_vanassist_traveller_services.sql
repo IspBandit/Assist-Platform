@@ -24,6 +24,7 @@ VALUES
     ('Locksmith and security', 'locksmith-and-security', 'Vehicle, caravan and RV lock, key and security assistance.', 270, 1, NOW(), NOW()),
     ('Windscreen and auto glass', 'windscreen-and-auto-glass', 'Windscreen, window and automotive glass repair or replacement.', 280, 1, NOW(), NOW()),
     ('Caravan and RV parts', 'caravan-and-rv-parts', 'Parts and consumables for caravans, campers and motorhomes.', 290, 1, NOW(), NOW()),
+    ('Vehicle parts and accessories', 'vehicle-parts-and-accessories', 'Automotive parts, consumables and accessories for tow vehicles.', 295, 1, NOW(), NOW()),
     ('Towing equipment and accessories', 'towing-equipment-and-accessories', 'Hitches, brake controllers, mirrors, wiring and towing accessories.', 300, 1, NOW(), NOW()),
     ('Weighbridges and mobile weighing', 'weighbridges-and-mobile-weighing', 'Vehicle and caravan weighing for safer, compliant travel.', 310, 1, NOW(), NOW()),
     ('Vehicle and caravan washing', 'vehicle-and-caravan-washing', 'Wash bays and cleaning services suitable for caravans and RVs.', 320, 1, NOW(), NOW()),

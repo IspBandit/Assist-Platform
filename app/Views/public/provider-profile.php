@@ -17,7 +17,7 @@ $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) $provider['business_name'];
 $initial = mb_strtoupper(mb_substr(trim($name), 0, 1));
 $slug = (string) $provider['slug'];
-$canNavigate = $isWorkshop && $address !== '' && stripos($address, 'mobile') === false;
+$canNavigate = $isWorkshop && is_navigable_street_address($address);
 $locationLabel = $townName;
 if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .= ', ' . $provider['state_abbr']; }
 $mapDestination = map_destination(null, null, [$address, $townName, (string) ($provider['state_abbr'] ?? '')]);
@@ -95,7 +95,7 @@ $mapDestination = map_destination(null, null, [$address, $townName, (string) ($p
                     <?php if ($showPhone): ?><a class="btn btn-primary btn-block" href="<?= e(url('go/phone/' . $slug)) ?>">Call <?= $this->e($phone) ?></a><?php endif; ?>
                     <?php if ($showEmail): ?><a class="btn btn-secondary btn-block" href="<?= e(url('go/email/' . $slug)) ?>">Email business</a><?php endif; ?>
                     <?php if ($website !== ''): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/website/' . $slug)) ?>" target="_blank" rel="noopener nofollow">Visit business website</a><?php endif; ?>
-                    <?php if ($canNavigate): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/directions/' . $slug)) ?>" target="_blank" rel="noopener" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>">Get directions</a><?php endif; ?>
+                    <?php if ($canNavigate): ?><a class="btn btn-ghost btn-block" href="<?= e(map_directions_url($mapDestination)) ?>" target="_blank" rel="noopener" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>">Get directions</a><?php endif; ?>
                 </div>
                 <?php if (!$showPhone && !$showEmail && $website === ''): ?><div class="inline-empty"><strong>Contact details unavailable</strong><span>This business has not supplied public contact information.</span></div><?php endif; ?>
                 <p class="contact-disclaimer"><?= $this->e($brand->name()) ?> does not guarantee availability, pricing or suitability. Confirm important details with the provider.</p>

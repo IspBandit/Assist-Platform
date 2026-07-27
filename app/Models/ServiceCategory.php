@@ -72,7 +72,8 @@ final class ServiceCategory extends Model
             'locksmith-and-security', 'windscreen-and-auto-glass',
         ];
         $parts = [
-            'caravan-and-rv-parts', 'towing-equipment-and-accessories', 'caravan-storage',
+            'caravan-and-rv-parts', 'vehicle-parts-and-accessories',
+            'towing-equipment-and-accessories', 'caravan-storage',
         ];
         $inspection = [
             'pre-trip-inspection', 'roadworthy-inspection', 'weighbridges-and-mobile-weighing',

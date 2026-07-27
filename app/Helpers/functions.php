@@ -162,6 +162,20 @@ if (!function_exists('map_directions_url')) {
     }
 }
 
+if (!function_exists('is_navigable_street_address')) {
+    function is_navigable_street_address(mixed $address): bool
+    {
+        $value = trim((string) $address);
+        if ($value === '' || stripos($value, 'mobile') !== false) {
+            return false;
+        }
+        if (preg_match('/\d/', $value) === 1) {
+            return true;
+        }
+        return preg_match('/\b(street|st|road|rd|avenue|ave|highway|hwy|drive|dr|lane|ln|court|ct|place|pl|boulevard|blvd|way|parade|pde|terrace|tce)\b/i', $value) === 1;
+    }
+}
+
 if (!function_exists('redirect_location')) {
     /**
      * Resolve an application path or explicitly supported external contact URL.

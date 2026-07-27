@@ -71,6 +71,14 @@ final class HelpersTest extends TestCase
         $this->assertStringContainsString('destination=1%20Main%20Street', map_directions_url('1 Main Street'));
     }
 
+    public function testDirectionsRequireARoutableStreetAddress(): void
+    {
+        $this->assertFalse(is_navigable_street_address('Sydney'));
+        $this->assertFalse(is_navigable_street_address('Mobile service only'));
+        $this->assertTrue(is_navigable_street_address('10 Main Street'));
+        $this->assertTrue(is_navigable_street_address('Bruce Highway'));
+    }
+
     public function testRedirectLocationAllowsContactSchemesAndRejectsScriptUrls(): void
     {
         $this->assertSame('tel:+61712345678', redirect_location('tel:+61712345678'));

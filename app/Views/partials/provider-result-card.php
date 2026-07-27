@@ -10,7 +10,9 @@ $location = trim((string) ($p['town_name'] ?? ''));
 if ($location !== '' && !empty($p['state_abbr'])) { $location .= ', ' . $p['state_abbr']; }
 $description = trim((string) ($p['description'] ?? ''));
 $isWorkshop = in_array($model, ['workshop', 'both'], true);
-$mapDestination = $isWorkshop ? map_destination(null, null, [$p['street_address'] ?? '', $p['town_name'] ?? '', $p['state_abbr'] ?? '']) : '';
+$mapDestination = $isWorkshop && is_navigable_street_address($p['street_address'] ?? '')
+    ? map_destination(null, null, [$p['street_address'] ?? '', $p['town_name'] ?? '', $p['state_abbr'] ?? ''])
+    : '';
 ?>
 <article class="provider-card<?= !empty($p['is_featured']) ? ' provider-card--featured' : '' ?>">
     <?php if (!empty($p['is_featured'])): ?><span class="provider-featured-label">Featured</span><?php endif; ?>

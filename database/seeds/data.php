@@ -338,7 +338,7 @@ return [
         'Pet-friendly travel and veterinary', 'Towing and vehicle recovery',
         '4WD and remote-area recovery', 'Mobile mechanics', 'Diesel mechanics',
         'Auto electrical and batteries', 'Locksmith and security',
-        'Windscreen and auto glass', 'Caravan and RV parts',
+        'Windscreen and auto glass', 'Caravan and RV parts', 'Vehicle parts and accessories',
         'Towing equipment and accessories', 'Weighbridges and mobile weighing',
         'Vehicle and caravan washing', 'Caravan storage', 'Mobile welding and fabrication',
         'Unsure which service is needed',
