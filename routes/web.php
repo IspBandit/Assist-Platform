@@ -10,6 +10,8 @@ use App\Core\Router;
  */
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
+        $router->get('/runtime-assets/brands/{brand}/{name}', 'Site\AssetController@brand', 'assets.brand');
+        $router->get('/runtime-assets/{group}/{name}', 'Site\AssetController@file', 'assets.file');
         $router->get('/', 'Site\HomeController@index', 'home');
         $router->get('/email/unsubscribe', 'Site\EmailPreferenceController@unsubscribe', 'email.unsubscribe');
         $router->get('/calculator', 'Site\TowSmartController@calculator', 'towsmart.calculator');

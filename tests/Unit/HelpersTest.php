@@ -29,6 +29,18 @@ final class HelpersTest extends TestCase
         $this->assertSame('http://localhost/find', url('/find'));
     }
 
+    public function testAssetUsesCurrentReleaseEndpoint(): void
+    {
+        $this->assertStringStartsWith(
+            'http://localhost/runtime-assets/css/app.css?v=',
+            asset('css/app.css')
+        );
+        $this->assertStringStartsWith(
+            'http://localhost/runtime-assets/brands/vanassist/symbol-v2.svg?v=',
+            asset('/assets/brands/vanassist/symbol-v2.svg')
+        );
+    }
+
     public function testDistanceFilterUsesSubmittedValue(): void
     {
         $filter = Geo::resolveDistanceFilter('100', true);
