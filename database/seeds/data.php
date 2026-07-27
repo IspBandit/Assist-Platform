@@ -144,7 +144,7 @@ return [
         'Theodore'          => ['Central Queensland', '4719', -24.9480, 150.0760, 0],
         'Banana'            => ['Central Queensland', '4702', -24.4690, 150.1170, 0],
         'Baralaba'          => ['Central Queensland', '4702', -24.1730, 149.8230, 0],
-        'Emerald'           => ['Central Queensland', '4720', -23.5270, 148.1590, 1],
+        'Emerald'           => ['Central Queensland', '4720', -23.52083, 148.16194, 1],
         'Blackwater'        => ['Central Queensland', '4717', -23.5830, 148.8810, 0],
         'Springsure'        => ['Central Queensland', '4722', -24.1170, 148.0890, 0],
         'Capella'           => ['Central Queensland', '4723', -23.0820, 148.0240, 0],

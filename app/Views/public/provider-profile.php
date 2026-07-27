@@ -47,7 +47,7 @@ $mapDestination = map_destination(null, null, [$address, $townName, (string) ($p
         <div class="profile-main">
             <?php if ($isUnclaimed): ?>
                 <aside class="trust-notice">
-                    <div><strong>This business has not claimed this profile yet.</strong><p>Details come from public sources and may change. Confirm services, qualifications, pricing and availability directly with the business.</p></div>
+                    <div><strong>This business has not claimed this profile yet.</strong><p>Details come from public sources and may change. Confirm services, qualifications, pricing and availability directly with the business.</p><?php if (!empty($provider['source_note'])): ?><p><small>Source: <?= $this->e((string) $provider['source_note']) ?><?php if (!empty($provider['source_url'])): ?> · <a href="<?= e_attr((string) $provider['source_url']) ?>" target="_blank" rel="noopener nofollow">view source</a><?php endif; ?></small></p><?php endif; ?></div>
                     <a class="btn btn-secondary btn-sm" href="<?= e(url('contact')) ?>">Claim this business</a>
                 </aside>
             <?php endif; ?>

@@ -4,10 +4,19 @@
 
 UPDATE towns t
 JOIN states s ON s.id = t.state_id
+JOIN regions r ON r.state_id = s.id AND r.slug = 'fitzroy'
 SET t.latitude = -23.5797200,
     t.longitude = 149.0705600,
+    t.region_id = r.id,
     t.updated_at = NOW()
 WHERE s.abbreviation = 'QLD' AND t.slug = 'bluff';
+
+UPDATE towns t
+JOIN states s ON s.id = t.state_id
+SET t.latitude = -23.5208300,
+    t.longitude = 148.1619400,
+    t.updated_at = NOW()
+WHERE s.abbreviation = 'QLD' AND t.slug = 'emerald';
 
 UPDATE towns t
 JOIN states s ON s.id = t.state_id
@@ -22,4 +31,4 @@ DELETE tn
 FROM town_neighbours tn
 JOIN towns t ON t.id = tn.town_id OR t.id = tn.neighbour_town_id
 JOIN states s ON s.id = t.state_id
-WHERE s.abbreviation = 'QLD' AND t.slug IN ('bluff', 'emu-park');
+WHERE s.abbreviation = 'QLD' AND t.slug IN ('bluff', 'emerald', 'emu-park');

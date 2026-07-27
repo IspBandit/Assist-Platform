@@ -26,6 +26,7 @@ $mapDestination = $isWorkshop && is_navigable_street_address($p['street_address'
     </a>
     <div class="provider-card-badges">
         <?php if (!empty($p['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
+        <?php if (str_contains((string) ($p['source_note'] ?? ''), 'qld-fuel-reporting')): ?><span class="badge badge-neutral">Queensland Government source</span><?php endif; ?>
         <?php if (!empty($p['is_unclaimed'])): ?><span class="badge badge-neutral">Details not yet claimed</span><?php endif; ?>
         <?php if ($isPossible): ?><span class="badge badge-neutral">Related service</span><?php endif; ?>
         <?php if ($isMobile): ?><span class="badge badge-confirmed"><?= $model === 'both' ? 'Mobile and workshop' : 'Mobile service' ?></span><?php elseif ($model !== ''): ?><span class="badge badge-neutral">Workshop</span><?php endif; ?>

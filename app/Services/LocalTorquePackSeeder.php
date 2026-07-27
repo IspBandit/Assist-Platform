@@ -65,6 +65,9 @@ final class LocalTorquePackSeeder
         $next = $offset + count($slice);
         $counts['next'] = $next < $total ? $next : -1;
         $counts['complete'] = $counts['next'] === -1;
+        if ($counts['complete']) {
+            $counts['retired_superseded_qld_fuel'] = $this->retireSupersededQueenslandFuelSeeds();
+        }
         return $counts;
     }
 
@@ -187,15 +190,17 @@ final class LocalTorquePackSeeder
         $approximate = ($record['_coords_approx'] ?? false) === true;
         $town = null;
 
-        if ($lat !== null && $lng !== null && !$approximate) {
-            $town = $this->nearestTown($lat, $lng, $state);
-        }
-        if ($town === null && $townName !== '' && $state !== '') {
+        // Exact authoritative source locality wins. A nearby centroid must not
+        // silently relabel Emerald as Lochington (or any border-area provider).
+        if ($townName !== '' && $state !== '') {
             $town = Database::selectOne(
                 'SELECT t.id, t.name, t.region_id, s.abbreviation AS state_abbr FROM towns t '
                 . 'JOIN states s ON s.id = t.state_id WHERE s.abbreviation = ? AND LOWER(t.name) = LOWER(?) AND t.is_active = 1 LIMIT 1',
                 [$state, $townName]
             );
+        }
+        if ($town === null && $lat !== null && $lng !== null && !$approximate) {
+            $town = $this->nearestTown($lat, $lng, $state);
         }
         if ($town === null && $lat !== null && $lng !== null) {
             $town = $this->nearestTown($lat, $lng, $state);
@@ -212,7 +217,7 @@ final class LocalTorquePackSeeder
     /** @return array<string,mixed>|null */
     private function nearestTown(float $lat, float $lng, string $state): ?array
     {
-        $where = ['t.is_active = 1', 't.latitude IS NOT NULL', 't.longitude IS NOT NULL'];
+        $where = ['t.is_active = 1', "t.coordinate_confidence IN ('authoritative','statistical')", 't.latitude IS NOT NULL', 't.longitude IS NOT NULL'];
         $params = [$lat, $lng, $lat];
         if ($state !== '') {
             $where[] = 's.abbreviation = ?';
@@ -226,6 +231,54 @@ final class LocalTorquePackSeeder
             . ' ORDER BY distance_km ASC LIMIT 1',
             $params
         );
+    }
+
+    /**
+     * Queensland's current mandatory reporting feed supersedes unclaimed GA/OSM
+     * fuel seeds. Claimed providers and non-fuel assignments are never changed.
+     */
+    private function retireSupersededQueenslandFuelSeeds(): int
+    {
+        $rows = Database::select(
+            "SELECT psr.id,psr.provider_id,psr.payload_json FROM provider_source_records psr "
+            . "JOIN providers p ON p.id=psr.provider_id WHERE p.is_unclaimed=1 "
+            . "AND psr.publishable=1 AND psr.source_key IN ('geoscience-australia','openstreetmap','osm')"
+        );
+        $retired = 0;
+        foreach ($rows as $row) {
+            $payload = json_decode((string) ($row['payload_json'] ?? ''), true);
+            if (!is_array($payload) || strtoupper((string) ($payload['state'] ?? '')) !== 'QLD'
+                || !in_array('fuel-station', (array) ($payload['categories'] ?? []), true)) {
+                continue;
+            }
+            $providerId = (int) $row['provider_id'];
+            if ((int) Database::scalar(
+                "SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND source_key='qld-fuel-reporting' AND publishable=1",
+                [$providerId]
+            ) > 0) {
+                continue;
+            }
+            Database::query('UPDATE provider_source_records SET publishable=0,needs_review=1,last_seen_at=NOW() WHERE id=?', [(int) $row['id']]);
+            Database::query(
+                "DELETE a FROM provider_brand_category_assignments a "
+                . "JOIN provider_brand_listings l ON l.id=a.listing_id "
+                . "JOIN brand_provider_categories c ON c.id=a.category_id "
+                . "WHERE l.provider_id=? AND c.category_key='fuel-station'",
+                [$providerId]
+            );
+            Database::query(
+                "UPDATE provider_brand_listings l SET l.status='draft',l.search_visible=0,l.updated_at=NOW() "
+                . 'WHERE l.provider_id=? AND NOT EXISTS (SELECT 1 FROM provider_brand_category_assignments a WHERE a.listing_id=l.id)',
+                [$providerId]
+            );
+            Database::query(
+                "UPDATE providers p SET p.status='pending',p.updated_at=NOW() WHERE p.id=? AND p.is_unclaimed=1 "
+                . "AND NOT EXISTS (SELECT 1 FROM provider_brand_listings l WHERE l.provider_id=p.id AND l.status='active' AND l.search_visible=1)",
+                [$providerId]
+            );
+            $retired++;
+        }
+        return $retired;
     }
 
     /** @param array<string,mixed> $record */

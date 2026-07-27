@@ -31,8 +31,9 @@ final class CaravanPark extends Model
         }
 
         if ($townId !== null && ($lat === null || $lng === null)) {
-            $town = Database::selectOne('SELECT latitude, longitude FROM towns WHERE id = ? AND is_active = 1', [$townId]);
-            if ($town !== null && is_numeric($town['latitude']) && is_numeric($town['longitude'])) {
+            $town = Database::selectOne('SELECT latitude, longitude, coordinate_confidence FROM towns WHERE id = ? AND is_active = 1', [$townId]);
+            if ($town !== null && in_array(($town['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true)
+                && is_numeric($town['latitude']) && is_numeric($town['longitude'])) {
                 $lat = (float) $town['latitude'];
                 $lng = (float) $town['longitude'];
             } else {

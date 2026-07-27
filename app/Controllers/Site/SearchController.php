@@ -243,7 +243,8 @@ final class SearchController extends Controller
             return [$gpsLat, $gpsLng, $label];
         }
 
-        if ($town !== null && $town['latitude'] !== null && $town['longitude'] !== null) {
+        if ($town !== null && $town['latitude'] !== null && $town['longitude'] !== null
+            && in_array(($town['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true)) {
             $label = (string) $town['name'];
             if (!empty($town['state_abbr'])) {
                 $label .= ', ' . $town['state_abbr'];
