@@ -84,6 +84,16 @@ const STATE_REGIONS = {
 };
 const STATES = Object.keys(STATE_REGIONS);
 
+// Australia Post-derived postcode coordinates can represent a shared delivery
+// centroid rather than the named locality. Keep reviewed, authoritative place
+// points here so a future rebuild cannot reintroduce known location errors.
+// Source: Queensland Government, QLD Place Names Gazetteer (population centres)
+// https://spatial-gis.information.qld.gov.au/arcgis/rest/services/Location/QldPlaceNames/MapServer/1
+const OFFICIAL_LOCALITY_COORDINATES = {
+  "QLD:BLUFF": [-23.57972, 149.07056],
+  "QLD:EMU PARK": [-23.2592568, 150.82384347],
+};
+
 function distKm(a, b, c, d) {
   const R = 6371, toRad = (x) => (x * Math.PI) / 180;
   const dLat = toRad(c - a), dLng = toRad(d - b);
@@ -135,7 +145,9 @@ function main() {
     if ((r.type || "") !== "Delivery Area") continue;
     const locality = String(r.locality || "").trim();
     if (!locality) continue;
-    const lat = parseFloat(r.lat), lng = parseFloat(r.long);
+    const officialCoordinates = OFFICIAL_LOCALITY_COORDINATES[`${state}:${locality.toUpperCase()}`];
+    const lat = officialCoordinates ? officialCoordinates[0] : parseFloat(r.lat);
+    const lng = officialCoordinates ? officialCoordinates[1] : parseFloat(r.long);
     if (!lat || !lng || Math.abs(lat) < 0.001) continue;
 
     const key = locality.toUpperCase();
