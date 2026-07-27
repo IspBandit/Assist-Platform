@@ -19,6 +19,7 @@ use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
 use App\Services\CampaignMetrics;
 use App\Models\GarageAsset;
+use App\Models\Provider;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -62,6 +63,13 @@ final class PlatformDatabaseTest extends TestCase
             . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records good WHERE good.provider_id=p.id '
             . 'AND good.publishable=1 AND good.needs_review=0)'
         ));
+
+        $fuelCategoryId = (int) Database::scalar(
+            "SELECT id FROM service_categories WHERE slug='fuel-and-travel-stops'"
+        );
+        $nearGladstone = Provider::forCategoryNear($fuelCategoryId, -23.842, 151.255, 150);
+        self::assertNotEmpty($nearGladstone);
+        self::assertLessThanOrEqual(150.0, (float) $nearGladstone[0]['distance_km']);
     }
 
     public function testPlatformBrandsAndBackfillIntegrity(): void
