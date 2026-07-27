@@ -522,4 +522,21 @@ final class PlatformDatabaseTest extends TestCase
             Database::query('DELETE FROM email_suppressions WHERE email=?', [$email]);
         }
     }
+
+    public function testStagedCampaignSchemaIsInstalled(): void
+    {
+        self::assertTrue(Database::tableExists('notification_test_deliveries'));
+        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name=?",
+                [$column]
+            ));
+        }
+        self::assertSame(1, (int) Database::scalar(
+            "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='email_queue' AND column_name='notification_id'"
+        ));
+        self::assertSame(1, (int) Database::scalar(
+            "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='notification_recipients' AND index_name='uq_notification_recipient_email'"
+        ));
+    }
 }

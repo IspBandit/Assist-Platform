@@ -10,15 +10,16 @@ use Throwable;
 
 /**
  * Resolves the recipient list for a targeted broadcast. Customer audiences are
- * limited to people who opted in to updates (marketing_opt_in); provider
- * audiences are treated as operational business contacts. Results are
- * de-duplicated by lower-cased email address.
+ * limited to people who opted in to updates. Provider audiences additionally
+ * require a dated, supported consent record; a public business address or an
+ * active listing is never treated as consent. Results are de-duplicated by
+ * lower-cased email address.
  */
 final class BroadcastAudience
 {
     public const TYPES = [
         'all'            => 'Everyone opted in',
-        'providers'      => 'All active providers',
+        'providers'      => 'Providers with documented marketing consent',
         'customers_open' => 'Customers with open requests',
         'town'           => 'By town (customers + local providers)',
         'region'         => 'By region (customers + providers)',
@@ -119,9 +120,12 @@ final class BroadcastAudience
             $joins .= ' INNER JOIN provider_services s ON s.provider_id=p.id AND s.category_id=?';
             $params[] = $categoryId;
         }
+        $consentBases = "'express_written','express_phone','express_web','inferred_role_relevant'";
         return Database::select(
             "SELECT DISTINCT p.id AS provider_id,COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')) AS email,p.business_name AS name "
-            . "FROM providers p{$joins} WHERE p.status='active' AND p.deleted_at IS NULL AND p.marketing_opt_in=1{$where}",
+            . "FROM providers p{$joins} WHERE p.status='active' AND p.deleted_at IS NULL AND p.marketing_opt_in=1 "
+            . "AND p.marketing_consented_at IS NOT NULL AND p.marketing_consent_source IN ({$consentBases}) "
+            . "AND NULLIF(TRIM(p.marketing_consent_evidence),'') IS NOT NULL{$where}",
             $params
         );
     }

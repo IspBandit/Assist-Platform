@@ -7,6 +7,7 @@
 /** @var array<int,array<string,mixed>> $towns */
 /** @var array<int,array<string,mixed>> $regions */
 /** @var array<int,array<string,mixed>> $categories */
+/** @var array<string,array{label:string,subject:string,body:string}> $campaignStyles */
 $this->extend('layouts.admin');
 $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
 ?>
@@ -19,12 +20,20 @@ $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
 
     <?php if ($formError): ?><div class="alert alert-error"><?= $this->e($formError) ?></div><?php endif; ?>
     <?php if ($previewCount !== null && $formError === null): ?>
-        <div class="alert alert-success">This audience currently has <strong><?= (int) $previewCount ?></strong> recipient(s). Review the message, then send or schedule.</div>
+        <div class="alert alert-success">This audience currently has <strong><?= (int) $previewCount ?></strong> consent-eligible recipient(s). Save the draft, send an internal test, then use the staged pilot.</div>
     <?php endif; ?>
 
     <form method="post" action="<?= e(url('admin/notifications/save')) ?>" class="stack" style="margin-top:1rem">
         <?= csrf_field() ?>
 
+        <div class="form-group">
+            <label for="copy_style">Relevant provider-email starter (optional)</label>
+            <div class="btn-row">
+                <select id="copy_style" name="copy_style"><option value="">Choose a service family</option><?php foreach ($campaignStyles as $key => $style): ?><option value="<?= e_attr($key) ?>" <?= (string) $v('copy_style') === $key ? 'selected' : '' ?>><?= $this->e($style['label']) ?></option><?php endforeach; ?></select>
+                <button type="submit" name="action" value="starter" class="btn btn-secondary" formnovalidate>Apply starter</button>
+            </div>
+            <p class="muted">Each starter is relevant and lightly human. Verify the selected audience and every claim before saving.</p>
+        </div>
         <div class="form-group"><label for="title">Title / subject</label><input type="text" id="title" name="title" value="<?= e_attr((string) $v('title')) ?>" required></div>
         <div class="form-group"><label for="body">Message (HTML allowed)</label><textarea id="body" name="body" rows="10" required><?= e((string) $v('body')) ?></textarea></div>
 
@@ -62,17 +71,11 @@ $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="scheduled_at">Schedule for (optional)</label>
-            <input type="datetime-local" id="scheduled_at" name="scheduled_at" value="<?= e_attr((string) $v('scheduled_at')) ?>">
-        </div>
-
         <div class="btn-row">
             <button type="submit" name="action" value="preview" class="btn btn-secondary">Preview recipients</button>
-            <button type="submit" name="action" value="draft" class="btn btn-ghost">Save draft</button>
-            <button type="submit" name="action" value="schedule" class="btn btn-ghost">Schedule</button>
-            <button type="submit" name="action" value="send" class="btn btn-primary">Send now</button>
+            <button type="submit" name="action" value="draft" class="btn btn-primary">Save staged campaign</button>
         </div>
+        <p class="muted">Bulk “send now” is disabled. Campaigns progress through internal test → 25-provider pilot → reviewed 50/day → reviewed 100/day.</p>
     </form>
 </div>
 <?php $this->endSection(); ?>
