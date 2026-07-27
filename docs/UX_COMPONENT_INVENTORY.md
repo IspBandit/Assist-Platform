@@ -36,6 +36,10 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Garage asset card | `/account/garage`, `.garage-card` | authenticated shared component | Asset type, jurisdiction, document count, next expiry, keyboard focus and mobile stacking |
 | Compliance wallet row | `/account/garage/{id}`, `.garage-document` | authenticated shared component | Owner-supplied status, expiry, authenticated download and removal |
 | Garage next-action card | `/account/garage/{id}`, `.garage-action-grid` | authenticated shared component | Non-sensitive rules/provider/tool handoff; private fields are never passed |
+| Guided compliance builder | `/rules/guided`, `.guided-form`, `.guided-steps` | shared public journey | Three native fields; official sources and limitation precede save/provider actions |
+| Owner compliance centre | `/account/compliance`, `.compliance-*` | authenticated shared component | Separate unticked consent for source alerts and limited-context handoff |
+| Provider trust and campaign workspace | `/provider/growth`, `.growth-*` | provider-owned component | Pending-by-default evidence and ads; organic analytics remain separate |
+| Trust, rules and growth control | `/admin/trust-growth`, `.admin-trust-*` | permission-scoped admin component | Source fail-closed queue, evidence review, pricing/relevance approval and alert audit |
 
 ### Current token debt
 

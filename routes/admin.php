@@ -33,6 +33,11 @@ return static function (Router $router): void {
         $router->get('/data-intelligence', 'Admin\DataIntelligenceController@index', 'admin.data-intelligence');
         $router->post('/data-intelligence/tasks', 'Admin\DataIntelligenceController@createTask', 'admin.data-intelligence.tasks');
         $router->post('/data-intelligence/tasks/status', 'Admin\DataIntelligenceController@updateTask', 'admin.data-intelligence.tasks.status');
+        $router->get('/trust-growth', 'Admin\TrustGrowthController@index', 'admin.trust-growth');
+        $router->post('/trust-growth/check-sources', 'Admin\TrustGrowthController@checkSources', 'admin.trust-growth.check-sources');
+        $router->post('/trust-growth/source', 'Admin\TrustGrowthController@reviewSource', 'admin.trust-growth.source');
+        $router->post('/trust-growth/credential', 'Admin\TrustGrowthController@reviewCredential', 'admin.trust-growth.credential');
+        $router->post('/trust-growth/campaign', 'Admin\TrustGrowthController@reviewCampaign', 'admin.trust-growth.campaign');
 
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).

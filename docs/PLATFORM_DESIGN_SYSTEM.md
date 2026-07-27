@@ -87,6 +87,24 @@ owner-supplied and never receive a verified badge without separate review.
 Garage action cards may pass non-sensitive type and jurisdiction context into
 official rules or provider search. They do not pass private notes or documents.
 
+### Guided compliance and commercial separation
+
+The guided check uses three questions (jurisdiction, vehicle and job), followed
+by a numbered practical sequence and authority-linked cards. The limitation is
+always visible with the result. Saving, subscribing and provider handoff are
+separate actions; alert and handoff consent use unticked native checkboxes with
+plain-language scope.
+
+Verified capability labels require reviewed evidence and show jurisdiction and
+validity. They must never use authority seals or claim government endorsement.
+Sponsored provider cards remain in a labelled landmark after official results.
+Paid dashboards label paid impressions, clicks, attributed contacts and media
+spend separately from organic discovery.
+
+The administrative trust dashboard uses the same status vocabulary everywhere:
+current, review, overdue, failed, pending, verified, rejected, paused and active.
+Colour supplements those words and never replaces them.
+
 ## Brand expression
 
 - **VanAssist:** travel confidence, regional utility and caravan/RV assistance.

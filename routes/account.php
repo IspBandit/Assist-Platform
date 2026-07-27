@@ -18,6 +18,11 @@ return static function (Router $router): void {
         $router->post('/garage/{id}', 'GarageController@update', 'account.garage.update');
         $router->post('/garage/{id}/remove', 'GarageController@remove', 'account.garage.remove');
         $router->post('/garage/{id}/documents', 'GarageController@uploadDocument', 'account.garage.documents.upload');
+        $router->get('/compliance', 'ComplianceController@index', 'account.compliance');
+        $router->post('/compliance/save', 'ComplianceController@save', 'account.compliance.save');
+        $router->post('/compliance/subscribe', 'ComplianceController@subscribe', 'account.compliance.subscribe');
+        $router->post('/compliance/unsubscribe', 'ComplianceController@unsubscribe', 'account.compliance.unsubscribe');
+        $router->post('/compliance/handoff', 'ComplianceController@handoff', 'account.compliance.handoff');
         $router->get('/towing-combinations', 'Site\TowSmartController@combinations', 'account.towing-combinations');
         $router->post('/towing-combinations', 'Site\TowSmartController@save', 'account.towing-combinations.save');
 

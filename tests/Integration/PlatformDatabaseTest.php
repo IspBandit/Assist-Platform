@@ -15,6 +15,8 @@ use App\Services\EmailQueue;
 use App\Services\Mailer;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
+use App\Services\RegulatoryAlertService;
+use App\Services\CampaignMetrics;
 use App\Models\GarageAsset;
 use PHPUnit\Framework\TestCase;
 
@@ -160,6 +162,79 @@ final class PlatformDatabaseTest extends TestCase
             self::assertNull(GarageAsset::ownedDocument($documentId, $otherId));
         } finally {
             Database::query('DELETE FROM users WHERE id IN (?,?)', [$ownerId, $otherId]);
+        }
+    }
+
+    public function testComplianceGrowthAndFreshnessSchemaIsInstalled(): void
+    {
+        foreach ([
+            'regulatory_journeys', 'regulatory_alert_subscriptions', 'regulatory_alert_deliveries',
+            'regulatory_provider_handoffs', 'provider_capability_credentials', 'advertising_campaign_daily_metrics',
+        ] as $table) {
+            self::assertTrue(Database::tableExists($table), $table . ' was not installed');
+        }
+        foreach (['objective','daily_budget_cents','total_budget_cents','billing_model','unit_price_cents'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'advertising_campaigns\' AND column_name=?',
+                [$column]
+            ));
+        }
+        self::assertSame(2, (int) Database::scalar("SELECT COUNT(*) FROM permissions WHERE slug IN ('regulatory.manage','campaigns.manage')"));
+        self::assertSame(1, (int) Database::scalar("SELECT COUNT(*) FROM scheduled_tasks WHERE task_key='regulatory_alerts'"));
+    }
+
+    public function testChangedOfficialSourceQueuesOnlyConsentedMatchingAlert(): void
+    {
+        $suffix = bin2hex(random_bytes(5));
+        $email = 'regulatory-alert-' . $suffix . '@example.test';
+        $userId = Database::insert("INSERT INTO users (name,email,password_hash,status,created_at) VALUES ('Alert owner',?,'test','active',NOW())", [$email]);
+        $document = Database::selectOne(
+            "SELECT d.* FROM regulatory_documents d INNER JOIN regulatory_document_brands db ON db.document_id=d.id AND db.brand_id=1 "
+            . "WHERE d.jurisdiction_code='QLD' AND JSON_CONTAINS(d.vehicle_classes_json,JSON_QUOTE('trailer')) LIMIT 1"
+        );
+        self::assertNotNull($document);
+        $documentId = (int) $document['id'];
+        $subscriptionId = Database::insert(
+            "INSERT INTO regulatory_alert_subscriptions (user_id,brand_id,jurisdiction_code,vehicle_class,document_kind,status,email_enabled,consented_at,consent_source,created_at) VALUES (?,1,'QLD','trailer',?,'active',1,NOW(),'integration',NOW())",
+            [$userId, (string) $document['document_kind']]
+        );
+        try {
+            Database::query("UPDATE regulatory_documents SET publication_status='review',change_detected_at=NOW() WHERE id=?", [$documentId]);
+            $result = (new RegulatoryAlertService())->queueReviewedChanges();
+            self::assertGreaterThanOrEqual(1, $result['queued']);
+            self::assertSame(1, (int) Database::scalar('SELECT COUNT(*) FROM regulatory_alert_deliveries WHERE subscription_id=? AND document_id=? AND status=\'queued\'', [$subscriptionId, $documentId]));
+            self::assertSame(1, (int) Database::scalar('SELECT COUNT(*) FROM email_queue WHERE recipient_email=? AND template_key=\'regulatory_source_change\'', [$email]));
+            self::assertSame(0, count(\App\Models\RegulatoryDocument::publicLibrary(1, ['jurisdiction' => 'QLD', 'vehicle' => 'trailer', 'kind' => (string) $document['document_kind'], 'q' => (string) $document['title']])));
+        } finally {
+            Database::query('DELETE FROM email_queue WHERE recipient_email=?', [$email]);
+            Database::query('DELETE FROM users WHERE id=?', [$userId]);
+            Database::query('UPDATE regulatory_documents SET publication_status=?,change_detected_at=? WHERE id=?', [$document['publication_status'], $document['change_detected_at'], $documentId]);
+            BrandContext::clear();
+        }
+    }
+
+    public function testCampaignMetricsRemainCampaignScoped(): void
+    {
+        $providerId = Database::insert(
+            "INSERT INTO providers (business_name,slug,email,status,created_at) VALUES ('Metric provider',?,'metric@example.test','active',NOW())",
+            ['metric-provider-' . bin2hex(random_bytes(4))]
+        );
+        $campaignId = Database::insert(
+            "INSERT INTO advertising_campaigns (brand_id,advertiser_provider_id,name,objective,status,headline,destination_url,daily_budget_cents,total_budget_cents,billing_model,unit_price_cents,created_at) VALUES (1,?,'Metric test','provider_profile','active','Relevant help','https://example.test',1000,5000,'cpc',250,NOW())",
+            [$providerId]
+        );
+        try {
+            CampaignMetrics::impressions([$campaignId, $campaignId]);
+            CampaignMetrics::click($campaignId, 250);
+            CampaignMetrics::conversion($campaignId);
+            $metric = Database::selectOne('SELECT * FROM advertising_campaign_daily_metrics WHERE campaign_id=? AND metric_date=CURRENT_DATE', [$campaignId]);
+            self::assertNotNull($metric);
+            self::assertSame(1, (int) $metric['impressions']);
+            self::assertSame(1, (int) $metric['clicks']);
+            self::assertSame(1, (int) $metric['conversions']);
+            self::assertSame(250, (int) $metric['spend_cents']);
+        } finally {
+            Database::query('DELETE FROM providers WHERE id=?', [$providerId]);
         }
     }
 

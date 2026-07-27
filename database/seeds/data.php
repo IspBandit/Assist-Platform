@@ -412,6 +412,7 @@ return [
         'send_run_reminders'       => 'Send run reminders',
         'provider_followups'       => 'Send provider follow-up reminders',
         'document_expiry'          => 'Send document expiry reminders',
+        'regulatory_alerts'        => 'Queue consented official-source change alerts',
         'expire_requests'          => 'Expire old unverified requests',
         'update_town_demand'       => 'Update town demand totals',
         'database_backup'          => 'Generate database backup',

@@ -22,6 +22,9 @@ a domain map, not a substitute for reading the relevant ordered migration.
 | TrailerWise | `trailer_listings` | Provider-owned, TrailerWise-scoped, currently secondary product capability |
 | Vehicle regulation | `regulatory_authorities`, `regulatory_documents`, `regulatory_source_checks`, `regulatory_document_brands` | Shared official-source register with brand-relevance mapping for all four platforms; issuing authorities retain document ownership |
 | Owner Garage | `garage_assets`, `garage_documents`, `garage_reminder_preferences`, `garage_brand_activity` | User-scoped vehicles/towables and private compliance wallet shared across brands; origin brand is context, never an access boundary |
+| Compliance journeys | `regulatory_journeys`, `regulatory_alert_subscriptions`, `regulatory_alert_deliveries`, `regulatory_provider_handoffs` | Owner-scoped saved pathways, explicit alert/handoff consent and auditable limited context |
+| Provider trust | `provider_capability_credentials` | Evidence-backed, expiring capability claims; only reviewed current rows may display publicly |
+| Campaign performance | `advertising_campaign_daily_metrics` plus `advertising_campaigns` budget/pricing columns | Campaign-only paid impressions, clicks, attributed contacts and media-value spend; never organic rank |
 | Operations | migrations, audit/system logs, tasks, health, exports, rate limits | Administrative/operational data |
 
 ## Migration rules

@@ -28,7 +28,8 @@ $this->extend('layouts.public');
             <h1><?= $this->e($page['heading']) ?></h1>
             <p><?= $this->e($page['intro']) ?></p>
             <div class="rules-hero-actions">
-                <a class="btn btn-light btn-lg" href="#rules-results">Search official rules</a>
+                <a class="btn btn-light btn-lg" href="<?= e(url('rules/guided')) ?>">Build a guided check</a>
+                <a class="btn btn-glass btn-lg" href="#rules-results">Search all rules</a>
                 <a class="btn btn-glass btn-lg" href="#how-current">How updates work</a>
             </div>
         </div>
@@ -176,7 +177,7 @@ $this->extend('layouts.public');
                 </div>
                 <div class="rules-sponsor-grid">
                     <?php foreach ($sponsoredCampaigns as $campaign): ?>
-                        <a href="<?= $this->e((string) $campaign['destination_url']) ?>" target="_blank" rel="sponsored noopener noreferrer">
+                        <a href="<?= e(url('sponsor/' . (int) $campaign['id'] . '/click')) ?>" target="_blank" rel="sponsored noopener noreferrer">
                             <small>Sponsored provider</small>
                             <strong><?= $this->e((string) $campaign['headline']) ?></strong>
                             <?php if (!empty($campaign['body'])): ?><span><?= $this->e((string) $campaign['body']) ?></span><?php endif; ?>

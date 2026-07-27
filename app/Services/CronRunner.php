@@ -34,6 +34,7 @@ final class CronRunner
             'send_run_reminders'       => fn () => $this->sendRunReminders(),
             'provider_followups'       => fn () => $this->providerFollowups(),
             'document_expiry'          => fn () => $this->documentExpiry(),
+            'regulatory_alerts'         => static fn () => (new RegulatoryAlertService())->queueReviewedChanges(),
             // Demand analytics (Phase 11). No-op unless the demand_analytics flag is on.
             'aggregate_daily_metrics'  => fn () => $this->aggregateDailyMetrics(),
             'customer_followups'       => fn () => $this->customerFollowups(),
@@ -242,7 +243,45 @@ final class CronRunner
                 $sent++;
             }
         }
-        return ['queued' => $sent];
+        $ownerRows = Database::select(
+            "SELECT d.id,d.label,d.expires_at,a.nickname,u.email,u.name,b.brand_key "
+            . "FROM garage_documents d INNER JOIN garage_assets a ON a.id=d.garage_asset_id AND a.deleted_at IS NULL "
+            . "INNER JOIN users u ON u.id=a.user_id INNER JOIN brands b ON b.id=a.created_in_brand_id "
+            . "INNER JOIN garage_reminder_preferences rp ON rp.garage_asset_id=a.id AND rp.user_id=a.user_id "
+            . "AND rp.reminder_kind='document_expiry' AND rp.enabled=1 AND rp.email_enabled=1 "
+            . "WHERE d.expires_at IN ({$placeholders})",
+            $dates
+        );
+        $ownerQueued = 0;
+        $hadPreviousBrand = \App\Platform\Brand\BrandContext::hasCurrent();
+        $previousBrand = $hadPreviousBrand ? \App\Platform\Brand\BrandContext::current() : null;
+        $registry = \App\Platform\Brand\BrandRegistry::fromArray((array) config('brands.registry', []));
+        try {
+            foreach ($ownerRows as $row) {
+                $email = (string) $row['email'];
+                $brand = $registry->find((string) $row['brand_key']);
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $brand === null) {
+                    continue;
+                }
+                \App\Platform\Brand\BrandContext::set($brand);
+                if (EmailQueue::queueTemplate('document_expiry_reminder', $email, (string) $row['name'], [
+                    'provider_name' => (string) $row['name'],
+                    'document_name' => (string) $row['label'],
+                    'vehicle_name' => (string) $row['nickname'],
+                    'expiry_date' => (string) $row['expires_at'],
+                    'action_url' => $brand->url() . '/account/garage',
+                ])) {
+                    $ownerQueued++;
+                }
+            }
+        } finally {
+            if ($previousBrand !== null) {
+                \App\Platform\Brand\BrandContext::set($previousBrand);
+            } else {
+                \App\Platform\Brand\BrandContext::clear();
+            }
+        }
+        return ['provider_queued' => $sent, 'owner_queued' => $ownerQueued];
     }
 
     /**

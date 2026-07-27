@@ -87,3 +87,16 @@ decorative when the adjacent live heading carries the meaning; forms and safety
 messages retain contrast and keyboard order. **Evidence:** exact-dimension and
 byte-budget tests plus 1440 px and true 390 px render/overflow inspection. Asset
 provenance and budgets are recorded in `PREMIUM_VISUAL_ASSETS.md`.
+
+## 2026-07-27 — Guidance ends in consent, not an invisible funnel
+
+**Context:** EXP-006/007, CORE-010, DATA-009 and COM-006/007. An official rule
+may lead to alerts or a provider, but those are different decisions. **Decision:**
+the guided check shows authority sources and limitations first. Save, email alert
+and provider handoff are separate actions. Alert and handoff checkboxes begin
+unticked and state the exact scope. Provider credentials are pending until
+evidence review; campaigns are pending until relevance, destination, budget and
+price review. **Accessibility:** native controls, persistent labels, textual
+statuses, keyboard order and single-column mobile fallbacks. **Evidence:** strict
+selection tests, changed-source alert integration, campaign-scoped metrics,
+owner isolation and representative renders.
