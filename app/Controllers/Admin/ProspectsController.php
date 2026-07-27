@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
+use App\Services\EmailSuppression;
 
 /**
  * Provider prospect CRM: track outreach to potential providers, log contact
@@ -87,6 +88,10 @@ final class ProspectsController extends Controller
     {
         $this->requirePermission('prospects.manage');
         $id = (int) $request->input('id');
+        $existing = $id > 0 ? Database::selectOne('SELECT * FROM provider_prospects WHERE id=? AND deleted_at IS NULL', [$id]) : null;
+        if ($id > 0 && $existing === null) {
+            $this->abort(404);
+        }
         $name = trim((string) $request->input('business_name'));
         if ($name === '') {
             return $this->redirectWith('/admin/prospects', 'error', 'Business name is required.');
@@ -94,6 +99,13 @@ final class ProspectsController extends Controller
 
         $status = in_array($request->input('outreach_status'), self::STATUSES, true) ? (string) $request->input('outreach_status') : 'not_contacted';
         $source = in_array($request->input('source'), ['google', 'facebook', 'referral', 'caravan_park', 'club', 'other'], true) ? (string) $request->input('source') : 'other';
+        $consentRecorded = $request->input('consent_recorded') ? 1 : 0;
+        $consentBasis = trim((string) $request->input('marketing_consent_basis'));
+        $consentEvidence = trim((string) $request->input('marketing_consent_evidence'));
+        $allowedConsentBases = ['express_written', 'express_phone', 'express_web', 'inferred_role_relevant'];
+        if ($consentRecorded && (!in_array($consentBasis, $allowedConsentBases, true) || $consentEvidence === '')) {
+            return $this->redirectWith('/admin/prospects/' . ($id ? 'edit?id=' . $id : 'new'), 'error', 'Record the consent basis and supporting evidence before enabling promotional email.');
+        }
 
         $data = [
             'business_name'       => $name,
@@ -108,6 +120,12 @@ final class ProspectsController extends Controller
             'outreach_status'     => $status,
             'next_follow_up_date' => $request->input('next_follow_up_date') ?: null,
             'notes'               => trim((string) $request->input('notes')) ?: null,
+            'consent_recorded'    => $consentRecorded,
+            'marketing_consented_at' => $consentRecorded
+                ? ((string) ($existing['marketing_consented_at'] ?? '') ?: date('Y-m-d H:i:s'))
+                : null,
+            'marketing_consent_basis' => $consentRecorded ? $consentBasis : null,
+            'marketing_consent_evidence' => $consentRecorded ? mb_substr($consentEvidence, 0, 500) : null,
             'updated_at'          => date('Y-m-d H:i:s'),
         ];
 
@@ -137,6 +155,9 @@ final class ProspectsController extends Controller
         );
         if ($prospect === null) {
             $this->abort(404);
+        }
+        if (empty($prospect['consent_recorded']) || empty($prospect['marketing_consent_basis']) || empty($prospect['marketing_consent_evidence'])) {
+            return $this->redirectWith('/admin/prospects/show?id=' . $id, 'error', 'Documented promotional-email consent is required before sending an invitation.');
         }
 
         return $this->view('admin.prospects.show', [
@@ -193,23 +214,30 @@ final class ProspectsController extends Controller
             . 'VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), ?, NOW())',
             [$id, $email, hash('sha256', $token), $days, current_user()['id'] ?? null]
         );
-        Database::query("UPDATE provider_prospects SET outreach_status = 'invited', updated_at = NOW() WHERE id = ?", [$id]);
-
         $acceptUrl = url('provider/join/' . $token);
         $queued = EmailQueue::queueTemplate('provider_invitation', $email, (string) $prospect['business_name'], [
             'provider_name' => (string) $prospect['business_name'],
             'action_url'    => $acceptUrl,
-        ]);
+            'unsubscribe_url' => EmailSuppression::unsubscribeUrl($email),
+        ], null, 'marketing');
         if (!$queued) {
-            EmailQueue::queueRaw(
+            $queued = EmailQueue::queueRaw(
                 $email,
                 (string) $prospect['business_name'],
                 'You are invited to join VanAssist',
                 '<p>Hi ' . e((string) $prospect['business_name']) . ',</p><p>You are invited to create your VanAssist provider profile.</p>'
                 . '<p><a href="' . e($acceptUrl) . '">Accept your invitation</a></p>',
-                "You are invited to join VanAssist: {$acceptUrl}"
+                "You are invited to join VanAssist: {$acceptUrl}",
+                null,
+                null,
+                'marketing'
             );
         }
+        if (!$queued) {
+            Database::query('DELETE FROM provider_invitations WHERE token_hash=? AND accepted_at IS NULL', [hash('sha256', $token)]);
+            return $this->redirectWith('/admin/prospects/show?id=' . $id, 'error', 'The recipient has unsubscribed or is suppressed from email delivery.');
+        }
+        Database::query("UPDATE provider_prospects SET outreach_status = 'invited', updated_at = NOW() WHERE id = ?", [$id]);
 
         AuditLog::record('prospect.invited', 'provider_prospect', (string) $id, null, $email);
         return $this->redirectWith('/admin/prospects/show?id=' . $id, 'success', 'Invitation sent to ' . $email . '.');

@@ -307,6 +307,7 @@ return [
                 ['label' => 'Find a business', 'path' => '/providers'],
                 ['label' => 'Categories', 'path' => '/services'],
                 ['label' => 'Rules & modifications', 'path' => '/rules'],
+                ['label' => 'Motorsport rules', 'path' => '/motorsport'],
                 ['label' => 'List your business', 'path' => '/for-providers'],
             ],
             'footer' => [

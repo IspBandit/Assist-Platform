@@ -11,21 +11,21 @@ $wrap = static function (string $title, string $body): string {
     return "<div style=\"font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;color:#2b2f33\">"
         . "<h2 style=\"color:#0f6e6e\">{$title}</h2>{$body}"
         . "<hr style=\"border:none;border-top:1px solid #e3e0d8;margin:24px 0\">"
-        . "<p style=\"font-size:12px;color:#8a8f94\">{{brand_name}} &middot; {{brand_domain}} &middot; {{support_email}}</p></div>";
+        . "<p style=\"font-size:12px;color:#8a8f94\">{{legal_name}} &middot; {{brand_domain}} &middot; {{support_email}}</p></div>";
 };
 
 return [
     [
         'template_key' => 'email_verification',
         'name'    => 'Email verification',
-        'subject' => 'Confirm your VanAssist email',
-        'html_body' => $wrap('Confirm your email', '<p>Hi {{customer_name}},</p><p>Please confirm your email address to activate your VanAssist account or request.</p><p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Confirm email</a></p><p>If the button does not work, copy this link: {{action_url}}</p>'),
-        'text_body' => "Hi {{customer_name}},\n\nConfirm your email: {{action_url}}\n\nVanAssist",
+        'subject' => 'Confirm your {{brand_name}} email',
+        'html_body' => $wrap('Confirm your email', '<p>Hi {{customer_name}},</p><p>Please confirm your email address to activate your {{brand_name}} account or request.</p><p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Confirm email</a></p><p>If the button does not work, copy this link: {{action_url}}</p>'),
+        'text_body' => "Hi {{customer_name}},\n\nConfirm your email: {{action_url}}\n\n{{brand_name}}",
     ],
     [
         'template_key' => 'password_reset',
         'name'    => 'Password reset',
-        'subject' => 'Reset your VanAssist password',
+        'subject' => 'Reset your {{brand_name}} password',
         'html_body' => $wrap('Reset your password', '<p>Hi {{customer_name}},</p><p>We received a request to reset your password. This link expires soon.</p><p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Reset password</a></p><p>If you did not request this, you can ignore this email.</p>'),
         'text_body' => "Hi {{customer_name}},\n\nReset your password: {{action_url}}\n\nIf you did not request this, ignore this email.",
     ],
@@ -115,6 +115,7 @@ return [
             . '<p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Claim this listing — it&rsquo;s free</a></p>'
             . '<p style="font-size:.9rem">If the button does not work, copy this link into your browser:<br><a href="{{action_url}}">{{action_url}}</a></p>'
             . '<p style="font-size:.85rem;color:#8a8f94">This link is personal to your business and expires in {{expiry_days}} days. If this is not your business, you can ignore this email — no account will be created unless you claim the listing.</p>'
+            . '<p style="font-size:.85rem"><a href="{{unsubscribe_url}}">Unsubscribe from promotional email</a></p>'
         ),
         'text_body' => "Hi {{greeting}},\n\n"
             . "VanAssist is a free regional directory (during our launch) that helps caravan and RV travellers find repair and service help across Australia.\n\n"
@@ -124,7 +125,7 @@ return [
             . "CLAIMING IS FREE during our launch — no listing fees, no subscription and no credit card required. Claiming lets you verify your details, update services and coverage, and receive customer requests.\n\n"
             . "Claim your listing:\n{{action_url}}{{founding_offer_text}}\n\n"
             . "Learn more: {{site_url}}\n\n"
-            . "This link expires in {{expiry_days}} days. If this is not your business, you can ignore this email.",
+            . "This link expires in {{expiry_days}} days. If this is not your business, you can ignore this email.\n\nUnsubscribe: {{unsubscribe_url}}",
     ],
     [
         'template_key' => 'provider_founding_graphic_unlocked',
@@ -159,28 +160,28 @@ return [
     [
         'template_key' => 'provider_invitation',
         'name'    => 'Provider invitation',
-        'subject' => 'You are invited to join VanAssist',
-        'html_body' => $wrap('Join VanAssist', '<p>Hi {{provider_name}},</p><p>You have been invited to create your VanAssist provider profile and start receiving local customer requests.</p><p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Accept your invitation</a></p><p>This link expires in 14 days. If the button does not work, copy this link: {{action_url}}</p>'),
-        'text_body' => "Hi {{provider_name}},\n\nYou are invited to join VanAssist: {{action_url}}\n\nThis link expires in 14 days.",
+        'subject' => 'You are invited to join {{brand_name}}',
+        'html_body' => $wrap('Join {{brand_name}}', '<p>Hi {{provider_name}},</p><p>You have been invited to create your {{brand_name}} provider profile and start receiving relevant local customer requests.</p><p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none">Accept your invitation</a></p><p>This link expires in 14 days. If the button does not work, copy this link: {{action_url}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe from promotional email</a></p>'),
+        'text_body' => "Hi {{provider_name}},\n\nYou are invited to join {{brand_name}}: {{action_url}}\n\nThis link expires in 14 days.\n\nUnsubscribe: {{unsubscribe_url}}",
     ],
     [
         'template_key' => 'provider_application_received',
         'name'    => 'Provider application received',
         'subject' => 'We received your provider application',
-        'html_body' => $wrap('Application received', '<p>Hi {{provider_name}},</p><p>Thanks for applying to join VanAssist. We will review your details and verification documents.</p>'),
+        'html_body' => $wrap('Application received', '<p>Hi {{provider_name}},</p><p>Thanks for applying to join {{brand_name}}. We will review your details and verification documents.</p>'),
         'text_body' => "Hi {{provider_name}},\n\nWe received your provider application.",
     ],
     [
         'template_key' => 'provider_approved',
         'name'    => 'Provider approved',
-        'subject' => 'Your VanAssist provider profile is approved',
+        'subject' => 'Your {{brand_name}} provider profile is approved',
         'html_body' => $wrap('You are approved', '<p>Hi {{provider_name}},</p><p>Your provider profile is approved and now public. You can create service runs and receive matching requests.</p><p><a href="{{action_url}}">Go to your dashboard</a></p>'),
         'text_body' => "Hi {{provider_name}},\n\nYour provider profile is approved: {{action_url}}",
     ],
     [
         'template_key' => 'provider_rejected',
         'name'    => 'Provider rejected',
-        'subject' => 'About your VanAssist provider application',
+        'subject' => 'About your {{brand_name}} provider application',
         'html_body' => $wrap('Application update', '<p>Hi {{provider_name}},</p><p>Thank you for your interest. Unfortunately we are unable to approve your application at this time.</p>'),
         'text_body' => "Hi {{provider_name}},\n\nWe are unable to approve your application at this time.",
     ],

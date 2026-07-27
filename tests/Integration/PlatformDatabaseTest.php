@@ -12,6 +12,7 @@ use App\Middleware\RateLimit as RateLimitMiddleware;
 use App\Platform\Brand\BrandContext;
 use App\Platform\Brand\BrandRegistry;
 use App\Services\EmailQueue;
+use App\Services\EmailSuppression;
 use App\Services\Mailer;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
@@ -112,6 +113,19 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(0, (int) Database::scalar(
             "SELECT COUNT(*) FROM regulatory_documents WHERE is_public=1 AND official_document<>1"
         ));
+    }
+
+    public function testMotorsportLibraryHasCompleteTaxonomyRulesAndVenueLayers(): void
+    {
+        foreach (['motorsport_authorities','motorsport_families','motorsport_disciplines','motorsport_documents','motorsport_document_families','motorsport_venues','motorsport_venue_families','motorsport_source_checks'] as $table) {
+            self::assertTrue(Database::tableExists($table), $table . ' was not installed');
+        }
+        self::assertSame(9, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_families'));
+        self::assertGreaterThanOrEqual(55, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_disciplines'));
+        self::assertGreaterThanOrEqual(15, (int) Database::scalar("SELECT COUNT(*) FROM motorsport_documents WHERE is_public=1 AND publication_status='current'"));
+        self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_families f WHERE NOT EXISTS (SELECT 1 FROM motorsport_document_families df WHERE df.family_key=f.family_key)'));
+        self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_families f WHERE NOT EXISTS (SELECT 1 FROM motorsport_venue_families vf WHERE vf.family_key=f.family_key)'));
+        self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM motorsport_venues WHERE website_url IS NULL AND calendar_url IS NULL'));
     }
 
     public function testSharedGarageSchemaUsesUserOwnershipInsteadOfBrandIsolation(): void
@@ -369,6 +383,46 @@ final class PlatformDatabaseTest extends TestCase
         self::assertStringNotContainsString('vanassist.com.au', (string) $trailerWise['from_address']);
     }
 
+    public function testSharedTemplatesAndDedicatedMailboxProbesAreBrandSafe(): void
+    {
+        $sharedKeys = [
+            'email_verification', 'password_reset', 'provider_invitation',
+            'provider_application_received', 'provider_approved', 'provider_rejected',
+        ];
+        $placeholders = implode(',', array_fill(0, count($sharedKeys), '?'));
+        $templates = Database::select(
+            "SELECT template_key,subject,html_body,text_body FROM email_templates WHERE template_key IN ({$placeholders})",
+            $sharedKeys
+        );
+
+        self::assertCount(count($sharedKeys), $templates);
+        foreach ($templates as $template) {
+            $copy = implode("\n", [
+                (string) $template['subject'],
+                (string) $template['html_body'],
+                (string) $template['text_body'],
+            ]);
+            self::assertStringContainsString('{{brand_name}}', $copy);
+            self::assertStringNotContainsString('VanAssist', $copy);
+        }
+
+        self::assertSame(3, (int) Database::scalar(
+            "SELECT COUNT(*) FROM email_queue WHERE template_key IN "
+            . "('vanassist_dedicated_mailbox_probe_20260728','towsmart_dedicated_mailbox_probe_20260728','trailerwise_dedicated_mailbox_probe_20260728') "
+            . "AND status IN ('pending','processing','sent')"
+        ));
+    }
+
+    public function testFacebookPublishingAuditColumnsAreInstalled(): void
+    {
+        foreach (['facebook_post_id','facebook_publish_error','facebook_published_at','facebook_published_by'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'social_media_assets\' AND column_name=?',
+                [$column]
+            ));
+        }
+    }
+
     public function testTemplateQueueInjectsCurrentBrandIdentity(): void
     {
         $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
@@ -393,6 +447,48 @@ final class PlatformDatabaseTest extends TestCase
             if ($queueId !== null) { Database::query('DELETE FROM email_queue WHERE id = ?', [$queueId]); }
             Database::query('DELETE FROM email_templates WHERE template_key = ?', [$templateKey]);
             BrandContext::clear();
+        }
+    }
+
+    public function testMarketingSuppressionDoesNotBlockTransactionalEmail(): void
+    {
+        $email = 'suppression-integration@example.com';
+        $transactionalId = null;
+        try {
+            self::assertTrue(Database::tableExists('email_suppressions'));
+            foreach (['marketing_opt_in','marketing_consented_at','marketing_consent_source','marketing_consent_evidence'] as $column) {
+                self::assertSame(1, (int) Database::scalar(
+                    'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'providers\' AND column_name=?',
+                    [$column]
+                ));
+            }
+            foreach (['marketing_consented_at','marketing_consent_basis','marketing_consent_evidence'] as $column) {
+                self::assertSame(1, (int) Database::scalar(
+                    'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'provider_prospects\' AND column_name=?',
+                    [$column]
+                ));
+            }
+            EmailSuppression::suppressMarketing($email, 'integration');
+            self::assertTrue(EmailSuppression::isSuppressed($email, 'marketing'));
+            self::assertFalse(EmailSuppression::isSuppressed($email, 'transactional'));
+            self::assertFalse(EmailQueue::queueRaw($email, null, 'Marketing', '<p>Marketing</p>', 'Marketing', null, null, 'marketing'));
+            self::assertTrue(EmailQueue::queueRaw($email, null, 'Account', '<p>Account</p>', 'Account'));
+
+            $transactionalId = (int) Database::scalar(
+                "SELECT id FROM email_queue WHERE recipient_email=? AND subject='Account' ORDER BY id DESC LIMIT 1",
+                [$email]
+            );
+            self::assertGreaterThan(0, $transactionalId);
+            self::assertSame(0, (int) Database::scalar(
+                "SELECT COUNT(*) FROM email_queue WHERE recipient_email=? AND subject='Marketing'",
+                [$email]
+            ));
+            EmailSuppression::suppressAll($email, 'hard_bounce', 'integration');
+            self::assertTrue(EmailSuppression::isSuppressed($email, 'transactional'));
+            self::assertFalse(EmailQueue::queueRaw($email, null, 'Blocked account', '<p>Blocked</p>'));
+        } finally {
+            if ($transactionalId !== null) { Database::query('DELETE FROM email_queue WHERE id=?', [$transactionalId]); }
+            Database::query('DELETE FROM email_suppressions WHERE email=?', [$email]);
         }
     }
 }

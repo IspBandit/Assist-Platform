@@ -58,8 +58,10 @@ final class RegulatorySourceMonitor
                 'header' => implode("\r\n", $headers),
             ]]);
             $body = file_get_contents($url, false, $context);
-            /** @var array<int,string> $http_response_header */
-            $responseHeaders = $http_response_header;
+            /** @var array<int,string> $responseHeaders */
+            $responseHeaders = function_exists('http_get_last_response_headers')
+                ? (http_get_last_response_headers() ?: [])
+                : (get_defined_vars()['http_response_header'] ?? []);
             foreach ($responseHeaders as $header) {
                 if (preg_match('/^HTTP\/\S+\s+(\d{3})/', $header, $match)) {
                     $status = (int) $match[1];

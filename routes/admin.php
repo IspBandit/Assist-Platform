@@ -156,6 +156,7 @@ return static function (Router $router): void {
         $router->post('/social-media/status', 'Admin\SocialMediaController@status');
         $router->get('/social-media/preview', 'Admin\SocialMediaController@preview');
         $router->get('/social-media/download', 'Admin\SocialMediaController@download');
+        $router->post('/social-media/facebook/publish', 'Admin\SocialMediaController@publishFacebook');
 
         // SEO settings (Phase 8): site meta, social image and the indexing switch.
         $router->get('/seo', 'Admin\SeoController@index', 'admin.seo');

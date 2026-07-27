@@ -9,6 +9,7 @@
  * @var array<string,mixed>|null $selectedTown
  * @var array<int,array<string,mixed>> $sponsoredCampaigns
  * @var array{title:string,metaDescription:string,kicker:string,heading:string,intro:string,vehicleSummary:string} $page
+ * @var string $heroAsset
  */
 $this->extend('layouts.public');
 ?>
@@ -16,10 +17,10 @@ $this->extend('layouts.public');
 
 <section class="rules-hero">
     <picture class="journey-hero-media" aria-hidden="true">
-        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/rules-hero-mobile.avif')) ?>">
-        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/rules-hero-mobile.webp')) ?>">
-        <source type="image/avif" srcset="<?= e(asset('img/rules-hero-desktop.avif')) ?>">
-        <img src="<?= e(asset('img/rules-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
+        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/' . $heroAsset . '-mobile.avif')) ?>">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/' . $heroAsset . '-mobile.webp')) ?>">
+        <source type="image/avif" srcset="<?= e(asset('img/' . $heroAsset . '-desktop.avif')) ?>">
+        <img src="<?= e(asset('img/' . $heroAsset . '-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
     </picture>
     <div class="journey-hero-shade" aria-hidden="true"></div>
     <div class="container rules-hero-grid">

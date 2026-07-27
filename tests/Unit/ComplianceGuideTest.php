@@ -14,6 +14,7 @@ final class ComplianceGuideTest extends TestCase
         self::assertNull(ComplianceGuide::selections('AUS', 'car', 'modify'));
         self::assertNull(ComplianceGuide::selections('QLD', 'spaceship', 'modify'));
         self::assertSame('modifications', ComplianceGuide::selections('QLD', 'car', 'modify')['kind'] ?? null);
+        self::assertSame('modifications', ComplianceGuide::selections('QLD', '4wd', 'modify')['kind'] ?? null);
         self::assertSame('roadworthiness', ComplianceGuide::selections('NSW', 'motorcycle', 'inspect')['kind'] ?? null);
         self::assertSame('towing', ComplianceGuide::selections('VIC', 'trailer', 'travel')['kind'] ?? null);
     }
