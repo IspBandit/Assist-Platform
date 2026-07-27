@@ -74,14 +74,22 @@ jobs:
             "https://trailerwise.com.au/"
             "https://trailerwise.com.au/marketplace"
             "https://trailerwise.com.au/rules"
-            "https://localtorque.com.au/"
-            "https://localtorque.com.au/rules"
-            "https://localtorque.com.au/motorsport"
           )
           for url in "${urls[@]}"; do
             curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
               --output /dev/null "$url"
           done
+          if getent hosts localtorque.com.au >/dev/null 2>&1; then
+            for url in \
+              "https://localtorque.com.au/" \
+              "https://localtorque.com.au/rules" \
+              "https://localtorque.com.au/motorsport"; do
+              curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+                --output /dev/null "$url"
+            done
+          else
+            echo "LocalTorque production DNS is not active yet; brand journey checks remain gated until it resolves."
+          fi
           homepage="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
           grep -q '/runtime-assets/css/app.css' <<<"$homepage"
           grep -q '/runtime-assets/js/app.js' <<<"$homepage"
