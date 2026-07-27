@@ -46,6 +46,37 @@ marks keep titles, decorative consumers use empty alternatives, current pages
 use `aria-current`, and the selector supports focus, Escape and directional
 keys. **Evidence:** BrandAssetTest, PHP/static checks and representative renders.
 
+## 2026-07-28 — Replace literal vehicle marks with geometric brand symbols
+
+**Context:** the 2026-07-24 mark family remained visually illustrative and lost
+clarity and authority in the public header and browser tab. **Decision:**
+supersede the rounded-stroke vehicle drawings with four solid geometric symbols
+that share a 64 × 64 grid, deep neutral form and one restrained accent. The
+same versioned asset is used in the public shell, authentication shell, admin
+workspace selector, control centre and favicon. **Affected journeys:** every
+public and administrative entry point across all four brands. **Alternatives:**
+removing identity entirely or making another set of detailed vehicle drawings
+were rejected because neither creates a distinctive, scalable platform family.
+**Accessibility and performance:** SVG titles remain; decorative consumers use
+empty alternatives; marks remain below 1.2 KB and are checked down to 16px;
+file-version URLs prevent stale browser caches. **Evidence:** BrandAssetTest,
+XML validation, 128px/64px/32px/24px/16px contact-sheet inspection and shell
+render checks.
+
+## 2026-07-28 — Provider journeys carry equal visual weight on mobile
+
+**Context:** VanAssist hid provider photography on phones and the other brand
+provider pages used a generic text-and-card layout. **Decision:** every provider
+landing page now opens with relevant full-bleed imagery, live brand-specific
+copy, a primary list-or-claim action, sign-in, proof points, a concise value
+strip and three-step onboarding explanation. Existing mobile AVIF/WebP crops
+are reused for TowSmart, TrailerWise and LocalTorque; VanAssist retains its
+provider-specific compressed photograph. **Accessibility:** live text supplies
+meaning, decorative imagery stays outside the reading order, contrast is
+protected by directional overlays and mobile actions stack to touch width.
+**Evidence:** PHP syntax, responsive CSS inspection and representative desktop
+and phone renders.
+
 ## 2026-07-27 — Authority-first rules and separated provider sponsorship
 
 **Context:** DATA-008. Readers need official vehicle rules while relevant local

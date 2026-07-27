@@ -144,12 +144,15 @@ Every promoted or materially changed component is checked in these states:
 
 ### 2026-07 enterprise shell increment
 
-- Four brand marks now share one tested SVG geometry contract.
+- Four abstract brand symbols share one tested solid-geometry SVG contract and
+  versioned delivery down to favicon size.
 - Admin presentation rules moved out of the layout into reusable shell classes.
 - Current navigation exposes `aria-current`; the workspace selector supports
   keyboard traversal and retains server-side brand access/scoping.
 - Representative acceptance widths are 360px and 1280px, with 768px included
   in the full component acceptance matrix.
+- Provider acquisition heroes now preserve relevant imagery and conversion
+  actions on both desktop and phone widths across all four brands.
 
 ## Definition of done
 

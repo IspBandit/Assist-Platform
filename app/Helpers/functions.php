@@ -105,6 +105,9 @@ if (!function_exists('asset')) {
     function asset(string $path): string
     {
         $rel = ltrim($path, '/');
+        if (str_starts_with($rel, 'assets/')) {
+            $rel = substr($rel, 7);
+        }
         $url = url('assets/' . $rel);
 
         // Cache-bust with the file's modification time so browsers (and phones)

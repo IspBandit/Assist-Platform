@@ -1,8 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="lt-title">
   <title id="lt-title">LocalTorque</title>
-  <g fill="none" stroke="#0f3b4c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M14 42h36v-8l-4-10H23l-5 10h-4v8ZM20 34h24"/>
-    <circle cx="21" cy="45" r="4" fill="#fff"/><circle cx="43" cy="45" r="4" fill="#fff"/>
-    <path d="M38 17a7 7 0 0 1 9-8l-5 5 4 4 5-5a7 7 0 0 1-8 9L30 35" stroke="#e56b2f"/>
-  </g>
+  <path fill="#102F3B" fill-rule="evenodd" d="m32 3 25.1 14.5v29L32 61 6.9 46.5v-29L32 3Zm0 11L16.4 23v18L32 50l15.6-9V23L32 14Z"/>
+  <path fill="#E66B3D" d="M28 18h8v17.5l11 6.3-4 6.9L28 40V18Z"/>
+  <circle cx="32" cy="36" r="5" fill="#fff"/>
+  <circle cx="32" cy="36" r="2.5" fill="#102F3B"/>
 </svg>

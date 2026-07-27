@@ -3,7 +3,11 @@
 $this->extend('layouts.public');
 ?>
 <?php $this->section('content'); ?>
-<section class="hero">
+<section class="hero hero--visual provider-hero provider-hero--vanassist">
+    <picture class="hero-media" aria-hidden="true">
+        <img src="<?= e(asset('img/hero-providers.jpg')) ?>" width="1536" height="1024" alt="" fetchpriority="high">
+    </picture>
+    <div class="hero-media-shade" aria-hidden="true"></div>
     <div class="container">
         <div class="hero-grid">
             <div class="hero-copy">
@@ -27,12 +31,6 @@ $this->extend('layouts.public');
                         Accept only the work you want
                     </li>
                 </ul>
-            </div>
-
-            <div class="hero-art">
-                <img class="hero-photo" src="<?= e(asset('img/hero-providers.jpg')) ?>" width="1536" height="1024"
-                     alt="Mobile caravan and RV repair technician with a fully fitted-out service van in a regional Australian town"
-                     loading="eager" fetchpriority="high">
             </div>
         </div>
     </div>
