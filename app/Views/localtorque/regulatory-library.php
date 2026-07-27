@@ -177,7 +177,7 @@ $this->extend('layouts.public');
                 </div>
                 <div class="rules-sponsor-grid">
                     <?php foreach ($sponsoredCampaigns as $campaign): ?>
-                        <a href="<?= e(url('sponsor/' . (int) $campaign['id'] . '/click')) ?>" target="_blank" rel="sponsored noopener noreferrer">
+                            <a href="<?= e(url('sponsor/' . (int) $campaign['id'] . '/click')) ?>" target="_blank" rel="sponsored noopener noreferrer">
                             <small>Sponsored provider</small>
                             <strong><?= $this->e((string) $campaign['headline']) ?></strong>
                             <?php if (!empty($campaign['body'])): ?><span><?= $this->e((string) $campaign['body']) ?></span><?php endif; ?>
