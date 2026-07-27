@@ -108,7 +108,9 @@ try {
                 . "(LOWER(p.business_name) REGEXP 'supercheap|autopro|auto parts|parts store|parts centre' AND c.slug<>'vehicle-parts-and-accessories') OR "
                 . "(LOWER(p.business_name) REGEXP 'tyre|tire|tyrepower|bob jane|bridgestone|goodyear' AND c.slug<>'tyres-and-wheels') OR "
                 . "(LOWER(p.business_name) REGEXP 'petroleum|service station|fuel stop|ampol|caltex|7-eleven' AND c.slug<>'fuel-and-travel-stops') OR "
-                . "(LOWER(p.business_name) REGEXP 'elgas|lpg refill|gas bottle|bottle exchange' AND c.slug<>'lpg-refills-and-bottle-exchange'))"
+                . "(LOWER(p.business_name) REGEXP 'elgas|lpg refill|gas bottle|bottle exchange' AND c.slug<>'lpg-refills-and-bottle-exchange')) "
+                . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records psr WHERE psr.provider_id=p.id '
+                . 'AND psr.publishable=1 AND psr.needs_review=0)'
             ),
         ],
         'localtorque_pack' => [
