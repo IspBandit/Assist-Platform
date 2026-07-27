@@ -58,6 +58,9 @@ final class SearchController extends Controller
         $distanceSelection = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : $distanceFilter['scope'];
         $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
 
+        [$originLat, $originLng, $originLabel] = $this->resolveOrigin($town, $hasCoords ? $lat : null, $hasCoords ? $lng : null, $usedLocation);
+        $hasOrigin = $originLat !== null && $originLng !== null;
+
         // What to show in the search box / heading after a GPS lookup.
         $locationDisplay = $location;
         if ($usedLocation && $town !== null) {
@@ -73,7 +76,10 @@ final class SearchController extends Controller
         if ($town !== null) {
             $townId = (int) $town['id'];
             if ($categoryId !== null) {
-                foreach (Provider::forCategory($categoryId, $townId) as $row) {
+                $categoryProviders = $distanceFilter['scope'] === 'km' && $hasOrigin
+                    ? Provider::forCategoryNear($categoryId, (float) $originLat, (float) $originLng, (int) $distanceFilter['km'])
+                    : Provider::forCategory($categoryId, $townId);
+                foreach ($categoryProviders as $row) {
                     if ((int) $row['is_inferred'] === 1) {
                         $possible[] = $row;
                     } else {
@@ -94,8 +100,6 @@ final class SearchController extends Controller
             }
         }
 
-        [$originLat, $originLng, $originLabel] = $this->resolveOrigin($town, $hasCoords ? $lat : null, $hasCoords ? $lng : null, $usedLocation);
-        $hasOrigin = $originLat !== null && $originLng !== null;
         if ($hasOrigin) {
             $townIdForFilter = $town !== null ? (int) $town['id'] : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);

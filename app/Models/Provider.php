@@ -262,6 +262,52 @@ final class Provider extends Model
     }
 
     /**
+     * Active providers inside a coordinate radius. This deliberately starts
+     * from provider/town coordinates rather than town service-area membership;
+     * otherwise a nearby station in the next locality is incorrectly hidden.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function forCategoryNear(
+        int $categoryId,
+        float $latitude,
+        float $longitude,
+        int $radiusKm,
+        int $limit = 120,
+    ): array {
+        $radiusKm = max(1, min(500, $radiusKm));
+        $limit = max(1, min(500, $limit));
+        $latDelta = $radiusKm / 111.32;
+        $longitudeScale = max(0.01, abs(cos(deg2rad($latitude))));
+        $lngDelta = min(180.0, $radiusKm / (111.32 * $longitudeScale));
+
+        return Database::select(
+            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
+            . 'p.is_founding_provider, p.is_unclaimed, ps.is_inferred, '
+            . 't.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,t.latitude) AS town_lat, '
+            . 'COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
+            . '(6371 * ACOS(LEAST(1, GREATEST(-1, COS(RADIANS(?)) '
+            . '* COS(RADIANS(COALESCE(p.latitude,t.latitude))) '
+            . '* COS(RADIANS(COALESCE(p.longitude,t.longitude)) - RADIANS(?)) '
+            . '+ SIN(RADIANS(?)) * SIN(RADIANS(COALESCE(p.latitude,t.latitude))))))) AS distance_km '
+            . 'FROM provider_services ps JOIN providers p ON p.id=ps.provider_id '
+            . 'LEFT JOIN towns t ON t.id=p.base_town_id LEFT JOIN states s ON s.id=t.state_id '
+            . "WHERE ps.category_id=? AND p.status='active' AND p.deleted_at IS NULL "
+            . 'AND COALESCE(p.latitude,t.latitude) BETWEEN ? AND ? '
+            . 'AND COALESCE(p.longitude,t.longitude) BETWEEN ? AND ? '
+            . 'HAVING distance_km <= ? '
+            . 'ORDER BY ps.is_inferred ASC, distance_km ASC, p.is_featured DESC, p.is_verified DESC, p.business_name '
+            . 'LIMIT ' . $limit,
+            [
+                $latitude, $longitude, $latitude, $categoryId,
+                $latitude - $latDelta, $latitude + $latDelta,
+                $longitude - $lngDelta, $longitude + $lngDelta,
+                $radiusKm,
+            ]
+        );
+    }
+
+    /**
      * Every business relevant to a town, ranked by how directly it serves it:
      *   relevance 0 — based in the town, or its service areas explicitly cover it;
      *   relevance 1 — a mobile/both operator elsewhere in the same region (travels);

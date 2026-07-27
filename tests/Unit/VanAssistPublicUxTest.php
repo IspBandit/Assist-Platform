@@ -41,6 +41,16 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('.service-directory-card:focus-visible', $css);
     }
 
+    public function testRadiusSearchUsesCoordinateCategoryLookup(): void
+    {
+        $controller = $this->source('app/Controllers/Site/SearchController.php');
+        $provider = $this->source('app/Models/Provider.php');
+
+        self::assertStringContainsString('Provider::forCategoryNear', $controller);
+        self::assertStringContainsString('public static function forCategoryNear', $provider);
+        self::assertStringContainsString('HAVING distance_km <= ?', $provider);
+    }
+
     private function source(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $relativePath);
