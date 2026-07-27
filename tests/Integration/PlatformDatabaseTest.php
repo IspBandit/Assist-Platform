@@ -15,6 +15,7 @@ use App\Services\EmailQueue;
 use App\Services\Mailer;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
+use App\Models\GarageAsset;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -109,6 +110,57 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(0, (int) Database::scalar(
             "SELECT COUNT(*) FROM regulatory_documents WHERE is_public=1 AND official_document<>1"
         ));
+    }
+
+    public function testSharedGarageSchemaUsesUserOwnershipInsteadOfBrandIsolation(): void
+    {
+        foreach (['garage_assets', 'garage_documents', 'garage_reminder_preferences', 'garage_brand_activity'] as $table) {
+            self::assertTrue(Database::tableExists($table), $table . ' was not installed');
+        }
+
+        $columns = array_column(Database::select(
+            "SELECT column_name AS name FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='garage_assets'"
+        ), 'name');
+        self::assertContains('user_id', $columns);
+        self::assertContains('created_in_brand_id', $columns);
+        self::assertNotContains('brand_id', $columns, 'Garage assets must not be siloed to the brand where they were created');
+        self::assertNotContains('vin', $columns);
+        self::assertNotContains('registration_number', $columns);
+
+        $documentPath = (string) Config::get('uploads.paths.garage_documents', '');
+        self::assertStringStartsWith('storage/private/', $documentPath);
+    }
+
+    public function testGarageAssetsAndDocumentsCannotBeReadByAnotherUser(): void
+    {
+        $suffix = bin2hex(random_bytes(5));
+        $ownerId = Database::insert(
+            "INSERT INTO users (name,email,password_hash,status,created_at) VALUES ('Garage owner',?,'test','active',NOW())",
+            ['garage-owner-' . $suffix . '@example.test']
+        );
+        $otherId = Database::insert(
+            "INSERT INTO users (name,email,password_hash,status,created_at) VALUES ('Other owner',?,'test','active',NOW())",
+            ['garage-other-' . $suffix . '@example.test']
+        );
+
+        try {
+            $assetId = Database::insert(
+                "INSERT INTO garage_assets (user_id,created_in_brand_id,asset_type,nickname,created_at) VALUES (?,1,'caravan','Tourer',NOW())",
+                [$ownerId]
+            );
+            $documentId = Database::insert(
+                "INSERT INTO garage_documents (garage_asset_id,document_type,label,stored_name,original_name,mime_type,file_size,created_at) "
+                . "VALUES (?,'registration','Registration','opaque.pdf','registration.pdf','application/pdf',100,NOW())",
+                [$assetId]
+            );
+
+            self::assertNotNull(GarageAsset::owned($assetId, $ownerId));
+            self::assertNull(GarageAsset::owned($assetId, $otherId));
+            self::assertNotNull(GarageAsset::ownedDocument($documentId, $ownerId));
+            self::assertNull(GarageAsset::ownedDocument($documentId, $otherId));
+        } finally {
+            Database::query('DELETE FROM users WHERE id IN (?,?)', [$ownerId, $otherId]);
+        }
     }
 
     public function testAgreedMembershipCatalogueIsInstalledWithoutActivatingBilling(): void

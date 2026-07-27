@@ -36,6 +36,7 @@ $this->extend('layouts.public');
             <?php endif; ?>
         </div>
         <div class="grid grid-3">
+            <a class="card account-card-link" href="<?= e(url('account/garage')) ?>"><h3>My Garage</h3><p class="muted">Vehicles, towables and private compliance documents shared across Assist.</p></a>
             <div class="card"><h3>Joined runs</h3><p class="muted">Service runs you have joined will appear here.</p></div>
             <div class="card"><h3>Profile & security</h3><p class="muted">Manage your details, communication preferences and password.</p></div>
         </div>

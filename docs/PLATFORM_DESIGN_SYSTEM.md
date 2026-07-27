@@ -19,6 +19,22 @@ components only after rendered, responsive and accessibility verification.
   placements are visually separated from official-source cards.
 - No fake counts, reviews, urgency, availability or endorsements.
 
+## Premium visual-content contract
+
+Major public journeys use original, subject-relevant hero photography rather
+than generic decoration. VanAssist shows regional caravan confidence; TowSmart
+shows measured towing safety; TrailerWise shows skilled trailer inspection;
+LocalTorque shows genuine automotive expertise; the rules library shows vehicle
+engineering/source review; and My Garage shows an organised mixed asset set.
+
+Hero images contain no baked-in words, logos, fake government marks or UI. Live
+HTML owns headings and actions. Every hero ships as an art-directed 1824 × 864
+desktop image and a 720 × 960 mobile crop, with AVIF first and WebP fallback.
+Desktop AVIF must remain at or below 110 KB and mobile AVIF at or below 65 KB;
+tests enforce dimensions, formats and transfer budgets. Above-the-fold heroes
+use `fetchpriority="high"`; below-the-fold editorial images must be lazy-loaded.
+Images never replace a usable text, list, map-fallback or form experience.
+
 ## Foundations
 
 Shared tokens cover typography, spacing, breakpoints, radii, elevation, focus,
@@ -58,6 +74,18 @@ authority source or download. Changed/unreviewed records are unavailable rather
 than shown with a weak warning. Sponsored local specialists appear only after
 the official results in a separately bordered region with a persistent
 `Sponsored` label and disclosure; they never appear inside a rule card.
+
+### Shared Garage contract
+
+My Garage is an account-level experience shared by every brand. Its structure is
+consistent while colour, wordmark and relevant next actions inherit the current
+brand. The mobile index is a single-column asset wallet; desktop may use a
+three-column collection. Technical ratings are progressive disclosure, not a
+barrier to adding an asset. Private documents must always be described as
+owner-supplied and never receive a verified badge without separate review.
+
+Garage action cards may pass non-sensitive type and jurisdiction context into
+official rules or provider search. They do not pass private notes or documents.
 
 ## Brand expression
 

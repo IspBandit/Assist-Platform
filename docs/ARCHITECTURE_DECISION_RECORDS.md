@@ -1,6 +1,7 @@
 # Architecture Decision Records
 
 See [ADR 0008](DECISIONS/0008-authoritative-regulatory-library.md) for the authoritative vehicle regulatory source and monitoring decision.
+See [ADR 0009](DECISIONS/0009-shared-owner-garage.md) for the shared owner Garage and private compliance wallet decision.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -44,5 +45,6 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0006: Connector-based, review-first data ingestion.
 - 0007: Modular Data Intelligence sources and workflow actions.
 - 0008: Authority-linked, monitored vehicle regulatory library.
+- 0009: Shared owner Garage and private compliance wallet.
 
 The index must be updated whenever an ADR is accepted.

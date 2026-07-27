@@ -31,8 +31,11 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Location controls | `use-location-btn`, distance filter | shared domain component | Document permission-denied and unavailable states |
 | Status badges | verified/confirmed/neutral and related styles | partially shared | Define one semantic status matrix |
 | Social assets | Social Studio templates and brand assets | in progress | Exact-size export and editorial gate remain mandatory |
-| Regulatory source card | `localtorque/regulatory-library.php`, `.rule-card` | LocalTorque domain pattern | Desktop/mobile render, official-link and long-title acceptance |
+| Regulatory source card | `localtorque/regulatory-library.php`, `.rule-card` | shared across all four brands | Desktop/mobile render, official-link and long-title acceptance |
 | Contextual sponsor rail | `.rules-sponsors` over shared advertising campaigns | reusable commercial pattern | Always labelled; explicit location only; must not alter organic or authority results |
+| Garage asset card | `/account/garage`, `.garage-card` | authenticated shared component | Asset type, jurisdiction, document count, next expiry, keyboard focus and mobile stacking |
+| Compliance wallet row | `/account/garage/{id}`, `.garage-document` | authenticated shared component | Owner-supplied status, expiry, authenticated download and removal |
+| Garage next-action card | `/account/garage/{id}`, `.garage-action-grid` | authenticated shared component | Non-sensitive rules/provider/tool handoff; private fields are never passed |
 
 ### Current token debt
 

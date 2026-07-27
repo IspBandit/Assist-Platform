@@ -15,6 +15,13 @@ $this->extend('layouts.public');
 <?php $this->section('content'); ?>
 
 <section class="rules-hero">
+    <picture class="journey-hero-media" aria-hidden="true">
+        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/rules-hero-mobile.avif')) ?>">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/rules-hero-mobile.webp')) ?>">
+        <source type="image/avif" srcset="<?= e(asset('img/rules-hero-desktop.avif')) ?>">
+        <img src="<?= e(asset('img/rules-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
+    </picture>
+    <div class="journey-hero-shade" aria-hidden="true"></div>
     <div class="container rules-hero-grid">
         <div>
             <span class="product-kicker"><?= $this->e($page['kicker']) ?></span>

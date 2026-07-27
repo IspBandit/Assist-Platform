@@ -15,7 +15,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-005 | Shared provider launch email templates and campaign segmentation | ready | Preview/test-send, consent, unsubscribe and queue tests |
 | CORE-007 | Platform Control Centre for domains, launch state, features and operational status | in progress | Super-admin-only acceptance and audit coverage |
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
-| CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | ready | Owner isolation, mobile asset wallet, document storage, brand-aware actions and account acceptance |
+| CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | in progress | Owner isolation, mobile asset wallet, document storage, brand-aware actions and account acceptance |
 | CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | ready | Explicit consent, preserved context, source-brand labels and analytics |
 
 ## Experience
@@ -28,7 +28,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | EXP-004 | WCAG 2.2 AA critical journeys | ready | Automated checks plus manual keyboard/screen-reader review |
 | EXP-005 | Mobile-first provider, search, calculator and admin journeys | in progress | Rendered acceptance on representative widths |
 | EXP-006 | Guided rule-to-action journeys from official requirement to compliant next step | ready | Vehicle/jurisdiction questions, official citations, limitations, saved outcome and relevant provider handoff |
-| EXP-007 | Mobile trip and compliance wallet | ready | Offline-tolerant document access, expiry reminders and representative owner journeys |
+| EXP-007 | Mobile trip and compliance wallet | in progress | Private mobile document access and expiry preferences implemented; offline-tolerant access, reminder dispatch and representative owner journeys remain |
 
 ## Brands
 
