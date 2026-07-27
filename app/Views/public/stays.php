@@ -15,6 +15,11 @@ $facilityLabels = [
         <div class="eyebrow">VanAssist stays</div>
         <h1>Getting tired? Find a place to stay.</h1>
         <p>Search nearby caravan parks, campgrounds, showgrounds and free or low-cost stays. Always confirm access, fees and restrictions before arrival.</p>
+        <ul class="page-trust-list" aria-label="Search information">
+            <li>Choose up to 150 km by default</li>
+            <li>Unverified listings are identified</li>
+            <li>Directions open in your maps service</li>
+        </ul>
     </div>
 </section>
 
@@ -73,6 +78,13 @@ $facilityLabels = [
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+    </div>
+</section>
+
+<section class="section section-sand stay-provider-cta">
+    <div class="container provider-conversion-inner">
+        <div><span class="directory-eyebrow">Park or campground operator?</span><h2>Keep your stay information accurate.</h2><p>Claim or add a listing so travellers can confirm facilities, access, contact details and current restrictions before arrival.</p></div>
+        <a class="btn btn-primary" href="<?= e(url('caravan-parks/apply')) ?>">Claim or list a place to stay</a>
     </div>
 </section>
 <?php $this->endSection(); ?>

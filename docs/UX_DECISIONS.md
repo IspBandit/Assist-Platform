@@ -77,6 +77,24 @@ protected by directional overlays and mobile actions stack to touch width.
 **Evidence:** PHP syntax, responsive CSS inspection and representative desktop
 and phone renders.
 
+## 2026-07-28 — VanAssist starts with traveller intent, not directory structure
+
+**Context:** EXP-001/005 and VAN-001/002. The premium homepage hero led into a
+large service selector, but fuel, EV charging and stays remained easy to miss,
+while the trust row implied universal verification and remote coverage that the
+mixed claimed/public-source directory could not support. **Decision:** retain
+the location-first search and hero assets, then add four concise intent paths
+for repairs, fuel, charging and stays before provider results. Reuse those paths
+at the service-directory entrance, group the result-page category selector and
+add an explicit provider-claim conversion panel. Trust language now explains
+listing states and the need to confirm current details. **Alternatives:** a
+larger hero form and a carousel were rejected because both increase mobile
+effort and hide choices. **Accessibility and performance:** the launcher is
+server-rendered text, uses no new image or script dependency, has visible focus,
+44px-class targets, one-column phone layouts and disabled motion when requested.
+**Evidence:** VanAssistPublicUxTest, PHP syntax, static analysis and responsive
+CSS inspection.
+
 ## 2026-07-27 — Authority-first rules and separated provider sponsorship
 
 **Context:** DATA-008. Readers need official vehicle rules while relevant local

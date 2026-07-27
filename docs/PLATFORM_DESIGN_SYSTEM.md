@@ -157,6 +157,17 @@ column at phone width and may expand to three columns on desktop. One provider
 identity is explained as a reduction in administration, never as automatic or
 irrelevant cross-brand exposure.
 
+### VanAssist traveller-intent launcher
+
+VanAssist keeps one location-first service form, then exposes repairs, fuel, EV
+charging and stays as four server-rendered intent paths before directory
+results. The launcher adds no image or script dependency and collapses from
+four columns to two and then one at phone width. It uses text and numbering
+rather than illustrative vehicle icons. Trust copy describes claimed, verified,
+featured and unclaimed states precisely and never implies universal provider or
+remote-town verification. Fuel, charging and stay paths still ask for location
+before presenting nearby relevance.
+
 ### Enterprise admin shell
 
 The admin shell uses a neutral charcoal navigation surface and raised white
