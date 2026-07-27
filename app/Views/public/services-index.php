@@ -1,6 +1,7 @@
 <?php
 /** @var \App\Core\View $this */
 /** @var array<int,array<string,mixed>> $categories */
+/** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
 $this->extend('layouts.public');
 ?>
 <?php $this->section('content'); ?>
@@ -15,16 +16,21 @@ $this->extend('layouts.public');
         <?php if ($categories === []): ?>
             <p class="muted">Service categories are being added.</p>
         <?php else: ?>
-            <div class="grid grid-3" style="margin-top:1.5rem">
-                <?php foreach ($categories as $cat): ?>
-                    <div class="card">
-                        <h3 style="margin-top:0"><a href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e((string) $cat['name']) ?></a></h3>
-                        <?php if (!empty($cat['short_description'])): ?>
-                            <p class="muted mb-0"><?= $this->e((string) $cat['short_description']) ?></p>
-                        <?php endif; ?>
+            <?php foreach ($categoryGroups as $groupName => $groupCategories): ?>
+                <section class="service-category-group" aria-labelledby="service-group-<?= e_attr(md5($groupName)) ?>">
+                    <h2 id="service-group-<?= e_attr(md5($groupName)) ?>"><?= $this->e($groupName) ?></h2>
+                    <div class="grid grid-3">
+                        <?php foreach ($groupCategories as $cat): ?>
+                            <div class="card">
+                                <h3 style="margin-top:0"><a href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e((string) $cat['name']) ?></a></h3>
+                                <?php if (!empty($cat['short_description'])): ?>
+                                    <p class="muted mb-0"><?= $this->e((string) $cat['short_description']) ?></p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
-            </div>
+                </section>
+            <?php endforeach; ?>
         <?php endif; ?>
     </div>
 </section>

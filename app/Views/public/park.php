@@ -5,6 +5,7 @@
 $this->extend('layouts.public');
 $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path']) : null;
 $stayLabels = ['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','showground'=>'Showground','rest_area'=>'Rest area','farm_stay'=>'Farm stay','other'=>'Place to stay'];
+$mapDestination = map_destination($park['latitude'] ?? null, $park['longitude'] ?? null, [$park['address'] ?? '', $park['town_name'] ?? '']);
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -42,6 +43,7 @@ $stayLabels = ['caravan_park'=>'Caravan park','campground'=>'Campground','free_c
                 <?php if ($park['address']): ?><p style="margin:0"><strong>Address:</strong> <?= $this->e((string) $park['address']) ?></p><?php endif; ?>
                 <?php if ($park['phone']): ?><p style="margin:0"><strong>Phone:</strong> <?= $this->e((string) $park['phone']) ?></p><?php endif; ?>
                 <?php if ($park['website']): ?><p style="margin:0"><strong>Website:</strong> <a href="<?= e((string) $park['website']) ?>" target="_blank" rel="noopener nofollow"><?= $this->e((string) $park['website']) ?></a></p><?php endif; ?>
+                <?php if ($mapDestination !== ''): ?><a class="btn btn-primary" href="<?= e(map_directions_url($mapDestination)) ?>" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>" target="_blank" rel="noopener noreferrer">Directions from my location</a><?php endif; ?>
                 <?php if ($park['number_of_sites']): ?><p style="margin:0"><strong>Sites:</strong> <?= (int) $park['number_of_sites'] ?></p><?php endif; ?>
                 <?php foreach (['powered_sites'=>'Powered sites','unpowered_sites'=>'Unpowered sites','toilets'=>'Toilets','showers'=>'Showers','potable_water'=>'Drinking water','dump_point'=>'Dump point','pets_allowed'=>'Pets considered'] as $field => $label): ?><?php if ((int) ($park[$field] ?? 0) === 1): ?><p style="margin:0">✓ <?= $this->e($label) ?></p><?php endif; ?><?php endforeach; ?>
                 <?php if (!empty($park['max_stay'])): ?><p style="margin:0"><strong>Maximum stay:</strong> <?= $this->e((string) $park['max_stay']) ?></p><?php endif; ?>

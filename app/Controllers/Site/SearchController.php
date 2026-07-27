@@ -176,7 +176,7 @@ final class SearchController extends Controller
             'possible'         => $possible,
             'requestUrl'       => $requestUrl,
             'searchId'         => $searchId,
-            'categories'       => ServiceCategory::activeTopLevel(),
+            'categories'       => ServiceCategory::activeAll(),
             'lat'              => $hasCoords ? $lat : null,
             'lng'              => $hasCoords ? $lng : null,
             'nearbyRuns'       => $nearbyRuns,

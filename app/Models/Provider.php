@@ -132,7 +132,7 @@ final class Provider extends Model
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $join . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.description, p.service_model, '
-            . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name, s.abbreviation AS state_abbr '
+            . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
             . 'FROM providers p ' . $join . $clause
             . ' ORDER BY p.is_featured DESC, p.is_verified DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
@@ -164,7 +164,7 @@ final class Provider extends Model
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $joins . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, pbl.slug, pbl.display_name AS business_name, p.description, p.service_model, '
-            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name, s.abbreviation AS state_abbr '
+            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
             . 'FROM providers p ' . $joins . $clause
             . ' ORDER BY pbl.is_featured DESC, pbl.is_verified DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
@@ -246,7 +246,7 @@ final class Provider extends Model
         }
 
         return Database::select(
-            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, '
+            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
             . 'p.is_founding_provider, p.is_unclaimed, ps.is_inferred, '
             . 't.name AS town_name, t.slug AS town_slug, t.latitude AS town_lat, t.longitude AS town_lng, '
             . 's.abbreviation AS state_abbr '

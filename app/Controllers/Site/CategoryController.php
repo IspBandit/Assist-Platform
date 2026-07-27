@@ -23,13 +23,14 @@ final class CategoryController extends Controller
         if (current_brand()->id() === 'localtorque') {
             return $this->localTorqueIndex();
         }
-        $categories = ServiceCategory::activeTopLevel();
+        $categories = ServiceCategory::activeAll();
 
         return $this->view('public.services-index', [
             'title'           => 'Caravan & RV service categories',
             'metaDescription' => 'Browse the caravan and RV services available through VanAssist, from 12-volt electrical and solar to brakes, bearings and gas appliance servicing.',
             'canonical'       => url('services'),
             'categories'      => $categories,
+            'categoryGroups'  => ServiceCategory::groupedForVanAssist($categories),
         ]);
     }
 
