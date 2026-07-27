@@ -108,6 +108,12 @@ final class ProvidersController extends Controller
         }
 
         $marketingOptIn = $request->input('marketing_opt_in') ? 1 : 0;
+        $consentBasis = trim((string) $request->input('marketing_consent_source'));
+        $consentEvidence = trim((string) $request->input('marketing_consent_evidence'));
+        $allowedConsentBases = ['express_written', 'express_phone', 'express_web', 'inferred_role_relevant'];
+        if ($marketingOptIn && (!in_array($consentBasis, $allowedConsentBases, true) || $consentEvidence === '')) {
+            return $this->redirectWith('/admin/providers/' . ($id ? 'edit?id=' . $id : 'new'), 'error', 'Record the provider consent basis and supporting evidence before enabling promotional email.');
+        }
         $data = [
             'business_name'     => $name,
             'contact_name'      => trim((string) $request->input('contact_name')) ?: null,
@@ -129,8 +135,9 @@ final class ProvidersController extends Controller
                 ? ((string) ($existing['marketing_consented_at'] ?? '') ?: date('Y-m-d H:i:s'))
                 : null,
             'marketing_consent_source' => $marketingOptIn
-                ? ((string) ($existing['marketing_consent_source'] ?? '') ?: 'admin_documented')
+                ? $consentBasis
                 : null,
+            'marketing_consent_evidence' => $marketingOptIn ? mb_substr($consentEvidence, 0, 500) : null,
             'seo_title'         => trim((string) $request->input('seo_title')) ?: null,
             'seo_description'   => trim((string) $request->input('seo_description')) ?: null,
             'updated_at'        => date('Y-m-d H:i:s'),

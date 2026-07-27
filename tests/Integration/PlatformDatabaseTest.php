@@ -446,9 +446,15 @@ final class PlatformDatabaseTest extends TestCase
         $transactionalId = null;
         try {
             self::assertTrue(Database::tableExists('email_suppressions'));
-            foreach (['marketing_opt_in','marketing_consented_at','marketing_consent_source'] as $column) {
+            foreach (['marketing_opt_in','marketing_consented_at','marketing_consent_source','marketing_consent_evidence'] as $column) {
                 self::assertSame(1, (int) Database::scalar(
                     'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'providers\' AND column_name=?',
+                    [$column]
+                ));
+            }
+            foreach (['marketing_consented_at','marketing_consent_basis','marketing_consent_evidence'] as $column) {
+                self::assertSame(1, (int) Database::scalar(
+                    'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'provider_prospects\' AND column_name=?',
                     [$column]
                 ));
             }

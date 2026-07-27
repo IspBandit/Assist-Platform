@@ -34,7 +34,13 @@ ALTER TABLE providers
     ADD COLUMN marketing_opt_in TINYINT(1) NOT NULL DEFAULT 0 AFTER show_public_email,
     ADD COLUMN marketing_consented_at DATETIME NULL AFTER marketing_opt_in,
     ADD COLUMN marketing_consent_source VARCHAR(80) NULL AFTER marketing_consented_at,
+    ADD COLUMN marketing_consent_evidence VARCHAR(500) NULL AFTER marketing_consent_source,
     ADD KEY idx_provider_marketing_consent (status, marketing_opt_in);
+
+ALTER TABLE provider_prospects
+    ADD COLUMN marketing_consented_at DATETIME NULL AFTER consent_recorded,
+    ADD COLUMN marketing_consent_basis VARCHAR(80) NULL AFTER marketing_consented_at,
+    ADD COLUMN marketing_consent_evidence VARCHAR(500) NULL AFTER marketing_consent_basis;
 
 UPDATE email_templates
 SET html_body=CONCAT(html_body,'<p style="font-size:12px"><a href="{{unsubscribe_url}}">Unsubscribe from promotional email</a></p>'),

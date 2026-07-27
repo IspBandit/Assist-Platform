@@ -104,8 +104,17 @@ $v = static fn (string $k, $default = '') => e((string) ($p[$k] ?? $default));
             <label><input type="checkbox" name="show_public_email" value="1" <?= !empty($p['show_public_email']) ? 'checked' : '' ?>> Show public email on profile</label>
         </div>
         <div class="form-group">
-            <label><input type="checkbox" name="marketing_opt_in" value="1" <?= !empty($p['marketing_opt_in']) ? 'checked' : '' ?>> Provider has explicitly agreed to receive promotional email</label>
+            <label><input type="checkbox" name="marketing_opt_in" value="1" <?= !empty($p['marketing_opt_in']) ? 'checked' : '' ?>> A valid promotional-email consent basis is documented</label>
             <p class="muted">Select only when documented consent is on file. Clearing this immediately removes the provider from campaign audiences.</p>
+            <label for="marketing_consent_source">Consent basis</label>
+            <select id="marketing_consent_source" name="marketing_consent_source">
+                <option value="">Choose documented basis</option>
+                <?php foreach (['express_written'=>'Express — written','express_phone'=>'Express — phone/in person','express_web'=>'Express — web form','inferred_role_relevant'=>'Inferred — published role-relevant address'] as $value=>$label): ?>
+                    <option value="<?= e($value) ?>" <?= ($p['marketing_consent_source'] ?? '') === $value ? 'selected' : '' ?>><?= $this->e($label) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <label for="marketing_consent_evidence">Consent evidence</label>
+            <input type="text" id="marketing_consent_evidence" name="marketing_consent_evidence" maxlength="500" value="<?= $v('marketing_consent_evidence') ?>" placeholder="When, how, by whom, and where the evidence is retained">
         </div>
         <?php if (!$provider): ?>
         <div class="form-group">
