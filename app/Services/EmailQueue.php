@@ -50,12 +50,17 @@ final class EmailQueue
         string $html,
         string $text = '',
         ?string $templateKey = null,
-        ?string $scheduledAt = null
+        ?string $scheduledAt = null,
+        string $messageType = 'transactional'
     ): bool {
+        $messageType = $messageType === 'marketing' ? 'marketing' : 'transactional';
+        if (EmailSuppression::isSuppressed($recipientEmail, $messageType)) {
+            return false;
+        }
         Database::query(
-            'INSERT INTO email_queue (brand_id, template_key, recipient_email, recipient_name, subject, html_body, text_body, status, scheduled_at, created_at) '
-            . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
-            [self::brandDatabaseId(), $templateKey, $recipientEmail, $recipientName, $subject, $html, $text, 'pending', $scheduledAt]
+            'INSERT INTO email_queue (brand_id, template_key, message_type, recipient_email, recipient_name, subject, html_body, text_body, status, scheduled_at, created_at) '
+            . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+            [self::brandDatabaseId(), $templateKey, $messageType, $recipientEmail, $recipientName, $subject, $html, $text, 'pending', $scheduledAt]
         );
         return true;
     }

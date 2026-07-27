@@ -103,6 +103,10 @@ $v = static fn (string $k, $default = '') => e((string) ($p[$k] ?? $default));
         <div class="form-group">
             <label><input type="checkbox" name="show_public_email" value="1" <?= !empty($p['show_public_email']) ? 'checked' : '' ?>> Show public email on profile</label>
         </div>
+        <div class="form-group">
+            <label><input type="checkbox" name="marketing_opt_in" value="1" <?= !empty($p['marketing_opt_in']) ? 'checked' : '' ?>> Provider has explicitly agreed to receive promotional email</label>
+            <p class="muted">Select only when documented consent is on file. Clearing this immediately removes the provider from campaign audiences.</p>
+        </div>
         <?php if (!$provider): ?>
         <div class="form-group">
             <label><input type="checkbox" name="is_founding_provider" value="1"> Mark as founding provider</label>

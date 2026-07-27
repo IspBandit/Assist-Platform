@@ -101,11 +101,13 @@ final class ProvidersController extends Controller
     {
         $this->requirePermission('providers.manage');
         $id = (int) $request->input('id');
+        $existing = $id > 0 ? $this->findOr404($id) : null;
         $name = trim((string) $request->input('business_name'));
         if ($name === '') {
             return $this->redirectWith('/admin/providers', 'error', 'Business name is required.');
         }
 
+        $marketingOptIn = $request->input('marketing_opt_in') ? 1 : 0;
         $data = [
             'business_name'     => $name,
             'contact_name'      => trim((string) $request->input('contact_name')) ?: null,
@@ -122,6 +124,13 @@ final class ProvidersController extends Controller
             'description'       => trim((string) $request->input('description')) ?: null,
             'show_public_phone' => $request->input('show_public_phone') ? 1 : 0,
             'show_public_email' => $request->input('show_public_email') ? 1 : 0,
+            'marketing_opt_in'  => $marketingOptIn,
+            'marketing_consented_at' => $marketingOptIn
+                ? ((string) ($existing['marketing_consented_at'] ?? '') ?: date('Y-m-d H:i:s'))
+                : null,
+            'marketing_consent_source' => $marketingOptIn
+                ? ((string) ($existing['marketing_consent_source'] ?? '') ?: 'admin_documented')
+                : null,
             'seo_title'         => trim((string) $request->input('seo_title')) ?: null,
             'seo_description'   => trim((string) $request->input('seo_description')) ?: null,
             'updated_at'        => date('Y-m-d H:i:s'),

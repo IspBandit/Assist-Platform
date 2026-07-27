@@ -123,7 +123,16 @@ final class MicrosoftGraphMailClient
     {
         $context = stream_context_create(['http' => ['method' => 'POST', 'header' => implode("\r\n", $headers), 'content' => $body, 'ignore_errors' => true, 'timeout' => 30]]);
         $response = @file_get_contents($url, false, $context);
-        $statusLine = $http_response_header[0] ?? '';
+        if (function_exists('http_get_last_response_headers')) {
+            $responseHeaders = http_get_last_response_headers();
+        } else {
+            // PHP < 8.4 defines this request-local variable after an HTTP
+            // stream call. Resolve it indirectly so PHP 8.5 does not emit the
+            // deprecation attached to direct source references.
+            $definedVariables = get_defined_vars();
+            $responseHeaders = $definedVariables['http_response_header'] ?? [];
+        }
+        $statusLine = is_array($responseHeaders) ? (string) ($responseHeaders[0] ?? '') : '';
         preg_match('/\s(\d{3})\s/', $statusLine, $matches);
         $status = (int) ($matches[1] ?? 0);
         if (!in_array($status, $expected, true)) {

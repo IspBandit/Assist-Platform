@@ -25,7 +25,8 @@ final class NotificationsController extends Controller
         return $this->view('admin.notifications.index', [
             'title'         => 'Notifications',
             'notifications' => Database::select(
-                'SELECT n.*, u.name AS author FROM notifications n LEFT JOIN users u ON u.id = n.created_by ORDER BY n.id DESC LIMIT 100'
+                'SELECT n.*,u.name AS author FROM notifications n LEFT JOIN users u ON u.id=n.created_by WHERE n.brand_id=? ORDER BY n.id DESC LIMIT 100',
+                [current_brand()->databaseId()]
             ),
             'queue'         => $this->queueStats(),
         ]);
@@ -71,10 +72,10 @@ final class NotificationsController extends Controller
         $scheduledAt = $action === 'schedule' ? date('Y-m-d H:i:s', strtotime($values['scheduled_at'])) : null;
 
         $id = Database::insert(
-            'INSERT INTO notifications (title, body, channel, audience_type, town_id, region_id, category_id, status, scheduled_at, created_by, created_at, updated_at) '
-            . "VALUES (?, ?, 'email', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+            'INSERT INTO notifications (brand_id,title,body,channel,audience_type,town_id,region_id,category_id,status,scheduled_at,created_by,created_at,updated_at) '
+            . "VALUES (?, ?, ?, 'email', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
             [
-                $values['title'], $values['body'], $values['audience_type'],
+                current_brand()->databaseId(), $values['title'], $values['body'], $values['audience_type'],
                 $values['town_id'], $values['region_id'], $values['category_id'],
                 $status, $scheduledAt, current_user()['id'] ?? null,
             ]
@@ -94,7 +95,7 @@ final class NotificationsController extends Controller
     public function show(Request $request): Response
     {
         $this->requirePermission('notifications.send');
-        $notification = Database::selectOne('SELECT * FROM notifications WHERE id = ?', [(int) $request->input('id')]);
+        $notification = Database::selectOne('SELECT * FROM notifications WHERE id=? AND brand_id=?', [(int) $request->input('id'), current_brand()->databaseId()]);
         if ($notification === null) {
             $this->abort(404, 'Notification not found.');
         }
@@ -119,7 +120,7 @@ final class NotificationsController extends Controller
     {
         $this->requirePermission('notifications.send');
         $id = (int) $request->input('id');
-        $notification = Database::selectOne('SELECT status FROM notifications WHERE id = ?', [$id]);
+        $notification = Database::selectOne('SELECT status FROM notifications WHERE id=? AND brand_id=?', [$id, current_brand()->databaseId()]);
         if ($notification === null) {
             $this->abort(404);
         }
@@ -135,7 +136,7 @@ final class NotificationsController extends Controller
     {
         $this->requirePermission('notifications.send');
         $id = (int) $request->input('id');
-        $notification = Database::selectOne('SELECT status FROM notifications WHERE id = ?', [$id]);
+        $notification = Database::selectOne('SELECT status FROM notifications WHERE id=? AND brand_id=?', [$id, current_brand()->databaseId()]);
         if ($notification === null) {
             $this->abort(404);
         }
