@@ -36,7 +36,7 @@ final class TownCoordinateActivation
             . "state_abbr VARCHAR(10) NOT NULL, town_slug VARCHAR(150) NOT NULL, region_key VARCHAR(80) NULL, "
             . "latitude DECIMAL(10,7) NULL, longitude DECIMAL(10,7) NULL, coordinate_source VARCHAR(80) NULL, "
             . "coordinate_confidence ENUM('authoritative','statistical','unverified') NOT NULL, coordinate_reference VARCHAR(100) NULL, "
-            . "PRIMARY KEY (state_abbr,town_slug)) ENGINE=InnoDB"
+            . "PRIMARY KEY (state_abbr,town_slug)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
         $rowsByKey = [];
