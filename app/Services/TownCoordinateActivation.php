@@ -36,12 +36,12 @@ final class TownCoordinateActivation
             . "state_abbr VARCHAR(10) NOT NULL, town_slug VARCHAR(150) NOT NULL, region_key VARCHAR(80) NULL, "
             . "latitude DECIMAL(10,7) NULL, longitude DECIMAL(10,7) NULL, coordinate_source VARCHAR(80) NULL, "
             . "coordinate_confidence ENUM('authoritative','statistical','unverified') NOT NULL, coordinate_reference VARCHAR(100) NULL, "
-            . "PRIMARY KEY (state_abbr,town_slug)) ENGINE=InnoDB"
+            . "PRIMARY KEY (state_abbr,town_slug)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
         );
 
-        $rows = [];
+        $rowsByKey = [];
         foreach ((array) ($data['towns'] ?? []) as $town) {
-            $rows[] = [
+            $row = [
                 (string) ($town['state'] ?? ''), str_slug((string) ($town['name'] ?? '')),
                 $regionSlugs[(string) ($town['region'] ?? '')] ?? (string) ($town['region'] ?? ''),
                 $town['lat'] ?? null, $town['lng'] ?? null,
@@ -50,12 +50,16 @@ final class TownCoordinateActivation
                     ? (string) $town['coordinate_confidence'] : 'unverified',
                 isset($town['coordinate_reference']) ? (string) $town['coordinate_reference'] : null,
             ];
-            if (count($rows) >= self::CHUNK) {
-                self::insertChunk($rows);
-                $rows = [];
+
+            // Punctuation variants such as O'Connor and O’Connor share one
+            // database slug. Collapse them before chunking, retaining the
+            // strongest available coordinate provenance.
+            $key = $row[0] . '|' . $row[1];
+            if (!isset($rowsByKey[$key]) || self::confidenceRank((string) $row[6]) > self::confidenceRank((string) $rowsByKey[$key][6])) {
+                $rowsByKey[$key] = $row;
             }
         }
-        if ($rows !== []) {
+        foreach (array_chunk(array_values($rowsByKey), self::CHUNK) as $rows) {
             self::insertChunk($rows);
         }
 
@@ -89,6 +93,15 @@ final class TownCoordinateActivation
             . implode(',', $placeholders),
             $params
         );
+    }
+
+    private static function confidenceRank(string $confidence): int
+    {
+        return match ($confidence) {
+            'authoritative' => 3,
+            'statistical' => 2,
+            default => 1,
+        };
     }
 
     /** @return array<string,string> canonical region key => database slug */
