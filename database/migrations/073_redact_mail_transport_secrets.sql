@@ -1,11 +1,11 @@
 -- Remove credential material captured by the former Graph HTTP-status fallback.
 UPDATE email_queue
-SET last_error = 'Microsoft Graph transport error (sensitive response redacted); retry delivery test.'
+SET last_error = 'Microsoft Graph transport error (sensitive response redacted). Retry delivery test.'
 WHERE last_error LIKE '%"access_token"%'
    OR last_error LIKE '%Bearer eyJ%';
 
 UPDATE email_log
-SET error = 'Microsoft Graph transport error (sensitive response redacted); retry delivery test.'
+SET error = 'Microsoft Graph transport error (sensitive response redacted). Retry delivery test.'
 WHERE error LIKE '%"access_token"%'
    OR error LIKE '%Bearer eyJ%';
 
