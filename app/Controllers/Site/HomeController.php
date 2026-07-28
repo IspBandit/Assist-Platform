@@ -81,12 +81,36 @@ final class HomeController extends Controller
         $popularCategories = array_slice($categories, 0, 12);
 
         $providerDirectoryCount = 0;
+        $verifiedProviderCount = 0;
+        $providerTownCount = 0;
+        $serviceCategoryCount = count($categories);
         try {
+            $brandId = current_brand()->databaseId();
             $providerDirectoryCount = (int) Database::scalar(
-                "SELECT COUNT(*) FROM providers WHERE status = 'active' AND deleted_at IS NULL"
+                "SELECT COUNT(*) FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id "
+                . "WHERE pbl.brand_id = ? AND pbl.status = 'active' AND pbl.search_visible = 1 AND pbl.deleted_at IS NULL "
+                . "AND p.status = 'active' AND p.deleted_at IS NULL",
+                [$brandId]
+            );
+            $verifiedProviderCount = (int) Database::scalar(
+                "SELECT COUNT(*) FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id "
+                . "WHERE pbl.brand_id = ? AND pbl.status = 'active' AND pbl.search_visible = 1 AND pbl.is_verified = 1 "
+                . "AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL",
+                [$brandId]
+            );
+            $providerTownCount = (int) Database::scalar(
+                "SELECT COUNT(DISTINCT p.base_town_id) FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id "
+                . "WHERE pbl.brand_id = ? AND pbl.status = 'active' AND pbl.search_visible = 1 AND pbl.deleted_at IS NULL "
+                . "AND p.status = 'active' AND p.base_town_id IS NOT NULL AND p.deleted_at IS NULL",
+                [$brandId]
+            );
+            $serviceCategoryCount = (int) Database::scalar(
+                "SELECT COUNT(*) FROM service_categories WHERE is_active = 1"
             );
         } catch (Throwable) {
             $providerDirectoryCount = 0;
+            $verifiedProviderCount = 0;
+            $providerTownCount = 0;
         }
 
         return $this->view('public.home', [
@@ -103,6 +127,12 @@ final class HomeController extends Controller
             'categoryGroups'    => $categoryGroups,
             'popularCategories' => $popularCategories,
             'providerDirectoryCount' => $providerDirectoryCount,
+            'homeEvidence' => [
+                'directory_listings' => $providerDirectoryCount,
+                'verified_providers' => $verifiedProviderCount,
+                'provider_towns' => $providerTownCount,
+                'service_categories' => $serviceCategoryCount,
+            ],
             'freeMessage'   => Settings::get('free_launch_message', ''),
             'jsonLd'        => $this->organisationSchema(),
         ]);

@@ -101,3 +101,12 @@ implementation detail belongs in linked issues and pull requests. Status values:
 - Blocked external prerequisites remain explicit; code must fail closed.
 - Production defects can interrupt sequencing, but their resolution must update
   this backlog and the relevant operational record.
+
+## Reconciled experience delivery
+
+- EXP-001: conversion-led customer homepage evidence, process and trust layer — done.
+- EXP-004: provider acquisition journey across all brands — done.
+- EXP-005: provider command-centre hierarchy and growth workspace — done.
+
+These items retain the current premium symbol family, optimised contextual hero
+assets, live location controls and server-side brand scoping.

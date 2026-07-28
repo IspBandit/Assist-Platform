@@ -165,3 +165,15 @@ Every promoted or materially changed component is checked in these states:
 A component is part of the official Design System only when its public contract,
 variants, responsive behaviour, accessibility requirements and owning source are
 documented and verified. Merely sharing a CSS class does not qualify.
+
+## Conversion journey components
+
+- `home-evidence`: compact proof points immediately following the primary hero.
+- `home-process`: a three-step explanation that preserves the search-first path.
+- `home-trust`: plain-language verification and listing provenance guidance.
+- `provider-acquisition`: brand-aware benefits, operating model and application CTA.
+- `provider-dashboard`: responsive command-centre summary and next actions.
+- `provider-growth`: consent-aware visibility and campaign controls.
+
+All components collapse to one column at phone widths, preserve visible focus,
+respect reduced motion and use the shared brand tokens and premium symbol family.

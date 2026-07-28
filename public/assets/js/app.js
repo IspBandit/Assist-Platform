@@ -294,10 +294,15 @@
         };
 
         input.addEventListener('input', function () {
-            // Typing invalidates any previously resolved region.
+            // A typed correction supersedes every previously resolved
+            // location value, including a GPS fix and linked region.
+            var resolvedLat = form ? form.querySelector('input[name="lat"]') : null;
+            var resolvedLng = form ? form.querySelector('input[name="lng"]') : null;
             if (regionField) { regionField.value = ''; }
             if (regionId) { regionId.value = ''; }
             if (resolvedTown) { resolvedTown.value = ''; }
+            if (resolvedLat) { resolvedLat.value = ''; }
+            if (resolvedLng) { resolvedLng.value = ''; }
             var q = input.value.trim();
             window.clearTimeout(timer);
             if (q.length < 2) { hide(); return; }

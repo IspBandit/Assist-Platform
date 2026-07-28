@@ -167,3 +167,16 @@ price review. **Accessibility:** native controls, persistent labels, textual
 statuses, keyboard order and single-column mobile fallbacks. **Evidence:** strict
 selection tests, changed-source alert integration, campaign-scoped metrics,
 owner isolation and representative renders.
+
+## 2026-07-28 — Reconcile conversion journeys with the premium visual release
+
+**Context:** Conversion work began before the premium symbol, hero and location
+releases reached production. **Decision:** retain the approved `symbol-v2.svg`
+family, responsive contextual hero assets and current search/location behaviour;
+layer evidence, process, trust, provider acquisition and provider workspace
+components around them. Older typography-only or provisional-icon assumptions
+do not supersede the premium visual release. **Accessibility:** primary search
+remains early in document order; additions use semantic headings, visible focus,
+single-column phone fallbacks and reduced-motion controls. **Evidence:** shared
+asset tests, location regression tests, static analysis, PHPUnit and desktop and
+mobile render inspection.
