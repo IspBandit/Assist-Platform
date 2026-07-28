@@ -17,6 +17,15 @@ final class RegulatorySponsorTest extends TestCase
         );
     }
 
+    public function testStreetRodSponsorsUseStreetRodCertificationCategories(): void
+    {
+        $keys = RegulatorySponsor::categoryKeys('localtorque', 'street_rods', 'street-rod', '');
+
+        self::assertContains('street-rod-certification', $keys);
+        self::assertContains('approved-vehicle-engineer', $keys);
+        self::assertNotContains('performance-workshops', $keys);
+    }
+
     public function testDoesNotInventContextForAnUnfilteredLibrary(): void
     {
         self::assertSame([], RegulatorySponsor::categoryKeys('localtorque', '', '', ''));

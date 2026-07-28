@@ -34,9 +34,11 @@
     <div class="container quick-paths-grid">
         <a href="<?= e(url('providers')) ?>"><span class="quick-icon">01</span><span><strong>Find a workshop</strong><small>Search by business, service or location</small></span></a>
         <a href="<?= e(url('services')) ?>"><span class="quick-icon">02</span><span><strong>Browse specialists</strong><small>From mechanics to vehicle inspections</small></span></a>
-        <a href="<?= e(url('rules')) ?>"><span class="quick-icon">03</span><span><strong>Rules & modifications</strong><small>Official roadworthy and modification sources</small></span></a>
+        <a href="<?= e(url('rules')) ?>"><span class="quick-icon">03</span><span><strong>Roadworthy & modifications</strong><small>Ordinary vehicle rules and approvals</small></span></a>
     </div>
 </section>
+
+<section class="section section-ink"><div class="container split-feature"><div><span class="product-kicker">Dedicated specialist pathway</span><h2>Building a street rod or hot rod?</h2><p>Street rods are not treated as ordinary vehicle modifications. Start with the separate national construction guidance and the approval, engineering, inspection and registration pathway for your state or territory.</p></div><div><a class="btn btn-light btn-lg" href="<?= e(url('rules?vehicle=street-rod&kind=street_rods')) ?>">Open street rod rules</a></div></div></section>
 
 <section class="section product-section">
     <div class="container">

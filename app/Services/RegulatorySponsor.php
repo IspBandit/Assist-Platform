@@ -97,7 +97,9 @@ final class RegulatorySponsor
         if (in_array($kind, ['roadworthiness', 'inspection_manual'], true)) {
             $keys[] = 'roadworthy-inspections';
             $keys[] = 'vehicle-inspections';
-        } elseif (in_array($kind, ['modifications', 'code_of_practice', 'street_rods'], true)) {
+        } elseif ($kind === 'street_rods') {
+            array_push($keys, 'street-rod-certification', 'approved-vehicle-engineer', 'fabrication');
+        } elseif (in_array($kind, ['modifications', 'code_of_practice'], true)) {
             array_push($keys, 'fabrication', 'performance-workshops', 'vehicle-inspections');
         } elseif (in_array($kind, ['towing', 'load_restraint'], true)) {
             array_push($keys, 'towing-training', 'towbars-hitches', 'public-weighing');
@@ -111,6 +113,8 @@ final class RegulatorySponsor
             $keys[] = 'fleet-maintenance';
         } elseif ($vehicle === 'trailer') {
             $keys[] = 'trailer-repairs';
+        } elseif ($vehicle === 'street-rod') {
+            $keys[] = 'street-rod-certification';
         }
         $query = mb_strtolower($query);
         foreach ([

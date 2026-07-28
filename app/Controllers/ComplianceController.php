@@ -37,7 +37,8 @@ final class ComplianceController extends Controller
         $selection = ComplianceGuide::selections(
             strtoupper(trim((string) $request->input('jurisdiction', ''))),
             trim((string) $request->input('vehicle', '')),
-            trim((string) $request->input('intention', ''))
+            trim((string) $request->input('intention', '')),
+            current_brand()->id()
         );
         if ($selection === null) {
             return $this->redirectWith('/rules/guided', 'error', 'Choose a valid jurisdiction, vehicle and job.');
@@ -125,6 +126,9 @@ final class ComplianceController extends Controller
         }
         if ($intention === 'travel') {
             return ['vanassist', 1, 'travel inspection'];
+        }
+        if ($vehicle === 'street-rod') {
+            return ['localtorque', 4, 'street rod certification'];
         }
         return ['localtorque', 4, $intention === 'modify' ? 'vehicle engineering' : 'roadworthy inspection'];
     }

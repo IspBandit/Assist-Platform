@@ -31,6 +31,11 @@ final class RegulatoryDocument extends Model
         if (($filters['vehicle'] ?? '') !== '') {
             $where[] = 'JSON_CONTAINS(d.vehicle_classes_json, JSON_QUOTE(?))';
             $params[] = $filters['vehicle'];
+            if ($filters['vehicle'] === 'street-rod') {
+                $where[] = "d.document_kind IN ('street_rods','registration')";
+            } else {
+                $where[] = "d.document_kind <> 'street_rods'";
+            }
         }
         if (($filters['kind'] ?? '') !== '') {
             $where[] = 'd.document_kind = ?';

@@ -25,7 +25,7 @@ final class GarageAssetTest extends TestCase
         self::assertSame('heavy-vehicle', GarageAsset::rulesVehicle('heavy_vehicle'));
         self::assertSame('trailer', GarageAsset::rulesVehicle('caravan'));
         self::assertSame('trailer', GarageAsset::rulesVehicle('horse_float'));
-        self::assertSame('car', GarageAsset::rulesVehicle('street_rod'));
+        self::assertSame('street-rod', GarageAsset::rulesVehicle('street_rod'));
     }
 
     public function testAustralianRegistrationJurisdictionsAreExplicit(): void

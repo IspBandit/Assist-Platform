@@ -28,21 +28,25 @@ final class ComplianceGuide
     ];
 
     /** @return array{jurisdiction:string,vehicle:string,intention:string,kind:string}|null */
-    public static function selections(string $jurisdiction, string $vehicle, string $intention): ?array
+    public static function selections(string $jurisdiction, string $vehicle, string $intention, string $brandId = 'localtorque'): ?array
     {
-        if (!isset(self::JURISDICTIONS[$jurisdiction], self::VEHICLES[$vehicle], self::INTENTIONS[$intention])) {
+        if (!isset(self::JURISDICTIONS[$jurisdiction], self::VEHICLES[$vehicle], self::INTENTIONS[$intention])
+            || !isset(RegulatoryTaxonomy::vehiclesForBrand($brandId)[$vehicle])) {
             return null;
         }
         return [
             'jurisdiction' => $jurisdiction,
             'vehicle' => $vehicle,
             'intention' => $intention,
-            'kind' => self::documentKind($intention),
+            'kind' => self::documentKind($intention, $vehicle),
         ];
     }
 
-    public static function documentKind(string $intention): string
+    public static function documentKind(string $intention, string $vehicle = ''): string
     {
+        if ($vehicle === 'street-rod' && $intention === 'modify') {
+            return 'street_rods';
+        }
         return match ($intention) {
             'inspect' => 'roadworthiness',
             'modify' => 'modifications',
@@ -53,8 +57,16 @@ final class ComplianceGuide
     }
 
     /** @return array<int,array{title:string,body:string}> */
-    public static function steps(string $intention): array
+    public static function steps(string $intention, string $vehicle = ''): array
     {
+        if ($vehicle === 'street-rod' && $intention === 'modify') {
+            return [
+                ['title' => 'Start with the street-rod pathway', 'body' => 'Confirm that the vehicle meets the jurisdiction definition for a street rod or qualifying replica. Ordinary light-vehicle modification approval is not a substitute.'],
+                ['title' => 'Apply before construction begins', 'body' => 'Follow the jurisdiction street-rod pre-build, engineering or Technical Advisory Committee process before buying parts or starting structural work.'],
+                ['title' => 'Keep the complete build evidence', 'body' => 'Retain plans, component specifications, receipts, photographs, engineering reports, inspections and final approvals with the vehicle.'],
+                ['title' => 'Use a street-rod specialist when needed', 'body' => 'Provider results are separate from official sources. Street-rod capability must be specifically evidenced and is not government endorsement.'],
+            ];
+        }
         $middle = match ($intention) {
             'inspect' => ['title' => 'Prepare the exact vehicle', 'body' => 'Use the authority inspection material to identify evidence, safety items and any jurisdiction-specific booking requirement.'],
             'modify' => ['title' => 'Confirm approval before work starts', 'body' => 'Discuss the exact modification with an appropriately qualified specialist or approved engineer before purchasing parts or beginning work.'],
