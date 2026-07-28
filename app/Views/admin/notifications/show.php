@@ -4,6 +4,7 @@
 /** @var array<int,array<string,mixed>> $recipients */
 /** @var array<int,array<string,mixed>> $tests */
 /** @var int $previewCount */
+/** @var array{with_email:int,consent_eligible:int,held_for_review:int}|null $providerSummary */
 $this->extend('layouts.admin');
 $status = (string) $notification['status'];
 $stage = (string) ($notification['delivery_stage'] ?? 'draft');
@@ -21,6 +22,9 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
         Audience: <strong><?= $this->e((string) $notification['audience_type']) ?></strong> ·
         <?php if ($status === 'sent'): ?>Sent to <strong><?= (int) $notification['recipient_count'] ?></strong> recipient(s)<?php else: ?>Estimated recipients: <strong><?= (int) $previewCount ?></strong><?php endif; ?>
     </p>
+    <?php if ($providerSummary !== null && $status !== 'sent'): ?>
+        <div class="alert alert-info"><strong><?= (int) $providerSummary['with_email'] ?></strong> active provider(s) have an email address in this audience. <strong><?= (int) $providerSummary['consent_eligible'] ?></strong> can be included now and <strong><?= (int) $providerSummary['held_for_review'] ?></strong> remain held for consent review.</div>
+    <?php endif; ?>
 
     <div style="border:1px solid #e3e0d8;border-radius:8px;padding:1rem;background:#fff;margin:1rem 0">
         <?= $notification['body'] /* trusted admin-authored HTML */ ?>

@@ -20,6 +20,7 @@ final class BroadcastAudience
     public const TYPES = [
         'all'            => 'Everyone opted in',
         'providers'      => 'Providers with documented marketing consent',
+        'provider_category' => 'Providers by service category (documented consent)',
         'customers_open' => 'Customers with open requests',
         'town'           => 'By town (customers + local providers)',
         'region'         => 'By region (customers + providers)',
@@ -45,6 +46,13 @@ final class BroadcastAudience
 
                 case 'providers':
                     $rows = self::activeProviders();
+                    break;
+
+                case 'provider_category':
+                    if ($categoryId === null) {
+                        return [];
+                    }
+                    $rows = self::activeProviders(null, null, $categoryId);
                     break;
 
                 case 'customers_open':
@@ -98,6 +106,30 @@ final class BroadcastAudience
     public static function count(string $type, ?int $townId, ?int $regionId, ?int $categoryId): int
     {
         return count(self::resolve($type, $townId, $regionId, $categoryId));
+    }
+
+    /** @return array{with_email:int,consent_eligible:int,held_for_review:int} */
+    public static function providerEmailSummary(?int $categoryId = null): array
+    {
+        $joins = " INNER JOIN provider_brand_listings bl ON bl.provider_id=p.id AND bl.brand_id=? AND bl.status='active' AND bl.deleted_at IS NULL";
+        $params = [self::brandId()];
+        if ($categoryId !== null) {
+            $joins .= ' INNER JOIN provider_services s ON s.provider_id=p.id AND s.category_id=?';
+            $params[] = $categoryId;
+        }
+        $rows = Database::select(
+            "SELECT DISTINCT NULL AS user_id,COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')) AS email,p.business_name AS name "
+            . "FROM providers p{$joins} WHERE p.status='active' AND p.deleted_at IS NULL "
+            . "AND COALESCE(NULLIF(TRIM(p.email),''),NULLIF(TRIM(p.public_email),'')) IS NOT NULL",
+            $params
+        );
+        $withEmail = count(self::dedupe($rows));
+        $eligible = count(self::dedupe(self::activeProviders(null, null, $categoryId)));
+        return [
+            'with_email' => $withEmail,
+            'consent_eligible' => $eligible,
+            'held_for_review' => max(0, $withEmail - $eligible),
+        ];
     }
 
     /** @return array<int,array<string,mixed>> */
