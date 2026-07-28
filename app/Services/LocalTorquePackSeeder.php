@@ -48,6 +48,7 @@ final class LocalTorquePackSeeder
             'created' => 0, 'enriched' => 0, 'linked' => 0,
             'public_listings' => 0, 'review_only' => 0, 'skipped' => 0,
             'location_corrected' => 0, 'location_conflicts' => 0,
+            'location_sources_quarantined' => 0,
         ];
 
         Database::beginTransaction();
@@ -70,6 +71,7 @@ final class LocalTorquePackSeeder
         $counts['next'] = $next < $total ? $next : -1;
         $counts['complete'] = $counts['next'] === -1;
         if ($counts['complete']) {
+            $counts['location_sources_quarantined'] = $this->quarantineContradictorySourceLocations();
             $counts['retired_superseded_qld_fuel'] = $this->retireSupersededQueenslandFuelSeeds();
         }
         return $counts;
@@ -278,6 +280,55 @@ final class LocalTorquePackSeeder
             "UPDATE providers SET status='pending',updated_at=NOW() WHERE id=? AND is_unclaimed=1",
             [$providerId]
         );
+    }
+
+    /**
+     * A provider can legitimately accumulate more than one public-source row.
+     * Reconcile the complete evidence set after the final batch so an older or
+     * duplicate row cannot remain trusted when it contradicts the provider's
+     * displayed Australian town. Claimed providers are deliberately excluded.
+     */
+    private function quarantineContradictorySourceLocations(): int
+    {
+        $rows = Database::select(
+            'SELECT psr.id,psr.provider_id,psr.payload_json,t.latitude AS town_latitude,t.longitude AS town_longitude '
+            . 'FROM provider_source_records psr JOIN providers p ON p.id=psr.provider_id '
+            . 'JOIN towns t ON t.id=p.base_town_id '
+            . 'WHERE p.is_unclaimed=1 AND psr.publishable=1 AND psr.needs_review=0 '
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
+            . "AND EXISTS (SELECT 1 FROM provider_brand_listings l WHERE l.provider_id=p.id AND l.status='active' AND l.search_visible=1)"
+        );
+        $quarantined = 0;
+        foreach ($rows as $row) {
+            $payload = json_decode((string) ($row['payload_json'] ?? ''), true);
+            if (!is_array($payload) || !is_numeric($payload['lat'] ?? null) || !is_numeric($payload['lng'] ?? null)
+                || ($payload['_coords_approx'] ?? false) === true) {
+                continue;
+            }
+            $distance = Geo::haversineKm(
+                (float) $payload['lat'],
+                (float) $payload['lng'],
+                (float) $row['town_latitude'],
+                (float) $row['town_longitude']
+            );
+            if ($distance <= self::MAX_DECLARED_TOWN_DISTANCE_KM) {
+                continue;
+            }
+
+            Database::query(
+                'UPDATE provider_source_records SET needs_review=1,last_seen_at=NOW() WHERE id=?',
+                [(int) $row['id']]
+            );
+            $providerId = (int) $row['provider_id'];
+            if ((int) Database::scalar(
+                'SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND publishable=1 AND needs_review=0',
+                [$providerId]
+            ) === 0) {
+                $this->quarantineUnclaimedProvider($providerId);
+            }
+            $quarantined++;
+        }
+        return $quarantined;
     }
 
     /** @return array<string,mixed>|null */
