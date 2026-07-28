@@ -72,4 +72,13 @@ final class MicrosoftGraphMailClientTest extends TestCase
             'operations@vanassist.com.au'
         ));
     }
+
+    public function testGraphErrorBodyRedactsAccessTokens(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'safeErrorBody');
+        $safe = $method->invoke(null, '{"token_type":"Bearer","access_token":"eyJsecret.payload.signature"}');
+
+        $this->assertStringContainsString('[REDACTED]', $safe);
+        $this->assertStringNotContainsString('eyJsecret', $safe);
+    }
 }

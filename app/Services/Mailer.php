@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Config;
 use App\Core\Database;
 use App\Core\Logger;
+use App\Core\SecretRedactor;
 use App\Platform\Brand\BrandRegistry;
 use PHPMailer\PHPMailer\PHPMailer;
 use RuntimeException;
@@ -56,7 +57,7 @@ final class Mailer
             } catch (Throwable $e) {
                 $attempts = (int) $row['attempts'];
                 $status = $attempts >= $maxAttempts ? 'failed' : 'pending';
-                Logger::error('Queue #' . $row['id'] . ' -> ' . strtoupper($status) . ' (attempt ' . $attempts . '/' . $maxAttempts . '): ' . $e->getMessage(), [
+                Logger::error('Queue #' . $row['id'] . ' -> ' . strtoupper($status) . ' (attempt ' . $attempts . '/' . $maxAttempts . '): ' . SecretRedactor::redact($e->getMessage()), [
                     'to' => $row['recipient_email'],
                 ], 'email');
                 self::markFailedAttempt($row, $status, $e);
@@ -174,7 +175,7 @@ final class Mailer
     /** @param array<string,mixed> $row */
     private static function markFailedAttempt(array $row, string $status, Throwable $error): void
     {
-        $message = substr($error->getMessage(), 0, 500);
+        $message = substr(SecretRedactor::redact($error->getMessage()), 0, 500);
         $backoffSeconds = min(3600, 60 * (2 ** max(0, (int) $row['attempts'] - 1)));
 
         Database::beginTransaction();
