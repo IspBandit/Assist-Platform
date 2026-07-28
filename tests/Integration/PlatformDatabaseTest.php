@@ -17,6 +17,7 @@ use App\Services\Mailer;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
+use App\Services\TownCoordinateActivation;
 use App\Services\CampaignMetrics;
 use App\Models\GarageAsset;
 use App\Models\Provider;
@@ -521,6 +522,17 @@ final class PlatformDatabaseTest extends TestCase
             if ($transactionalId !== null) { Database::query('DELETE FROM email_queue WHERE id=?', [$transactionalId]); }
             Database::query('DELETE FROM email_suppressions WHERE email=?', [$email]);
         }
+    }
+
+    public function testNationalTownCoordinatePackActivatesWithNormalisedNameVariants(): void
+    {
+        $result = TownCoordinateActivation::afterMigrations();
+
+        self::assertArrayHasKey('updated', $result);
+        self::assertGreaterThan(1000, (int) $result['updated']);
+        self::assertSame('authoritative', Database::scalar(
+            "SELECT coordinate_confidence FROM towns t JOIN states s ON s.id=t.state_id WHERE s.abbreviation='ACT' AND t.slug='o-connor'"
+        ));
     }
 
     public function testStagedCampaignSchemaIsInstalled(): void
