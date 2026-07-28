@@ -69,6 +69,10 @@ final class NationalTownSeeder
                 ($t['pc'] ?? null) !== null && (string) $t['pc'] !== '' ? (string) $t['pc'] : null,
                 isset($t['lat']) ? (float) $t['lat'] : null,
                 isset($t['lng']) ? (float) $t['lng'] : null,
+                (string) ($t['coordinate_source'] ?? 'australian-postcodes'),
+                in_array(($t['coordinate_confidence'] ?? ''), ['authoritative', 'statistical'], true)
+                    ? (string) $t['coordinate_confidence'] : 'unverified',
+                isset($t['coordinate_reference']) ? (string) $t['coordinate_reference'] : null,
             ];
             if (count($rows) >= self::CHUNK) {
                 $created += $this->insertChunk($rows);
@@ -91,19 +95,20 @@ final class NationalTownSeeder
      * Bulk INSERT IGNORE a batch of towns. Returns the number of rows actually
      * created (existing (state,slug) rows are ignored).
      *
-     * @param array<int,array{0:int,1:?int,2:string,3:string,4:?string,5:?float,6:?float}> $rows
+     * @param array<int,array{0:int,1:?int,2:string,3:string,4:?string,5:?float,6:?float,7:string,8:string,9:?string}> $rows
      */
     private function insertChunk(array $rows): int
     {
         $placeholders = [];
         $params = [];
         foreach ($rows as $r) {
-            $placeholders[] = '(?, ?, ?, ?, ?, ?, ?, 1, 0, 1, NOW(), NOW())';
-            array_push($params, $r[0], $r[1], $r[2], $r[3], $r[4], $r[5], $r[6]);
+            $placeholders[] = '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE, 1, 0, 1, NOW(), NOW())';
+            array_push($params, ...$r);
         }
 
         return Database::query(
             'INSERT IGNORE INTO towns (state_id, region_id, name, slug, primary_postcode, latitude, longitude, '
+            . 'coordinate_source, coordinate_confidence, coordinate_reference, coordinate_verified_at, '
             . 'is_active, is_launch_town, noindex, created_at, updated_at) VALUES '
             . implode(', ', $placeholders),
             $params

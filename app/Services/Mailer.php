@@ -156,6 +156,7 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'sent', NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject']]
             );
+            Database::query("UPDATE notification_recipients SET status='sent' WHERE queue_id=?", [$row['id']]);
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();
@@ -193,6 +194,9 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'failed', ?, NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject'], $message]
             );
+            if ($status === 'failed') {
+                Database::query("UPDATE notification_recipients SET status='failed' WHERE queue_id=?", [$row['id']]);
+            }
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();

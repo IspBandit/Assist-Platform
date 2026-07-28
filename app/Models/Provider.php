@@ -247,8 +247,9 @@ final class Provider extends Model
 
         return Database::select(
             'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
-            . 'p.is_founding_provider, p.is_unclaimed, ps.is_inferred, '
-            . 't.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
+            . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
+            . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
+            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, "
             . 's.abbreviation AS state_abbr '
             . 'FROM provider_services ps '
             . 'JOIN providers p ON p.id = ps.provider_id '
@@ -283,18 +284,18 @@ final class Provider extends Model
 
         return Database::select(
             'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
-            . 'p.is_founding_provider, p.is_unclaimed, ps.is_inferred, '
-            . 't.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,t.latitude) AS town_lat, '
-            . 'COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
+            . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
+            . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
+            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, s.abbreviation AS state_abbr, "
             . '(6371 * ACOS(LEAST(1, GREATEST(-1, COS(RADIANS(?)) '
-            . '* COS(RADIANS(COALESCE(p.latitude,t.latitude))) '
-            . '* COS(RADIANS(COALESCE(p.longitude,t.longitude)) - RADIANS(?)) '
-            . '+ SIN(RADIANS(?)) * SIN(RADIANS(COALESCE(p.latitude,t.latitude))))))) AS distance_km '
+            . "* COS(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))) "
+            . "* COS(RADIANS(COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END)) - RADIANS(?)) "
+            . "+ SIN(RADIANS(?)) * SIN(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))))))) AS distance_km "
             . 'FROM provider_services ps JOIN providers p ON p.id=ps.provider_id '
             . 'LEFT JOIN towns t ON t.id=p.base_town_id LEFT JOIN states s ON s.id=t.state_id '
             . "WHERE ps.category_id=? AND p.status='active' AND p.deleted_at IS NULL "
-            . 'AND COALESCE(p.latitude,t.latitude) BETWEEN ? AND ? '
-            . 'AND COALESCE(p.longitude,t.longitude) BETWEEN ? AND ? '
+            . "AND COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) BETWEEN ? AND ? "
+            . "AND COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) BETWEEN ? AND ? "
             . 'HAVING distance_km <= ? '
             . 'ORDER BY ps.is_inferred ASC, distance_km ASC, p.is_featured DESC, p.is_verified DESC, p.business_name '
             . 'LIMIT ' . $limit,

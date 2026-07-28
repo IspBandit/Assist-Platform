@@ -45,8 +45,8 @@ final class PlatformDatabaseTest extends TestCase
     public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void
     {
         self::assertTrue(Database::tableExists('provider_source_records'));
-        self::assertSame(8485, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
-        self::assertSame(1863, (int) Database::scalar(
+        self::assertSame(9730, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
+        self::assertSame(3108, (int) Database::scalar(
             "SELECT COUNT(*) FROM provider_source_records WHERE payload_json LIKE '%\"fuel-station\"%'"
         ));
         self::assertSame(0, (int) Database::scalar(
@@ -521,5 +521,22 @@ final class PlatformDatabaseTest extends TestCase
             if ($transactionalId !== null) { Database::query('DELETE FROM email_queue WHERE id=?', [$transactionalId]); }
             Database::query('DELETE FROM email_suppressions WHERE email=?', [$email]);
         }
+    }
+
+    public function testStagedCampaignSchemaIsInstalled(): void
+    {
+        self::assertTrue(Database::tableExists('notification_test_deliveries'));
+        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name=?",
+                [$column]
+            ));
+        }
+        self::assertSame(1, (int) Database::scalar(
+            "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='email_queue' AND column_name='notification_id'"
+        ));
+        self::assertSame(1, (int) Database::scalar(
+            "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='notification_recipients' AND index_name='uq_notification_recipient_email'"
+        ));
     }
 }

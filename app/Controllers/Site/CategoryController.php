@@ -62,7 +62,7 @@ final class CategoryController extends Controller
         $selectedTown = null;
         if ($townId !== null) {
             $selectedTown = Database::selectOne(
-                'SELECT t.id, t.name, t.latitude, t.longitude, s.abbreviation AS state_abbr FROM towns t '
+                'SELECT t.id, t.name, t.latitude, t.longitude, t.coordinate_confidence, s.abbreviation AS state_abbr FROM towns t '
                 . 'LEFT JOIN states s ON s.id = t.state_id WHERE t.id = ? AND t.is_active = 1',
                 [$townId]
             );
@@ -76,8 +76,10 @@ final class CategoryController extends Controller
         $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
 
         // Reference point for approximate distances (the searched town's centre).
-        $originLat = $selectedTown !== null && $selectedTown['latitude'] !== null ? (float) $selectedTown['latitude'] : null;
-        $originLng = $selectedTown !== null && $selectedTown['longitude'] !== null ? (float) $selectedTown['longitude'] : null;
+        $trustedOrigin = $selectedTown !== null
+            && in_array(($selectedTown['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true);
+        $originLat = $trustedOrigin && $selectedTown['latitude'] !== null ? (float) $selectedTown['latitude'] : null;
+        $originLng = $trustedOrigin && $selectedTown['longitude'] !== null ? (float) $selectedTown['longitude'] : null;
 
         $matches = [];
         $possible = [];

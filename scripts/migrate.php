@@ -21,6 +21,8 @@ require BASE_PATH . '/bootstrap/autoload.php';
 use App\Core\Config;
 use App\Helpers\Env;
 use App\Services\Migrator;
+use App\Services\ProviderPackActivation;
+use App\Services\TownCoordinateActivation;
 
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
@@ -35,6 +37,14 @@ try {
         foreach ($ran as $name) {
             echo "  - {$name}\n";
         }
+    }
+    $townCoordinates = TownCoordinateActivation::afterMigrations();
+    if (empty($townCoordinates['skipped'])) {
+        echo 'Activated verified town coordinates: ' . (int) ($townCoordinates['updated'] ?? 0) . " rows.\n";
+    }
+    $providerPack = ProviderPackActivation::afterMigrations();
+    if (empty($providerPack['skipped'])) {
+        echo 'Activated authoritative provider pack: ' . (int) ($providerPack['total'] ?? 0) . " records.\n";
     }
     exit(0);
 } catch (Throwable $e) {

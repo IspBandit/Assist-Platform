@@ -144,7 +144,7 @@ return [
         'Theodore'          => ['Central Queensland', '4719', -24.9480, 150.0760, 0],
         'Banana'            => ['Central Queensland', '4702', -24.4690, 150.1170, 0],
         'Baralaba'          => ['Central Queensland', '4702', -24.1730, 149.8230, 0],
-        'Emerald'           => ['Central Queensland', '4720', -23.5270, 148.1590, 1],
+        'Emerald'           => ['Central Queensland', '4720', -23.52083, 148.16194, 1],
         'Blackwater'        => ['Central Queensland', '4717', -23.5830, 148.8810, 0],
         'Springsure'        => ['Central Queensland', '4722', -24.1170, 148.0890, 0],
         'Capella'           => ['Central Queensland', '4723', -23.0820, 148.0240, 0],
@@ -157,7 +157,7 @@ return [
         // ---- Fitzroy (Rockhampton, Capricorn Coast) ----
         'Rockhampton'       => ['Fitzroy', '4700', -23.3790, 150.5100, 1],
         'Yeppoon'           => ['Fitzroy', '4703', -23.1320, 150.7390, 1],
-        'Emu Park'          => ['Fitzroy', '4710', -23.2530, 150.8290, 0],
+        'Emu Park'          => ['Fitzroy', '4710', -23.2592568, 150.8238435, 0],
         'Gracemere'         => ['Fitzroy', '4702', -23.4380, 150.4560, 0],
         'Mount Morgan'      => ['Fitzroy', '4714', -23.6470, 150.3870, 0],
         'Marlborough'       => ['Fitzroy', '4705', -22.8200, 149.8900, 0],
