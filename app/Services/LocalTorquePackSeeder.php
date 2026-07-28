@@ -295,8 +295,7 @@ final class LocalTorquePackSeeder
             . 'FROM provider_source_records psr JOIN providers p ON p.id=psr.provider_id '
             . 'JOIN towns t ON t.id=p.base_town_id '
             . 'WHERE p.is_unclaimed=1 AND psr.publishable=1 AND psr.needs_review=0 '
-            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
-            . "AND EXISTS (SELECT 1 FROM provider_brand_listings l WHERE l.provider_id=p.id AND l.status='active' AND l.search_visible=1)"
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL'
         );
         $quarantined = 0;
         foreach ($rows as $row) {
