@@ -38,6 +38,14 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                 <h1>Caravan help, <span class="accent">wherever you travel.</span></h1>
                 <p class="lead">Find repairs, mobile help, fuel, EV charging and practical places to stop across Australia—all from one location-first search.</p>
 
+                <ul class="hero-trust">
+                    <li>Claimed and verified status shown clearly</li>
+                    <li>Location-first results</li>
+                    <li>Free to search</li>
+                </ul>
+            </div>
+
+            <div class="hero-search-panel">
                 <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -91,21 +99,6 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                         <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
                 </form>
-
-                <ul class="hero-trust">
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Claimed and verified status shown clearly
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Search by town, suburb, postcode or location
-                    </li>
-                    <li>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Free, no-obligation requests
-                    </li>
-                </ul>
             </div>
 
         </div>

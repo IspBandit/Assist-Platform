@@ -2,7 +2,6 @@
 /** @var \App\Core\View $this */
 $minimalBrand = current_brand();
 $minimalBrandMeta = $minimalBrand->metadata();
-$minimalBrandAssets = $minimalBrand->assets();
 ?>
 <!doctype html>
 <html lang="en-AU">
@@ -13,15 +12,14 @@ $minimalBrandAssets = $minimalBrand->assets();
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
     <?php $this->include('partials.brand-theme'); ?>
-    <link rel="icon" type="image/svg+xml" href="<?= e(asset($minimalBrandAssets['favicon'] ?? '/assets/brands/vanassist/mark.svg')) ?>">
+    <link rel="icon" href="data:,">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
 <main id="main" class="auth-wrap">
     <div class="<?= $this->e($cardClass ?? 'auth-card') ?>">
         <div class="text-center" style="margin-bottom:1.5rem">
-            <a class="brand brand-auth" href="<?= e(url('/')) ?>" aria-label="<?= e($minimalBrand->name()) ?> home">
-                <img class="brand-mark" src="<?= e(asset($minimalBrandAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="44" height="44">
+            <a class="brand brand-auth brand--wordmark" href="<?= e(url('/')) ?>" aria-label="<?= e($minimalBrand->name()) ?> home">
                 <span class="brand-copy"><span class="brand-name"><?= e($minimalBrandMeta['wordmark_prefix'] ?? $minimalBrand->name()) ?><span class="assist"><?= e($minimalBrandMeta['wordmark_accent'] ?? '') ?></span></span><span class="brand-descriptor"><?= e($minimalBrandMeta['header_descriptor'] ?? $minimalBrandMeta['tagline'] ?? '') ?></span></span>
             </a>
         </div>

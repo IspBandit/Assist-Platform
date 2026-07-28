@@ -50,7 +50,7 @@
     --maxw: 1200px;
 }
 
-+/* ---------- Experience v2: immersive discovery ---------- */
+/* ---------- Experience v2: immersive discovery ---------- */
 .hero-v2 { min-height: min(860px, calc(100svh - 76px)); padding: 0; display:grid; align-items:center; background:#071f20; }
 .hero-v2::after { content:""; position:absolute; inset:0; z-index:1; background:linear-gradient(90deg,rgba(3,24,26,.97) 0%,rgba(5,37,38,.88) 42%,rgba(5,37,38,.28) 72%,rgba(5,37,38,.08) 100%); }
 .hero-v2 > .container { position:static; z-index:auto; }
@@ -298,10 +298,11 @@ select:focus-visible, textarea:focus-visible {
 .site-header { background: rgba(255,255,255,.97); border-bottom: 1px solid color-mix(in srgb, var(--brand-primary) 15%, #e5e7eb); box-shadow: 0 8px 30px rgba(15,23,42,.055); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); }
 .site-header .container { display: flex; align-items: center; justify-content: space-between; min-height: 76px; gap: 1rem; flex-wrap: wrap; }
 .brand { display: inline-flex; min-height: 32px; align-items: center; color: var(--color-text); text-decoration: none; min-width: 0; }
+.brand--wordmark { position:relative; padding-left:1rem; border-left:3px solid var(--color-brand); }
 .brand-copy { display: flex; flex-direction: column; min-width: 0; line-height: 1; }
-.brand-name { color:#111827; font-size: 1.46rem; font-weight: 800; letter-spacing: -.045em; white-space: nowrap; }
+.brand-name { color:#111827; font-size: 1.62rem; font-weight: 820; letter-spacing: -.055em; white-space: nowrap; }
 .brand span.assist { color: var(--color-brand); }
-.brand-descriptor { margin-top: .4rem; color: var(--color-text-muted); font-size: .57rem; font-weight: 760; letter-spacing: .16em; white-space: nowrap; }
+.brand-descriptor { margin-top: .4rem; color: var(--color-text-muted); font-size: .54rem; font-weight: 780; letter-spacing: .13em; text-transform:uppercase; white-space: nowrap; }
 .brand-auth { justify-content: center; text-align: left; }
 .brand-admin { color: #fff; }
 .brand-admin .brand-name, .brand-admin span.assist { color: #fff; }
@@ -1242,11 +1243,12 @@ linear-gradient(135deg,#071c27 0%,#0f3b4c 58%,#092834 100%)}
 .hero-media,.hero-media img,.journey-hero-media,.journey-hero-media img{position:absolute;inset:0;width:100%;height:100%}
 .hero-media img,.journey-hero-media img{object-fit:cover;object-position:center}
 .hero-media-shade,.journey-hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,25,30,.94) 0%,rgba(4,25,30,.84) 40%,rgba(4,25,30,.28) 70%,rgba(4,25,30,.08) 100%)}
-.hero--visual>.container{position:relative;z-index:2}.hero--visual .hero-grid{grid-template-columns:minmax(0,760px);align-items:center}.hero--visual .hero-copy{padding:2rem 0 1rem}
+.hero--visual>.container{position:relative;z-index:2}.hero--visual .hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(410px,.78fr);gap:clamp(2.5rem,6vw,6rem);align-items:center}.hero--visual .hero-copy{padding:3rem 0 2rem}.hero--visual .hero-copy h1{max-width:9ch;font-size:clamp(3.7rem,6.4vw,6.5rem);line-height:.9;letter-spacing:-.065em}.hero--visual .hero-copy .lead{max-width:580px;font-size:clamp(1.08rem,1.5vw,1.28rem)}.hero-search-panel{align-self:center}.hero-search-panel .search-card{margin:0;padding:clamp(1.35rem,2.5vw,2rem);border-radius:6px;background:rgba(255,255,255,.98);box-shadow:0 32px 90px rgba(0,0,0,.38)}.hero-search-panel .home-search-primary{grid-template-columns:1fr}.hero-search-panel .btn-row{display:grid;grid-template-columns:1fr}.hero-search-panel .btn-row>*{width:100%;justify-content:center}.hero--visual .hero-trust{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1.6rem}.hero--visual .hero-trust li{padding:.45rem .7rem;border:1px solid rgba(255,255,255,.28);border-radius:999px;background:rgba(3,31,33,.35);font-size:.78rem}.hero--visual .hero-trust li::before{content:'✓';margin-right:.4rem;color:#8fe0d8}
 .rules-hero .journey-hero-shade{background:linear-gradient(90deg,rgba(6,20,33,.96) 0%,rgba(6,20,33,.84) 46%,rgba(6,20,33,.38) 74%,rgba(6,20,33,.22) 100%)}
 .garage-hero .journey-hero-shade{background:linear-gradient(90deg,rgba(7,20,38,.95) 0%,rgba(7,20,38,.82) 48%,rgba(7,20,38,.34) 75%,rgba(7,20,38,.14) 100%)}
 .journey-hero-media{z-index:0}.journey-hero-shade{z-index:0}.rules-hero-grid,.garage-hero-inner{z-index:1}
-@media(max-width:719px){.hero-media-shade,.journey-hero-shade,.rules-hero .journey-hero-shade,.garage-hero .journey-hero-shade{background:linear-gradient(0deg,rgba(5,13,24,.98) 0%,rgba(5,13,24,.88) 52%,rgba(5,13,24,.16) 86%)}.hero--visual{min-height:0;padding-top:14rem}.hero--visual .hero-copy{padding-top:1rem}.journey-hero-media img{object-position:center 30%}.rules-hero,.garage-hero{padding-top:14rem}.garage-hero-inner{padding-top:2rem}}
+@media(max-width:919px){.hero--visual .hero-grid{grid-template-columns:1fr;gap:1.5rem}.hero-search-panel{max-width:700px}.hero--visual .hero-copy h1{max-width:10ch}}
+@media(max-width:719px){.hero-media-shade,.journey-hero-shade,.rules-hero .journey-hero-shade,.garage-hero .journey-hero-shade{background:linear-gradient(0deg,rgba(5,13,24,.98) 0%,rgba(5,13,24,.88) 58%,rgba(5,13,24,.12) 90%)}.hero--visual{min-height:0;padding-top:13rem;padding-bottom:1rem}.hero--visual .hero-copy{padding:1rem 0 0}.hero--visual .hero-copy h1{font-size:clamp(3rem,15vw,4.6rem)}.hero--visual .hero-trust{display:none}.hero-search-panel .search-card{padding:1rem;border-radius:14px}.journey-hero-media img{object-position:center 30%}.rules-hero,.garage-hero{padding-top:14rem}.garage-hero-inner{padding-top:2rem}}
 
 /* LocalTorque motorsport rule finder */
 .motorsport-hero{position:relative;overflow:hidden;min-height:680px;padding:clamp(5rem,10vw,8rem) 0;color:#fff;background:#071724}

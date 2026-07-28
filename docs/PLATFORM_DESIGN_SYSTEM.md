@@ -207,9 +207,16 @@ tokens and components.
 ## Conversion-led journey layer
 
 The premium visual system and conversion journey are complementary. Public
-homepages may pair optimised contextual hero photography with the approved
-`symbol-v2.svg` family, concise evidence, a three-step process and explicit
-trust language. Provider acquisition and provider workspaces reuse the same
-tokens, responsive breakpoints and focus treatment. These additions must not
-replace the approved symbols with cartoon vehicle artwork, hide primary search,
-or reintroduce colour-heavy brand tiles.
+homepages pair optimised contextual hero photography with typography-led brand
+wordmarks, concise evidence, a three-step process and explicit trust language.
+Public headers and browser tabs do not use the provisional platform symbols;
+the tab intentionally uses a blank favicon until a professionally art-directed
+identity is approved. Provider acquisition and provider workspaces reuse the
+same tokens, responsive breakpoints and focus treatment. These additions must
+not reintroduce cartoon vehicle artwork, hide primary search or use colour-heavy
+brand tiles.
+
+The VanAssist first screen uses an editorial two-column layout on desktop: the
+value proposition and trust statements sit beside a dedicated search console.
+At 919px and below it becomes a single-column journey, and at phone widths the
+trust chips are removed so the primary search remains concise and unobstructed.
