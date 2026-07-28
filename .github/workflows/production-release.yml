@@ -93,11 +93,23 @@ jobs:
           homepage="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
           grep -q '/runtime-assets/css/app.css' <<<"$homepage"
           grep -q '/runtime-assets/js/app.js' <<<"$homepage"
-          grep -q '/runtime-assets/brands/vanassist/symbol-v2.svg' <<<"$homepage"
+          grep -q 'class="brand brand--wordmark"' <<<"$homepage"
+          grep -q 'class="hero-search-panel"' <<<"$homepage"
+          grep -q '<link rel="icon" href="data:,">' <<<"$homepage"
+          if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$homepage"; then
+            echo "Public VanAssist identity unexpectedly contains a retired platform symbol."
+            exit 1
+          fi
 
-          symbol="$(curl --fail --silent --show-error --location --max-time 20 \
-            https://vanassist.com.au/runtime-assets/brands/vanassist/symbol-v2.svg)"
-          grep -q 'viewBox="0 0 64 64"' <<<"$symbol"
+          for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
+            brand_homepage="$(curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
+            grep -q 'class="brand brand--wordmark"' <<<"$brand_homepage"
+            grep -q '<link rel="icon" href="data:,">' <<<"$brand_homepage"
+            if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$brand_homepage"; then
+              echo "Public identity at $brand_url unexpectedly contains a retired platform symbol."
+              exit 1
+            fi
+          done
           app_js="$(curl --fail --silent --show-error --location --max-time 20 \
             https://vanassist.com.au/runtime-assets/js/app.js)"
           grep -q 'A manually entered town or postcode' <<<"$app_js"
