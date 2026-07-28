@@ -191,3 +191,14 @@ and avoids a fragile cross-domain login hop. The override applies only below
 workspace always opens its dashboard, whose provider, account, email, campaign
 and specialist-module metrics are filtered to that brand. The active brand name,
 theme and browser icon remain visible throughout the shell.
+
+## 2026-07-28 — Admin is an operating console, not an accounting package
+
+The shared dashboard now exposes only destinations the signed-in staff member
+can actually use, and specialist customer modules appear only in the brands that
+enable them. Summary counts link directly to their working queues. Audit history
+and scheduled-task health are restricted to their matching permissions, while
+backup and maintenance tools remain owner-only. The internal general-ledger
+routes remain available for compatibility but are removed from primary
+navigation. Normal commercial work is plans, invoices and reviewed CSV export
+to Xero or MYOB; bookkeeping remains in the external accounting product.

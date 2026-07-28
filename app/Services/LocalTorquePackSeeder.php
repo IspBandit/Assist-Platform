@@ -301,8 +301,7 @@ final class LocalTorquePackSeeder
         $quarantined = 0;
         foreach ($rows as $row) {
             $payload = json_decode((string) ($row['payload_json'] ?? ''), true);
-            if (!is_array($payload) || !is_numeric($payload['lat'] ?? null) || !is_numeric($payload['lng'] ?? null)
-                || ($payload['_coords_approx'] ?? false) === true) {
+            if (!is_array($payload) || !is_numeric($payload['lat'] ?? null) || !is_numeric($payload['lng'] ?? null)) {
                 continue;
             }
             $distance = Geo::haversineKm(

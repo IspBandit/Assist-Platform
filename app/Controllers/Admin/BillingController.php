@@ -11,6 +11,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
+use App\Services\InvoiceExportService;
 
 /**
  * Administrator billing management. Plans, limits and entitlements are editable
@@ -39,7 +40,19 @@ final class BillingController extends Controller
             'billingEnabled' => BillingManager::enabled(),
             'gateway'        => config('billing.gateway', 'none'),
             'taxReview'      => $taxReview,
+            'recentInvoices' => InvoiceExportService::recentInvoices(),
         ]);
+    }
+
+    public function exportInvoices(Request $request): Response
+    {
+        $this->requirePermission('billing.manage');
+        $format = strtolower(trim((string) $request->query('format', '')));
+        if (!in_array($format, ['xero', 'myob'], true)) {
+            return $this->redirectWith('/admin/billing', 'error', 'Choose Xero or MYOB for the invoice export.');
+        }
+        AuditLog::record('billing.invoices_exported', 'invoice_export', $format);
+        return InvoiceExportService::download($format);
     }
 
     public function editPlan(Request $request): Response

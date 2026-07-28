@@ -6,65 +6,119 @@ $adminBrandMeta = $adminBrand->metadata();
 $adminBrandTheme = $adminBrand->theme();
 $adminBrandAssets = $adminBrand->assets();
 $adminBrands = $user !== null ? \App\Services\AdminBrandAccess::availableBrands((int) $user['id']) : [];
+$permitted = static fn (string $permission): bool => auth()->can($permission);
+$platformAdmin = auth()->isSuperAdmin() || auth()->hasAnyRole('administrator', 'platform-administrator');
 $nav = [
     'Overview' => [
         ['Dashboard', '/admin'],
-        ['All brands', '/admin/control-centre'],
-    ],
-    'People' => [
-        ['Users', '/admin/users'],
-        ['Customers', '/admin/customers'],
-        ['Providers', '/admin/providers'],
-        ['Trailer listings', '/admin/trailer-listings'],
-        ['Ad graphics', '/admin/promotions'],
-        ['Provider prospects', '/admin/prospects'],
-        ['Caravan parks', '/admin/parks'],
-    ],
-    'Demand' => [
-        ['Service requests', '/admin/requests'],
-        ['Matching console', '/admin/matching'],
-        ['Service runs', '/admin/runs'],
-    ],
-    'Analytics' => [
-        ['Trust, rules & growth', '/admin/trust-growth'],
-        ['Data Intelligence', '/admin/data-intelligence'],
-        ['Demand overview', '/admin/demand'],
-        ['Provider usage', '/admin/demand/providers'],
-        ['Conversion funnel', '/admin/demand/funnel'],
-        ['Coverage gaps', '/admin/demand/coverage'],
-        ['Demand map', '/admin/demand/map'],
-    ],
-    'Catalogue' => [
-        ['Locations', '/admin/locations'],
-        ['Service categories', '/admin/categories'],
-        ['Data sources', '/admin/data-sources'],
-        ['Import review', '/admin/data-sources/review'],
-    ],
-    'Content' => [
-        ['Pages & blocks', '/admin/content'],
-        ['Social studio', '/admin/social-media'],
-        ['Email templates', '/admin/email-templates'],
-        ['Notifications', '/admin/notifications'],
-        ['SEO', '/admin/seo'],
-    ],
-    'Billing' => [
-        ['Plans & billing', '/admin/billing'],
-    ],
-    'Finance' => [
-        ['Finance dashboard', '/admin/finance'],
-        ['Chart of accounts', '/admin/finance/accounts'],
-        ['Journals', '/admin/finance/journals'],
-    ],
-    'System' => [
-        ['Reports', '/admin/reports'],
-        ['Audit log', '/admin/audit'],
-        ['System logs', '/admin/logs'],
-        ['Settings', '/admin/settings'],
-        ['Feature flags', '/admin/feature-flags'],
-        ['Backups', '/admin/backups'],
-        ['Maintenance', '/admin/maintenance'],
+        ...($platformAdmin ? [['Launch readiness', '/admin/control-centre']] : []),
     ],
 ];
+$directory = [];
+if ($permitted('providers.manage')) {
+    $directory[] = ['Providers', '/admin/providers'];
+}
+if ($permitted('categories.manage')) {
+    $directory[] = ['Service categories', '/admin/categories'];
+}
+if ($permitted('locations.manage')) {
+    $directory[] = ['Locations', '/admin/locations'];
+}
+if ($platformAdmin && $permitted('data_sources.review')) {
+    $directory[] = ['Import review', '/admin/data-sources/review'];
+}
+if ($adminBrand->moduleEnabled('trailer_marketplace') && $permitted('providers.manage')) {
+    $directory[] = ['Trailer listings', '/admin/trailer-listings'];
+}
+if ($directory !== []) {
+    $nav['Directory'] = $directory;
+}
+
+$customerOperations = [];
+if ($adminBrand->moduleEnabled('requests') && $permitted('customers.manage')) {
+    $customerOperations[] = ['Customers', '/admin/customers'];
+}
+if ($adminBrand->moduleEnabled('requests') && $permitted('requests.manage')) {
+    $customerOperations[] = ['Service requests', '/admin/requests'];
+}
+if ($adminBrand->moduleEnabled('requests') && $permitted('requests.match')) {
+    $customerOperations[] = ['Matching', '/admin/matching'];
+}
+if ($adminBrand->moduleEnabled('service_runs') && $permitted('runs.manage')) {
+    $customerOperations[] = ['Service runs', '/admin/runs'];
+}
+if ($adminBrand->moduleEnabled('parks') && $permitted('parks.manage')) {
+    $customerOperations[] = ['Places to stay', '/admin/parks'];
+}
+if ($customerOperations !== []) {
+    $nav['Customer operations'] = $customerOperations;
+}
+
+$growth = [];
+if ($permitted('prospects.manage')) {
+    $growth[] = ['Provider outreach', '/admin/prospects'];
+}
+if ($permitted('content.manage')) {
+    $growth[] = ['Social studio', '/admin/social-media'];
+}
+if ($permitted('notifications.send')) {
+    $growth[] = ['Email campaigns', '/admin/notifications'];
+}
+if ($permitted('providers.manage')) {
+    $growth[] = ['Ad graphics', '/admin/promotions'];
+}
+if ($growth !== []) {
+    $nav['Growth'] = $growth;
+}
+
+$insights = [];
+if ($permitted('regulatory.manage') || $permitted('campaigns.manage')) {
+    $insights[] = ['Trust, rules & growth', '/admin/trust-growth'];
+}
+if ($permitted('data_intelligence.view')) {
+    $insights[] = ['Data Intelligence', '/admin/data-intelligence'];
+}
+if ($permitted('demand.view')) {
+    $insights[] = ['Demand overview', '/admin/demand'];
+}
+if ($insights !== []) {
+    $nav['Insights'] = $insights;
+}
+
+$content = [];
+if ($permitted('content.manage')) {
+    $content[] = ['Pages & blocks', '/admin/content'];
+}
+if ($permitted('email.manage')) {
+    $content[] = ['Email templates', '/admin/email-templates'];
+}
+if ($permitted('seo.manage')) {
+    $content[] = ['SEO', '/admin/seo'];
+}
+if ($content !== []) {
+    $nav['Content'] = $content;
+}
+if ($permitted('billing.manage')) {
+    $nav['Commercial'] = [['Plans & invoice exports', '/admin/billing']];
+}
+
+$administration = [];
+if ($permitted('users.manage')) {
+    $administration[] = ['Users & access', '/admin/users'];
+}
+if ($permitted('audit.view')) {
+    $administration[] = ['Audit log', '/admin/audit'];
+}
+if ($permitted('settings.manage')) {
+    $administration[] = ['Settings', '/admin/settings'];
+}
+if (auth()->isSuperAdmin()) {
+    $administration[] = ['Backups', '/admin/backups'];
+    $administration[] = ['Maintenance', '/admin/maintenance'];
+}
+if ($administration !== []) {
+    $nav['Administration'] = $administration;
+}
 $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/') ?: '/admin';
 ?>
 <!doctype html>

@@ -15,6 +15,7 @@ use App\Services\EmailQueue;
 use App\Services\EmailSuppression;
 use App\Services\Mailer;
 use App\Services\LaunchReadinessService;
+use App\Services\InvoiceExportService;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
@@ -581,5 +582,31 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(1, (int) Database::scalar(
             "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='notification_recipients' AND index_name='uq_notification_recipient_email'"
         ));
+    }
+
+    public function testInvoiceExportsAreWiredForExternalAccounting(): void
+    {
+        $invoiceId = Database::insert(
+            "INSERT INTO invoices (invoice_number,invoice_date,due_date,status,currency,gst_inclusive,subtotal_cents,gst_cents,total_cents,amount_paid_cents,business_name,billing_address,created_at) VALUES ('TEST-EXPORT-001','2026-07-28','2026-08-11','open','AUD',1,10000,1000,11000,0,'Example Workshop','1 Test Street, Brisbane',NOW())"
+        );
+        try {
+            Database::query(
+                "INSERT INTO invoice_items (invoice_id,description,quantity,unit_amount_cents,amount_cents,gst_cents,created_at) VALUES (?,'Platform subscription',1,11000,11000,1000,NOW())",
+                [$invoiceId]
+            );
+            $xero = InvoiceExportService::download('xero');
+            self::assertSame(200, $xero->status());
+            self::assertStringContainsString('ContactName,EmailAddress', $xero->content());
+            self::assertStringContainsString('TEST-EXPORT-001', $xero->content());
+            self::assertStringContainsString('28/07/2026', $xero->content());
+
+            $myob = InvoiceExportService::download('myob');
+            self::assertSame(200, $myob->status());
+            self::assertStringContainsString('Co./Last Name', $myob->content());
+            self::assertStringContainsString('Platform subscription', $myob->content());
+        } finally {
+            Database::query('DELETE FROM invoice_items WHERE invoice_id=?', [$invoiceId]);
+            Database::query('DELETE FROM invoices WHERE id=?', [$invoiceId]);
+        }
     }
 }

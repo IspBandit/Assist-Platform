@@ -26,10 +26,13 @@ final class CsvExport
 
         fwrite($stream, "\xEF\xBB\xBF"); // UTF-8 BOM
         if ($headers !== []) {
-            fputcsv($stream, $headers);
+            fputcsv($stream, $headers, ',', '"', '');
         }
         foreach ($rows as $row) {
-            fputcsv($stream, array_map(static fn ($v) => $v === null ? '' : (string) $v, array_values((array) $row)));
+            fputcsv($stream, array_map(static function ($value): string {
+                $cell = $value === null ? '' : (string) $value;
+                return preg_match('/^[=+\-@]/', $cell) === 1 ? "'" . $cell : $cell;
+            }, array_values((array) $row)), ',', '"', '');
         }
 
         rewind($stream);

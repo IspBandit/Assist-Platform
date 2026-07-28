@@ -58,15 +58,17 @@ final class AdminController extends Controller
             $stats['motorsport_venues'] = $this->count('SELECT COUNT(*) FROM motorsport_venues WHERE is_public=1');
         }
 
-        $recentActivity = $this->safe(fn () => Database::select(
+        $canViewAudit = can('audit.view');
+        $canViewHealth = can('platform.health');
+        $recentActivity = $canViewAudit ? $this->safe(fn () => Database::select(
             'SELECT a.action, a.object_type, a.object_id, a.created_at, u.name AS user_name '
             . 'FROM audit_logs a LEFT JOIN users u ON u.id = a.user_id '
             . 'ORDER BY a.id DESC LIMIT 12'
-        ));
+        )) : [];
 
-        $tasks = $this->safe(fn () => Database::select(
+        $tasks = $canViewHealth ? $this->safe(fn () => Database::select(
             'SELECT task_key, last_status, last_run_at FROM scheduled_tasks ORDER BY task_key'
-        ));
+        )) : [];
 
         return $this->view('admin.dashboard', [
             'title'          => 'Dashboard',
@@ -74,6 +76,8 @@ final class AdminController extends Controller
             'stats'          => $stats,
             'recentActivity' => $recentActivity,
             'tasks'          => $tasks,
+            'canViewAudit'   => $canViewAudit,
+            'canViewHealth'  => $canViewHealth,
             'launchMode'     => Settings::launchMode(),
             'maintenance'    => Settings::isMaintenanceMode(),
             'adGraphicsQueue' => (int) ($stats['ad_graphics_queue'] ?? 0),

@@ -73,4 +73,25 @@ $money = static fn (int $cents): string => '$' . number_format($cents / 100, 2);
     <p class="muted">Generated invoices are <strong>marked for accountant review</strong> and must not be treated as compliant with tax obligations until professionally reviewed before launch.</p>
 </div>
 
+<div class="card">
+    <h2>Invoices and accounting export</h2>
+    <p>Assist keeps the invoice and payment records required to run the platform. Full bookkeeping stays in your accounting system.</p>
+    <div class="actions">
+        <a class="btn btn-primary" href="<?= e(url('admin/billing/invoices/export?format=xero')) ?>">Export for Xero</a>
+        <a class="btn btn-secondary" href="<?= e(url('admin/billing/invoices/export?format=myob')) ?>">Export for MYOB</a>
+    </div>
+    <p class="muted">Xero exports use its customer-invoice template headings and import as drafts for review. MYOB exports are field-mappable sales CSV files; confirm your MYOB product's import mapping and back up the company file before importing.</p>
+    <?php if ($recentInvoices === []): ?>
+        <p class="muted">No invoices have been generated yet.</p>
+    <?php else: ?>
+        <div class="table-wrap"><table class="table"><thead><tr><th>Invoice</th><th>Customer</th><th>Date</th><th>Status</th><th>Total</th><th>Paid</th></tr></thead><tbody>
+        <?php foreach ($recentInvoices as $invoice): ?><tr>
+            <td><?= $this->e((string) $invoice['invoice_number']) ?></td><td><?= $this->e((string) $invoice['customer_name']) ?></td>
+            <td><?= $this->e((string) ($invoice['invoice_date'] ?? '')) ?></td><td><?= $this->e(ucfirst((string) $invoice['status'])) ?></td>
+            <td><?= $money((int) $invoice['total_cents']) ?> <?= $this->e((string) $invoice['currency']) ?></td><td><?= $money((int) $invoice['amount_paid_cents']) ?></td>
+        </tr><?php endforeach; ?>
+        </tbody></table></div>
+    <?php endif; ?>
+</div>
+
 <?php $this->endSection(); ?>
