@@ -121,12 +121,12 @@ key), `tools/osm-import.js` pulls them from **OpenStreetMap** via the public
 
 How it works:
 1. One Overpass query **per state** (8 total, not one per town) selects relevant
-   features: `shop=car_repair|tyres|caravan|trailer`, `craft=caravan|plumber|welder|metal_construction`,
+   features: `amenity=fuel`, `shop=car_repair|tyres|caravan|trailer`, `craft=caravan|plumber|welder|metal_construction`,
    `amenity=vehicle_inspection`, and `service:vehicle:*` tags (repair, tyres, brakes,
    electrical, air_conditioning, caravan/motorhome repair, etc.). Metro/regional
    radius passes also run name matches (mobile mechanic, gas fitter, trailer repair, …).
 2. Each business is mapped to VanAssist trade buckets (mechanical, caravan,
-   autoelec, trailer, plumber, gasfitter, roadworthy, roadside) by tag + name heuristics,
+   autoelec, trailer, plumber, gasfitter, roadworthy, roadside, fuel) by tag + name heuristics,
    then assigned to the **nearest known town** (and that town's region) from
    `towns_national.json`, within a distance cap (`--max-km`, default 60).
 3. Listings are deduped against `national_import.json` (by phone, website host and
@@ -158,6 +158,12 @@ backs it, reusing the exact unclaimed-listing path (provider + services + town/a
 Only contact details OSM publishes are stored; listings are badged unclaimed and
 prompt users to confirm before booking (OSM data is community-maintained and may be
 incomplete). Source: © OpenStreetMap contributors (ODbL).
+
+Production can also call `php cron/run.php refresh_osm` frequently. Each call
+advances one state or city step, resumes safely after a source timeout, and then
+cools down for seven days after a national scan completes. `import_osm` consumes
+the completed source file in bounded batches. This makes fuel and provider data
+refreshable without a long-running web request or a full database seed.
 
 It is intentionally **not** part of `seedAll()`, so fresh installs stay fast — run
 it from Maintenance after install.

@@ -24,6 +24,7 @@ const fs = require("fs");
 const path = require("path");
 
 const OUT_FILE = path.join(__dirname, "..", "database", "seeds", "towns_national.json");
+const OVERRIDES_FILE = path.join(__dirname, "..", "database", "seeds", "town_coordinate_overrides.json");
 
 function arg(name, def) {
   const i = process.argv.indexOf(name);
@@ -84,6 +85,19 @@ const STATE_REGIONS = {
 };
 const STATES = Object.keys(STATE_REGIONS);
 
+// Australia Post-derived postcode coordinates can represent a shared delivery
+// centroid rather than the named locality. Keep reviewed, authoritative place
+// points here so a future rebuild cannot reintroduce known location errors.
+// Source: Queensland Government, QLD Place Names Gazetteer (population centres)
+// https://spatial-gis.information.qld.gov.au/arcgis/rest/services/Location/QldPlaceNames/MapServer/1
+const overrideData = JSON.parse(fs.readFileSync(OVERRIDES_FILE, "utf8"));
+const OFFICIAL_LOCALITY_COORDINATES = Object.fromEntries(
+  overrideData.towns.map((town) => [
+    `${town.state}:${town.name.toUpperCase()}`,
+    [Number(town.lat), Number(town.lng)],
+  ])
+);
+
 function distKm(a, b, c, d) {
   const R = 6371, toRad = (x) => (x * Math.PI) / 180;
   const dLat = toRad(c - a), dLng = toRad(d - b);
@@ -135,7 +149,9 @@ function main() {
     if ((r.type || "") !== "Delivery Area") continue;
     const locality = String(r.locality || "").trim();
     if (!locality) continue;
-    const lat = parseFloat(r.lat), lng = parseFloat(r.long);
+    const officialCoordinates = OFFICIAL_LOCALITY_COORDINATES[`${state}:${locality.toUpperCase()}`];
+    const lat = officialCoordinates ? officialCoordinates[0] : parseFloat(r.lat);
+    const lng = officialCoordinates ? officialCoordinates[1] : parseFloat(r.long);
     if (!lat || !lng || Math.abs(lat) < 0.001) continue;
 
     const key = locality.toUpperCase();
@@ -145,14 +161,17 @@ function main() {
 
     const region = nearestRegion(state, lat, lng);
     if (!region) continue;
-    towns.push({
+    const town = {
       name: titleCase(locality),
       state,
       region,
       pc: String(r.postcode || "").padStart(4, "0") || null,
       lat: Math.round(lat * 1e6) / 1e6,
       lng: Math.round(lng * 1e6) / 1e6,
-    });
+      coordinate_source: officialCoordinates ? overrideData.source_key : "australian-postcodes",
+      coordinate_confidence: officialCoordinates ? "authoritative" : "unverified",
+    };
+    towns.push(town);
     perState[state] = (perState[state] || 0) + 1;
   }
 

@@ -10,6 +10,7 @@ declare(strict_types=1);
  *   php scripts/seed.php --towns      # national towns/suburbs only
  *   php scripts/seed.php --osm        # OpenStreetMap businesses (loops until done)
  *   php scripts/seed.php --locality   # locality research matrix (loops until done)
+ *   php scripts/seed.php --localtorque # authoritative LocalTorque MDM pack (loops until done)
  *   php scripts/seed.php --providers  # towns + national + osm + locality + feature cities
  */
 if (PHP_SAPI !== 'cli') {
@@ -74,6 +75,13 @@ try {
         echo "Locality-provider import (to completion)…\n";
         $summary = $runner->runLocalityToCompletion($progress);
         echo 'Locality: ' . json_encode($summary) . "\n";
+        exit(isset($summary['error']) ? 1 : 0);
+    }
+
+    if (in_array('--localtorque', $arguments, true)) {
+        echo "LocalTorque provider-pack import (to completion)…\n";
+        $summary = $runner->runLocalTorqueToCompletion($progress);
+        echo 'LocalTorque: ' . json_encode($summary) . "\n";
         exit(isset($summary['error']) ? 1 : 0);
     }
 

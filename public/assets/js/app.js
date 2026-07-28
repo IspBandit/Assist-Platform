@@ -486,4 +486,24 @@
         areaType.addEventListener('change', syncAreaFields);
         syncAreaFields();
     }
+
+    // Hand directions to the phone's natural mapping experience. Desktop links
+    // retain their server-generated Google Maps fallback.
+    document.querySelectorAll('[data-map-directions]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            var destination = link.getAttribute('data-map-destination') || '';
+            if (!destination) { return; }
+
+            var isAppleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+                || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            var isAndroid = /Android/i.test(navigator.userAgent);
+            if (!isAppleMobile && !isAndroid) { return; }
+
+            event.preventDefault();
+            var target = isAppleMobile
+                ? 'https://maps.apple.com/?daddr=' + encodeURIComponent(destination) + '&dirflg=d'
+                : 'geo:0,0?q=' + encodeURIComponent(destination);
+            window.location.href = target;
+        });
+    });
 })();

@@ -11,7 +11,7 @@ LocalTorque is the automotive business-directory brand within the Assist Platfor
 
 - Brand ID `4`, key `localtorque`, status `private`.
 - Development hostname `localtorque.test`; no production domain is assumed.
-- Forty data-driven automotive categories seeded by migration `041_localtorque_foundation.sql`.
+- The original forty-category foundation plus the authoritative provider-pack taxonomy, routed per brand from `category.brands`.
 - Brand-scoped directory filtering and business profiles.
 - Canonical LocalTorque routes `/business/{slug}` and `/category/{slug}`.
 - Dedicated LocalBusiness structured data, canonical URLs and sitemap entries.
@@ -20,6 +20,8 @@ LocalTorque is the automotive business-directory brand within the Assist Platfor
 - Authority-linked roadworthy, inspection and modification library at `/rules`, covering national material and every state and territory.
 - Daily source fingerprinting with current/upcoming effective states and review-before-republish when official material changes.
 - Clearly labelled, context-matched provider sponsorship after rule results; sponsorship never changes official sources or organic rankings.
+- Resumable ingestion of the publishable LocalTorque MDM pack with record-level source, licence, confidence and review provenance.
+- Fuel-station and EV-charging discovery shared with VanAssist only, using exact site coordinates where available.
 
 ## Data integrity and verification
 
@@ -27,7 +29,10 @@ The presence of a public business record is not proof of current trading status,
 
 ## Search and future scope
 
-The directory supports business, category and town filtering and uses the national town type-ahead formatted as `Town / State`. GPS-nearby and map endpoints are shared platform capabilities. Open-now, review ranking, richer branch modelling, route-aware suggestions and AI search remain staged work and must not be presented as live until implemented and tested.
+The directory supports business, category and town filtering and uses the national town type-ahead formatted as `Town / State`. GPS-nearby and map endpoints are shared platform capabilities. Exact provider coordinates are preferred; results without exact coordinates use their resolved town location and must not imply site-level precision. Open-now, road-route distance, review ranking, richer branch modelling and AI search remain staged work and must not be presented as live until implemented and tested.
+
+See `LOCALTORQUE_PROVIDER_PACK.md` for the import contract, fuel/EV UX, filters,
+ranking, attribution requirements and known coverage gaps.
 
 ## Launch blockers
 

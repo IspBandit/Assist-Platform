@@ -1,0 +1,12 @@
+{
+  "source_key": "qld-place-names-gazetteer",
+  "source_name": "Queensland Government QLD Place Names Gazetteer",
+  "source_url": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/Location/QldPlaceNames/MapServer/1",
+  "licence": "CC BY 4.0",
+  "verified_at": "2026-07-28",
+  "towns": [
+    {"state":"QLD","name":"Bluff","lat":-23.57972,"lng":149.07056},
+    {"state":"QLD","name":"Emerald","lat":-23.52083,"lng":148.16194},
+    {"state":"QLD","name":"Emu Park","lat":-23.2592568,"lng":150.82384347}
+  ]
+}

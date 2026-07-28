@@ -10,7 +10,11 @@ namespace App\Helpers;
 final class Geo
 {
     /** Allowed max-distance filter values (km). */
-    public const DISTANCE_OPTIONS = [25, 50, 100, 200, 500];
+    public const DISTANCE_OPTIONS = [25, 50, 100, 150, 200, 250, 500];
+
+    /** Stay-directory radii, with a travel-friendly 150 km default. */
+    public const STAY_DISTANCE_OPTIONS = [25, 50, 100, 150, 250, 500];
+    public const DEFAULT_STAY_DISTANCE_KM = 150;
 
     public const SCOPE_TOWN = 'town';
     public const SCOPE_ANY = 'any';
@@ -116,6 +120,15 @@ final class Geo
         $km = (int) $raw;
 
         return in_array($km, self::DISTANCE_OPTIONS, true) ? $km : null;
+    }
+
+    public static function stayDistance(mixed $raw): int
+    {
+        $km = is_scalar($raw) ? (int) $raw : 0;
+
+        return in_array($km, self::STAY_DISTANCE_OPTIONS, true)
+            ? $km
+            : self::DEFAULT_STAY_DISTANCE_KM;
     }
 
     /**

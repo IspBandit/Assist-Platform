@@ -55,6 +55,8 @@ trap rollback ERR
 docker compose config -q
 docker compose up -d --build --force-recreate app caddy
 docker compose exec -T app php scripts/migrate.php
+docker compose exec -T app php scripts/seed.php --localtorque
+docker compose exec -T app php scripts/data-quality-audit.php --strict
 
 for url in \
   https://vanassist.com.au/readyz \

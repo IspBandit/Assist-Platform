@@ -13,6 +13,7 @@ use App\Core\Session;
 use App\Models\CaravanPark;
 use App\Models\Town;
 use App\Models\User;
+use App\Helpers\Geo;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
 use App\Validation\Validator;
@@ -70,19 +71,26 @@ final class ParkController extends Controller
         $priceType = (string) $request->input('price_type', '');
         $stayType = array_key_exists($stayType, self::STAY_TYPES) ? $stayType : null;
         $priceType = array_key_exists($priceType, self::PRICE_TYPES) ? $priceType : null;
+        $distanceKm = Geo::stayDistance($request->input('distance'));
+        $hasOrigin = $townId !== null || ($lat !== null && $lng !== null);
 
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',
             'metaDescription' => 'Find caravan parks, campgrounds and free or low-cost stays near your town or current location across Australia.',
             'canonical' => url('stays'),
-            'stays' => CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType),
+            'stays' => $hasOrigin
+                ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm)
+                : [],
             'stayTypes' => self::STAY_TYPES,
             'priceTypes' => self::PRICE_TYPES,
             'selectedTownId' => $townId,
             'selectedLocation' => $location,
             'selectedStayType' => $stayType,
             'selectedPriceType' => $priceType,
-            'searched' => $townId !== null || ($lat !== null && $lng !== null) || $stayType !== null || $priceType !== null,
+            'selectedDistance' => $distanceKm,
+            'distanceOptions' => Geo::STAY_DISTANCE_OPTIONS,
+            'hasOrigin' => $hasOrigin,
+            'searched' => $hasOrigin,
         ]);
     }
 

@@ -17,8 +17,10 @@ use App\Services\Mailer;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
+use App\Services\TownCoordinateActivation;
 use App\Services\CampaignMetrics;
 use App\Models\GarageAsset;
+use App\Models\Provider;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -39,6 +41,36 @@ final class PlatformDatabaseTest extends TestCase
 
         self::assertSame(0, $dirty);
         self::assertSame(0, $missingChecksums);
+    }
+
+    public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void
+    {
+        self::assertTrue(Database::tableExists('provider_source_records'));
+        self::assertSame(9730, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
+        self::assertSame(3108, (int) Database::scalar(
+            "SELECT COUNT(*) FROM provider_source_records WHERE payload_json LIKE '%\"fuel-station\"%'"
+        ));
+        self::assertSame(0, (int) Database::scalar(
+            'SELECT COUNT(*) FROM provider_brand_category_assignments a '
+            . 'JOIN brand_provider_categories c ON c.id=a.category_id '
+            . 'JOIN brands b ON b.id=c.brand_id '
+            . "WHERE c.category_key IN ('fuel-station','ev-charging') "
+            . "AND b.brand_key NOT IN ('localtorque','vanassist')"
+        ));
+        self::assertSame(0, (int) Database::scalar(
+            'SELECT COUNT(DISTINCT l.id) FROM provider_source_records psr '
+            . 'JOIN providers p ON p.id=psr.provider_id JOIN provider_brand_listings l ON l.provider_id=p.id '
+            . "WHERE p.is_unclaimed=1 AND psr.needs_review=1 AND l.status='active' AND l.search_visible=1 "
+            . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records good WHERE good.provider_id=p.id '
+            . 'AND good.publishable=1 AND good.needs_review=0)'
+        ));
+
+        $fuelCategoryId = (int) Database::scalar(
+            "SELECT id FROM service_categories WHERE slug='fuel-and-travel-stops'"
+        );
+        $nearGladstone = Provider::forCategoryNear($fuelCategoryId, -23.842, 151.255, 150);
+        self::assertNotEmpty($nearGladstone);
+        self::assertLessThanOrEqual(150.0, (float) $nearGladstone[0]['distance_km']);
     }
 
     public function testPlatformBrandsAndBackfillIntegrity(): void
@@ -490,5 +522,33 @@ final class PlatformDatabaseTest extends TestCase
             if ($transactionalId !== null) { Database::query('DELETE FROM email_queue WHERE id=?', [$transactionalId]); }
             Database::query('DELETE FROM email_suppressions WHERE email=?', [$email]);
         }
+    }
+
+    public function testNationalTownCoordinatePackActivatesWithNormalisedNameVariants(): void
+    {
+        $result = TownCoordinateActivation::afterMigrations();
+
+        self::assertArrayHasKey('updated', $result);
+        self::assertGreaterThan(1000, (int) $result['updated']);
+        self::assertSame('authoritative', Database::scalar(
+            "SELECT coordinate_confidence FROM towns t JOIN states s ON s.id=t.state_id WHERE s.abbreviation='ACT' AND t.slug='o-connor'"
+        ));
+    }
+
+    public function testStagedCampaignSchemaIsInstalled(): void
+    {
+        self::assertTrue(Database::tableExists('notification_test_deliveries'));
+        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by'] as $column) {
+            self::assertSame(1, (int) Database::scalar(
+                "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name=?",
+                [$column]
+            ));
+        }
+        self::assertSame(1, (int) Database::scalar(
+            "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='email_queue' AND column_name='notification_id'"
+        ));
+        self::assertSame(1, (int) Database::scalar(
+            "SELECT COUNT(DISTINCT index_name) FROM information_schema.statistics WHERE table_schema=DATABASE() AND table_name='notification_recipients' AND index_name='uq_notification_recipient_email'"
+        ));
     }
 }

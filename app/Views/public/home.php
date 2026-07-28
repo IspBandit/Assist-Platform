@@ -4,6 +4,8 @@
 /** @var array $confirmedRuns */
 /** @var array $formingRuns */
 /** @var array $categories */
+/** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
+/** @var array $popularCategories */
 /** @var array<string,mixed>|null $nearbyTown */
 /** @var array<int,array<string,mixed>> $nearbyProviders */
 /** @var string $nearbyFindUrl */
@@ -28,20 +30,24 @@ $this->extend('layouts.public');
                     Right across regional Australia
                 </span>
                 <h1>Caravan help, <span class="accent">wherever you travel.</span></h1>
-                <p class="lead">Find caravan and RV specialists coming to your area, or register the service you need to help bring a provider to town.</p>
+                <p class="lead">Find repairs, mobile help, fuel, EV charging and practical places to stop across Australia—all from one location-first search.</p>
 
                 <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                        Find caravan and RV help near you
+                        What do you need near you?
                     </div>
                     <div class="grid grid-2 home-search-primary">
                         <div class="form-group mb-0">
                             <label for="category">Service category</label>
                             <select id="category" name="category">
                                 <option value="">Any service</option>
-                                <?php foreach ($categories as $cat): ?>
-                                    <option value="<?= e_attr($cat['slug']) ?>"><?= $this->e($cat['name']) ?></option>
+                                <?php foreach ($categoryGroups as $groupName => $groupCategories): ?>
+                                    <optgroup label="<?= e_attr($groupName) ?>">
+                                        <?php foreach ($groupCategories as $cat): ?>
+                                            <option value="<?= e_attr($cat['slug']) ?>"><?= $this->e($cat['name']) ?></option>
+                                        <?php endforeach; ?>
+                                    </optgroup>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -83,11 +89,11 @@ $this->extend('layouts.public');
                 <ul class="hero-trust">
                     <li>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Verified local providers
+                        Claimed and verified status shown clearly
                     </li>
                     <li>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
-                        Coverage in remote towns
+                        Search by town, suburb, postcode or location
                     </li>
                     <li>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>
@@ -101,6 +107,41 @@ $this->extend('layouts.public');
 
     <div class="hero-wave" aria-hidden="true">
         <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 42 C 240 84 480 4 720 26 C 960 48 1200 82 1440 40 L1440 80 L0 80 Z" fill="#fbf8f1"/></svg>
+    </div>
+</section>
+
+<section class="section journey-launcher" aria-labelledby="journey-launcher-heading">
+    <div class="container">
+        <div class="journey-launcher-head">
+            <div>
+                <span class="directory-eyebrow">Choose your next stop</span>
+                <h2 id="journey-launcher-heading">Start with what you need right now.</h2>
+            </div>
+            <p>Each search remains free to browse. Location helps VanAssist show useful nearby results instead of a national list.</p>
+        </div>
+        <div class="journey-launcher-grid">
+            <a class="journey-launcher-card" href="<?= e(url('find')) ?>">
+                <span class="journey-launcher-number" aria-hidden="true">01</span>
+                <span><strong>Repairs &amp; mobile help</strong><small>Caravan, RV, vehicle and roadside services</small></span>
+                <b aria-hidden="true">&rarr;</b>
+            </a>
+            <a class="journey-launcher-card" href="<?= e(url('find?category=fuel-and-travel-stops')) ?>">
+                <span class="journey-launcher-number" aria-hidden="true">02</span>
+                <span><strong>Fuel &amp; travel stops</strong><small>Find fuel stations for the next leg</small></span>
+                <b aria-hidden="true">&rarr;</b>
+            </a>
+            <a class="journey-launcher-card" href="<?= e(url('find?category=ev-charging')) ?>">
+                <span class="journey-launcher-number" aria-hidden="true">03</span>
+                <span><strong>EV charging</strong><small>Locate charging options along your journey</small></span>
+                <b aria-hidden="true">&rarr;</b>
+            </a>
+            <a class="journey-launcher-card" href="<?= e(url('stays')) ?>">
+                <span class="journey-launcher-number" aria-hidden="true">04</span>
+                <span><strong>Places to stay</strong><small>Parks, campgrounds, showgrounds and low-cost stops</small></span>
+                <b aria-hidden="true">&rarr;</b>
+            </a>
+        </div>
+        <p class="journey-trust-note"><strong>Know what you are viewing.</strong> VanAssist distinguishes claimed, verified, featured and unclaimed listings. Always confirm current contact details, access, facilities and availability before travelling.</p>
     </div>
 </section>
 
@@ -181,12 +222,12 @@ $this->extend('layouts.public');
     </div>
 </section>
 
-<?php if ($categories !== []): ?>
+<?php if ($popularCategories !== []): ?>
 <section class="section section-sand">
     <div class="container">
         <h2>Popular service categories</h2>
         <div class="btn-row">
-            <?php foreach ($categories as $cat): ?>
+            <?php foreach ($popularCategories as $cat): ?>
                 <a class="btn btn-ghost" href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
             <?php endforeach; ?>
         </div>
@@ -199,6 +240,20 @@ $this->extend('layouts.public');
         <h2>Can't find a provider for your area?</h2>
         <p class="muted">No suitable provider is currently listed for some areas. Register your request and VanAssist will notify relevant providers when assistance becomes available.</p>
         <a class="btn btn-primary btn-lg" href="<?= e(url('request-assistance')) ?>">Request assistance</a>
+    </div>
+</section>
+
+<section class="section provider-conversion">
+    <div class="container provider-conversion-inner">
+        <div>
+            <span class="directory-eyebrow">For Australian businesses</span>
+            <h2>Help travellers find the right service—not a guessed one.</h2>
+            <p>Claim an existing listing or create a provider profile, confirm the services you genuinely offer and keep your contact details current.</p>
+        </div>
+        <div class="provider-conversion-actions">
+            <a class="btn btn-primary btn-lg" href="<?= e(url('for-providers')) ?>">Claim or list a business</a>
+            <a class="btn btn-ghost" href="<?= e(url('login')) ?>">Provider sign in</a>
+        </div>
     </div>
 </section>
 

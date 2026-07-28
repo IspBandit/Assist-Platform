@@ -133,6 +133,49 @@ if (!function_exists('view')) {
     }
 }
 
+if (!function_exists('map_destination')) {
+    /** Build a maps destination from precise coordinates or address parts. */
+    function map_destination(mixed $latitude, mixed $longitude, array $addressParts = []): string
+    {
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            $lat = (float) $latitude;
+            $lng = (float) $longitude;
+            if ($lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180) {
+                return rtrim(rtrim(number_format($lat, 6, '.', ''), '0'), '.') . ','
+                    . rtrim(rtrim(number_format($lng, 6, '.', ''), '0'), '.');
+            }
+        }
+
+        $parts = array_values(array_filter(array_map(
+            static fn (mixed $part): string => trim((string) $part),
+            $addressParts
+        ), static fn (string $part): bool => $part !== ''));
+
+        return implode(', ', $parts);
+    }
+}
+
+if (!function_exists('map_directions_url')) {
+    function map_directions_url(string $destination): string
+    {
+        return 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($destination);
+    }
+}
+
+if (!function_exists('is_navigable_street_address')) {
+    function is_navigable_street_address(mixed $address): bool
+    {
+        $value = trim((string) $address);
+        if ($value === '' || stripos($value, 'mobile') !== false) {
+            return false;
+        }
+        if (preg_match('/\d/', $value) === 1) {
+            return true;
+        }
+        return preg_match('/\b(street|st|road|rd|avenue|ave|highway|hwy|drive|dr|lane|ln|court|ct|place|pl|boulevard|blvd|way|parade|pde|terrace|tce)\b/i', $value) === 1;
+    }
+}
+
 if (!function_exists('redirect_location')) {
     /**
      * Resolve an application path or explicitly supported external contact URL.

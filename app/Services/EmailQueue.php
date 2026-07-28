@@ -54,16 +54,29 @@ final class EmailQueue
         ?string $scheduledAt = null,
         string $messageType = 'transactional'
     ): bool {
+        return self::queueRawId($recipientEmail, $recipientName, $subject, $html, $text, $templateKey, $scheduledAt, $messageType) !== null;
+    }
+
+    public static function queueRawId(
+        string $recipientEmail,
+        ?string $recipientName,
+        string $subject,
+        string $html,
+        string $text = '',
+        ?string $templateKey = null,
+        ?string $scheduledAt = null,
+        string $messageType = 'transactional',
+        ?int $notificationId = null
+    ): ?int {
         $messageType = $messageType === 'marketing' ? 'marketing' : 'transactional';
         if (EmailSuppression::isSuppressed($recipientEmail, $messageType)) {
-            return false;
+            return null;
         }
-        Database::query(
-            'INSERT INTO email_queue (brand_id, template_key, message_type, recipient_email, recipient_name, subject, html_body, text_body, status, scheduled_at, created_at) '
-            . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
-            [self::brandDatabaseId(), $templateKey, $messageType, $recipientEmail, $recipientName, $subject, $html, $text, 'pending', $scheduledAt]
+        return Database::insert(
+            'INSERT INTO email_queue (brand_id, notification_id, template_key, message_type, recipient_email, recipient_name, subject, html_body, text_body, status, scheduled_at, created_at) '
+            . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+            [self::brandDatabaseId(), $notificationId, $templateKey, $messageType, $recipientEmail, $recipientName, $subject, $html, $text, 'pending', $scheduledAt]
         );
-        return true;
     }
 
     private static function replace(string $body, array $placeholders): string

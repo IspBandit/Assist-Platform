@@ -12,6 +12,7 @@
 /** @var string $requestUrl */
 /** @var int|null $searchId */
 /** @var array<int,array<string,mixed>> $categories */
+/** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
 /** @var float|null $lat */
 /** @var float|null $lng */
 /** @var string $timeframe */
@@ -45,8 +46,12 @@ $this->extend('layouts.public');
                     <label for="category">Service category</label>
                     <select id="category" name="category">
                         <option value="">Any service</option>
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?= e_attr((string) $cat['slug']) ?>" <?= $categorySlug === (string) $cat['slug'] ? 'selected' : '' ?>><?= $this->e((string) $cat['name']) ?></option>
+                        <?php foreach ($categoryGroups as $groupName => $groupCategories): ?>
+                            <optgroup label="<?= e_attr($groupName) ?>">
+                                <?php foreach ($groupCategories as $cat): ?>
+                                    <option value="<?= e_attr((string) $cat['slug']) ?>" <?= $categorySlug === (string) $cat['slug'] ? 'selected' : '' ?>><?= $this->e((string) $cat['name']) ?></option>
+                                <?php endforeach; ?>
+                            </optgroup>
                         <?php endforeach; ?>
                     </select>
                 </div>

@@ -1,0 +1,197 @@
+{
+  "project": "LocalTorque",
+  "role": "Master automotive business directory / MDM for the Assist Platform",
+  "one_question": "Who can fix, build, inspect, modify or service my vehicle anywhere in Australia?",
+  "not": [
+    "roadside assistance platform",
+    "repair booking platform",
+    "camping platform"
+  ],
+  "brands_fed": [
+    "localtorque",
+    "vanassist",
+    "towsmart",
+    "trailerwise"
+  ],
+  "files": {
+    "providers_publishable": "providers-publishable.json",
+    "categories": "categories.json",
+    "launch_meta": "launch.meta.json",
+    "confidence": "confidence.summary.json",
+    "full_corpus": "../../data/providers/corpus.json"
+  },
+  "counts": {
+    "publishable": 8485,
+    "taxonomy_categories": 132,
+    "taxonomy_groups": 24,
+    "fuel_station_publishable": 1863
+  },
+  "record_fields": [
+    "_coords_approx",
+    "abn",
+    "address",
+    "brands",
+    "categories",
+    "claimed",
+    "confidence",
+    "description",
+    "email",
+    "enriched_at",
+    "enriched_from",
+    "facebook_url",
+    "id",
+    "instagram_url",
+    "lat",
+    "linkedin_url",
+    "lng",
+    "modes",
+    "name",
+    "needs_review",
+    "opening_hours",
+    "phone",
+    "postcode",
+    "publishable",
+    "region",
+    "services_note",
+    "source",
+    "source_url",
+    "sources_merged",
+    "state",
+    "tiktok_url",
+    "town",
+    "trading_name",
+    "va_cats",
+    "verified",
+    "website",
+    "youtube_url"
+  ],
+  "sample_records": [
+    {
+      "id": "caravan-solutions-qld-bne",
+      "name": "Caravan Solutions (Qld)",
+      "trading_name": null,
+      "phone": "0417 710 252",
+      "email": "info@caravansolutionsqld.com.au",
+      "website": "https://caravansolutionsqld.com.au/",
+      "address": "Brisbane - mobile",
+      "town": "Brisbane",
+      "region": "seq",
+      "state": null,
+      "postcode": null,
+      "lat": null,
+      "lng": null,
+      "modes": [
+        "mobile"
+      ],
+      "categories": [
+        "caravan-repairs",
+        "camper-trailer-repairs",
+        "motorhome-repairs"
+      ],
+      "va_cats": [
+        "caravan"
+      ],
+      "brands": [
+        "localtorque",
+        "vanassist",
+        "trailerwise"
+      ],
+      "services_note": "Mobile service/repair of caravans, camper trailers, motorhomes & horse floats: brakes, bearings, awnings, water leaks, general servicing. Comes to you.",
+      "source": "vanassist-national",
+      "source_url": null,
+      "claimed": false,
+      "verified": false,
+      "confidence": 78,
+      "publishable": true,
+      "needs_review": false
+    },
+    {
+      "id": "vantastic-repairs-bne",
+      "name": "Vantastic Repairs",
+      "trading_name": null,
+      "phone": "0401 184 511",
+      "email": "info@vantasticrepairs.com",
+      "website": "https://vantasticrepairs.com/",
+      "address": "Brisbane, Logan, Redland Bay, Ipswich & Gold Coast - mobile",
+      "town": "Brisbane",
+      "region": "seq",
+      "state": null,
+      "postcode": null,
+      "lat": null,
+      "lng": null,
+      "modes": [
+        "mobile"
+      ],
+      "categories": [
+        "caravan-repairs",
+        "auto-electrician",
+        "rv-repairs"
+      ],
+      "va_cats": [
+        "caravan"
+      ],
+      "brands": [
+        "localtorque",
+        "vanassist"
+      ],
+      "services_note": "Mobile caravan/RV repairs at home, on the road or at a campground: general servicing, brakes, leaks, 12V electrics.",
+      "source": "vanassist-national",
+      "source_url": null,
+      "claimed": false,
+      "verified": false,
+      "opening_hours": "Monday &#8211; Friday 08:00 - 16:00 20 Years of Trusted Experience HOURS Monday-Friday (8:00 am - 4:00 pm) LOCATION Servicing Brisbane, Logan, Redland Bay, Ipswich, Gold Coast & Beyond CONTACT 0401 184 511 info@vantasticrep",
+      "enriched_from": "website",
+      "enriched_at": "2026-07-24T07:07:23.684Z",
+      "confidence": 80,
+      "publishable": true,
+      "needs_review": false
+    },
+    {
+      "id": "ontrack-mobile-bne",
+      "name": "On Track Mobile Caravan & Gas Repairs",
+      "trading_name": null,
+      "phone": "0422 033 309",
+      "email": "ontrackmobile@hotmail.com",
+      "website": "https://www.ontrackmobile.com.au/",
+      "address": "North Brisbane to Sunshine Coast (Bribie/Kilcoy/Strathpine) - mobile",
+      "town": "Brisbane",
+      "region": "seq",
+      "state": null,
+      "postcode": null,
+      "lat": null,
+      "lng": null,
+      "modes": [
+        "mobile"
+      ],
+      "categories": [
+        "caravan-repairs",
+        "motorhome-repairs"
+      ],
+      "va_cats": [
+        "caravan"
+      ],
+      "brands": [
+        "localtorque",
+        "vanassist"
+      ],
+      "services_note": "Mobile caravan repairs, servicing, upgrades & caravan gas certificates across SEQ. 20+ yrs with caravans & motorhomes.",
+      "source": "vanassist-national",
+      "source_url": null,
+      "claimed": false,
+      "verified": false,
+      "enriched_from": "website+website",
+      "facebook_url": "https://facebook.com/ontrackmobilecaravanrepairs",
+      "description": "Call the team at On Track Mobile Caravan &amp; Gas Repairs in Queensland when you need mobile caravan repairs. We offer comprehensive services for all your needs.",
+      "opening_hours": "Mon - Fri 8:00 am - 5:00 pm Sat - Sun Closed Share by:",
+      "enriched_at": "2026-07-24T09:47:53.876Z",
+      "confidence": 85,
+      "publishable": true,
+      "needs_review": false
+    }
+  ],
+  "launch_rule": "Public directories should prefer publishable=true. Others are review/enrichment queue.",
+  "confidence_rule": "confidence 0-100; publishable typically needs contact + place and confidence>=40",
+  "quality_caveat": "Compiled from OSM, Places, ASIC, VanAssist research, website enrichment. Mostly unclaimed/unverified.",
+  "generated_at": "2026-07-27T16:48:20.982Z",
+  "notes": " Fuel stations merged 2026-07-27"
+}
