@@ -220,7 +220,15 @@
         syncDistanceFilter(form);
         var loc = form.querySelector('input[name="location"]');
         if (loc) {
-            loc.addEventListener('input', function () { syncDistanceFilter(form); });
+            loc.addEventListener('input', function () {
+                // A manually entered town or postcode must replace a previous
+                // GPS lookup. Otherwise the hidden coordinates win on the
+                // server and the typed location appears to be ignored.
+                setFormField(form, 'lat', '');
+                setFormField(form, 'lng', '');
+                setLocationStatus(form, '', false);
+                syncDistanceFilter(form);
+            });
         }
         var town = form.querySelector('select[name="town"]');
         if (town) {
@@ -237,6 +245,7 @@
         var box = form ? form.querySelector('#town-suggest') : null;
         var regionField = form ? form.querySelector('#region') : null;
         var regionId = form ? form.querySelector('#region_id') : null;
+        var resolvedTown = form ? form.querySelector('#town_id, input[type="hidden"][name="town"]') : null;
         if (!box) { return; }
         var timer = null;
         var items = [];
@@ -245,9 +254,8 @@
         var hide = function () { box.hidden = true; box.innerHTML = ''; active = -1; };
 
         var choose = function (t) {
-            var label = t.name + (t.state_abbr ? ', ' + t.state_abbr : '');
-            var townId = form ? form.querySelector('#town_id, input[name="town"]') : null;
-            if (townId) { townId.value = t.id; }
+            var label = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
+            if (resolvedTown) { resolvedTown.value = t.id; }
             if (input.name === 'location' || input.id === 'location') {
                 input.value = label;
                 hide();
@@ -269,7 +277,7 @@
                 btn.setAttribute('role', 'option');
                 btn.dataset.index = i;
                 var sub = [t.postcode, t.region_name].filter(Boolean).join(' · ');
-                var primary = t.name + (t.state_abbr ? ', ' + t.state_abbr : '');
+                var primary = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
                 btn.innerHTML = '<strong>' + primary + '</strong>' + (sub ? ' <span class="muted">' + sub + '</span>' : '');
                 btn.addEventListener('click', function () { choose(t); input.focus(); });
                 box.appendChild(btn);
@@ -286,16 +294,15 @@
         };
 
         input.addEventListener('input', function () {
-            // Typing invalidates any previously resolved town, region or GPS
-            // fix so a manual correction always takes precedence.
-            var resolvedTown = form ? form.querySelector('#town_id, input[name="town"]') : null;
+            // A typed correction supersedes every previously resolved
+            // location value, including a GPS fix and linked region.
             var resolvedLat = form ? form.querySelector('input[name="lat"]') : null;
             var resolvedLng = form ? form.querySelector('input[name="lng"]') : null;
+            if (regionField) { regionField.value = ''; }
+            if (regionId) { regionId.value = ''; }
             if (resolvedTown) { resolvedTown.value = ''; }
             if (resolvedLat) { resolvedLat.value = ''; }
             if (resolvedLng) { resolvedLng.value = ''; }
-            if (regionField) { regionField.value = ''; }
-            if (regionId) { regionId.value = ''; }
             var q = input.value.trim();
             window.clearTimeout(timer);
             if (q.length < 2) { hide(); return; }
@@ -484,4 +491,24 @@
         areaType.addEventListener('change', syncAreaFields);
         syncAreaFields();
     }
+
+    // Hand directions to the phone's natural mapping experience. Desktop links
+    // retain their server-generated Google Maps fallback.
+    document.querySelectorAll('[data-map-directions]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            var destination = link.getAttribute('data-map-destination') || '';
+            if (!destination) { return; }
+
+            var isAppleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+                || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            var isAndroid = /Android/i.test(navigator.userAgent);
+            if (!isAppleMobile && !isAndroid) { return; }
+
+            event.preventDefault();
+            var target = isAppleMobile
+                ? 'https://maps.apple.com/?daddr=' + encodeURIComponent(destination) + '&dirflg=d'
+                : 'geo:0,0?q=' + encodeURIComponent(destination);
+            window.location.href = target;
+        });
+    });
 })();

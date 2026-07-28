@@ -33,6 +33,11 @@ return static function (Router $router): void {
         $router->get('/data-intelligence', 'Admin\DataIntelligenceController@index', 'admin.data-intelligence');
         $router->post('/data-intelligence/tasks', 'Admin\DataIntelligenceController@createTask', 'admin.data-intelligence.tasks');
         $router->post('/data-intelligence/tasks/status', 'Admin\DataIntelligenceController@updateTask', 'admin.data-intelligence.tasks.status');
+        $router->get('/trust-growth', 'Admin\TrustGrowthController@index', 'admin.trust-growth');
+        $router->post('/trust-growth/check-sources', 'Admin\TrustGrowthController@checkSources', 'admin.trust-growth.check-sources');
+        $router->post('/trust-growth/source', 'Admin\TrustGrowthController@reviewSource', 'admin.trust-growth.source');
+        $router->post('/trust-growth/credential', 'Admin\TrustGrowthController@reviewCredential', 'admin.trust-growth.credential');
+        $router->post('/trust-growth/campaign', 'Admin\TrustGrowthController@reviewCampaign', 'admin.trust-growth.campaign');
 
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).
@@ -151,6 +156,7 @@ return static function (Router $router): void {
         $router->post('/social-media/status', 'Admin\SocialMediaController@status');
         $router->get('/social-media/preview', 'Admin\SocialMediaController@preview');
         $router->get('/social-media/download', 'Admin\SocialMediaController@download');
+        $router->post('/social-media/facebook/publish', 'Admin\SocialMediaController@publishFacebook');
 
         // SEO settings (Phase 8): site meta, social image and the indexing switch.
         $router->get('/seo', 'Admin\SeoController@index', 'admin.seo');
@@ -169,7 +175,8 @@ return static function (Router $router): void {
         $router->get('/notifications/compose', 'Admin\NotificationsController@compose', 'admin.notifications.compose');
         $router->post('/notifications/save', 'Admin\NotificationsController@store');
         $router->get('/notifications/show', 'Admin\NotificationsController@show', 'admin.notifications.show');
-        $router->post('/notifications/send', 'Admin\NotificationsController@send');
+        $router->post('/notifications/test', 'Admin\NotificationsController@test');
+        $router->post('/notifications/stage', 'Admin\NotificationsController@stage');
         $router->post('/notifications/cancel', 'Admin\NotificationsController@cancel');
 
         // Caravan parks (Phase 7): applications, approval, documents, service-day requests.

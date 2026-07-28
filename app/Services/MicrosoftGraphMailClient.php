@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Logger;
 use RuntimeException;
 
 /** App-only Microsoft Graph mail transport using a certificate credential. */
@@ -15,29 +16,73 @@ final class MicrosoftGraphMailClient
     /** @param array<string,mixed> $cfg */
     public static function send(array $cfg, string $to, string $recipientName, string $subject, string $html, string $text): void
     {
-        $from = trim((string) ($cfg['from_address'] ?? ''));
-        if ($from === '') { throw new RuntimeException('Microsoft Graph brand sender mailbox is not configured.'); }
-        $payload = [
+        $replyTo = trim((string) ($cfg['from_address'] ?? ''));
+        $mailbox = self::sendingMailbox($cfg, $replyTo);
+        if ($replyTo === '') { throw new RuntimeException('Microsoft Graph brand sender address is not configured.'); }
+        $payload = self::messagePayload($cfg, $mailbox, $replyTo, $to, $recipientName, $subject, $html, $text);
+        $headers = ['Authorization: Bearer ' . self::token($cfg), 'Content-Type: application/json'];
+        try {
+            self::request(
+                self::sendingEndpoint($mailbox),
+                json_encode($payload, JSON_THROW_ON_ERROR),
+                $headers,
+                [202]
+            );
+        } catch (RuntimeException $e) {
+            $fallback = trim((string) ($cfg['graph_fallback_mailbox'] ?? ''));
+            if (!self::shouldFallback($e, $mailbox, $fallback)) {
+                throw $e;
+            }
+
+            Logger::warning('Dedicated Graph mailbox was rejected; using the approved operations fallback.', [
+                'mailbox' => $mailbox,
+                'fallback' => $fallback,
+            ], 'email');
+            $fallbackPayload = self::messagePayload($cfg, $fallback, $replyTo, $to, $recipientName, $subject, $html, $text);
+            self::request(
+                self::sendingEndpoint($fallback),
+                json_encode($fallbackPayload, JSON_THROW_ON_ERROR),
+                $headers,
+                [202]
+            );
+        }
+    }
+
+    /** @param array<string,mixed> $cfg @return array<string,mixed> */
+    private static function messagePayload(array $cfg, string $mailbox, string $replyTo, string $to, string $recipientName, string $subject, string $html, string $text): array
+    {
+        return [
             'message' => [
                 'subject' => $subject,
                 'body' => ['contentType' => 'HTML', 'content' => $html !== '' ? $html : nl2br(htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'))],
-                'from' => ['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $from]],
-                'replyTo' => [['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $from]]],
+                // App-only Graph sending must use the real mailbox targeted by
+                // /users/{mailbox}/sendMail. Brand aliases remain Reply-To until
+                // they are provisioned and accepted as Exchange mailboxes.
+                'from' => ['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $mailbox]],
+                'replyTo' => [['emailAddress' => ['name' => (string) $cfg['from_name'], 'address' => $replyTo]]],
                 'toRecipients' => [['emailAddress' => ['name' => $recipientName, 'address' => $to]]],
             ],
             'saveToSentItems' => false,
         ];
-        self::request(
-            self::sendingEndpoint($from),
-            json_encode($payload, JSON_THROW_ON_ERROR),
-            ['Authorization: Bearer ' . self::token($cfg), 'Content-Type: application/json'],
-            [202]
-        );
     }
 
-    private static function sendingEndpoint(string $from): string
+    private static function sendingEndpoint(string $mailbox): string
     {
-        return 'https://graph.microsoft.com/v1.0/users/' . rawurlencode($from) . '/sendMail';
+        return 'https://graph.microsoft.com/v1.0/users/' . rawurlencode($mailbox) . '/sendMail';
+    }
+
+    /** @param array<string,mixed> $cfg */
+    private static function sendingMailbox(array $cfg, string $from): string
+    {
+        $configured = trim((string) ($cfg['graph_mailbox'] ?? ''));
+        return $configured !== '' ? $configured : $from;
+    }
+
+    private static function shouldFallback(RuntimeException $error, string $mailbox, string $fallback): bool
+    {
+        return $fallback !== ''
+            && strcasecmp($mailbox, $fallback) !== 0
+            && preg_match('/Microsoft Graph request failed with HTTP (?:403|404):/', $error->getMessage()) === 1;
     }
 
     /** @param array<string,mixed> $cfg */
@@ -78,7 +123,16 @@ final class MicrosoftGraphMailClient
     {
         $context = stream_context_create(['http' => ['method' => 'POST', 'header' => implode("\r\n", $headers), 'content' => $body, 'ignore_errors' => true, 'timeout' => 30]]);
         $response = @file_get_contents($url, false, $context);
-        $statusLine = $http_response_header[0] ?? '';
+        if (function_exists('http_get_last_response_headers')) {
+            $responseHeaders = http_get_last_response_headers();
+        } else {
+            // PHP < 8.4 defines this request-local variable after an HTTP
+            // stream call. Resolve it indirectly so PHP 8.5 does not emit the
+            // deprecation attached to direct source references.
+            $definedVariables = get_defined_vars();
+            $responseHeaders = $definedVariables['http_response_header'] ?? [];
+        }
+        $statusLine = is_array($responseHeaders) ? (string) ($responseHeaders[0] ?? '') : '';
         preg_match('/\s(\d{3})\s/', $statusLine, $matches);
         $status = (int) ($matches[1] ?? 0);
         if (!in_array($status, $expected, true)) {

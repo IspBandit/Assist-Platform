@@ -6,6 +6,7 @@ state-changing browser routes use CSRF protection.
 | Surface | Prefix/examples | Gate |
 |---|---|---|
 | Public | `/`, `/providers`, `/find`, `/services`, `/regions`, `/request-assistance` | Brand/module checks plus rate limits on abuse-prone submissions |
+| LocalTorque motorsport | `/motorsport` | LocalTorque host only; official sanctioning-body, venue and calendar links are public/read-only |
 | TowSmart | `/calculator`, `/account/towing-combinations` | TowSmart host/module; saving requires authenticated owner |
 | TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
 | Authentication | `/login`, `/register`, reset/verification/logout | Guest/auth state, CSRF and rate limiting |

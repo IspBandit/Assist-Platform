@@ -103,12 +103,13 @@ final class BrandViewTest extends TestCase
             'freeMessage' => '',
         ]);
 
-        self::assertStringContainsString('class="experience-hero"', $html);
-        self::assertStringContainsString('One platform, three useful paths', $html);
+        self::assertStringContainsString('class="hero hero--visual"', $html);
+        self::assertStringContainsString('Start with what you need right now.', $html);
+        self::assertStringContainsString('From “who can help?” to a useful next step.', $html);
         self::assertStringContainsString('1,248', $html);
         self::assertStringContainsString('active service listings', $html);
         self::assertStringNotContainsString('>0</strong><span>verified providers', $html);
-        self::assertStringNotContainsString('/assets/brands/vanassist/mark.svg', $html);
+        self::assertStringContainsString('vanassist-hero-mobile.avif', $html);
     }
 
     public function testProviderDashboardPrioritisesOpenDemand(): void

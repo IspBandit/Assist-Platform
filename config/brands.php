@@ -25,9 +25,9 @@ return [
                 'legacy' => 'vanassist.condrendigital.com.au',
             ],
             'assets' => [
-                'logo' => '/assets/brands/vanassist/mark.svg',
-                'icon' => '/assets/brands/vanassist/mark.svg',
-                'favicon' => '/assets/brands/vanassist/mark.svg',
+                'logo' => '/assets/brands/vanassist/symbol-v2.svg',
+                'icon' => '/assets/brands/vanassist/symbol-v2.svg',
+                'favicon' => '/assets/brands/vanassist/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#0f6e6e',
@@ -107,9 +107,9 @@ return [
                 'legacy_local' => 'towwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/towsmart/mark.svg',
-                'icon' => '/assets/brands/towsmart/mark.svg',
-                'favicon' => '/assets/brands/towsmart/mark.svg',
+                'logo' => '/assets/brands/towsmart/symbol-v2.svg',
+                'icon' => '/assets/brands/towsmart/symbol-v2.svg',
+                'favicon' => '/assets/brands/towsmart/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#1d4ed8',
@@ -141,6 +141,7 @@ return [
                 ['label' => 'Weight calculator', 'path' => '/calculator'],
                 ['label' => 'Tow guide', 'path' => '/tow-guide'],
                 ['label' => 'Checklist', 'path' => '/checklist'],
+                ['label' => 'Rules & compliance', 'path' => '/rules'],
                 ['label' => 'Towing specialists', 'path' => '/providers'],
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
@@ -153,7 +154,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => true,
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
@@ -191,9 +192,9 @@ return [
                 'local' => 'trailerwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/trailerwise/mark.svg',
-                'icon' => '/assets/brands/trailerwise/mark.svg',
-                'favicon' => '/assets/brands/trailerwise/mark.svg',
+                'logo' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'icon' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'favicon' => '/assets/brands/trailerwise/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#7c3aed',
@@ -224,6 +225,7 @@ return [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Find trailer services', 'path' => '/providers'],
                 ['label' => 'Service categories', 'path' => '/services'],
+                ['label' => 'Rules & compliance', 'path' => '/rules'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],
@@ -234,7 +236,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => true,
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
@@ -272,9 +274,9 @@ return [
                 'local' => 'localtorque.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/localtorque/mark.svg',
-                'icon' => '/assets/brands/localtorque/mark.svg',
-                'favicon' => '/assets/brands/localtorque/mark.svg',
+                'logo' => '/assets/brands/localtorque/symbol-v2.svg',
+                'icon' => '/assets/brands/localtorque/symbol-v2.svg',
+                'favicon' => '/assets/brands/localtorque/symbol-v2.svg',
             ],
             'theme' => [
                 'brand' => '#0f3b4c',
@@ -304,6 +306,8 @@ return [
             'navigation' => [
                 ['label' => 'Find a business', 'path' => '/providers'],
                 ['label' => 'Categories', 'path' => '/services'],
+                ['label' => 'Rules & modifications', 'path' => '/rules'],
+                ['label' => 'Motorsport rules', 'path' => '/motorsport'],
                 ['label' => 'List your business', 'path' => '/for-providers'],
             ],
             'footer' => [

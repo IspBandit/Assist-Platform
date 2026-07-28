@@ -6,6 +6,7 @@ $items = [
     'dashboard'    => ['Dashboard', 'provider'],
     'requests'     => ['Incoming requests', 'provider/requests'],
     'analytics'    => ['Analytics', 'provider/analytics'],
+    'growth'       => ['Credentials & campaigns', 'provider/growth'],
     'runs'         => ['Service runs', 'provider/runs'],
     'profile'      => ['Business profile', 'provider/profile'],
     'services'     => ['Services', 'provider/services'],

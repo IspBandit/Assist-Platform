@@ -22,6 +22,13 @@ final class Seeder
     {
         $this->data = require base_path('database/seeds/data.php');
         $this->content = require base_path('database/seeds/content.php');
+        $legalPages = require base_path('database/seeds/legal_pages.php');
+        foreach ($this->content['pages'] as $index => $page) {
+            $key = (string) ($page['page_key'] ?? '');
+            if (isset($legalPages[$key])) {
+                $this->content['pages'][$index] = $legalPages[$key];
+            }
+        }
         $this->emailTemplates = require base_path('database/seeds/email_templates.php');
         $this->billing = require base_path('database/seeds/billing.php');
         $this->ownerFinance = require base_path('database/seeds/owner_finance.php');

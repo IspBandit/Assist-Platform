@@ -76,11 +76,9 @@ final class HomeController extends Controller
             }
         }
 
-        $categories = $this->safe(
-            fn () => Database::select(
-                "SELECT name, slug FROM service_categories WHERE is_active = 1 AND parent_id IS NULL ORDER BY sort_order LIMIT 12"
-            )
-        );
+        $categories = $this->safe(fn () => \App\Models\ServiceCategory::activeAll());
+        $categoryGroups = \App\Models\ServiceCategory::groupedForVanAssist($categories);
+        $popularCategories = array_slice($categories, 0, 12);
 
         $providerDirectoryCount = 0;
         $verifiedProviderCount = 0;
@@ -126,6 +124,8 @@ final class HomeController extends Controller
             'nearbyFindUrl'     => $nearbyFindUrl,
             'nearbyEndpoint'    => url('locations/nearby-providers'),
             'categories'        => $categories,
+            'categoryGroups'    => $categoryGroups,
+            'popularCategories' => $popularCategories,
             'providerDirectoryCount' => $providerDirectoryCount,
             'homeEvidence' => [
                 'directory_listings' => $providerDirectoryCount,

@@ -1,6 +1,7 @@
 <?php
 /** @var \App\Core\View $this */
 $layoutBrand = current_brand();
+$layoutBrandAssets = $layoutBrand->assets();
 $layoutBrandTheme = $layoutBrand->theme();
 ?>
 <!doctype html>
@@ -12,6 +13,7 @@ $layoutBrandTheme = $layoutBrand->theme();
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
     <?php $this->include('partials.brand-theme'); ?>
     <meta name="theme-color" content="<?= e($layoutBrandTheme['brand'] ?? '#0f6e6e') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= e(asset($layoutBrandAssets['favicon'] ?? '/assets/brands/vanassist/mark.svg')) ?>">
     <link rel="alternate" type="application/xml" title="Sitemap" href="<?= e(url('sitemap.xml')) ?>">
     <?= $this->yield('head') ?>
 </head>

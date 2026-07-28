@@ -17,7 +17,7 @@ final class CaravanPark extends Model
      *
      * @return array<int,array<string,mixed>>
      */
-    public static function searchStays(?int $townId, ?float $lat, ?float $lng, ?string $stayType, ?string $priceType, int $limit = 60): array
+    public static function searchStays(?int $townId, ?float $lat, ?float $lng, ?string $stayType, ?string $priceType, int $maxDistanceKm = 150, int $limit = 60): array
     {
         $where = ["cp.status = 'active'", 'cp.public_page_enabled = 1', 'cp.deleted_at IS NULL'];
         $params = [];
@@ -31,8 +31,9 @@ final class CaravanPark extends Model
         }
 
         if ($townId !== null && ($lat === null || $lng === null)) {
-            $town = Database::selectOne('SELECT latitude, longitude FROM towns WHERE id = ? AND is_active = 1', [$townId]);
-            if ($town !== null && is_numeric($town['latitude']) && is_numeric($town['longitude'])) {
+            $town = Database::selectOne('SELECT latitude, longitude, coordinate_confidence FROM towns WHERE id = ? AND is_active = 1', [$townId]);
+            if ($town !== null && in_array(($town['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true)
+                && is_numeric($town['latitude']) && is_numeric($town['longitude'])) {
                 $lat = (float) $town['latitude'];
                 $lng = (float) $town['longitude'];
             } else {
@@ -42,6 +43,7 @@ final class CaravanPark extends Model
         }
 
         $distanceSql = 'NULL AS distance_km';
+        $having = '';
         $order = 'cp.is_featured DESC, cp.name ASC';
         if ($lat !== null && $lng !== null) {
             $distanceSql = '(6371 * ACOS(LEAST(1, GREATEST(-1, '
@@ -49,6 +51,8 @@ final class CaravanPark extends Model
                 . '+ SIN(RADIANS(?)) * SIN(RADIANS(cp.latitude)))))) AS distance_km';
             array_unshift($params, $lat, $lng, $lat);
             $where[] = 'cp.latitude IS NOT NULL AND cp.longitude IS NOT NULL';
+            $having = ' HAVING distance_km <= ?';
+            $params[] = max(1, min(500, $maxDistanceKm));
             $order = 'cp.is_featured DESC, distance_km ASC, cp.name ASC';
         }
 
@@ -58,7 +62,7 @@ final class CaravanPark extends Model
             . 'FROM caravan_parks cp '
             . 'LEFT JOIN towns t ON t.id = cp.town_id '
             . 'LEFT JOIN states s ON s.id = cp.state_id '
-            . 'WHERE ' . implode(' AND ', $where) . ' ORDER BY ' . $order . ' LIMIT ' . $limit,
+            . 'WHERE ' . implode(' AND ', $where) . $having . ' ORDER BY ' . $order . ' LIMIT ' . $limit,
             $params
         );
     }

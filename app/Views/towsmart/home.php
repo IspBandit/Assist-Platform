@@ -3,7 +3,9 @@
 
 <section class="product-hero product-hero--towsmart">
     <picture class="product-hero-media" aria-hidden="true">
-        <source media="(max-width: 719px)" srcset="<?= e(asset('img/towsmart-hero-mobile.webp')) ?>">
+        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/towsmart-hero-mobile.avif')) ?>">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/towsmart-hero-mobile.webp')) ?>">
+        <source type="image/avif" srcset="<?= e(asset('img/towsmart-hero-desktop.avif')) ?>">
         <img src="<?= e(asset('img/towsmart-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
     </picture>
     <div class="product-hero-shade"></div>

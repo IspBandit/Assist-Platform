@@ -24,17 +24,12 @@ final class Mailer
     {
         $result = ['processed' => 0, 'sent' => 0, 'failed' => 0];
 
-        // Email can be delivered either via PHPMailer (when Composer deps are
-        // installed) or the built-in dependency-free SmtpClient fallback. Only a
-        // missing SMTP host means we genuinely cannot send — leave the queue
-        // pending in that case rather than burning delivery attempts.
+        // Leave the queue pending when the selected transport is incomplete
+        // rather than burning delivery attempts.
         $cfg = self::config();
         $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
-        $transportReady = $driver === 'graph'
-            ? trim((string) ($cfg['graph_tenant_id'] ?? '')) !== '' && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
-            : trim((string) $cfg['host']) !== '';
-        if (!$transportReady) {
-            Logger::warning('SMTP host not configured; email queue left pending. Set mail settings in Admin → Settings.', [], 'email');
+        if (!self::transportConfigured($cfg)) {
+            Logger::warning('Outgoing email transport is not configured; email queue left pending.', [], 'email');
             return $result;
         }
 
@@ -77,6 +72,19 @@ final class Mailer
         }
 
         return $result;
+    }
+
+    /** @param array<string,mixed> $cfg */
+    public static function transportConfigured(array $cfg): bool
+    {
+        $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
+        if ($driver === 'graph') {
+            return trim((string) ($cfg['graph_tenant_id'] ?? '')) !== ''
+                && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
+                && trim((string) ($cfg['graph_mailbox'] ?? '')) !== '';
+        }
+
+        return trim((string) ($cfg['host'] ?? '')) !== '';
     }
 
     /** @return array<int,array<string,mixed>> */
@@ -148,6 +156,7 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'sent', NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject']]
             );
+            Database::query("UPDATE notification_recipients SET status='sent' WHERE queue_id=?", [$row['id']]);
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();
@@ -185,6 +194,9 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'failed', ?, NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject'], $message]
             );
+            if ($status === 'failed') {
+                Database::query("UPDATE notification_recipients SET status='failed' WHERE queue_id=?", [$row['id']]);
+            }
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();
@@ -202,6 +214,7 @@ final class Mailer
     public static function config(?int $brandDatabaseId = null): array
     {
         $env = config('mail');
+        $graphMailbox = (string) ($env['graph']['mailbox'] ?? '');
         $db = static fn (string $key, string $envKey): string =>
             trim((string) Settings::get($key, '')) !== ''
                 ? trim((string) Settings::get($key, ''))
@@ -238,6 +251,11 @@ final class Mailer
             if ($fromAddress === '') {
                 throw new RuntimeException("Outbound sender is not configured for {$brand->name()}");
             }
+
+            $graphMailbox = self::graphMailboxForBrand(
+                (array) ($env['graph'] ?? []),
+                $brand->id()
+            );
         }
 
         return [
@@ -255,8 +273,23 @@ final class Mailer
             'graph_certificate_path' => (string) ($env['graph']['certificate_path'] ?? ''),
             'graph_private_key_path' => (string) ($env['graph']['private_key_path'] ?? ''),
             'graph_private_key_password' => (string) ($env['graph']['private_key_password'] ?? ''),
-            'graph_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
+            'graph_mailbox' => $graphMailbox,
+            'graph_fallback_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
         ];
+    }
+
+    /** @param array<string,mixed> $graph */
+    public static function graphMailboxForBrand(array $graph, ?string $brandId): string
+    {
+        $fallback = trim((string) ($graph['mailbox'] ?? ''));
+        if ($brandId === null) {
+            return $fallback;
+        }
+
+        $mailboxes = is_array($graph['mailboxes'] ?? null) ? $graph['mailboxes'] : [];
+        $brandMailbox = trim((string) ($mailboxes[$brandId] ?? ''));
+
+        return $brandMailbox !== '' ? $brandMailbox : $fallback;
     }
 
     private static function send(array $row): void

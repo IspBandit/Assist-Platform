@@ -15,7 +15,30 @@ components only after rendered, responsive and accessibility verification.
 - Provider and admin tasks work on mobile, not only desktop.
 - Empty, loading, success and error states are designed states.
 - Paid and sponsored content is visibly labelled.
+- Regulatory content identifies its issuing authority and status; paid provider
+  placements are visually separated from official-source cards.
 - No fake counts, reviews, urgency, availability or endorsements.
+
+## Premium visual-content contract
+
+Major public journeys use original, subject-relevant hero photography rather
+than generic decoration. VanAssist shows regional caravan confidence; TowSmart
+shows measured towing safety; TrailerWise shows skilled trailer inspection;
+LocalTorque shows genuine automotive expertise; the rules library shows vehicle
+engineering/source review; and My Garage shows an organised mixed asset set.
+
+Hero images contain no baked-in words, logos, fake government marks or UI. Live
+HTML owns headings and actions. Every hero ships as an art-directed 1824 × 864
+desktop image and a 720 × 960 mobile crop, with AVIF first and WebP fallback.
+Desktop AVIF must remain at or below 110 KB and mobile AVIF at or below 65 KB;
+tests enforce dimensions, formats and transfer budgets. Above-the-fold heroes
+use `fetchpriority="high"`; below-the-fold editorial images must be lazy-loaded.
+Images never replace a usable text, list, map-fallback or form experience.
+
+LocalTorque motorsport uses the same art-directed contract. Its hero may
+combine several credible competition disciplines but carries no sanctioning-body
+marks, sponsor liveries or implication that one authority governs every sport.
+Disciplines, rulebooks, venues and calendars remain live HTML below the image.
 
 ## Foundations
 
@@ -37,6 +60,68 @@ The system must include and document:
 - content, calculator and data-entry patterns;
 - Social Studio templates and export-safe areas.
 
+### Four-brand mobile rule-library contract
+
+The shared rule library is a required mobile journey for VanAssist, TowSmart,
+TrailerWise and LocalTorque. At 619px and below filters form one column, document
+metadata forms one column, download actions occupy the available width and
+sponsor disclosures precede sponsor cards. Jurisdiction navigation may scroll
+horizontally without clipping labels. At 979px and below authority cards and
+sponsor cards form a single column. Core official-source access must not depend
+on JavaScript; town autocomplete is an optional enhancement.
+
+### Regulatory library pattern
+
+Regulatory results use an authority-first card with jurisdiction, current or
+upcoming state, document type, applicable vehicle chips, issuer, version,
+effective date and last source check. The primary action opens the official
+authority source or download. Changed/unreviewed records are unavailable rather
+than shown with a weak warning. Sponsored local specialists appear only after
+the official results in a separately bordered region with a persistent
+`Sponsored` label and disclosure; they never appear inside a rule card.
+
+### Motorsport rule and venue pattern
+
+The LocalTorque motorsport journey starts with explicit discipline families and
+named disciplines, then presents the four rule layers: sanctioning body,
+discipline/class, state/series and event/venue. Cards identify the authority,
+version, jurisdictions, applicable families and source check. Venue cards
+identify permanent, temporary, route-based or club-network status, locality,
+official venue website where available, and a separately labelled official
+calendar source. A calendar link never implies that entries remain open. At
+680px and below family, rule and venue grids form one column and actions use
+touch-sized full-width controls where needed.
+
+### Shared Garage contract
+
+My Garage is an account-level experience shared by every brand. Its structure is
+consistent while colour, wordmark and relevant next actions inherit the current
+brand. The mobile index is a single-column asset wallet; desktop may use a
+three-column collection. Technical ratings are progressive disclosure, not a
+barrier to adding an asset. Private documents must always be described as
+owner-supplied and never receive a verified badge without separate review.
+
+Garage action cards may pass non-sensitive type and jurisdiction context into
+official rules or provider search. They do not pass private notes or documents.
+
+### Guided compliance and commercial separation
+
+The guided check uses three questions (jurisdiction, vehicle and job), followed
+by a numbered practical sequence and authority-linked cards. The limitation is
+always visible with the result. Saving, subscribing and provider handoff are
+separate actions; alert and handoff consent use unticked native checkboxes with
+plain-language scope.
+
+Verified capability labels require reviewed evidence and show jurisdiction and
+validity. They must never use authority seals or claim government endorsement.
+Sponsored provider cards remain in a labelled landmark after official results.
+Paid dashboards label paid impressions, clicks, attributed contacts and media
+spend separately from organic discovery.
+
+The administrative trust dashboard uses the same status vocabulary everywhere:
+current, review, overdue, failed, pending, verified, rejected, paused and active.
+Colour supplements those words and never replaces them.
+
 ## Brand expression
 
 - **VanAssist:** travel confidence, regional utility and caravan/RV assistance.
@@ -47,70 +132,51 @@ The system must include and document:
 Brand expression changes tokens, imagery, voice and relevant content—not basic
 usability conventions.
 
-### Typography-first brand identity
+### Brand mark family
 
-Public, authentication, provider and admin navigation use typographic wordmarks
-without illustrative vehicle or service icons. Brand colour is a restrained
-wordmark accent; product purpose is carried by a compact descriptor. No generic
-or provisional mark is presented as finished brand identity. A future symbol
-requires professionally reviewed identity work, distinctive geometry, small-size
-testing and explicit owner approval before it enters a product surface.
+The four platform marks use a shared 64 × 64 solid-geometry SVG contract. They
+are abstract brand symbols, not vehicle illustrations: no depicted cars,
+caravans, trailers, tools, wheels, gradients, enclosing app tiles or decorative
+scenery. A deep neutral primary form and one restrained brand accent preserve
+clarity at favicon size. VanAssist combines a V with location confidence;
+TowSmart combines a T with an engineered connection; TrailerWise combines a W
+with verification; LocalTorque combines a torque aperture with a directional
+load. Marks must be checked at 16, 24, 32, 40 and 64px. Decorative consumers
+use an empty `alt`; a standalone mark retains its SVG title or receives an
+accessible name from its consumer. All mark URLs use file-version cache busting
+so a replaced identity cannot leave a stale browser-tab or shell asset behind.
+
+### Provider acquisition contract
+
+Provider landing pages receive the same visual priority as customer journeys.
+Each brand uses its responsive AVIF/WebP hero family, a legible directional
+overlay, one primary acquisition action, a returning-provider sign-in and a
+short proof row. Mobile retains the subject image above live copy rather than
+hiding the artwork. Benefits and onboarding steps follow the hero in a single
+column at phone width and may expand to three columns on desktop. One provider
+identity is explained as a reduction in administration, never as automatic or
+irrelevant cross-brand exposure.
+
+### VanAssist traveller-intent launcher
+
+VanAssist keeps one location-first service form, then exposes repairs, fuel, EV
+charging and stays as four server-rendered intent paths before directory
+results. The launcher adds no image or script dependency and collapses from
+four columns to two and then one at phone width. It uses text and numbering
+rather than illustrative vehicle icons. Trust copy describes claimed, verified,
+featured and unclaimed states precisely and never implies universal provider or
+remote-town verification. Fuel, charging and stay paths still ask for location
+before presenting nearby relevance.
 
 ### Enterprise admin shell
 
 The admin shell uses a neutral charcoal navigation surface and raised white
 work surfaces. Brand colour is limited to active/focus accents. The workspace
-selector shows the active brand name and platform context; available
+selector shows the active brand icon, name and platform context; available
 brands keep server-authorised POST switching. It supports Escape, Home, End and
 arrow-key movement, visible focus and 44px-class touch targets. At 720px and
 below navigation collapses and top-bar actions remain horizontally reachable.
 Motion is restrained and disabled when `prefers-reduced-motion` is requested.
-
-### Immersive discovery and provider command centre
-
-High-intent public pages use editorial-scale type, strong photography and a
-single dominant task surface. VanAssist places location-aware discovery over an
-immersive service scene while preserving the complete accessible form. Provider
-pages use a command-centre hierarchy: business status, demand indicators,
-market intelligence and clearly ranked management actions. Responsive layouts
-collapse to one task per row without hiding core data or actions.
-
-### Conversion-led experience architecture
-
-Premium presentation is not accepted as a substitute for a useful journey.
-High-intent marketplace pages establish, in order: product purpose, primary
-action, real evidence, available paths, operating process and trust limitations.
-Public evidence uses current database values and disappears when a value is
-unavailable or zero; templates never backfill proof with invented numbers.
-
-VanAssist public discovery separates three intents rather than placing every
-feature in one generic directory flow:
-
-1. find a relevant RV service provider by need and location;
-2. find an appropriate place to stay;
-3. register an unmet assistance need so it can be matched or recorded as a
-   coverage gap.
-
-Provider acquisition is a distinct commercial journey. It explains provider
-control, evidence review, demand visibility, cross-brand eligibility and the
-absence of guaranteed-lead or silent-billing promises before requesting
-registration. Provider operations use an action-led workspace: one ranked next
-step, relevant open demand, precisely described activity measures and grouped
-business controls. Counts never imply confirmed revenue or completed work.
-
-### Editorial layout rules
-
-- Use composed editorial sections and ruled information layouts for major
-  journeys; avoid solving every hierarchy problem with another rounded card.
-- Serif accent type is limited to short emotional emphasis in marketing heroes;
-  controls, evidence and operational content retain the shared sans-serif face.
-- Photography supports a real customer or provider context and must retain a
-  readable text treatment at 360px without becoming essential to task completion.
-- Warm accent surfaces carry evidence or transparency content, not decoration.
-- Dark sections signal a deliberate change of narrative or audience; they do
-  not change control meaning.
-- Full-page mobile acceptance includes the complete content order, not only the
-  first viewport.
 
 ## UX change workflow
 
@@ -137,3 +203,13 @@ Material changes to navigation, layout foundations, colour semantics, typography
 or interaction conventions require Experience workstream review and the UX part
 of the platform quality gate. Brand-only visual changes must still use shared
 tokens and components.
+
+## Conversion-led journey layer
+
+The premium visual system and conversion journey are complementary. Public
+homepages may pair optimised contextual hero photography with the approved
+`symbol-v2.svg` family, concise evidence, a three-step process and explicit
+trust language. Provider acquisition and provider workspaces reuse the same
+tokens, responsive breakpoints and focus treatment. These additions must not
+replace the approved symbols with cartoon vehicle artwork, hide primary search,
+or reintroduce colour-heavy brand tiles.

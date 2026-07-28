@@ -84,6 +84,8 @@ final class ProviderCoverage
             . "WHERE pr.provider_id = p.id AND pr.area_type = 'radius' AND pr.radius_km IS NOT NULL AND pr.radius_km > 0 "
             . 'AND base.latitude IS NOT NULL AND base.longitude IS NOT NULL '
             . 'AND tgt.latitude IS NOT NULL AND tgt.longitude IS NOT NULL '
+            . "AND base.coordinate_confidence IN ('authoritative','statistical') "
+            . "AND tgt.coordinate_confidence IN ('authoritative','statistical') "
             . 'AND (6371 * ACOS(LEAST(1, GREATEST(-1, '
             . 'COS(RADIANS(base.latitude)) * COS(RADIANS(tgt.latitude)) * COS(RADIANS(tgt.longitude) - RADIANS(base.longitude)) '
             . '+ SIN(RADIANS(base.latitude)) * SIN(RADIANS(tgt.latitude)) '

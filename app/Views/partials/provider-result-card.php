@@ -9,6 +9,10 @@ $profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'provider
 $location = trim((string) ($p['town_name'] ?? ''));
 if ($location !== '' && !empty($p['state_abbr'])) { $location .= ', ' . $p['state_abbr']; }
 $description = trim((string) ($p['description'] ?? ''));
+$isWorkshop = in_array($model, ['workshop', 'both'], true);
+$mapDestination = $isWorkshop && is_navigable_street_address($p['street_address'] ?? '')
+    ? map_destination(null, null, [$p['street_address'] ?? '', $p['town_name'] ?? '', $p['state_abbr'] ?? ''])
+    : '';
 ?>
 <article class="provider-card<?= !empty($p['is_featured']) ? ' provider-card--featured' : '' ?>">
     <?php if (!empty($p['is_featured'])): ?><span class="provider-featured-label">Featured</span><?php endif; ?>
@@ -16,16 +20,17 @@ $description = trim((string) ($p['description'] ?? ''));
         <span class="provider-avatar" aria-hidden="true"><?= e($initial) ?></span>
         <span class="provider-card-content">
             <span class="provider-card-title"><?= e($name) ?></span>
-            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · approximately <?= max(1, (int) $p['distance_km']) ?> km away<?php endif; ?></span><?php endif; ?>
+            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · <?= max(1, (int) $p['distance_km']) ?> km straight-line<?php endif; ?></span><?php endif; ?>
         </span>
         <span class="provider-card-arrow" aria-hidden="true">→</span>
     </a>
     <div class="provider-card-badges">
         <?php if (!empty($p['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
+        <?php if (str_contains((string) ($p['source_note'] ?? ''), 'qld-fuel-reporting')): ?><span class="badge badge-neutral">Queensland Government source</span><?php endif; ?>
         <?php if (!empty($p['is_unclaimed'])): ?><span class="badge badge-neutral">Details not yet claimed</span><?php endif; ?>
         <?php if ($isPossible): ?><span class="badge badge-neutral">Related service</span><?php endif; ?>
         <?php if ($isMobile): ?><span class="badge badge-confirmed"><?= $model === 'both' ? 'Mobile and workshop' : 'Mobile service' ?></span><?php elseif ($model !== ''): ?><span class="badge badge-neutral">Workshop</span><?php endif; ?>
     </div>
     <?php if ($description !== ''): ?><p class="provider-card-description"><?= e(mb_substr($description, 0, 150)) ?><?= mb_strlen($description) > 150 ? '…' : '' ?></p><?php endif; ?>
-    <a class="provider-card-link" href="<?= e(url($profilePath . $p['slug'])) ?>">View services and contact details</a>
+    <div class="btn-row"><a class="provider-card-link" href="<?= e(url($profilePath . $p['slug'])) ?>">View services and contact details</a><?php if ($mapDestination !== ''): ?><a class="provider-card-link" href="<?= e(map_directions_url($mapDestination)) ?>" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>" target="_blank" rel="noopener noreferrer">Directions</a><?php endif; ?></div>
 </article>

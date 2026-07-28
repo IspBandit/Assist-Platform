@@ -132,7 +132,7 @@ final class Provider extends Model
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $join . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.description, p.service_model, '
-            . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name, s.abbreviation AS state_abbr '
+            . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
             . 'FROM providers p ' . $join . $clause
             . ' ORDER BY p.is_featured DESC, p.is_verified DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
@@ -164,7 +164,7 @@ final class Provider extends Model
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $joins . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, pbl.slug, pbl.display_name AS business_name, p.description, p.service_model, '
-            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, t.name AS town_name, s.abbreviation AS state_abbr '
+            . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
             . 'FROM providers p ' . $joins . $clause
             . ' ORDER BY pbl.is_featured DESC, pbl.is_verified DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
@@ -178,7 +178,7 @@ final class Provider extends Model
         return Database::selectOne(
             'SELECT p.*, pbl.slug AS brand_slug, pbl.display_name AS brand_display_name, pbl.is_verified AS brand_verified, '
             . 'pbl.is_featured AS brand_featured, pbl.seo_title AS brand_seo_title, pbl.seo_description AS brand_seo_description, '
-            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, t.latitude AS town_lat, t.longitude AS town_lng, '
+            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
             . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
             . 'FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id '
             . 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = p.region_id '
@@ -204,7 +204,7 @@ final class Provider extends Model
     {
         return Database::selectOne(
             'SELECT p.*, t.name AS town_name, t.slug AS town_slug, '
-            . 't.primary_postcode AS town_postcode, t.latitude AS town_lat, t.longitude AS town_lng, '
+            . 't.primary_postcode AS town_postcode, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
             . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
             . 'FROM providers p LEFT JOIN towns t ON t.id = p.base_town_id '
             . 'LEFT JOIN states s ON s.id = t.state_id '
@@ -246,9 +246,10 @@ final class Provider extends Model
         }
 
         return Database::select(
-            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, '
-            . 'p.is_founding_provider, p.is_unclaimed, ps.is_inferred, '
-            . 't.name AS town_name, t.slug AS town_slug, t.latitude AS town_lat, t.longitude AS town_lng, '
+            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
+            . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
+            . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
+            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, "
             . 's.abbreviation AS state_abbr '
             . 'FROM provider_services ps '
             . 'JOIN providers p ON p.id = ps.provider_id '
@@ -258,6 +259,52 @@ final class Provider extends Model
             . ' ORDER BY ps.is_inferred ASC, p.is_featured DESC, p.is_verified DESC, p.business_name '
             . 'LIMIT ' . $limit,
             $params
+        );
+    }
+
+    /**
+     * Active providers inside a coordinate radius. This deliberately starts
+     * from provider/town coordinates rather than town service-area membership;
+     * otherwise a nearby station in the next locality is incorrectly hidden.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function forCategoryNear(
+        int $categoryId,
+        float $latitude,
+        float $longitude,
+        int $radiusKm,
+        int $limit = 120,
+    ): array {
+        $radiusKm = max(1, min(500, $radiusKm));
+        $limit = max(1, min(500, $limit));
+        $latDelta = $radiusKm / 111.32;
+        $longitudeScale = max(0.01, abs(cos(deg2rad($latitude))));
+        $lngDelta = min(180.0, $radiusKm / (111.32 * $longitudeScale));
+
+        return Database::select(
+            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, '
+            . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
+            . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
+            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, s.abbreviation AS state_abbr, "
+            . '(6371 * ACOS(LEAST(1, GREATEST(-1, COS(RADIANS(?)) '
+            . "* COS(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))) "
+            . "* COS(RADIANS(COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END)) - RADIANS(?)) "
+            . "+ SIN(RADIANS(?)) * SIN(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))))))) AS distance_km "
+            . 'FROM provider_services ps JOIN providers p ON p.id=ps.provider_id '
+            . 'LEFT JOIN towns t ON t.id=p.base_town_id LEFT JOIN states s ON s.id=t.state_id '
+            . "WHERE ps.category_id=? AND p.status='active' AND p.deleted_at IS NULL "
+            . "AND COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) BETWEEN ? AND ? "
+            . "AND COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) BETWEEN ? AND ? "
+            . 'HAVING distance_km <= ? '
+            . 'ORDER BY ps.is_inferred ASC, distance_km ASC, p.is_featured DESC, p.is_verified DESC, p.business_name '
+            . 'LIMIT ' . $limit,
+            [
+                $latitude, $longitude, $latitude, $categoryId,
+                $latitude - $latDelta, $latitude + $latDelta,
+                $longitude - $lngDelta, $longitude + $lngDelta,
+                $radiusKm,
+            ]
         );
     }
 
@@ -289,7 +336,7 @@ final class Provider extends Model
         return Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, '
             . 'p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.description, p.street_address, '
-            . 't.name AS town_name, t.latitude AS town_lat, t.longitude AS town_lng, s.abbreviation AS state_abbr, '
+            . 't.name AS town_name, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
             . 'CASE WHEN ' . $covers . ' THEN 0 '
             . "WHEN p.service_model IN ('mobile','both') THEN 1 ELSE 2 END AS relevance "
             . 'FROM providers p '

@@ -12,9 +12,11 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-002 | Unified admin, global view and permission-scoped brand switching | in progress | Cross-domain handoff, RBAC and rendered acceptance |
 | CORE-003 | Canonical providers with relevant per-brand listings | in progress | Isolation, relevance and duplicate tests |
 | CORE-004 | Shared membership entitlements for Launch, Free, Founding, Verified and Featured | done | Migration 045 catalogue, entitlement tests, provider dashboard states and billing-disabled acceptance |
-| CORE-005 | Shared provider launch email templates and campaign segmentation | ready | Preview/test-send, consent, unsubscribe and queue tests |
+| CORE-005 | Shared provider launch email templates and campaign segmentation | in progress | Brand-scoped preview, documented consent, suppression, unsubscribe and test/pilot/50/100 staged limits implemented; production pilot acceptance remains |
 | CORE-007 | Platform Control Centre for domains, launch state, features and operational status | in progress | Super-admin-only acceptance and audit coverage |
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
+| CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | done | Owner isolation, mobile asset wallet, private document storage, expiry delivery and brand-aware actions |
+| CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | done | Explicit consent, limited preserved context, source/destination brand audit and private-field exclusion |
 
 ## Experience
 
@@ -23,8 +25,11 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | EXP-001 | Promote current UX redesign into shared tokens/components | in progress | Component inventory documented; semantic-token migration and regression renders remain |
 | EXP-002 | Unified admin information architecture and brand switcher | in progress | Desktop/mobile rendered acceptance and keyboard tests |
 | EXP-003 | Production-grade Social Studio templates and individual exports | in progress | Exact-size assets, editorial approval and no mock-up/crop contamination |
+| EXP-008 | Review-first Facebook Page publishing from Social Studio | in progress | Approved-asset publishing, brand/page isolation and post audit implemented; Meta Page credentials and live publish acceptance remain |
 | EXP-004 | WCAG 2.2 AA critical journeys | ready | Automated checks plus manual keyboard/screen-reader review |
 | EXP-005 | Mobile-first provider, search, calculator and admin journeys | in progress | Rendered acceptance on representative widths |
+| EXP-006 | Guided rule-to-action journeys from official requirement to compliant next step | done | Vehicle/jurisdiction/job guide, official citations, limitations, saved outcome and consented provider handoff |
+| EXP-007 | Mobile trip and compliance wallet | done | Private mobile document access/download, expiry preferences and dispatch, source alerts and representative owner journeys |
 
 ## Brands
 
@@ -35,10 +40,11 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
 | TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
-| TRL-002 | Trailer ownership and compliance content system | ready | Source, jurisdiction and freshness requirements pass |
+| TRL-002 | Trailer ownership and compliance content system | done | Shared Garage, trailer source/jurisdiction guide, freshness alerts and specialist handoff pass |
 | LOC-001 | LocalTorque first-class private brand foundation | done | Private render, categories, sitemap and enrichment report |
 | LOC-002 | LocalTorque national coverage, claims and search readiness | in progress | Coverage report, duplicate review and claim acceptance |
 | LOC-003 | LocalTorque production launch | blocked | Domain purchase, DNS, email, legal and launch acceptance |
+| LOC-004 | LocalTorque complete motorsport rule, venue and calendar discovery | in progress | Explicit national discipline taxonomy, official rule layers, verified venue websites/calendars, source freshness and mobile journey acceptance |
 
 ## Data
 
@@ -50,7 +56,10 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-004 | Coverage-gap reporting by brand/category/location | ready | Admin reports and zero-result analytics |
 | DATA-005 | Data Intelligence, opportunity scoring and action queue | in progress | Modular metric sources, population-aware scoring, verification/import quality and direct Data Sources hand-off |
 | DATA-006 | Connector-based discovery, encrypted credentials and review-first imports | done | Migration, connector contract, Google adapter, admin workflow, audit and tests |
-| DATA-007 | Maps/geocoding production limits and fallback | in progress | GPS town resolution and manual fallback improved; quota, failure and list-view acceptance remain |
+| DATA-007 | Maps/geocoding production limits and fallback | ready | Quota, failure and list-view acceptance |
+| DATA-008 | Four-brand authoritative Australian vehicle rules library | done | All-jurisdiction official-source catalogue, brand relevance, genuine downloads, source-change review, mobile filters and labelled local sponsorship |
+| DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
+| DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
 
 ## Infrastructure
 
@@ -75,11 +84,13 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| COM-001 | Transactional email transport and sender reputation | in progress | Graph certificate and queued delivery accepted; visible brand sender identity plus external bounce/suppression acceptance remain |
-| COM-002 | Consent-aware bulk provider campaign sending | blocked | COM-001 plus consent, throttling and unsubscribe acceptance |
+| COM-001 | Transactional email transport and sender reputation | in progress | Direct shared-mailbox send/receive passes; brand-neutral templates, application probes and central bounce/complaint suppression implemented; production application-probe acceptance remains |
+| COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
 | COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |
+| COM-006 | Verified provider capability credentials | done | Private evidence, expiry, reviewer audit, public labels and explicit no-endorsement controls |
+| COM-007 | Provider campaign relevance and performance workspace | done | Self-service local/context targeting, transparent sponsorship, daily/total budgets, click/contact attribution and organic separation |
 
 ## Backlog rules
 
@@ -90,3 +101,12 @@ implementation detail belongs in linked issues and pull requests. Status values:
 - Blocked external prerequisites remain explicit; code must fail closed.
 - Production defects can interrupt sequencing, but their resolution must update
   this backlog and the relevant operational record.
+
+## Reconciled experience delivery
+
+- EXP-001: conversion-led customer homepage evidence, process and trust layer — done.
+- EXP-004: provider acquisition journey across all brands — done.
+- EXP-005: provider command-centre hierarchy and growth workspace — done.
+
+These items retain the current premium symbol family, optimised contextual hero
+assets, live location controls and server-side brand scoping.

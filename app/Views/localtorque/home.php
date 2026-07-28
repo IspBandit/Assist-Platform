@@ -2,6 +2,12 @@
 <?php $this->section('content'); ?>
 
 <section class="product-hero product-hero--localtorque">
+    <picture class="product-hero-media" aria-hidden="true">
+        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/localtorque-hero-mobile.avif')) ?>">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/localtorque-hero-mobile.webp')) ?>">
+        <source type="image/avif" srcset="<?= e(asset('img/localtorque-hero-desktop.avif')) ?>">
+        <img src="<?= e(asset('img/localtorque-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
+    </picture>
     <div class="product-hero-shade"></div>
     <div class="container product-hero-content">
         <div class="product-hero-copy">
@@ -13,7 +19,7 @@
                 <input id="localtorque-business" name="q" type="search" placeholder="Business or service" autocomplete="off">
                 <label class="sr-only" for="localtorque-location">Town, suburb or postcode</label>
                 <span class="location-field">
-                    <input id="localtorque-location" type="search" placeholder="Town / State or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
+                    <input id="localtorque-location" name="location" type="search" placeholder="Town / State or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                     <input type="hidden" id="town_id" name="town" value="">
                     <span id="town-suggest" class="town-suggest" role="listbox" hidden></span>
                 </span>
@@ -28,7 +34,7 @@
     <div class="container quick-paths-grid">
         <a href="<?= e(url('providers')) ?>"><span class="quick-icon">01</span><span><strong>Find a workshop</strong><small>Search by business, service or location</small></span></a>
         <a href="<?= e(url('services')) ?>"><span class="quick-icon">02</span><span><strong>Browse specialists</strong><small>From mechanics to vehicle inspections</small></span></a>
-        <a href="<?= e(url('for-providers')) ?>"><span class="quick-icon">03</span><span><strong>List your business</strong><small>Claim or create a shared provider profile</small></span></a>
+        <a href="<?= e(url('rules')) ?>"><span class="quick-icon">03</span><span><strong>Rules & modifications</strong><small>Official roadworthy and modification sources</small></span></a>
     </div>
 </section>
 

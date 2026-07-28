@@ -19,6 +19,9 @@
 6. Verify environment and shared storage; rehearse migrations on staging first.
 7. Apply forward migrations once through the locked CLI runner.
 8. Atomically switch `/opt/assist-platform/current`.
+   Recreate both the PHP application and Caddy containers after the switch;
+   bind mounts resolved through the `current` symlink must never remain pinned
+   to different release directories.
 9. Run every affected-brand smoke test, health/readiness, installer, queue, cron,
    sitemap, robots and authentication checks.
 10. Monitor; retain the preceding release for rollback.

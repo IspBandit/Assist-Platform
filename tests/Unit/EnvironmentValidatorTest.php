@@ -24,6 +24,8 @@ final class EnvironmentValidatorTest extends TestCase
         'billing.enabled', 'mail.driver', 'mail.host', 'mail.encryption', 'mail.from_address',
         'mail.graph.tenant_id', 'mail.graph.client_id', 'mail.graph.certificate_path',
         'mail.graph.private_key_path', 'mail.graph.mailbox',
+        'mail.graph.mailboxes.vanassist', 'mail.graph.mailboxes.towsmart',
+        'mail.graph.mailboxes.trailerwise', 'mail.graph.mailboxes.localtorque',
     ];
 
     protected function setUp(): void
@@ -82,6 +84,21 @@ final class EnvironmentValidatorTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('APP_RELEASE is required in production');
+        EnvironmentValidator::validateInstalledApplication();
+    }
+
+    public function testInvalidOptionalBrandGraphMailboxFailsClosed(): void
+    {
+        Config::set('mail.driver', 'graph');
+        Config::set('mail.graph.tenant_id', 'tenant');
+        Config::set('mail.graph.client_id', 'client');
+        Config::set('mail.graph.certificate_path', 'certificate.pem');
+        Config::set('mail.graph.private_key_path', 'private-key.pem');
+        Config::set('mail.graph.mailbox', 'operations@vanassist.com.au');
+        Config::set('mail.graph.mailboxes.towsmart', 'not-an-email');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('MICROSOFT_GRAPH_TOWSMART_MAILBOX');
         EnvironmentValidator::validateInstalledApplication();
     }
 

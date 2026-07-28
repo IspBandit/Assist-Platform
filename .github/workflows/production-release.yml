@@ -56,5 +56,52 @@ jobs:
         run: |
           scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
           ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+      - name: Verify public user journeys
+        shell: bash
+        run: |
+          set -euo pipefail
+          urls=(
+            "https://vanassist.com.au/"
+            "https://vanassist.com.au/providers"
+            "https://vanassist.com.au/request-assistance"
+            "https://vanassist.com.au/locations/nearest?lat=-27.4698&lng=153.0251"
+            "https://vanassist.com.au/login"
+            "https://vanassist.com.au/register"
+            "https://vanassist.com.au/forgot-password"
+            "https://towsmart.com.au/"
+            "https://towsmart.com.au/calculator"
+            "https://towsmart.com.au/rules"
+            "https://trailerwise.com.au/"
+            "https://trailerwise.com.au/marketplace"
+            "https://trailerwise.com.au/rules"
+          )
+          for url in "${urls[@]}"; do
+            curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+              --output /dev/null "$url"
+          done
+          if getent hosts localtorque.com.au >/dev/null 2>&1; then
+            for url in \
+              "https://localtorque.com.au/" \
+              "https://localtorque.com.au/rules" \
+              "https://localtorque.com.au/motorsport"; do
+              curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+                --output /dev/null "$url"
+            done
+          else
+            echo "LocalTorque production DNS is not active yet; brand journey checks remain gated until it resolves."
+          fi
+          homepage="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
+          grep -q '/runtime-assets/css/app.css' <<<"$homepage"
+          grep -q '/runtime-assets/js/app.js' <<<"$homepage"
+          grep -q '/runtime-assets/brands/vanassist/symbol-v2.svg' <<<"$homepage"
+
+          symbol="$(curl --fail --silent --show-error --location --max-time 20 \
+            https://vanassist.com.au/runtime-assets/brands/vanassist/symbol-v2.svg)"
+          grep -q 'viewBox="0 0 64 64"' <<<"$symbol"
+          app_js="$(curl --fail --silent --show-error --location --max-time 20 \
+            https://vanassist.com.au/runtime-assets/js/app.js)"
+          grep -q 'A manually entered town or postcode' <<<"$app_js"
+          curl --fail --silent --show-error --location --max-time 20 \
+            --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

@@ -33,66 +33,150 @@ Current component evidence lives in `UX_COMPONENT_INVENTORY.md`; shared contract
 live in `PLATFORM_DESIGN_SYSTEM.md`. New interface work extends those documents
 instead of creating a parallel design language.
 
-## 2026-07-24 — Typography-first identity and experience-led shell
+## 2026-07-24 — Cohesive brand marks and enterprise workspace selector
 
-**Context:** EXP-001/002/004/005. Provisional vehicle illustrations and later
-generic symbols did not meet the product's intended identity standard; shell
-polish alone also failed to materially improve customer and provider journeys.
-**Decision:** remove provisional marks from product navigation, use typographic
-wordmarks, and move visual emphasis to immersive discovery and a provider
-command-centre hierarchy. The existing switcher remains keyboard-operable and
-server-scoped. **Affected journeys:** public discovery, authentication, provider
-dashboard and administration. **Alternatives:** iterating generic symbols or
-adding an icon dependency were rejected. **Accessibility:** identity no longer
-depends on an unlabeled image; current navigation retains `aria-current`, and
-all task surfaces preserve names, focus and responsive order. **Evidence:**
-PHP/static checks and representative desktop/mobile renders.
+**Context:** EXP-001/002/004/005. Gradient vehicle tiles lacked a shared visual
+grammar and the admin brand dropdown did not communicate platform context.
+**Decision:** adopt a 64 × 64, 3px rounded-stroke mark family and promote the
+existing admin switcher into a branded, keyboard-operable workspace selector
+inside the shared shell. **Affected journeys:** public identity and all admin
+navigation. **Alternatives:** retaining coloured tiles or introducing an icon
+dependency were rejected as visually noisy and unnecessary. **Accessibility:**
+marks keep titles, decorative consumers use empty alternatives, current pages
+use `aria-current`, and the selector supports focus, Escape and directional
+keys. **Evidence:** BrandAssetTest, PHP/static checks and representative renders.
 
-## 2026-07-24 — Conversion architecture replaces cosmetic Experience v2
+## 2026-07-28 — Replace literal vehicle marks with geometric brand symbols
 
-**Context:** EXP-001/004/005 with COM-003. Full-page review showed that an
-immersive hero and restyled dashboard did not materially change how a traveller
-found help, how a provider understood the commercial proposition, or how a
-provider prioritised work. External research was used as directional evidence:
-professional presentation is an initial credibility threshold, while useful
-information structure, verifiable organisational evidence, findability,
-accessibility and performance determine whether the experience continues to
-earn confidence.
+**Context:** the 2026-07-24 mark family remained visually illustrative and lost
+clarity and authority in the public header and browser tab. **Decision:**
+supersede the rounded-stroke vehicle drawings with four solid geometric symbols
+that share a 64 × 64 grid, deep neutral form and one restrained accent. The
+same versioned asset is used in the public shell, authentication shell, admin
+workspace selector, control centre and favicon. **Affected journeys:** every
+public and administrative entry point across all four brands. **Alternatives:**
+removing identity entirely or making another set of detailed vehicle drawings
+were rejected because neither creates a distinctive, scalable platform family.
+**Accessibility and performance:** SVG titles remain; decorative consumers use
+empty alternatives; marks remain below 1.2 KB and are checked down to 16px;
+file-version URLs prevent stale browser caches. **Evidence:** BrandAssetTest,
+XML validation, 128px/64px/32px/24px/16px contact-sheet inspection and shell
+render checks.
 
-**Decision:** structure the VanAssist homepage around three explicit customer
-intents, database-backed evidence, operating-process explanation and listing
-status transparency. Make provider acquisition a dedicated journey. Replace the
-dashboard summary-card hierarchy with one ranked next action, current matched
-demand, precisely named activity measures and grouped business controls. Retain
-typography-first brand identity and remove decorative brand symbols from product
-surfaces.
+## 2026-07-28 — Provider journeys carry equal visual weight on mobile
 
-**Affected journeys:** VanAssist discovery, stays/request recovery paths, all
-brand provider acquisition, authenticated provider operations and the shared
-credibility footer. **Alternatives:** another hero/card visual pass was rejected
-because it would not change user comprehension or task success. Introducing a
-client-side framework was rejected because the server-rendered platform already
-supports the required experience and a new dependency would increase delivery
-and performance risk. **Accessibility:** content order follows task order;
-interactive elements remain native links, fields and buttons; evidence is not
-colour-only; layouts collapse to one column; reduced motion removes the new
-transitions. **Measurement:** search, provider profile, contact, request and
-outcome events continue through the existing first-party demand analytics
-vocabulary. **Evidence:** unit/static analysis, desktop/mobile full-page renders
-and quality-gate results recorded in the pull request.
+**Context:** VanAssist hid provider photography on phones and the other brand
+provider pages used a generic text-and-card layout. **Decision:** every provider
+landing page now opens with relevant full-bleed imagery, live brand-specific
+copy, a primary list-or-claim action, sign-in, proof points, a concise value
+strip and three-step onboarding explanation. Existing mobile AVIF/WebP crops
+are reused for TowSmart, TrailerWise and LocalTorque; VanAssist retains its
+provider-specific compressed photograph. **Accessibility:** live text supplies
+meaning, decorative imagery stays outside the reading order, contrast is
+protected by directional overlays and mobile actions stack to touch width.
+**Evidence:** PHP syntax, responsive CSS inspection and representative desktop
+and phone renders.
 
-## 2026-07-26 — GPS location resolves to a reusable locality
+## 2026-07-28 — VanAssist starts with traveller intent, not directory structure
 
-**Context:** DATA-007 and EXP-005. “Use my current location” could resolve a GPS
-coordinate but then submit an older `Town / STATE` label that some directory
-paths could not parse. The directory also ignored otherwise valid GPS fields,
-and manual edits could leave stale coordinates attached to a new town name.
-**Decision:** GPS coordinates take precedence only for the location action that
-created them; resolved labels use the canonical `Town, STATE` format; legacy
-slash labels remain accepted; choosing or typing a town clears stale resolution
-data; and equal-distance postcode centroids prefer recognisable geographic
-localities over postal-delivery records. **Affected journeys:** homepage search,
-provider directory, stays and assistance requests. **Accessibility:** existing
-native controls and live status remain unchanged; manual entry remains the
-fallback when location permission or resolution fails. **Evidence:** unit tests,
-JavaScript syntax validation and relevant PHP/static checks.
+**Context:** EXP-001/005 and VAN-001/002. The premium homepage hero led into a
+large service selector, but fuel, EV charging and stays remained easy to miss,
+while the trust row implied universal verification and remote coverage that the
+mixed claimed/public-source directory could not support. **Decision:** retain
+the location-first search and hero assets, then add four concise intent paths
+for repairs, fuel, charging and stays before provider results. Reuse those paths
+at the service-directory entrance, group the result-page category selector and
+add an explicit provider-claim conversion panel. Trust language now explains
+listing states and the need to confirm current details. **Alternatives:** a
+larger hero form and a carousel were rejected because both increase mobile
+effort and hide choices. **Accessibility and performance:** the launcher is
+server-rendered text, uses no new image or script dependency, has visible focus,
+44px-class targets, one-column phone layouts and disabled motion when requested.
+**Evidence:** VanAssistPublicUxTest, PHP syntax, static analysis and responsive
+CSS inspection.
+
+## 2026-07-27 — Authority-first rules and separated provider sponsorship
+
+**Context:** DATA-008. Readers need official vehicle rules while relevant local
+providers have a legitimate paid-acquisition opportunity. **Decision:** official
+sources remain the uninterrupted primary result; active paid campaigns appear
+afterwards in a labelled sponsor rail and match only explicit location and rule
+context. **Affected journeys:** VanAssist, TowSmart, TrailerWise and LocalTorque
+rule discovery and provider acquisition. **Alternatives:** interleaving ads with
+government sources and implicit behavioural location were rejected because they
+weaken trust. **Accessibility:** semantic cards and sponsor landmark, text status
+labels, keyboard-native links and responsive single-column layouts. **Evidence:**
+unit, static, database and representative render checks under DATA-008.
+
+## 2026-07-27 — Explicit motorsport taxonomy and source-owned calendars
+
+**Context:** DATA-010 / LOC-004. “Motorsport” is too broad to be a useful
+filter, while copying event dates creates stale-calendar risk. **Decision:**
+LocalTorque exposes named disciplines grouped into nine families and always
+shows the sanctioning-body, discipline/class, state/series and event/venue rule
+layers. Venue cards distinguish permanent, temporary, route-based and club
+locations, show the venue website when available and link the official venue,
+club or governing-body calendar separately. Mobile collapses family, source and
+venue grids to one column. The family cards are closed initially and disclose
+their named disciplines on demand, avoiding a wall of more than fifty choices.
+The commercial step follows the official answer and venue information, using a
+single relevant provider action rather than interruptive advertising.
+**Affected journey:** `/motorsport`. **Accessibility:** native `details` and
+`summary` controls retain keyboard operation, focus visibility and reduced-motion
+support. **Evidence:** catalogue and asset tests, static and database analysis,
+plus desktop and phone-width rendering.
+
+## 2026-07-27 — One Garage follows the owner across brands
+
+**Context:** CORE-009 and EXP-007. Owners should not recreate a tow vehicle,
+trailer, caravan or motorcycle when moving between specialist Assist brands.
+**Decision:** My Garage is a shared account capability. Brand origin is visible
+context, not a silo. Basic identity fields come first; plate ratings are optional
+progressive disclosure. The detail page starts with useful brand-aware actions,
+then the private wallet and editing. Registration numbers and VINs are not
+collected in the first release. **Accessibility:** mobile uses one asset column,
+stacked actions and full-width document controls; no essential action depends on
+hover or a horizontal table. **Evidence:** CORE-009 owner-isolation, upload,
+responsive-render and static checks.
+
+## 2026-07-27 — Subject-specific premium hero imagery
+
+**Context:** EXP-001. Brand pages need immediate emotional and practical
+relevance without turning the platform into a slow image gallery. **Decision:**
+use an original art-directed hero family for each brand and high-value section,
+with separate mobile crops, AVIF/WebP sources and live HTML content. The image
+communicates the current job: roadside travel for VanAssist, measured towing for
+TowSmart, trailer inspection for TrailerWise, workshop discovery for
+LocalTorque, mixed ownership for My Garage and technical authority for rules.
+Generic stock scenes, baked-in text, third-party logos and decorative imagery
+with no page relevance are rejected. **Accessibility:** contextual hero media is
+decorative when the adjacent live heading carries the meaning; forms and safety
+messages retain contrast and keyboard order. **Evidence:** exact-dimension and
+byte-budget tests plus 1440 px and true 390 px render/overflow inspection. Asset
+provenance and budgets are recorded in `PREMIUM_VISUAL_ASSETS.md`.
+
+## 2026-07-27 — Guidance ends in consent, not an invisible funnel
+
+**Context:** EXP-006/007, CORE-010, DATA-009 and COM-006/007. An official rule
+may lead to alerts or a provider, but those are different decisions. **Decision:**
+the guided check shows authority sources and limitations first. Save, email alert
+and provider handoff are separate actions. Alert and handoff checkboxes begin
+unticked and state the exact scope. Provider credentials are pending until
+evidence review; campaigns are pending until relevance, destination, budget and
+price review. **Accessibility:** native controls, persistent labels, textual
+statuses, keyboard order and single-column mobile fallbacks. **Evidence:** strict
+selection tests, changed-source alert integration, campaign-scoped metrics,
+owner isolation and representative renders.
+
+## 2026-07-28 — Reconcile conversion journeys with the premium visual release
+
+**Context:** Conversion work began before the premium symbol, hero and location
+releases reached production. **Decision:** retain the approved `symbol-v2.svg`
+family, responsive contextual hero assets and current search/location behaviour;
+layer evidence, process, trust, provider acquisition and provider workspace
+components around them. Older typography-only or provisional-icon assumptions
+do not supersede the premium visual release. **Accessibility:** primary search
+remains early in document order; additions use semantic headings, visible focus,
+single-column phone fallbacks and reduced-motion controls. **Evidence:** shared
+asset tests, location regression tests, static analysis, PHPUnit and desktop and
+mobile render inspection.

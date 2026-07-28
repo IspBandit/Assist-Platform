@@ -89,6 +89,21 @@ $label = static fn (string $s): string => ucwords(str_replace('_', ' ', $s));
             <textarea id="notes" name="notes" rows="3"><?= $v('notes') ?></textarea>
         </div>
 
+        <fieldset class="form-group">
+            <legend>Promotional email consent</legend>
+            <label><input type="checkbox" name="consent_recorded" value="1" <?= !empty($p['consent_recorded']) ? 'checked' : '' ?>> Consent is documented</label>
+            <label for="marketing_consent_basis">Consent basis</label>
+            <select id="marketing_consent_basis" name="marketing_consent_basis">
+                <option value="">Choose documented basis</option>
+                <?php foreach (['express_written'=>'Express — written','express_phone'=>'Express — phone/in person','express_web'=>'Express — web form','inferred_role_relevant'=>'Inferred — published role-relevant address'] as $value=>$label): ?>
+                    <option value="<?= e($value) ?>" <?= ($p['marketing_consent_basis'] ?? '') === $value ? 'selected' : '' ?>><?= $this->e($label) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <label for="marketing_consent_evidence">Consent evidence</label>
+            <input type="text" id="marketing_consent_evidence" name="marketing_consent_evidence" maxlength="500" value="<?= $v('marketing_consent_evidence') ?>" placeholder="When, how, by whom, and where the evidence is retained">
+            <p class="muted">A public address alone is not consent. Record why the message is expected and directly relevant, or retain express consent evidence.</p>
+        </fieldset>
+
         <div class="btn-row">
             <button type="submit" class="btn btn-primary">Save prospect</button>
             <a class="btn btn-ghost" href="<?= e(url('admin/prospects')) ?>">Cancel</a>

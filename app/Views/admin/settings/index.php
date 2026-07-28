@@ -66,7 +66,7 @@ $demoTotal = array_sum($demoCounts);
                 <input type="password" id="mail_password" name="mail_password" value="" autocomplete="new-password" placeholder="<?= trim($s('mail_password')) !== '' ? 'Saved — leave blank to keep' : 'Not set' ?>">
                 <small class="muted">Leave blank to keep the current password. <?= trim($s('mail_password')) !== '' ? 'A password is currently saved.' : 'No password saved yet.' ?></small>
             </div>
-            <div class="form-group"><label for="mail_from_address">From address</label><input type="email" id="mail_from_address" name="mail_from_address" value="<?= e_attr($s('mail_from_address')) ?>" placeholder="vanassist@condrendigital.com.au"></div>
+            <div class="form-group"><label for="mail_from_address">From address</label><input type="email" id="mail_from_address" name="mail_from_address" value="<?= e_attr($s('mail_from_address')) ?>" placeholder="support@vanassist.com.au"></div>
             <div class="form-group"><label for="mail_from_name">From name</label><input type="text" id="mail_from_name" name="mail_from_name" value="<?= e_attr($s('mail_from_name', 'VanAssist')) ?>"></div>
         </div>
         <p class="muted" style="margin:.5rem 0 0;font-size:.85rem">After saving, send a test from <a href="<?= e(url('admin/email-templates')) ?>">Email templates</a>. Test emails send on the next email cron run.</p>

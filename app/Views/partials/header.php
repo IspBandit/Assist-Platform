@@ -6,6 +6,7 @@ $headerBrandMeta = $headerBrand->metadata();
 <header class="site-header">
     <div class="container">
         <a class="brand" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
+            <img class="brand-mark" src="<?= e(asset($headerBrand->assets()['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="44" height="44">
             <span class="brand-copy">
                 <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>
                 <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?></span>
@@ -39,16 +40,17 @@ $headerBrandMeta = $headerBrand->metadata();
                         <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                     <?php endif; ?>
                 <?php else: ?>
-                <li><a href="<?= e(url('find')) ?>">Find RV help</a></li>
-                <li><a href="<?= e(url('stays')) ?>">Plan a stay</a></li>
-                <li><a href="<?= e(url('how-it-works')) ?>">How VanAssist works</a></li>
-                <li><a href="<?= e(url('for-providers')) ?>">For providers</a></li>
+                <li><a href="<?= e(url('find')) ?>">Find help</a></li>
+                <li><a href="<?= e(url('stays')) ?>">Places to stay</a></li>
+                <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
+                <li><a href="<?= e(url('rules')) ?>">Rules & safety</a></li>
+                <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>
                 <?php if (auth()->check()): ?>
                     <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
                 <?php else: ?>
                     <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                 <?php endif; ?>
-                <li><a class="btn btn-primary nav-primary-action" href="<?= e(url('request-assistance')) ?>">Request assistance</a></li>
+                <li><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a></li>
                 <?php endif; ?>
             </ul>
         </nav>

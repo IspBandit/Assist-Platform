@@ -31,6 +31,16 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Location controls | `use-location-btn`, distance filter | shared domain component | Document permission-denied and unavailable states |
 | Status badges | verified/confirmed/neutral and related styles | partially shared | Define one semantic status matrix |
 | Social assets | Social Studio templates and brand assets | in progress | Exact-size export and editorial gate remain mandatory |
+| Regulatory source card | `localtorque/regulatory-library.php`, `.rule-card` | shared across all four brands | Desktop/mobile render, official-link and long-title acceptance |
+| Motorsport discipline, source and venue cards | `localtorque/motorsport.php`, `.motorsport-*` | LocalTorque public journey | Explicit taxonomy, four rule layers, venue website/calendar provenance and single-column mobile acceptance |
+| Contextual sponsor rail | `.rules-sponsors` over shared advertising campaigns | reusable commercial pattern | Always labelled; explicit location only; must not alter organic or authority results |
+| Garage asset card | `/account/garage`, `.garage-card` | authenticated shared component | Asset type, jurisdiction, document count, next expiry, keyboard focus and mobile stacking |
+| Compliance wallet row | `/account/garage/{id}`, `.garage-document` | authenticated shared component | Owner-supplied status, expiry, authenticated download and removal |
+| Garage next-action card | `/account/garage/{id}`, `.garage-action-grid` | authenticated shared component | Non-sensitive rules/provider/tool handoff; private fields are never passed |
+| Guided compliance builder | `/rules/guided`, `.guided-form`, `.guided-steps` | shared public journey | Three native fields; official sources and limitation precede save/provider actions |
+| Owner compliance centre | `/account/compliance`, `.compliance-*` | authenticated shared component | Separate unticked consent for source alerts and limited-context handoff |
+| Provider trust and campaign workspace | `/provider/growth`, `.growth-*` | provider-owned component | Pending-by-default evidence and ads; organic analytics remain separate |
+| Trust, rules and growth control | `/admin/trust-growth`, `.admin-trust-*` | permission-scoped admin component | Source fail-closed queue, evidence review, pricing/relevance approval and alert audit |
 
 ### Current token debt
 
@@ -93,6 +103,8 @@ search and representative rendered regression show no consumers.
 - TowSmart calculator input, assumptions, warning and result summary;
 - TrailerWise service/business and ownership-content result;
 - LocalTorque workshop/specialist result and category/location search;
+- LocalTorque official-rule result, source-freshness state and contextual sponsor rail;
+- LocalTorque motorsport discipline, authority source, venue and official-calendar journey;
 - claimed/verified provider profile;
 - membership comparison and entitlement explanation;
 - campaign preview and Social Studio export.
@@ -132,37 +144,36 @@ Every promoted or materially changed component is checked in these states:
 
 ### 2026-07 enterprise shell increment
 
-- Provisional brand illustrations were removed from product navigation in
-  favour of typography-first wordmarks and restrained colour accents.
+- Four abstract brand symbols share one tested solid-geometry SVG contract and
+  versioned delivery down to favicon size.
 - Admin presentation rules moved out of the layout into reusable shell classes.
 - Current navigation exposes `aria-current`; the workspace selector supports
   keyboard traversal and retains server-side brand access/scoping.
 - Representative acceptance widths are 360px and 1280px, with 768px included
   in the full component acceptance matrix.
-- The public discovery hero and provider dashboard now use the Experience v2
-  immersive-task and command-centre patterns.
-
-### 2026-07 conversion architecture increment
-
-| Pattern | Owning source | Contract |
-| --- | --- | --- |
-| Editorial discovery hero | `public/home.php`, `.experience-hero` | One value promise and one compact service/location task; mobile media remains supporting content |
-| Evidence ribbon | `HomeController`, `.evidence-ribbon` | Brand-scoped live counts only; zero values are omitted and labels describe records precisely |
-| Journey selector | `.journey-grid` | Three visibly distinct customer intents with complete link targets and meaningful link text |
-| Process narrative | `.process-layout` | Explains discovery, evidence and next steps without implying fulfilment or guaranteed availability |
-| Listing-status definitions | `.trust-definitions` | Verified, featured and unclaimed remain distinct and are explained in plain language |
-| Provider acquisition | `public/for-providers.php` | Separate commercial journey covering value, onboarding, limitations and an explicit registration action |
-| Provider priority workspace | `provider/dashboard.php` | Open demand outranks profile completion, expiring evidence and analytics in that order |
-| Activity ledger | `.performance-ledger` | Describes profile views, contact actions, requests and runs without converting them into estimated revenue |
-| Credibility footer | `partials/footer.php` | Organisation context, direct support details, legal/accessibility routes and task recovery |
-
-The conversion increment intentionally replaces generic rounded-card repetition
-with ruled editorial grids and flat task surfaces. Existing `.card` remains valid
-for secondary forms and records; it is no longer the default composition for a
-marketing or command-centre page.
+- Provider acquisition heroes now preserve relevant imagery and conversion
+  actions on both desktop and phone widths across all four brands.
+- VanAssist uses a shared intent-launcher pattern immediately after its hero to
+  expose repairs, fuel, EV charging and stays without expanding the primary
+  form. The service directory uses the same destinations, grouped category
+  cards and one-column phone layouts. Trust copy distinguishes claimed,
+  verified, featured and unclaimed records instead of implying that every
+  listing or remote locality has been verified.
 
 ## Definition of done
 
 A component is part of the official Design System only when its public contract,
 variants, responsive behaviour, accessibility requirements and owning source are
 documented and verified. Merely sharing a CSS class does not qualify.
+
+## Conversion journey components
+
+- `home-evidence`: compact proof points immediately following the primary hero.
+- `home-process`: a three-step explanation that preserves the search-first path.
+- `home-trust`: plain-language verification and listing provenance guidance.
+- `provider-acquisition`: brand-aware benefits, operating model and application CTA.
+- `provider-dashboard`: responsive command-centre summary and next actions.
+- `provider-growth`: consent-aware visibility and campaign controls.
+
+All components collapse to one column at phone widths, preserve visible focus,
+respect reduced motion and use the shared brand tokens and premium symbol family.

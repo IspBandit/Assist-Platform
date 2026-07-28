@@ -11,7 +11,9 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Models\CaravanPark;
+use App\Models\Town;
 use App\Models\User;
+use App\Helpers\Geo;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
 use App\Validation\Validator;
@@ -47,7 +49,12 @@ final class ParkController extends Controller
             $this->abort(404, 'Page not found.');
         }
 
+        $location = trim((string) $request->input('location', ''));
         $townId = filter_var($request->input('town_id'), FILTER_VALIDATE_INT) ?: null;
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location, 1);
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+        }
         $lat = is_numeric($request->input('lat')) ? (float) $request->input('lat') : null;
         $lng = is_numeric($request->input('lng')) ? (float) $request->input('lng') : null;
         if ($lat !== null && ($lat < -90 || $lat > 90)) {
@@ -56,23 +63,34 @@ final class ParkController extends Controller
         if ($lng !== null && ($lng < -180 || $lng > 180)) {
             $lng = null;
         }
+        if ($townId !== null) {
+            $lat = null;
+            $lng = null;
+        }
         $stayType = (string) $request->input('stay_type', '');
         $priceType = (string) $request->input('price_type', '');
         $stayType = array_key_exists($stayType, self::STAY_TYPES) ? $stayType : null;
         $priceType = array_key_exists($priceType, self::PRICE_TYPES) ? $priceType : null;
+        $distanceKm = Geo::stayDistance($request->input('distance'));
+        $hasOrigin = $townId !== null || ($lat !== null && $lng !== null);
 
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',
             'metaDescription' => 'Find caravan parks, campgrounds and free or low-cost stays near your town or current location across Australia.',
             'canonical' => url('stays'),
-            'stays' => CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType),
+            'stays' => $hasOrigin
+                ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm)
+                : [],
             'stayTypes' => self::STAY_TYPES,
             'priceTypes' => self::PRICE_TYPES,
             'selectedTownId' => $townId,
-            'selectedLocation' => trim((string) $request->input('location', '')),
+            'selectedLocation' => $location,
             'selectedStayType' => $stayType,
             'selectedPriceType' => $priceType,
-            'searched' => $townId !== null || ($lat !== null && $lng !== null) || $stayType !== null || $priceType !== null,
+            'selectedDistance' => $distanceKm,
+            'distanceOptions' => Geo::STAY_DISTANCE_OPTIONS,
+            'hasOrigin' => $hasOrigin,
+            'searched' => $hasOrigin,
         ]);
     }
 

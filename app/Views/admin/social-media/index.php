@@ -3,6 +3,7 @@
 <div class="page-heading">
     <div><p class="eyebrow">Brand content</p><h1>Social Studio</h1><p class="lead">Generate, review and download premium <?= $this->e($brand->name()) ?> artwork and ready-to-use post copy.</p></div>
 </div>
+<?php if (!$facebookConnected): ?><div class="alert alert-warning"><strong>Facebook not connected.</strong> Add this brand’s Page ID and Page access token on the server to enable direct publishing. Approved assets remain downloadable.</div><?php endif; ?>
 
 <?php if (!$schemaReady): ?>
     <div class="alert alert-warning"><strong>Setup required.</strong> Run database migration 039 to enable the Social Studio.</div>
@@ -39,7 +40,9 @@
                         <a class="btn btn-primary" href="<?= e(url('admin/social-media/download?id=' . (int) $asset['id'])) ?>">Download PNG</a>
                         <?php if ($asset['status'] !== 'approved'): ?><form method="post" action="<?= e(url('admin/social-media/status')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $asset['id'] ?>"><input type="hidden" name="status" value="approved"><button class="btn btn-secondary" type="submit">Approve</button></form><?php endif; ?>
                         <?php if ($asset['status'] !== 'archived'): ?><form method="post" action="<?= e(url('admin/social-media/status')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $asset['id'] ?>"><input type="hidden" name="status" value="archived"><button class="btn btn-ghost" type="submit">Archive</button></form><?php endif; ?>
+                        <?php if ($asset['platform'] === 'facebook' && $asset['status'] === 'approved' && empty($asset['facebook_post_id'])): ?><form method="post" action="<?= e(url('admin/social-media/facebook/publish')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $asset['id'] ?>"><button class="btn btn-secondary" type="submit" <?= !$facebookConnected ? 'disabled' : '' ?>>Publish to Facebook</button></form><?php endif; ?>
                     </div>
+                    <?php if (!empty($asset['facebook_post_id'])): ?><p class="status-success">Published to Facebook · <?= $this->e((string) $asset['facebook_post_id']) ?></p><?php elseif (!empty($asset['facebook_publish_error'])): ?><p class="alert alert-error"><?= $this->e((string) $asset['facebook_publish_error']) ?></p><?php endif; ?>
                 </div>
             </article>
         <?php endforeach; ?>

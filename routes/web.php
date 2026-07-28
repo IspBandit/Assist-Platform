@@ -10,7 +10,10 @@ use App\Core\Router;
  */
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
+        $router->get('/runtime-assets/brands/{brand}/{name}', 'Site\AssetController@brand', 'assets.brand');
+        $router->get('/runtime-assets/{group}/{name}', 'Site\AssetController@file', 'assets.file');
         $router->get('/', 'Site\HomeController@index', 'home');
+        $router->get('/email/unsubscribe', 'Site\EmailPreferenceController@unsubscribe', 'email.unsubscribe');
         $router->get('/calculator', 'Site\TowSmartController@calculator', 'towsmart.calculator');
         $router->get('/calculator/catalogue/{type}', 'Site\TowSmartController@catalogue', 'towsmart.catalogue');
         $router->get('/calculator/catalogue/{type}/{id}', 'Site\TowSmartController@catalogueItem', 'towsmart.catalogue.item');
@@ -38,6 +41,9 @@ return static function (Router $router): void {
         $router->get('/services', 'Site\CategoryController@index', 'services');
         $router->get('/services/{slug}', 'Site\CategoryController@show', 'services.show');
         $router->get('/category/{slug}', 'Site\CategoryController@show', 'categories.show');
+        $router->get('/rules', 'Site\RegulatoryLibraryController@index', 'rules.index');
+        $router->get('/rules/guided', 'Site\RegulatoryLibraryController@guide', 'rules.guide');
+        $router->get('/motorsport', 'Site\MotorsportController@index', 'motorsport.index');
 
         // Location pages (Phase 2): region index/detail and town detail.
         $router->get('/regions', 'Site\LocationController@regionsIndex', 'regions');
@@ -52,6 +58,7 @@ return static function (Router $router): void {
         // Provider directory and profiles (Phase 3), generated from the database.
         $router->get('/providers', 'Site\ProviderController@index', 'providers');
         $router->get('/providers/{slug}', 'Site\ProviderController@show', 'providers.show');
+        $router->get('/sponsor/{campaign}/click', 'Site\SponsoredCampaignController@click', 'sponsor.click');
         $router->get('/business/{slug}', 'Site\ProviderController@show', 'business.show');
 
         // Attributable provider contact actions (Phase 11): record then redirect

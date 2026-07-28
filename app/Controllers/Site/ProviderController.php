@@ -115,6 +115,10 @@ final class ProviderController extends Controller
                 "SELECT licence_type, issuing_authority FROM provider_licences WHERE provider_id = ? AND verification_status = 'verified' AND display_publicly = 1 ORDER BY licence_type",
                 [$id]
             ),
+            'capabilities' => Database::select(
+                "SELECT capability_label,jurisdiction_code,valid_until FROM provider_capability_credentials WHERE provider_id=? AND brand_id=? AND verification_status='verified' AND (valid_until IS NULL OR valid_until>=CURRENT_DATE) ORDER BY capability_label",
+                [$id, $brand->databaseId()]
+            ),
             'runs' => $runs,
             'jsonLd' => $this->providerSchema($provider, $publicSlug),
             'promotionAd' => $brand->id() === 'vanassist' ? FoundingGraphicService::deliveredAd($id) : null,
