@@ -8,7 +8,6 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
-use App\Services\FoundingGraphicService;
 use App\Services\Settings;
 use Throwable;
 
@@ -47,7 +46,6 @@ final class AdminController extends Controller
                 'customers' => $this->count("SELECT COUNT(*) FROM customers WHERE deleted_at IS NULL"),
                 'parks' => $this->count("SELECT COUNT(*) FROM caravan_parks WHERE status = 'active'"),
                 'prospects' => $this->count("SELECT COUNT(*) FROM provider_prospects WHERE deleted_at IS NULL"),
-                'ad_graphics_queue' => FoundingGraphicService::queueCount(),
             ];
         } elseif ($brand->id() === 'towsmart') {
             $stats['saved_combinations'] = $this->count('SELECT COUNT(*) FROM towing_combinations WHERE brand_id=?', [$brandId]);
@@ -80,7 +78,6 @@ final class AdminController extends Controller
             'canViewHealth'  => $canViewHealth,
             'launchMode'     => Settings::launchMode(),
             'maintenance'    => Settings::isMaintenanceMode(),
-            'adGraphicsQueue' => (int) ($stats['ad_graphics_queue'] ?? 0),
         ]);
     }
 

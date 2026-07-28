@@ -1,5 +1,17 @@
 # Staged provider email operations
 
+The production admin uses the configured email transport (Microsoft 365 through
+Microsoft Graph in production, or SMTP in environments explicitly configured for
+SMTP). The Email templates screen's **Delivery test** processes the exact test
+message it creates and reports that message's transport result, so an older queue
+item cannot produce a false success or failure.
+
+Migration `072_prepare_vanassist_provider_campaign.sql` creates the initial
+VanAssist provider-review campaign as a draft only. It does not add recipients or
+send email. An operator must still complete the internal test, 25-recipient pilot,
+50-per-day and 100-per-day stages. Audience selection remains fail-closed unless a
+provider has recorded consent source and evidence.
+
 **Backlog:** CORE-005
 **Status:** implemented; no provider launch campaign has been authorised or sent
 

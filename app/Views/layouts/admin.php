@@ -64,9 +64,6 @@ if ($permitted('content.manage')) {
 if ($permitted('notifications.send')) {
     $growth[] = ['Email campaigns', '/admin/notifications'];
 }
-if ($permitted('providers.manage')) {
-    $growth[] = ['Ad graphics', '/admin/promotions'];
-}
 if ($growth !== []) {
     $nav['Growth'] = $growth;
 }

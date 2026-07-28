@@ -4,7 +4,6 @@
 /** @var array<string,int> $counts */
 /** @var array<string,bool> $checklist */
 /** @var array<int,array<string,mixed>> $recentRequests */
-/** @var array<string,mixed>|null $foundingPromo */
 /** @var array{slug:string,name:string,charging_enabled:bool,summary:string}|null $membershipState */
 $this->extend('layouts.public');
 $statusBadge = ['active' => 'badge-verified', 'pending' => 'badge-confirmed', 'suspended' => 'badge-neutral', 'rejected' => 'badge-neutral', 'draft' => 'badge-neutral'];
@@ -98,10 +97,9 @@ if (($counts['open_requests'] ?? 0) > 0) {
                 </div>
             </section>
 
-            <?php if ($membershipState !== null || $foundingPromo !== null): ?>
-                <section class="workspace-notices" aria-label="Membership and promotion information">
+            <?php if ($membershipState !== null): ?>
+                <section class="workspace-notices" aria-label="Membership information">
                     <?php if ($membershipState !== null): ?><article><p class="experience-kicker dark">Membership</p><h2><?= $this->e($membershipState['name']) ?></h2><p><?= $this->e($membershipState['summary']) ?></p><?php if (!$membershipState['charging_enabled']): ?><strong>Billing is not active.</strong><?php endif; ?></article><?php endif; ?>
-                    <?php if ($foundingPromo !== null): ?><article><p class="experience-kicker dark">Launch programme</p><h2>Provider promotion</h2><?php if (!empty($foundingPromo['can_request'])): ?><p>Your verified founding-provider offer is ready to request.</p><a class="text-link" href="<?= e(url('provider/promotion')) ?>">Review the offer <span aria-hidden="true">→</span></a><?php else: ?><p>Promotion status: <?= $this->e(ucwords(str_replace('_', ' ', (string) $foundingPromo['status']))) ?>.</p><?php endif; ?></article><?php endif; ?>
                 </section>
             <?php endif; ?>
         <?php endif; ?>

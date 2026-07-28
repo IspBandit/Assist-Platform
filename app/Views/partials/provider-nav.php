@@ -18,9 +18,6 @@ $items = [
 if (current_brand()->id() === 'trailerwise') {
     $items['trailer-listings'] = ['Trailer listings', 'provider/trailer-listings'];
 }
-if (function_exists('provider_founding_promo_active') && provider_founding_promo_active()) {
-    $items['promotion'] = ['Promote', 'provider/promotion'];
-}
 if (\App\Billing\BillingManager::enabled()) {
     $items['billing'] = ['Billing', 'provider/billing'];
 }

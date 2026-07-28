@@ -79,7 +79,11 @@ final class LaunchReadinessService
         );
         $checks = [
             self::check('Representative town, state and postcode searches', $resolved === count($fixtures) ? 'pass' : 'fail', $resolved . '/' . count($fixtures) . ' resolved'),
-            self::check('Distance-capable Australian localities', $geocoded !== null && $geocoded >= 13000 ? 'pass' : 'fail', $geocoded === null ? 'evidence unavailable' : $geocoded . ' geocoded active towns'),
+            self::check(
+                'Distance-capable Australian localities',
+                $geocoded === null || $geocoded === 0 ? 'fail' : ($geocoded >= 13000 ? 'pass' : 'warning'),
+                $geocoded === null ? 'evidence unavailable' : $geocoded . ' geocoded active towns; 13,000 is the national coverage target'
+            ),
         ];
         return self::group('Search reliability', $checks);
     }

@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Core\Database;
 use App\Models\User;
 use App\Services\EmailQueue;
-use App\Services\FoundingGraphicService;
 use RuntimeException;
 
 /**
@@ -60,14 +59,6 @@ final class ProviderClaimService
         );
         $serviceNames = array_map(static fn (array $row): string => (string) $row['name'], $services);
 
-        $launchTownName = null;
-        if (!empty($provider['is_launch_town']) && !empty($provider['town_name'])) {
-            $launchTownName = (string) $provider['town_name'];
-            if (!empty($provider['state_abbr'])) {
-                $launchTownName .= ', ' . $provider['state_abbr'];
-            }
-        }
-
         $queued = EmailQueue::queueTemplate('provider_claim_invite', $email, (string) $provider['business_name'], [
             'business_name'        => (string) $provider['business_name'],
             'greeting'             => self::greeting($provider),
@@ -77,8 +68,8 @@ final class ProviderClaimService
             'action_url'           => $url,
             'site_url'             => url('/'),
             'expiry_days'          => (string) $days,
-            'founding_offer_line'  => FoundingGraphicService::claimInviteOfferLine($launchTownName),
-            'founding_offer_text'  => FoundingGraphicService::claimInviteOfferText($launchTownName),
+            'founding_offer_line'  => '',
+            'founding_offer_text'  => '',
             'unsubscribe_url'      => EmailSuppression::unsubscribeUrl($email),
         ], null, 'marketing');
         if (!$queued) {

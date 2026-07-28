@@ -1,5 +1,18 @@
 # UX decisions
 
+## 2026-07-28 — Launch evidence and provider outreach clarity
+
+- The control centre labels launch readiness as a platform-wide gate and shows
+  separate pass, warning and fail totals. A missing or unusable capability remains
+  a failure; incomplete progress toward the 13,000-locality national coverage
+  target is a warning when usable geocoded coverage exists.
+- Admin email screens describe the active transport rather than presenting every
+  environment as SMTP. Production Microsoft 365 credentials remain protected
+  configuration and are not editable as SMTP fields in the database-backed form.
+- Custom provider ad-graphic creation is no longer offered in provider or admin
+  navigation. Provider outreach focuses on listing accuracy, claim controls and
+  accurate service categories.
+
 The current UX redesign is the official starting point. This document records
 experience decisions that do not require a full architectural ADR. Material
 navigation, design-foundation or interaction changes still require Experience

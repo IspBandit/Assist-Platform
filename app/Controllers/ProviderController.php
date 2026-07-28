@@ -10,7 +10,6 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
-use App\Services\FoundingGraphicService;
 use App\Services\MembershipPresentationService;
 use App\Services\PlanEntitlementService;
 use App\Services\UsageMeteringService;
@@ -113,9 +112,6 @@ final class ProviderController extends Controller
                     BillingManager::enabled(),
                     isset($membershipPlan['slug']) ? (string) $membershipPlan['slug'] : null
                 )
-                : null,
-            'foundingPromo'  => $provider !== null
-                ? FoundingGraphicService::dashboardCard((int) $provider['id'], $provider)
                 : null,
             'recentRequests' => $recentRequests,
         ]);

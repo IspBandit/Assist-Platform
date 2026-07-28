@@ -13,7 +13,6 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Models\User;
 use App\Services\AuditLog;
-use App\Services\FoundingGraphicService;
 use App\Services\ProviderClaimService;
 use App\Services\SubscriptionService;
 use App\Validation\Validator;
@@ -45,7 +44,6 @@ final class ClaimController extends Controller
             'townName'     => (string) ($claim['town_name'] ?? ''),
             'services'     => $services,
             'formErrors'   => Session::errors(),
-            'launchOffer'  => !empty($claim['is_launch_town']),
         ]);
     }
 
@@ -123,13 +121,8 @@ final class ClaimController extends Controller
         }
 
         (new SubscriptionService())->provisionProvider($providerId, ['founding' => true]);
-        FoundingGraphicService::grantEligibilityIfQualifies($providerId);
         Auth::instance()->login($userId);
-        $success = 'Listing claimed. Review your pre-filled profile and complete any missing details.';
-        if (FoundingGraphicService::forProvider($providerId) !== null) {
-            $success .= ' Once verified, you can request your free local ad graphic from the dashboard.';
-        }
-        Session::flash('success', $success);
+        Session::flash('success', 'Listing claimed. Review your pre-filled profile and complete any missing details.');
         return $this->redirect('provider');
     }
 }

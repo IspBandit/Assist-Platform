@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\DemoSeeder;
+use App\Services\Mailer;
 use App\Services\SecretCipher;
 use App\Services\Settings;
 use Throwable;
@@ -33,7 +34,10 @@ final class SettingsController extends Controller
         'site_name', 'tagline', 'contact_email', 'contact_phone',
         'business_legal_name', 'business_structure', 'business_abn', 'business_address',
         'facebook_url', 'maintenance_message', 'free_launch_message',
-        // Outgoing email (SMTP). Password is handled separately (write-only).
+    ];
+
+    /** SMTP fallback fields; production Microsoft Graph is environment-owned. */
+    private const SMTP_TEXT_KEYS = [
         'mail_host', 'mail_port', 'mail_encryption', 'mail_username',
         'mail_from_address', 'mail_from_name',
     ];
@@ -41,6 +45,9 @@ final class SettingsController extends Controller
     public function index(Request $request): Response
     {
         $this->requirePermission('settings.manage');
+
+        $mailConfig = Mailer::config();
+        $mailDriver = strtolower((string) ($mailConfig['driver'] ?? 'smtp'));
 
         return $this->view('admin.settings.index', [
             'title'       => 'Settings',
@@ -52,6 +59,9 @@ final class SettingsController extends Controller
             'demoCounts'  => $this->demoCounts(),
             'checklist'   => $this->checklist(),
             'isSuperAdmin' => \App\Auth\Auth::instance()->isSuperAdmin(),
+            'mailDriver' => $mailDriver,
+            'mailConfigured' => Mailer::transportConfigured($mailConfig),
+            'mailTransport' => $mailDriver === 'graph' ? 'Microsoft 365 (Microsoft Graph)' : 'SMTP',
         ]);
     }
 
@@ -61,6 +71,13 @@ final class SettingsController extends Controller
 
         foreach (self::TEXT_KEYS as $key) {
             Settings::set($key, trim((string) $request->input($key, '')));
+        }
+
+        $mailDriver = strtolower((string) (Mailer::config()['driver'] ?? 'smtp'));
+        if ($mailDriver !== 'graph') {
+            foreach (self::SMTP_TEXT_KEYS as $key) {
+                Settings::set($key, trim((string) $request->input($key, '')));
+            }
         }
 
         $launch = (string) $request->input('launch_mode', 'private');
@@ -73,7 +90,7 @@ final class SettingsController extends Controller
         // SMTP password is write-only: only overwrite when a new value is typed,
         // so the saved password is never echoed back into the form.
         $mailPassword = (string) $request->input('mail_password', '');
-        if ($mailPassword !== '') {
+        if ($mailDriver !== 'graph' && $mailPassword !== '') {
             Settings::set('mail_password', SecretCipher::encrypt($mailPassword));
         }
 
@@ -126,10 +143,14 @@ final class SettingsController extends Controller
             'ok'    => str_starts_with($appUrl, 'https://'),
             'hint'  => 'APP_URL should use https and match the live subdomain.',
         ];
+        $mailConfig = Mailer::config();
+        $driver = strtolower((string) ($mailConfig['driver'] ?? 'smtp'));
         $items[] = [
-            'label' => 'SMTP email configured',
-            'ok'    => trim((string) (Settings::get('mail_host', '') ?: config('mail.host', ''))) !== '',
-            'hint'  => 'Set the SMTP host/username/password under "Email sending (SMTP)" above so queued email can send.',
+            'label' => 'Email delivery configured',
+            'ok'    => Mailer::transportConfigured($mailConfig),
+            'hint'  => $driver === 'graph'
+                ? 'Microsoft 365 delivery is configured in the protected production environment.'
+                : 'Configure the SMTP fallback under Email delivery above.',
         ];
         $items[] = [
             'label' => 'Demo data removed',
