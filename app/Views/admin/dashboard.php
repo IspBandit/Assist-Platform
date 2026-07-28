@@ -12,12 +12,32 @@ $labels = [
     'customers' => 'Customers', 'parks' => 'Caravan parks',
     'prospects' => 'Provider prospects', 'failed_emails' => 'Failed emails',
     'ad_graphics_queue' => 'Ad graphics to fulfil',
+    'brand_accounts' => 'Active brand accounts', 'social_assets' => 'Campaign assets',
+    'saved_combinations' => 'Saved towing combinations', 'trailer_listings' => 'Trailer listings',
+    'regulatory_documents' => 'Official rule documents', 'motorsport_venues' => 'Motorsport venues',
+];
+$destinations = [
+    'new_requests' => can('requests.manage') ? '/admin/requests' : null,
+    'open_requests' => can('requests.manage') ? '/admin/requests' : null,
+    'pending_providers' => can('providers.manage') ? '/admin/providers' : null,
+    'pending_documents' => can('providers.manage') ? '/admin/providers' : null,
+    'active_providers' => can('providers.manage') ? '/admin/providers' : null,
+    'active_runs' => can('runs.manage') ? '/admin/runs' : null,
+    'customers' => can('customers.manage') ? '/admin/customers' : null,
+    'parks' => can('parks.manage') ? '/admin/parks' : null,
+    'prospects' => can('prospects.manage') ? '/admin/prospects' : null,
+    'failed_emails' => can('email.manage') ? '/admin/email-templates' : null,
+    'ad_graphics_queue' => can('providers.manage') ? '/admin/promotions' : null,
+    'brand_accounts' => can('users.manage') ? '/admin/users' : null,
+    'social_assets' => can('content.manage') ? '/admin/social-media' : null,
+    'trailer_listings' => can('providers.manage') ? '/admin/trailer-listings' : null,
+    'regulatory_documents' => can('regulatory.manage') ? '/admin/trust-growth' : null,
 ];
 ?>
 <?php $this->section('content'); ?>
 
 <div class="alert alert-info">
-    Launch mode: <strong><?= $this->e(ucfirst($launchMode)) ?></strong>.
+    <strong><?= $this->e($dashboardBrand->name()) ?> workspace</strong> · Launch mode: <strong><?= $this->e(ucfirst($launchMode)) ?></strong>.
     <?php if ($maintenance): ?> <strong style="color:var(--red)">Maintenance mode is ON.</strong><?php endif; ?>
     <?php if (!empty($adGraphicsQueue)): ?>
         · <a href="<?= e(url('admin/promotions')) ?>"><strong><?= (int) $adGraphicsQueue ?></strong> ad graphic<?= (int) $adGraphicsQueue === 1 ? '' : 's' ?> awaiting fulfilment</a>
@@ -26,14 +46,17 @@ $labels = [
 
 <div class="stat-grid">
     <?php foreach ($stats as $key => $value): ?>
-        <div class="stat">
+        <?php $destination = $destinations[$key] ?? null; ?>
+        <?php if ($destination !== null): ?><a class="stat stat-link" href="<?= e(url(ltrim($destination, '/'))) ?>"><?php else: ?><div class="stat"><?php endif; ?>
             <div class="num"><?= (int) $value ?></div>
             <div class="label"><?= $this->e($labels[$key] ?? $key) ?></div>
-        </div>
+        <?php if ($destination !== null): ?></a><?php else: ?></div><?php endif; ?>
     <?php endforeach; ?>
 </div>
 
+<?php if ($canViewAudit || $canViewHealth): ?>
 <div class="grid grid-2" style="margin-top:1.5rem">
+    <?php if ($canViewAudit): ?>
     <div class="card">
         <h2>Recent activity</h2>
         <?php if ($recentActivity === []): ?>
@@ -56,7 +79,9 @@ $labels = [
             </div>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
 
+    <?php if ($canViewHealth): ?>
     <div class="card">
         <h2>Scheduled tasks</h2>
         <?php if ($tasks === []): ?>
@@ -78,5 +103,7 @@ $labels = [
             </div>
         <?php endif; ?>
     </div>
+    <?php endif; ?>
 </div>
+<?php endif; ?>
 <?php $this->endSection(); ?>

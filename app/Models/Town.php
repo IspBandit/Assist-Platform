@@ -86,8 +86,9 @@ final class Town extends Model
      * Resolve a free-text town, suburb or postcode query to active localities,
      * best match first. Postcodes match primary_postcode or the postcodes table;
      * names match exactly, then by prefix, then anywhere in the name (so suburbs
-     * and partial typing work). An optional state suffix ("Parramatta, NSW") is
-     * recognised.
+     * and partial typing work). Optional state suffixes such as
+     * "Parramatta NSW", "Parramatta, NSW" and "Parramatta / New South Wales"
+     * are recognised.
      *
      * @return array<int,array<string,mixed>>
      */
@@ -148,10 +149,31 @@ final class Town extends Model
      */
     public static function parseSearchQuery(string $query): array
     {
-        $query = trim($query);
+        $query = trim((string) preg_replace('/\s+/', ' ', $query));
         $state = null;
-        if (preg_match('/(?:,|\/)\s*([A-Za-z]{2,3})\s*$/', $query, $m)) {
-            $state = strtoupper($m[1]);
+        $states = [
+            'ACT' => 'ACT', 'AUSTRALIAN CAPITAL TERRITORY' => 'ACT',
+            'NSW' => 'NSW', 'NEW SOUTH WALES' => 'NSW',
+            'NT' => 'NT', 'NORTHERN TERRITORY' => 'NT',
+            'QLD' => 'QLD', 'QUEENSLAND' => 'QLD',
+            'SA' => 'SA', 'SOUTH AUSTRALIA' => 'SA',
+            'TAS' => 'TAS', 'TASMANIA' => 'TAS',
+            'VIC' => 'VIC', 'VICTORIA' => 'VIC',
+            'WA' => 'WA', 'WESTERN AUSTRALIA' => 'WA',
+        ];
+        $labels = implode('|', array_map(
+            static fn (string $label): string => preg_quote($label, '/'),
+            array_keys($states)
+        ));
+        if (preg_match('/(?:^|\s)(\d{4})\s*$/', $query, $postcode)) {
+            $prefix = trim(substr($query, 0, -strlen($postcode[0])));
+            if ($prefix !== '' && preg_match('/(?:\s*[,\/-]\s*|\s+)(' . $labels . ')\s*$/i', $prefix, $stateMatch)) {
+                $state = $states[strtoupper($stateMatch[1])];
+            }
+            return ['term' => $postcode[1], 'state' => $state];
+        }
+        if (preg_match('/(?:\s*[,\/-]\s*|\s+)(' . $labels . ')\s*$/i', $query, $m)) {
+            $state = $states[strtoupper($m[1])];
             $query = trim(substr($query, 0, -strlen($m[0])));
         }
 

@@ -12,6 +12,8 @@
 /** @var string $nearbyEndpoint */
 /** @var array<string,int> $homeEvidence */
 $this->extend('layouts.public');
+$categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
+$popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
 $evidence = $homeEvidence ?? [];
 $directoryCount = (int) ($evidence['directory_listings'] ?? 0);
 $verifiedCount = (int) ($evidence['verified_providers'] ?? 0);

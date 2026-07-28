@@ -2,7 +2,12 @@
 set -Eeuo pipefail
 root=/opt/assist-platform
 env_file="$root/config/backup.env"
-[[ -r "$env_file" ]] || { echo "Missing $env_file" >&2; exit 2; }
+status_dir="$root/shared/storage/ops"
+status_file="$status_dir/offsite-restore-drill.status.json"
+mkdir -p "$status_dir"
+record_failure(){ printf '{"status":"failed","completed_at":"%s"}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$status_file"; }
+trap record_failure ERR
+[[ -r "$env_file" ]] || { record_failure; echo "Missing $env_file" >&2; exit 2; }
 set -a; source "$env_file"; set +a
 : "${RESTIC_REPOSITORY:?}" "${AWS_ACCESS_KEY_ID:?}" "${AWS_SECRET_ACCESS_KEY:?}" "${RESTIC_PASSWORD:?}"
 work=$(mktemp -d /opt/assist-restore-drill.XXXXXX)
@@ -33,4 +38,6 @@ docker exec "$container" mariadb -uroot -p"$password" -e 'CREATE DATABASE restor
 gzip -dc "$dump" | docker exec -i "$container" mariadb -uroot -p"$password" restore_test
 table_count=$(docker exec "$container" mariadb -N -uroot -p"$password" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='restore_test'")
 [[ "$table_count" -gt 20 ]] || { echo "Restore drill produced only $table_count tables." >&2; exit 4; }
+printf '{"status":"success","completed_at":"%s","restored_tables":%s}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$table_count" > "$status_file"
+trap - ERR
 echo "Off-site restore drill passed with $table_count restored tables. Production was not modified."

@@ -69,6 +69,16 @@ if (!function_exists('app_base_url')) {
      */
     function app_base_url(): string
     {
+        // The unified administrator may intentionally inspect a private brand
+        // from any live brand host. Keep admin navigation on that trusted host
+        // while BrandContext controls the data, copy and theme being managed.
+        if (str_starts_with((string) ($_SERVER['REQUEST_URI'] ?? ''), '/admin')) {
+            $adminOrigin = rtrim((string) Session::get('_admin_origin_url', ''), '/');
+            if ($adminOrigin !== '' && preg_match('#^https://[A-Za-z0-9.-]+(?::\d+)?$#', $adminOrigin) === 1) {
+                return $adminOrigin;
+            }
+        }
+
         // Once the request/command has resolved a trusted brand, its configured
         // canonical URL is authoritative. This keeps links, assets, redirects,
         // sitemaps and queued brand email URLs on the correct domain while

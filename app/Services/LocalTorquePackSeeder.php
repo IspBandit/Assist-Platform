@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\Database;
+use App\Helpers\Geo;
 use RuntimeException;
 use Throwable;
 
@@ -16,6 +17,8 @@ use Throwable;
 final class LocalTorquePackSeeder
 {
     private const PACK_DIR = 'database/seeds/localtorque';
+    private const MAX_DECLARED_TOWN_DISTANCE_KM = 150.0;
+    private const MAX_NEAREST_AUSTRALIAN_TOWN_DISTANCE_KM = 150.0;
 
     /** @var array<string,array{name:string,group:string,brands:list<string>}> */
     private array $taxonomy = [];
@@ -44,6 +47,8 @@ final class LocalTorquePackSeeder
             'total' => $total, 'offset' => $offset, 'processed' => 0,
             'created' => 0, 'enriched' => 0, 'linked' => 0,
             'public_listings' => 0, 'review_only' => 0, 'skipped' => 0,
+            'location_corrected' => 0, 'location_conflicts' => 0,
+            'location_sources_quarantined' => 0,
         ];
 
         Database::beginTransaction();
@@ -66,6 +71,7 @@ final class LocalTorquePackSeeder
         $counts['next'] = $next < $total ? $next : -1;
         $counts['complete'] = $counts['next'] === -1;
         if ($counts['complete']) {
+            $counts['location_sources_quarantined'] = $this->quarantineContradictorySourceLocations();
             $counts['retired_superseded_qld_fuel'] = $this->retireSupersededQueenslandFuelSeeds();
         }
         return $counts;
@@ -106,7 +112,14 @@ final class LocalTorquePackSeeder
             || $confidence < 40
             || $validCategories === []
             || $location['town_id'] === 0
+            || $location['location_conflict']
             || $closed;
+        if ($location['location_corrected']) {
+            $counts['location_corrected']++;
+        }
+        if ($location['location_conflict']) {
+            $counts['location_conflicts']++;
+        }
 
         $sourceKey = strtolower(trim((string) ($record['source'] ?? 'other'))) ?: 'other';
         $providerId = $this->findProvider($sourceKey, $externalId, $record, $location['town_id']);
@@ -131,12 +144,16 @@ final class LocalTorquePackSeeder
         }
 
         $this->removeKnownBadFuelGasAssignments($providerId, $record);
+        $this->removeUnsupportedBrandCategoryAssignments($providerId, $record, $validCategories);
 
         $brands = $this->brandsForCategories($validCategories);
         $hasPublicEvidence = (int) Database::scalar(
             'SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND publishable=1 AND needs_review=0',
             [$providerId]
         ) > 0;
+        if (!$hasPublicEvidence) {
+            $this->quarantineUnclaimedProvider($providerId);
+        }
         if ($hasPublicEvidence) {
             Database::query(
                 "UPDATE providers SET status='active', updated_at=NOW() WHERE id=? AND is_unclaimed=1 AND status IN ('draft','pending')",
@@ -173,6 +190,12 @@ final class LocalTorquePackSeeder
             $this->linkVanAssistCompatibility($providerId, $validCategories);
         }
         if ($location['town_id'] > 0) {
+            if ($location['location_corrected']) {
+                Database::query(
+                    "DELETE FROM provider_service_areas WHERE provider_id=? AND area_type='town'",
+                    [$providerId]
+                );
+            }
             Database::query(
                 "INSERT IGNORE INTO provider_service_areas (provider_id, area_type, town_id, label, created_at) VALUES (?, 'town', ?, ?, NOW())",
                 [$providerId, $location['town_id'], $location['town_name']]
@@ -180,7 +203,10 @@ final class LocalTorquePackSeeder
         }
     }
 
-    /** @param array<string,mixed> $record @return array{town_id:int,region_id:int,town_name:string,state:string} */
+    /**
+     * @param array<string,mixed> $record
+     * @return array{town_id:int,region_id:int,town_name:string,state:string,location_corrected:bool,location_conflict:bool}
+     */
     private function resolveLocation(array $record): array
     {
         $state = strtoupper(trim((string) ($record['state'] ?? '')));
@@ -189,21 +215,48 @@ final class LocalTorquePackSeeder
         $lng = is_numeric($record['lng'] ?? null) ? (float) $record['lng'] : null;
         $approximate = ($record['_coords_approx'] ?? false) === true;
         $town = null;
+        $locationCorrected = false;
+        $locationConflict = false;
 
-        // Exact authoritative source locality wins. A nearby centroid must not
-        // silently relabel Emerald as Lochington (or any border-area provider).
+        // Exact source locality normally wins. Where precise source coordinates
+        // contradict it by a large margin, use the coordinate locality only if
+        // it resolves close to a known Australian town; otherwise quarantine it.
         if ($townName !== '' && $state !== '') {
             $town = Database::selectOne(
-                'SELECT t.id, t.name, t.region_id, s.abbreviation AS state_abbr FROM towns t '
+                'SELECT t.id, t.name, t.region_id, t.latitude, t.longitude, s.abbreviation AS state_abbr FROM towns t '
                 . 'JOIN states s ON s.id = t.state_id WHERE s.abbreviation = ? AND LOWER(t.name) = LOWER(?) AND t.is_active = 1 LIMIT 1',
                 [$state, $townName]
             );
         }
-        if ($town === null && $lat !== null && $lng !== null && !$approximate) {
-            $town = $this->nearestTown($lat, $lng, $state);
+        if ($town !== null && $lat !== null && $lng !== null && !$approximate
+            && $town['latitude'] !== null && $town['longitude'] !== null) {
+            $declaredDistance = Geo::haversineExactKm(
+                $lat,
+                $lng,
+                (float) $town['latitude'],
+                (float) $town['longitude']
+            );
+            if ($declaredDistance > self::MAX_DECLARED_TOWN_DISTANCE_KM) {
+                $coordinateTown = $this->nearestTown($lat, $lng, '');
+                if ($coordinateTown !== null
+                    && (float) ($coordinateTown['distance_km'] ?? PHP_FLOAT_MAX)
+                        <= self::MAX_NEAREST_AUSTRALIAN_TOWN_DISTANCE_KM) {
+                    $town = $coordinateTown;
+                    $locationCorrected = true;
+                } else {
+                    $locationConflict = true;
+                }
+            }
         }
         if ($town === null && $lat !== null && $lng !== null) {
-            $town = $this->nearestTown($lat, $lng, $state);
+            $coordinateTown = $this->nearestTown($lat, $lng, $state);
+            if (!$approximate && $coordinateTown !== null
+                && (float) ($coordinateTown['distance_km'] ?? PHP_FLOAT_MAX)
+                    > self::MAX_NEAREST_AUSTRALIAN_TOWN_DISTANCE_KM) {
+                $locationConflict = true;
+            } else {
+                $town = $coordinateTown;
+            }
         }
 
         return [
@@ -211,7 +264,69 @@ final class LocalTorquePackSeeder
             'region_id' => (int) ($town['region_id'] ?? 0),
             'town_name' => (string) ($town['name'] ?? $townName),
             'state' => (string) ($town['state_abbr'] ?? $state),
+            'location_corrected' => $locationCorrected,
+            'location_conflict' => $locationConflict,
         ];
+    }
+
+    private function quarantineUnclaimedProvider(int $providerId): void
+    {
+        Database::query(
+            "UPDATE provider_brand_listings SET status='draft',search_visible=0,updated_at=NOW() "
+            . 'WHERE provider_id=? AND EXISTS (SELECT 1 FROM providers p WHERE p.id=? AND p.is_unclaimed=1)',
+            [$providerId, $providerId]
+        );
+        Database::query(
+            "UPDATE providers SET status='pending',updated_at=NOW() WHERE id=? AND is_unclaimed=1",
+            [$providerId]
+        );
+    }
+
+    /**
+     * A provider can legitimately accumulate more than one public-source row.
+     * Reconcile the complete evidence set after the final batch so an older or
+     * duplicate row cannot remain trusted when it contradicts the provider's
+     * displayed Australian town. Claimed providers are deliberately excluded.
+     */
+    private function quarantineContradictorySourceLocations(): int
+    {
+        $rows = Database::select(
+            'SELECT psr.id,psr.provider_id,psr.payload_json,t.latitude AS town_latitude,t.longitude AS town_longitude '
+            . 'FROM provider_source_records psr JOIN providers p ON p.id=psr.provider_id '
+            . 'JOIN towns t ON t.id=p.base_town_id '
+            . 'WHERE p.is_unclaimed=1 AND psr.publishable=1 AND psr.needs_review=0 '
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL'
+        );
+        $quarantined = 0;
+        foreach ($rows as $row) {
+            $payload = json_decode((string) ($row['payload_json'] ?? ''), true);
+            if (!is_array($payload) || !is_numeric($payload['lat'] ?? null) || !is_numeric($payload['lng'] ?? null)) {
+                continue;
+            }
+            $distance = Geo::haversineExactKm(
+                (float) $payload['lat'],
+                (float) $payload['lng'],
+                (float) $row['town_latitude'],
+                (float) $row['town_longitude']
+            );
+            if ($distance <= self::MAX_DECLARED_TOWN_DISTANCE_KM) {
+                continue;
+            }
+
+            Database::query(
+                'UPDATE provider_source_records SET needs_review=1,last_seen_at=NOW() WHERE id=?',
+                [(int) $row['id']]
+            );
+            $providerId = (int) $row['provider_id'];
+            if ((int) Database::scalar(
+                'SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND publishable=1 AND needs_review=0',
+                [$providerId]
+            ) === 0) {
+                $this->quarantineUnclaimedProvider($providerId);
+            }
+            $quarantined++;
+        }
+        return $quarantined;
     }
 
     /** @return array<string,mixed>|null */
@@ -310,7 +425,7 @@ final class LocalTorquePackSeeder
         return $id;
     }
 
-    /** @param array<string,mixed> $record @param array{town_id:int,region_id:int,town_name:string,state:string} $location */
+    /** @param array<string,mixed> $record @param array{town_id:int,region_id:int,town_name:string,state:string,location_corrected:bool,location_conflict:bool} $location */
     private function insertProvider(array $record, string $externalId, array $location, bool $public): int
     {
         $phone = $this->phone($record['phone'] ?? null);
@@ -346,7 +461,7 @@ final class LocalTorquePackSeeder
         );
     }
 
-    /** @param array<string,mixed> $record @param array{town_id:int,region_id:int,town_name:string,state:string} $location */
+    /** @param array<string,mixed> $record @param array{town_id:int,region_id:int,town_name:string,state:string,location_corrected:bool,location_conflict:bool} $location */
     private function enrichProvider(int $providerId, array $record, array $location): bool
     {
         $phone = $this->phone($record['phone'] ?? null);
@@ -357,7 +472,8 @@ final class LocalTorquePackSeeder
             'UPDATE providers SET trading_name=COALESCE(NULLIF(trading_name,\'\'),?), operator_name=COALESCE(NULLIF(operator_name,\'\'),?), '
             . 'abn=COALESCE(NULLIF(abn,\'\'),?), phone=COALESCE(NULLIF(phone,\'\'),?), public_phone=COALESCE(NULLIF(public_phone,\'\'),?), '
             . 'email=COALESCE(NULLIF(email,\'\'),?), public_email=COALESCE(NULLIF(public_email,\'\'),?), website=COALESCE(NULLIF(website,\'\'),?), '
-            . 'base_town_id=COALESCE(base_town_id,?), region_id=COALESCE(region_id,?), street_address=COALESCE(NULLIF(street_address,\'\'),?), '
+            . 'base_town_id=IF(?=1,?,COALESCE(base_town_id,?)), region_id=IF(?=1,?,COALESCE(region_id,?)), '
+            . 'street_address=COALESCE(NULLIF(street_address,\'\'),?), '
             . 'latitude=COALESCE(latitude,?), longitude=COALESCE(longitude,?), opening_hours=COALESCE(NULLIF(opening_hours,\'\'),?), '
             . 'operational_status=COALESCE(NULLIF(operational_status,\'\'),?), fuel_types_json=COALESCE(NULLIF(fuel_types_json,\'\'),?), '
             . 'source_licence=COALESCE(NULLIF(source_licence,\'\'),?), show_public_phone=GREATEST(show_public_phone,?), '
@@ -365,7 +481,9 @@ final class LocalTorquePackSeeder
             [
                 $this->text($record['trading_name'] ?? null, 190), $this->text($record['operator'] ?? null, 190),
                 $this->text($record['abn'] ?? null, 20), $phone, $phone, $email, $email,
-                $this->url($record['website'] ?? null, 255), $location['town_id'] ?: null, $location['region_id'] ?: null,
+                $this->url($record['website'] ?? null, 255),
+                $location['location_corrected'] ? 1 : 0, $location['town_id'] ?: null, $location['town_id'] ?: null,
+                $location['location_corrected'] ? 1 : 0, $location['region_id'] ?: null, $location['region_id'] ?: null,
                 $this->text($record['address'] ?? null, 255), $lat, $lng,
                 $this->text($record['opening_hours'] ?? null, 500), $this->text($record['operational_status'] ?? null, 60),
                 $this->jsonList($record['fuel_types'] ?? null), $this->text($record['source_licence'] ?? null, 80),
@@ -434,7 +552,60 @@ final class LocalTorquePackSeeder
                 static fn (string $category): bool => $category !== 'gas-certification'
             ));
         }
+        $allowlist = self::conservativeCategoryAllowlist($record);
+        if ($allowlist !== null) {
+            $categories = array_values(array_intersect($categories, $allowlist));
+        }
         return $categories;
+    }
+
+    /** @param array<string,mixed> $record @return list<string>|null */
+    private static function conservativeCategoryAllowlist(array $record): ?array
+    {
+        $name = strtolower(trim((string) ($record['name'] ?? '')));
+        if (preg_match('/\bbattery world\b|\bbatter(?:y|ies)\b/', $name) === 1) {
+            return ['battery-specialist', 'auto-electrician'];
+        }
+        if (preg_match('/\btyrepower\b|\bbob jane\b|\btyre\b|\btire\b/', $name) === 1) {
+            return ['tyre-shop'];
+        }
+        if (preg_match('/\bsupercheap\b|\bauto parts\b|\bparts (?:store|centre)\b/', $name) === 1) {
+            return ['vehicle-parts'];
+        }
+        if (preg_match('/\bwindscreen\b|\bauto(?:motive)? glass\b/', $name) === 1) {
+            return ['windscreen', 'side-rear-glass'];
+        }
+        if (in_array('fuel-station', (array) ($record['categories'] ?? []), true)
+            && preg_match('/\bampol\b|\bcaltex\b|\bservice station\b|\bfuel\b|\bpetroleum\b/', $name) === 1) {
+            return ['fuel-station', 'ev-charging'];
+        }
+        return null;
+    }
+
+    /** @param array<string,mixed> $record @param list<string> $categories */
+    private function removeUnsupportedBrandCategoryAssignments(int $providerId, array $record, array $categories): void
+    {
+        if (self::conservativeCategoryAllowlist($record) === null) {
+            return;
+        }
+        if ($categories === []) {
+            Database::query(
+                'DELETE a FROM provider_brand_category_assignments a '
+                . 'JOIN provider_brand_listings l ON l.id=a.listing_id '
+                . "WHERE l.provider_id=? AND a.is_verified=0 AND a.assignment_source IN ('import','heuristic')",
+                [$providerId]
+            );
+            return;
+        }
+        $placeholders = implode(',', array_fill(0, count($categories), '?'));
+        Database::query(
+            'DELETE a FROM provider_brand_category_assignments a '
+            . 'JOIN provider_brand_listings l ON l.id=a.listing_id '
+            . 'JOIN brand_provider_categories c ON c.id=a.category_id '
+            . "WHERE l.provider_id=? AND a.is_verified=0 AND a.assignment_source IN ('import','heuristic') "
+            . "AND c.category_key NOT IN ({$placeholders})",
+            array_merge([$providerId], $categories)
+        );
     }
 
     /** @param array<string,mixed> $record */

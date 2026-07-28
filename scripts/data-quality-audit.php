@@ -137,6 +137,22 @@ try {
                 . "WHERE p.is_unclaimed=1 AND psr.source_key='vanassist-osm' "
                 . "AND psr.payload_json LIKE '%\"fuel-station\"%' AND c.category_key='gas-certification'"
             ),
+            'location_coordinate_conflicts_publicly_visible' => $scalar(
+                'SELECT COUNT(DISTINCT psr.id) FROM provider_source_records psr '
+                . 'JOIN providers p ON p.id=psr.provider_id JOIN towns t ON t.id=p.base_town_id '
+                . 'JOIN provider_brand_listings pbl ON pbl.provider_id=p.id '
+                . "WHERE p.is_unclaimed=1 AND p.status='active' AND pbl.status='active' AND pbl.search_visible=1 "
+                . 'AND psr.publishable=1 AND psr.needs_review=0 '
+                . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lat')) IN ('INTEGER','DOUBLE') "
+                . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lng')) IN ('INTEGER','DOUBLE') "
+                . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
+                . 'AND (6371 * ACOS(LEAST(1,GREATEST(-1, '
+                . "COS(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+                . '* COS(RADIANS(t.latitude)) '
+                . "* COS(RADIANS(t.longitude)-RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lng')) AS DECIMAL(10,6)))) "
+                . "+ SIN(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+                . '* SIN(RADIANS(t.latitude)))))) > 150'
+            ),
         ],
     ];
 } catch (Throwable $error) {
@@ -154,6 +170,7 @@ if (in_array('--strict', $argv ?? [], true) && isset($report['database']['provid
         $violations += (int) ($pack['missing_required_source_licence'] ?? 0);
         $violations += (int) ($pack['unclaimed_review_rows_publicly_visible'] ?? 0);
         $violations += (int) ($pack['legacy_fuel_rows_presented_as_gas_certifiers'] ?? 0);
+        $violations += (int) ($pack['location_coordinate_conflicts_publicly_visible'] ?? 0);
         $violations += (int) (($pack['source_records'] ?? 0) === 0);
     }
     exit($violations === 0 ? 0 : 2);

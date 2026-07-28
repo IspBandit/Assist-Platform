@@ -42,6 +42,7 @@ return static function (Router $router): void {
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).
         $router->get('/billing', 'Admin\BillingController@index', 'admin.billing');
+        $router->get('/billing/invoices/export', 'Admin\BillingController@exportInvoices', 'admin.billing.invoices.export');
         $router->get('/billing/plans/edit', 'Admin\BillingController@editPlan', 'admin.billing.plan.edit');
         $router->post('/billing/plans/update', 'Admin\BillingController@updatePlan', 'admin.billing.plan.update');
 

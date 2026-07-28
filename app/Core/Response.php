@@ -52,6 +52,11 @@ final class Response
         return $this->status;
     }
 
+    public function content(): string
+    {
+        return $this->content;
+    }
+
     /** @return array<string,string> */
     public function headers(): array
     {

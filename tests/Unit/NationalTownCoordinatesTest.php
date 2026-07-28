@@ -4,10 +4,19 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Helpers\Geo;
 use PHPUnit\Framework\TestCase;
 
 final class NationalTownCoordinatesTest extends TestCase
 {
+    public function testTrustThresholdsCanUseExactDistanceWithoutDisplayRounding(): void
+    {
+        $exact = Geo::haversineExactKm(0.0, 0.0, 0.0, 1.3529);
+
+        self::assertGreaterThan(150.0, $exact);
+        self::assertSame(150.0, Geo::haversineKm(0.0, 0.0, 0.0, 1.3529));
+    }
+
     public function testBluffAndEmuParkUseAuthoritativeDistinctCoordinates(): void
     {
         $path = dirname(__DIR__, 2) . '/database/seeds/towns_national.json';

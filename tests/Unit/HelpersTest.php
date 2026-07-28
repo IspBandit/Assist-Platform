@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Core\Session;
 use App\Helpers\Geo;
 use App\Models\Town;
 use App\Services\Mailer;
@@ -105,6 +106,47 @@ final class HelpersTest extends TestCase
             ['term' => 'Gladstone', 'state' => 'QLD'],
             Town::parseSearchQuery('Gladstone / QLD')
         );
+        $this->assertSame(
+            ['term' => 'Emerald', 'state' => 'QLD'],
+            Town::parseSearchQuery('Emerald QLD')
+        );
+        $this->assertSame(
+            ['term' => 'Parramatta', 'state' => 'NSW'],
+            Town::parseSearchQuery('Parramatta, New South Wales')
+        );
+        $this->assertSame(
+            ['term' => 'Perth', 'state' => 'WA'],
+            Town::parseSearchQuery('  Perth   Western Australia  ')
+        );
+        $this->assertSame(
+            ['term' => '4720', 'state' => 'QLD'],
+            Town::parseSearchQuery('Emerald QLD 4720')
+        );
+        $this->assertSame(
+            ['term' => '2150', 'state' => null],
+            Town::parseSearchQuery('Parramatta 2150')
+        );
+        $this->assertSame(
+            ['term' => 'Victoria Point', 'state' => null],
+            Town::parseSearchQuery('Victoria Point')
+        );
+    }
+
+    public function testAdminWorkspaceKeepsNavigationOnTrustedLiveHost(): void
+    {
+        $originalUri = $_SERVER['REQUEST_URI'] ?? null;
+        $_SERVER['REQUEST_URI'] = '/admin';
+        Session::set('_admin_origin_url', 'https://vanassist.com.au');
+        try {
+            $this->assertSame('https://vanassist.com.au/admin/providers', url('admin/providers'));
+        } finally {
+            Session::forget('_admin_origin_url');
+            if ($originalUri === null) {
+                unset($_SERVER['REQUEST_URI']);
+            } else {
+                $_SERVER['REQUEST_URI'] = $originalUri;
+            }
+        }
     }
 
     public function testGraphTransportDoesNotRequireAnSmtpHost(): void
