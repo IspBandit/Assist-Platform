@@ -115,12 +115,12 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
                             <?php foreach ($adminBrands as $brandKey => $switchBrand): ?>
                                 <?php $switchAssets = $switchBrand->assets(); ?>
                                 <?php if ($switchBrand->id() === $adminBrand->id()): ?><span class="is-current" aria-current="true"><img src="<?= e(asset($switchAssets['icon'] ?? $switchAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small>Current workspace</small></span><span class="admin-current-mark" aria-hidden="true">✓</span></span>
-                                <?php else: ?><form method="post" action="<?= e(url('admin/switch-brand')) ?>"><?= csrf_field() ?><input type="hidden" name="brand" value="<?= e($brandKey) ?>"><input type="hidden" name="return_path" value="<?= e($current) ?>"><button type="submit"><img src="<?= e(asset($switchAssets['icon'] ?? $switchAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small><?= $this->e(ucfirst($switchBrand->status())) ?> workspace</small></span></button></form><?php endif; ?>
+                                <?php else: ?><form method="post" action="<?= e(url('admin/switch-brand')) ?>"><?= csrf_field() ?><input type="hidden" name="brand" value="<?= e($brandKey) ?>"><input type="hidden" name="return_path" value="/admin"><button type="submit"><img src="<?= e(asset($switchAssets['icon'] ?? $switchAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="32" height="32"><span><strong><?= $this->e($switchBrand->name()) ?></strong><small><?= $this->e(ucfirst($switchBrand->status())) ?> workspace</small></span></button></form><?php endif; ?>
                             <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
-                <a class="btn btn-ghost admin-view-site" href="<?= e(url('/')) ?>" target="_blank" rel="noopener"><span class="admin-view-site-label">View site</span><span aria-hidden="true">↗</span></a>
+                <?php if (!str_ends_with((string) parse_url($adminBrand->url(), PHP_URL_HOST), '.test')): ?><a class="btn btn-ghost admin-view-site" href="<?= e($adminBrand->url()) ?>" target="_blank" rel="noopener"><span class="admin-view-site-label">View site</span><span aria-hidden="true">↗</span></a><?php endif; ?>
                 <span class="admin-user"><?= $this->e($user['name'] ?? '') ?></span>
                 <form class="admin-signout" method="post" action="<?= e(url('logout')) ?>">
                     <?= csrf_field() ?>

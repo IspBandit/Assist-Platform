@@ -12,12 +12,15 @@ $labels = [
     'customers' => 'Customers', 'parks' => 'Caravan parks',
     'prospects' => 'Provider prospects', 'failed_emails' => 'Failed emails',
     'ad_graphics_queue' => 'Ad graphics to fulfil',
+    'brand_accounts' => 'Active brand accounts', 'social_assets' => 'Campaign assets',
+    'saved_combinations' => 'Saved towing combinations', 'trailer_listings' => 'Trailer listings',
+    'regulatory_documents' => 'Official rule documents', 'motorsport_venues' => 'Motorsport venues',
 ];
 ?>
 <?php $this->section('content'); ?>
 
 <div class="alert alert-info">
-    Launch mode: <strong><?= $this->e(ucfirst($launchMode)) ?></strong>.
+    <strong><?= $this->e($dashboardBrand->name()) ?> workspace</strong> · Launch mode: <strong><?= $this->e(ucfirst($launchMode)) ?></strong>.
     <?php if ($maintenance): ?> <strong style="color:var(--red)">Maintenance mode is ON.</strong><?php endif; ?>
     <?php if (!empty($adGraphicsQueue)): ?>
         · <a href="<?= e(url('admin/promotions')) ?>"><strong><?= (int) $adGraphicsQueue ?></strong> ad graphic<?= (int) $adGraphicsQueue === 1 ? '' : 's' ?> awaiting fulfilment</a>

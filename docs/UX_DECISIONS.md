@@ -180,3 +180,14 @@ remains early in document order; additions use semantic headings, visible focus,
 single-column phone fallbacks and reduced-motion controls. **Evidence:** shared
 asset tests, location regression tests, static analysis, PHPUnit and desktop and
 mobile render inspection.
+
+## 2026-07-28 — Admin workspace switching stays unified and visibly scoped
+
+The administrator workspace selector now changes a permission-checked session
+workspace while retaining the current trusted live admin host. This lets the
+owner manage a private brand such as LocalTorque before its public domain exists
+and avoids a fragile cross-domain login hop. The override applies only below
+`/admin`; public brand resolution remains hostname-authoritative. Selecting a
+workspace always opens its dashboard, whose provider, account, email, campaign
+and specialist-module metrics are filtered to that brand. The active brand name,
+theme and browser icon remain visible throughout the shell.

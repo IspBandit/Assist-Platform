@@ -9,6 +9,8 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
+use App\Platform\Brand\BrandContext;
 use App\Platform\Brand\BrandRegistry;
 use App\Services\AdminBrandAccess;
 use App\Services\AuditLog;
@@ -16,7 +18,6 @@ use App\Services\BrandBlueprintService;
 use App\Services\GraphMailHealth;
 use App\Services\LaunchReadinessService;
 use InvalidArgumentException;
-use RuntimeException;
 use Throwable;
 
 final class PlatformController extends Controller
@@ -105,13 +106,20 @@ final class PlatformController extends Controller
         $registry = BrandRegistry::fromArray((array) config('brands.registry', []));
         $target = $registry->find($targetKey);
         if ($target === null || $target->status() === 'disabled') { $this->abort(404); }
-        try {
-            $token = AdminBrandAccess::issue((int) auth()->id(), current_brand(), $target, (string) $request->input('return_path', '/admin'));
-            AuditLog::record('admin.brand_handoff_issued', 'brand', (string) $target->databaseId());
-        } catch (RuntimeException $e) {
-            return $this->redirectWith('/admin', 'error', $e->getMessage());
+        if (!AdminBrandAccess::canAccess((int) auth()->id(), $target)) {
+            return $this->redirectWith('/admin', 'error', 'You do not have access to that brand.');
         }
-        return $this->redirect($target->url() . '/admin/brand-handoff?token=' . rawurlencode($token));
+
+        // Keep the enterprise admin on its current trusted host. This also makes
+        // private brands (which intentionally have no public domain yet)
+        // manageable without pretending their placeholder URL is live.
+        $hostBrand = $registry->forHost((string) $request->header('Host', '')) ?? current_brand();
+        Session::set('_admin_brand_id', $target->databaseId());
+        Session::set('_admin_origin_url', $hostBrand->url());
+        BrandContext::set($target);
+        AuditLog::record('admin.brand_workspace_switched', 'brand', (string) $target->databaseId());
+
+        return $this->redirect($hostBrand->url() . '/admin');
     }
 
     public function consumeHandoff(Request $request): Response

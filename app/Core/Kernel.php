@@ -14,6 +14,7 @@ use App\Platform\Brand\BrandResolver;
 use App\Platform\Support\EnvironmentValidator;
 use App\Platform\Support\RequestContext;
 use App\Services\Settings;
+use App\Services\AdminBrandAccess;
 use Throwable;
 
 /**
@@ -24,6 +25,7 @@ final class Kernel
 {
     private Router $router;
     private BrandResolver $brandResolver;
+    private BrandRegistry $brandRegistry;
     private bool $booted = false;
 
     public function boot(): void
@@ -43,6 +45,7 @@ final class Kernel
             throw new \RuntimeException('Brand registry configuration must be an array');
         }
         $registry = BrandRegistry::fromArray($brandConfig);
+        $this->brandRegistry = $registry;
         $this->brandResolver = new BrandResolver(
             $registry,
             (string) Config::get('brands.default', 'vanassist'),
@@ -96,6 +99,17 @@ final class Kernel
         }
 
         $brand = $this->brandResolver->resolve($request);
+        if (str_starts_with($path, '/admin')) {
+            $overrideId = (int) Session::get('_admin_brand_id', 0);
+            $userId = (int) Session::get('_auth_user_id', 0);
+            $override = $overrideId > 0 ? $this->brandRegistry->forDatabaseId($overrideId) : null;
+            if ($override !== null && $userId > 0 && AdminBrandAccess::canAccess($userId, $override)) {
+                $brand = $override;
+            } elseif ($overrideId > 0) {
+                Session::forget('_admin_brand_id');
+                Session::forget('_admin_origin_url');
+            }
+        }
         BrandContext::set($brand);
 
         // Disabled/coming-soon brands must never fall through to VanAssist

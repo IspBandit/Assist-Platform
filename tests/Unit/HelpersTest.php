@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Core\Session;
 use App\Helpers\Geo;
 use App\Models\Town;
 use App\Services\Mailer;
@@ -129,6 +130,23 @@ final class HelpersTest extends TestCase
             ['term' => 'Victoria Point', 'state' => null],
             Town::parseSearchQuery('Victoria Point')
         );
+    }
+
+    public function testAdminWorkspaceKeepsNavigationOnTrustedLiveHost(): void
+    {
+        $originalUri = $_SERVER['REQUEST_URI'] ?? null;
+        $_SERVER['REQUEST_URI'] = '/admin';
+        Session::set('_admin_origin_url', 'https://vanassist.com.au');
+        try {
+            $this->assertSame('https://vanassist.com.au/admin/providers', url('admin/providers'));
+        } finally {
+            Session::forget('_admin_origin_url');
+            if ($originalUri === null) {
+                unset($_SERVER['REQUEST_URI']);
+            } else {
+                $_SERVER['REQUEST_URI'] = $originalUri;
+            }
+        }
     }
 
     public function testGraphTransportDoesNotRequireAnSmtpHost(): void
