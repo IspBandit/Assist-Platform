@@ -27,7 +27,7 @@ return [
             'assets' => [
                 'logo' => '/assets/brands/vanassist/symbol-v2.svg',
                 'icon' => '/assets/brands/vanassist/symbol-v2.svg',
-                'favicon' => '/assets/brands/vanassist/symbol-v2.svg',
+                'favicon' => '/assets/brands/vanassist/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#0f6e6e',
@@ -109,7 +109,7 @@ return [
             'assets' => [
                 'logo' => '/assets/brands/towsmart/symbol-v2.svg',
                 'icon' => '/assets/brands/towsmart/symbol-v2.svg',
-                'favicon' => '/assets/brands/towsmart/symbol-v2.svg',
+                'favicon' => '/assets/brands/towsmart/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#1d4ed8',
@@ -194,7 +194,7 @@ return [
             'assets' => [
                 'logo' => '/assets/brands/trailerwise/symbol-v2.svg',
                 'icon' => '/assets/brands/trailerwise/symbol-v2.svg',
-                'favicon' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'favicon' => '/assets/brands/trailerwise/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#7c3aed',
@@ -276,7 +276,7 @@ return [
             'assets' => [
                 'logo' => '/assets/brands/localtorque/symbol-v2.svg',
                 'icon' => '/assets/brands/localtorque/symbol-v2.svg',
-                'favicon' => '/assets/brands/localtorque/symbol-v2.svg',
+                'favicon' => '/assets/brands/localtorque/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#0f3b4c',

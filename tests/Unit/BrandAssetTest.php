@@ -35,4 +35,20 @@ final class BrandAssetTest extends TestCase
         self::assertStringNotContainsString('stroke=', $svg);
         self::assertLessThan(1200, strlen($svg));
     }
+
+    #[DataProvider('brands')]
+    public function testFaviconUsesRestrainedTabSpecificSvgContract(string $brand): void
+    {
+        $svg = file_get_contents(dirname(__DIR__, 2) . '/public/assets/brands/' . $brand . '/favicon.svg');
+
+        self::assertIsString($svg);
+        self::assertStringContainsString('viewBox="0 0 32 32"', $svg);
+        self::assertStringContainsString('role="img"', $svg);
+        self::assertStringContainsString('<title ', $svg);
+        self::assertStringContainsString('<path ', $svg);
+        self::assertStringNotContainsString('linearGradient', $svg);
+        self::assertStringNotContainsString('<rect', $svg);
+        self::assertStringNotContainsString('vehicle', strtolower($svg));
+        self::assertLessThan(900, strlen($svg));
+    }
 }

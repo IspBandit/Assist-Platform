@@ -209,9 +209,11 @@ tokens and components.
 The premium visual system and conversion journey are complementary. Public
 homepages pair optimised contextual hero photography with typography-led brand
 wordmarks, concise evidence, a three-step process and explicit trust language.
-Public headers and browser tabs do not use the provisional platform symbols;
-the tab intentionally uses a blank favicon until a professionally art-directed
-identity is approved. Provider acquisition and provider workspaces reuse the
+Public headers do not use the provisional platform symbols. Browser tabs use a
+separate 32px geometric lettermark family: dark neutral field, fine brand-colour
+keyline, warm-white monogram and at most one restrained accent. These favicons
+contain no vehicles, gradients, shadows or decorative scenes and are not reused
+as oversized page illustrations. Provider acquisition and provider workspaces reuse the
 same tokens, responsive breakpoints and focus treatment. These additions must
 not reintroduce cartoon vehicle artwork, hide primary search or use colour-heavy
 brand tiles.
