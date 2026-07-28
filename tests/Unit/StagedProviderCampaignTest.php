@@ -60,6 +60,19 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertTrue(ProviderPackActivation::shouldRun(15000, 'same', 'same', '500'));
     }
 
+    public function testCustomProviderGraphicServiceIsNotOfferedInTheProduct(): void
+    {
+        $providerRoutes = $this->source('routes/provider.php');
+        $adminRoutes = $this->source('routes/admin.php');
+        $providerDashboard = $this->source('app/Views/provider/dashboard.php');
+        $claimView = $this->source('app/Views/provider/claim-accept.php');
+
+        self::assertStringNotContainsString('/promotion', $providerRoutes);
+        self::assertStringNotContainsString('/promotions', $adminRoutes);
+        self::assertStringNotContainsString('free ad graphic', strtolower($providerDashboard));
+        self::assertStringNotContainsString('free ad graphic', strtolower($claimView));
+    }
+
     private function source(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $relativePath);

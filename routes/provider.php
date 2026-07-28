@@ -54,9 +54,6 @@ return static function (Router $router): void {
         $router->post('/growth/credential/withdraw', 'Provider\GrowthController@withdrawCredential', 'provider.growth.credential.withdraw');
         $router->post('/growth/campaign', 'Provider\GrowthController@saveCampaign', 'provider.growth.campaign');
 
-        $router->get('/promotion', 'Provider\PromotionController@index', 'provider.promotion');
-        $router->post('/promotion', 'Provider\PromotionController@store');
-
         // Service runs self-service (Phase 6).
         $router->get('/runs', 'Provider\RunController@index', 'provider.runs');
         $router->get('/runs/form', 'Provider\RunController@form', 'provider.runs.form');

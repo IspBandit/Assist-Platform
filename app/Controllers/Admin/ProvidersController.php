@@ -11,7 +11,6 @@ use App\Core\Response;
 use App\Models\Provider;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
-use App\Services\FoundingGraphicService;
 use App\Services\ProviderClaimService;
 use App\Services\SubscriptionService;
 
@@ -61,7 +60,6 @@ final class ProvidersController extends Controller
         $this->requirePermission('providers.manage');
         $provider = $this->findOr404((int) $request->input('id'));
         $id = (int) $provider['id'];
-        $foundingPromo = FoundingGraphicService::forProvider($id);
 
         return $this->view('admin.providers.show', [
             'title'         => $provider['business_name'],
@@ -78,8 +76,6 @@ final class ProvidersController extends Controller
             'allCategories' => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
             'allTowns'      => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'allRegions'    => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
-            'foundingPromo' => $foundingPromo,
-            'promoImageUrls' => $foundingPromo !== null ? FoundingGraphicService::imageUrls($foundingPromo) : ['desktop' => null, 'mobile' => null],
         ]);
     }
 
@@ -214,9 +210,6 @@ final class ProvidersController extends Controller
         }
         $new = $provider[$col] ? 0 : 1;
         Database::query("UPDATE providers SET {$col} = ?, updated_at = NOW() WHERE id = ?", [$new, $id]);
-        if ($flag === 'verified' && $new === 1) {
-            FoundingGraphicService::onVerified($id);
-        }
         AuditLog::record('provider.flag_' . $flag, 'provider', (string) $id, (string) $provider[$col], (string) $new);
         return $this->redirectWith('/admin/providers/show?id=' . $id, 'success', 'Updated.');
     }

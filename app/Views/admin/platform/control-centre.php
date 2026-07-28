@@ -1,6 +1,13 @@
 <?php
 /** @var \App\Core\View $this */
 $this->extend('layouts.admin');
+$gateCounts = ['pass' => 0, 'warning' => 0, 'fail' => 0];
+foreach ($launchReadiness['groups'] as $gateGroup) {
+    foreach ($gateGroup['checks'] as $gateCheck) {
+        $gateStatus = (string) ($gateCheck['status'] ?? 'fail');
+        $gateCounts[$gateStatus] = ($gateCounts[$gateStatus] ?? 0) + 1;
+    }
+}
 ?>
 <?php $this->section('content'); ?>
 <div class="page-heading platform-heading">
@@ -25,9 +32,10 @@ $this->extend('layouts.admin');
 
 <section class="card section-compact">
     <div class="page-header">
-        <div><p class="eyebrow">Launch gate</p><h2>Trust, search, outreach and operations</h2><p class="muted">This gate uses current production evidence. Missing or stale proof cannot display as a pass.</p></div>
+        <div><p class="eyebrow">Platform-wide launch gate</p><h2>Trust, search, outreach and operations</h2><p class="muted">This is stricter than a website uptime check and covers every active brand. A failure is a launch blocker; a warning is incomplete scale or work requiring review. Missing or stale proof cannot display as a pass.</p></div>
         <span class="badge badge-<?= $this->e((string) $launchReadiness['status']) ?>"><?= $this->e(strtoupper((string) $launchReadiness['status'])) ?></span>
     </div>
+    <p class="muted"><strong><?= (int) $gateCounts['pass'] ?> passed</strong> · <strong><?= (int) $gateCounts['warning'] ?> warnings</strong> · <strong><?= (int) $gateCounts['fail'] ?> launch blockers</strong>. A failed operational evidence check does not mean the public website is down.</p>
     <div class="grid grid-2">
         <?php foreach ($launchReadiness['groups'] as $group): ?>
             <article class="launch-gate-group">

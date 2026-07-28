@@ -100,12 +100,8 @@ return static function (Router $router): void {
         $router->post('/providers/licence/verify', 'Admin\ProvidersController@verifyLicence');
         $router->post('/providers/send-claim-invite', 'Admin\ProvidersController@sendClaimInvite');
         $router->post('/providers/bulk-claim-invites', 'Admin\ProvidersController@bulkClaimInvites');
-        $router->get('/promotions', 'Admin\PromotionsController@index', 'admin.promotions');
         $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
         $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
-        $router->get('/promotions/show', 'Admin\PromotionsController@show', 'admin.promotions.show');
-        $router->post('/promotions/in-progress', 'Admin\PromotionsController@markInProgress');
-        $router->post('/promotions/deliver', 'Admin\PromotionsController@deliver');
         $router->get('/providers/duplicates', 'Admin\ProvidersController@duplicates', 'admin.providers.duplicates');
 
         // Provider prospect CRM (Phase 3): outreach, notes, CSV import/export, invitations.
@@ -168,6 +164,7 @@ return static function (Router $router): void {
         $router->get('/email-templates/edit', 'Admin\EmailTemplatesController@edit');
         $router->post('/email-templates/save', 'Admin\EmailTemplatesController@save');
         $router->post('/email-templates/test', 'Admin\EmailTemplatesController@sendTest');
+        $router->post('/email-templates/delivery-test', 'Admin\EmailTemplatesController@sendDeliveryTest');
         $router->post('/email-templates/smtp-test', 'Admin\EmailTemplatesController@sendSmtpTest');
         $router->post('/email-templates/process-queue', 'Admin\EmailTemplatesController@processQueueNow');
 

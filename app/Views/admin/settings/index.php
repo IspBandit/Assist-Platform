@@ -8,6 +8,9 @@
 /** @var array<string,int> $demoCounts */
 /** @var array<int,array{label:string,ok:?bool,hint:string}> $checklist */
 /** @var bool $isSuperAdmin */
+/** @var string $mailDriver */
+/** @var bool $mailConfigured */
+/** @var string $mailTransport */
 $this->extend('layouts.admin');
 $s = static fn (string $k, string $d = '') => $settings[$k] ?? $d;
 $demoTotal = array_sum($demoCounts);
@@ -43,8 +46,13 @@ $demoTotal = array_sum($demoCounts);
     </div>
 
     <div class="card">
-        <h2 style="margin-top:0">Email sending (SMTP)</h2>
-        <p class="muted" style="margin:.2rem 0 1rem;font-size:.85rem">Outgoing mail server used to send all VanAssist email. For GoDaddy/cPanel use the secure SSL/TLS settings from your email account. These values are stored in the database and override any values in <code>.env</code>.</p>
+        <h2 style="margin-top:0">Email delivery</h2>
+        <p style="margin:.2rem 0 1rem"><strong>Active transport:</strong> <?= $this->e($mailTransport) ?> · <span class="badge <?= $mailConfigured ? 'badge-confirmed' : 'badge-neutral' ?>"><?= $mailConfigured ? 'Configured' : 'Not configured' ?></span></p>
+        <?php if ($mailDriver === 'graph'): ?>
+            <p class="muted" style="margin:0">Production email is delivered through the protected Microsoft 365 configuration. VanAssist, TowSmart and TrailerWise select their own approved sender mailbox from the message brand. Certificates, mailbox permissions and private keys are intentionally not editable from this page.</p>
+            <p class="muted" style="margin:.75rem 0 0">Use <a href="<?= e(url('admin/email-templates')) ?>">Email delivery</a> to send a precise test and view the latest queue error.</p>
+        <?php else: ?>
+        <p class="muted" style="margin:.2rem 0 1rem;font-size:.85rem">SMTP is the active fallback transport. Saved values override the matching environment defaults. The password remains write-only.</p>
         <div class="grid grid-2">
             <div class="form-group"><label for="mail_host">SMTP host</label><input type="text" id="mail_host" name="mail_host" value="<?= e_attr($s('mail_host')) ?>" placeholder="e.g. sg2plzcpnl509286.prod.sin2.secureserver.net"></div>
             <div class="form-group"><label for="mail_username">Username</label><input type="text" id="mail_username" name="mail_username" value="<?= e_attr($s('mail_username')) ?>" placeholder="full email address" autocomplete="off"></div>
@@ -69,7 +77,8 @@ $demoTotal = array_sum($demoCounts);
             <div class="form-group"><label for="mail_from_address">From address</label><input type="email" id="mail_from_address" name="mail_from_address" value="<?= e_attr($s('mail_from_address')) ?>" placeholder="support@vanassist.com.au"></div>
             <div class="form-group"><label for="mail_from_name">From name</label><input type="text" id="mail_from_name" name="mail_from_name" value="<?= e_attr($s('mail_from_name', 'VanAssist')) ?>"></div>
         </div>
-        <p class="muted" style="margin:.5rem 0 0;font-size:.85rem">After saving, send a test from <a href="<?= e(url('admin/email-templates')) ?>">Email templates</a>. Test emails send on the next email cron run.</p>
+        <p class="muted" style="margin:.5rem 0 0;font-size:.85rem">After saving, send a test from <a href="<?= e(url('admin/email-templates')) ?>">Email delivery</a>.</p>
+        <?php endif; ?>
     </div>
 
     <div class="card">

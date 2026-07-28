@@ -406,6 +406,43 @@ final class PlatformDatabaseTest extends TestCase
         }
     }
 
+    public function testEmailQueueCanClaimOneExactDashboardTestMessage(): void
+    {
+        $firstId = Database::insert(
+            "INSERT INTO email_queue (brand_id, recipient_email, subject, html_body, status, created_at) "
+            . "VALUES (1, 'older-test@example.com', 'Older', '<p>older</p>', 'pending', NOW())"
+        );
+        $targetId = Database::insert(
+            "INSERT INTO email_queue (brand_id, recipient_email, subject, html_body, status, created_at) "
+            . "VALUES (1, 'exact-test@example.com', 'Exact', '<p>exact</p>', 'pending', NOW())"
+        );
+        $claim = new \ReflectionMethod(Mailer::class, 'claimBatch');
+
+        try {
+            /** @var array<int,array<string,mixed>> $rows */
+            $rows = $claim->invoke(null, 1, 3, $targetId);
+            self::assertCount(1, $rows);
+            self::assertSame($targetId, (int) $rows[0]['id']);
+            self::assertSame('pending', (string) Database::scalar('SELECT status FROM email_queue WHERE id=?', [$firstId]));
+        } finally {
+            Database::query('DELETE FROM email_queue WHERE id IN (?,?)', [$firstId, $targetId]);
+        }
+    }
+
+    public function testVanAssistProviderCampaignIsPreparedButNotQueued(): void
+    {
+        $campaign = Database::selectOne(
+            "SELECT status,delivery_stage,recipient_count,body FROM notifications WHERE brand_id=1 "
+            . "AND title='Please check how travellers find your business on VanAssist'"
+        );
+
+        self::assertNotNull($campaign);
+        self::assertSame('draft', $campaign['status']);
+        self::assertSame('draft', $campaign['delivery_stage']);
+        self::assertSame(0, (int) $campaign['recipient_count']);
+        self::assertStringContainsString('https://vanassist.com.au/for-providers', (string) $campaign['body']);
+    }
+
     public function testEmailQueuePersistsCurrentBrandContext(): void
     {
         $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));

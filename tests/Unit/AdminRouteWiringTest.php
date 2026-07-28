@@ -48,4 +48,15 @@ final class AdminRouteWiringTest extends TestCase
             self::assertContains($destination, $getPaths, "Dashboard navigation destination {$destination} is not wired to a GET route.");
         }
     }
+
+    public function testEmailDeliveryTestUsesTheActiveTransportRoute(): void
+    {
+        $routes = (string) file_get_contents(base_path('routes/admin.php'));
+        $view = (string) file_get_contents(base_path('app/Views/admin/email-templates/index.php'));
+
+        self::assertStringContainsString("'/email-templates/delivery-test'", $routes);
+        self::assertStringContainsString('Delivery test', $view);
+        self::assertStringNotContainsString('GoDaddy', $view);
+        self::assertStringNotContainsString('cPanel webmail', $view);
+    }
 }

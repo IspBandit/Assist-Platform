@@ -111,7 +111,6 @@ return [
             . '<p style="margin:0"><strong>Completely free during our launch.</strong> There are no listing fees, no subscription and no credit card required. Claiming lets you verify your details, update services and service areas, and receive customer requests when we match them to your business.</p>'
             . '</div>'
             . '<p>Learn more about VanAssist at <a href="{{site_url}}">{{site_url}}</a>.</p>'
-            . '{{founding_offer_line}}'
             . '<p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Claim this listing — it&rsquo;s free</a></p>'
             . '<p style="font-size:.9rem">If the button does not work, copy this link into your browser:<br><a href="{{action_url}}">{{action_url}}</a></p>'
             . '<p style="font-size:.85rem;color:#8a8f94">This link is personal to your business and expires in {{expiry_days}} days. If this is not your business, you can ignore this email — no account will be created unless you claim the listing.</p>'
@@ -123,39 +122,9 @@ return [
             . "We created a preliminary listing for {{business_name}} from publicly available information:\n"
             . "{{listing_url}}\n\n"
             . "CLAIMING IS FREE during our launch — no listing fees, no subscription and no credit card required. Claiming lets you verify your details, update services and coverage, and receive customer requests.\n\n"
-            . "Claim your listing:\n{{action_url}}{{founding_offer_text}}\n\n"
+            . "Claim your listing:\n{{action_url}}\n\n"
             . "Learn more: {{site_url}}\n\n"
             . "This link expires in {{expiry_days}} days. If this is not your business, you can ignore this email.\n\nUnsubscribe: {{unsubscribe_url}}",
-    ],
-    [
-        'template_key' => 'provider_founding_graphic_unlocked',
-        'name'    => 'Founding free ad graphic unlocked',
-        'subject' => 'Your free local ad graphics are ready to request',
-        'html_body' => $wrap(
-            'Free ad graphics',
-            '<p>Hi {{provider_name}},</p>'
-            . '<p>Your VanAssist profile is now <strong>verified</strong>. As a founding provider in a launch area, you can request your <strong>free local ad graphics</strong> (worth $99).</p>'
-            . '<p>We will design a desktop banner (1200×400) and a mobile version (800×450) for travellers searching near {{town_name}}, and feature your business during our launch period.</p>'
-            . '<p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Request my free graphics</a></p>'
-            . '<p style="font-size:.9rem">If the button does not work, copy this link: {{action_url}}</p>'
-        ),
-        'text_body' => "Hi {{provider_name}},\n\n"
-            . "Your profile is verified. Request your free local ad graphics (desktop + mobile, worth $99) for travellers near {{town_name}}:\n"
-            . "{{action_url}}",
-    ],
-    [
-        'template_key' => 'provider_founding_graphic_delivered',
-        'name'    => 'Founding ad graphic delivered',
-        'subject' => 'Your VanAssist ad graphics are ready',
-        'html_body' => $wrap(
-            'Your ad graphics are ready',
-            '<p>Hi {{provider_name}},</p>'
-            . '<p>Your free founding ad graphics are ready — desktop and mobile versions — and your business is now <strong>featured</strong> for travellers searching in your service area during our launch.</p>'
-            . '<p><a href="{{action_url}}">View your promotion</a></p>'
-            . '<p style="font-size:.9rem">Download: <a href="{{image_url}}">Desktop graphic</a>'
-            . ' · <a href="{{image_url_mobile}}">Mobile graphic</a></p>'
-        ),
-        'text_body' => "Hi {{provider_name}},\n\nYour free founding ad graphics are ready.\nDesktop: {{image_url}}\nMobile: {{image_url_mobile}}\n\nView details: {{action_url}}",
     ],
     [
         'template_key' => 'provider_invitation',

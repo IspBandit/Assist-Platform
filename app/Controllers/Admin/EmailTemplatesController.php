@@ -34,8 +34,8 @@ final class EmailTemplatesController extends Controller
         'request_reference' => 'VA-2026-0042',
         'town_name'         => 'Emerald',
         'run_title'         => 'Central QLD service run',
-        'founding_offer_line' => '<p style="background:#eef9f7;border-left:4px solid #0f6e6e;padding:12px 16px">Launch offer: free ad graphic.</p>',
-        'founding_offer_text' => "\n\nLaunch offer: free ad graphic.",
+        'founding_offer_line' => '',
+        'founding_offer_text' => '',
         'image_url'         => 'https://example.com/uploads/ad-desktop.webp',
         'image_url_mobile'  => 'https://example.com/uploads/ad-mobile.webp',
     ];
@@ -57,6 +57,7 @@ final class EmailTemplatesController extends Controller
             'failedCount'  => (int) Database::scalar("SELECT COUNT(*) FROM email_queue WHERE status = 'failed'"),
             'sentCount'    => (int) Database::scalar("SELECT COUNT(*) FROM email_queue WHERE status = 'sent'"),
             'mailConfigured' => Mailer::transportConfigured($cfg),
+            'mailDriver'   => strtolower((string) ($cfg['driver'] ?? 'smtp')),
             'mailTransport' => strtolower((string) ($cfg['driver'] ?? 'smtp')) === 'graph' ? 'Microsoft Graph' : (string) $cfg['host'],
             'recentFailures' => $recentFailures,
         ]);
@@ -156,7 +157,7 @@ final class EmailTemplatesController extends Controller
             return $this->redirectWith('/admin/email-templates/edit?id=' . (int) $template['id'], 'error', 'Enter a valid test email address.');
         }
 
-        EmailQueue::queueRaw(
+        $queueId = EmailQueue::queueRawId(
             $to,
             (string) (current_user()['name'] ?? 'Test'),
             '[TEST] ' . $this->render((string) $template['subject']),
@@ -164,30 +165,30 @@ final class EmailTemplatesController extends Controller
             $this->render((string) ($template['text_body'] ?? '')),
             (string) $template['template_key']
         );
-        $res = Mailer::processQueue(5);
+        if ($queueId === null) {
+            return $this->redirectWith('/admin/email-templates/edit?id=' . (int) $template['id'], 'error', 'The test address is suppressed from email delivery.');
+        }
+        Mailer::processQueue(1, $queueId);
         AuditLog::record('email.template_test', 'email_template', (string) $template['id'], null, $to);
 
-        if ($res['sent'] > 0) {
+        $result = $this->queueResult($queueId);
+        if ($result['status'] === 'sent') {
             return $this->redirectWith('/admin/email-templates/edit?id=' . (int) $template['id'], 'success', 'Test email sent to ' . $to . '. Check your inbox (and spam).');
         }
 
-        $err = (string) Database::scalar(
-            "SELECT last_error FROM email_queue WHERE recipient_email = ? ORDER BY id DESC LIMIT 1",
-            [$to]
-        );
         $msg = 'Test email failed to send to ' . $to . '.';
-        if ($err !== '') {
-            $msg .= ' Error: ' . $err;
+        if ($result['error'] !== '') {
+            $msg .= ' Error: ' . $result['error'];
         }
-        $msg .= ' See Admin → System logs → email for the full SMTP transcript.';
+        $msg .= ' See Admin → System logs → email for the delivery details.';
         return $this->redirectWith('/admin/email-templates/edit?id=' . (int) $template['id'], 'error', $msg);
     }
 
     /**
-     * Send a minimal test message immediately — the fastest way to verify SMTP
-     * credentials and diagnose delivery without editing a template.
+     * Send a minimal message through whichever transport is active in the
+     * environment (Microsoft Graph in production, SMTP where configured).
      */
-    public function sendSmtpTest(Request $request): Response
+    public function sendDeliveryTest(Request $request): Response
     {
         $this->requirePermission('email.manage');
 
@@ -198,28 +199,53 @@ final class EmailTemplatesController extends Controller
 
         $to = trim((string) $request->input('test_email')) ?: (string) (current_user()['email'] ?? '');
         if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
-            return $this->redirectWith('/admin/email-templates', 'error', 'Enter a valid email address for the SMTP test.');
+            return $this->redirectWith('/admin/email-templates', 'error', 'Enter a valid email address for the delivery test.');
         }
 
-        $html = '<p>This is a test message from VanAssist at ' . e(date('Y-m-d H:i:s T')) . '.</p>'
-            . '<p>If you received this, outgoing SMTP from the website is working.</p>';
-        EmailQueue::queueRaw($to, 'SMTP test', 'VanAssist SMTP test', $html, 'VanAssist SMTP test at ' . date('c'));
-        $res = Mailer::processQueue(5);
+        $brandName = current_brand()->name();
+        $html = '<p>This is a delivery test from ' . e($brandName) . ' at ' . e(date('Y-m-d H:i:s T')) . '.</p>'
+            . '<p>If you received this, the website email transport is working.</p>';
+        $queueId = EmailQueue::queueRawId($to, 'Delivery test', $brandName . ' delivery test', $html, $brandName . ' delivery test at ' . date('c'));
+        if ($queueId === null) {
+            return $this->redirectWith('/admin/email-templates', 'error', 'The test address is suppressed from email delivery.');
+        }
+        Mailer::processQueue(1, $queueId);
+        $result = $this->queueResult($queueId);
 
-        if ($res['sent'] > 0) {
-            return $this->redirectWith('/admin/email-templates', 'success', 'SMTP test sent to ' . $to . '. Check that inbox (and spam). Sent mail may not appear in cPanel webmail — that is normal.');
+        if ($result['status'] === 'sent') {
+            return $this->redirectWith('/admin/email-templates', 'success', 'Delivery test sent to ' . $to . ' through ' . $this->transportLabel($cfg) . '. Check that inbox (and spam).');
         }
 
-        $err = (string) Database::scalar(
-            "SELECT last_error FROM email_queue WHERE recipient_email = ? ORDER BY id DESC LIMIT 1",
-            [$to]
-        );
-        $msg = 'SMTP test failed for ' . $to . '.';
-        if ($err !== '') {
-            $msg .= ' Error: ' . $err;
+        $msg = 'Delivery test failed for ' . $to . ' through ' . $this->transportLabel($cfg) . '.';
+        if ($result['error'] !== '') {
+            $msg .= ' Error: ' . $result['error'];
         }
-        $msg .= ' Open System logs → email for the step-by-step SMTP conversation.';
+        $msg .= ' Open System logs → email for the transport details.';
         return $this->redirectWith('/admin/email-templates', 'error', $msg);
+    }
+
+    /** Backwards-compatible action for saved admin links. */
+    public function sendSmtpTest(Request $request): Response
+    {
+        return $this->sendDeliveryTest($request);
+    }
+
+    /** @return array{status:string,error:string} */
+    private function queueResult(int $queueId): array
+    {
+        $row = Database::selectOne('SELECT status,last_error FROM email_queue WHERE id=?', [$queueId]);
+        return [
+            'status' => (string) ($row['status'] ?? 'unknown'),
+            'error' => (string) ($row['last_error'] ?? ''),
+        ];
+    }
+
+    /** @param array<string,mixed> $cfg */
+    private function transportLabel(array $cfg): string
+    {
+        return strtolower((string) ($cfg['driver'] ?? 'smtp')) === 'graph'
+            ? 'Microsoft 365'
+            : 'SMTP';
     }
 
     private function render(string $body): string

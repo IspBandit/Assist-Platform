@@ -20,7 +20,7 @@ use Throwable;
 final class Mailer
 {
     /** @return array{processed:int,sent:int,failed:int} */
-    public static function processQueue(int $batch = 25): array
+    public static function processQueue(int $batch = 25, ?int $queueId = null): array
     {
         $result = ['processed' => 0, 'sent' => 0, 'failed' => 0];
 
@@ -34,7 +34,7 @@ final class Mailer
         }
 
         $maxAttempts = (int) config('mail.max_attempts', 3);
-        $rows = self::claimBatch($batch, $maxAttempts);
+        $rows = self::claimBatch($batch, $maxAttempts, $queueId);
 
         $transport = $driver === 'graph' ? 'Microsoft Graph' : (class_exists(PHPMailer::class) ? 'PHPMailer' : 'SmtpClient (built-in)');
         Logger::info('Processing email queue: ' . count($rows) . ' pending item(s).', [
@@ -88,7 +88,7 @@ final class Mailer
     }
 
     /** @return array<int,array<string,mixed>> */
-    private static function claimBatch(int $batch, int $maxAttempts): array
+    private static function claimBatch(int $batch, int $maxAttempts, ?int $queueId = null): array
     {
         $batch = max(1, min($batch, 100));
         $maxAttempts = max(1, $maxAttempts);
@@ -103,13 +103,20 @@ final class Mailer
 
         Database::beginTransaction();
         try {
+            $params = [$maxAttempts];
+            $queueFilter = '';
+            if ($queueId !== null) {
+                $queueFilter = 'AND id = ? ';
+                $params[] = $queueId;
+            }
+            $params[] = $batch;
             $ids = Database::select(
-                "SELECT id FROM email_queue WHERE attempts < ? "
+                "SELECT id FROM email_queue WHERE attempts < ? {$queueFilter}"
                 . "AND (next_attempt_at IS NULL OR next_attempt_at <= NOW()) "
                 . "AND (scheduled_at IS NULL OR scheduled_at <= NOW()) "
                 . "AND (status = 'pending' OR (status = 'processing' AND leased_until <= NOW())) "
                 . 'ORDER BY id ASC LIMIT ? FOR UPDATE SKIP LOCKED',
-                [$maxAttempts, $batch]
+                $params
             );
             if ($ids === []) {
                 Database::commit();
