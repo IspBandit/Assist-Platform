@@ -451,7 +451,7 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame('draft', $categoryCampaign['status']);
         self::assertSame('draft', $categoryCampaign['delivery_stage']);
         self::assertSame(0, (int) $categoryCampaign['recipient_count']);
-        self::assertStringContainsString('/assets/img/email-campaigns/provider-', (string) $categoryCampaign['body']);
+        self::assertStringContainsString('/runtime-assets/img/provider-', (string) $categoryCampaign['body']);
     }
 
     public function testEmailQueuePersistsCurrentBrandContext(): void
