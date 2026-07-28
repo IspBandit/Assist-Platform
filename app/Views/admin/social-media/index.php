@@ -41,6 +41,11 @@
                         <?php if ($asset['status'] !== 'approved'): ?><form method="post" action="<?= e(url('admin/social-media/status')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $asset['id'] ?>"><input type="hidden" name="status" value="approved"><button class="btn btn-secondary" type="submit">Approve</button></form><?php endif; ?>
                         <?php if ($asset['status'] !== 'archived'): ?><form method="post" action="<?= e(url('admin/social-media/status')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $asset['id'] ?>"><input type="hidden" name="status" value="archived"><button class="btn btn-ghost" type="submit">Archive</button></form><?php endif; ?>
                         <?php if ($asset['platform'] === 'facebook' && $asset['status'] === 'approved' && empty($asset['facebook_post_id'])): ?><form method="post" action="<?= e(url('admin/social-media/facebook/publish')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $asset['id'] ?>"><button class="btn btn-secondary" type="submit" <?= !$facebookConnected ? 'disabled' : '' ?>>Publish to Facebook</button></form><?php endif; ?>
+                        <form method="post" action="<?= e(url('admin/social-media/delete')) ?>" onsubmit="return confirm('Permanently delete this Social Studio asset and its stored image?<?= !empty($asset['facebook_post_id']) ? ' The existing Facebook post will remain live.' : '' ?>');">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="id" value="<?= (int) $asset['id'] ?>">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
                     </div>
                     <?php if (!empty($asset['facebook_post_id'])): ?><p class="status-success">Published to Facebook · <?= $this->e((string) $asset['facebook_post_id']) ?></p><?php elseif (!empty($asset['facebook_publish_error'])): ?><p class="alert alert-error"><?= $this->e((string) $asset['facebook_publish_error']) ?></p><?php endif; ?>
                 </div>

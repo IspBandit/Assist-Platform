@@ -43,4 +43,13 @@ final class SocialMediaAssetServiceTest extends TestCase
             array_keys(SocialMediaAssetService::templates())
         );
     }
+
+    public function testSocialStudioExposesAConfirmedCsrfProtectedDeleteAction(): void
+    {
+        $view = (string) file_get_contents(base_path('app/Views/admin/social-media/index.php'));
+        self::assertStringContainsString("admin/social-media/delete", $view);
+        self::assertStringContainsString('csrf_field()', $view);
+        self::assertStringContainsString("return confirm('Permanently delete this Social Studio asset", $view);
+        self::assertStringContainsString('btn btn-danger', $view);
+    }
 }

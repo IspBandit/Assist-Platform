@@ -155,6 +155,7 @@ return static function (Router $router): void {
         $router->get('/social-media', 'Admin\SocialMediaController@index', 'admin.social-media');
         $router->post('/social-media/generate', 'Admin\SocialMediaController@generate');
         $router->post('/social-media/status', 'Admin\SocialMediaController@status');
+        $router->post('/social-media/delete', 'Admin\SocialMediaController@delete');
         $router->get('/social-media/preview', 'Admin\SocialMediaController@preview');
         $router->get('/social-media/download', 'Admin\SocialMediaController@download');
         $router->post('/social-media/facebook/publish', 'Admin\SocialMediaController@publishFacebook');

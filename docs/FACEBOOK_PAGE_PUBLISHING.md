@@ -30,3 +30,20 @@ failure-alert acceptance are complete.
 
 Rollback disables the environment credentials. Existing Facebook posts are not
 deleted automatically and must be managed on the Page.
+
+## VanAssist launch pack
+
+The reviewed replacement launch pack is stored under `brand-assets/facebook/`:
+
+- `vanassist-profile-v2.png` — 1080 × 1080 master profile image;
+- `vanassist-cover-v2.png` — 1640 × 624 master cover;
+- `vanassist-cover-fast-v2.jpg` — lightweight 851 × 315 upload cover;
+- `vanassist-first-post-v2.png` — 1200 × 630 first-post master;
+- `vanassist-first-post-fast-v2.jpg` — lightweight first-post upload.
+
+These replace the earlier illustrated experiments. The v2 pack uses
+photorealistic Australian travel/provider scenes, exact live brand typography
+and separately composited copy so it does not depend on generated lettering.
+Use the lightweight JPEG exports for Facebook and retain the PNG masters for
+future crops. Social Studio may permanently delete rejected generated assets;
+that deletion does not remove any post already published to Facebook.

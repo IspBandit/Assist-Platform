@@ -202,3 +202,15 @@ backup and maintenance tools remain owner-only. The internal general-ledger
 routes remain available for compatibility but are removed from primary
 navigation. Normal commercial work is plans, invoices and reviewed CSV export
 to Xero or MYOB; bookkeeping remains in the external accounting product.
+
+## 2026-07-28 — Social Studio drafts can be permanently removed
+
+**Context:** EXP-003. Generated campaign experiments are not all suitable for a
+brand library, and archiving an unusable draft leaves visual clutter and stored
+files behind. **Decision:** brand-authorised content staff may permanently
+delete a Social Studio asset through a confirmed POST action. The brand-scoped
+database record and private image are removed together and deletion metadata is
+retained in the immutable audit log. A Facebook post already published from
+that asset remains live until separately removed on Facebook. **Accessibility:**
+the destructive action uses a labelled button, native confirmation and the
+existing success/error announcement path.

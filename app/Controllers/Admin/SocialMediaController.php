@@ -73,6 +73,39 @@ final class SocialMediaController extends Controller
         return $this->assetResponse($request, true);
     }
 
+    public function delete(Request $request): Response
+    {
+        $this->requirePermission('content.manage');
+        $brand = current_brand();
+        $id = (int) $request->input('id');
+        if (SocialMediaAssetService::find($id, $brand->databaseId()) === null) { $this->abort(404); }
+
+        try {
+            $asset = SocialMediaAssetService::delete($id, $brand->databaseId());
+            AuditLog::record(
+                'social_asset.deleted',
+                'social_media_asset',
+                (string) $id,
+                json_encode([
+                    'brand_id' => $brand->databaseId(),
+                    'platform' => $asset['platform'] ?? null,
+                    'format_key' => $asset['format_key'] ?? null,
+                    'status' => $asset['status'] ?? null,
+                    'facebook_post_id' => $asset['facebook_post_id'] ?? null,
+                    'image_path' => $asset['image_path'] ?? null,
+                ], JSON_UNESCAPED_SLASHES) ?: null,
+                null
+            );
+        } catch (Throwable $e) {
+            return $this->redirectWith('/admin/social-media', 'error', $e->getMessage());
+        }
+
+        $notice = empty($asset['facebook_post_id'])
+            ? 'Social asset and stored image deleted.'
+            : 'Social asset and stored image deleted. The existing Facebook post was not removed.';
+        return $this->redirectWith('/admin/social-media', 'success', $notice);
+    }
+
     public function download(Request $request): Response
     {
         return $this->assetResponse($request, false);

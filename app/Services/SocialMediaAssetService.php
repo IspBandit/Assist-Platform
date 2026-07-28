@@ -185,6 +185,33 @@ final class SocialMediaAssetService
         );
     }
 
+    /** @return array<string,mixed> */
+    public static function delete(int $id, int $brandId): array
+    {
+        $asset = self::find($id, $brandId);
+        if ($asset === null) {
+            throw new RuntimeException('Social asset not found.');
+        }
+
+        Database::beginTransaction();
+        try {
+            $deleted = Database::affecting(
+                'DELETE FROM social_media_assets WHERE id = ? AND brand_id = ?',
+                [$id, $brandId]
+            );
+            if ($deleted !== 1) {
+                throw new RuntimeException('The social asset could not be deleted.');
+            }
+            FileStorage::delete('social_media_assets', (string) $asset['image_path']);
+            Database::commit();
+        } catch (\Throwable $e) {
+            Database::rollBack();
+            throw $e;
+        }
+
+        return $asset;
+    }
+
     /** @return array{name:string,domain:string,dark:string,accent:string} */
     private static function brandStyle(string $key): array
     {

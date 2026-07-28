@@ -34,3 +34,8 @@ drafts until approved and are stored in brand-scoped private storage.
 - Keep parks/stays content in VanAssist.
 - Record campaigns consistently so a sale or handover preserves marketing history.
 - Approval in Social Studio is editorial approval, not automatic social posting.
+- Staff with brand-scoped content permission may permanently delete an unwanted
+  generated asset after an explicit confirmation. Deletion removes both the
+  database record and its private stored image and records an immutable audit
+  event. It never removes a post already published on an external network; the
+  confirmation and completion message state that limitation.

@@ -68,8 +68,8 @@ final class FileStorage
     public static function delete(string $pathKey, string $storedName): void
     {
         $path = self::resolveDir($pathKey) . DIRECTORY_SEPARATOR . basename($storedName);
-        if (is_file($path)) {
-            @unlink($path);
+        if (is_file($path) && !unlink($path)) {
+            throw new RuntimeException('The stored file could not be deleted.');
         }
     }
 
