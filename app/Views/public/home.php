@@ -10,7 +10,13 @@
 /** @var array<int,array<string,mixed>> $nearbyProviders */
 /** @var string $nearbyFindUrl */
 /** @var string $nearbyEndpoint */
+/** @var array<string,int> $homeEvidence */
 $this->extend('layouts.public');
+$evidence = $homeEvidence ?? [];
+$directoryCount = (int) ($evidence['directory_listings'] ?? 0);
+$verifiedCount = (int) ($evidence['verified_providers'] ?? 0);
+$townCount = (int) ($evidence['provider_towns'] ?? 0);
+$categoryCount = (int) ($evidence['service_categories'] ?? 0);
 ?>
 <?php $this->section('content'); ?>
 
@@ -110,6 +116,16 @@ $this->extend('layouts.public');
     </div>
 </section>
 
+<section class="evidence-ribbon" aria-label="Current VanAssist directory evidence">
+    <div class="container evidence-ribbon-grid">
+        <?php if ($directoryCount > 0): ?><div><strong><?= number_format($directoryCount) ?></strong><span>active service listings</span></div><?php endif; ?>
+        <?php if ($verifiedCount > 0): ?><div><strong><?= number_format($verifiedCount) ?></strong><span>verified providers</span></div><?php endif; ?>
+        <?php if ($townCount > 0): ?><div><strong><?= number_format($townCount) ?></strong><span>provider base towns</span></div><?php endif; ?>
+        <?php if ($categoryCount > 0): ?><div><strong><?= number_format($categoryCount) ?></strong><span>service categories</span></div><?php endif; ?>
+        <div class="evidence-ribbon-note"><strong>Clear listing labels</strong><span>Verified, featured and unclaimed mean different things</span></div>
+    </div>
+</section>
+
 <section class="section journey-launcher" aria-labelledby="journey-launcher-heading">
     <div class="container">
         <div class="journey-launcher-head">
@@ -146,6 +162,37 @@ $this->extend('layouts.public');
 </section>
 
 <?php $this->include('partials.home-nearby-providers'); ?>
+
+<section class="section process-section" aria-labelledby="process-heading">
+    <div class="container process-layout">
+        <div class="process-intro">
+            <p class="experience-kicker">Designed for real travel problems</p>
+            <h2 id="process-heading">From “who can help?” to a useful next step.</h2>
+            <p>VanAssist shows what is known, labels what has been checked and provides a path forward when local coverage is incomplete.</p>
+            <a class="text-link" href="<?= e(url('how-it-works')) ?>">Understand the complete process <span aria-hidden="true">→</span></a>
+        </div>
+        <ol class="process-list">
+            <li><span>01</span><div><h3>Describe the need and location</h3><p>Choose a service and search by town, postcode or your current location.</p></div></li>
+            <li><span>02</span><div><h3>Review the listing evidence</h3><p>Compare service model, location and clearly labelled verification status.</p></div></li>
+            <li><span>03</span><div><h3>Contact, request or register demand</h3><p>Contact a suitable business or record a local coverage gap.</p></div></li>
+        </ol>
+    </div>
+</section>
+
+<section class="section trust-section" aria-labelledby="trust-heading">
+    <div class="container trust-layout">
+        <div>
+            <p class="experience-kicker">Trust through transparency</p>
+            <h2 id="trust-heading">Know what each listing label means.</h2>
+            <p>Discovered businesses, paid visibility and reviewed provider evidence are not presented as though they are the same thing.</p>
+        </div>
+        <dl class="trust-definitions">
+            <div><dt>Verified</dt><dd>Provider evidence has been reviewed for the status displayed. Confirm suitability for your particular work.</dd></div>
+            <div><dt>Featured</dt><dd>A clearly labelled promotional position that does not replace service or location relevance.</dd></div>
+            <div><dt>Unclaimed</dt><dd>The business does not yet control the listing. Confirm current details directly before relying on them.</dd></div>
+        </dl>
+    </div>
+</section>
 
 <section class="section section-sand">
     <div class="container"><div class="product-cta">

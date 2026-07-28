@@ -150,7 +150,7 @@ final class Town extends Model
     {
         $query = trim($query);
         $state = null;
-        if (preg_match('/,\s*([A-Za-z]{2,3})\s*$/', $query, $m)) {
+        if (preg_match('/(?:,|\/)\s*([A-Za-z]{2,3})\s*$/', $query, $m)) {
             $state = strtoupper($m[1]);
             $query = trim(substr($query, 0, -strlen($m[0])));
         }

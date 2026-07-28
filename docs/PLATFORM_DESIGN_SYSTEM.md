@@ -203,3 +203,13 @@ Material changes to navigation, layout foundations, colour semantics, typography
 or interaction conventions require Experience workstream review and the UX part
 of the platform quality gate. Brand-only visual changes must still use shared
 tokens and components.
+
+## Conversion-led journey layer
+
+The premium visual system and conversion journey are complementary. Public
+homepages may pair optimised contextual hero photography with the approved
+`symbol-v2.svg` family, concise evidence, a three-step process and explicit
+trust language. Provider acquisition and provider workspaces reuse the same
+tokens, responsive breakpoints and focus treatment. These additions must not
+replace the approved symbols with cartoon vehicle artwork, hide primary search,
+or reintroduce colour-heavy brand tiles.
