@@ -230,7 +230,7 @@ final class LocalTorquePackSeeder
         }
         if ($town !== null && $lat !== null && $lng !== null && !$approximate
             && $town['latitude'] !== null && $town['longitude'] !== null) {
-            $declaredDistance = Geo::haversineKm(
+            $declaredDistance = Geo::haversineExactKm(
                 $lat,
                 $lng,
                 (float) $town['latitude'],
@@ -303,7 +303,7 @@ final class LocalTorquePackSeeder
             if (!is_array($payload) || !is_numeric($payload['lat'] ?? null) || !is_numeric($payload['lng'] ?? null)) {
                 continue;
             }
-            $distance = Geo::haversineKm(
+            $distance = Geo::haversineExactKm(
                 (float) $payload['lat'],
                 (float) $payload['lng'],
                 (float) $row['town_latitude'],

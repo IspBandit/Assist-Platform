@@ -151,7 +151,7 @@ try {
                 . '* COS(RADIANS(t.latitude)) '
                 . "* COS(RADIANS(t.longitude)-RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lng')) AS DECIMAL(10,6)))) "
                 . "+ SIN(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
-                . '* SIN(RADIANS(t.latitude))))) > 150'
+                . '* SIN(RADIANS(t.latitude)))))) > 150'
             ),
         ],
     ];
