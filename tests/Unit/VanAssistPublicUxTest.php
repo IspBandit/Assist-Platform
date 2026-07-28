@@ -41,6 +41,17 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('.service-directory-card:focus-visible', $css);
     }
 
+    public function testPublicIdentityIsTypographyLedWithoutPlatformSymbolsOrFavicon(): void
+    {
+        $header = $this->source('app/Views/partials/header.php');
+        $layout = $this->source('app/Views/layouts/public.php');
+
+        self::assertStringContainsString('brand--wordmark', $header);
+        self::assertStringNotContainsString('<img class="brand-mark"', $header);
+        self::assertStringContainsString('<link rel="icon" href="data:,">', $layout);
+        self::assertStringNotContainsString("['favicon']", $layout);
+    }
+
     public function testRadiusSearchUsesCoordinateCategoryLookup(): void
     {
         $controller = $this->source('app/Controllers/Site/SearchController.php');
