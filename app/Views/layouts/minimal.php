@@ -2,6 +2,7 @@
 /** @var \App\Core\View $this */
 $minimalBrand = current_brand();
 $minimalBrandMeta = $minimalBrand->metadata();
+$minimalBrandAssets = $minimalBrand->assets();
 ?>
 <!doctype html>
 <html lang="en-AU">
@@ -12,7 +13,7 @@ $minimalBrandMeta = $minimalBrand->metadata();
     <meta name="robots" content="noindex">
     <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
     <?php $this->include('partials.brand-theme'); ?>
-    <link rel="icon" href="data:,">
+    <link rel="icon" type="image/svg+xml" href="<?= e(asset($minimalBrandAssets['favicon'] ?? '/assets/brands/vanassist/favicon.svg')) ?>">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
