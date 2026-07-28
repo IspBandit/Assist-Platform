@@ -12,6 +12,7 @@ use App\Services\AuditLog;
 use App\Services\BroadcastAudience;
 use App\Services\NotificationService;
 use App\Services\ProviderCampaignCopy;
+use App\Services\ProviderCampaignDrafts;
 use RuntimeException;
 
 /**
@@ -24,6 +25,7 @@ final class NotificationsController extends Controller
     public function index(Request $request): Response
     {
         $this->requirePermission('notifications.send');
+        ProviderCampaignDrafts::prepareForBrand(current_brand()->databaseId());
         return $this->view('admin.notifications.index', [
             'title'         => 'Notifications',
             'notifications' => Database::select(
@@ -111,6 +113,9 @@ final class NotificationsController extends Controller
             'recipients'   => Database::select('SELECT email, status FROM notification_recipients WHERE notification_id = ? ORDER BY id LIMIT 200', [(int) $notification['id']]),
             'tests'        => Database::select('SELECT recipient_email,created_at FROM notification_test_deliveries WHERE notification_id=? ORDER BY id DESC LIMIT 10', [(int) $notification['id']]),
             'previewCount' => $previewCount,
+            'providerSummary' => in_array((string) $notification['audience_type'], ['providers', 'provider_category'], true)
+                ? BroadcastAudience::providerEmailSummary($notification['category_id'] !== null ? (int) $notification['category_id'] : null)
+                : null,
         ]);
     }
 
@@ -181,7 +186,7 @@ final class NotificationsController extends Controller
         if ($values['audience_type'] === 'region' && $values['region_id'] === null) {
             return 'Select a region for this audience.';
         }
-        if ($values['audience_type'] === 'category' && $values['category_id'] === null) {
+        if (in_array($values['audience_type'], ['category', 'provider_category'], true) && $values['category_id'] === null) {
             return 'Select a service category for this audience.';
         }
         return null;
@@ -210,6 +215,9 @@ final class NotificationsController extends Controller
             'regions'      => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'categories'   => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
             'campaignStyles' => ProviderCampaignCopy::styles(),
+            'providerSummary' => $previewCount !== null && in_array((string) ($values['audience_type'] ?? ''), ['providers', 'provider_category'], true)
+                ? BroadcastAudience::providerEmailSummary(isset($values['category_id']) && $values['category_id'] !== null ? (int) $values['category_id'] : null)
+                : null,
         ]);
     }
 

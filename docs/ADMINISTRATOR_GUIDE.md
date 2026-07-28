@@ -41,6 +41,20 @@ TrailerWise brand listings and category assignments. Automated matches are
 always unverified and retain discovery evidence; they must be claimed by the
 business or reviewed by an administrator before a verified badge is granted.
 
+## Provider email campaigns
+
+Open **Growth → Email campaigns**. VanAssist prepares a separate draft for each
+active service category that has at least one provider email. Each draft uses
+relevant human copy and a compressed service-family header, and targets only
+providers in that category. Review the copy and recipient summary before use.
+
+The summary deliberately separates all active providers with email from those
+with documented marketing consent. Addresses held for review cannot be queued.
+For every campaign, send an internal test, inspect it in the mailbox, run the
+25-provider pilot and review bounces, replies, complaints and opt-outs before
+using the 50/day and 100/day stages. Do not treat a public business email as
+consent and do not edit database consent fields merely to increase reach.
+
 ## Sensitive changes
 
 Do not enable billing, public indexing, broad data imports, destructive cleanup,

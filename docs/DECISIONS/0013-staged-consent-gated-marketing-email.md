@@ -28,6 +28,13 @@ The application does not automatically promote a campaign. Each batch is an
 audited admin action. Cancellation also cancels its still-pending queue entries.
 Suppression and a signed unsubscribe link remain mandatory at queue time.
 
+Provider campaigns may be segmented with the dedicated `provider_category`
+audience. Unlike the general category audience, it never includes customers.
+The administrator sees the number of active providers with email, the subset
+with complete consent evidence and the remainder held for review. A lightweight
+service-family image and human category-specific copy can be prepared in a
+draft, but neither changes recipient eligibility.
+
 ## Consequences
 
 - Provider seed/import data cannot silently become a marketing audience.
@@ -35,6 +42,9 @@ Suppression and a signed unsubscribe link remain mandatory at queue time.
   to be reviewed before volume increases.
 - Campaigns above 100 recipients require repeated daily admin actions.
 - Existing scheduled broadcasts return to draft for review.
+- When an administrator opens VanAssist email campaigns, the platform
+  idempotently prepares a review-only draft for each active provider service
+  category that has at least one listed provider email. No draft is queued.
 - These controls support compliance operations but do not replace legal advice
   or the operator's obligation to retain evidence and use relevant content.
 

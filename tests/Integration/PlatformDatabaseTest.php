@@ -431,6 +431,7 @@ final class PlatformDatabaseTest extends TestCase
 
     public function testVanAssistProviderCampaignIsPreparedButNotQueued(): void
     {
+        \App\Services\ProviderCampaignDrafts::prepareForBrand(1);
         $campaign = Database::selectOne(
             "SELECT status,delivery_stage,recipient_count,body FROM notifications WHERE brand_id=1 "
             . "AND title='Please check how travellers find your business on VanAssist'"
@@ -441,6 +442,16 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame('draft', $campaign['delivery_stage']);
         self::assertSame(0, (int) $campaign['recipient_count']);
         self::assertStringContainsString('https://vanassist.com.au/for-providers', (string) $campaign['body']);
+
+        $categoryCampaign = Database::selectOne(
+            "SELECT status,delivery_stage,recipient_count,audience_type,body FROM notifications WHERE brand_id=1 "
+            . "AND audience_type='provider_category' ORDER BY id LIMIT 1"
+        );
+        self::assertNotNull($categoryCampaign);
+        self::assertSame('draft', $categoryCampaign['status']);
+        self::assertSame('draft', $categoryCampaign['delivery_stage']);
+        self::assertSame(0, (int) $categoryCampaign['recipient_count']);
+        self::assertStringContainsString('/assets/img/email-campaigns/provider-', (string) $categoryCampaign['body']);
     }
 
     public function testEmailQueuePersistsCurrentBrandContext(): void

@@ -6,6 +6,7 @@ namespace Tests\Unit;
 
 use App\Services\NotificationService;
 use App\Services\ProviderCampaignCopy;
+use App\Services\ProviderCampaignDrafts;
 use App\Services\ProviderPackActivation;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +29,8 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('p.marketing_consent_source IN', $audience);
         self::assertStringContainsString("marketing_consent_evidence),'') IS NOT NULL", $audience);
         self::assertStringNotContainsString('treated as operational business contacts', $audience);
+        self::assertStringContainsString("case 'provider_category'", $audience);
+        self::assertStringContainsString('providerEmailSummary', $audience);
     }
 
     public function testServiceFamilyCopyIsRelevantHumanAndNotOverstated(): void
@@ -41,6 +44,31 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('Fuel gauges', $styles['fuel']['body']);
         self::assertStringContainsString('not a towing calculation', $styles['trailer']['body']);
         self::assertStringNotContainsString('guaranteed', strtolower(implode(' ', array_column($styles, 'body'))));
+        self::assertStringContainsString('provider-workshop.webp', $styles['workshop']['body']);
+        self::assertStringContainsString('not promising a miraculous queue of leads', $styles['workshop']['body']);
+    }
+
+    public function testEveryServiceCategoryMapsToOneCampaignFamily(): void
+    {
+        self::assertSame('fuel', ProviderCampaignCopy::familyForCategory('ev-charging'));
+        self::assertSame('trailer', ProviderCampaignCopy::familyForCategory('weighbridges-and-mobile-weighing'));
+        self::assertSame('stays', ProviderCampaignCopy::familyForCategory('caravan-parks-and-campgrounds'));
+        self::assertSame('compliance', ProviderCampaignCopy::familyForCategory('roadworthy-inspections'));
+        self::assertSame('workshop', ProviderCampaignCopy::familyForCategory('diesel-mechanics'));
+
+        $draft = ProviderCampaignCopy::forCategory('EV charging', 'ev-charging');
+        self::assertSame('A quick accuracy check for EV charging on VanAssist', $draft['subject']);
+        self::assertStringContainsString('<strong>EV charging</strong>', $draft['body']);
+        self::assertStringContainsString('provider-fuel.webp', $draft['body']);
+    }
+
+    public function testCampaignDraftPreparationIsVanAssistScoped(): void
+    {
+        self::assertSame(0, ProviderCampaignDrafts::prepareForBrand(2));
+        $source = $this->source('app/Services/ProviderCampaignDrafts.php');
+        self::assertStringContainsString("'provider_category'", $source);
+        self::assertStringContainsString("'draft','draft'", $source);
+        self::assertStringContainsString('NOT EXISTS', $source);
     }
 
     public function testComposeScreenHasNoBulkSendNowControl(): void
@@ -49,6 +77,18 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringNotContainsString('Send now', $view);
         self::assertStringContainsString('Save staged campaign', $view);
         self::assertStringContainsString('Apply starter', $view);
+        self::assertStringContainsString('held back until valid consent evidence is recorded', $view);
+    }
+
+    public function testCampaignHeadersAreLightweightRetinaWebpAssets(): void
+    {
+        $directory = dirname(__DIR__, 2) . '/public/assets/img/email-campaigns';
+        foreach (['workshop','electrical','tyres','rv','trailer','fuel','compliance','stays'] as $family) {
+            $path = $directory . '/provider-' . $family . '.webp';
+            self::assertFileExists($path);
+            self::assertLessThan(120_000, filesize($path));
+            self::assertSame([1200, 400], array_slice((array) getimagesize($path), 0, 2));
+        }
     }
 
     public function testProviderPackActivationOnlyRunsForSeededStaleProductionData(): void

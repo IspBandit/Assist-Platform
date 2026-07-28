@@ -8,6 +8,7 @@
 /** @var array<int,array<string,mixed>> $regions */
 /** @var array<int,array<string,mixed>> $categories */
 /** @var array<string,array{label:string,subject:string,body:string}> $campaignStyles */
+/** @var array{with_email:int,consent_eligible:int,held_for_review:int}|null $providerSummary */
 $this->extend('layouts.admin');
 $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
 ?>
@@ -21,6 +22,9 @@ $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
     <?php if ($formError): ?><div class="alert alert-error"><?= $this->e($formError) ?></div><?php endif; ?>
     <?php if ($previewCount !== null && $formError === null): ?>
         <div class="alert alert-success">This audience currently has <strong><?= (int) $previewCount ?></strong> consent-eligible recipient(s). Save the draft, send an internal test, then use the staged pilot.</div>
+        <?php if ($providerSummary !== null): ?>
+            <div class="alert alert-info"><strong><?= (int) $providerSummary['with_email'] ?></strong> active provider(s) have an email address. <strong><?= (int) $providerSummary['consent_eligible'] ?></strong> are currently consent-eligible and <strong><?= (int) $providerSummary['held_for_review'] ?></strong> are held back until valid consent evidence is recorded.</div>
+        <?php endif; ?>
     <?php endif; ?>
 
     <form method="post" action="<?= e(url('admin/notifications/save')) ?>" class="stack" style="margin-top:1rem">
