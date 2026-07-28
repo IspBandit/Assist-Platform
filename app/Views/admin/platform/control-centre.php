@@ -25,6 +25,25 @@ $this->extend('layouts.admin');
 
 <section class="card section-compact">
     <div class="page-header">
+        <div><p class="eyebrow">Launch gate</p><h2>Trust, search, outreach and operations</h2><p class="muted">This gate uses current production evidence. Missing or stale proof cannot display as a pass.</p></div>
+        <span class="badge badge-<?= $this->e((string) $launchReadiness['status']) ?>"><?= $this->e(strtoupper((string) $launchReadiness['status'])) ?></span>
+    </div>
+    <div class="grid grid-2">
+        <?php foreach ($launchReadiness['groups'] as $group): ?>
+            <article class="launch-gate-group">
+                <div class="page-header"><h3><?= $this->e((string) $group['label']) ?></h3><span class="badge badge-<?= $this->e((string) $group['status']) ?>"><?= $this->e((string) $group['status']) ?></span></div>
+                <ul class="control-centre-list">
+                    <?php foreach ($group['checks'] as $check): ?>
+                        <li><strong><?= $this->e((string) $check['label']) ?></strong><br><span class="muted"><?= $this->e((string) $check['detail']) ?></span> <span class="badge badge-<?= $this->e((string) $check['status']) ?>"><?= $this->e((string) $check['status']) ?></span></li>
+                    <?php endforeach; ?>
+                </ul>
+            </article>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<section class="card section-compact">
+    <div class="page-header">
         <div><p class="eyebrow">Transactional email</p><h2>Microsoft Graph certificate</h2><p class="muted">Private key material stays server-side and is never available through the admin console.</p></div>
         <span class="badge"><?= $this->e(ucfirst((string) $graphMail['status'])) ?></span>
     </div>

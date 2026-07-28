@@ -50,7 +50,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports and quarantine controls |
+| DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls |
 | DATA-002 | Duplicate detection and merge with audit preservation | ready | Dry run, merge tests and administrator workflow |
 | DATA-003 | Cross-brand recommendation policies | ready | Relevance rules, labelled origin and analytics |
 | DATA-004 | Coverage-gap reporting by brand/category/location | ready | Admin reports and zero-result analytics |
@@ -75,9 +75,9 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | OPS-001 | Immutable gated production releases | done | Production release workflow and runbook |
-| OPS-002 | Backup, restore and rollback rehearsal | ready | Timestamped successful rehearsal record |
+| OPS-002 | Backup, restore and rollback rehearsal | ready | Fresh machine-readable off-site backup and restore evidence displayed in the launch gate |
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
-| OPS-004 | Full Platform Quality Gate for release candidates | ready | Signed gate record linked to release |
+| OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
 | OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
 
 ## Commercial

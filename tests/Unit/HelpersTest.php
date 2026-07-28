@@ -105,6 +105,30 @@ final class HelpersTest extends TestCase
             ['term' => 'Gladstone', 'state' => 'QLD'],
             Town::parseSearchQuery('Gladstone / QLD')
         );
+        $this->assertSame(
+            ['term' => 'Emerald', 'state' => 'QLD'],
+            Town::parseSearchQuery('Emerald QLD')
+        );
+        $this->assertSame(
+            ['term' => 'Parramatta', 'state' => 'NSW'],
+            Town::parseSearchQuery('Parramatta, New South Wales')
+        );
+        $this->assertSame(
+            ['term' => 'Perth', 'state' => 'WA'],
+            Town::parseSearchQuery('  Perth   Western Australia  ')
+        );
+        $this->assertSame(
+            ['term' => '4720', 'state' => 'QLD'],
+            Town::parseSearchQuery('Emerald QLD 4720')
+        );
+        $this->assertSame(
+            ['term' => '2150', 'state' => null],
+            Town::parseSearchQuery('Parramatta 2150')
+        );
+        $this->assertSame(
+            ['term' => 'Victoria Point', 'state' => null],
+            Town::parseSearchQuery('Victoria Point')
+        );
     }
 
     public function testGraphTransportDoesNotRequireAnSmtpHost(): void

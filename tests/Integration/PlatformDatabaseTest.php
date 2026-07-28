@@ -14,6 +14,7 @@ use App\Platform\Brand\BrandRegistry;
 use App\Services\EmailQueue;
 use App\Services\EmailSuppression;
 use App\Services\Mailer;
+use App\Services\LaunchReadinessService;
 use App\Services\PlatformBackfill;
 use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
@@ -64,6 +65,22 @@ final class PlatformDatabaseTest extends TestCase
             . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records good WHERE good.provider_id=p.id '
             . 'AND good.publishable=1 AND good.needs_review=0)'
         ));
+        self::assertSame(0, (int) Database::scalar(
+            'SELECT COUNT(DISTINCT psr.id) FROM provider_source_records psr '
+            . 'JOIN providers p ON p.id=psr.provider_id JOIN towns t ON t.id=p.base_town_id '
+            . 'JOIN provider_brand_listings l ON l.provider_id=p.id '
+            . "WHERE p.is_unclaimed=1 AND p.status='active' AND l.status='active' AND l.search_visible=1 "
+            . 'AND psr.publishable=1 AND psr.needs_review=0 '
+            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lat')) IN ('INTEGER','DOUBLE') "
+            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lng')) IN ('INTEGER','DOUBLE') "
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
+            . 'AND (6371 * ACOS(LEAST(1,GREATEST(-1, '
+            . "COS(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . '* COS(RADIANS(t.latitude)) '
+            . "* COS(RADIANS(t.longitude)-RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lng')) AS DECIMAL(10,6)))) "
+            . "+ SIN(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . '* SIN(RADIANS(t.latitude))))) > 150'
+        ), 'Public source coordinates must not contradict the displayed Australian town by more than 150 km.');
 
         $fuelCategoryId = (int) Database::scalar(
             "SELECT id FROM service_categories WHERE slug='fuel-and-travel-stops'"
@@ -71,6 +88,20 @@ final class PlatformDatabaseTest extends TestCase
         $nearGladstone = Provider::forCategoryNear($fuelCategoryId, -23.842, 151.255, 150);
         self::assertNotEmpty($nearGladstone);
         self::assertLessThanOrEqual(150.0, (float) $nearGladstone[0]['distance_km']);
+    }
+
+    public function testLaunchGateProducesAllFourEvidenceGroups(): void
+    {
+        $readiness = LaunchReadinessService::inspect();
+        self::assertContains($readiness['status'], ['pass', 'warning', 'fail']);
+        self::assertSame(
+            ['data_trust', 'search_reliability', 'compliant_outreach', 'operational_proof'],
+            array_keys($readiness['groups'])
+        );
+        foreach ($readiness['groups'] as $group) {
+            self::assertNotEmpty($group['checks']);
+            self::assertContains($group['status'], ['pass', 'warning', 'fail']);
+        }
     }
 
     public function testPlatformBrandsAndBackfillIntegrity(): void

@@ -62,6 +62,31 @@ final class LocalTorquePackTest extends TestCase
         );
     }
 
+    public function testKnownRetailChainsDoNotInheritUnsupportedWorkshopServices(): void
+    {
+        self::assertSame(
+            ['auto-electrician', 'battery-specialist'],
+            LocalTorquePackSeeder::sanitiseCategories(
+                ['name' => 'Battery World Emerald', 'source' => 'public-source'],
+                ['general-mechanic', 'tyre-shop', 'auto-electrician', 'battery-specialist', 'suspension']
+            )
+        );
+        self::assertSame(
+            ['tyre-shop'],
+            LocalTorquePackSeeder::sanitiseCategories(
+                ['name' => 'Emerald Tyrepower', 'source' => 'public-source'],
+                ['general-mechanic', 'auto-electrician', 'tyre-shop']
+            )
+        );
+        self::assertSame(
+            ['fuel-station'],
+            LocalTorquePackSeeder::sanitiseCategories(
+                ['name' => 'Ampol Emerald', 'source' => 'public-source', 'categories' => ['fuel-station', 'general-mechanic']],
+                ['fuel-station', 'general-mechanic']
+            )
+        );
+    }
+
     public function testFuelRowsRetainRequiredSourceAttribution(): void
     {
         foreach ($this->json('providers-publishable.json') as $provider) {

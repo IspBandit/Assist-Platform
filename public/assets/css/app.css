@@ -561,6 +561,14 @@ legend { font-weight: 700; padding: 0 .4rem; }
 .badge-neutral { background: #eceae3; color: var(--muted); }
 .badge-verified { background: var(--teal-light); color: var(--teal-dark); }
 .badge-sponsored { background: #fff4e0; color: #9a5b00; border: 1px solid #f0d59a; }
+.badge-pass { background: #e7f2ea; color: #17603a; }
+.badge-warning { background: #fbf0d9; color: #7a4d00; }
+.badge-fail { background: #fbeae8; color: #9b2c24; }
+.launch-gate-group { min-width: 0; padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--surface, #f8faf9); }
+.launch-gate-group .page-header { align-items: center; margin-bottom: .5rem; }
+.launch-gate-group .page-header h3 { margin: 0; }
+.launch-gate-group .control-centre-list li { overflow-wrap: anywhere; }
+.launch-gate-group .control-centre-list .badge { margin-left: .35rem; }
 
 /* ---------- Homepage nearby providers ---------- */
 .nearby-section { padding-top: 2rem; }
