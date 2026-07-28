@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\SecretRedactor;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
 use App\Services\Mailer;
@@ -49,6 +50,10 @@ final class EmailTemplatesController extends Controller
             "SELECT recipient_email, subject, last_error, last_attempt_at FROM email_queue "
             . "WHERE status = 'failed' ORDER BY last_attempt_at DESC LIMIT 5"
         );
+        foreach ($recentFailures as &$failure) {
+            $failure['last_error'] = SecretRedactor::redact((string) ($failure['last_error'] ?? ''));
+        }
+        unset($failure);
 
         return $this->view('admin.email-templates.index', [
             'title'        => 'Email templates',
@@ -92,7 +97,7 @@ final class EmailTemplatesController extends Controller
                 "SELECT last_error FROM email_queue WHERE status = 'failed' AND last_error IS NOT NULL ORDER BY last_attempt_at DESC LIMIT 1"
             );
             if ($err !== '') {
-                $msg .= ' Last error: ' . $err;
+                $msg .= ' Last error: ' . SecretRedactor::redact($err);
             }
         }
         return $this->redirectWith('/admin/email-templates', $type, $msg);
@@ -236,7 +241,7 @@ final class EmailTemplatesController extends Controller
         $row = Database::selectOne('SELECT status,last_error FROM email_queue WHERE id=?', [$queueId]);
         return [
             'status' => (string) ($row['status'] ?? 'unknown'),
-            'error' => (string) ($row['last_error'] ?? ''),
+            'error' => SecretRedactor::redact((string) ($row['last_error'] ?? '')),
         ];
     }
 

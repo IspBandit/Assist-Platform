@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\Logger;
+use App\Core\SecretRedactor;
 use RuntimeException;
 
 /** App-only Microsoft Graph mail transport using a certificate credential. */
@@ -121,25 +122,46 @@ final class MicrosoftGraphMailClient
     /** @param list<string> $headers @param list<int> $expected */
     private static function request(string $url, string $body, array $headers, array $expected): string
     {
-        $context = stream_context_create(['http' => ['method' => 'POST', 'header' => implode("\r\n", $headers), 'content' => $body, 'ignore_errors' => true, 'timeout' => 30]]);
-        $response = @file_get_contents($url, false, $context);
-        if (function_exists('http_get_last_response_headers')) {
-            $responseHeaders = http_get_last_response_headers();
-        } else {
-            // PHP < 8.4 defines this request-local variable after an HTTP
-            // stream call. Resolve it indirectly so PHP 8.5 does not emit the
-            // deprecation attached to direct source references.
-            $definedVariables = get_defined_vars();
-            $responseHeaders = $definedVariables['http_response_header'] ?? [];
+        if (!function_exists('curl_init')) {
+            throw new RuntimeException('Microsoft Graph requires the cURL extension.');
         }
-        $statusLine = is_array($responseHeaders) ? (string) ($responseHeaders[0] ?? '') : '';
-        preg_match('/\s(\d{3})\s/', $statusLine, $matches);
-        $status = (int) ($matches[1] ?? 0);
+        return self::curlRequest($url, $body, $headers, $expected);
+    }
+
+    /** @param list<string> $headers @param list<int> $expected */
+    private static function curlRequest(string $url, string $body, array $headers, array $expected): string
+    {
+        $handle = curl_init($url);
+        if ($handle === false) {
+            throw new RuntimeException('Microsoft Graph HTTP client could not be initialised.');
+        }
+        curl_setopt_array($handle, [
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_FOLLOWLOCATION => false,
+        ]);
+        $response = curl_exec($handle);
+        $status = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+        $networkError = curl_error($handle);
+        curl_close($handle);
+
         if (!in_array($status, $expected, true)) {
-            $safe = is_string($response) ? mb_substr(strip_tags($response), 0, 500) : 'No response body';
-            throw new RuntimeException("Microsoft Graph request failed with HTTP {$status}: {$safe}");
+            $detail = $networkError !== '' ? SecretRedactor::redact($networkError) : self::safeErrorBody($response);
+            throw new RuntimeException("Microsoft Graph request failed with HTTP {$status}: {$detail}");
         }
         return is_string($response) ? $response : '';
+    }
+
+    private static function safeErrorBody(mixed $response): string
+    {
+        if (!is_string($response) || $response === '') {
+            return 'No response body';
+        }
+        return mb_substr(SecretRedactor::redact(strip_tags($response)), 0, 500);
     }
 
     private static function resolvePath(string $path): string
