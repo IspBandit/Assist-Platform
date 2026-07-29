@@ -49,13 +49,15 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 **How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile; VanAssist reviews authority before granting control.
 
+**Did the tablet administration update change public search?** No. Its shared stylesheet changes are restricted to `admin-*` controls inside the authenticated administration shell; customer search, map, tracking and provider-ranking behaviour are unchanged.
+
 ## Version introduced
 
 2026-07 VanAssist mobile map increment.
 
 ## Last updated
 
-2026-07-30.
+2026-07-30 (administration-only tablet boundary confirmed).
 
 ## Owner
 

@@ -50,6 +50,11 @@ See **Requests, runs and growth** for operational work and the Administrator Gui
 
 **Can I edit another provider by changing an ID?** No. Ownership is enforced by the controller.
 
+Public profile visits and contact actions are attributed to the originating
+search when that context is available. This gives providers clearer performance
+evidence without exposing a visitor's precise device location or changing
+listing permissions.
+
 ## Version introduced
 
 Current repository baseline.

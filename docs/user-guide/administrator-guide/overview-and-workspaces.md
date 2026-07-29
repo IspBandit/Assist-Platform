@@ -17,12 +17,14 @@ The `/admin` route group requires authentication and an accepted administrative 
 - **Dashboard:** the workspace/launch alert shows the current brand, launch mode and maintenance state. **Needs attention** prioritises live request, provider-review, document and failed-email queues. The 30-day Website activity card shows Visitors, Page views, Searches, Profiles opened and Contact actions. Reference totals, recent administrative activity and scheduled tasks remain available in disclosure panels so they do not compete with launch decisions. Cards appear only when their data and permission checks allow them.
 - **Launch readiness / control centre:** platform totals show Users, Canonical providers, Active memberships and queued/failed email. Launch-gate groups display a label and status. Microsoft Graph certificate details show Transport, Sending mailbox, Certificate expires, Days remaining and the rendered fingerprint/health warning. Each brand card shows name, configured status, primary domain, Listings, Categories and Social assets. Scheduled operations show Task, Status and Last run.
 - **Workspace switcher:** lists only brands returned by `AdminBrandAccess`, with brand name, configured status and current-workspace state. Its form submits the target brand plus the constrained `/admin` return path.
+- **Tablet and phone navigation:** at tablet widths the permanent sidebar becomes a **Menu** button and a scrollable left drawer. Tap outside the drawer, choose a destination or press Escape to close it. Portrait tablets use two-column dashboard groups where space allows; phones use one column. Wide tables stay inside their own horizontal scroll area instead of pushing controls off screen.
 
 ## Actions
 
 - **Dashboard:** open permitted stat-card destinations and **Open website insights**.
 - **Launch readiness / control centre:** **Open Brand Builder**, **Open Data Intelligence**, **Manage Data Sources**, **Open [brand] dashboard**, and the private-blueprint validation link.
 - **Admin header:** open context **Help**, open the workspace menu, select an available workspace (using the cross-domain handoff when required), **View site** where shown, or **Sign out**.
+- **Tablet/phone menu:** tap **Menu**, then tap a permitted destination. The drawer traps keyboard focus while open and returns focus to **Menu** when dismissed with Escape or the backdrop.
 
 ## Workflows
 
@@ -55,7 +57,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-07-30 (tablet administration update).
 
 ## Owner
 

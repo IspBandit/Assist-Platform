@@ -158,6 +158,8 @@ $documentationTarget = \App\Services\Documentation\DocumentationLinkResolver::fo
         </nav>
     </aside>
 
+    <button type="button" class="admin-nav-scrim" aria-label="Close administration menu" tabindex="-1"></button>
+
     <div class="admin-main">
         <div class="admin-topbar">
             <div class="admin-page-heading"><span><?= $this->e($adminBrand->name()) ?></span><strong><?= $this->e($title ?? 'Admin') ?></strong></div>

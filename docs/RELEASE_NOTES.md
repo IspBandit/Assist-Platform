@@ -7,6 +7,7 @@ may remain as dated files and are linked here rather than copied.
 
 ### Website interaction recording repaired
 
+- Made the permission-scoped administrator shell practical on portrait and landscape tablets: navigation now uses a touch-friendly side drawer up to 1100px, supports outside-tap/Escape dismissal and keyboard focus containment, compacts crowded header actions, keeps forms within the viewport and contains wide tables in their own scroll area.
 - Corrected the first-party funnel-event insert so searches, provider profile opens, contact actions and confirmed outcomes retain the complete database parameter list instead of failing silently.
 - Added regression coverage for the exact placeholder/value mismatch that caused the lost events.
 - Made the VanAssist main search location-first on desktop and mobile. It resolves the nearest town without submitting, while any typed town, suburb or postcode immediately clears GPS coordinates and remains authoritative.

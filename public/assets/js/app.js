@@ -60,6 +60,7 @@
     // Mobile navigation toggle (admin sidebar).
     var adminToggle = document.querySelector('.admin-nav-toggle');
     var sidebar = document.querySelector('.admin-sidebar');
+    var adminScrim = document.querySelector('.admin-nav-scrim');
     if (adminToggle && sidebar) {
         var closeAdminNav = function () {
             sidebar.classList.remove('open');
@@ -82,10 +83,27 @@
         sidebar.querySelectorAll('nav a').forEach(function (link) {
             link.addEventListener('click', closeAdminNav);
         });
+        adminScrim?.addEventListener('click', function () {
+            closeAdminNav();
+            adminToggle.focus();
+        });
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape' && sidebar.classList.contains('open')) {
                 closeAdminNav();
                 adminToggle.focus();
+            }
+            if (event.key === 'Tab' && sidebar.classList.contains('open')) {
+                var focusable = Array.prototype.slice.call(sidebar.querySelectorAll('button:not([disabled]), a[href]'));
+                if (!focusable.length) return;
+                var first = focusable[0];
+                var last = focusable[focusable.length - 1];
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
             }
         });
     }
