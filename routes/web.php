@@ -15,6 +15,10 @@ return static function (Router $router): void {
         $router->get('/runtime-assets/brands/{brand}/{name}', 'Site\AssetController@brand', 'assets.brand');
         $router->get('/runtime-assets/{group}/{name}', 'Site\AssetController@file', 'assets.file');
         $router->get('/', 'Site\HomeController@index', 'home');
+        $router->get('/help', 'Site\DocumentationController@index', 'documentation.index');
+        $router->get('/help/whats-new', 'Site\DocumentationController@whatsNew', 'documentation.whats-new');
+        $router->get('/help/{guide}', 'Site\DocumentationController@guide', 'documentation.guide');
+        $router->get('/help/{guide}/{article}', 'Site\DocumentationController@article', 'documentation.article');
         $router->get('/email/unsubscribe', 'Site\EmailPreferenceController@unsubscribe', 'email.unsubscribe');
         $router->get('/email/listing-notices/stop', 'Site\EmailPreferenceController@stopDirectoryNotices', 'email.directory-notices.stop');
         $router->get('/calculator', 'Site\TowSmartController@calculator', 'towsmart.calculator');

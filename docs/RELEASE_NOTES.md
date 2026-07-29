@@ -20,6 +20,14 @@ may remain as dated files and are linked here rather than copied.
   state. Paid selection and charging remain disabled pending COM-004 acceptance.
 - Completed INF-003's fail-closed environment and integration configuration
   contract, corrected the free-plan example and documented secret rotation.
+- Added OPS-006's repository-backed living documentation system with seven
+  guide sections, global search and audience/brand/module/version filters,
+  contextual dashboard Help links, mobile/accessibility treatment and a What's
+  new view. Administrator/developer/API material remains behind the admin role
+  gate; public help exposes only customer/provider and release information.
+- Added CI and pull-request enforcement so changed public, customer, provider,
+  administrator or API behaviour must update the matching registered guide and
+  these release notes. No migration or environment change is required.
 
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.

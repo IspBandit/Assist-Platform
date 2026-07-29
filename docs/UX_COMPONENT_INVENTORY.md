@@ -181,3 +181,13 @@ documented and verified. Merely sharing a CSS class does not qualify.
 
 All components collapse to one column at phone widths, preserve visible focus,
 respect reduced motion and use the shared brand tokens and premium symbol family.
+
+## Living documentation components
+
+- `documentation-navigation`: shared guide index and What's new entry point.
+- `documentation-search`: labelled query plus audience, brand, module and
+  version filters with server-rendered results and empty state.
+- `documentation-article`: repository-backed article body with audience,
+  version, update date and owner metadata.
+- `context-help`: route-resolved Help action in admin, customer, provider and
+  park dashboard layouts.

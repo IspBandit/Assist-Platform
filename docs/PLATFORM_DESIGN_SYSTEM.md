@@ -275,3 +275,15 @@ brand-scoped web manifest and a minimal service worker. The worker may cache
 release-owned public assets only; dynamic pages, searches, provider details,
 accounts and administration are always network-controlled and are never placed
 in an offline cache.
+
+## Living documentation surfaces
+
+Documentation reuses the existing typography, card, form, button, focus and
+responsive tokens. Its shared shell contains a narrow-width scrollable guide
+navigation, labelled search/filter form, result cards, article metadata and
+safe server-rendered Markdown. Operational guides are available only through
+the authenticated admin surface; public help exposes customer/provider guidance
+and release information. Every dashboard layout supplies a contextual Help
+action resolved from the current route. Help remains keyboard reachable,
+readable at 360px, usable without JavaScript and must not expose administrator
+or developer material through public routes.

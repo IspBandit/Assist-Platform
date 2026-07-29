@@ -26,6 +26,10 @@ the current team, but each perspective must be evaluated explicitly.
 
 - Relevant unit, integration and end-to-end tests pass.
 - Static analysis, Composer validation and production dependency build pass.
+- Changed public, customer, provider, administrator and API behaviour is
+  reflected in the matching maintained guide, and `RELEASE_NOTES.md` records
+  the user-visible or operator-visible change. Documentation deferral is a
+  failed gate, not a release follow-up.
 - Security, privacy, performance and observability impacts are addressed.
 - Secrets are absent; environment changes are documented.
 - Health checks, backup, migration and rollback steps are executable.
@@ -64,4 +68,5 @@ Business: PASS / CONDITIONAL / FAIL — evidence
 Overall gate:
 Approver/date:
 Release and rollback notes:
+Documentation impact and updated guides:
 ```

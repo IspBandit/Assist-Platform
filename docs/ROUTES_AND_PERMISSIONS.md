@@ -16,6 +16,8 @@ state-changing browser routes use CSRF protection.
 | Admin | `/admin/*` | Moderator/administrator/super-administrator role plus controller permission checks |
 | Installer | `/install/*` | Setup authorisation and permanent installer lock after installation |
 | Stripe webhook | `/billing/webhook/stripe` | No browser CSRF; signature verification and idempotency required |
+| Public documentation | `/help`, `/help/whats-new`, `/help/{guide}/{article}` | Public catalogue allowlist; administrator/developer/API guides return 404 |
+| Operational documentation | `/admin/help`, `/admin/help/whats-new`, `/admin/help/{guide}/{article}` | Existing admin role middleware; all registered guides searchable |
 
 Common admin permissions include `users.manage`, `users.export`,
 `providers.manage`, `providers.approve`, `documents.verify`, `requests.manage`,
@@ -39,6 +41,11 @@ event metadata.
 
 Adding a route requires appropriate middleware, controller ownership checks,
 brand isolation tests and an update here when it creates a new surface.
+
+Dashboard layouts resolve their Help link from registered article routes. A
+missing exact route falls back to the owning audience overview; this does not
+grant access because the destination controller applies its normal public/admin
+catalogue boundary.
 
 ## Provider email campaign recipients
 
