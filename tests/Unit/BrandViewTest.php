@@ -8,6 +8,7 @@ use App\Core\View;
 use App\Platform\Brand\BrandContext;
 use App\Platform\Brand\BrandRegistry;
 use App\Services\Settings;
+use App\Services\SeoSchema;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -49,6 +50,31 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('<title>Towing weight calculator — TowSmart</title>', $html);
         self::assertStringContainsString('property="og:site_name" content="TowSmart"', $html);
         self::assertStringContainsString('property="og:url" content="https://towsmart.com.au/calculator"', $html);
+        self::assertStringContainsString('<link rel="canonical" href="https://towsmart.com.au/calculator">', $html);
+        self::assertStringContainsString('property="og:locale" content="en_AU"', $html);
+    }
+
+    public function testSeoMetadataSupportsSearchEngineVerificationAndImagePreviews(): void
+    {
+        $this->setSettingsCache([
+            'site_name' => 'VanAssist',
+            'launch_mode' => 'public',
+            'google_site_verification_vanassist' => 'google-token_123',
+            'bing_site_verification_vanassist' => 'bing-token=456',
+        ]);
+        BrandContext::set($this->vanAssistBrand());
+        $_SERVER['REQUEST_URI'] = '/services?distance=50';
+
+        $html = View::render('partials.seo-meta', [
+            'title' => 'Caravan services',
+            'ogImage' => 'https://vanassist.test/assets/share.webp',
+        ]);
+
+        self::assertStringContainsString('<link rel="canonical" href="https://vanassist.test/services">', $html);
+        self::assertStringContainsString('name="google-site-verification" content="google-token_123"', $html);
+        self::assertStringContainsString('name="msvalidate.01" content="bing-token=456"', $html);
+        self::assertStringContainsString('name="twitter:image" content="https://vanassist.test/assets/share.webp"', $html);
+        self::assertStringContainsString('property="og:image:alt" content="Caravan services — VanAssist"', $html);
     }
 
     public function testNonVanAssistFooterUsesBrandSupportAddress(): void
@@ -64,6 +90,19 @@ final class BrandViewTest extends TestCase
 
         self::assertStringContainsString('mailto:support@towsmart.com.au', $html);
         self::assertStringNotContainsString('mailto:support@vanassist.com.au', $html);
+    }
+
+    public function testBreadcrumbSchemaUsesVisibleHierarchyWithoutInventedFields(): void
+    {
+        $json=SeoSchema::breadcrumbs([
+            ['name'=>'Home','url'=>'https://vanassist.test/'],
+            ['name'=>'Services','url'=>'https://vanassist.test/services'],
+            ['name'=>'12 volt electrical','url'=>'https://vanassist.test/services/12-volt-electrical'],
+        ]);
+        $schema=json_decode($json,true,512,JSON_THROW_ON_ERROR);
+        self::assertSame('BreadcrumbList',$schema['@type']);
+        self::assertSame(3,$schema['itemListElement'][2]['position']);
+        self::assertSame('12 volt electrical',$schema['itemListElement'][2]['name']);
     }
 
     public function testBrandThemePublishesPlatformSemanticTokens(): void

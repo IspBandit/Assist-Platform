@@ -14,6 +14,7 @@ final class ProviderCampaignDrafts
         if ($brandId !== 1) {
             return 0;
         }
+        $brandName = trim((string) Database::scalar('SELECT name FROM brands WHERE id=?', [$brandId])) ?: 'VanAssist';
 
         $categories = Database::select(
             "SELECT DISTINCT sc.id,sc.name,sc.slug FROM service_categories sc "
@@ -34,6 +35,12 @@ final class ProviderCampaignDrafts
                 . "SELECT ?,?,?,'email','provider_marketing','provider_category',?,'draft','draft',0,NULL,NULL,NOW(),NOW() "
                 . "WHERE NOT EXISTS (SELECT 1 FROM notifications WHERE brand_id=? AND campaign_type='provider_marketing' AND audience_type='provider_category' AND category_id=?)",
                 [$brandId, $copy['subject'], $copy['body'], (int) $category['id'], $brandId, (int) $category['id']]
+            );
+            $created += Database::affecting(
+                "INSERT INTO notifications (brand_id,title,body,channel,campaign_type,audience_type,category_id,status,delivery_stage,recipient_count,scheduled_at,created_by,created_at,updated_at) "
+                . "SELECT ?,?,?,'email','directory_accuracy','provider_category',?,'draft','draft',0,NULL,NULL,NOW(),NOW() "
+                . "WHERE NOT EXISTS (SELECT 1 FROM notifications WHERE brand_id=? AND campaign_type='directory_accuracy' AND audience_type='provider_category' AND category_id=?)",
+                [$brandId, DirectoryAccuracyNotice::subject($brandName), DirectoryAccuracyNotice::previewBody($brandName), (int)$category['id'], $brandId, (int)$category['id']]
             );
         }
         return $created;

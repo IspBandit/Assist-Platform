@@ -186,6 +186,10 @@ return static function (Router $router): void {
 
         // Caravan parks (Phase 7): applications, approval, documents, service-day requests.
         $router->get('/parks', 'Admin\ParksController@index', 'admin.parks');
+        $router->get('/parks/import', 'Admin\ParksController@importQueue', 'admin.parks.import');
+        $router->post('/parks/import/upload', 'Admin\ParksController@importUpload');
+        $router->post('/parks/import/process', 'Admin\ParksController@importProcess');
+        $router->post('/parks/import/review', 'Admin\ParksController@importReview');
         $router->get('/parks/show', 'Admin\ParksController@show', 'admin.parks.show');
         $router->get('/parks/form', 'Admin\ParksController@form');
         $router->post('/parks/save', 'Admin\ParksController@save');

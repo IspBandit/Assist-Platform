@@ -16,7 +16,7 @@ $qs = static function (array $extra) use ($status, $search): string {
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
-    <h1 style="margin:0 0 1rem">Caravan parks <span class="muted" style="font-size:1rem">(<?= (int) $total ?>)</span></h1>
+    <div class="admin-section-heading"><h1>Places to stay <span class="muted" style="font-size:1rem">(<?= (int) $total ?>)</span></h1><?php if(current_brand()->id()==='vanassist' && (auth()->isSuperAdmin() || auth()->hasAnyRole('administrator','platform-administrator'))): ?><a class="btn btn-secondary" href="<?= e(url('admin/parks/import')) ?>">Review discovered stays</a><?php endif; ?></div>
     <form method="get" action="<?= e(url('admin/parks')) ?>" class="grid grid-3" style="align-items:flex-end">
         <div class="form-group mb-0">
             <label for="status">Status</label>

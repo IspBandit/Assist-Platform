@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Helpers\Geo;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
+use App\Services\SeoSchema;
 use App\Validation\Validator;
 
 /**
@@ -275,6 +276,11 @@ final class ParkController extends Controller
             'title'           => ($park['seo_title'] ?: $park['name']) . ' — VanAssist',
             'metaDescription' => $park['seo_description'] ?: ('Find caravan and RV service near ' . $park['name'] . '.'),
             'canonical'       => url('caravan-parks/' . $park['slug']),
+            'jsonLd'          => SeoSchema::breadcrumbs([
+                ['name'=>'Home','url'=>url('/')],
+                ['name'=>'Places to stay','url'=>url('stays')],
+                ['name'=>(string)$park['name'],'url'=>url('caravan-parks/'.$park['slug'])],
+            ]),
             'park'            => $park,
             'runs'            => CaravanPark::nearbyRuns($park['town_id'] ? (int) $park['town_id'] : null, $park['region_id'] ? (int) $park['region_id'] : null),
             'isManaged'       => (int) Database::scalar('SELECT COUNT(*) FROM caravan_park_users WHERE park_id = ?', [$id]) > 0,
