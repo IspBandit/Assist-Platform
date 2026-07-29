@@ -53,8 +53,8 @@ foreach ($allResults as $provider) {
         'location' => trim((string) ($provider['town_name'] ?? '') . (!empty($provider['state_abbr']) ? ', ' . $provider['state_abbr'] : '')),
         'possible' => (int) ($provider['is_inferred'] ?? 0) === 1,
         'featured' => !empty($provider['is_featured']),
-        'profile' => url('providers/' . (string) ($provider['slug'] ?? '')),
-        'directions' => $providerDestination !== '' ? map_directions_url($providerDestination) : null,
+        'profile' => url('providers/' . (string) ($provider['slug'] ?? '')) . ($searchId ? '?s=' . (int) $searchId : ''),
+        'directions' => $providerDestination !== '' ? url('go/directions/' . (string) ($provider['slug'] ?? '')) . ($searchId ? '?s=' . (int) $searchId : '') : null,
         'destination' => $providerDestination !== '' ? $providerDestination : null,
     ];
 }

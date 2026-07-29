@@ -10,7 +10,7 @@ Caravan, motorhome and RV travellers planning before departure or searching whil
 
 ## Permissions
 
-No account is required. Device location is optional and is requested only after the user chooses **Use my current location**.
+No account is required. On the main VanAssist search, the browser may ask for optional device-location permission automatically so the nearest town can be prepared. Denying permission leaves the full manual search available.
 
 ## Fields
 
@@ -18,7 +18,7 @@ No account is required. Device location is optional and is requested only after 
 
 ## Actions
 
-**Use my current location** asks the browser for coordinates. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. A numbered map pin opens the exact returned provider summary, including **Details**, **Show in list** and **Directions** when the listing has a navigable workshop address. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The provider list remains fully usable without JavaScript or map tiles.
+The main search attempts to resolve the current location without submitting the form. **Use my current location** repeats that request when needed. Typing any town, suburb or postcode clears the device coordinates immediately, so the typed place always wins. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. A numbered map pin opens the exact returned provider summary, including **Details**, **Show in list** and **Directions** when the listing has a navigable workshop address. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The provider list remains fully usable without JavaScript or map tiles.
 
 ## Workflows
 

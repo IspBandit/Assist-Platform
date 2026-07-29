@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Website interaction recording repaired
+
+- Corrected the first-party funnel-event insert so searches, provider profile opens, contact actions and confirmed outcomes retain the complete database parameter list instead of failing silently.
+- Added regression coverage for the exact placeholder/value mismatch that caused the lost events.
+- Made the VanAssist main search location-first on desktop and mobile. It resolves the nearest town without submitting, while any typed town, suburb or postcode immediately clears GPS coordinates and remains authoritative.
+- Reordered the administrator dashboard around queues needing action and website demand. Inventory totals, audit detail and scheduled tasks remain available in compact disclosure panels instead of competing with launch work.
+- Added data-freshness timestamps, search-success interpretation and a daily traffic pulse to Website Insights; provider reporting is now isolated to the active brand.
+
 ### Consolidated enterprise workstream
 
 - Established Assist Platform Enterprise as the single product and governance

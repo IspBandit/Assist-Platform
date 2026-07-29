@@ -26,6 +26,8 @@ final class WebsiteInsightsService
         $profileViews = self::count("SELECT COUNT(*) FROM analytics_events WHERE brand_id=? AND event_name='provider_profile_viewed' AND is_excluded=0 AND created_at BETWEEN ? AND ?", $window);
         $contacts = self::count('SELECT COUNT(*) FROM provider_contact_actions WHERE brand_id=? AND is_excluded=0 AND created_at BETWEEN ? AND ?', $window);
         $confirmed = self::count("SELECT COUNT(*) FROM service_outcomes WHERE brand_id=? AND is_excluded=0 AND confidence IN ('customer_reported','both_confirmed','admin_verified') AND created_at BETWEEN ? AND ?", $window);
+        $lastPageView = Database::scalar('SELECT MAX(created_at) FROM page_views WHERE brand_id=?', [$brandId]);
+        $lastDemandEvent = Database::scalar('SELECT MAX(created_at) FROM analytics_events WHERE brand_id=? AND is_excluded=0', [$brandId]);
 
         return [
             'summary' => [
@@ -38,8 +40,12 @@ final class WebsiteInsightsService
                 'profile_views' => $profileViews,
                 'contact_actions' => $contacts,
                 'confirmed_uses' => $confirmed,
+                'successful_searches' => max(0, $searches - $noResults),
+                'search_success_rate' => ReportingService::rate(max(0, $searches - $noResults), $searches),
                 'search_to_contact' => ReportingService::rate($contacts, $searches),
                 'profile_to_contact' => ReportingService::rate($contacts, $profileViews),
+                'last_page_view_at' => is_string($lastPageView) ? $lastPageView : null,
+                'last_demand_event_at' => is_string($lastDemandEvent) ? $lastDemandEvent : null,
             ],
             'daily' => self::rows(
                 'SELECT DATE(created_at) AS label, COUNT(*) AS total, COUNT(DISTINCT session_id) AS secondary '

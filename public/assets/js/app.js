@@ -240,6 +240,14 @@
                                 if (!data || !data.town) {
                                     throw new Error((data && data.error) || 'No town found near you.');
                                 }
+                                if (form.getAttribute('data-location-manual') === '1') {
+                                    buttons.forEach(function (b) {
+                                        b.disabled = false;
+                                        b.removeAttribute('aria-busy');
+                                        b.innerHTML = b.getAttribute('data-label-html') || original;
+                                    });
+                                    return;
+                                }
                                 applyNearestTown(form, btn, data.town, lat, lng);
                             })
                             .catch(function (e) {
@@ -294,6 +302,7 @@
                 // server and the typed location appears to be ignored.
                 setFormField(form, 'lat', '');
                 setFormField(form, 'lng', '');
+                form.setAttribute('data-location-manual', '1');
                 setLocationStatus(form, '', false);
                 syncDistanceFilter(form);
             });
@@ -303,6 +312,24 @@
             town.addEventListener('change', function () { syncDistanceFilter(form); });
         }
     });
+
+    // VanAssist starts location-first on its main search form. Resolving the
+    // nearest town fills the form but never submits it automatically, leaving
+    // the traveller free to choose a service or type a different place.
+    if ('geolocation' in navigator) {
+        document.querySelectorAll('form[data-auto-location]').forEach(function (form) {
+            var loc = form.querySelector('input[name="location"]');
+            var lat = form.querySelector('input[name="lat"]');
+            var empty = (!loc || loc.value.trim() === '') && (!lat || lat.value === '');
+            var trigger = form.querySelector('[data-use-location][data-auto-submit="false"]');
+            if (!empty || !trigger) { return; }
+            window.setTimeout(function () {
+                if (form.getAttribute('data-location-manual') !== '1' && (!loc || loc.value.trim() === '')) {
+                    trigger.click();
+                }
+            }, 250);
+        });
+    }
 
     // Town type-ahead: query the JSON endpoint and, when a town is chosen, fill
     // the linked region (and hidden region id) fields. Progressive enhancement —
