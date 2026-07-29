@@ -44,6 +44,12 @@ may remain as dated files and are linked here rather than copied.
   action. Phones default to compact list rows with a List/Map control, preserve
   a prominent nearby Places to stay path, separate Featured and related-service
   results, and keep the list as the no-JavaScript/map-failure fallback.
+- Added direct map manipulation after users select Map: touch drag, two-finger
+  pinch zoom, mouse-wheel and keyboard pan/zoom, accessible zoom and fit-result
+  controls, plus a collapsible and pointer/keyboard-movable provider summary.
+  Supporting trust/distance copy now follows the results instead of interrupting
+  the compact search and list/map task flow.
+- Removed the legacy minimum card height from compact provider results and tightened spacing, avatars, badges and actions on desktop and mobile. Phone actions retain practical touch targets while each result consumes materially less vertical space.
 - Added a compact listing-accuracy notice to the VanAssist homepage, results
   and Places to stay, with direct disclaimer and correction links. Public
   contact actions now use only explicitly public phone/email fields; an
