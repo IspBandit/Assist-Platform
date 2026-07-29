@@ -282,3 +282,14 @@ search-visible brand listings rather than shared master-provider slugs. Google
 and Bing verification tokens are optional administrator settings; robots,
 sitemap, metadata and structured data remain server-rendered and brand-aware.
 Search results and ranking are never represented as guaranteed outcomes.
+
+## 2026-07-29 — National provider review uses controlled automation
+
+**Context:** CORE-003. National discovery files are too large for one-record-at-a-
+time administration, but publication and claimed-provider ownership must remain
+fail-closed. **Decision:** the import queue exposes separate actions for evidence
+confirmation, eligible new-listing approval, strict duplicate merge and automatic
+exact-duplicate linking. Each action states its boundary and reports both processed
+and skipped counts. Automatic linking never changes provider fields; ambiguous,
+claimed or cross-workspace-only matches remain visible for human review. Controls
+remain native, labelled and usable in the existing mobile review-card layout.
