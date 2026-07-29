@@ -262,15 +262,6 @@ paid discovery while preventing hotels, stale businesses or legally unsuitable
 stops from appearing as trusted traveller advice. The queue uses the existing
 mobile review-card pattern and exposes held, duplicate, empty and failed states.
 
-## 2026-07-29 — Search controls use one canonical public URL per page
-
-Every public render now supplies a self-canonical URL even when a controller did
-not explicitly provide one. VanAssist provider sitemap rows come from active,
-search-visible brand listings rather than shared master-provider slugs. Google
-and Bing verification tokens are optional administrator settings; robots,
-sitemap, metadata and structured data remain server-rendered and brand-aware.
-Search results and ranking are never represented as guaranteed outcomes.
-
 ## 2026-07-29 — VanAssist can be saved without pretending to be a native app
 
 **Context:** EXP-005. Travellers need fast repeat access on iPhone and Android,
@@ -282,3 +273,12 @@ hides the action. A minimal service worker caches public versioned assets only
 and never caches dynamic, authenticated, provider or admin pages. The control is
 touch-sized, keyboard operable, dismissible and does not compete with primary
 search or assistance actions.
+
+## 2026-07-29 — Search controls use one canonical public URL per page
+
+Every public render now supplies a self-canonical URL even when a controller did
+not explicitly provide one. VanAssist provider sitemap rows come from active,
+search-visible brand listings rather than shared master-provider slugs. Google
+and Bing verification tokens are optional administrator settings; robots,
+sitemap, metadata and structured data remain server-rendered and brand-aware.
+Search results and ranking are never represented as guaranteed outcomes.
