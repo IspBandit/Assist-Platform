@@ -226,3 +226,17 @@ evidence without leaving the campaign. Public contact data never becomes consent
 automatically, and opt-outs, complaints and bounces cannot be overridden. The
 review table becomes stacked controls on phones and retains native labels,
 visible focus behaviour and textual statuses.
+
+## 2026-07-29 — Website insights report behaviour, not anonymous identities
+
+**Context:** DATA-004. Operators need to understand visits, searches, provider
+interest and conversion across every brand without recreating a complex or
+privacy-invasive analytics suite. **Decision:** each brand dashboard receives a
+small thirty-day activity summary and one deeper Website Insights destination.
+The active brand is a mandatory query boundary. Anonymous sessions are counted
+but never listed; signed-in visitors are reported only as an aggregate. Service
+searches, result appearances, profile opens and contact actions are labelled as
+progressively stronger interest, while completed or confirmed work remains a
+separate outcome. Staff and bots are excluded. **Accessibility:** all insight
+tables retain headings and textual empty/disabled states, cards collapse to one
+column on phones and no meaning depends on charts, colour or hover.

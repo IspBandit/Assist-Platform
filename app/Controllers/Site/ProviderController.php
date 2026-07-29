@@ -29,8 +29,10 @@ final class ProviderController extends Controller
         $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
         $hasCoords = $lat !== null && $lng !== null
             && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
+        $resolvedTown = null;
         if ($hasCoords) {
             $gpsTown = Town::nearestActive($lat, $lng);
+            $resolvedTown = $gpsTown;
             $townId = isset($gpsTown['id']) ? (int) $gpsTown['id'] : null;
             if ($gpsTown !== null) {
                 $location = (string) $gpsTown['name'];
@@ -40,6 +42,7 @@ final class ProviderController extends Controller
             }
         } elseif ($location !== '') {
             $townMatches = Town::searchActive($location);
+            $resolvedTown = $townMatches[0] ?? null;
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
         $locationFound = ($location === '' && !$hasCoords) || $townId !== null;
@@ -55,6 +58,19 @@ final class ProviderController extends Controller
         $categories = $brandScoped
             ? Database::select('SELECT id, name FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name', [$brand->databaseId()])
             : Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name');
+
+        // Treat a filtered directory browse as a search on every brand. This is
+        // best-effort and remains a no-op while demand analytics is disabled.
+        if ($search !== '' || $location !== '' || $hasCoords || $categoryId !== null) {
+            $searchId = DemandRecorder::recordSearch([
+                'town_id' => $townId,
+                'region_id' => $resolvedTown['region_id'] ?? null,
+                'state_id' => $resolvedTown['state_id'] ?? null,
+                'category_id' => $categoryId,
+                'result_count' => (int) $result['total'],
+            ]);
+            DemandRecorder::recordImpressions($searchId, $result['rows'], $categoryId);
+        }
 
         return $this->view('public.providers-index', [
             'title' => 'Find a service provider — ' . $brand->name(),

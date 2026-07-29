@@ -41,6 +41,7 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Owner compliance centre | `/account/compliance`, `.compliance-*` | authenticated shared component | Separate unticked consent for source alerts and limited-context handoff |
 | Provider trust and campaign workspace | `/provider/growth`, `.growth-*` | provider-owned component | Pending-by-default evidence and ads; organic analytics remain separate |
 | Trust, rules and growth control | `/admin/trust-growth`, `.admin-trust-*` | permission-scoped admin component | Source fail-closed queue, evidence review, pricing/relevance approval and alert audit |
+| Website insights | `/admin/demand`, `.insight-*`, `.dashboard-insight-*` | permission- and brand-scoped admin component | Aggregate visits, intent and provider interest; explicit estimated-versus-confirmed language; no anonymous identity disclosure |
 
 ### Current token debt
 

@@ -122,6 +122,18 @@ The administrative trust dashboard uses the same status vocabulary everywhere:
 current, review, overdue, failed, pending, verified, rejected, paused and active.
 Colour supplements those words and never replaces them.
 
+### Website-insights pattern
+
+The brand dashboard shows only a concise thirty-day activity strip. The full
+Website Insights view uses date filters, six primary metrics and progressively
+detailed tables for services, actions, providers, pages, sources, devices and
+locations. Tables remain horizontally contained and collapse to a single-column
+card flow on phones. Copy distinguishes result appearances, profile views,
+contact actions and confirmed provider use; clicks are never described as jobs.
+Anonymous visitor identity, IP addresses and raw event metadata are not shown.
+Tracking-disabled states name which stream is off and link authorised users to
+the relevant setting rather than displaying misleading zeroes without context.
+
 ## Brand expression
 
 - **VanAssist:** travel confidence, regional utility and caravan/RV assistance.

@@ -70,12 +70,13 @@ final class OutcomeService
             if ($existing === null) {
                 $outcomeId = Database::insert(
                     'INSERT INTO service_outcomes '
-                    . '(request_id, match_id, provider_id, customer_id, category_id, town_id, region_id, status, '
+                    . '(brand_id, request_id, match_id, provider_id, customer_id, category_id, town_id, region_id, status, '
                     . 'confidence, used_via_vanassist, customer_confirmed, provider_confirmed, admin_confirmed, '
                     . 'issue_resolved, would_use_again, satisfaction_rating, value_band, work_type, cancellation_reason, '
                     . 'notes, contacted_at, created_at, updated_at) '
-                    . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
+                    . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
                     [
+                        current_brand()->databaseId(),
                         $requestId > 0 ? $requestId : null,
                         self::nullableInt($data['match_id'] ?? null),
                         $providerId,
@@ -102,7 +103,7 @@ final class OutcomeService
             } else {
                 $outcomeId = (int) $existing['id'];
                 Database::query(
-                    'UPDATE service_outcomes SET status = ?, '
+                    'UPDATE service_outcomes SET brand_id = COALESCE(brand_id, ?), status = ?, '
                     . 'customer_confirmed = ?, provider_confirmed = ?, admin_confirmed = ?, '
                     . 'used_via_vanassist = COALESCE(?, used_via_vanassist), '
                     . 'issue_resolved = COALESCE(?, issue_resolved), would_use_again = COALESCE(?, would_use_again), '
@@ -110,7 +111,7 @@ final class OutcomeService
                     . 'work_type = COALESCE(?, work_type), cancellation_reason = COALESCE(?, cancellation_reason), '
                     . 'notes = COALESCE(?, notes), updated_at = NOW() WHERE id = ?',
                     [
-                        $status, $customerConfirmed, $providerConfirmed, $adminConfirmed,
+                        current_brand()->databaseId(), $status, $customerConfirmed, $providerConfirmed, $adminConfirmed,
                         self::nullableTiny($data['used_via_vanassist'] ?? null),
                         self::nullableTiny($data['issue_resolved'] ?? null),
                         self::nullableTiny($data['would_use_again'] ?? null),

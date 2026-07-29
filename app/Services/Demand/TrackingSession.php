@@ -144,9 +144,10 @@ final class TrackingSession
         if (!is_string($host) || $host === '') {
             return 'direct';
         }
-        $self = parse_url((string) config('app.url', ''), PHP_URL_HOST);
-        if (is_string($self) && $self !== '' && str_ends_with($host, $self)) {
-            return 'internal';
+        foreach (current_brand()->domains() as $domain) {
+            if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+                return 'internal';
+            }
         }
         return substr($host, 0, 120);
     }

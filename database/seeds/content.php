@@ -95,7 +95,7 @@ return [
             . '<h2>Unclaimed business listings</h2>'
             . '<p>Some provider listings are compiled from publicly available sources and marked "unclaimed". We display only the contact details a business already publishes. A business can claim, correct or request removal of its listing at any time by contacting us.</p>'
             . '<h2>Cookies &amp; analytics</h2>'
-            . '<p>We use essential cookies to keep you signed in and secure the site. If analytics are enabled, we use aggregated, non-identifying usage data to improve the service. You can control cookies through your browser settings.</p>'
+            . '<p>We use essential cookies to keep you signed in and secure the site. If first-party analytics are enabled, a randomly generated session identifier helps us count visits and understand searches and provider interest without storing visitor IP addresses in analytics or identifying anonymous people. You can control cookies through your browser settings.</p>'
             . '<h2>Security &amp; retention</h2>'
             . '<p>We take reasonable steps to protect your information from misuse, loss and unauthorised access, and we keep it only as long as needed for the purposes above or as required by law.</p>'
             . '<h2>Access, correction &amp; complaints</h2>'
