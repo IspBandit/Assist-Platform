@@ -171,6 +171,16 @@ final class Mailer
                 [$row['id'], $row['recipient_email'], $row['subject']]
             );
             Database::query("UPDATE notification_recipients SET status='sent' WHERE queue_id=?", [$row['id']]);
+            Database::query(
+                "UPDATE organisation_outreach_contacts o INNER JOIN notification_recipients nr ON nr.organisation_contact_id=o.id "
+                . "SET o.outcome_status=IF(o.outcome_status='not_contacted','sent',o.outcome_status),o.last_contacted_at=COALESCE(o.last_contacted_at,NOW()),o.updated_at=NOW() WHERE nr.queue_id=?",
+                [$row['id']]
+            );
+            Database::query(
+                "INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,notes,created_at) "
+                . "SELECT organisation_contact_id,notification_id,id,'sent','Accepted by the configured outbound mail transport.',NOW() FROM notification_recipients WHERE queue_id=? AND organisation_contact_id IS NOT NULL",
+                [$row['id']]
+            );
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();
@@ -196,6 +206,11 @@ final class Mailer
                 [$row['id'], $row['recipient_email'], $row['subject']]
             );
             Database::query("UPDATE notification_recipients SET status='suppressed' WHERE queue_id=?", [$row['id']]);
+            Database::query(
+                "INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,notes,created_at) "
+                . "SELECT organisation_contact_id,notification_id,id,'suppressed','Suppressed before transport.',NOW() FROM notification_recipients WHERE queue_id=? AND organisation_contact_id IS NOT NULL",
+                [$row['id']]
+            );
             Database::commit();
         } catch (Throwable $error) {
             Database::rollBack();
@@ -233,6 +248,13 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'failed', ?, NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject'], $message]
             );
+            if ($status === 'failed') {
+                Database::query(
+                    "INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,notes,created_at) "
+                    . "SELECT organisation_contact_id,notification_id,id,'failed',?,NOW() FROM notification_recipients WHERE queue_id=? AND organisation_contact_id IS NOT NULL",
+                    [$message, $row['id']]
+                );
+            }
             if ($status === 'failed') {
                 Database::query("UPDATE notification_recipients SET status='failed' WHERE queue_id=?", [$row['id']]);
             }

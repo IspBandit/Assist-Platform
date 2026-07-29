@@ -35,6 +35,7 @@ Select **12 volt electrical**, enter **Boyne Island**, and choose a distance. Th
 - Treating a straight-line distance as current driving distance.
 - Assuming a base-locality pin is an exact mobile-provider destination.
 - Assuming an unclaimed or related-service listing has confirmed the requested work.
+- Assuming a club, publication or tourism organisation that shares VanAssist has endorsed every listing. An endorsement or partnership is never implied unless stated explicitly.
 - Operating the search or map while driving.
 
 ## Related pages
@@ -48,6 +49,8 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 **Which map opens for directions?** iPhone and iPad use Apple Maps, Android hands off to the device's map handler, and desktop retains the Google Maps web fallback.
 
 **How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile; VanAssist reviews authority before granting control.
+
+**A club or organisation shared the VanAssist link. Do I need to join or pay?** No. Public search remains free and does not require membership of the organisation that shared it. Check each listing's claimed and verified status and confirm important details with the business.
 
 ## Version introduced
 

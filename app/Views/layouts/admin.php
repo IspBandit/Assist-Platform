@@ -61,14 +61,15 @@ if ($customerOperations !== []) {
 }
 
 $growth = [];
-if ($permitted('prospects.manage')) {
-    $growth[] = ['Provider outreach', '/admin/prospects'];
-}
-if ($permitted('content.manage')) {
-    $growth[] = ['Social studio', '/admin/social-media'];
-}
 if ($permitted('notifications.send')) {
-    $growth[] = ['Provider email campaigns', '/admin/notifications'];
+    $growth[] = ['Growth & outreach', '/admin/outreach-hub'];
+} else {
+    if ($permitted('prospects.manage')) {
+        $growth[] = ['Provider outreach', '/admin/prospects'];
+    }
+    if ($permitted('content.manage')) {
+        $growth[] = ['Social studio', '/admin/social-media'];
+    }
 }
 if ($growth !== []) {
     $nav['Growth'] = $growth;

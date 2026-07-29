@@ -224,6 +224,14 @@ detail. On phones, secondary reports begin collapsed and expanded content is
 bounded to the viewport with internal scrolling. Critical alerts and coverage gaps
 remain visible without opening a disclosure.
 
+The PR & Outreach Hub follows the same compact-admin rule: five headline counts,
+one filter row, an evidence-backed target register and a separate campaign
+pipeline. Desktop may use a contained table. Phones stack the header, import and
+filter controls, keep every action touch-sized and bound the target register to
+an internal vertical/horizontal scroll region rather than forcing the admin page
+outside the viewport. Official website and evidence links remain visible; source,
+role and relevance information must not be hidden behind colour alone.
+
 ## UX change workflow
 
 1. Inventory the existing implementation before editing.

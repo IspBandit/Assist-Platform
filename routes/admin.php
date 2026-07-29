@@ -192,6 +192,14 @@ return static function (Router $router): void {
         $router->post('/notifications/recipient-include', 'Admin\NotificationsController@recipientInclude');
         $router->post('/notifications/cancel', 'Admin\NotificationsController@cancel');
 
+        // PR and organisation outreach: researched targets remain review-only
+        // until an administrator records role relevance and source evidence.
+        $router->get('/outreach-hub', 'Admin\OutreachHubController@index', 'admin.outreach-hub');
+        $router->get('/outreach-hub/template', 'Admin\OutreachHubController@template');
+        $router->post('/outreach-hub/import', 'Admin\OutreachHubController@import');
+        $router->post('/outreach-hub/review', 'Admin\OutreachHubController@review');
+        $router->post('/outreach-hub/outcome', 'Admin\OutreachHubController@outcome');
+
         // Caravan parks (Phase 7): applications, approval, documents, service-day requests.
         $router->get('/parks', 'Admin\ParksController@index', 'admin.parks');
         $router->get('/parks/import', 'Admin\ParksController@importQueue', 'admin.parks.import');

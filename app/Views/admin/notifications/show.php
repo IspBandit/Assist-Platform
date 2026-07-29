@@ -8,11 +8,14 @@
 /** @var array<int,array<string,mixed>> $providerCandidates */
 /** @var array<string,string> $consentBases */
 /** @var string $recipientSearch */
+/** @var array<string,int|string> $deliverySummary */
 $this->extend('layouts.admin');
 $status = (string) $notification['status'];
 $stage = (string) ($notification['delivery_stage'] ?? 'draft');
 $canCancel = !in_array($status, ['sent', 'cancelled'], true);
 $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'directory_accuracy';
+$isOrganisationOutreach = (string) ($notification['campaign_type'] ?? '') === 'organisation_outreach';
+$deliveryCounts = $deliverySummary;
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
@@ -23,9 +26,10 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
     <p class="muted">
         Status: <strong><?= $this->e($status) ?></strong> ·
         Stage: <strong><?= $this->e($stage) ?></strong> ·
-        Type: <strong><?= $this->e($isDirectoryAccuracy ? 'Factual listing accuracy' : 'Consent-gated marketing') ?></strong> ·
+        Type: <strong><?= $this->e($isDirectoryAccuracy ? 'Factual listing accuracy' : ($isOrganisationOutreach ? 'Reviewed organisation PR outreach' : 'Consent-gated marketing')) ?></strong> ·
         Audience: <strong><?= $this->e((string) $notification['audience_type']) ?></strong> ·
-        <?php if ($status === 'sent'): ?>Sent to <strong><?= (int) $notification['recipient_count'] ?></strong> recipient(s)<?php else: ?>Estimated recipients: <strong><?= (int) $previewCount ?></strong><?php endif; ?>
+        <?php if ($isOrganisationOutreach): ?>Target: <strong><?= $this->e(str_replace('_', ' ', (string) ($notification['organisation_type'] ?? ''))) ?></strong> ·<?php endif; ?>
+        <?php if ($status === 'sent'): ?>Queue complete for <strong><?= (int) $notification['recipient_count'] ?></strong> recipient(s) · transport accepted <strong><?= (int) ($deliveryCounts['sent'] ?? 0) ?></strong> · failed <strong><?= (int) ($deliveryCounts['failed'] ?? 0) ?></strong> · suppressed <strong><?= (int) ($deliveryCounts['suppressed'] ?? 0) ?></strong><?php else: ?>Estimated recipients: <strong><?= (int) $previewCount ?></strong><?php endif; ?>
     </p>
     <?php if ($providerSummary !== null && $status !== 'sent'): ?>
         <div class="alert alert-info"><strong><?= (int) $providerSummary['with_email'] ?></strong> active provider(s) have an email address in this audience. <strong><?= (int) $providerSummary['eligible'] ?></strong> can be included now; every other address remains visible below for review.</div>
@@ -40,7 +44,7 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
             <h2 style="margin-top:0">Safe delivery stages</h2>
             <ol>
                 <li>Send and inspect an internal test.</li>
-                <li>Queue no more than 25 eligible providers, then review replies, corrections, complaints, bounces and opt-outs.</li>
+                <li>Queue no more than 25 eligible recipients, then review replies, corrections, complaints, bounces and opt-outs.</li>
                 <li>After review, queue no more than 50 in any rolling 24 hours.</li>
                 <li>Only after another review, raise the hard cap to 100 in any rolling 24 hours.</li>
             </ol>
