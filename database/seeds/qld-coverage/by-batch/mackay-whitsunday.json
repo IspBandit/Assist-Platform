@@ -1,0 +1,14 @@
+{
+  "batch_id": "mackay-whitsunday",
+  "batch_name": "Mackay–Whitsunday",
+  "towns": 222,
+  "categories": 134,
+  "cells": 29748,
+  "verified_cells": 552,
+  "zero_coverage_cells": 26746,
+  "weak_coverage_cells": 2450,
+  "providers_referenced": 187,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\mackay-whitsunday.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\mackay-whitsunday-report.jsonl",
+  "last_audited": "2026-07-29"
+}

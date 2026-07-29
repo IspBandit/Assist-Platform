@@ -27,6 +27,9 @@ if ($permitted('locations.manage')) {
 if ($platformAdmin && $permitted('data_sources.review')) {
     $directory[] = ['Import review', '/admin/data-sources/review'];
 }
+if ($platformAdmin && $permitted('data_sources.view')) {
+    $directory[] = ['Queensland coverage', '/admin/qld-coverage'];
+}
 if ($adminBrand->moduleEnabled('trailer_marketplace') && $permitted('providers.manage')) {
     $directory[] = ['Trailer listings', '/admin/trailer-listings'];
 }

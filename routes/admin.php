@@ -27,6 +27,7 @@ return static function (Router $router): void {
         $router->get('/data-sources/review', 'Admin\DataSourcesController@queue', 'admin.data-sources.review');
         $router->post('/data-sources/review', 'Admin\DataSourcesController@review');
         $router->post('/data-sources/schedule', 'Admin\DataSourcesController@saveSchedule', 'admin.data-sources.schedule');
+        $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
 
         // Platform intelligence derived from canonical provider, demand and
         // optional population sources. Recommendations feed Data Sources.

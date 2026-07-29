@@ -1,0 +1,14 @@
+{
+  "batch_id": "gold-coast-scenic-rim",
+  "batch_name": "Gold Coast and Scenic Rim",
+  "towns": 263,
+  "categories": 134,
+  "cells": 35242,
+  "verified_cells": 2134,
+  "zero_coverage_cells": 27898,
+  "weak_coverage_cells": 5210,
+  "providers_referenced": 1091,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\gold-coast-scenic-rim.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\gold-coast-scenic-rim-report.jsonl",
+  "last_audited": "2026-07-29"
+}
