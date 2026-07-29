@@ -134,6 +134,18 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString("form.getAttribute('data-location-manual') !== '1'", $script);
     }
 
+    public function testTownSuggestionsAnchorToTheLocationInput(): void
+    {
+        $script = (string) file_get_contents(base_path('public/assets/js/app.js'));
+        $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
+
+        self::assertStringContainsString('input.offsetTop', $script);
+        self::assertStringContainsString('input.offsetWidth', $script);
+        self::assertStringContainsString("strong.textContent = primary", $script);
+        self::assertStringContainsString('.location-field{position:relative', $css);
+        self::assertStringContainsString('z-index: 120', $css);
+    }
+
     public function testMobileAdminAndInsightReportsUseCompactDisclosurePatterns(): void
     {
         $layout = (string) file_get_contents(base_path('app/Views/layouts/admin.php'));

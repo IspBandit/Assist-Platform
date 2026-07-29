@@ -527,11 +527,12 @@ ol.steps-list li::before {
     .location-actions .btn-primary { width: 100%; }
 }
 /* Town type-ahead suggestions dropdown. */
-.town-suggest { position: absolute; left: 0; right: 0; top: 100%; z-index: 30; background: #fff; border: 1px solid var(--line); border-top: 0; border-radius: 0 0 8px 8px; max-height: 260px; overflow-y: auto; box-shadow: 0 10px 24px rgba(0,0,0,.10); }
-.town-suggest button { display: block; width: 100%; text-align: left; padding: .55rem .8rem; background: none; border: 0; border-bottom: 1px solid var(--line); cursor: pointer; font-size: .95rem; }
+.location-field{position:relative;min-width:0}.town-suggest { position: absolute; z-index: 120; max-height:min(19rem,45vh); overflow-y:auto; overscroll-behavior:contain; background:rgba(255,255,255,.99); color:var(--color-text,var(--charcoal)); border:1px solid color-mix(in srgb,var(--brand-primary) 24%,var(--line)); border-radius:11px; box-shadow:0 16px 38px rgba(15,23,42,.18); scrollbar-width:thin; }
+.town-suggest button { display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.75rem;width:100%;min-height:46px;text-align:left;padding:.55rem .7rem;background:none;color:inherit;border:0;border-bottom:1px solid var(--line);cursor:pointer;font-size:.9rem; }
 .town-suggest button:last-child { border-bottom: 0; }
-.town-suggest button:hover, .town-suggest button.active { background: var(--teal-light); }
-.town-suggest .muted { color: var(--muted); font-size: .85rem; }
+.town-suggest button:hover, .town-suggest button.active,.town-suggest button:focus-visible { background:color-mix(in srgb,var(--brand-primary) 10%,#fff);outline:0; }
+.town-suggest button strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.town-suggest .muted { color:var(--muted);font-size:.74rem;white-space:nowrap; }
+@media(max-width:520px){.town-suggest button{grid-template-columns:1fr;gap:.1rem;min-height:50px}.town-suggest .muted{white-space:normal}}
 label { display: block; font-weight: 600; margin-bottom: .35rem; }
 .required { color: var(--red); }
 input:not([type]), input[type=text], input[type=email], input[type=password], input[type=tel],

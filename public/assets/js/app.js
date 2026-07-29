@@ -346,6 +346,14 @@
         var items = [];
         var active = -1;
 
+        var positionBox = function () {
+            var anchor = input.closest('.location-field');
+            if (!anchor) { return; }
+            box.style.left = (input.offsetLeft || 0) + 'px';
+            box.style.top = ((input.offsetTop || 0) + input.offsetHeight + 5) + 'px';
+            box.style.width = input.offsetWidth + 'px';
+        };
+
         var hide = function () { box.hidden = true; box.innerHTML = ''; active = -1; };
 
         var choose = function (t) {
@@ -373,10 +381,19 @@
                 btn.dataset.index = i;
                 var sub = [t.postcode, t.region_name].filter(Boolean).join(' · ');
                 var primary = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
-                btn.innerHTML = '<strong>' + primary + '</strong>' + (sub ? ' <span class="muted">' + sub + '</span>' : '');
+                var strong = document.createElement('strong');
+                strong.textContent = primary;
+                btn.appendChild(strong);
+                if (sub) {
+                    var secondary = document.createElement('span');
+                    secondary.className = 'muted';
+                    secondary.textContent = sub;
+                    btn.appendChild(secondary);
+                }
                 btn.addEventListener('click', function () { choose(t); input.focus(); });
                 box.appendChild(btn);
             });
+            positionBox();
             box.hidden = false;
             active = -1;
         };
@@ -418,6 +435,7 @@
         document.addEventListener('click', function (e) {
             if (e.target !== input && !box.contains(e.target)) { hide(); }
         });
+        window.addEventListener('resize', function () { if (!box.hidden) { positionBox(); } });
     });
 
     // Auto-dismiss flash alerts after a while (kept accessible: not removed instantly).
