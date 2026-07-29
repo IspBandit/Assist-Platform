@@ -1,0 +1,14 @@
+{
+  "batch_id": "darling-downs-south-west",
+  "batch_name": "Darling Downs and South West",
+  "towns": 752,
+  "categories": 134,
+  "cells": 100768,
+  "verified_cells": 1117,
+  "zero_coverage_cells": 93697,
+  "weak_coverage_cells": 5954,
+  "providers_referenced": 740,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\darling-downs-south-west.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\darling-downs-south-west-report.jsonl",
+  "last_audited": "2026-07-29"
+}

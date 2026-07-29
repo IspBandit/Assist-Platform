@@ -1,0 +1,14 @@
+{
+  "batch_id": "sunshine-coast-noosa",
+  "batch_name": "Sunshine Coast and Noosa",
+  "towns": 210,
+  "categories": 134,
+  "cells": 28140,
+  "verified_cells": 1534,
+  "zero_coverage_cells": 23202,
+  "weak_coverage_cells": 3404,
+  "providers_referenced": 416,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\sunshine-coast-noosa.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\sunshine-coast-noosa-report.jsonl",
+  "last_audited": "2026-07-29"
+}

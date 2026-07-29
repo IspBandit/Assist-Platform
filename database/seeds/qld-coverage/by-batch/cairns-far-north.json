@@ -1,0 +1,14 @@
+{
+  "batch_id": "cairns-far-north",
+  "batch_name": "Cairns and Far North Queensland",
+  "towns": 385,
+  "categories": 134,
+  "cells": 51590,
+  "verified_cells": 1374,
+  "zero_coverage_cells": 47156,
+  "weak_coverage_cells": 3060,
+  "providers_referenced": 291,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\cairns-far-north.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\cairns-far-north-report.jsonl",
+  "last_audited": "2026-07-29"
+}

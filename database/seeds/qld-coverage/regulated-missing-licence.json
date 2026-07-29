@@ -1,0 +1,986 @@
+[
+  {
+    "id": "allroads-barcaldine",
+    "name": "All Roads Automotive & Mechanical",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "secure-diesel-boulia",
+    "name": "Secure Diesel & Automotive",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "safet-cert-roadworthy",
+    "name": "SafeT Cert Mobile Roadworthy",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "caravan-mechanic-caboolture",
+    "name": "Caravan Mechanic & Detailing Service",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "cjs-mech-cairns",
+    "name": "C.J.S Mechanical / Marine & Mobile",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "secure-diesel-cloncurry",
+    "name": "Secure Diesel & Automotive (Cloncurry)",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "lochs-garage-emerald",
+    "name": "Loch's Garage",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "asap-mobile-roadworthy-gladstone",
+    "name": "ASAP Mobile Roadworthy",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "betts-plumbing-calliope",
+    "name": "Betts Plumbing Calliope",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "roadworthy-2u-gladstone",
+    "name": "Mobile Roadworthy 2U",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "gc-caravan-service",
+    "name": "GC Caravan Service",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "brisbane-rd-ae-gympie",
+    "name": "Brisbane Road Auto Electrics & Air Conditioning",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "surat-basin-mech-miles",
+    "name": "Surat Basin Mechanical & Engineering",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "caravan-man-mission-beach",
+    "name": "The Caravan Man",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "jkc-mossman",
+    "name": "JKC Auto",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "all4-mobile-mechanic-rocky",
+    "name": "All 4 Mobile Mechanic",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "murphys-mobile-roadworthy-rocky",
+    "name": "Murphys Mobile Mechanical",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "rockhampton-mobile-mechanic",
+    "name": "Rockhampton Mobile Mechanic",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "taylors-mech-roma",
+    "name": "Taylor's Mechanical Services",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "bk-motors-warwick",
+    "name": "B & K Motors",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "winton-auto",
+    "name": "Winton Automotive Repairs",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-alexandra-hills-131328",
+    "name": "mycar Tyre & Auto Alexandra Hills",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ3zRtI1Cdk2sRacr5TuH7m6k",
+    "name": "Roadworthy Today - Mobile Roadworthy Sunshine Coast",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJH0t5zUBsYKMRPUFHROG-_0E",
+    "name": "Ausmec Mobile Roadworthy Burpengary",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJq6q-Tafwk2sRvoNkgNedN58",
+    "name": "Miss Roadworthy - Mobile Mechanic",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJsYHPGdoWqAoR-Tds9sgX-ms",
+    "name": "ZK AUTOS | MECHANICAL & ROADWORTHY",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJVcjOyFdjeGkRFvSZW2cLyyc",
+    "name": "Cairns Mobile RWC and COI",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-benowa-131328",
+    "name": "mycar Tyre & Auto Benowa",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-birkdale-131328",
+    "name": "mycar Tyre & Auto Birkdale",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJGQtXQ7tmeGkRiNhtZoN33XQ",
+    "name": "Mobile RWC FNQ",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n11191850581",
+    "name": "Wallam Creek General Store",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "caravan-rwc-and-gas-certificates-rwcgascertificates-com-au",
+    "name": "Caravan RWC and Gas Certificates",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "accurate-caravans-bne",
+    "name": "Accurate Caravans",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-brisbane-mobile-131328",
+    "name": "mycar Tyre & Auto Brisbane Mobile",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-broadbeach-131328",
+    "name": "mycar Tyre & Auto Broadbeach",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJexO6XzHN2WsRh5DxqyhA9uM",
+    "name": "Crispys Automotive Compliance",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ7UMovP_T22sRJt_IioBrrfw",
+    "name": "Motor vehicle inspection centre",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ2yHq7Wn31WsRjb9fPgOVtDo",
+    "name": "Roadworthies | Mobile Mechanic Townsville",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-browns-plains-mobile-131328",
+    "name": "mycar Tyre & Auto Browns Plains Mobile",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-buddina-131328",
+    "name": "mycar Tyre & Auto Buddina",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ5-reqewXkWsRmXLVB2Vq2Qg",
+    "name": "MCHUGH’S MOBILE MOTORCYCLE ROADWORTHYS (MMMR)",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-bundaberg-131328",
+    "name": "mycar Tyre & Auto Bundaberg",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-burleigh-heads-131328",
+    "name": "mycar Tyre & Auto Burleigh Heads",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-burpengary-131328",
+    "name": "mycar Tyre & Auto Burpengary",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n9226716573",
+    "name": "United Ufill 24",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "roadworthy2u-0428415849",
+    "name": "Roadworthy2U",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "cairns-caravan-roadworthy-and-gas-certificate-0472661250",
+    "name": "Cairns Caravan Roadworthy and Gas Certificate",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-caloundra-131328",
+    "name": "mycar Tyre & Auto Caloundra",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "cannonvale-auto-repairs-repcoservice-com",
+    "name": "Cannonvale Auto Repairs",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-capalaba-131328",
+    "name": "mycar Tyre & Auto Capalaba",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-chapel-hill-131328",
+    "name": "mycar Tyre & Auto Chapel Hill",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-chermside-131328",
+    "name": "mycar Tyre & Auto Chermside",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-cleveland-131328",
+    "name": "mycar Tyre & Auto Cleveland",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ8UMtntEs_y8R4Lk7GmCH2cw",
+    "name": "S.A.S Automotive Group (mobile roadworthys)",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-coomera-131328",
+    "name": "mycar Tyre & Auto Coomera",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJU-m8ou2762sR-I3sqiC7IzY",
+    "name": "Bundaberg Roadworthy & HVRAS",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ1cEYR1X31WsR2iDObC7xDu8",
+    "name": "Mobile Roadworthy Guys Townsville",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJQzwsVHv51WsRyn4d67vEwg8",
+    "name": "NQ Mobile Roadworthy's Townsville",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "pjs-automotive-cunnamulla",
+    "name": "PJ's Automotive",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n8357331532",
+    "name": "KJ Safety Certificates/Roadworthy Certificates",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-elanora-131328",
+    "name": "mycar Tyre & Auto Elanora",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n9886722999",
+    "name": "Pedders",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-fairfield-central-131328",
+    "name": "mycar Tyre & Auto Fairfield Central",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-garden-city-mobile-tyres-131328",
+    "name": "mycar Tyre & Auto Garden City Mobile Tyres",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJWXfImAj7k2sRLn2_K5gx5D4",
+    "name": "Mates Rates Roadworthy Certificates",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-geebung-131328",
+    "name": "mycar Tyre & Auto Geebung",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJdUQMU8pZw2sRZSi8TNiGI7g",
+    "name": "CPR maintenance",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "gin-gin-mechanical-repcoservice-com",
+    "name": "Gin Gin Mechanical",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-gladstone-131328",
+    "name": "mycar Tyre & Auto Gladstone",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n7707033414",
+    "name": "Goomeri Caravan and Bush Camp",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJI21WvWS_lmsRbQ_s0PLNf-A",
+    "name": "Mobile Roadworthy QLD",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJ9_TCL4hclmsRza--oLkKhwQ",
+    "name": "Mobile Roadworthy Toowoomba",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJrbNafQpdlmsRIsGeuJ_lVPk",
+    "name": "Roadworthys On The Run",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n12189422411",
+    "name": "Hebel Hotel & General Store",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-helensvale-131328",
+    "name": "mycar Tyre & Auto Helensvale",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n13475585483",
+    "name": "All Round Tyre And Mechanical",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-hervey-bay-131328",
+    "name": "mycar Tyre & Auto Hervey Bay",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-indooroopilly-131328",
+    "name": "mycar Tyre & Auto Indooroopilly",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-ipswich-mobile-131328",
+    "name": "mycar Tyre & Auto Ipswich Mobile",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n8974239535",
+    "name": "Andos Food Barn",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-kallangur-mobile-131328",
+    "name": "mycar Tyre & Auto Kallangur Mobile",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJIakwmLvT22sRauM1bUFx2UU",
+    "name": "Roadworthy Mackay",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJAQCcJPLlk2sRf5miCW0HMio",
+    "name": "Motorcycle Roadworthy",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-kirwan-131328",
+    "name": "mycar Tyre & Auto Kirwan",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJK_sz6MD11WsR7t3s2vCXq_w",
+    "name": "Mechanic & Roadworthy Station",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-loganholme-131328",
+    "name": "mycar Tyre & Auto Loganholme",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-maroochydore-131328",
+    "name": "mycar Tyre & Auto Maroochydore",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "moranbah-discount-tyres-mechanical-repcoservice-com",
+    "name": "Moranbah Discount Tyres & Mechanical",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-morayfield-mobile-tyres-131328",
+    "name": "mycar Tyre & Auto Morayfield Mobile Tyres",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n12160892024",
+    "name": "Morven News Country Store",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-mount-ommaney-131328",
+    "name": "mycar Tyre & Auto Mount Ommaney",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n13616072295",
+    "name": "Rormac Local Gas Supplies",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-north-lakes-131328",
+    "name": "mycar Tyre & Auto North Lakes",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-pimpama-131328",
+    "name": "mycar Tyre & Auto Pimpama",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n9147124693",
+    "name": "Elle's News",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJATUzpRrt6WsRWmcc7l__ruI",
+    "name": "RWC2U",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJCdWvySQHw2sRRgSvuf0QRww",
+    "name": "Ridgelands Rd Roadworthy's",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-redbank-131328",
+    "name": "mycar Tyre & Auto Redbank",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-redbank-plains-131328",
+    "name": "mycar Tyre & Auto Redbank Plains",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mobile-caravan-rwc-gas-certificates-0418933027",
+    "name": "Mobile Caravan RWC & Gas Certificates",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n6175900031",
+    "name": "Everything for Gas",
+    "categories": [
+      "gas-certification"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-robina-131328",
+    "name": "mycar Tyre & Auto Robina",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-rochedale-131328",
+    "name": "mycar Tyre & Auto Rochedale",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-rockhampton-131328",
+    "name": "mycar Tyre & Auto Rockhampton",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "taylor-s-mechanical-service-repcoservice-com",
+    "name": "Taylor's Mechanical Service",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJGZpG6npY6GoR2Bx4Ud84r68",
+    "name": "Complete Mobile Roadworthys",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJU_84ccR_gmkRxzYL3Ou0VQQ",
+    "name": "Fair Assessing Mobile Roadworthys FNQ",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-n6282044182",
+    "name": "Hi Tech Auto Service",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-sherwood-131328",
+    "name": "mycar Tyre & Auto Sherwood",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-smithfield-131328",
+    "name": "mycar Tyre & Auto Smithfield",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-southport-131328",
+    "name": "mycar Tyre & Auto Southport",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-springfield-central-mobile-131328",
+    "name": "mycar Tyre & Auto Springfield Central Mobile",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-st-lucia-131328",
+    "name": "mycar Tyre & Auto St Lucia",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-sunnybank-131328",
+    "name": "mycar Tyre & Auto Sunnybank",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-sunnybank-hills-131328",
+    "name": "mycar Tyre & Auto Sunnybank Hills",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "caravan-tech-0494188194",
+    "name": "Caravan Tech",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-toowoomba-131328",
+    "name": "mycar Tyre & Auto Toowoomba",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "auto-marvel-0493185473",
+    "name": "Auto Marvel",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "lm-motors-repcoservice-com",
+    "name": "LM Motors",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-townsville-131328",
+    "name": "mycar Tyre & Auto Townsville",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "places-ChIJq6qGY6Kek2sR3G7FzS2wOj0",
+    "name": "Caravan Service",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "osm-w1470425429",
+    "name": "Repco West End Service Centre",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  },
+  {
+    "id": "mycar-tyre-auto-wynnum-west-131328",
+    "name": "mycar Tyre & Auto Wynnum West",
+    "categories": [
+      "roadworthy"
+    ],
+    "note": "Regulated category present without separate licence register evidence in this offline pack"
+  }
+]

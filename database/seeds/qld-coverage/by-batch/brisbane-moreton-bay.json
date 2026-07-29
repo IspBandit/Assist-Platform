@@ -1,0 +1,14 @@
+{
+  "batch_id": "brisbane-moreton-bay",
+  "batch_name": "Brisbane and Moreton Bay",
+  "towns": 686,
+  "categories": 134,
+  "cells": 91924,
+  "verified_cells": 7717,
+  "zero_coverage_cells": 68004,
+  "weak_coverage_cells": 16203,
+  "providers_referenced": 1606,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\brisbane-moreton-bay.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\brisbane-moreton-bay-report.jsonl",
+  "last_audited": "2026-07-29"
+}
