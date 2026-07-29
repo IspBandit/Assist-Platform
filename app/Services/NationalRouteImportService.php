@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Core\Database;
 use App\Platform\DataSources\DuplicateMatcher;
+use App\Platform\DataSources\BulkReviewPolicy;
 use RuntimeException;
 use Throwable;
 
@@ -38,7 +39,7 @@ final class NationalRouteImportService
         return $this->stageFile($path, basename($path), (int) filesize($path), $brandId, $userId, false);
     }
 
-    /** @return array{processed:int,inserted:int,held:int,skipped:int,done:bool,total_processed:int,job_id:int} */
+    /** @return array{processed:int,inserted:int,held:int,skipped:int,auto_merged:int,done:bool,total_processed:int,job_id:int} */
     public function processJob(int $jobId, int $brandId, int $batchSize = 300): array
     {
         $this->purgeExpiredCandidates();
@@ -53,7 +54,7 @@ final class NationalRouteImportService
             throw new RuntimeException('National route import job was not found for this workspace.');
         }
         if (!in_array((string) $job['status'], ['queued', 'running'], true)) {
-            return ['processed'=>0,'inserted'=>0,'held'=>0,'skipped'=>0,'done'=>true,'total_processed'=>(int)$job['candidates_found'],'job_id'=>$jobId];
+            return ['processed'=>0,'inserted'=>0,'held'=>0,'skipped'=>0,'auto_merged'=>0,'done'=>true,'total_processed'=>(int)$job['candidates_found'],'job_id'=>$jobId];
         }
 
         $scope = json_decode((string) $job['scope_json'], true);
@@ -76,12 +77,13 @@ final class NationalRouteImportService
             }
 
             $categories = $this->categoryMap($brandId);
-            $providerIndex = $this->providerIndex();
+            $providerIndex = $this->providerIndex($brandId);
             $classifier = new NationalRouteCandidateClassifier();
             $processed = 0;
             $inserted = 0;
             $held = 0;
             $skipped = 0;
+            $autoMerged = 0;
             $reachedEnd = false;
             $errors = array_values(array_filter((array)($scope['errors'] ?? []), 'is_array'));
 
@@ -116,6 +118,9 @@ final class NationalRouteImportService
                     } elseif ($result === 'held') {
                         $inserted++;
                         $held++;
+                    } elseif ($result === 'merged') {
+                        $inserted++;
+                        $autoMerged++;
                     } else {
                         $skipped++;
                     }
@@ -133,6 +138,7 @@ final class NationalRouteImportService
         $totalProcessed = $processedBefore + $processed;
         $scope['processed_lines'] = $totalProcessed;
         $scope['skipped_lines'] = (int)($scope['skipped_lines'] ?? 0) + $skipped;
+        $scope['auto_merged'] = (int)($scope['auto_merged'] ?? 0) + $autoMerged;
         $scope['errors'] = $errors;
         $done = $reachedEnd || $processed < $batchSize;
         Database::query(
@@ -157,7 +163,7 @@ final class NationalRouteImportService
 
         return [
             'processed'=>$processed, 'inserted'=>$inserted, 'held'=>$held,
-            'skipped'=>$skipped, 'done'=>$done, 'total_processed'=>$totalProcessed,
+            'skipped'=>$skipped, 'auto_merged'=>$autoMerged, 'done'=>$done, 'total_processed'=>$totalProcessed,
             'job_id'=>$jobId,
         ];
     }
@@ -219,7 +225,10 @@ final class NationalRouteImportService
         }
     }
 
-    /** @param array<string,int> $categories @param array<string,array<string,array<int,array<string,mixed>>>> $providerIndex */
+    /**
+     * @param array<string,int> $categories
+     * @param array{name:array<string,list<array<string,mixed>>>,phone:array<string,list<array<string,mixed>>>,host:array<string,list<array<string,mixed>>>,id:array<int,array<string,mixed>>} $providerIndex
+     */
     private function storeCandidate(int $jobId, int $connectorId, int $brandId, array $row, NationalRouteCandidateClassifier $classifier, array $categories, array $providerIndex): string
     {
         $externalId = trim((string) ($row['external_id'] ?? ''));
@@ -253,6 +262,28 @@ final class NationalRouteImportService
         if ($inserted < 1) {
             return 'skipped';
         }
+        $candidateId = (int)Database::scalar(
+            'SELECT id FROM data_source_import_candidates WHERE connector_id=? AND external_id=?',
+            [$connectorId,$externalId]
+        );
+        $target = $duplicate['id'] !== null ? ($providerIndex['id'][(int)$duplicate['id']] ?? null) : null;
+        if ($candidateId > 0 && is_array($target)) {
+            $identity = [
+                'duplicate_provider_id'=>$duplicate['id'],
+                'duplicate_score'=>$duplicate['score'],
+                'duplicate_reasons_json'=>json_encode($duplicate['reasons'], JSON_THROW_ON_ERROR),
+                'target_is_unclaimed'=>$target['is_unclaimed'] ?? 0,
+                'target_has_brand_listing'=>$target['has_brand_listing'] ?? 0,
+            ];
+            if ((new BulkReviewPolicy())->automaticLinkProblems($identity) === []) {
+                Database::query(
+                    "UPDATE data_source_import_candidates SET review_status='merged',provider_id=?,reviewed_at=NOW(),"
+                    . "review_notes='Automatically linked as an exact duplicate; no candidate fields were copied to the provider.' WHERE id=?",
+                    [(int)$duplicate['id'],$candidateId]
+                );
+                return 'merged';
+            }
+        }
         return $classification['review_status'] === 'held' ? 'held' : 'inserted';
     }
 
@@ -267,11 +298,15 @@ final class NationalRouteImportService
         return $map;
     }
 
-    /** @return array<string,array<string,array<int,array<string,mixed>>>> */
-    private function providerIndex(): array
+    /** @return array{name:array<string,list<array<string,mixed>>>,phone:array<string,list<array<string,mixed>>>,host:array<string,list<array<string,mixed>>>,id:array<int,array<string,mixed>>} */
+    private function providerIndex(int $brandId): array
     {
-        $index = ['name'=>[], 'phone'=>[], 'host'=>[]];
-        foreach (Database::select('SELECT id,business_name,phone,website FROM providers WHERE deleted_at IS NULL') as $provider) {
+        $index = ['name'=>[], 'phone'=>[], 'host'=>[], 'id'=>[]];
+        foreach (Database::select(
+            'SELECT p.id,p.business_name,p.phone,p.website,p.is_unclaimed,EXISTS(SELECT 1 FROM provider_brand_listings pbl WHERE pbl.provider_id=p.id AND pbl.brand_id=? AND pbl.deleted_at IS NULL) AS has_brand_listing FROM providers p WHERE p.deleted_at IS NULL',
+            [$brandId]
+        ) as $provider) {
+            $index['id'][(int)$provider['id']] = $provider;
             $name = $this->normal((string) $provider['business_name']);
             $phone = $this->normal((string) ($provider['phone'] ?? ''));
             $host = $this->host((string) ($provider['website'] ?? ''));
@@ -282,7 +317,10 @@ final class NationalRouteImportService
         return $index;
     }
 
-    /** @param array<string,array<string,array<int,array<string,mixed>>>> $index @return array{score:int,reasons:array<int,string>,id:?int} */
+    /**
+     * @param array{name:array<string,list<array<string,mixed>>>,phone:array<string,list<array<string,mixed>>>,host:array<string,list<array<string,mixed>>>,id:array<int,array<string,mixed>>} $index
+     * @return array{score:int,reasons:array<int,string>,id:?int}
+     */
     private function duplicate(array $row, array $index): array
     {
         $matches = [];
