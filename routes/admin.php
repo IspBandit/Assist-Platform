@@ -14,6 +14,10 @@ return static function (Router $router): void {
         'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator,platform-administrator,brand-administrator,editor,support,finance,marketing'],
     ], static function (Router $router): void {
         $router->get('', 'Admin\AdminController@dashboard', 'admin');
+        $router->get('/help', 'Admin\DocumentationController@index', 'admin.documentation.index');
+        $router->get('/help/whats-new', 'Admin\DocumentationController@whatsNew', 'admin.documentation.whats-new');
+        $router->get('/help/{guide}', 'Admin\DocumentationController@guide', 'admin.documentation.guide');
+        $router->get('/help/{guide}/{article}', 'Admin\DocumentationController@article', 'admin.documentation.article');
         $router->get('/control-centre', 'Admin\PlatformController@controlCentre', 'admin.control-centre');
         $router->post('/switch-brand', 'Admin\PlatformController@switchBrand', 'admin.switch-brand');
         $router->get('/brand-builder', 'Admin\PlatformController@brandBuilder', 'admin.brand-builder');

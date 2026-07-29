@@ -106,6 +106,7 @@ if ($permitted('billing.manage')) {
 }
 
 $administration = [];
+$administration[] = ['Documentation', '/admin/help'];
 if ($permitted('users.manage')) {
     $administration[] = ['Users & access', '/admin/users'];
 }
@@ -123,6 +124,7 @@ if ($administration !== []) {
     $nav['Administration'] = $administration;
 }
 $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/') ?: '/admin';
+$documentationTarget = \App\Services\Documentation\DocumentationLinkResolver::forRoute($current, 'administrator');
 ?>
 <!doctype html>
 <html lang="en-AU">
@@ -160,6 +162,9 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
         <div class="admin-topbar">
             <div class="admin-page-heading"><span><?= $this->e($adminBrand->name()) ?></span><strong><?= $this->e($title ?? 'Admin') ?></strong></div>
             <div class="admin-topbar-actions">
+                <?php if (!str_starts_with($current, '/admin/help') && $documentationTarget !== null): ?>
+                    <a class="btn btn-ghost admin-context-help" href="<?= e(url('admin/help/' . $documentationTarget['guide'] . '/' . $documentationTarget['slug'])) ?>"><span aria-hidden="true">?</span><span class="admin-context-help-label">Help</span></a>
+                <?php endif; ?>
                 <?php if (count($adminBrands) > 1): ?>
                     <div class="admin-brand-switcher">
                         <button class="btn btn-ghost admin-brand-switcher__trigger" type="button" aria-expanded="false" aria-controls="admin-brand-menu">

@@ -324,3 +324,19 @@ off-by-default factual workflow available only after reviewed test, pilot and
 Suppressions are rechecked immediately before transport. **Evidence:** policy,
 workflow, suppression, migration, campaign and database integration tests plus
 audited per-batch outcomes.
+
+## 2026-07-30 — Product documentation is a versioned interface
+
+**Context:** OPS-006. Dashboard functions had no reliable page-level guide and
+historical prose could drift away from routes, permissions and controller
+behaviour. **Decision:** one repository-backed registry owns Customer, Provider,
+Administrator, Developer, API, Release Notes and Changelog articles. Shared
+public/admin views provide search and filters; every dashboard layout resolves a
+contextual Help target from its current route. Operational guides remain behind
+the administrator role gate. Articles require structured metadata and standard
+sections, and CI rejects interface changes without a scope-matched guide plus
+release-note update. A database CMS is deliberately not introduced because
+version control, review and deploy parity are the required source-of-truth
+properties. **Accessibility:** search is server-rendered, controls are labelled,
+navigation is keyboard reachable, mobile content reflows without horizontal
+page overflow and raw Markdown HTML is escaped.

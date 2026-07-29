@@ -23,6 +23,8 @@ This is the authoritative orientation page for developers and AI agents.
    `docs/RELEASE_NOTES.md`.
 10. For product-specific data, `docs/TOWSMART_CATALOGUE.md`,
     `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
+11. For living customer, provider, administrator, developer and API guidance,
+    read `docs/user-guide/README.md` and `docs/user-guide/registry.php`.
 
 ## Sources of truth
 
