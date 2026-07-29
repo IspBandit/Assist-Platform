@@ -9,6 +9,7 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Services\DataSourceService;
 use App\Services\NationalRouteImportService;
+use App\Services\ProviderImportQueueWorker;
 use Throwable;
 
 final class DataSourcesController extends Controller
@@ -60,6 +61,7 @@ final class DataSourcesController extends Controller
             'nationalImportJob' => $jobId > 0 ? (new NationalRouteImportService())->jobStatus($jobId, $brandId) : null,
             'isVanAssist' => current_brand()->id() === 'vanassist',
             'eligibleQueueRun' => $eligibleQueueRun ? $runState : null,
+            'serverQueue' => $service->eligibleQueueSummary($brandId, []),
         ]);
     }
     public function saveConnector(Request $r): Response { $this->requirePlatformAdmin('data_sources.manage');try{(new DataSourceService())->saveConnector((int)$r->input('connector_id'),(string)$r->input('api_key'),(int)$r->input('daily_request_limit'),(float)$r->input('daily_budget_aud'),$r->input('active')==='1',(int)auth()->id());return $this->redirectWith('/admin/data-sources','success','Connector settings saved securely.');}catch(Throwable $e){return $this->redirectWith('/admin/data-sources','error',$e->getMessage());} }
@@ -150,6 +152,24 @@ final class DataSourcesController extends Controller
             return $this->redirectWith($returnTo, 'success', $message);
         } catch (Throwable $e) {
             return $this->redirectWith($returnTo, 'error', $e->getMessage());
+        }
+    }
+
+    public function processServerQueue(Request $r): Response
+    {
+        $this->requirePlatformAdmin('data_sources.review');
+        if (current_brand()->id() !== 'vanassist') {
+            return $this->redirectWith('/admin/data-sources/review','error','Switch to the VanAssist workspace before processing the provider import queue.');
+        }
+        try {
+            $result = (new ProviderImportQueueWorker())->run(30.0);
+            $message = number_format((int)$result['providers_published']) . ' eligible providers published and '
+                . number_format((int)$result['duplicates_merged']) . ' safe duplicates merged in this server pass. '
+                . number_format((int)$result['eligible_remaining']) . ' eligible records remain; '
+                . number_format((int)$result['review_required']) . ' require independent evidence or another manual decision.';
+            return $this->redirectWith('/admin/data-sources/review','success',$message);
+        } catch (Throwable $e) {
+            return $this->redirectWith('/admin/data-sources/review','error','Server queue processor stopped safely: ' . $e->getMessage());
         }
     }
 

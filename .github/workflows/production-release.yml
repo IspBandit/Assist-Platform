@@ -126,5 +126,13 @@ jobs:
             --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
           curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
+      - name: Resume safeguarded provider processing
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh "$VPS_USER@$VPS_HOST" "sudo /usr/local/sbin/assist-cron process_provider_import_queue"
+          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php scripts/provider-import-status.php" | tee provider-import-status.json
+          printf 'Provider import status after release: `%s`\n' "$(cat provider-import-status.json)" >> "$GITHUB_STEP_SUMMARY"
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

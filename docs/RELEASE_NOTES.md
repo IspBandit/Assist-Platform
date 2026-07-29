@@ -28,6 +28,22 @@ may remain as dated files and are linked here rather than copied.
 - Added CI and pull-request enforcement so changed public, customer, provider,
   administrator or API behaviour must update the matching registered guide and
   these release notes. No migration or environment change is required.
+- Replaced browser-dependent provider import continuation with a locked server
+  worker that resumes national screening, merges safe unclaimed duplicates,
+  publishes only evidence-confirmed listings and reports processable versus
+  review-required counts. Migration 083 registers the scheduled task.
+- Corrected provider campaign scope to use the same canonical brand categories
+  as the live directory. VanAssist now prepares factual and consent-gated
+  marketing drafts for every active service category, validates sendable email
+  addresses and exposes up to 250 current campaigns.
+- Reworked VanAssist's phone first screen around immediate service/location
+  search, current-location access and touch-safe traveller shortcuts over the
+  approved navy travel treatment. Search results now show returned, located
+  providers as numbered OpenStreetMap pins tied to the accessible result list;
+  each pin opens the exact provider summary, list link and available directions
+  action. Phones default to compact list rows with a List/Map control, preserve
+  a prominent nearby Places to stay path, separate Featured and related-service
+  results, and keep the list as the no-JavaScript/map-failure fallback.
 
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.

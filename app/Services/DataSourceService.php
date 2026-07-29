@@ -427,6 +427,20 @@ final class DataSourceService
         return $result;
     }
 
+    /** @return array{pending:int,mergeable:int,approvable:int,eligible:int,blocked:int,reasons:array<string,int>} */
+    public function eligibleQueueSummary(int $brandId,array $filters=[]): array
+    {
+        $snapshot = $this->eligibleQueueSnapshot($brandId,$filters);
+        return [
+            'pending'=>count($snapshot['rows']),
+            'mergeable'=>$snapshot['mergeable'],
+            'approvable'=>$snapshot['approvable'],
+            'eligible'=>$snapshot['eligible'],
+            'blocked'=>$snapshot['blocked'],
+            'reasons'=>$snapshot['reasons'],
+        ];
+    }
+
     /** @return array{rows:array<int,array<string,mixed>>,by_id:array<int,array<string,mixed>>,mergeable:int,approvable:int,eligible:int,blocked:int,reasons:array<string,int>} */
     private function eligibleQueueSnapshot(int $brandId,array $filters): array
     {

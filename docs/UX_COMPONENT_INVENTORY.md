@@ -43,8 +43,9 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Provider trust and campaign workspace | `/provider/growth`, `.growth-*` | provider-owned component | Pending-by-default evidence and ads; organic analytics remain separate |
 | Trust, rules and growth control | `/admin/trust-growth`, `.admin-trust-*` | permission-scoped admin component | Source fail-closed queue, evidence review, pricing/relevance approval and alert audit |
 | Website insights | `/admin/demand`, `.insight-*`, `.dashboard-insight-*` | permission- and brand-scoped admin component | Aggregate visits, intent and provider interest; explicit estimated-versus-confirmed language; no anonymous identity disclosure |
-| Controlled provider queue processor | `/admin/data-sources/review`, server-session continuation | VanAssist admin data operation | Claimed-provider, brand-scope, provenance, CSRF, idempotency and no-progress acceptance |
+| Controlled provider queue processor | `/admin/data-sources/review`, migration 083 and `process_provider_import_queue` | VanAssist admin data operation | Server-owned resumable work, explicit ready-versus-review counts, claimed-provider, brand-scope, provenance, CSRF, idempotency and no-progress acceptance |
 | Factual directory campaign continuation | `/admin/notifications`, migration 082 and scheduled notification worker | shared campaign operation | Off by default; directory-accuracy only; reviewed-stage, suppression and rate-limit acceptance |
+| Canonical service campaign list | `/admin/notifications`, migration 083 | VanAssist growth operation | Factual and consent-gated drafts for every active brand category; live eligible/held/suppressed/removed counts and recipient controls |
 
 ### Current token debt
 
@@ -191,3 +192,23 @@ respect reduced motion and use the shared brand tokens and premium symbol family
   version, update date and owner metadata.
 - `context-help`: route-resolved Help action in admin, customer, provider and
   park dashboard layouts.
+
+## VanAssist mobile search and result map
+
+- The 390px first screen uses the compact road wordmark, a navy/white
+  daylight-readable intro, immediate service and location inputs, explicit
+  current-location action and four touch-safe traveller shortcuts. It does not
+  reuse a compressed desktop composition or a green/teal hero wash.
+- The result map is progressive enhancement over the canonical provider list.
+  It maps only providers returned by the current server-side search, numbers
+  pins in list order, distinguishes direct and related-service results with
+  words as well as colour, and marks the searched origin separately.
+- A pin opens the exact provider summary with profile and directions actions;
+  focusing or selecting its result card identifies the corresponding pin.
+  Missing coordinates never remove a provider from the list.
+- Phones default to a clean compact list and expose Map through a two-option
+  segmented control. Featured results are explicitly separate, organic direct
+  results rank verified then nearest, related services remain separate, and
+  Places to stay stays visible as a touch-safe shortcut using search context.
+- Map tiles come from OpenStreetMap with visible attribution. Failure of script
+  or external tiles leaves search, provider cards and directions usable.

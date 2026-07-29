@@ -86,7 +86,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | COM-001 | Transactional email transport and sender reputation | in progress | Direct shared-mailbox send/receive passes; brand-neutral templates, application probes and central bounce/complaint suppression implemented; production application-probe acceptance remains |
-| COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
+| COM-002 | Consent-aware bulk provider campaign sending | in progress | Canonical brand-category drafts, searchable candidate pool, campaign exclusions, factual-source and marketing-consent boundaries, bounded queue batches, suppression and signed unsubscribe complete; production recipient-count and throughput acceptance remains |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
 | COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |

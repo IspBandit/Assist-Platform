@@ -75,6 +75,9 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('DirectoryAccuracyNotice::previewBody($brandName)', $source);
         self::assertStringContainsString("'draft','draft'", $source);
         self::assertStringContainsString('NOT EXISTS', $source);
+        self::assertStringContainsString('brand_provider_categories', $source);
+        self::assertStringContainsString('provider_brand_category_id', $source);
+        self::assertStringNotContainsString('INNER JOIN provider_services ps ON ps.category_id=sc.id', $source);
     }
 
     public function testProviderImportsAutomaticallyPrepareDraftsWithoutQueuingDelivery(): void
@@ -136,7 +139,8 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('marketing_consented_at', $service);
         self::assertStringContainsString('assertNotSuppressed', $service);
         self::assertStringContainsString('notification_provider_exclusions', $service);
-        self::assertStringContainsString("GROUP BY LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')))", $service);
+        self::assertStringContainsString('$statusByEmail', $service);
+        self::assertStringContainsString('FILTER_VALIDATE_EMAIL', $service);
         self::assertStringContainsString("SELECT LOWER(email) AS email FROM email_suppressions WHERE scope IN ('marketing','all')", $service);
         self::assertStringContainsString('$statusByEmail', $service);
         self::assertStringContainsString('Record consent and add', $view);
@@ -156,7 +160,8 @@ final class StagedProviderCampaignTest extends TestCase
         $controller = $this->source('app/Controllers/Admin/NotificationsController.php');
         $view = $this->source('app/Views/admin/notifications/index.php');
 
-        self::assertStringContainsString('ORDER BY n.id DESC LIMIT 50', $controller);
+        self::assertStringContainsString('LIMIT 250', $controller);
+        self::assertStringContainsString('brand_provider_categories bpc', $controller);
         self::assertStringContainsString('CampaignRecipientManager::summary($notification)', $controller);
         self::assertStringContainsString('Queued / sent', $view);
         self::assertStringContainsString('eligible now', $view);
@@ -164,6 +169,15 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('held', $view);
         self::assertStringContainsString('suppressed', $view);
         self::assertStringContainsString('not inserted into delivery records', $view);
+    }
+
+    public function testCampaignRecipientsUseCanonicalBrandAssignmentsAndRejectInvalidEmail(): void
+    {
+        $service=$this->source('app/Services/CampaignRecipientManager.php');
+        self::assertStringContainsString('provider_brand_category_assignments pbca',$service);
+        self::assertStringContainsString('provider_brand_category_id',$service);
+        self::assertStringContainsString('FILTER_VALIDATE_EMAIL',$service);
+        self::assertStringContainsString('eligibleMarketingRecipients',$service);
     }
 
     public function testAutomaticContinuationIsOffByDefaultAndFactualOnlyAfterReviewedDaily100(): void

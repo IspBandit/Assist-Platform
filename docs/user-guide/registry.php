@@ -50,6 +50,7 @@ $common = static fn (
 ];
 
 $articles = [
+    $common('customer-guide', 'finding-nearby-help', 'Finding nearby help', 'Search VanAssist by service and location, compare mapped results and open directions safely.', ['customer'], ['vanassist'], 'search', 5, [], ['/find'], ['customer-guide.requests-and-saved-providers'], ['routes/web.php', 'app/Controllers/Site/SearchController.php', 'app/Views/public/search-results.php', 'public/assets/js/app.js']),
     $common('customer-guide', 'account-and-garage', 'Account and My Garage', 'Manage private account assets, documents and brand-aware actions.', ['customer'], $allBrands, 'garage', 10, ['authenticated owner'], ['/account', '/account/garage', '/account/compliance'], ['customer-guide.requests-and-saved-providers'], ['routes/account.php', 'app/Controllers/GarageController.php', 'app/Controllers/ComplianceController.php']),
     $common('customer-guide', 'requests-and-saved-providers', 'Requests and saved providers', 'Review owned assistance requests and maintain a saved-provider list.', ['customer'], $allBrands, 'requests', 20, ['authenticated owner'], ['/account/requests', '/account/saved', '/account/providers/save'], ['customer-guide.account-and-garage', 'provider-guide.requests-runs-and-growth'], ['routes/account.php', 'app/Controllers/AccountController.php']),
 

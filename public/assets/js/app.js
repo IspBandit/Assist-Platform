@@ -579,4 +579,207 @@
             window.location.href = target;
         });
     });
+
+    // Search-result map: a deliberately small, dependency-free OpenStreetMap
+    // tile viewer. The server-rendered provider list remains the canonical and
+    // fully accessible experience when script or tiles are unavailable.
+    var resultsMap = document.querySelector('[data-results-map]');
+    var resultsMapData = document.querySelector('[data-results-map-data]');
+    if (resultsMap && resultsMapData) {
+        var mapCanvas = resultsMap.querySelector('[data-results-map-canvas]');
+        var mapStatus = document.querySelector('[data-results-map-status]');
+        var mapSummary = resultsMap.querySelector('[data-results-map-summary]');
+        var summaryName = resultsMap.querySelector('[data-results-map-summary-name]');
+        var summaryLocation = resultsMap.querySelector('[data-results-map-summary-location]');
+        var summaryPosition = resultsMap.querySelector('[data-results-map-summary-position]');
+        var summaryProfile = resultsMap.querySelector('[data-results-map-summary-profile]');
+        var summaryDirections = resultsMap.querySelector('[data-results-map-summary-directions]');
+        var summaryList = resultsMap.querySelector('[data-results-map-summary-list]');
+        var summaryClose = resultsMap.querySelector('[data-results-map-summary-close]');
+        var resultsViewShell = resultsMap.closest('[data-results-view-shell]');
+        var resultsList = document.querySelector('[data-results-list]');
+        var mapPayload = null;
+        try { mapPayload = JSON.parse(resultsMapData.textContent || '{}'); } catch (e) { mapPayload = null; }
+
+        var providers = mapPayload && Array.isArray(mapPayload.providers) ? mapPayload.providers : [];
+        var validCoordinate = function (lat, lng) {
+            return Number.isFinite(Number(lat)) && Number.isFinite(Number(lng))
+                && Number(lat) >= -90 && Number(lat) <= 90 && Number(lng) >= -180 && Number(lng) <= 180;
+        };
+        providers = providers.filter(function (provider) { return validCoordinate(provider.lat, provider.lng); }).slice(0, 80);
+
+        if (mapCanvas && providers.length) {
+            resultsMap.hidden = false;
+            var tileSize = 256;
+            var activeProviderId = null;
+            var setResultsView = function (view) {
+                if (!resultsViewShell || (view !== 'list' && view !== 'map')) { return; }
+                resultsViewShell.setAttribute('data-active-view', view);
+                document.querySelectorAll('[data-results-view]').forEach(function (button) {
+                    button.setAttribute('aria-pressed', button.getAttribute('data-results-view') === view ? 'true' : 'false');
+                });
+                if (resultsList) { resultsList.hidden = view === 'map' && window.matchMedia('(max-width: 719px)').matches; }
+                if (view === 'map') { window.setTimeout(renderResultsMap, 0); }
+            };
+            document.querySelectorAll('[data-results-view]').forEach(function (button) {
+                button.addEventListener('click', function () { setResultsView(button.getAttribute('data-results-view')); });
+            });
+            var openSummary = function (provider, index, focusSummary) {
+                activeProviderId = String(provider.id);
+                resultsMap.querySelectorAll('.results-map-pin').forEach(function (candidate) {
+                    candidate.classList.toggle('is-active', candidate.getAttribute('data-provider-id') === activeProviderId);
+                });
+                if (!mapSummary) { return; }
+                summaryPosition.textContent = 'Result ' + (index + 1);
+                summaryName.textContent = provider.name;
+                summaryLocation.textContent = provider.location || 'Location supplied on provider profile';
+                summaryProfile.href = provider.profile;
+                summaryDirections.hidden = !provider.directions;
+                if (provider.directions) {
+                    summaryDirections.href = provider.directions;
+                    summaryDirections.setAttribute('data-map-destination', provider.destination || '');
+                }
+                mapSummary.hidden = false;
+                if (focusSummary) { summaryProfile.focus(); }
+            };
+            if (summaryClose) {
+                summaryClose.addEventListener('click', function () {
+                    mapSummary.hidden = true;
+                    activeProviderId = null;
+                    resultsMap.querySelectorAll('.results-map-pin').forEach(function (candidate) { candidate.classList.remove('is-active'); });
+                });
+            }
+            if (summaryDirections) {
+                summaryDirections.addEventListener('click', function (event) {
+                    var destination = summaryDirections.getAttribute('data-map-destination') || '';
+                    if (!destination) { return; }
+                    var appleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+                        || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                    var androidMobile = /Android/i.test(navigator.userAgent);
+                    if (!appleMobile && !androidMobile) { return; }
+                    event.preventDefault();
+                    window.location.href = appleMobile
+                        ? 'https://maps.apple.com/?daddr=' + encodeURIComponent(destination) + '&dirflg=d'
+                        : 'geo:0,0?q=' + encodeURIComponent(destination);
+                });
+            }
+            if (summaryList) {
+                summaryList.addEventListener('click', function () {
+                    var card = activeProviderId ? document.getElementById('provider-result-' + activeProviderId) : null;
+                    setResultsView('list');
+                    if (!card) { return; }
+                    window.setTimeout(function () {
+                        card.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+                        card.focus({ preventScroll: true });
+                    }, 0);
+                });
+            }
+            var project = function (lat, lng, zoom) {
+                var scale = Math.pow(2, zoom);
+                var safeLat = Math.max(-85.0511, Math.min(85.0511, Number(lat)));
+                var sin = Math.sin(safeLat * Math.PI / 180);
+                return {
+                    x: (Number(lng) + 180) / 360 * scale * tileSize,
+                    y: (0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * scale * tileSize
+                };
+            };
+            var renderResultsMap = function () {
+                var width = Math.max(280, mapCanvas.clientWidth);
+                var height = Math.max(310, mapCanvas.clientHeight);
+                var points = providers.map(function (provider) {
+                    return { lat: Number(provider.lat), lng: Number(provider.lng) };
+                });
+                var origin = mapPayload.origin;
+                if (origin && validCoordinate(origin.lat, origin.lng)) {
+                    points.push({ lat: Number(origin.lat), lng: Number(origin.lng) });
+                }
+
+                var zoom = 15;
+                var projected = [];
+                for (; zoom >= 3; zoom -= 1) {
+                    projected = points.map(function (point) { return project(point.lat, point.lng, zoom); });
+                    var xs = projected.map(function (point) { return point.x; });
+                    var ys = projected.map(function (point) { return point.y; });
+                    if (Math.max.apply(null, xs) - Math.min.apply(null, xs) <= width - 96
+                        && Math.max.apply(null, ys) - Math.min.apply(null, ys) <= height - 96) { break; }
+                }
+
+                var minX = Math.min.apply(null, projected.map(function (point) { return point.x; }));
+                var maxX = Math.max.apply(null, projected.map(function (point) { return point.x; }));
+                var minY = Math.min.apply(null, projected.map(function (point) { return point.y; }));
+                var maxY = Math.max.apply(null, projected.map(function (point) { return point.y; }));
+                var left = (minX + maxX) / 2 - width / 2;
+                var top = (minY + maxY) / 2 - height / 2;
+                var fragment = document.createDocumentFragment();
+
+                for (var tileX = Math.floor(left / tileSize); tileX <= Math.floor((left + width) / tileSize); tileX += 1) {
+                    for (var tileY = Math.floor(top / tileSize); tileY <= Math.floor((top + height) / tileSize); tileY += 1) {
+                        var maxTile = Math.pow(2, zoom);
+                        if (tileY < 0 || tileY >= maxTile) { continue; }
+                        var wrappedX = ((tileX % maxTile) + maxTile) % maxTile;
+                        var tile = document.createElement('img');
+                        tile.className = 'results-map-tile';
+                        tile.alt = '';
+                        tile.decoding = 'async';
+                        tile.referrerPolicy = 'strict-origin-when-cross-origin';
+                        tile.src = 'https://tile.openstreetmap.org/' + zoom + '/' + wrappedX + '/' + tileY + '.png';
+                        tile.style.left = (tileX * tileSize - left) + 'px';
+                        tile.style.top = (tileY * tileSize - top) + 'px';
+                        fragment.appendChild(tile);
+                    }
+                }
+
+                providers.forEach(function (provider, index) {
+                    var point = project(provider.lat, provider.lng, zoom);
+                    var pin = document.createElement('button');
+                    pin.type = 'button';
+                    pin.className = 'results-map-pin' + (provider.featured ? ' is-featured' : (provider.possible ? ' is-possible' : ''));
+                    pin.setAttribute('data-provider-id', String(provider.id));
+                    pin.setAttribute('data-number', String(index + 1));
+                    pin.style.left = (point.x - left) + 'px';
+                    pin.style.top = (point.y - top) + 'px';
+                    pin.setAttribute('aria-label', provider.name + (provider.location ? ', ' + provider.location : '') + '. Jump to result.');
+                    pin.title = provider.name;
+                    pin.addEventListener('click', function (event) {
+                        var card = document.getElementById('provider-result-' + provider.id);
+                        openSummary(provider, index, true);
+                        if (card) {
+                            card.classList.add('provider-card--map-focus');
+                            window.setTimeout(function () { card.classList.remove('provider-card--map-focus'); }, 1800);
+                        }
+                    });
+                    fragment.appendChild(pin);
+                });
+
+                if (origin && validCoordinate(origin.lat, origin.lng)) {
+                    var originPoint = project(origin.lat, origin.lng, zoom);
+                    var originPin = document.createElement('span');
+                    originPin.className = 'results-map-origin';
+                    originPin.style.left = (originPoint.x - left) + 'px';
+                    originPin.style.top = (originPoint.y - top) + 'px';
+                    originPin.setAttribute('role', 'img');
+                    originPin.setAttribute('aria-label', 'Your searched location');
+                    fragment.appendChild(originPin);
+                }
+
+                mapCanvas.replaceChildren(fragment);
+                if (mapStatus) { mapStatus.textContent = providers.length + ' returned ' + (providers.length === 1 ? 'provider is' : 'providers are') + ' shown on the map and in the list below.'; }
+            };
+
+            renderResultsMap();
+            setResultsView(window.matchMedia('(max-width: 719px)').matches ? 'list' : 'map');
+            document.querySelectorAll('[id^="provider-result-"]').forEach(function (card) {
+                var providerId = card.id.replace('provider-result-', '');
+                var providerIndex = providers.findIndex(function (provider) { return String(provider.id) === providerId; });
+                if (providerIndex < 0) { return; }
+                card.addEventListener('focusin', function () { openSummary(providers[providerIndex], providerIndex, false); });
+                card.addEventListener('click', function () { openSummary(providers[providerIndex], providerIndex, false); });
+            });
+            var mapResizeTimer = null;
+            window.addEventListener('resize', function () {
+                window.clearTimeout(mapResizeTimer);
+                mapResizeTimer = window.setTimeout(renderResultsMap, 160);
+            }, { passive: true });
+        }
+    }
 })();

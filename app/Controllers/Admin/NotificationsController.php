@@ -35,7 +35,10 @@ final class NotificationsController extends Controller
         $this->requirePermission('notifications.send');
         ProviderCampaignDrafts::prepareForBrand(current_brand()->databaseId());
         $notifications = Database::select(
-            'SELECT n.*,u.name AS author,sc.name AS category_name FROM notifications n LEFT JOIN users u ON u.id=n.created_by LEFT JOIN service_categories sc ON sc.id=n.category_id WHERE n.brand_id=? ORDER BY n.id DESC LIMIT 50',
+            'SELECT n.*,u.name AS author,COALESCE(bpc.name,sc.name) AS category_name FROM notifications n '
+            . 'LEFT JOIN users u ON u.id=n.created_by LEFT JOIN service_categories sc ON sc.id=n.category_id '
+            . 'LEFT JOIN brand_provider_categories bpc ON bpc.id=n.provider_brand_category_id '
+            . "WHERE n.brand_id=? ORDER BY FIELD(n.campaign_type,'directory_accuracy','provider_marketing','general_marketing'),COALESCE(bpc.sort_order,999),n.id DESC LIMIT 250",
             [current_brand()->databaseId()]
         );
         $audienceSummaries = [];

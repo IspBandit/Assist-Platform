@@ -17,14 +17,14 @@ Website insights requires `demand.view`, with CSV export separately requiring `d
 - **Website insights:** Period, From and To filters. Summary values are Visitors, Page views/pages per visitor, Provider searches/no-results, Provider profiles opened, Contact actions and Confirmed provider uses. Tables cover Services wanted, Visitor actions, Provider interest, Most viewed pages, Visitor sources, Devices, demand locations and coverage gaps. Provider interest shows Provider, Result appearances, Profile views and Contact actions; Funnel shows Stage, Count and percentage from previous; Coverage gaps/Map show the rendered town, category, demand and provider counts.
 - **Data Intelligence:** State and Category filters; summary shows Active providers, Verification coverage/verified count, Critical opportunities and Population-backed rows. Import quality shows Candidates, Awaiting review, Approved, Merged, Rejected and Possible duplicates. Opportunities show Priority, Location, Category, Providers, Verified %, Population, Per 10k, Score and Action; the action queue shows Priority, Title and Rationale.
 - **Trust, rules & growth:** Public sources, Fail-closed review, Checks overdue, 7-day failures and Alert subscribers; source rows show status, Title, Authority and Last checked; capability evidence shows Provider, Capability, Jurisdiction, filename/status and Review note; campaign review shows Campaign, advertiser, Brand, daily/total budgets, target count, destination and Approved CPC; alert audit shows Created, Source, Recipient, Status and Reason.
-- **Data Sources:** connector cards show status, usage/limit, cost, credential hint, New API key, Daily request limit, Daily AUD budget and Enable. Gap finder fields are Connector, mapped Category/query and Location. Schedule fields are Name, Connector, Mapping, Location, Frequency and Enabled. Mappings show Platform category, Connector query and Active; coverage shows Category, Active and Verified; jobs show Source, Query, Status and Found; schedules show name, frequency and enabled/paused. Import-review fields are enumerated in **Providers and directory**.
+- **Data Sources:** connector cards show status, usage/limit, cost, credential hint, New API key, Daily request limit, Daily AUD budget and Enable. Gap finder fields are Connector, mapped Category/query and Location. Schedule fields are Name, Connector, Mapping, Location, Frequency and Enabled. Mappings show Platform category, Connector query and Active; coverage shows Category, Active and Verified; jobs show Source, Query, Status and Found; schedules show name, frequency and enabled/paused. Import review shows Pending total, Ready for automatic processing, Need evidence or a decision, and recorded blocking reasons. Import-review fields are enumerated in **Providers and directory**.
 
 ## Actions
 
 - **Website insights:** **Apply**, **Export summary**, open detailed provider reporting, **Inspect providers**, **Conversion funnel**, tracking settings/feature-flag links, provider links and available CSV exports. Coverage and map tables are display-only.
 - **Data Intelligence:** **Apply**, **Send to import workflow**, **Continue import**, **Complete**, **Manage data sources** and **Open review queue**.
 - **Trust, rules & growth:** **Check next 20 due sources**, **Confirm current**, **Retire**, **Verify** / **Reject** capability evidence, and **Activate** / **Reject** a campaign using Approved CPC.
-- **Data Sources:** **Queensland coverage**, **Open review queue**, **Save secure settings**, **Find missing providers**, **Save schedule**, and save each mapping. Import-review actions are enumerated in **Providers and directory**.
+- **Data Sources:** **Queensland coverage**, **Open review queue**, **Save secure settings**, **Find missing providers**, **Save schedule**, save each mapping and **Run server processor now**. The worker continues staged screening, safe duplicate links and evidence-confirmed publication after the browser closes. Import-review actions are enumerated in **Providers and directory**.
 
 ## Workflows
 
@@ -32,7 +32,7 @@ Start with a selected-brand insight, create a task where follow-up is justified,
 
 ## Examples
 
-A zero-result service/location pattern can become a Data Intelligence task and then a scoped connector run. The resulting candidates stay in the review queue until an authorised decision.
+A zero-result service/location pattern can become a Data Intelligence task and then a scoped connector run. Candidates with adequate independent evidence can be advanced by the server worker. Restricted-source rows remain temporary review records until a lawful independent source supports publication.
 
 ## Common mistakes
 
@@ -41,6 +41,7 @@ A zero-result service/location pattern can become a Data Intelligence task and t
 - Treating aggregate analytics as raw customer records.
 - Running broad imports without category, location, limit and review planning.
 - Assuming a successful source fetch makes its claims verified.
+- Assuming every pending discovery row can lawfully become a permanent listing. The status panel distinguishes safe automatic work from records missing independent evidence or retention rights.
 
 ## Related pages
 
@@ -58,7 +59,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-07-30 (server-owned provider processing and explicit queue reasons).
 
 ## Owner
 

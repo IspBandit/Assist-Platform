@@ -8,6 +8,7 @@ See [ADR 0013](DECISIONS/0013-staged-consent-gated-marketing-email.md) for conse
 
 See [ADR 0014](DECISIONS/0014-separate-directory-accuracy-from-marketing.md) for the locked factual listing-notice boundary and type-specific suppression.
 See [ADR 0015](DECISIONS/0015-controlled-bulk-provider-review.md) for controlled bulk publication and strong duplicate linking.
+See [ADR 0016](DECISIONS/0016-server-owned-provider-import-and-campaign-taxonomy.md) for server-owned import processing and canonical provider-campaign category scope.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -58,5 +59,6 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
 - 0014: Separate directory-accuracy notices from marketing communication.
 - 0015: Controlled bulk provider review and strong duplicate linking.
+- 0016: Server-owned provider import processing and canonical provider-campaign taxonomy.
 
 The index must be updated whenever an ADR is accepted.

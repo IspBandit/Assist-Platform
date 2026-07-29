@@ -106,6 +106,12 @@ final class SearchController extends Controller
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townIdForFilter);
         }
 
+        // Paid visibility is kept in an explicitly labelled block. Organic
+        // direct results rank verified listings first, then nearest distance;
+        // related/inferred services remain a separate group.
+        $matches = $this->rankDirectMatches($matches);
+        usort($possible, [$this, 'compareProviderDistance']);
+
         $locationNotFound = $town === null && ($location !== '' || $hasCoords);
 
         // Record the search session + provider impressions (no-op unless the
@@ -254,5 +260,27 @@ final class SearchController extends Controller
         }
 
         return [null, null, null];
+    }
+
+    /** @param array<int,array<string,mixed>> $rows @return array<int,array<string,mixed>> */
+    private function rankDirectMatches(array $rows): array
+    {
+        $sponsored = array_values(array_filter($rows, static fn (array $row): bool => !empty($row['is_featured'])));
+        $organic = array_values(array_filter($rows, static fn (array $row): bool => empty($row['is_featured'])));
+        usort($sponsored, [$this, 'compareProviderDistance']);
+        usort($organic, function (array $a, array $b): int {
+            $verified = ((int) ($b['is_verified'] ?? 0)) <=> ((int) ($a['is_verified'] ?? 0));
+            return $verified !== 0 ? $verified : $this->compareProviderDistance($a, $b);
+        });
+        return array_merge($sponsored, $organic);
+    }
+
+    /** @param array<string,mixed> $a @param array<string,mixed> $b */
+    private function compareProviderDistance(array $a, array $b): int
+    {
+        $aDistance = isset($a['distance_km']) && is_numeric($a['distance_km']) ? (float) $a['distance_km'] : INF;
+        $bDistance = isset($b['distance_km']) && is_numeric($b['distance_km']) ? (float) $b['distance_km'] : INF;
+        $distance = $aDistance <=> $bDistance;
+        return $distance !== 0 ? $distance : strcasecmp((string) ($a['business_name'] ?? ''), (string) ($b['business_name'] ?? ''));
     }
 }
