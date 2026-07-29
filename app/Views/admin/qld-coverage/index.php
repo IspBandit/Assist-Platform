@@ -230,6 +230,13 @@
 </section>
 
 <section class="card">
+  <h2>Import dry-run</h2>
+  <p class="muted">Publishable-minus-regulated candidates shaped for the review queue. Default CLI mode writes files only — no production writes.</p>
+  <p><code>php scripts/qld-coverage-import-dry-run.php --batch brisbane-moreton-bay</code></p>
+  <p class="muted">Reports land in <code>storage/imports/qld-coverage/dry-run-*.json</code>. Use <code>--apply</code> only on local/test to insert pending review rows.</p>
+</section>
+
+<section class="card">
   <h2>Sources and licences</h2>
   <ul>
   <?php foreach (($summary['sources'] ?? []) as $sourceRow): ?>

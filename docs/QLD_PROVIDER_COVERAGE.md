@@ -40,8 +40,30 @@ node tools/qld-coverage-matrix.js --batch brisbane-moreton-bay
 node tools/qld-coverage-matrix.js --resume
 node tools/qld-coverage-matrix.js --list-batches
 php scripts/validate-qld-coverage.php
-./vendor/bin/phpunit --filter QldCoverageReportServiceTest
+php scripts/qld-coverage-import-dry-run.php --batch brisbane-moreton-bay
+./vendor/bin/phpunit --filter QldCoverage
 ```
+
+## Import dry-run (review queue shape)
+
+Default mode writes artefacts only — **no database writes**:
+
+```bash
+php scripts/qld-coverage-import-dry-run.php --batch brisbane-moreton-bay
+```
+
+Outputs:
+
+- `storage/imports/qld-coverage/dry-run-{batch}.json` — counts and notes
+- `storage/imports/qld-coverage/dry-run-{batch}-candidates.jsonl` — review-queue-shaped rows
+
+Rules:
+
+- source = `providers-publishable.json`
+- excludes `regulated-missing-licence.json`
+- flags Google Places provenance (skipped on `--apply`)
+- never sets marketing consent
+- `--apply` is local/test only; inserts pending `data_source_import_candidates`, never publishes providers
 
 ## Inputs (permitted sources only)
 
