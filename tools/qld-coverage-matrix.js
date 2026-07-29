@@ -304,9 +304,40 @@ function normalizeProvider(raw, origin) {
 
   const confidence = Number(raw.confidence) || 0;
   const verified = !!raw.verified;
-  const publishable = raw.publishable !== false && confidence >= 60 && !raw.needs_review
-    ? confidence >= 80
-    : !!raw.publishable && !raw.needs_review;
+  const email = raw.email || raw.public_email || null;
+  const needsReview =
+    !!raw.needs_review ||
+    confidence < 80 ||
+    (catIds.some((c) =>
+      [
+        "gas-certification",
+        "roadworthy",
+        "engineering-certification",
+        "compliance-engineering",
+      ].includes(c)
+    ) &&
+      !raw.licence_evidence);
+  const publishable =
+    !!raw.publishable && !needsReview && confidence >= 80 && !raw.licence_hold;
+
+  const field_evidence = {
+    categories: catIds.map((id) => ({
+      category: id,
+      evidence: `Listed under category in ${sourceName} pack`,
+      source: sourceName,
+      source_url: raw.source_url || null,
+      checked_at: checked,
+    })),
+  };
+  if (email) {
+    field_evidence.email = {
+      address: email,
+      source_url: raw.email_source_url || raw.source_url || raw.website || null,
+      checked_at: checked,
+      contact_type: raw.email_contact_type || "business_general",
+      marketing_consent: false,
+    };
+  }
 
   return {
     id: String(raw.id || `${origin}-${normName(raw.name || raw.business_name)}`),
@@ -314,7 +345,7 @@ function normalizeProvider(raw, origin) {
     trading_name: raw.trading_name || null,
     abn: raw.abn || null,
     phone: raw.phone || raw.public_phone || null,
-    public_email: raw.email || raw.public_email || null,
+    public_email: email,
     website: raw.website || null,
     street_address: raw.address || raw.street_address || null,
     town: raw.town || null,
@@ -336,22 +367,26 @@ function normalizeProvider(raw, origin) {
       : "unknown",
     claimed_status: raw.claimed ? "claimed" : "unclaimed",
     source_records,
-    field_evidence: {
-      categories: catIds.map((id) => ({
-        category: id,
-        evidence: `Listed under category in ${sourceName} pack`,
-        source: sourceName,
-      })),
-    },
+    field_evidence,
     confidence,
     last_checked_at: checked,
-    publishable: !!raw.publishable && !raw.needs_review,
-    needs_review: !!raw.needs_review || confidence < 80,
+    publishable,
+    needs_review: needsReview,
     review_reasons: [
       ...(raw.needs_review ? ["pack_needs_review"] : []),
       ...(confidence < 80 ? ["confidence_below_80"] : []),
       ...(!raw.phone ? ["missing_phone"] : []),
-      ...(!(raw.email || raw.public_email) ? ["missing_email"] : []),
+      ...(!email ? ["missing_email"] : []),
+      ...(catIds.some((c) =>
+        [
+          "gas-certification",
+          "roadworthy",
+          "engineering-certification",
+          "compliance-engineering",
+        ].includes(c)
+      ) && !raw.licence_evidence
+        ? ["regulated_missing_licence"]
+        : []),
     ],
     verified,
     _origin: origin,
@@ -722,10 +757,9 @@ function writeAggregates(allProviders, catById, batchResults, allTowns) {
     "roadworthy",
     "engineering-certification",
     "compliance-engineering",
-    "licensed-electrician",
   ]);
   const regulatedMissingLicence = qldProviders.filter((p) =>
-    (p.category_slugs || []).some((c) => regulatedCats.has(c))
+    (p.review_reasons || []).includes("regulated_missing_licence")
   );
 
   // Possible duplicates by name+postcode soft collision across origins

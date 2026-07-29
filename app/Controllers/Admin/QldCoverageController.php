@@ -20,11 +20,38 @@ final class QldCoverageController extends Controller
         }
 
         $service = new QldCoverageReportService();
+        $batch = trim((string) $request->query('batch', ''));
+        $town = trim((string) $request->query('town', ''));
+        $category = trim((string) $request->query('category', ''));
+        $status = trim((string) $request->query('status', ''));
+        $source = trim((string) $request->query('source', 'zero'));
+        if (!in_array($source, ['zero', 'weak'], true)) {
+            $source = 'zero';
+        }
+
+        $filters = [
+            'batch' => $batch,
+            'town' => $town,
+            'category' => $category,
+            'status' => $status,
+            'source' => $source,
+            'limit' => 50,
+        ];
+
         return $this->view('admin.qld-coverage.index', [
             'title' => 'Queensland coverage',
             'summary' => $service->summary(),
             'batches' => $service->batches(),
-            'zeroSample' => $service->zeroCoverageSample(50),
+            'filters' => $filters,
+            'coverageSample' => $service->coverageRows($filters),
+            'reviewSample' => $service->reviewCandidates([
+                'batch' => $batch,
+                'town' => $town,
+                'category' => $category,
+                'limit' => 15,
+            ]),
+            'duplicates' => $service->possibleDuplicates(25),
+            'regulated' => $service->regulatedMissingLicence(25),
         ]);
     }
 }

@@ -3,6 +3,8 @@
 Offline, evidence-backed Queensland locality × service-category coverage for
 Assist Platform / LocalTorque. **Does not write to the production database.**
 
+Backlog: **LOC-002** (coverage readiness) with provenance rules from **DATA-001**.
+
 ## Purpose
 
 Answer, for every active Queensland locality and every LocalTorque taxonomy
@@ -38,6 +40,7 @@ node tools/qld-coverage-matrix.js --batch brisbane-moreton-bay
 node tools/qld-coverage-matrix.js --resume
 node tools/qld-coverage-matrix.js --list-batches
 php scripts/validate-qld-coverage.php
+./vendor/bin/phpunit --filter QldCoverageReportServiceTest
 ```
 
 ## Inputs (permitted sources only)
@@ -50,6 +53,11 @@ php scripts/validate-qld-coverage.php
 - `database/seeds/businesses_osm.json` — ODbL
 
 Google Places is not used by this tool. Phone/email/hours are never invented.
+Public emails never imply marketing consent.
+
+Regulated categories held without licence evidence:
+`gas-certification`, `roadworthy`, `engineering-certification`,
+`compliance-engineering`.
 
 ## Outputs
 
@@ -73,12 +81,20 @@ Large matrix JSONL (gitignored runtime):
 
 ## Admin integration
 
-Import candidates are shaped for later review through Admin → Data Sources.
+Admin → Directory → Queensland coverage (read-only):
+
+- filter gap samples by region batch, town, category and coverage status;
+- inspect source licence and category-assignment evidence on review candidates;
+- list possible duplicates and regulated providers missing licence evidence;
+- hand off approve/merge/reject to the existing import review queue.
+
 Do not auto-approve. Regulated categories remain held without licence evidence.
 
 ## Quality rules
 
 - Straight-line km only until an authorised routing source exists.
 - Franchise websites are brand-level unless site-specific evidence exists.
-- `publishable` requires pack publishable flag and no review hold.
+- `publishable` requires pack publishable flag, confidence ≥ 80, and no review hold.
 - Marketing consent is never inferred from a public email.
+- Queensland is not “complete” while zero-coverage cells remain; the matrix
+  documents gaps honestly rather than inventing coverage.
