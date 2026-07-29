@@ -82,7 +82,7 @@ final class StagedProviderCampaignTest extends TestCase
 
     public function testCampaignHeadersAreLightweightRetinaWebpAssets(): void
     {
-        $directory = dirname(__DIR__, 2) . '/public/assets/img/email-campaigns';
+        $directory = dirname(__DIR__, 2) . '/public/assets/img';
         foreach (['workshop','electrical','tyres','rv','trailer','fuel','compliance','stays'] as $family) {
             $path = $directory . '/provider-' . $family . '.webp';
             self::assertFileExists($path);

@@ -116,5 +116,7 @@ jobs:
           grep -q 'A manually entered town or postcode' <<<"$app_js"
           curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
+          curl --fail --silent --show-error --location --max-time 20 \
+            --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

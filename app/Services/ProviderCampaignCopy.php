@@ -7,7 +7,7 @@ namespace App\Services;
 /** Curated launch-email starters. Admins must verify every claim before use. */
 final class ProviderCampaignCopy
 {
-    private const IMAGE_BASE = 'https://vanassist.com.au/assets/img/email-campaigns/provider-';
+    private const IMAGE_BASE = 'https://vanassist.com.au/runtime-assets/img/provider-';
 
     /** @return array<string,array{label:string,subject:string,body:string}> */
     public static function styles(): array
