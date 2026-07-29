@@ -154,7 +154,8 @@ final class BroadcastAudience
         }
         $consentBases = "'express_written','express_phone','express_web','inferred_role_relevant'";
         return Database::select(
-            "SELECT DISTINCT p.id AS provider_id,COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')) AS email,p.business_name AS name "
+            "SELECT DISTINCT p.id AS provider_id,COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')) AS email,p.business_name AS name,"
+            . "p.marketing_consent_source,CONCAT(DATE_FORMAT(p.marketing_consented_at,'%Y-%m-%d'),': ',p.marketing_consent_source,': ',p.marketing_consent_evidence) AS compliance_evidence "
             . "FROM providers p{$joins} WHERE p.status='active' AND p.deleted_at IS NULL AND p.marketing_opt_in=1 "
             . "AND p.marketing_consented_at IS NOT NULL AND p.marketing_consent_source IN ({$consentBases}) "
             . "AND NULLIF(TRIM(p.marketing_consent_evidence),'') IS NOT NULL{$where}",
@@ -197,6 +198,8 @@ final class BroadcastAudience
                 'provider_id' => isset($row['provider_id']) ? (int) $row['provider_id'] ?: null : null,
                 'email'   => $email,
                 'name'    => trim((string) ($row['name'] ?? '')),
+                'marketing_consent_source' => trim((string) ($row['marketing_consent_source'] ?? '')),
+                'compliance_evidence' => trim((string) ($row['compliance_evidence'] ?? '')),
             ];
         }
         return $out;

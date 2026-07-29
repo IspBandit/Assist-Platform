@@ -9,6 +9,7 @@ $err = static fn (string $k) => isset($errors[$k]) ? '<p class="field-error">' .
     <h1>Create your account</h1>
     <form method="post" action="<?= e(url('register')) ?>" class="stack">
         <?= csrf_field() ?>
+        <?php $this->include('partials.turnstile'); ?>
         <div class="honeypot" aria-hidden="true">
             <label>Leave this blank<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
         </div>

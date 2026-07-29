@@ -6,6 +6,8 @@ See [ADR 0011](DECISIONS/0011-separate-motorsport-rule-and-venue-catalogue.md) f
 See [ADR 0012](DECISIONS/0012-authoritative-provider-pack-routing.md) for canonical provider-pack ingestion and taxonomy-controlled brand routing.
 See [ADR 0013](DECISIONS/0013-staged-consent-gated-marketing-email.md) for consent-gated provider audiences and reviewed campaign limits.
 
+See [ADR 0014](DECISIONS/0014-separate-directory-accuracy-from-marketing.md) for the locked factual listing-notice boundary and type-specific suppression.
+
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
 

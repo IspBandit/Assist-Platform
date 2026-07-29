@@ -20,6 +20,7 @@ $this->extend('layouts.public');
             <p class="muted">Request <strong><?= $this->e((string) $request['reference']) ?></strong> — <?= $this->e((string) $request['title']) ?></p>
             <form method="post" action="<?= e(url('followup/' . $token)) ?>" class="card stack">
                 <?= csrf_field() ?>
+                <?php $this->include('partials.turnstile'); ?>
                 <fieldset class="stack" style="border:0;padding:0;margin:0">
                     <label><input type="radio" name="used" value="yes_vanassist" checked> I used a provider found through VanAssist</label>
                     <label><input type="radio" name="used" value="yes_elsewhere"> I used someone found elsewhere</label>

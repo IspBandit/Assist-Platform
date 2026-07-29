@@ -78,7 +78,8 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringNotContainsString('Send now', $view);
         self::assertStringContainsString('Save staged campaign', $view);
         self::assertStringContainsString('Apply starter', $view);
-        self::assertStringContainsString('held back until valid consent evidence is recorded', $view);
+        self::assertStringContainsString('Safety boundary', $view);
+        self::assertStringContainsString('factual listing notice', strtolower($view));
     }
 
     public function testRecipientReviewShowsAllCandidatesWithoutBypassingConsent(): void
@@ -95,7 +96,23 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('Record consent and add', $view);
         self::assertStringContainsString('Remove from campaign', $view);
         self::assertStringContainsString('/notifications/recipient-include', $routes);
-        self::assertStringContainsString('CampaignRecipientManager::filter', $delivery);
+        self::assertStringContainsString('CampaignRecipientManager::eligibleRecipients', $delivery);
+    }
+
+    public function testFactualDirectoryNoticesAreLockedAndSeparatedFromMarketing(): void
+    {
+        $migration = $this->source('database/migrations/079_outreach_campaign_boundaries.sql');
+        $controller = $this->source('app/Controllers/Admin/NotificationsController.php');
+        $delivery = $this->source('app/Services/NotificationService.php');
+        $notice = $this->source('app/Services/DirectoryAccuracyNotice.php');
+
+        self::assertStringContainsString("'provider_marketing','directory_accuracy'", $migration);
+        self::assertStringContainsString('DirectoryAccuracyNotice::subject()', $controller);
+        self::assertStringContainsString('DirectoryAccuracyNotice::assertFixed', $delivery);
+        self::assertStringContainsString("'directory_accuracy'", $delivery);
+        self::assertStringContainsString('does not subscribe this address to marketing', $notice);
+        self::assertStringNotContainsString('claim your listing', strtolower($notice));
+        self::assertStringNotContainsString('pricing offer', strtolower($notice));
     }
 
     public function testCampaignHeadersAreLightweightRetinaWebpAssets(): void

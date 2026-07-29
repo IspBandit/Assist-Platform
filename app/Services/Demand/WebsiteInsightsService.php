@@ -46,11 +46,11 @@ final class WebsiteInsightsService
                 . 'FROM page_views WHERE brand_id=? AND created_at BETWEEN ? AND ? GROUP BY DATE(created_at) ORDER BY label',
                 $window
             ),
-            'pages' => self::rows(
+            'pages' => self::humanisePages(self::rows(
                 'SELECT route AS label, COUNT(*) AS total, COUNT(DISTINCT session_id) AS secondary '
                 . 'FROM page_views WHERE brand_id=? AND created_at BETWEEN ? AND ? GROUP BY route ORDER BY total DESC LIMIT 25',
                 $window
-            ),
+            )),
             'sources' => self::rows(
                 "SELECT COALESCE(NULLIF(referrer_source,''),'direct') AS label, COUNT(DISTINCT session_id) AS total, COUNT(*) AS secondary "
                 . 'FROM page_views WHERE brand_id=? AND created_at BETWEEN ? AND ? GROUP BY referrer_source ORDER BY total DESC LIMIT 20',
@@ -75,6 +75,18 @@ final class WebsiteInsightsService
                 . 'FROM provider_searches ps LEFT JOIN towns t ON t.id=ps.town_id '
                 . 'WHERE ps.brand_id=? AND ps.is_excluded=0 AND ps.created_at BETWEEN ? AND ? '
                 . "GROUP BY COALESCE(t.name, NULLIF(ps.postcode,''), 'Location not supplied') ORDER BY total DESC LIMIT 25",
+                $window
+            ),
+            'coverage_gaps' => Database::select(
+                "SELECT ps.town_id,ps.category_id,COALESCE(t.name,NULLIF(ps.postcode,''),'Location not supplied') AS location_name,"
+                . "COALESCE(st.abbreviation,'') AS state_abbr,COALESCE(bpc.name,sc.name,'Any service') AS service_name,"
+                . 'COUNT(*) AS searches,MAX(ps.created_at) AS last_searched '
+                . 'FROM provider_searches ps LEFT JOIN towns t ON t.id=ps.town_id LEFT JOIN states st ON st.id=COALESCE(t.state_id,ps.state_id) '
+                . 'LEFT JOIN brand_provider_categories bpc ON bpc.id=ps.category_id AND bpc.brand_id=ps.brand_id '
+                . 'LEFT JOIN service_categories sc ON sc.id=ps.category_id '
+                . 'WHERE ps.brand_id=? AND ps.is_excluded=0 AND ps.result_count=0 AND ps.created_at BETWEEN ? AND ? '
+                . "GROUP BY ps.town_id,ps.category_id,COALESCE(t.name,NULLIF(ps.postcode,''),'Location not supplied'),COALESCE(st.abbreviation,''),COALESCE(bpc.name,sc.name,'Any service') "
+                . 'ORDER BY searches DESC,last_searched DESC LIMIT 50',
                 $window
             ),
             'actions' => self::rows(
@@ -119,5 +131,56 @@ final class WebsiteInsightsService
     private static function rows(string $sql, array $params): array
     {
         return Database::select($sql, $params);
+    }
+
+    /** @param array<int,array<string,mixed>> $rows @return array<int,array<string,mixed>> */
+    private static function humanisePages(array $rows): array
+    {
+        $exact = [
+            '/' => 'Home page',
+            '/providers' => 'Find local services',
+            '/providers/search' => 'Provider search results',
+            '/find' => 'Provider search results',
+            '/services' => 'Services directory',
+            '/places-to-stay' => 'Places to stay',
+            '/stays' => 'Places to stay',
+            '/contact' => 'Contact us',
+            '/about' => 'About the platform',
+            '/register-request' => 'Request help',
+            '/request-assistance' => 'Request help',
+            '/for-providers' => 'Information for providers',
+            '/for-providers/register' => 'Provider registration',
+            '/how-it-works' => 'How it works',
+            '/faqs' => 'Frequently asked questions',
+            '/privacy' => 'Privacy policy',
+            '/terms' => 'Terms of use',
+            '/disclaimer' => 'Important disclaimer',
+        ];
+        foreach ($rows as &$row) {
+            $route = (string) ($row['label'] ?? '/');
+            $friendly = $exact[$route] ?? null;
+            if ($friendly === null) {
+                $friendly = match (true) {
+                    str_starts_with($route, '/providers/'), str_starts_with($route, '/business/') => 'Provider: ' . self::routeName($route),
+                    str_starts_with($route, '/services/'), str_starts_with($route, '/category/') => 'Service: ' . self::routeName($route),
+                    str_starts_with($route, '/towns/') => 'Town: ' . self::routeName($route),
+                    str_starts_with($route, '/regions/') => 'Region: ' . self::routeName($route),
+                    str_starts_with($route, '/caravan-parks/'), str_starts_with($route, '/places-to-stay/') => 'Place to stay: ' . self::routeName($route),
+                    str_starts_with($route, '/rules') => 'Rules and regulations',
+                    str_starts_with($route, '/motorsport') => 'Motorsport information',
+                    default => ucwords(str_replace(['-', '_'], ' ', trim($route, '/'))) ?: 'Home page',
+                };
+            }
+            $row['route'] = $route;
+            $row['label'] = $friendly;
+        }
+        unset($row);
+        return $rows;
+    }
+
+    private static function routeName(string $route): string
+    {
+        $slug = basename(trim($route, '/'));
+        return ucwords(str_replace(['-', '_'], ' ', rawurldecode($slug)));
     }
 }

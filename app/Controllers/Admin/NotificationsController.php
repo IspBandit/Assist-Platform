@@ -11,6 +11,7 @@ use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\BroadcastAudience;
 use App\Services\CampaignRecipientManager;
+use App\Services\DirectoryAccuracyNotice;
 use App\Services\NotificationService;
 use App\Services\ProviderCampaignCopy;
 use App\Services\ProviderCampaignDrafts;
@@ -23,6 +24,12 @@ use RuntimeException;
  */
 final class NotificationsController extends Controller
 {
+    private const CAMPAIGN_TYPES = [
+        'provider_marketing' => 'Provider marketing — documented consent required',
+        'directory_accuracy' => 'Factual listing accuracy notice — fixed non-promotional wording',
+        'general_marketing' => 'Customer/general marketing — opted-in audience only',
+    ];
+
     public function index(Request $request): Response
     {
         $this->requirePermission('notifications.send');
@@ -49,6 +56,7 @@ final class NotificationsController extends Controller
 
         $action = (string) $request->input('action', 'preview');
         $values = [
+            'campaign_type' => (string) $request->input('campaign_type', 'provider_marketing'),
             'title'         => trim((string) $request->input('title')),
             'body'          => (string) $request->input('body'),
             'audience_type' => (string) $request->input('audience_type'),
@@ -57,6 +65,11 @@ final class NotificationsController extends Controller
             'category_id'   => (int) $request->input('category_id') ?: null,
             'copy_style'    => (string) $request->input('copy_style'),
         ];
+
+        if ($values['campaign_type'] === 'directory_accuracy') {
+            $values['title'] = DirectoryAccuracyNotice::subject();
+            $values['body'] = DirectoryAccuracyNotice::previewBody();
+        }
 
         if ($action === 'starter') {
             $style = ProviderCampaignCopy::styles()[$values['copy_style']] ?? null;
@@ -73,17 +86,24 @@ final class NotificationsController extends Controller
             return $this->renderForm($values, null, $error);
         }
 
-        $count = BroadcastAudience::count($values['audience_type'], $values['town_id'], $values['region_id'], $values['category_id']);
+        $draftNotification = array_merge($values, [
+            'id' => 0,
+            'brand_id' => current_brand()->databaseId(),
+        ]);
+        $isProviderCampaign = in_array($values['campaign_type'], ['provider_marketing', 'directory_accuracy'], true);
+        $count = $isProviderCampaign
+            ? CampaignRecipientManager::summary($draftNotification)['eligible']
+            : BroadcastAudience::count($values['audience_type'], $values['town_id'], $values['region_id'], $values['category_id']);
 
         if ($action === 'preview') {
             return $this->renderForm($values, $count);
         }
 
         $id = Database::insert(
-            'INSERT INTO notifications (brand_id,title,body,channel,audience_type,town_id,region_id,category_id,status,scheduled_at,created_by,created_at,updated_at) '
-            . "VALUES (?, ?, ?, 'email', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+            'INSERT INTO notifications (brand_id,title,body,channel,campaign_type,audience_type,town_id,region_id,category_id,status,scheduled_at,created_by,created_at,updated_at) '
+            . "VALUES (?, ?, ?, 'email', ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
             [
-                current_brand()->databaseId(), $values['title'], $values['body'], $values['audience_type'],
+                current_brand()->databaseId(), $values['title'], $values['body'], $values['campaign_type'], $values['audience_type'],
                 $values['town_id'], $values['region_id'], $values['category_id'],
                 'draft', null, current_user()['id'] ?? null,
             ]
@@ -99,16 +119,17 @@ final class NotificationsController extends Controller
         if ($notification === null) {
             $this->abort(404, 'Notification not found.');
         }
-        $isProviderCampaign = in_array((string) $notification['audience_type'], ['providers', 'provider_category'], true);
-        $resolved = in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)
-            ? BroadcastAudience::resolve(
-                (string) $notification['audience_type'],
-                $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
-                $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
-                $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
-            ) : [];
-        if ($isProviderCampaign && $resolved !== []) {
-            $resolved = CampaignRecipientManager::filter((int) $notification['id'], $resolved);
+        $isProviderCampaign = in_array((string) ($notification['campaign_type'] ?? ''), ['provider_marketing', 'directory_accuracy'], true);
+        $resolved = [];
+        if (in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)) {
+            $resolved = $isProviderCampaign
+                ? CampaignRecipientManager::eligibleRecipients($notification)
+                : BroadcastAudience::resolve(
+                    (string) $notification['audience_type'],
+                    $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
+                    $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
+                    $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
+                );
         }
         $previewCount = in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)
             ? count($resolved)
@@ -240,6 +261,17 @@ final class NotificationsController extends Controller
         if (!isset(BroadcastAudience::TYPES[$values['audience_type']])) {
             return 'Choose a valid audience.';
         }
+        if (!isset(self::CAMPAIGN_TYPES[$values['campaign_type']])) {
+            return 'Choose a valid campaign type.';
+        }
+        $providerAudience = in_array($values['audience_type'], ['providers', 'provider_category'], true);
+        $providerCampaign = in_array($values['campaign_type'], ['provider_marketing', 'directory_accuracy'], true);
+        if ($providerCampaign && !$providerAudience) {
+            return 'Provider campaign types can only use a provider audience.';
+        }
+        if (!$providerCampaign && $providerAudience) {
+            return 'Provider audiences require either a consent-gated provider marketing campaign or a factual listing accuracy notice.';
+        }
         if ($values['audience_type'] === 'town' && $values['town_id'] === null) {
             return 'Select a town for this audience.';
         }
@@ -275,8 +307,9 @@ final class NotificationsController extends Controller
             'regions'      => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'categories'   => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
             'campaignStyles' => ProviderCampaignCopy::styles(),
+            'campaignTypes' => self::CAMPAIGN_TYPES,
             'providerSummary' => $previewCount !== null && in_array((string) ($values['audience_type'] ?? ''), ['providers', 'provider_category'], true)
-                ? BroadcastAudience::providerEmailSummary(isset($values['category_id']) && $values['category_id'] !== null ? (int) $values['category_id'] : null)
+                ? CampaignRecipientManager::summary(array_merge($values, ['id' => 0, 'brand_id' => current_brand()->databaseId()]))
                 : null,
         ]);
     }

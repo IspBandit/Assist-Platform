@@ -21,7 +21,7 @@ final class ProviderCampaignDrafts
             . "INNER JOIN providers p ON p.id=ps.provider_id AND p.status='active' AND p.deleted_at IS NULL "
             . "INNER JOIN provider_brand_listings bl ON bl.provider_id=p.id AND bl.brand_id=? AND bl.status='active' AND bl.deleted_at IS NULL "
             . "WHERE sc.is_active=1 AND COALESCE(NULLIF(TRIM(p.email),''),NULLIF(TRIM(p.public_email),'')) IS NOT NULL "
-            . "AND NOT EXISTS (SELECT 1 FROM notifications n WHERE n.brand_id=? AND n.audience_type='provider_category' AND n.category_id=sc.id) "
+            . "AND NOT EXISTS (SELECT 1 FROM notifications n WHERE n.brand_id=? AND n.campaign_type='provider_marketing' AND n.audience_type='provider_category' AND n.category_id=sc.id) "
             . 'ORDER BY sc.name',
             [$brandId, $brandId]
         );
@@ -30,9 +30,9 @@ final class ProviderCampaignDrafts
         foreach ($categories as $category) {
             $copy = ProviderCampaignCopy::forCategory((string) $category['name'], (string) $category['slug']);
             $created += Database::affecting(
-                "INSERT INTO notifications (brand_id,title,body,channel,audience_type,category_id,status,delivery_stage,recipient_count,scheduled_at,created_by,created_at,updated_at) "
-                . "SELECT ?,?,?,'email','provider_category',?,'draft','draft',0,NULL,NULL,NOW(),NOW() "
-                . "WHERE NOT EXISTS (SELECT 1 FROM notifications WHERE brand_id=? AND audience_type='provider_category' AND category_id=?)",
+                "INSERT INTO notifications (brand_id,title,body,channel,campaign_type,audience_type,category_id,status,delivery_stage,recipient_count,scheduled_at,created_by,created_at,updated_at) "
+                . "SELECT ?,?,?,'email','provider_marketing','provider_category',?,'draft','draft',0,NULL,NULL,NOW(),NOW() "
+                . "WHERE NOT EXISTS (SELECT 1 FROM notifications WHERE brand_id=? AND campaign_type='provider_marketing' AND audience_type='provider_category' AND category_id=?)",
                 [$brandId, $copy['subject'], $copy['body'], (int) $category['id'], $brandId, (int) $category['id']]
             );
         }

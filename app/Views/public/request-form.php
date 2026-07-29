@@ -30,6 +30,7 @@ $maxImages = (int) config('uploads.max_request_images', 6);
 
         <form method="post" action="<?= e(url('request-assistance')) ?>" enctype="multipart/form-data" class="stack" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
             <?= csrf_field() ?>
+            <?php $this->include('partials.turnstile'); ?>
             <?php if ($park !== null): ?><input type="hidden" name="park" value="<?= e_attr((string) $park['slug']) ?>"><?php endif; ?>
             <div class="honeypot" aria-hidden="true"><label>Leave this blank<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
 
