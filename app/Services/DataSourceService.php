@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Core\Database;
 use App\Models\Town;
 use App\Platform\DataSources\ConnectorRegistry;
+use App\Platform\DataSources\BulkReviewPolicy;
 use App\Platform\DataSources\DuplicateMatcher;
 use RuntimeException;
 use Throwable;
@@ -208,10 +209,11 @@ final class DataSourceService
         $evidenceUrl = trim($evidenceUrl);
         $reviewNotes = mb_substr(trim($reviewNotes), 0, 1000);
         $publishing = in_array($decision, ['approve','merge'], true);
-        if (!$publishing) {
+        $confirmingEvidence = $decision === 'confirm';
+        if (!$publishing && !$confirmingEvidence) {
             $evidenceUrl = '';
         }
-        if ($publishing && $evidenceUrl !== '' && !$this->validEvidenceUrl($evidenceUrl)) {
+        if (($publishing || $confirmingEvidence) && $evidenceUrl !== '' && !$this->validEvidenceUrl($evidenceUrl)) {
             throw new RuntimeException('Use the business website or another independent http/https evidence URL, not a Google search or Maps URL.');
         }
         Database::query(
@@ -223,6 +225,18 @@ final class DataSourceService
         if ($decision === 'reject') { Database::query('UPDATE data_source_import_candidates SET review_status=\'rejected\',reviewed_by=?,reviewed_at=NOW() WHERE id=? AND brand_id=?',[$userId,$candidateId,$brandId]); AuditLog::record('data_source.candidate_rejected','data_source_import_candidate',(string)$candidateId); return 0; }
         if ($decision === 'hold') { Database::query('UPDATE data_source_import_candidates SET review_status=\'held\',reviewed_by=?,reviewed_at=NOW() WHERE id=? AND brand_id=?',[$userId,$candidateId,$brandId]); AuditLog::record('data_source.candidate_held','data_source_import_candidate',(string)$candidateId); return 0; }
         if ($decision === 'restore') { Database::query('UPDATE data_source_import_candidates SET review_status=\'pending\',reviewed_by=NULL,reviewed_at=NULL WHERE id=? AND brand_id=?',[$candidateId,$brandId]); AuditLog::record('data_source.candidate_restored','data_source_import_candidate',(string)$candidateId); return 0; }
+        if ($confirmingEvidence) {
+            if (empty($candidate['category_id']) || !$retentionConfirmed || $evidenceUrl === '') {
+                throw new RuntimeException('Choose the confirmed service, record an independent evidence URL and tick the retention confirmation.');
+            }
+            $this->publicServiceCategoryId($candidate);
+            Database::query(
+                "UPDATE data_source_import_candidates SET review_status='pending',evidence_status='confirmed',reviewed_by=?,reviewed_at=NOW(),updated_at=NOW() WHERE id=? AND brand_id=?",
+                [$userId,$candidateId,$brandId]
+            );
+            AuditLog::record('data_source.candidate_evidence_confirmed','data_source_import_candidate',(string)$candidateId,null,json_encode(['evidence_url'=>$evidenceUrl,'category_id'=>(int)$candidate['category_id']]));
+            return 0;
+        }
         if ($publishing && empty($candidate['category_id'])) {
             throw new RuntimeException('Choose and confirm an active service category before approving or merging this candidate.');
         }
@@ -265,15 +279,24 @@ final class DataSourceService
         } catch (Throwable $e) { Database::rollBack(); throw $e; }
     }
 
-    /** @param array<int,int> $candidateIds */
-    public function bulkReview(array $candidateIds,string $decision,int $brandId,int $userId): int
+    /**
+     * @param array<int,int> $candidateIds
+     * @return array{processed:int,skipped:int}
+     */
+    public function bulkReview(array $candidateIds,string $decision,int $brandId,int $userId,bool $confirmed=false): array
     {
-        if (!in_array($decision, ['hold','reject','restore'], true)) {
-            throw new RuntimeException('Bulk approval and merging are not permitted. Review evidence individually.');
+        if (!in_array($decision, ['hold','reject','restore','approve_eligible','merge_exact_duplicates'], true)) {
+            throw new RuntimeException('Choose a valid bulk review action.');
         }
         $ids = array_values(array_unique(array_filter(array_map('intval', $candidateIds), static fn(int $id): bool => $id > 0)));
         if ($ids === [] || count($ids) > 100) {
             throw new RuntimeException('Select between 1 and 100 candidates.');
+        }
+        if (in_array($decision, ['approve_eligible','merge_exact_duplicates'], true)) {
+            if (!$confirmed) {
+                throw new RuntimeException('Confirm the controlled publication or duplicate-merge action before continuing.');
+            }
+            return $this->bulkPublish($ids, $decision, $brandId, $userId);
         }
         $status = ['hold'=>'held','reject'=>'rejected','restore'=>'pending'][$decision];
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
@@ -285,7 +308,92 @@ final class DataSourceService
             $params
         );
         AuditLog::record('data_source.candidates_bulk_' . $decision,'data_source_import_candidate','bulk',null,json_encode(['count'=>$count]));
-        return $count;
+        return ['processed'=>$count,'skipped'=>count($ids)-$count];
+    }
+
+    /**
+     * @param array<int,int> $candidateIds
+     * @return array{processed:int,skipped:int}
+     */
+    private function bulkPublish(array $candidateIds,string $decision,int $brandId,int $userId): array
+    {
+        $placeholders = implode(',', array_fill(0, count($candidateIds), '?'));
+        $rows = Database::select(
+            'SELECT c.*,ds.connector_key,p.is_unclaimed AS target_is_unclaimed '
+            . 'FROM data_source_import_candidates c '
+            . 'JOIN data_source_connectors ds ON ds.id=c.connector_id '
+            . 'LEFT JOIN providers p ON p.id=c.duplicate_provider_id AND p.deleted_at IS NULL '
+            . 'WHERE c.id IN (' . $placeholders . ') AND c.brand_id=?',
+            [...$candidateIds, $brandId]
+        );
+        $policy = new BulkReviewPolicy();
+        $processed = 0;
+        foreach ($rows as $candidate) {
+            $problems = $decision === 'approve_eligible'
+                ? $policy->approvalProblems($candidate)
+                : $policy->exactMergeProblems($candidate);
+            if ($problems !== []) {
+                continue;
+            }
+            $reviewDecision = $decision === 'approve_eligible' ? 'approve' : 'merge';
+            $this->review(
+                (int) $candidate['id'], $brandId, $reviewDecision,
+                $reviewDecision === 'merge' ? (int) $candidate['duplicate_provider_id'] : null,
+                $userId, true, (int) $candidate['category_id'],
+                (string) $candidate['evidence_url'],
+                trim((string) ($candidate['review_notes'] ?? '')) !== ''
+                    ? (string) $candidate['review_notes']
+                    : 'Processed by controlled bulk review after evidence and eligibility checks.'
+            );
+            ++$processed;
+        }
+        $result = ['processed'=>$processed,'skipped'=>count($candidateIds)-$processed];
+        AuditLog::record(
+            'data_source.candidates_bulk_' . $decision,
+            'data_source_import_candidate',
+            'bulk',
+            null,
+            json_encode($result + ['selected'=>count($candidateIds),'exact_duplicate_threshold'=>BulkReviewPolicy::EXACT_DUPLICATE_SCORE])
+        );
+        return $result;
+    }
+
+    /** @return array{processed:int,remaining:int} */
+    public function resolveExactDuplicates(int $brandId,int $userId,int $limit=1000): array
+    {
+        $limit = max(1, min(2000, $limit));
+        $rows = Database::select(
+            'SELECT c.*,p.is_unclaimed AS target_is_unclaimed,EXISTS(SELECT 1 FROM provider_brand_listings pbl WHERE pbl.provider_id=p.id AND pbl.brand_id=c.brand_id AND pbl.deleted_at IS NULL) AS target_has_brand_listing FROM data_source_import_candidates c '
+            . 'JOIN providers p ON p.id=c.duplicate_provider_id AND p.deleted_at IS NULL '
+            . "WHERE c.brand_id=? AND c.review_status IN ('pending','held') AND c.duplicate_score>=? "
+            . 'ORDER BY c.id LIMIT ' . $limit,
+            [$brandId, BulkReviewPolicy::EXACT_DUPLICATE_SCORE]
+        );
+        $policy = new BulkReviewPolicy();
+        $processed = 0;
+        foreach ($rows as $candidate) {
+            if ($policy->automaticLinkProblems($candidate) !== []) {
+                continue;
+            }
+            $count = Database::affecting(
+                "UPDATE data_source_import_candidates SET review_status='merged',provider_id=?,reviewed_by=?,reviewed_at=NOW(),"
+                . "review_notes=CONCAT_WS(' ',NULLIF(review_notes,''),'Automatically linked as an exact duplicate; no candidate fields were copied to the provider.'),updated_at=NOW() "
+                . "WHERE id=? AND brand_id=? AND review_status IN ('pending','held')",
+                [(int)$candidate['duplicate_provider_id'],$userId,(int)$candidate['id'],$brandId]
+            );
+            if ($count > 0) {
+                ++$processed;
+                AuditLog::record('data_source.candidate_exact_duplicate_linked','provider',(string)$candidate['duplicate_provider_id'],null,json_encode(['candidate_id'=>(int)$candidate['id'],'score'=>(int)$candidate['duplicate_score']]));
+            }
+        }
+        $remaining = (int)Database::scalar(
+            "SELECT COUNT(*) FROM data_source_import_candidates c JOIN providers p ON p.id=c.duplicate_provider_id AND p.deleted_at IS NULL AND p.is_unclaimed=1 "
+            . "JOIN provider_brand_listings pbl ON pbl.provider_id=p.id AND pbl.brand_id=c.brand_id AND pbl.deleted_at IS NULL "
+            . "WHERE c.brand_id=? AND c.review_status IN ('pending','held') AND c.duplicate_score>=?",
+            [$brandId,BulkReviewPolicy::EXACT_DUPLICATE_SCORE]
+        );
+        AuditLog::record('data_source.exact_duplicates_auto_resolved','data_source_import_candidate','bulk',null,json_encode(['processed'=>$processed,'remaining'=>$remaining]));
+        return ['processed'=>$processed,'remaining'=>$remaining];
     }
 
     private function attachProvider(int $providerId,array $candidate,int $userId): void

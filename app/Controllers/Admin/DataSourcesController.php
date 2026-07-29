@@ -74,6 +74,7 @@ final class DataSourcesController extends Controller
             $message = $id > 0
                 ? 'Candidate processed and linked to provider #' . $id . '.'
                 : match ($decision) {
+                    'confirm' => 'Evidence and service confirmed. This candidate is now eligible for controlled bulk approval.',
                     'hold' => 'Candidate placed on hold.',
                     'restore' => 'Candidate returned to the pending queue.',
                     default => 'Candidate rejected.',
@@ -121,12 +122,35 @@ final class DataSourcesController extends Controller
         $returnTo = $this->reviewReturnTo((string)$r->input('return_to', ''));
         try {
             $ids = $r->input('candidate_ids', []);
-            $count = (new DataSourceService())->bulkReview(
-                is_array($ids) ? $ids : [], (string)$r->input('bulk_decision'), current_brand()->databaseId(), (int)auth()->id()
+            $decision = (string)$r->input('bulk_decision');
+            $result = (new DataSourceService())->bulkReview(
+                is_array($ids) ? $ids : [], $decision, current_brand()->databaseId(), (int)auth()->id(),
+                $r->input('bulk_confirmed') === '1'
             );
-            return $this->redirectWith($returnTo, 'success', $count . ' candidates updated.');
+            $label = match ($decision) {
+                'approve_eligible' => 'eligible listings approved',
+                'merge_exact_duplicates' => 'exact duplicates merged',
+                default => 'candidates updated',
+            };
+            $message = $result['processed'] . ' ' . $label . '.';
+            if ($result['skipped'] > 0) {
+                $message .= ' ' . $result['skipped'] . ' safely skipped because they were ineligible or had changed.';
+            }
+            return $this->redirectWith($returnTo, 'success', $message);
         } catch (Throwable $e) {
             return $this->redirectWith($returnTo, 'error', $e->getMessage());
+        }
+    }
+    public function resolveExactDuplicates(Request $r): Response
+    {
+        $this->requirePlatformAdmin('data_sources.review');
+        try {
+            $result = (new DataSourceService())->resolveExactDuplicates(current_brand()->databaseId(), (int)auth()->id());
+            $message = $result['processed'] . ' exact duplicates automatically linked without changing provider details.';
+            if ($result['remaining'] > 0) $message .= ' ' . $result['remaining'] . ' remain for another safe batch.';
+            return $this->redirectWith('/admin/data-sources/review?duplicate=yes', 'success', $message);
+        } catch (Throwable $e) {
+            return $this->redirectWith('/admin/data-sources/review?duplicate=yes', 'error', $e->getMessage());
         }
     }
     public function saveSchedule(Request $r): Response { $this->requirePlatformAdmin('data_sources.manage');try{(new DataSourceService())->saveSchedule((int)$r->input('connector_id'),current_brand()->databaseId(),(int)$r->input('mapping_id'),(string)$r->input('name'),(string)$r->input('location'),(string)$r->input('frequency'),$r->input('enabled')==='1',(int)auth()->id());return $this->redirectWith('/admin/data-sources','success','Import schedule saved.');}catch(Throwable $e){return $this->redirectWith('/admin/data-sources','error',$e->getMessage());} }

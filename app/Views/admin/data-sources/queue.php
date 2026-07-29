@@ -112,13 +112,17 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
 <section class="card">
     <div class="btn-row">
         <strong><?= number_format($total) ?> matching candidates</strong>
+        <form method="post" action="<?= e(url('admin/data-sources/review/resolve-exact')) ?>" onsubmit="return confirm('Automatically link exact duplicate candidates to existing unclaimed providers? No provider details will be overwritten.');">
+            <?= csrf_field() ?><button class="btn btn-primary" type="submit">Auto-resolve exact duplicates</button>
+        </form>
         <form id="bulk-review-form" method="post" action="<?= e(url('admin/data-sources/review/bulk')) ?>" class="btn-row">
             <?= csrf_field() ?><input type="hidden" name="return_to" value="<?= e_attr($returnTo) ?>">
-            <select name="bulk_decision" required><option value="">Selected records…</option><option value="hold">Place on hold</option><option value="reject">Reject</option><option value="restore">Return to pending</option></select>
+            <select name="bulk_decision" required><option value="">Selected records…</option><option value="approve_eligible">Approve eligible new listings</option><option value="merge_exact_duplicates">Merge exact duplicates</option><option value="hold">Place on hold</option><option value="reject">Reject</option><option value="restore">Return to pending</option></select>
+            <label class="review-bulk-confirm"><input type="checkbox" name="bulk_confirmed" value="1"> Confirm controlled bulk action</label>
             <button class="btn btn-secondary" type="submit">Apply to selected</button>
         </form>
     </div>
-    <p class="muted">Bulk approval is deliberately unavailable. Publication and merging require individual evidence review.</p>
+    <p class="muted"><strong>Safety rules:</strong> approval only accepts independently confirmed records with a mapped service and no duplicate. Duplicate merge requires an unclaimed target, at least 90% confidence, an exact business name and an exact phone or website match. Claimed provider details are never changed.</p>
     <div class="table-wrap">
         <table class="data review-queue-table">
             <thead><tr><th><span class="sr-only">Select</span></th><th>Business</th><th>Route</th><th>Suggested service</th><th>Evidence</th><th>Duplicate</th><th>Review</th></tr></thead>
@@ -146,6 +150,7 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
                             <label><input type="checkbox" name="retention_confirmed" value="1"> I opened the independent source and confirmed the business and selected service may be retained and published.</label>
                             <label>Merge target provider ID<input type="number" min="1" name="provider_id" value="<?= (int)($candidate['duplicate_provider_id']??0) ?: '' ?>"></label>
                             <div class="btn-row">
+                                <button class="btn btn-secondary" name="decision" value="confirm">Confirm evidence for bulk approval</button>
                                 <button class="btn btn-primary" name="decision" value="approve">Approve new listing</button>
                                 <button class="btn btn-secondary" name="decision" value="merge">Merge</button>
                                 <?php if(($candidate['review_status']??'pending')==='held'): ?><button class="btn btn-ghost" name="decision" value="restore">Return to pending</button><?php else: ?><button class="btn btn-ghost" name="decision" value="hold">Hold</button><?php endif; ?>
