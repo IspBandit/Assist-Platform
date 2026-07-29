@@ -4,7 +4,7 @@
 /** @var array<int,array<string,mixed>> $runs */
 $this->extend('layouts.public');
 $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path']) : null;
-$stayLabels = ['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','showground'=>'Showground','rest_area'=>'Rest area','farm_stay'=>'Farm stay','other'=>'Place to stay'];
+$stayLabels = ['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','national_park'=>'National park camping','showground'=>'Showground','rest_area'=>'Permitted overnight rest area','council_camp'=>'Council camp','farm_stay'=>'Farm stay','station_stay'=>'Station stay','other'=>'Place to stay'];
 $mapDestination = map_destination($park['latitude'] ?? null, $park['longitude'] ?? null, [$park['address'] ?? '', $park['town_name'] ?? '']);
 ?>
 <?php $this->section('content'); ?>
@@ -40,6 +40,7 @@ $mapDestination = map_destination($park['latitude'] ?? null, $park['longitude'] 
 
             <div class="card stack">
                 <h2 style="margin-top:0">Park details</h2>
+                <p class="notice"><strong>Confirm before travelling.</strong> Overnight permission, access, fees, closures, vehicle limits and stay limits can change. Check the linked authority or operator source before relying on this listing.</p>
                 <?php if ($park['address']): ?><p style="margin:0"><strong>Address:</strong> <?= $this->e((string) $park['address']) ?></p><?php endif; ?>
                 <?php if ($park['phone']): ?><p style="margin:0"><strong>Phone:</strong> <?= $this->e((string) $park['phone']) ?></p><?php endif; ?>
                 <?php if ($park['website']): ?><p style="margin:0"><strong>Website:</strong> <a href="<?= e((string) $park['website']) ?>" target="_blank" rel="noopener nofollow"><?= $this->e((string) $park['website']) ?></a></p><?php endif; ?>

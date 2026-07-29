@@ -66,6 +66,18 @@ References:
    then handles ownership and verification.
 7. Every configuration, import and review decision is written to the audit log.
 
+### National route review
+
+The VanAssist import-review screen accepts the budget-capped national caravan
+route discovery pack as JSONL or compressed JSONL. Uploads are stored in private
+staging and screened in resumable 500-row batches. State, route, category,
+contact, evidence and duplicate filters keep large batches manageable.
+
+Google-discovered candidates cannot be approved or merged until an administrator
+records a non-Google independent evidence URL, selects the confirmed service and
+checks the retention confirmation. Bulk actions are restricted to holding,
+rejecting or restoring candidates; there is no bulk-publication path.
+
 ## Scheduled work
 
 Run `php scripts/run-data-source-schedules.php` from the trusted scheduler. It

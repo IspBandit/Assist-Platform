@@ -187,8 +187,15 @@ work surfaces. Brand colour is limited to active/focus accents. The workspace
 selector shows the active brand icon, name and platform context; available
 brands keep server-authorised POST switching. It supports Escape, Home, End and
 arrow-key movement, visible focus and 44px-class touch targets. At 720px and
-below navigation collapses and top-bar actions remain horizontally reachable.
+below navigation becomes a full-height scrollable drawer, top-bar actions become
+compact touch controls, and the page itself must not scroll horizontally. Dense
+review data uses labelled record cards rather than squeezed table columns.
 Motion is restrained and disabled when `prefers-reduced-motion` is requested.
+
+Operational analytics use compact headline measures followed by disclosure-based
+detail. On phones, secondary reports begin collapsed and expanded content is
+bounded to the viewport with internal scrolling. Critical alerts and coverage gaps
+remain visible without opening a disclosure.
 
 ## UX change workflow
 

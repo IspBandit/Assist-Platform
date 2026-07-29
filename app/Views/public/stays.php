@@ -14,7 +14,7 @@ $facilityLabels = [
     <div class="container">
         <div class="eyebrow">VanAssist stays</div>
         <h1>Getting tired? Find a place to stay.</h1>
-        <p>Search nearby caravan parks, campgrounds, showgrounds and free or low-cost stays. Always confirm access, fees and restrictions before arrival.</p>
+        <p>Search nearby caravan parks, campgrounds, national-park camping, showgrounds, permitted rest areas and free or low-cost caravan stays. Hotels and motels are not included. Always confirm access, fees and restrictions before arrival.</p>
         <ul class="page-trust-list" aria-label="Search information">
             <li>Choose up to 150 km by default</li>
             <li>Unverified listings are identified</li>

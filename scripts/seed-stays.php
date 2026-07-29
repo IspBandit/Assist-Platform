@@ -19,6 +19,8 @@ $payload = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_
 $states = [];
 foreach (Database::select('SELECT id, abbreviation FROM states') as $state) { $states[$state['abbreviation']] = (int) $state['id']; }
 $created = 0; $updated = 0; $skipped = 0;
+$stayTypes = ['caravan_park','campground','free_camp','national_park','showground','rest_area','council_camp','farm_stay','station_stay','other'];
+$priceTypes = ['free','donation','low_cost','paid','unknown'];
 foreach (($payload['stays'] ?? []) as $stay) {
     $stateId = $states[$stay['state'] ?? ''] ?? null;
     if ($stateId === null || empty($stay['name']) || empty($stay['external_id'])) { $skipped++; continue; }
@@ -33,7 +35,7 @@ foreach (($payload['stays'] ?? []) as $stay) {
         $town['region_id'] ?? null, $stateId, $stay['latitude'], $stay['longitude'],
         trim((string) ($stay['phone'] ?? '')) ?: null, trim((string) ($stay['email'] ?? '')) ?: null,
         trim((string) ($stay['website'] ?? '')) ?: null, trim((string) ($stay['booking_url'] ?? '')) ?: null,
-        $stay['stay_type'] ?? 'other', $stay['price_type'] ?? 'unknown',
+        in_array($stay['stay_type'] ?? '',$stayTypes,true)?$stay['stay_type']:'other', in_array($stay['price_type'] ?? '',$priceTypes,true)?$stay['price_type']:'unknown',
         $bool($stay['powered_sites'] ?? null), $bool($stay['unpowered_sites'] ?? null), $bool($stay['toilets'] ?? null),
         $bool($stay['showers'] ?? null), $bool($stay['potable_water'] ?? null), $bool($stay['dump_point'] ?? null),
         $bool($stay['pets_allowed'] ?? null), (string) ($stay['source_url'] ?? ''), 'community',

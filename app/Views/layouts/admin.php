@@ -133,14 +133,14 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
     <meta name="theme-color" content="<?= e($adminBrandTheme['brand'] ?? '#0f6e6e') ?>">
     <link rel="icon" type="image/svg+xml" href="<?= e(asset($adminBrandAssets['favicon'] ?? '/assets/brands/vanassist/mark.svg')) ?>">
 </head>
-<body<?= in_array($current, ['/admin', '/admin/demand'], true) ? ' data-auto-refresh-seconds="10"' : '' ?>>
+<body<?= $current === '/admin' ? ' data-auto-refresh-seconds="10"' : '' ?>>
 <div class="admin-body">
     <aside class="admin-sidebar">
         <a class="brand brand-admin" href="<?= e(url('admin')) ?>" aria-label="Assist Platform admin home">
             <img class="brand-mark" src="<?= e(asset($adminBrandAssets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="40" height="40">
             <span class="brand-copy"><span class="brand-name">Assist Platform</span><span class="admin-brand-context"><?= $this->e($adminBrand->name()) ?> workspace</span></span>
         </a>
-        <button type="button" class="admin-nav-toggle" aria-controls="admin-nav" aria-expanded="false">Menu</button>
+        <button type="button" class="admin-nav-toggle" aria-controls="admin-nav" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Menu</button>
         <p class="admin-sidebar-label">Enterprise administration</p>
         <nav id="admin-nav" aria-label="Admin">
             <?php foreach ($nav as $group => $links): ?>
@@ -178,7 +178,7 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
                 <span class="admin-user"><?= $this->e($user['name'] ?? '') ?></span>
                 <form class="admin-signout" method="post" action="<?= e(url('logout')) ?>">
                     <?= csrf_field() ?>
-                    <button type="submit" class="btn btn-secondary">Sign out</button>
+                    <button type="submit" class="btn btn-secondary"><span class="admin-signout-label">Sign out</span><svg class="admin-signout-icon" aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M9 12h9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 </form>
             </div>
         </div>

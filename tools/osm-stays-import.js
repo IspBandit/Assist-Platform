@@ -21,6 +21,16 @@ function km(a,b,c,d){const x=rad(c-a),y=rad(d-b),q=Math.sin(x/2)**2+Math.cos(rad
 function nearest(lat,lng,state){let best=null,dist=Infinity;for(const t of towns){if(t.state!==state||!Number.isFinite(+t.lat)||!Number.isFinite(+t.lng))continue;const d=km(lat,lng,+t.lat,+t.lng);if(d<dist){dist=d;best=t;}}return dist<=100?best:null;}
 function yes(v){return /^(yes|designated|permissive)$/i.test(String(v||""))?true:/^(no|private)$/i.test(String(v||""))?false:null;}
 function url(tags){return tags.website||tags["contact:website"]||"";}
+function stayType(tags,name,free){
+  const n=String(name||"").toLowerCase();
+  if(/national park|(^|[^a-z])np([^a-z]|$)/.test(n))return "national_park";
+  if(/showgrounds?/.test(n))return "showground";
+  if(/rest area/.test(n))return "rest_area";
+  if(/station (stay|camp)/.test(n))return "station_stay";
+  if(/farm ?stay/.test(n))return "farm_stay";
+  if(free)return "free_camp";
+  return tags.tourism==="camp_site"?"campground":"caravan_park";
+}
 async function fetchState(state){
   const cache=path.join(cacheDir,state+".json");
   if(fs.existsSync(cache) && !process.argv.includes("--refresh")) return JSON.parse(fs.readFileSync(cache,"utf8")).elements||[];
@@ -45,7 +55,7 @@ async function fetchState(state){
       const free=fee==="no"||/free camp/i.test(t.name);
       stays.push({
         external_id:`osm-${el.type[0]}${el.id}`,name:t.name,address:[t["addr:housenumber"],t["addr:street"]].filter(Boolean).join(" "),town:town.name,state,
-        latitude:lat,longitude:lng,stay_type:free?"free_camp":(t.tourism==="camp_site"?"campground":"caravan_park"),price_type:free?"free":(fee==="yes"?"paid":"unknown"),
+        latitude:lat,longitude:lng,stay_type:stayType(t,t.name,free),price_type:free?"free":(fee==="yes"?"paid":"unknown"),
         phone:t.phone||t["contact:phone"]||"",email:t.email||t["contact:email"]||"",website:url(t),booking_url:t["contact:booking"]||t.booking||"",
         powered_sites:yes(t.power_supply),unpowered_sites:null,toilets:yes(t.toilets),showers:yes(t.shower),potable_water:yes(t.drinking_water),dump_point:yes(t.sanitary_dump_station),pets_allowed:yes(t.dog),
         source_type:"openstreetmap",source_url:`https://www.openstreetmap.org/${el.type}/${el.id}`,verification_type:"community"

@@ -26,6 +26,9 @@ return static function (Router $router): void {
         $router->post('/data-sources/run', 'Admin\DataSourcesController@run', 'admin.data-sources.run');
         $router->get('/data-sources/review', 'Admin\DataSourcesController@queue', 'admin.data-sources.review');
         $router->post('/data-sources/review', 'Admin\DataSourcesController@review');
+        $router->post('/data-sources/review/bulk', 'Admin\DataSourcesController@bulkReview');
+        $router->post('/data-sources/national-route/upload', 'Admin\DataSourcesController@uploadNationalRoute');
+        $router->post('/data-sources/national-route/process', 'Admin\DataSourcesController@processNationalRoute');
         $router->post('/data-sources/schedule', 'Admin\DataSourcesController@saveSchedule', 'admin.data-sources.schedule');
         $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
 

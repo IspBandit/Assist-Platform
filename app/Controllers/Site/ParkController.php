@@ -29,9 +29,12 @@ final class ParkController extends Controller
         'caravan_park' => 'Caravan park',
         'campground' => 'Campground',
         'free_camp' => 'Free camp',
+        'national_park' => 'National park camping',
         'showground' => 'Showground',
-        'rest_area' => 'Rest area',
+        'rest_area' => 'Permitted overnight rest area',
+        'council_camp' => 'Council camp',
         'farm_stay' => 'Farm stay',
+        'station_stay' => 'Station stay',
         'other' => 'Other stay',
     ];
 
@@ -76,7 +79,7 @@ final class ParkController extends Controller
 
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',
-            'metaDescription' => 'Find caravan parks, campgrounds and free or low-cost stays near your town or current location across Australia.',
+            'metaDescription' => 'Find caravan parks, campgrounds, national-park camping and free or low-cost caravan stays near your location across Australia.',
             'canonical' => url('stays'),
             'stays' => $hasOrigin
                 ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm)

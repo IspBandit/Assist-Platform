@@ -39,3 +39,19 @@
     window.location.reload();
   }, seconds * 1000);
 })();
+
+(() => {
+  const form = document.querySelector('form[data-auto-submit]');
+  if (!form) return;
+  const delay = Math.max(500, Number(form.dataset.autoSubmit || 1200));
+  window.setTimeout(() => {
+    if (document.visibilityState === 'visible') form.requestSubmit();
+  }, delay);
+})();
+
+(() => {
+  if (!window.matchMedia('(max-width: 720px)').matches) return;
+  document.querySelectorAll('details[data-mobile-collapse]').forEach((panel) => {
+    panel.removeAttribute('open');
+  });
+})();
