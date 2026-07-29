@@ -27,6 +27,7 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Buttons | `.btn` variants and sizes | reusable | Replace brand-colour legacy references with semantic tokens |
 | Cards/grids | `.card`, `.grid-*` | reusable | Document density and interactive-card rules |
 | Hero/search | `.hero`, `.search-card`, variants | reusable pattern | Separate content hero from intent/search hero variants |
+| VanAssist travel-companion hero | `.hero--visual`, `.hero-roadline`, `.hero-capabilities`, `.hero-bookmark` | VanAssist public journey | 1440 × 900 and 390 × 844 acceptance; keep live search and install controls |
 | Provider cards | `partials/provider-result-card.php` | shared domain component | Verify badges, sponsorship labels and brand context |
 | Location controls | `use-location-btn`, distance filter | shared domain component | Document permission-denied and unavailable states |
 | Status badges | verified/confirmed/neutral and related styles | partially shared | Define one semantic status matrix |
@@ -42,6 +43,8 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Provider trust and campaign workspace | `/provider/growth`, `.growth-*` | provider-owned component | Pending-by-default evidence and ads; organic analytics remain separate |
 | Trust, rules and growth control | `/admin/trust-growth`, `.admin-trust-*` | permission-scoped admin component | Source fail-closed queue, evidence review, pricing/relevance approval and alert audit |
 | Website insights | `/admin/demand`, `.insight-*`, `.dashboard-insight-*` | permission- and brand-scoped admin component | Aggregate visits, intent and provider interest; explicit estimated-versus-confirmed language; no anonymous identity disclosure |
+| Controlled provider queue processor | `/admin/data-sources/review`, server-session continuation | VanAssist admin data operation | Claimed-provider, brand-scope, provenance, CSRF, idempotency and no-progress acceptance |
+| Factual directory campaign continuation | `/admin/notifications`, migration 082 and scheduled notification worker | shared campaign operation | Off by default; directory-accuracy only; reviewed-stage, suppression and rate-limit acceptance |
 
 ### Current token debt
 

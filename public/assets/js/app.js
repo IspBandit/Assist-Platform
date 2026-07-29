@@ -277,7 +277,7 @@
                 var town = form.querySelector('#town_id');
                 var empty = (!loc || loc.value.trim() === '') && (!lat || lat.value === '') && (!town || !town.value);
                 if (empty && form.querySelector('[data-use-location]')) {
-                    setLocationStatus(form, 'Tip: tap “Use my current location” to find services near you.', true);
+                    setLocationStatus(form, '', false);
                     sessionStorage.setItem('va-loc-hint', '1');
                 }
             });

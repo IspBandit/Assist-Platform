@@ -148,7 +148,9 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('1,248', $html);
         self::assertStringContainsString('active service listings', $html);
         self::assertStringNotContainsString('>0</strong><span>verified providers', $html);
-        self::assertStringContainsString('vanassist-hero-mobile.avif', $html);
+        self::assertStringContainsString('vanassist-coastal-hero-mobile-v1.webp', $html);
+        self::assertStringContainsString('Your travel', $html);
+        self::assertStringContainsString('companion.', $html);
     }
 
     public function testProviderDashboardPrioritisesOpenDemand(): void

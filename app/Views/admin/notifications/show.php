@@ -65,6 +65,28 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
                 <?php endif; ?>
             </div>
         </div>
+
+        <?php if ($isDirectoryAccuracy): ?>
+            <div class="card" style="margin:1rem 0">
+                <h2 style="margin-top:0">Optional factual batch continuation</h2>
+                <p class="muted">This switch never applies to marketing. It becomes available only after the internal test, pilot, 50/day review and manual 100/day approval. Every automatic batch still resolves the live audience, honours removals and suppressions, and is capped at 100 recipients in a rolling 24 hours.</p>
+                <?php if (!empty($notification['auto_continue_last_error'])): ?><div class="alert alert-error"><strong>Continuation stopped:</strong> <?= $this->e((string) $notification['auto_continue_last_error']) ?></div><?php endif; ?>
+                <?php if (!empty($notification['auto_continue_enabled'])): ?>
+                    <div class="alert alert-info"><strong>On.</strong> Next eligible run: <?= $this->e((string) ($notification['auto_continue_next_at'] ?? 'pending cron run')) ?>. You can switch it off immediately.</div>
+                    <form method="post" action="<?= e(url('admin/notifications/auto-continue')) ?>">
+                        <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="enabled" value="0">
+                        <button class="btn btn-ghost" type="submit">Switch off automatic continuation</button>
+                    </form>
+                <?php elseif ($status === 'sending' && $stage === 'daily_100' && !empty($notification['stage_reviewed_at']) && !empty($notification['stage_reviewed_by'])): ?>
+                    <form method="post" action="<?= e(url('admin/notifications/auto-continue')) ?>">
+                        <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="enabled" value="1">
+                        <button class="btn btn-secondary" type="submit">Enable automatic factual batches (max 100/day)</button>
+                    </form>
+                <?php else: ?>
+                    <p class="muted mb-0"><strong>Off.</strong> Manually complete and review each earlier stage. This control remains unavailable until the campaign is actively sending at the reviewed 100/day stage.</p>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     <?php endif; ?>
 
     <?php if ($canCancel): ?>

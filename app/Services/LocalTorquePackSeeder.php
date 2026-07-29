@@ -779,7 +779,7 @@ final class LocalTorquePackSeeder
     /** @param array<string,mixed> $record */
     private function sourceUrl(array $record): ?string
     {
-        $url = $this->url($record['source_url'] ?? null, 1000);
+        $url = $this->url(ImportProvenance::sourceUrl($record), 1000);
         if ($url !== null) {
             return $url;
         }

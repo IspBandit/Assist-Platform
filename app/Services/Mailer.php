@@ -50,6 +50,12 @@ final class Mailer
         foreach ($rows as $row) {
             $result['processed']++;
 
+            if (EmailSuppression::isSuppressed((string) $row['recipient_email'], (string) $row['message_type'])) {
+                self::markSuppressed($row);
+                Logger::info('Queue #' . $row['id'] . ' -> CANCELLED because the recipient is suppressed.', [], 'email');
+                continue;
+            }
+
             Logger::info('Queue #' . $row['id'] . ' -> sending to ' . $row['recipient_email'] . ' [' . $row['subject'] . '] via ' . $transport . '.', [], 'email');
 
             try {
@@ -169,6 +175,31 @@ final class Mailer
         } catch (Throwable $e) {
             Database::rollBack();
             throw $e;
+        }
+    }
+
+    /** @param array<string,mixed> $row */
+    private static function markSuppressed(array $row): void
+    {
+        Database::beginTransaction();
+        try {
+            $updated = Database::affecting(
+                "UPDATE email_queue SET status='cancelled', lease_token=NULL, leased_until=NULL, next_attempt_at=NULL, "
+                . "last_error='Recipient suppressed before delivery' WHERE id=? AND status='processing' AND lease_token=?",
+                [$row['id'], $row['lease_token']]
+            );
+            if ($updated !== 1) {
+                throw new RuntimeException('Email queue lease was lost while applying suppression');
+            }
+            Database::query(
+                "INSERT INTO email_log (queue_id,recipient_email,subject,status,error,created_at) VALUES (?,?,?,'suppressed','Recipient suppressed before delivery',NOW())",
+                [$row['id'], $row['recipient_email'], $row['subject']]
+            );
+            Database::query("UPDATE notification_recipients SET status='suppressed' WHERE queue_id=?", [$row['id']]);
+            Database::commit();
+        } catch (Throwable $error) {
+            Database::rollBack();
+            throw $error;
         }
     }
 

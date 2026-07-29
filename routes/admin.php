@@ -27,6 +27,7 @@ return static function (Router $router): void {
         $router->get('/data-sources/review', 'Admin\DataSourcesController@queue', 'admin.data-sources.review');
         $router->post('/data-sources/review', 'Admin\DataSourcesController@review');
         $router->post('/data-sources/review/bulk', 'Admin\DataSourcesController@bulkReview');
+        $router->post('/data-sources/review/process-eligible', 'Admin\DataSourcesController@processEligibleQueue');
         $router->post('/data-sources/review/resolve-exact', 'Admin\DataSourcesController@resolveExactDuplicates');
         $router->post('/data-sources/national-route/upload', 'Admin\DataSourcesController@uploadNationalRoute');
         $router->post('/data-sources/national-route/process', 'Admin\DataSourcesController@processNationalRoute');
@@ -180,6 +181,7 @@ return static function (Router $router): void {
         $router->get('/notifications/show', 'Admin\NotificationsController@show', 'admin.notifications.show');
         $router->post('/notifications/test', 'Admin\NotificationsController@test');
         $router->post('/notifications/stage', 'Admin\NotificationsController@stage');
+        $router->post('/notifications/auto-continue', 'Admin\NotificationsController@autoContinue');
         $router->post('/notifications/recipient-exclude', 'Admin\NotificationsController@recipientExclude');
         $router->post('/notifications/recipient-restore', 'Admin\NotificationsController@recipientRestore');
         $router->post('/notifications/recipient-include', 'Admin\NotificationsController@recipientInclude');

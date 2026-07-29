@@ -5,7 +5,7 @@ namespace App\Platform\DataSources;
 
 final class BulkReviewPolicy
 {
-    public const EXACT_DUPLICATE_SCORE = 90;
+    public const STRONG_DUPLICATE_SCORE = 70;
 
     /** @return array<int,string> */
     public function approvalProblems(array $candidate): array
@@ -31,13 +31,13 @@ final class BulkReviewPolicy
         if (empty($candidate['duplicate_provider_id'])) {
             $problems[] = 'no merge target';
         }
-        if ((int) ($candidate['duplicate_score'] ?? 0) < self::EXACT_DUPLICATE_SCORE) {
-            $problems[] = 'duplicate confidence below ' . self::EXACT_DUPLICATE_SCORE . '%';
+        if ((int) ($candidate['duplicate_score'] ?? 0) < self::STRONG_DUPLICATE_SCORE) {
+            $problems[] = 'duplicate confidence below ' . self::STRONG_DUPLICATE_SCORE . '%';
         }
         $reasons = json_decode((string) ($candidate['duplicate_reasons_json'] ?? '[]'), true);
         $reasons = is_array($reasons) ? array_map('strval', $reasons) : [];
-        if (!in_array('same normalised name', $reasons, true)) {
-            $problems[] = 'business name is not an exact match';
+        if (!in_array('same normalised name', $reasons, true) && !in_array('similar business name', $reasons, true)) {
+            $problems[] = 'business name is not a strong match';
         }
         if (!in_array('same phone', $reasons, true) && !in_array('same website', $reasons, true)) {
             $problems[] = 'phone or website is not an exact match';
@@ -56,6 +56,17 @@ final class BulkReviewPolicy
             $problems[] = 'target is not yet listed in this workspace';
         }
         return array_values(array_unique($problems));
+    }
+
+    /** @return array{action:string,problems:array<int,string>} */
+    public function eligibleQueueAction(array $candidate): array
+    {
+        if (!empty($candidate['duplicate_provider_id'])) {
+            $problems = $this->automaticLinkProblems($candidate);
+            return ['action'=>$problems === [] ? 'merge' : 'blocked','problems'=>$problems];
+        }
+        $problems = $this->approvalProblems($candidate);
+        return ['action'=>$problems === [] ? 'approve' : 'blocked','problems'=>$problems];
     }
 
     /** @return array<int,string> */

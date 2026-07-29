@@ -186,6 +186,62 @@ final class NotificationService
         });
     }
 
+    /**
+     * Continue only administrator-enabled factual campaigns that have already
+     * passed the test, pilot, 50/day review and explicit 100/day approval.
+     * A due row is reserved before queueing so overlapping workers cannot run
+     * the same campaign batch. Any error disables continuation fail-closed.
+     *
+     * @return array{campaigns:int,recipients:int,disabled:int,limited:int}
+     */
+    public static function continueDirectoryCampaigns(int $limit = 10): array
+    {
+        $limit = max(1, min(25, $limit));
+        $rows = Database::select(
+            "SELECT id FROM notifications WHERE auto_continue_enabled=1 AND campaign_type='directory_accuracy' "
+            . "AND status='sending' AND delivery_stage='daily_100' AND stage_reviewed_at IS NOT NULL "
+            . "AND stage_reviewed_by IS NOT NULL AND auto_continue_next_at IS NOT NULL AND auto_continue_next_at<=NOW() "
+            . "ORDER BY auto_continue_next_at,id LIMIT {$limit}"
+        );
+        $result = ['campaigns' => 0, 'recipients' => 0, 'disabled' => 0, 'limited' => 0];
+
+        foreach ($rows as $row) {
+            $id = (int) $row['id'];
+            $reserved = Database::affecting(
+                "UPDATE notifications SET auto_continue_next_at=DATE_ADD(NOW(),INTERVAL 24 HOUR),updated_at=NOW() "
+                . "WHERE id=? AND auto_continue_enabled=1 AND campaign_type='directory_accuracy' AND status='sending' "
+                . "AND delivery_stage='daily_100' AND auto_continue_next_at<=NOW()",
+                [$id]
+            );
+            if ($reserved !== 1) {
+                continue;
+            }
+
+            try {
+                $batch = self::queueStage($id, 'daily_100', null);
+                $result['campaigns']++;
+                $result['recipients'] += (int) $batch['recipients'];
+                $result['limited'] += !empty($batch['limited']) ? 1 : 0;
+                Database::query(
+                    "UPDATE notifications SET auto_continue_last_run_at=NOW(),auto_continue_last_error=NULL, "
+                    . "auto_continue_enabled=IF(status='sent',0,auto_continue_enabled), "
+                    . "auto_continue_next_at=IF(status='sent',NULL,auto_continue_next_at),updated_at=NOW() WHERE id=?",
+                    [$id]
+                );
+                AuditLog::record('notification.auto_continue.batch', 'notification', (string) $id, null, 'queued:' . (int) $batch['recipients']);
+            } catch (Throwable $error) {
+                Database::query(
+                    'UPDATE notifications SET auto_continue_enabled=0,auto_continue_next_at=NULL,auto_continue_last_run_at=NOW(),auto_continue_last_error=?,updated_at=NOW() WHERE id=?',
+                    [mb_substr($error->getMessage(), 0, 500), $id]
+                );
+                AuditLog::record('notification.auto_continue.failed', 'notification', (string) $id, 'enabled', 'disabled');
+                $result['disabled']++;
+            }
+        }
+
+        return $result;
+    }
+
     private static function assertTransition(string $current, string $target): void
     {
         $allowed = [

@@ -10,6 +10,8 @@ use App\Core\Router;
  */
 return static function (Router $router): void {
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
+        $router->get('/manifest.webmanifest', 'Site\AssetController@manifest', 'assets.manifest');
+        $router->get('/service-worker.js', 'Site\AssetController@serviceWorker', 'assets.service-worker');
         $router->get('/runtime-assets/brands/{brand}/{name}', 'Site\AssetController@brand', 'assets.brand');
         $router->get('/runtime-assets/{group}/{name}', 'Site\AssetController@file', 'assets.file');
         $router->get('/', 'Site\HomeController@index', 'home');
