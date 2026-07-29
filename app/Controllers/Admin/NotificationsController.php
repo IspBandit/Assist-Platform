@@ -35,9 +35,9 @@ final class NotificationsController extends Controller
         $this->requirePermission('notifications.send');
         ProviderCampaignDrafts::prepareForBrand(current_brand()->databaseId());
         return $this->view('admin.notifications.index', [
-            'title'         => 'Notifications',
+            'title'         => 'Provider email campaigns',
             'notifications' => Database::select(
-                'SELECT n.*,u.name AS author FROM notifications n LEFT JOIN users u ON u.id=n.created_by WHERE n.brand_id=? ORDER BY n.id DESC LIMIT 100',
+                'SELECT n.*,u.name AS author,sc.name AS category_name FROM notifications n LEFT JOIN users u ON u.id=n.created_by LEFT JOIN service_categories sc ON sc.id=n.category_id WHERE n.brand_id=? ORDER BY n.id DESC LIMIT 200',
                 [current_brand()->databaseId()]
             ),
             'queue'         => $this->queueStats(),

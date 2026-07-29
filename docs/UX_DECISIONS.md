@@ -250,3 +250,23 @@ its headline measures visible in a compact two-column grid; detailed reports are
 collapsed initially, expand on demand and use a bounded internal scroll area. The
 VanAssist public hero applies stronger local contrast on small screens so live text
 remains readable over photography without replacing the relevant image.
+
+## 2026-07-29 — Paid discovery becomes evidence-gated drafts, never instant claims
+
+Google Places discovery is useful coverage research, not proof that a place is
+lawful or suitable for an overnight caravan stay. VanAssist therefore stages the
+Queensland discovery pack in a private, expiring review queue. Approval requires
+a current independent source and creates a non-public, unverified draft. Sensitive
+stay types require a government or council source. This preserves the value of
+paid discovery while preventing hotels, stale businesses or legally unsuitable
+stops from appearing as trusted traveller advice. The queue uses the existing
+mobile review-card pattern and exposes held, duplicate, empty and failed states.
+
+## 2026-07-29 — Search controls use one canonical public URL per page
+
+Every public render now supplies a self-canonical URL even when a controller did
+not explicitly provide one. VanAssist provider sitemap rows come from active,
+search-visible brand listings rather than shared master-provider slugs. Google
+and Bing verification tokens are optional administrator settings; robots,
+sitemap, metadata and structured data remain server-rendered and brand-aware.
+Search results and ranking are never represented as guaranteed outcomes.

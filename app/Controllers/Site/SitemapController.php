@@ -50,7 +50,17 @@ final class SitemapController extends Controller
         // Only surface curated/indexable towns in the sitemap; the bulk national
         // locality import is noindex by default and would otherwise flood it.
         $this->addRows($urls, "SELECT slug, updated_at FROM towns WHERE is_active = 1 AND (noindex = 0 OR is_launch_town = 1 OR is_featured = 1)", 'towns/', 0.5);
-        $this->addRows($urls, "SELECT slug, updated_at FROM providers WHERE status = 'active' AND deleted_at IS NULL", 'providers/', 0.8);
+        $this->addRows(
+            $urls,
+            "SELECT pbl.slug, COALESCE(pbl.updated_at,p.updated_at) AS updated_at
+             FROM provider_brand_listings pbl
+             INNER JOIN providers p ON p.id=pbl.provider_id
+             WHERE pbl.brand_id=? AND pbl.status='active' AND pbl.search_visible=1
+               AND pbl.deleted_at IS NULL AND p.status='active' AND p.deleted_at IS NULL",
+            'providers/',
+            0.8,
+            [current_brand()->databaseId()]
+        );
         $this->addRows($urls, "SELECT slug, updated_at FROM service_runs WHERE is_public = 1 AND deleted_at IS NULL AND status IN ('forming','confirmed','limited')", 'service-runs/', 0.7);
         $this->addRows($urls, "SELECT slug, updated_at FROM caravan_parks WHERE status = 'active' AND public_page_enabled = 1 AND deleted_at IS NULL", 'caravan-parks/', 0.5);
 
@@ -135,10 +145,10 @@ final class SitemapController extends Controller
      * @param string $prefix a path prefix ending in '/', or the sentinel 'slug'
      *                       when the slug itself is a top-level page path
      */
-    private function addRows(array &$urls, string $sql, string $prefix, float $priority): void
+    private function addRows(array &$urls, string $sql, string $prefix, float $priority, array $params = []): void
     {
         try {
-            $rows = Database::select($sql);
+            $rows = Database::select($sql, $params);
         } catch (Throwable) {
             return;
         }

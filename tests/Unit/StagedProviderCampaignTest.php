@@ -68,8 +68,33 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertSame(0, ProviderCampaignDrafts::prepareForBrand(2));
         $source = $this->source('app/Services/ProviderCampaignDrafts.php');
         self::assertStringContainsString("'provider_category'", $source);
+        self::assertStringContainsString("'directory_accuracy'", $source);
+        self::assertStringContainsString('DirectoryAccuracyNotice::previewBody()', $source);
         self::assertStringContainsString("'draft','draft'", $source);
         self::assertStringContainsString('NOT EXISTS', $source);
+    }
+
+    public function testPaidStayDiscoveryIsReviewOnlyAndAuthorityGated(): void
+    {
+        $migration = $this->source('database/migrations/081_caravan_stay_import_review.sql');
+        $service = $this->source('app/Services/CaravanStayImportService.php');
+        $view = $this->source('app/Views/admin/parks/import.php');
+
+        self::assertStringContainsString('caravan_stay_import_candidates', $migration);
+        self::assertStringContainsString("public_page_enabled,status", $service);
+        self::assertStringContainsString("0,'draft'", $service);
+        self::assertStringContainsString('AUTHORITY_TYPES', $service);
+        self::assertStringContainsString("str_ends_with(\$host,'.gov.au')", str_replace(' ', '', $service));
+        self::assertStringContainsString('Nothing on this page publishes automatically', $view);
+        self::assertStringContainsString('A current Australian government or council source is required', $view);
+    }
+
+    public function testVanAssistSitemapUsesBrandListingSlugsAndActiveVisibility(): void
+    {
+        $source = $this->source('app/Controllers/Site/SitemapController.php');
+        self::assertStringContainsString('FROM provider_brand_listings pbl', $source);
+        self::assertStringContainsString("pbl.brand_id=? AND pbl.status='active' AND pbl.search_visible=1", $source);
+        self::assertStringNotContainsString("SELECT slug, updated_at FROM providers WHERE status = 'active'", $source);
     }
 
     public function testComposeScreenHasNoBulkSendNowControl(): void

@@ -14,6 +14,7 @@ use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Services\Demand\ActivityTracker;
 use App\Services\Demand\DemandRecorder;
+use App\Services\SeoSchema;
 
 /**
  * Public service-category pages generated from the database.
@@ -117,6 +118,11 @@ final class CategoryController extends Controller
                 : ($titleName . ' — VanAssist'),
             'metaDescription' => $category['seo_description'] ?: $category['short_description'],
             'canonical'       => url('services/' . $category['slug']),
+            'jsonLd'          => SeoSchema::breadcrumbs([
+                ['name'=>'Home','url'=>url('/')],
+                ['name'=>'Services','url'=>url('services')],
+                ['name'=>(string)$category['name'],'url'=>url('services/'.$category['slug'])],
+            ]),
             'category'        => $category,
             'children'        => $children,
             'parent'          => $parent,

@@ -52,6 +52,9 @@ if ($adminBrand->moduleEnabled('service_runs') && $permitted('runs.manage')) {
 }
 if ($adminBrand->moduleEnabled('parks') && $permitted('parks.manage')) {
     $customerOperations[] = ['Places to stay', '/admin/parks'];
+    if ($platformAdmin && $adminBrand->id() === 'vanassist') {
+        $customerOperations[] = ['Stay discovery review', '/admin/parks/import'];
+    }
 }
 if ($customerOperations !== []) {
     $nav['Customer operations'] = $customerOperations;
@@ -65,7 +68,7 @@ if ($permitted('content.manage')) {
     $growth[] = ['Social studio', '/admin/social-media'];
 }
 if ($permitted('notifications.send')) {
-    $growth[] = ['Email campaigns', '/admin/notifications'];
+    $growth[] = ['Provider email campaigns', '/admin/notifications'];
 }
 if ($growth !== []) {
     $nav['Growth'] = $growth;

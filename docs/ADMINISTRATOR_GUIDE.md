@@ -43,10 +43,13 @@ business or reviewed by an administrator before a verified badge is granted.
 
 ## Provider email campaigns
 
-Open **Growth → Email campaigns**. VanAssist prepares a separate draft for each
-active service category that has at least one provider email. Each draft uses
-relevant human copy and a compressed service-family header, and targets only
-providers in that category. Review the copy and recipient summary before use.
+Open **Growth → Provider email campaigns**. VanAssist prepares two clearly
+separated drafts for each active service category that has at least one provider
+email: a fixed factual listing-accuracy notice and a consent-gated marketing
+campaign. Each remains a draft until an administrator reviews its audience and
+uses the staged delivery controls. Marketing drafts use relevant human copy and
+a compressed service-family header. Review the copy and recipient summary before
+use.
 
 The summary deliberately separates all active providers with email from those
 with documented marketing consent. Addresses held for review cannot be queued.
@@ -64,6 +67,27 @@ For every campaign, send an internal test, inspect it in the mailbox, run the
 25-provider pilot and review bounces, replies, complaints and opt-outs before
 using the 50/day and 100/day stages. Do not treat a public business email as
 consent and do not edit database consent fields merely to increase reach.
+
+## Paid caravan-stay discovery review
+
+Open **Customer operations → Stay discovery review** in the VanAssist workspace
+and upload the generated JSONL discovery pack. The pack is screened in bounded
+batches into a private queue. It never creates public stays automatically.
+Before creating a private draft, open and retain a current independent operator
+or authority page. Free camps, rest areas, showgrounds, council camps and
+national parks require an Australian government or council URL because lawful
+overnight access, permits and restrictions can change. Review the resulting
+draft in **Places to stay** before separately enabling its public page.
+
+## Search discovery
+
+Open **Content → SEO**. Keep indexing enabled for the public VanAssist launch,
+maintain an accurate default description and social image, and paste the token
+values supplied by Google Search Console and Bing Webmaster Tools. After each is
+verified, submit the displayed sitemap URL in both webmaster consoles. The
+platform emits self-canonical URLs, brand-aware public provider URLs, robots
+directives, Open Graph/Twitter metadata and structured data; search engines
+still control crawl timing and rankings.
 
 ## Sensitive changes
 
