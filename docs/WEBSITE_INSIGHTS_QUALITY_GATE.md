@@ -60,3 +60,14 @@
 
 **Pass.** Migration rehearsal, authenticated route coverage, public privacy
 disclosure and production activation are recorded in the release evidence.
+
+## Live follow-up — 29 July 2026
+
+- Corrected the request lifecycle so analytics records before the response is
+  sent. This allows a first-time anonymous visitor to receive the `va_sid`
+  first-party session cookie and therefore be included in unique-visitor
+  totals; previously page views could be written without a countable session.
+- Tightened the VanAssist mobile home hero spacing from a fixed 13rem image gap
+  to a responsive 2–3rem inset, keeping the visual treatment while bringing the
+  location message and headline into the first mobile viewport.
+- Added regression coverage for both the response ordering and mobile spacing.
