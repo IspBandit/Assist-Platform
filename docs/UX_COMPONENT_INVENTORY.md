@@ -21,7 +21,7 @@ and remove VanAssist-specific presentation assumptions gradually.
 | --- | --- | --- | --- |
 | Theme injection | `partials/brand-theme.php`, brand registry theme maps | shared | Rename legacy tokens and document semantic aliases |
 | Public shell | `layouts/public.php`, header, footer, SEO partials | shared | Verify all four brands and private-brand behaviour |
-| Admin shell | `layouts/admin.php`, `admin-platform.js` | shared | Enterprise workspace selector implemented; rendered desktop/mobile and assistive-technology acceptance remains release evidence |
+| Admin shell | `layouts/admin.php`, `app.js`, `admin-platform.js` | shared | Enterprise workspace selector plus touch/keyboard tablet drawer implemented; rendered desktop/tablet/mobile and assistive-technology acceptance remains release evidence |
 | Minimal/auth shell | `layouts/minimal.php` | shared | Verify brand sender/support/legal states |
 | Navigation | shared header plus configuration-driven links | shared | Add active/current semantics and overflow tests |
 | Buttons | `.btn` variants and sizes | reusable | Replace brand-colour legacy references with semantic tokens |

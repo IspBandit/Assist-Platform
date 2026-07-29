@@ -209,7 +209,7 @@ final class DemandRecorder
     }
 
     /** Record a deliberate provider profile view (deduped per session). */
-    public static function recordProfileView(int $providerId): void
+    public static function recordProfileView(int $providerId, ?int $searchId = null): void
     {
         if ($providerId === 0 || !self::enabled() || ActivityTracker::excluded()) {
             return;
@@ -226,7 +226,11 @@ final class DemandRecorder
                     return;
                 }
             }
-            ActivityTracker::record('provider_profile_viewed', ['provider_id' => $providerId, 'session_id' => $sessionId]);
+            ActivityTracker::record('provider_profile_viewed', [
+                'provider_id' => $providerId,
+                'session_id' => $sessionId,
+                'search_id' => $searchId,
+            ]);
         } catch (Throwable) {
         }
     }

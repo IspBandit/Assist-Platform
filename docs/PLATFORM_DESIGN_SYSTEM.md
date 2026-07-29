@@ -213,9 +213,12 @@ The admin shell uses a neutral charcoal navigation surface and raised white
 work surfaces. Brand colour is limited to active/focus accents. The workspace
 selector shows the active brand icon, name and platform context; available
 brands keep server-authorised POST switching. It supports Escape, Home, End and
-arrow-key movement, visible focus and 44px-class touch targets. At 720px and
-below navigation becomes a full-height scrollable drawer, top-bar actions become
-compact touch controls, and the page itself must not scroll horizontally. Dense
+arrow-key movement, visible focus and 44px-class touch targets. At 1100px and
+below navigation becomes a full-height scrollable drawer so both portrait and
+landscape tablets retain useful working width. The drawer has a touch-dismiss
+scrim, contains keyboard focus while open and leaves the main workspace inert.
+Below 900px secondary top-bar labels become compact touch controls; at 720px
+and below the drawer spans the phone viewport. The page itself must not scroll horizontally. Dense
 review data uses labelled record cards rather than squeezed table columns.
 Motion is restrained and disabled when `prefers-reduced-motion` is requested.
 

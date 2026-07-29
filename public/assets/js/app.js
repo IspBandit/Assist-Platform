@@ -60,6 +60,7 @@
     // Mobile navigation toggle (admin sidebar).
     var adminToggle = document.querySelector('.admin-nav-toggle');
     var sidebar = document.querySelector('.admin-sidebar');
+    var adminScrim = document.querySelector('.admin-nav-scrim');
     if (adminToggle && sidebar) {
         var closeAdminNav = function () {
             sidebar.classList.remove('open');
@@ -82,10 +83,27 @@
         sidebar.querySelectorAll('nav a').forEach(function (link) {
             link.addEventListener('click', closeAdminNav);
         });
+        adminScrim?.addEventListener('click', function () {
+            closeAdminNav();
+            adminToggle.focus();
+        });
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape' && sidebar.classList.contains('open')) {
                 closeAdminNav();
                 adminToggle.focus();
+            }
+            if (event.key === 'Tab' && sidebar.classList.contains('open')) {
+                var focusable = Array.prototype.slice.call(sidebar.querySelectorAll('button:not([disabled]), a[href]'));
+                if (!focusable.length) return;
+                var first = focusable[0];
+                var last = focusable[focusable.length - 1];
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    last.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    first.focus();
+                }
             }
         });
     }
@@ -240,6 +258,14 @@
                                 if (!data || !data.town) {
                                     throw new Error((data && data.error) || 'No town found near you.');
                                 }
+                                if (form.getAttribute('data-location-manual') === '1') {
+                                    buttons.forEach(function (b) {
+                                        b.disabled = false;
+                                        b.removeAttribute('aria-busy');
+                                        b.innerHTML = b.getAttribute('data-label-html') || original;
+                                    });
+                                    return;
+                                }
                                 applyNearestTown(form, btn, data.town, lat, lng);
                             })
                             .catch(function (e) {
@@ -294,6 +320,7 @@
                 // server and the typed location appears to be ignored.
                 setFormField(form, 'lat', '');
                 setFormField(form, 'lng', '');
+                form.setAttribute('data-location-manual', '1');
                 setLocationStatus(form, '', false);
                 syncDistanceFilter(form);
             });
@@ -303,6 +330,24 @@
             town.addEventListener('change', function () { syncDistanceFilter(form); });
         }
     });
+
+    // VanAssist starts location-first on its main search form. Resolving the
+    // nearest town fills the form but never submits it automatically, leaving
+    // the traveller free to choose a service or type a different place.
+    if ('geolocation' in navigator) {
+        document.querySelectorAll('form[data-auto-location]').forEach(function (form) {
+            var loc = form.querySelector('input[name="location"]');
+            var lat = form.querySelector('input[name="lat"]');
+            var empty = (!loc || loc.value.trim() === '') && (!lat || lat.value === '');
+            var trigger = form.querySelector('[data-use-location][data-auto-submit="false"]');
+            if (!empty || !trigger) { return; }
+            window.setTimeout(function () {
+                if (form.getAttribute('data-location-manual') !== '1' && (!loc || loc.value.trim() === '')) {
+                    trigger.click();
+                }
+            }, 250);
+        });
+    }
 
     // Town type-ahead: query the JSON endpoint and, when a town is chosen, fill
     // the linked region (and hidden region id) fields. Progressive enhancement —
@@ -318,6 +363,14 @@
         var timer = null;
         var items = [];
         var active = -1;
+
+        var positionBox = function () {
+            var anchor = input.closest('.location-field');
+            if (!anchor) { return; }
+            box.style.left = (input.offsetLeft || 0) + 'px';
+            box.style.top = ((input.offsetTop || 0) + input.offsetHeight + 5) + 'px';
+            box.style.width = input.offsetWidth + 'px';
+        };
 
         var hide = function () { box.hidden = true; box.innerHTML = ''; active = -1; };
 
@@ -346,10 +399,19 @@
                 btn.dataset.index = i;
                 var sub = [t.postcode, t.region_name].filter(Boolean).join(' · ');
                 var primary = t.name + (t.state_abbr ? ' / ' + t.state_abbr : '');
-                btn.innerHTML = '<strong>' + primary + '</strong>' + (sub ? ' <span class="muted">' + sub + '</span>' : '');
+                var strong = document.createElement('strong');
+                strong.textContent = primary;
+                btn.appendChild(strong);
+                if (sub) {
+                    var secondary = document.createElement('span');
+                    secondary.className = 'muted';
+                    secondary.textContent = sub;
+                    btn.appendChild(secondary);
+                }
                 btn.addEventListener('click', function () { choose(t); input.focus(); });
                 box.appendChild(btn);
             });
+            positionBox();
             box.hidden = false;
             active = -1;
         };
@@ -391,6 +453,7 @@
         document.addEventListener('click', function (e) {
             if (e.target !== input && !box.contains(e.target)) { hide(); }
         });
+        window.addEventListener('resize', function () { if (!box.hidden) { positionBox(); } });
     });
 
     // Auto-dismiss flash alerts after a while (kept accessible: not removed instantly).

@@ -136,7 +136,6 @@ final class ActivityTracker
             $columns[] = 'created_at';
             $placeholders = array_fill(0, count($columns), '?');
             $placeholders[count($placeholders) - 1] = 'NOW()';
-            array_pop($values); // created_at uses NOW(), no bound value
 
             $sql = 'INSERT INTO analytics_events (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ')';
             return Database::insert($sql, $values);
