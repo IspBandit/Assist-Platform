@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\BroadcastAudience;
+use App\Services\CampaignRecipientManager;
 use App\Services\NotificationService;
 use App\Services\ProviderCampaignCopy;
 use App\Services\ProviderCampaignDrafts;
@@ -98,14 +99,21 @@ final class NotificationsController extends Controller
         if ($notification === null) {
             $this->abort(404, 'Notification not found.');
         }
-        $previewCount = in_array($notification['status'], ['draft', 'scheduled'], true)
-            ? BroadcastAudience::count(
+        $isProviderCampaign = in_array((string) $notification['audience_type'], ['providers', 'provider_category'], true);
+        $resolved = in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)
+            ? BroadcastAudience::resolve(
                 (string) $notification['audience_type'],
                 $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
                 $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
                 $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
-            )
+            ) : [];
+        if ($isProviderCampaign && $resolved !== []) {
+            $resolved = CampaignRecipientManager::filter((int) $notification['id'], $resolved);
+        }
+        $previewCount = in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)
+            ? count($resolved)
             : (int) $notification['recipient_count'];
+        $recipientSearch = trim((string) $request->input('recipient_search'));
 
         return $this->view('admin.notifications.show', [
             'title'        => 'Broadcast: ' . $notification['title'],
@@ -113,10 +121,62 @@ final class NotificationsController extends Controller
             'recipients'   => Database::select('SELECT email, status FROM notification_recipients WHERE notification_id = ? ORDER BY id LIMIT 200', [(int) $notification['id']]),
             'tests'        => Database::select('SELECT recipient_email,created_at FROM notification_test_deliveries WHERE notification_id=? ORDER BY id DESC LIMIT 10', [(int) $notification['id']]),
             'previewCount' => $previewCount,
-            'providerSummary' => in_array((string) $notification['audience_type'], ['providers', 'provider_category'], true)
-                ? BroadcastAudience::providerEmailSummary($notification['category_id'] !== null ? (int) $notification['category_id'] : null)
-                : null,
+            'providerSummary' => $isProviderCampaign ? CampaignRecipientManager::summary($notification) : null,
+            'providerCandidates' => $isProviderCampaign ? CampaignRecipientManager::candidates($notification, $recipientSearch) : [],
+            'recipientSearch' => $recipientSearch,
+            'consentBases' => CampaignRecipientManager::CONSENT_BASES,
         ]);
+    }
+
+    public function recipientExclude(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $providerId = (int) $request->input('provider_id');
+        $notification = $this->findBrandNotification($id);
+        try {
+            CampaignRecipientManager::exclude($notification, $providerId, (string) $request->input('reason'), $this->currentUserId());
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
+        }
+        AuditLog::record('notification.recipient.exclude', 'provider', (string) $providerId, null, 'notification:' . $id);
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Provider removed from this campaign.');
+    }
+
+    public function recipientRestore(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $providerId = (int) $request->input('provider_id');
+        $notification = $this->findBrandNotification($id);
+        try {
+            CampaignRecipientManager::restore($notification, $providerId);
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
+        }
+        AuditLog::record('notification.recipient.restore', 'provider', (string) $providerId, null, 'notification:' . $id);
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Provider restored to this campaign.');
+    }
+
+    public function recipientInclude(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $providerId = (int) $request->input('provider_id');
+        $notification = $this->findBrandNotification($id);
+        try {
+            CampaignRecipientManager::recordConsentAndInclude(
+                $notification,
+                $providerId,
+                (string) $request->input('consent_basis'),
+                (string) $request->input('consent_evidence'),
+                (string) $request->input('consented_at')
+            );
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
+        }
+        AuditLog::record('notification.recipient.consent', 'provider', (string) $providerId, null, (string) $request->input('consent_basis'));
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Consent evidence recorded and provider added to the eligible campaign audience.');
     }
 
     public function test(Request $request): Response
@@ -230,5 +290,10 @@ final class NotificationsController extends Controller
             $stats[(string) $row['status']] = (int) $row['c'];
         }
         return $stats;
+    }
+
+    private function currentUserId(): ?int
+    {
+        return isset(current_user()['id']) ? (int) current_user()['id'] : null;
     }
 }

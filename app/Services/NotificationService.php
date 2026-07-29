@@ -85,6 +85,7 @@ final class NotificationService
                 $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
                 $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
             );
+            $recipients = CampaignRecipientManager::filter($notificationId, $recipients);
             $existing = Database::select('SELECT email FROM notification_recipients WHERE notification_id=?', [$notificationId]);
             $seen = array_fill_keys(array_map(static fn (array $row): string => strtolower((string) $row['email']), $existing), true);
             $eligible = array_values(array_filter($recipients, static fn (array $row): bool => !isset($seen[strtolower($row['email'])])));

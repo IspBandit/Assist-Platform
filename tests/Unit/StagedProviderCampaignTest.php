@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use App\Services\NotificationService;
+use App\Services\CampaignRecipientManager;
 use App\Services\ProviderCampaignCopy;
 use App\Services\ProviderCampaignDrafts;
 use App\Services\ProviderPackActivation;
@@ -78,6 +79,23 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('Save staged campaign', $view);
         self::assertStringContainsString('Apply starter', $view);
         self::assertStringContainsString('held back until valid consent evidence is recorded', $view);
+    }
+
+    public function testRecipientReviewShowsAllCandidatesWithoutBypassingConsent(): void
+    {
+        self::assertCount(4, CampaignRecipientManager::CONSENT_BASES);
+        $service = $this->source('app/Services/CampaignRecipientManager.php');
+        $view = $this->source('app/Views/admin/notifications/show.php');
+        $routes = $this->source('routes/admin.php');
+        $delivery = $this->source('app/Services/NotificationService.php');
+        self::assertStringContainsString("p.status='active'", $service);
+        self::assertStringContainsString('marketing_consented_at', $service);
+        self::assertStringContainsString('assertNotSuppressed', $service);
+        self::assertStringContainsString('notification_provider_exclusions', $service);
+        self::assertStringContainsString('Record consent and add', $view);
+        self::assertStringContainsString('Remove from campaign', $view);
+        self::assertStringContainsString('/notifications/recipient-include', $routes);
+        self::assertStringContainsString('CampaignRecipientManager::filter', $delivery);
     }
 
     public function testCampaignHeadersAreLightweightRetinaWebpAssets(): void

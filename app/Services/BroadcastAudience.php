@@ -28,7 +28,7 @@ final class BroadcastAudience
     ];
 
     /**
-     * @return array<int,array{user_id:?int,email:string,name:string}>
+     * @return array<int,array{user_id:?int,provider_id:?int,email:string,name:string}>
      */
     public static function resolve(string $type, ?int $townId, ?int $regionId, ?int $categoryId): array
     {
@@ -180,7 +180,7 @@ final class BroadcastAudience
 
     /**
      * @param array<int,array<string,mixed>> $rows
-     * @return array<int,array{user_id:?int,email:string,name:string}>
+     * @return array<int,array{user_id:?int,provider_id:?int,email:string,name:string}>
      */
     private static function dedupe(array $rows): array
     {
@@ -194,6 +194,7 @@ final class BroadcastAudience
             $seen[$email] = true;
             $out[] = [
                 'user_id' => isset($row['user_id']) ? (int) $row['user_id'] ?: null : null,
+                'provider_id' => isset($row['provider_id']) ? (int) $row['provider_id'] ?: null : null,
                 'email'   => $email,
                 'name'    => trim((string) ($row['name'] ?? '')),
             ];

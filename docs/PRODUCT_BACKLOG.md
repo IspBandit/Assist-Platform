@@ -12,7 +12,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-002 | Unified admin, global view and permission-scoped brand switching | in progress | Cross-domain handoff, RBAC and rendered acceptance |
 | CORE-003 | Canonical providers with relevant per-brand listings | in progress | Isolation, relevance and duplicate tests |
 | CORE-004 | Shared membership entitlements for Launch, Free, Founding, Verified and Featured | done | Migration 045 catalogue, entitlement tests, provider dashboard states and billing-disabled acceptance |
-| CORE-005 | Shared provider launch email templates and campaign segmentation | in progress | Brand-scoped preview, documented consent, suppression, unsubscribe and test/pilot/50/100 staged limits implemented; production pilot acceptance remains |
+| CORE-005 | Shared provider launch email templates and campaign segmentation | in progress | Brand-scoped full candidate review, audited add/remove controls, documented consent, suppression, unsubscribe and test/pilot/50/100 staged limits implemented; production pilot acceptance remains |
 | CORE-007 | Platform Control Centre for domains, launch state, features and operational status | in progress | Super-admin-only acceptance and audit coverage |
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
 | CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | done | Owner isolation, mobile asset wallet, private document storage, expiry delivery and brand-aware actions |
@@ -85,7 +85,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | COM-001 | Transactional email transport and sender reputation | in progress | Direct shared-mailbox send/receive passes; brand-neutral templates, application probes and central bounce/complaint suppression implemented; production application-probe acceptance remains |
-| COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
+| COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
 | COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |

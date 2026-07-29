@@ -175,6 +175,9 @@ return static function (Router $router): void {
         $router->get('/notifications/show', 'Admin\NotificationsController@show', 'admin.notifications.show');
         $router->post('/notifications/test', 'Admin\NotificationsController@test');
         $router->post('/notifications/stage', 'Admin\NotificationsController@stage');
+        $router->post('/notifications/recipient-exclude', 'Admin\NotificationsController@recipientExclude');
+        $router->post('/notifications/recipient-restore', 'Admin\NotificationsController@recipientRestore');
+        $router->post('/notifications/recipient-include', 'Admin\NotificationsController@recipientInclude');
         $router->post('/notifications/cancel', 'Admin\NotificationsController@cancel');
 
         // Caravan parks (Phase 7): applications, approval, documents, service-day requests.

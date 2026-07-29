@@ -12,6 +12,15 @@ send email. An operator must still complete the internal test, 25-recipient pilo
 50-per-day and 100-per-day stages. Audience selection remains fail-closed unless a
 provider has recorded consent source and evidence.
 
+Each provider campaign includes a searchable recipient review table listing all
+matching active providers with valid email addresses. **Eligible** has complete
+consent evidence; **Held** needs review; **Removed** is excluded from this
+campaign; and **Suppressed** has a platform-wide opt-out, complaint, bounce or
+admin block. Use **Record consent and add** only after consent actually exists.
+**Remove from campaign** is checked again when a batch is built and cancels a
+matching queue item that is still pending. It cannot recall an email already
+being processed or sent. **Restore** never clears a global suppression.
+
 **Backlog:** CORE-005
 **Status:** implemented; no provider launch campaign has been authorised or sent
 
@@ -47,7 +56,8 @@ ask for consent. Never invent consent evidence.
 
 1. Select one brand and the narrowest relevant audience.
 2. Start from the matching service-family copy, then verify every claim.
-3. Preview the consent-eligible count and save the campaign.
+3. Review the full provider candidate pool, record genuine consent evidence or
+   remove unsuitable recipients, then preview the eligible count and save.
 4. Queue an internal test. Check From name/address, subject, links, mobile layout,
    legal sender/contact, reply handling and unsubscribe.
 5. Queue the maximum 25-recipient pilot.
@@ -79,7 +89,8 @@ within the statutory period.
 - **Architecture — pass:** shared service, brand-attributed queues, forward
   migration, audited stages and ADR 0013.
 - **UX — pass:** no bulk-send control; a readable staged checklist, explicit
-  recipient count and service-family starters in the existing admin design.
+  recipient count, searchable add/remove review controls and service-family
+  starters in the existing admin design, including a phone layout.
 - **Engineering — pass:** fail-closed consent query, deduplication, suppression,
   rolling hard caps, linked cancellation, queue leases and automated tests.
 - **Business — conditional pass:** supports cautious provider acquisition while
