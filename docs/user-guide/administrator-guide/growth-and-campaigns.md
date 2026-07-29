@@ -16,7 +16,7 @@ Provider outreach requires `prospects.manage`. Social Studio requires `content.m
 
 - **Provider outreach:** Outreach status and Search filters; rows show Business, Contact, Town, Status and Follow up. The form contains Business name, Contact name, Email, Phone, Website, Base town, Region, Source, Outreach status, Next follow-up date, Services observed, Notes, Consent documented, Consent basis and Consent evidence. Detail shows invitation Email, Sent, Expires and Status, plus contact-log Type and Note.
 - **Social Studio:** Campaign name; Purpose (Brand launch, Provider recruitment, Customer service discovery, Education and safety, Community engagement); Design system (Premium editorial, Field guide/educational, Provider spotlight, Launch impact); and Platform/format (Instagram post 1080×1080, story 1080×1920 or profile 1080×1080; Facebook post 1200×630, cover 1640×624 or profile 1080×1080). Library cards show preview, platform, template, dimensions, status, optional campaign name, headline, post copy and any Facebook publish ID/error.
-- **Provider email campaigns list:** queue counts for Pending, Sent and Failed; rows show Title/author, Type/audience, Status/stage, Queued/sent, Live audience and When. Live audience shows with email, eligible, held, suppressed and removed.
+- **Provider email campaigns list:** queue counts for Pending, Sent and Failed; prominent Factual listing checks and Provider marketing summaries show how many addresses can currently be contacted under each boundary. Rows show Title/author, factual or marketing Type, canonical brand service category, Status/stage, Queued/sent, Live audience and When. Live audience shows with email, eligible, held, suppressed and removed. Up to 250 current campaigns are shown so every active VanAssist service category remains visible.
 - **Campaign compose:** Campaign type, optional Service-family starter, Title/subject, HTML message, Audience, and conditional Town, Region or Service category. Visible types distinguish consented provider marketing, fixed factual listing accuracy and general/customer marketing. Audience choices are everyone opted in, consented providers, providers by category, customers with open requests, by town, by region and by category.
 - **Campaign detail/recipient review:** status, delivery stage, type, audience, sent/estimated recipient count, message, tests and recipient Email/Status. Provider review has Search, with email/eligible/held/removed/suppressed summary, Provider, Review status, evidence/consent and Campaign action. Inclusion asks for Basis, Date and Evidence; removal can include a Reason.
 
@@ -29,7 +29,7 @@ Provider outreach requires `prospects.manage`. Social Studio requires `content.m
 
 ## Workflows
 
-For prospects, remember that changing workspace does not filter the list. For marketing campaigns, record valid consent before inclusion, check the campaign's live audience, send an internal test, then progress through the enforced pilot and daily stages. Factual directory-accuracy notices use server-fixed content and separate suppression scope. Automatic continuation is unavailable to marketing and remains an explicit reviewed option for qualifying factual campaigns only.
+For prospects, remember that changing workspace does not filter the list. Provider campaign drafts are prepared from the same brand-specific categories used by public search, including categories that currently have no sendable addresses. For marketing campaigns, record valid consent before inclusion, check the campaign's live audience, send an internal test, then progress through the enforced pilot and daily stages. Factual directory-accuracy notices use server-fixed content and separate suppression scope. Automatic continuation is unavailable to marketing and remains an explicit reviewed option for qualifying factual campaigns only.
 
 ## Examples
 
@@ -59,7 +59,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-07-30 (canonical service campaigns and server-refreshed drafts).
 
 ## Owner
 

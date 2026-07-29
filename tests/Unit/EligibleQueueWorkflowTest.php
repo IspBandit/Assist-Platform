@@ -48,7 +48,11 @@ final class EligibleQueueWorkflowTest extends TestCase
         self::assertStringContainsString('function processEligibleQueue',(string)file_get_contents($root.'/app/Controllers/Admin/DataSourcesController.php'));
         $view = (string)file_get_contents($root.'/app/Views/admin/data-sources/queue.php');
         self::assertStringContainsString('Process every eligible filtered record',$view);
-        self::assertStringContainsString('data-auto-submit="1200"',$view);
+        self::assertStringContainsString('Run server processor now',$view);
+        self::assertStringContainsString('continues on the server even when the dashboard is closed',$view);
+        $cron=(string)file_get_contents($root.'/app/Services/CronRunner.php');
+        self::assertStringContainsString('process_provider_import_queue',$cron);
+        self::assertStringContainsString('ProviderImportQueueWorker',$cron);
     }
 
     public function testFinalMutationsRecheckPendingAndUnclaimedState(): void

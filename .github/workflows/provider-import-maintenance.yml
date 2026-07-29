@@ -1,0 +1,42 @@
+name: Provider import maintenance
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type PROCESS to run the safeguarded production provider worker
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-provider-import
+  cancel-in-progress: false
+
+jobs:
+  process:
+    if: github.event.inputs.confirm == 'PROCESS' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 20
+    steps:
+      - name: Configure verified SSH host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Resume safe provider imports and campaign preparation
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          ssh "$VPS_USER@$VPS_HOST" "sudo /usr/local/sbin/assist-cron process_provider_import_queue"
+          status="$(ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php scripts/provider-import-status.php")"
+          printf 'Production provider status: `%s`\n' "$status" >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' "$status"

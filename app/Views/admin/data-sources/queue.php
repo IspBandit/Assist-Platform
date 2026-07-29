@@ -5,6 +5,7 @@
 /** @var array<string,int> $summary */
 /** @var array<string,mixed>|null $nationalImportJob */
 /** @var array<string,mixed>|null $eligibleQueueRun */
+/** @var array{pending:int,mergeable:int,approvable:int,eligible:int,blocked:int,reasons:array<string,int>} $serverQueue */
 $this->extend('layouts.admin');
 $pages = (int)ceil(max(1, $total) / $perPage);
 $filterQuery = static function (array $extra = []) use ($filters): string {
@@ -46,8 +47,8 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
             <div class="alert alert-warning"><strong><?= number_format((int)$jobScope['skipped_lines']) ?> rows need attention.</strong> They were not silently imported.<?php if(!empty($jobScope['errors'])): ?><details><summary>Show recorded errors</summary><ul><?php foreach((array)$jobScope['errors'] as $error): ?><li>Line <?= (int)($error['line']??0) ?>: <?= $this->e((string)($error['error']??'Unknown import error')) ?></li><?php endforeach; ?></ul></details><?php endif; ?></div>
         <?php endif; ?>
         <?php if (in_array((string)$nationalImportJob['status'], ['queued','running'], true)): ?>
-            <p class="muted">The file is being screened in safe 500-row batches. Keep this page open until processing finishes.</p>
-            <form id="national-route-process" method="post" action="<?= e(url('admin/data-sources/national-route/process')) ?>" data-auto-submit="1200">
+            <p class="muted">The server is screening this file in safe, resumable batches. You may close this page; processing continues in the background.</p>
+            <form id="national-route-process" method="post" action="<?= e(url('admin/data-sources/national-route/process')) ?>">
                 <?= csrf_field() ?>
                 <input type="hidden" name="job_id" value="<?= (int)$nationalImportJob['id'] ?>">
                 <button class="btn btn-primary" type="submit">Continue screening now</button>
@@ -67,6 +68,27 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
         </form>
     <?php endif; ?>
 </details>
+<?php endif; ?>
+
+<?php if ($isVanAssist): ?>
+<section class="card">
+    <div class="page-header">
+        <div>
+            <p class="eyebrow">Server import worker</p>
+            <h2>Provider processing status</h2>
+            <p class="muted">This continues on the server even when the dashboard is closed.</p>
+        </div>
+        <form method="post" action="<?= e(url('admin/data-sources/review/process-server')) ?>">
+            <?= csrf_field() ?><button class="btn btn-primary" type="submit">Run server processor now</button>
+        </form>
+    </div>
+    <div class="campaign-recipient-summary" aria-label="Provider import processing status">
+        <span><strong><?= number_format((int)$serverQueue['pending']) ?></strong> pending total</span>
+        <span class="is-eligible"><strong><?= number_format((int)$serverQueue['eligible']) ?></strong> ready for automatic processing</span>
+        <span class="is-held"><strong><?= number_format((int)$serverQueue['blocked']) ?></strong> need evidence or a decision</span>
+    </div>
+    <?php if ($serverQueue['reasons'] !== []): ?><details><summary>Why records still need review</summary><ul><?php foreach(array_slice($serverQueue['reasons'],0,8,true) as $reason=>$count): ?><li><strong><?= number_format((int)$count) ?></strong> — <?= $this->e((string)$reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
+</section>
 <?php endif; ?>
 
 <section class="card">
@@ -113,12 +135,12 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
 <section class="card">
     <?php if (!empty($eligibleQueueRun)): ?>
         <div class="alert alert-info">
-            <strong>Safeguarded queue processing is continuing automatically.</strong>
+            <strong>This browser-triggered pass is still running; the server worker will continue after it closes.</strong>
             <?= number_format((int)($eligibleQueueRun['merged']??0)) ?> duplicates merged ·
             <?= number_format((int)($eligibleQueueRun['approved']??0)) ?> eligible providers published ·
             <?= number_format((int)($eligibleQueueRun['remaining']??0)) ?> eligible records remain.
         </div>
-        <form method="post" action="<?= e(url('admin/data-sources/review/process-eligible')) ?>" data-auto-submit="1200">
+        <form method="post" action="<?= e(url('admin/data-sources/review/process-eligible')) ?>">
             <?= csrf_field() ?><input type="hidden" name="run_token" value="<?= e_attr((string)$eligibleQueueRun['token']) ?>">
             <button class="btn btn-primary" type="submit">Continue safeguarded processing now</button>
         </form>
@@ -145,7 +167,7 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
             <button class="btn btn-secondary" type="submit">Apply to selected</button>
         </form>
     </div>
-    <p class="muted"><strong>One-click eligible processing:</strong> runs in bounded, resumable batches; merges safe 70%+ unclaimed duplicates first, then publishes only nonduplicates whose service, independent evidence and retention rights are already confirmed. Ineligible records stay in review with reason counts.</p>
+    <p class="muted"><strong>Server-side eligible processing:</strong> runs in bounded, resumable batches without an open browser; merges safe 70%+ unclaimed duplicates first, then publishes only nonduplicates whose service, independent evidence and retention rights are already confirmed. Ineligible records stay in review with reason counts.</p>
     <p class="muted"><strong>Safety rules:</strong> approval only accepts independently confirmed records with a mapped service and no duplicate. Duplicate merge requires an unclaimed target, at least 70% confidence, a strong business-name match and an exact phone or website match. Claimed provider details are never changed.</p>
     <div class="table-wrap">
         <table class="data review-queue-table">

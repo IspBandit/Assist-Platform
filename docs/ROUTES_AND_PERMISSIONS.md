@@ -65,6 +65,7 @@ catalogue boundary.
 | `POST /admin/data-sources/mapping` | `data_sources.manage` | Platform Admin only |
 | `POST /admin/data-sources/run` | `data_sources.run` | Platform Admin only |
 | `GET/POST /admin/data-sources/review` | `data_sources.review` | Platform Admin only |
+| `POST /admin/data-sources/review/process-server` | `data_sources.review` | VanAssist workspace; one locked server pass without bypassing evidence or claimed-record safeguards |
 | `POST /admin/data-sources/schedule` | `data_sources.manage` | Platform Admin only |
 
 # Data Intelligence

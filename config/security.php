@@ -45,7 +45,7 @@ return [
     ],
 
     // A conservative CSP that allows self plus inline styles (used by lean pages).
-    'csp' => "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
+    'csp' => "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; "
         . "script-src 'self' https://challenges.cloudflare.com; font-src 'self' data:; connect-src 'self' https://challenges.cloudflare.com; "
         . "frame-src https://challenges.cloudflare.com; frame-ancestors 'self'; "
         . "base-uri 'self'; form-action 'self'",

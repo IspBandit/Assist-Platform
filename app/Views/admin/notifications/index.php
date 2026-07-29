@@ -4,6 +4,12 @@
 /** @var array<int,array{with_email:int,eligible:int,held:int,excluded:int,suppressed:int}> $audienceSummaries */
 /** @var array<string,int> $queue */
 $this->extend('layouts.admin');
+$factualCampaigns=0;$marketingCampaigns=0;$factualEligible=0;$marketingEligible=0;
+foreach($notifications as $campaign){
+    $type=(string)($campaign['campaign_type']??'');$summary=$audienceSummaries[(int)$campaign['id']]??null;
+    if($type==='directory_accuracy'){$factualCampaigns++;$factualEligible+=(int)($summary['eligible']??0);}
+    if($type==='provider_marketing'){$marketingCampaigns++;$marketingEligible+=(int)($summary['eligible']??0);}
+}
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
@@ -19,7 +25,24 @@ $this->extend('layouts.admin');
     <p class="muted" style="margin-top:.5rem;font-size:.85rem">Two clearly separated campaign types are prepared for each VanAssist service category. <strong>Factual listing checks</strong> can include unclaimed providers backed by a recorded public source. <strong>Marketing campaigns</strong> remain held until documented consent exists. Both require an internal test, a 25-recipient pilot and reviewed daily caps.</p>
 </div>
 
-<div class="card">
+<div class="grid grid-2 campaign-type-overview">
+    <section class="card">
+        <p class="eyebrow">Can contact now after staged review</p>
+        <h2>Factual listing checks</h2>
+        <p><strong><?= number_format($factualEligible) ?></strong> source-backed provider email address(es) are currently eligible across <strong><?= number_format($factualCampaigns) ?></strong> prepared campaigns.</p>
+        <p class="muted">Fixed non-promotional wording asks the business to confirm, correct or remove its public unclaimed record. Start with an internal test, then the 25-provider pilot.</p>
+        <a class="btn btn-primary" href="#campaign-list">Review factual campaigns</a>
+    </section>
+    <section class="card">
+        <p class="eyebrow">Consent required</p>
+        <h2>Provider marketing</h2>
+        <p><strong><?= number_format($marketingEligible) ?></strong> documented-consent address(es) are currently eligible across <strong><?= number_format($marketingCampaigns) ?></strong> service-specific campaigns.</p>
+        <p class="muted">Addresses without recorded consent stay visible for review but cannot be bulk marketed to.</p>
+        <a class="btn btn-secondary" href="#campaign-list">Review marketing campaigns</a>
+    </section>
+</div>
+
+<div class="card" id="campaign-list">
     <h2 style="margin-top:0">Recent broadcasts</h2>
     <div class="table-wrap">
         <p class="muted">Live audience counts are resolved from current provider data and suppression controls. They are not inserted into delivery records until an approved stage is queued.</p>

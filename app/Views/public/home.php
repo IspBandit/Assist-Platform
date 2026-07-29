@@ -52,6 +52,12 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
             </div>
 
             <div class="hero-search-panel">
+                <div class="mobile-hero-intro">
+                    <span>Right across regional Australia</span>
+                    <h1>Your travel <strong>companion.</strong></h1>
+                    <p>Nearby services, fuel, stays and practical help. Search before you set off or while safely stopped.</p>
+                    <button type="button" data-install-app>Save VanAssist to your phone</button>
+                </div>
                 <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -105,6 +111,12 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                         <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
                 </form>
+                <nav class="mobile-travel-shortcuts" aria-label="Traveller shortcuts">
+                    <a href="<?= e(url('find')) ?>"><strong>Services</strong><span>Repairs &amp; help</span></a>
+                    <a href="<?= e(url('stays')) ?>"><strong>Stays</strong><span>Caravan stops</span></a>
+                    <a href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><strong>Fuel</strong><span>Servos nearby</span></a>
+                    <a href="<?= e(url('services')) ?>"><strong>Essentials</strong><span>Browse all</span></a>
+                </nav>
             </div>
 
         </div>

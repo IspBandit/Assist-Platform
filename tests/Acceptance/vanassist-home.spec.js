@@ -30,7 +30,8 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
     : 'vanassist-coastal-hero-desktop-v1.webp';
   expect(await heroImage.evaluate((image) => image.currentSrc)).toContain(expectedHero);
 
-  const headline = page.getByRole('heading', { level: 1 });
+  const isMobile = testInfo.project.name.startsWith('mobile');
+  const headline = isMobile ? page.locator('.mobile-hero-intro h1') : page.locator('.hero-copy h1');
   const search = page.locator('.hero-search-panel .search-card');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
   await expect(search).toBeVisible();
@@ -46,10 +47,10 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
   expect(overflow.body, 'body horizontal overflow in pixels').toBeLessThanOrEqual(1);
   expect(overflow.document, 'document horizontal overflow in pixels').toBeLessThanOrEqual(1);
 
-  if (testInfo.project.name.startsWith('mobile')) {
+  if (isMobile) {
     const topGap = await page.evaluate(() => {
       const header = document.querySelector('.site-header');
-      const heroCopy = document.querySelector('.hero--visual .hero-copy');
+      const heroCopy = document.querySelector('.hero--visual .mobile-hero-intro');
       if (!header || !heroCopy) return null;
       return heroCopy.getBoundingClientRect().top - header.getBoundingClientRect().bottom;
     });
@@ -65,9 +66,12 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
       primarySearchBox.y + primarySearchBox.height,
       'mobile primary submit is fully visible in the first viewport',
     ).toBeLessThanOrEqual(viewport.height);
+    await expect(page.getByRole('navigation', { name: 'Traveller shortcuts' }).getByRole('link', { name: /Stays/i })).toBeVisible();
   }
 
-  const installButton = page.getByRole('button', { name: /Save VanAssist before you go/i });
+  const installButton = isMobile
+    ? page.getByRole('button', { name: /Save VanAssist to your phone/i })
+    : page.getByRole('button', { name: /Save VanAssist before you go/i });
   await expect(installButton).toBeVisible();
   await expectElementStartsInViewport(installButton, viewport.height);
 

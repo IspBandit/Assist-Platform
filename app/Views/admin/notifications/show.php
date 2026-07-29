@@ -136,7 +136,8 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
                         <td><strong><?= $this->e((string) $candidate['business_name']) ?></strong><small><?= $this->e((string) $candidate['email']) ?></small></td>
                         <td><span class="badge campaign-recipient-status status-<?= e_attr($candidateStatus) ?>"><?= $this->e(ucfirst($candidateStatus)) ?></span><?php if ($candidateStatus === 'excluded'): ?><small><?= $this->e((string) $candidate['exclusion_reason']) ?></small><?php elseif ($candidateStatus === 'suppressed'): ?><small><?= $this->e((string) $candidate['suppression_reason']) ?></small><?php endif; ?></td>
                         <td>
-                            <?php if ($isDirectoryAccuracy && !empty($candidate['has_directory_evidence'])): ?>
+                            <?php if (empty($candidate['valid_email'])): ?><span class="muted">Held: the stored email address is not valid for delivery</span>
+                            <?php elseif ($isDirectoryAccuracy && !empty($candidate['has_directory_evidence'])): ?>
                                 <strong>Unclaimed public record</strong>
                                 <small><?= $this->e((string) $candidate['source_evidence']) ?></small>
                             <?php elseif ($isDirectoryAccuracy): ?><span class="muted">Held: no adequate public source recorded</span>
