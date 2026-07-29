@@ -314,7 +314,10 @@ Add to the privacy policy (admin-editable CMS page) — **review with a lawyer**
    `analytics_retention_event_days`, `analytics_retention_session_days`).
 5. Confirm cron entries (section 6) exist; the hourly `customer_followups` now
    sends mail when the flag is on.
-6. Toggle `demand_analytics` **on** when ready to begin recording.
+6. Migration `078_activate_first_party_website_insights.sql` records the
+   owner's approval, publishes the analytics disclosure and enables both
+   first-party page and demand tracking. Either control can still be disabled
+   immediately in Admin.
 
 **Rollback:** flag off (instantly disables tracking, dashboards no-op cleanly),
 optionally drop `019` tables and the `014` tables (section 8). No existing data
