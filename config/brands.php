@@ -40,7 +40,8 @@ return [
             'metadata' => [
                 'wordmark_prefix' => 'Van',
                 'wordmark_accent' => 'Assist',
-                'header_descriptor' => 'RV SERVICE NETWORK',
+                'header_descriptor' => 'FIND · CONNECT · GET ASSISTED',
+                'header_platform_context' => '',
                 'tagline' => 'Caravan help, wherever you travel.',
                 'description' => 'Find caravan and RV service providers across regional Australia.',
                 'social_image' => '/assets/img/hero-home.jpg',

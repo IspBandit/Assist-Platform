@@ -18,6 +18,7 @@ $bizEmail = $footerBrand->id() === 'vanassist' ? (string) Settings::get('contact
             <p><?= $this->e($footerMeta['tagline'] ?? '') ?></p>
             <p class="footer-trust-copy">A focused brand powered by Assist Platform Enterprise. Directory information is clearly labelled; confirm suitability and current details directly.</p>
             <?php if ($bizPhone !== '' || $bizEmail !== ''): ?><address><?php if ($bizPhone !== ''): ?><a href="tel:<?= e_attr(preg_replace('/\s+/', '', $bizPhone)) ?>"><?= $this->e($bizPhone) ?></a><?php endif; ?><?php if ($bizEmail !== ''): ?><a href="mailto:<?= e_attr($bizEmail) ?>"><?= $this->e($bizEmail) ?></a><?php endif; ?></address><?php endif; ?>
+            <?php if ($footerBrand->id() === 'vanassist'): ?><button class="btn btn-light install-app-button" type="button" data-install-app>Save VanAssist to your phone</button><?php endif; ?>
         </div>
         <?php if ($footerBrand->id() === 'vanassist'): ?>
             <div><h4>Find</h4><ul><li><a href="<?= e(url('find')) ?>">RV service providers</a></li><li><a href="<?= e(url('services')) ?>">Browse services</a></li><li><a href="<?= e(url('stays')) ?>">Places to stay</a></li><li><a href="<?= e(url('regions')) ?>">Browse regions</a></li><li><a href="<?= e(url('service-runs')) ?>">Service runs</a></li></ul></div>
@@ -30,3 +31,15 @@ $bizEmail = $footerBrand->id() === 'vanassist' ? (string) Settings::get('contact
     </div>
     <div class="container footer-bottom"><p>&copy; <?= date('Y') ?> <?= $this->e($footerBrand->legalName()) ?><?php if ($bizAbn !== ''): ?> &middot; ABN <?= $this->e($bizAbn) ?><?php endif; ?>.</p><p>General information only. Verify specifications, suitability, licensing and availability where required.</p></div>
 </footer>
+<?php if ($footerBrand->id() === 'vanassist'): ?>
+<dialog class="install-app-dialog" data-install-dialog aria-labelledby="install-app-title">
+    <div class="install-app-dialog__inner">
+        <button class="install-app-dialog__close" type="button" data-install-close aria-label="Close">&times;</button>
+        <span class="eyebrow">Keep VanAssist handy</span>
+        <h2 id="install-app-title">Save VanAssist to your phone</h2>
+        <div data-install-ios hidden><p>On iPhone or iPad in Safari:</p><ol><li>Tap the <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Tap <strong>Add</strong>.</li></ol></div>
+        <div data-install-android hidden><p>Open your browser menu and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p></div>
+        <p class="muted">VanAssist will open from your home screen with nearby help, travel services and stays one tap away.</p>
+    </div>
+</dialog>
+<?php endif; ?>

@@ -241,3 +241,17 @@ The VanAssist first screen uses an editorial two-column layout on desktop: the
 value proposition and trust statements sit beside a dedicated search console.
 At 919px and below it becomes a single-column journey, and at phone widths the
 trust chips are removed so the primary search remains concise and unobstructed.
+
+### VanAssist home-screen installation
+
+VanAssist exposes one clearly labelled “Save VanAssist to your phone” action in
+the public footer. Supporting Android browsers use their native install prompt;
+iPhone and iPad users receive short Safari Share → Add to Home Screen steps.
+The control disappears in standalone mode. Installation is optional and never
+blocks search, contact or assistance journeys.
+
+The installed experience uses the dedicated geometric VanAssist lettermark, a
+brand-scoped web manifest and a minimal service worker. The worker may cache
+release-owned public assets only; dynamic pages, searches, provider details,
+accounts and administration are always network-controlled and are never placed
+in an offline cache.

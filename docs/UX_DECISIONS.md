@@ -262,6 +262,18 @@ paid discovery while preventing hotels, stale businesses or legally unsuitable
 stops from appearing as trusted traveller advice. The queue uses the existing
 mobile review-card pattern and exposes held, duplicate, empty and failed states.
 
+## 2026-07-29 — VanAssist can be saved without pretending to be a native app
+
+**Context:** EXP-005. Travellers need fast repeat access on iPhone and Android,
+but browser installation differs by platform and must remain optional.
+**Decision:** VanAssist publishes a scoped install manifest and a visible footer
+action. Android receives the browser's native install prompt when available;
+Safari users receive the exact Share → Add to Home Screen steps. Installed mode
+hides the action. A minimal service worker caches public versioned assets only
+and never caches dynamic, authenticated, provider or admin pages. The control is
+touch-sized, keyboard operable, dismissible and does not compete with primary
+search or assistance actions.
+
 ## 2026-07-29 — Search controls use one canonical public URL per page
 
 Every public render now supplies a self-canonical URL even when a controller did
