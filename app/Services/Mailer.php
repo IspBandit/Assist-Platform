@@ -171,6 +171,11 @@ final class Mailer
                 [$row['id'], $row['recipient_email'], $row['subject']]
             );
             Database::query("UPDATE notification_recipients SET status='sent' WHERE queue_id=?", [$row['id']]);
+            Database::query(
+                "UPDATE organisation_outreach_contacts o INNER JOIN notification_recipients nr ON nr.organisation_contact_id=o.id "
+                . "SET o.outcome_status=IF(o.outcome_status='not_contacted','sent',o.outcome_status),o.last_contacted_at=COALESCE(o.last_contacted_at,NOW()),o.updated_at=NOW() WHERE nr.queue_id=?",
+                [$row['id']]
+            );
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();

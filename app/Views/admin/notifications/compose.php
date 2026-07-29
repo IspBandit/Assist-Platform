@@ -9,6 +9,7 @@
 /** @var array<int,array<string,mixed>> $categories */
 /** @var array<string,array{label:string,subject:string,body:string}> $campaignStyles */
 /** @var array<string,string> $campaignTypes */
+/** @var array<string,string> $organisationTypes */
 /** @var array{with_email:int,eligible:int,held:int,excluded:int,suppressed:int}|null $providerSummary */
 $this->extend('layouts.admin');
 $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
@@ -38,16 +39,25 @@ $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
                     <option value="<?= e_attr($key) ?>" <?= (string) $v('campaign_type', 'provider_marketing') === $key ? 'selected' : '' ?>><?= $this->e($label) ?></option>
                 <?php endforeach; ?>
             </select>
-            <div class="alert alert-warning" style="margin-top:.75rem"><strong>Safety boundary:</strong> provider marketing is sent only where documented consent is recorded. A factual listing notice uses locked server wording, identifies the exact public record and contains no offer, pricing, claim link or promotional copy.</div>
+            <div class="alert alert-warning" style="margin-top:.75rem"><strong>Safety boundary:</strong> provider marketing requires documented consent; organisation outreach requires a reviewed published role, current source and direct message relevance. Factual listing notices use locked non-promotional wording.</div>
         </div>
 
         <div class="form-group">
-            <label for="copy_style">Relevant provider-email starter (optional)</label>
+            <label for="copy_style">Relevant message starter (optional)</label>
             <div class="btn-row">
                 <select id="copy_style" name="copy_style"><option value="">Choose a service family</option><?php foreach ($campaignStyles as $key => $style): ?><option value="<?= e_attr($key) ?>" <?= (string) $v('copy_style') === $key ? 'selected' : '' ?>><?= $this->e($style['label']) ?></option><?php endforeach; ?></select>
                 <button type="submit" name="action" value="starter" class="btn btn-secondary" formnovalidate>Apply starter</button>
             </div>
-            <p class="muted">Starters apply only to consent-gated marketing. Factual listing notices ignore editable copy and use the locked accuracy template.</p>
+            <p class="muted">Choose a starter that matches the recipient's role. Factual listing notices ignore editable copy and use the locked accuracy template.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="organisation_type">Organisation target type</label>
+            <select id="organisation_type" name="organisation_type">
+                <option value="">Not an organisation campaign</option>
+                <?php foreach ($organisationTypes as $key => $label): ?><option value="<?= e_attr($key) ?>" <?= (string) $v('organisation_type') === $key ? 'selected' : '' ?>><?= $this->e($label) ?></option><?php endforeach; ?>
+            </select>
+            <p class="muted">Required for organisation outreach. One narrow target type per campaign prevents a club note being sent to a publication, manufacturer or tourism body.</p>
         </div>
         <div class="form-group"><label for="title">Title / subject</label><input type="text" id="title" name="title" value="<?= e_attr((string) $v('title')) ?>" required></div>
         <div class="form-group"><label for="body">Message (HTML allowed)</label><textarea id="body" name="body" rows="10" required><?= e((string) $v('body')) ?></textarea></div>
@@ -90,7 +100,7 @@ $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
             <button type="submit" name="action" value="preview" class="btn btn-secondary">Preview recipients</button>
             <button type="submit" name="action" value="draft" class="btn btn-primary">Save staged campaign</button>
         </div>
-        <p class="muted">Bulk “send now” is disabled. Campaigns progress through internal test → 25-provider pilot → reviewed 50/day → reviewed 100/day.</p>
+        <p class="muted">Bulk “send now” is disabled. Campaigns progress through internal test → 25-recipient pilot → reviewed 50/day → reviewed 100/day.</p>
     </form>
 </div>
 <?php $this->endSection(); ?>

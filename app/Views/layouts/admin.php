@@ -68,6 +68,7 @@ if ($permitted('content.manage')) {
     $growth[] = ['Social studio', '/admin/social-media'];
 }
 if ($permitted('notifications.send')) {
+    $growth[] = ['PR & outreach hub', '/admin/outreach-hub'];
     $growth[] = ['Provider email campaigns', '/admin/notifications'];
 }
 if ($growth !== []) {

@@ -58,6 +58,17 @@ may remain as dated files and are linked here rather than copied.
 - Corrected production and maintenance workflows to run the safeguarded
   provider worker non-interactively inside the existing application container,
   avoiding the remote password prompt that interrupted the previous release.
+- Added a focused PR & Outreach Hub for clubs, peak bodies, manufacturers,
+  dealer/rental networks, park groups, tourism organisations, touring bodies and
+  publications. Imports remain research-only until a human verifies the current
+  official source, published role, direct relevance and absence of contrary
+  warnings. Organisation campaigns select one target type, use role-matched
+  copy, retain recipient evidence, honour suppression and progress through the
+  existing test, 25-recipient pilot and reviewed daily limits. Automatic sending
+  and member/customer-list ingestion are not provided. The controlled release
+  loader idempotently places the initial 63 official-source targets directly in
+  the production register as research/held records; no manual upload and no
+  automatic eligibility or delivery is required.
 
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.

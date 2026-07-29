@@ -68,6 +68,31 @@ For every campaign, send an internal test, inspect it in the mailbox, run the
 using the 50/day and 100/day stages. Do not treat a public business email as
 consent and do not edit database consent fields merely to increase reach.
 
+## PR and organisation outreach
+
+Open **Growth → PR & outreach hub** to manage caravan/RV clubs, federations,
+industry bodies, manufacturers, dealer and rental networks, park groups,
+tourism organisations, 4WD/touring associations and publications. Research is
+imported with an official source URL, date checked, published role, publication
+context and relevance reason. Importing an address never makes it sendable.
+The initial official-source research set is loaded idempotently by the release
+migration command, so deployment does not leave contacts in a local file waiting
+for an operator upload.
+
+Review the official page and destination restrictions before marking a contact
+eligible. Personal or ambiguous addresses, stale sources and any no-unsolicited
+warning remain held. Prefer one peak-body approach before writing to every
+affiliated club. Never request or upload member, customer or subscriber lists.
+
+Organisation campaigns select one target type and matching copy: club member
+resource, industry/data collaboration, fleet/dealer owner support, tourism
+visitor resource or earned editorial pitch. Use the normal internal test,
+maximum-25 pilot and reviewed daily stages. There is no automatic continuation.
+The platform retains the organisation contact and evidence used for each queued
+recipient and honours marketing/all suppression. Record replies, interest,
+sharing, declines, bounces and opt-outs in the hub; an opted-out outcome adds
+marketing suppression and cancels applicable pending mail.
+
 ## Paid caravan-stay discovery review
 
 Open **Customer operations → Stay discovery review** in the VanAssist workspace
