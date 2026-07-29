@@ -47,6 +47,8 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("mapCanvas.addEventListener('wheel'", $script);
         self::assertStringContainsString("event.key === 'ArrowLeft'", $script);
         self::assertStringContainsString('.provider-card--compact', $css);
+        self::assertStringContainsString('.provider-card--compact{min-height:0', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-badges .badge:nth-child(n+3){display:none}', $css);
         self::assertStringContainsString('touch-action:none', $css);
         self::assertStringContainsString('.results-map-summary.is-collapsed', $css);
         self::assertStringContainsString('min-height:44px', $css);

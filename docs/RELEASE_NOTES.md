@@ -49,6 +49,7 @@ may remain as dated files and are linked here rather than copied.
   controls, plus a collapsible and pointer/keyboard-movable provider summary.
   Supporting trust/distance copy now follows the results instead of interrupting
   the compact search and list/map task flow.
+- Removed the legacy minimum card height from compact provider results and tightened spacing, avatars, badges and actions on desktop and mobile. Phone actions retain practical touch targets while each result consumes materially less vertical space.
 - Added a compact listing-accuracy notice to the VanAssist homepage, results
   and Places to stay, with direct disclaimer and correction links. Public
   contact actions now use only explicitly public phone/email fields; an
