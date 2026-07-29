@@ -27,6 +27,15 @@ final class VanAssistInstallTest extends TestCase
         self::assertStringContainsString('display-mode: standalone', $script);
     }
 
+    public function testApprovedVanAssistWordmarkDirectionUsesVectorRoadAndExactLine(): void
+    {
+        $header = $this->source('app/Views/partials/header.php');
+        $brands = $this->source('config/brands.php');
+        self::assertStringContainsString('class="brand-road"', $header);
+        self::assertStringContainsString('FIND · CONNECT · GET ASSISTED', $brands);
+        self::assertStringNotContainsString('<img class="brand-road"', $header);
+    }
+
     public function testManifestAndWorkerAvoidCachingPrivatePages(): void
     {
         $manifest = json_decode($this->source('public/manifest.webmanifest'), true, 512, JSON_THROW_ON_ERROR);

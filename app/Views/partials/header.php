@@ -2,13 +2,16 @@
 /** @var \App\Core\View $this */
 $headerBrand = current_brand();
 $headerBrandMeta = $headerBrand->metadata();
+$headerPlatformContext = array_key_exists('header_platform_context', $headerBrandMeta)
+    ? (string)$headerBrandMeta['header_platform_context']
+    : 'Assist Platform';
 ?>
 <header class="site-header">
     <div class="container">
-        <a class="brand brand--wordmark" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
+        <a class="brand brand--wordmark brand--<?= e_attr($headerBrand->id()) ?>" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
             <span class="brand-copy">
-                <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>
-                <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?> · Assist Platform</span>
+                <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span><?php if ($headerBrand->id() === 'vanassist'): ?><svg class="brand-road" viewBox="0 0 64 32" aria-hidden="true"><path class="brand-road-edge" d="M3 27C19 27 22 6 42 6h18"/><path class="brand-road-centre" d="M8 29C24 26 28 11 44 10h16"/></svg><?php endif; ?></span>
+                <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?><?php if ($headerPlatformContext !== ''): ?> · <?= e($headerPlatformContext) ?><?php endif; ?></span>
             </span>
         </a>
 
