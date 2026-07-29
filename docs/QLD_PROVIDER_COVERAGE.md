@@ -44,6 +44,8 @@ php scripts/qld-coverage-import-dry-run.php --batch brisbane-moreton-bay
 ./vendor/bin/phpunit --filter QldCoverage
 ```
 
+Places gap-fill (SEQ + Central QLD, A$50 budget): see `docs/QLD_PLACES_GAP_FILL.md`.
+
 ## Import dry-run (review queue shape)
 
 Default mode writes artefacts only — **no database writes**:
