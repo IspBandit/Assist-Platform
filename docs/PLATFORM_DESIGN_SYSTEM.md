@@ -178,6 +178,13 @@ column at phone width and may expand to three columns on desktop. One provider
 identity is explained as a reduction in administration, never as automatic or
 irrelevant cross-brand exposure.
 
+Provider workspace navigation groups tasks as Overview, Your listing, Trust,
+Work and Growth. Desktop may show the groups in one contained navigation strip;
+phones use one native disclosure showing the current page and touch-sized
+links. Claim/correction pages use plain language, distinguish public and private
+information, never imply that submission proves ownership, and keep optional
+promotional consent separate and unticked.
+
 ### VanAssist traveller-intent launcher
 
 VanAssist keeps one location-first service form, then exposes repairs, fuel, EV

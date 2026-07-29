@@ -2,11 +2,11 @@
 /** @var \App\Core\View $this */
 $this->extend('layouts.public');
 $isUnclaimed = !empty($provider['is_unclaimed']);
-$showPhone = (!empty($provider['show_public_phone']) || $isUnclaimed);
-$phone = $showPhone ? trim((string) (($provider['public_phone'] ?? '') ?: ($provider['phone'] ?? ''))) : '';
+$showPhone = !empty($provider['show_public_phone']);
+$phone = $showPhone ? trim((string) ($provider['public_phone'] ?? '')) : '';
 $showPhone = $phone !== '';
-$showEmail = (!empty($provider['show_public_email']) || $isUnclaimed);
-$email = $showEmail ? trim((string) (($provider['public_email'] ?? '') ?: ($provider['email'] ?? ''))) : '';
+$showEmail = !empty($provider['show_public_email']);
+$email = $showEmail ? trim((string) ($provider['public_email'] ?? '')) : '';
 $showEmail = $email !== '';
 $website = trim((string) ($provider['website'] ?? ''));
 $address = trim((string) ($provider['street_address'] ?? ''));
@@ -48,7 +48,7 @@ $mapDestination = map_destination(null, null, [$address, $townName, (string) ($p
             <?php if ($isUnclaimed): ?>
                 <aside class="trust-notice">
                     <div><strong>This business has not claimed this profile yet.</strong><p>Details come from public sources and may change. Confirm services, qualifications, pricing and availability directly with the business.</p><?php if (!empty($provider['source_note'])): ?><p><small>Source: <?= $this->e((string) $provider['source_note']) ?><?php if (!empty($provider['source_url'])): ?> · <a href="<?= e_attr((string) $provider['source_url']) ?>" target="_blank" rel="noopener nofollow">view source</a><?php endif; ?></small></p><?php endif; ?></div>
-                    <a class="btn btn-secondary btn-sm" href="<?= e(url('contact')) ?>">Claim this business</a>
+                    <a class="btn btn-secondary btn-sm" href="<?= e(url('for-providers/register?listing=' . rawurlencode($slug))) ?>">Request to claim or correct this listing</a>
                 </aside>
             <?php endif; ?>
 

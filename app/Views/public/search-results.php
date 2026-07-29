@@ -117,6 +117,8 @@ foreach ($allResults as $provider) {
             <a href="<?= e(url('find?' . http_build_query(array_filter(['location' => $location ?: null, 'category' => 'fuel-and-travel-stops', 'lat' => $lat ?? null, 'lng' => $lng ?? null])))) ?>"><strong>Fuel nearby</strong><span>Find the next servo</span></a>
         </nav>
 
+        <?php $this->include('partials.listing-accuracy-notice'); ?>
+
         <?php if ($locationNotFound): ?>
             <div class="card" style="border-left:4px solid #c9a227">
                 <p style="margin:0"><strong>We couldn't find “<?= $this->e($location) ?>”.</strong> Try a nearby larger town or a 4-digit postcode, or browse by <a href="<?= e(url('regions')) ?>">region</a>.</p>

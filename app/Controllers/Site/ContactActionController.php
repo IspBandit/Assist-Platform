@@ -64,22 +64,20 @@ final class ContactActionController extends Controller
      */
     private function targetFor(string $action, array $p): ?string
     {
-        $isUnclaimed = !empty($p['is_unclaimed']);
-
         switch ($action) {
             case 'phone':
-                if (empty($p['show_public_phone']) && !$isUnclaimed) {
+                if (empty($p['show_public_phone'])) {
                     return null;
                 }
-                $phone = (string) ($p['public_phone'] ?? '') ?: (string) ($p['phone'] ?? '');
+                $phone = trim((string) ($p['public_phone'] ?? ''));
                 $phone = preg_replace('/[^0-9+]/', '', $phone);
                 return $phone !== '' ? 'tel:' . $phone : null;
 
             case 'email':
-                if (empty($p['show_public_email']) && !$isUnclaimed) {
+                if (empty($p['show_public_email'])) {
                     return null;
                 }
-                $email = (string) ($p['public_email'] ?? '') ?: (string) ($p['email'] ?? '');
+                $email = trim((string) ($p['public_email'] ?? ''));
                 return $email !== '' ? 'mailto:' . $email : null;
 
             case 'website':

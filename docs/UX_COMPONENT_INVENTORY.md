@@ -46,6 +46,10 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Controlled provider queue processor | `/admin/data-sources/review`, migration 083 and `process_provider_import_queue` | VanAssist admin data operation | Server-owned resumable work, explicit ready-versus-review counts, claimed-provider, brand-scope, provenance, CSRF, idempotency and no-progress acceptance |
 | Factual directory campaign continuation | `/admin/notifications`, migration 082 and scheduled notification worker | shared campaign operation | Off by default; directory-accuracy only; reviewed-stage, suppression and rate-limit acceptance |
 | Canonical service campaign list | `/admin/notifications`, migration 083 | VanAssist growth operation | Factual and consent-gated drafts for every active brand category; live eligible/held/suppressed/removed counts and recipient controls |
+| Listing accuracy notice | `partials/listing-accuracy-notice.php` | VanAssist homepage, provider results and Places to stay | Compact desktop/mobile warning, disclaimer link and correction path; never substitutes for record-level status labels |
+| Grouped provider navigation | `partials/provider-nav.php` | Provider workspace | Five task groups on desktop and one accessible disclosure menu on phones; active page remains explicit |
+| Listing-specific claim/correction request | Provider profile and `/for-providers/register?listing={slug}` | Public-to-provider handoff | Existing rate limit and anti-bot gate; authority review before access; onboarding and optional marketing permission separated |
+| Provider acquisition hero | `public/for-providers.php`, `provider-rv.webp` | VanAssist provider acquisition | Neutral unbranded caravan service scene with empty decorative alt; no invented provider name, phone number or implied testimonial |
 
 ### Current token debt
 

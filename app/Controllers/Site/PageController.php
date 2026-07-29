@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
+use App\Models\Provider;
 use App\Services\EmailQueue;
 use App\Services\Settings;
 use Throwable;
@@ -82,9 +83,12 @@ final class PageController extends Controller
         if (current_brand()->id() !== 'vanassist') {
             return $this->view('brands.provider-interest', ['title' => 'Register your business with ' . current_brand()->name(), 'errors' => Session::errors()]);
         }
+        $listingSlug = trim((string) $request->input('listing'));
+        $listingProvider = $listingSlug !== '' ? Provider::findPublicBySlug($listingSlug) : null;
         return $this->view('public.provider-interest', [
             'title'  => 'Register your interest — VanAssist for providers',
             'errors' => Session::errors(),
+            'listingProvider' => $listingProvider,
         ]);
     }
 
@@ -107,6 +111,9 @@ final class PageController extends Controller
         $region   = trim((string) $request->input('region'));
         $services = trim((string) $request->input('services'));
         $message  = trim((string) $request->input('message'));
+        $listingSlug = trim((string) $request->input('listing_slug'));
+        $listingProvider = $listingSlug !== '' ? Provider::findPublicBySlug($listingSlug) : null;
+        $marketingOptIn = $request->input('marketing_opt_in') ? 1 : 0;
 
         // Explicit mobile / workshop questions drive the stored service model.
         $offersMobile = (string) $request->input('offers_mobile');
@@ -131,8 +138,8 @@ final class PageController extends Controller
 
         if ($errors !== []) {
             Session::flashErrors($errors);
-            Session::flashInput($request->only(['business_name', 'contact_name', 'email', 'phone', 'town', 'region', 'region_id', 'services', 'message', 'offers_mobile', 'has_workshop']));
-            return $this->redirect('/for-providers/register');
+            Session::flashInput($request->only(['business_name', 'contact_name', 'email', 'phone', 'town', 'region', 'region_id', 'services', 'message', 'offers_mobile', 'has_workshop', 'listing_slug', 'marketing_opt_in']));
+            return $this->redirect('/for-providers/register' . ($listingProvider !== null ? '?listing=' . rawurlencode((string) $listingProvider['slug']) : ''));
         }
 
         // Combine the base town and its region for the CRM "towns serviced" field.
@@ -149,12 +156,18 @@ final class PageController extends Controller
         if ($message !== '') {
             $noteParts[] = 'Message: ' . $message;
         }
+        if ($listingProvider !== null) {
+            $noteParts[] = 'Requested claim/correction for provider #' . (int) $listingProvider['id'] . ' (' . (string) $listingProvider['slug'] . '). Ownership is not granted by this submission.';
+        }
+        if ($marketingOptIn) {
+            $noteParts[] = 'Optional promotional email consent given through the provider registration form.';
+        }
 
         try {
             Database::query(
                 'INSERT INTO provider_prospects (business_name, contact_name, phone, email, services_observed, '
-                . 'service_model, towns_serviced, source, outreach_status, consent_recorded, notes, created_at, updated_at) '
-                . "VALUES (?, ?, ?, ?, ?, ?, ?, 'other', 'interested', 1, ?, NOW(), NOW())",
+                . 'service_model, towns_serviced, source, outreach_status, consent_recorded, marketing_consented_at, marketing_consent_basis, marketing_consent_evidence, notes, created_at, updated_at) '
+                . "VALUES (?, ?, ?, ?, ?, ?, ?, 'other', 'interested', ?, " . ($marketingOptIn ? 'NOW()' : 'NULL') . ", ?, ?, ?, NOW(), NOW())",
                 [
                     $business,
                     $contact ?: null,
@@ -163,6 +176,9 @@ final class PageController extends Controller
                     $services ?: null,
                     $model,
                     $based ?: null,
+                    $marketingOptIn,
+                    $marketingOptIn ? 'express_web' : null,
+                    $marketingOptIn ? 'Optional provider marketing checkbox affirmatively selected on the VanAssist provider registration form.' : null,
                     implode("\n", $noteParts),
                 ]
             );
@@ -172,7 +188,7 @@ final class PageController extends Controller
 
         $this->notifyInterest($business, $contact, $email, $phone, $town, $region, $services, $message, $model);
 
-        return $this->redirectWith('/for-providers/register', 'success', 'Thanks ' . ($contact !== '' ? $contact : $business) . '! Your interest is registered — we\'ll send your onboarding details soon.');
+        return $this->redirectWith('/for-providers/register', 'success', 'Thanks ' . ($contact !== '' ? $contact : $business) . '! Your request is recorded. We will check your authority before any listing access is granted.');
     }
 
     private function notifyInterest(string $business, string $contact, string $email, string $phone, string $town, string $region, string $services, string $message, string $model): void

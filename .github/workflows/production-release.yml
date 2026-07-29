@@ -131,7 +131,7 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          ssh "$VPS_USER@$VPS_HOST" "sudo /usr/local/sbin/assist-cron process_provider_import_queue"
+          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php cron/run.php process_provider_import_queue"
           ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php scripts/provider-import-status.php" | tee provider-import-status.json
           printf 'Provider import status after release: `%s`\n' "$(cat provider-import-status.json)" >> "$GITHUB_STEP_SUMMARY"
       - name: Record release summary
