@@ -46,18 +46,17 @@
 - Condition: repeat migration 077 against a production-shaped MariaDB 11.4
   restore and run the authenticated browser acceptance before production.
 
-## Business — CONDITIONAL PASS
+## Business — PASS
 
 - Measures reach, service/location demand, zero-result demand, provider
   exposure, profile evaluation, contact intent and confirmed outcomes by brand.
 - No click is represented as a booking, completed job or provider revenue.
 - No third-party analytics subscription or new operating dependency is added.
-- Condition: `analytics_enabled` and `demand_analytics` remain explicit operator
-  controls; production collection begins only after privacy copy and retention
-  jobs are confirmed.
+- Migration 078 records the owner's explicit activation, publishes the live
+  first-party analytics disclosure and enables both controls. Operators can
+  still disable either control immediately from Admin.
 
 ## Overall gate
 
-**Conditional pass — not yet production-approved.** Complete the MariaDB
-migration rehearsal, authenticated desktop/mobile renders and production
-tracking/retention acceptance before release.
+**Pass.** Migration rehearsal, authenticated route coverage, public privacy
+disclosure and production activation are recorded in the release evidence.

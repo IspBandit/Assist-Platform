@@ -827,6 +827,8 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .stat-link:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
 .stat .num { font-size: 1.8rem; font-weight: 800; color: var(--teal-dark); }
 .stat .label { color: var(--muted); font-size: .9rem; }
+.stat-unavailable { border-color: color-mix(in srgb, var(--red) 38%, var(--line)); background: color-mix(in srgb, var(--red) 5%, #fff); }
+.stat-unavailable .num { color: var(--red); }
 
 @media (max-width: 720px) {
     .admin-body { flex-direction: column; }

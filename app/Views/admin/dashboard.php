@@ -3,6 +3,7 @@
 /** @var array $stats */
 /** @var array $recentActivity */
 /** @var array $tasks */
+/** @var array<int,string> $dashboardWarnings */
 $this->extend('layouts.admin');
 $labels = [
     'new_requests' => 'New requests', 'open_requests' => 'Open requests',
@@ -39,13 +40,21 @@ $destinations = [
     <?php if ($maintenance): ?> <strong style="color:var(--red)">Maintenance mode is ON.</strong><?php endif; ?>
 </div>
 
+<?php if ($dashboardWarnings !== []): ?>
+<div class="alert alert-error" role="alert">
+    <strong>Some dashboard data is unavailable.</strong>
+    The affected sections are: <?= $this->e(implode(', ', $dashboardWarnings)) ?>.
+    The problem has been written to System logs; these values are not being shown as zero.
+</div>
+<?php endif; ?>
+
 <div class="stat-grid">
     <?php foreach ($stats as $key => $value): ?>
         <?php $destination = $destinations[$key] ?? null; ?>
-        <?php if ($destination !== null): ?><a class="stat stat-link" href="<?= e(url(ltrim($destination, '/'))) ?>"><?php else: ?><div class="stat"><?php endif; ?>
-            <div class="num"><?= (int) $value ?></div>
+        <?php if ($destination !== null && $value !== null): ?><a class="stat stat-link" href="<?= e(url(ltrim($destination, '/'))) ?>"><?php else: ?><div class="stat<?= $value === null ? ' stat-unavailable' : '' ?>"><?php endif; ?>
+            <div class="num"><?= $value === null ? '—' : (int) $value ?></div>
             <div class="label"><?= $this->e($labels[$key] ?? $key) ?></div>
-        <?php if ($destination !== null): ?></a><?php else: ?></div><?php endif; ?>
+        <?php if ($destination !== null && $value !== null): ?></a><?php else: ?></div><?php endif; ?>
     <?php endforeach; ?>
 </div>
 
