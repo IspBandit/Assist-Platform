@@ -76,7 +76,7 @@ if ($permitted('data_intelligence.view')) {
     $insights[] = ['Data Intelligence', '/admin/data-intelligence'];
 }
 if ($permitted('demand.view')) {
-    $insights[] = ['Demand overview', '/admin/demand'];
+    $insights[] = ['Website insights', '/admin/demand'];
 }
 if ($insights !== []) {
     $nav['Insights'] = $insights;

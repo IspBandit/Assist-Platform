@@ -24,6 +24,19 @@ Common admin permissions include `users.manage`, `users.export`,
 billing permissions. Super-administrator bypass exists deliberately; all other
 roles require an assigned permission.
 
+## Website insights
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/demand` | `demand.view` | Selected brand only; aggregate visits, sources, devices, service/location searches, provider interest and contact actions |
+| `GET /admin/demand/providers` | `demand.view` | Selected-brand provider result appearances, profile views and contact actions |
+| `GET /admin/demand/funnel` | `demand.view` | Selected-brand search-to-confirmed-use funnel |
+| `GET /admin/demand/export` | `demand.export` | Selected-brand date-filtered CSV output |
+
+Anonymous session ids are never shown in the administrator UI. Signed-in and
+anonymous counts are aggregated; reports do not expose IP addresses or raw
+event metadata.
+
 Adding a route requires appropriate middleware, controller ownership checks,
 brand isolation tests and an update here when it creates a new surface.
 

@@ -9,7 +9,10 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\CsvExport;
+use App\Services\FeatureFlag;
+use App\Services\Settings;
 use App\Services\Demand\ReportingService;
+use App\Services\Demand\WebsiteInsightsService;
 
 /**
  * Platform-wide demand, provider-usage, funnel, coverage-gap and demand-map
@@ -23,16 +26,15 @@ final class DemandController extends Controller
     {
         $this->requirePermission('demand.view');
         [$from, $to, $label, $range] = $this->range($request);
+        $brand = current_brand();
 
         return $this->view('admin.demand.index', [
-            'title'    => 'Demand analytics',
+            'title'    => 'Website insights',
             'range'    => $range, 'from' => $from, 'to' => $to, 'rangeLabel' => $label,
-            'overview' => ReportingService::platformOverview($from, $to),
-            'byCategory' => ReportingService::needsBy('category', $from, $to, 10),
-            'byUrgency'  => ReportingService::needsBy('urgency', $from, $to),
-            'byState'    => ReportingService::needsBy('state', $from, $to),
-            'byTown'     => ReportingService::needsBy('town', $from, $to, 10),
-            'byVehicle'  => ReportingService::needsBy('vehicle_type', $from, $to),
+            'brand'    => $brand,
+            'insights' => WebsiteInsightsService::report($brand->databaseId(), $from, $to),
+            'pageTrackingOn' => (string) Settings::get('analytics_enabled', '0') === '1',
+            'demandTrackingOn' => FeatureFlag::enabled('demand_analytics', false),
         ]);
     }
 
@@ -40,11 +42,12 @@ final class DemandController extends Controller
     {
         $this->requirePermission('demand.view');
         [$from, $to, $label, $range] = $this->range($request);
+        $report = WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to);
 
         return $this->view('admin.demand.providers', [
-            'title'   => 'Provider usage',
+            'title'   => 'Provider interest',
             'range'   => $range, 'from' => $from, 'to' => $to, 'rangeLabel' => $label,
-            'rows'    => ReportingService::providerPerformance($from, $to, 200),
+            'rows'    => $report['providers'],
         ]);
     }
 
@@ -52,36 +55,38 @@ final class DemandController extends Controller
     {
         $this->requirePermission('demand.view');
         [$from, $to, $label, $range] = $this->range($request);
+        $report = WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to);
+        $summary = $report['summary'];
+        $rawStages = [
+            ['Searches', (int) $summary['searches']],
+            ['Provider profiles opened', (int) $summary['profile_views']],
+            ['Contact actions', (int) $summary['contact_actions']],
+            ['Confirmed provider use', (int) $summary['confirmed_uses']],
+        ];
+        $funnel = [];
+        $previous = null;
+        foreach ($rawStages as [$stageLabel, $count]) {
+            $funnel[] = ['label' => $stageLabel, 'count' => $count, 'rate' => $previous === null ? null : ReportingService::rate($count, $previous)];
+            $previous = $count;
+        }
 
         return $this->view('admin.demand.funnel', [
             'title'  => 'Conversion funnel',
             'range'  => $range, 'from' => $from, 'to' => $to, 'rangeLabel' => $label,
-            'funnel' => ReportingService::funnel($from, $to),
+            'funnel' => $funnel,
         ]);
     }
 
     public function coverage(Request $request): Response
     {
         $this->requirePermission('demand.view');
-        [$from, $to, $label, $range] = $this->range($request);
-
-        return $this->view('admin.demand.coverage', [
-            'title'    => 'Coverage gaps',
-            'range'    => $range, 'from' => $from, 'to' => $to, 'rangeLabel' => $label,
-            'coverage' => ReportingService::coverageGaps($from, $to),
-        ]);
+        return $this->redirectWith('/admin/demand', 'info', 'Coverage and zero-result searches are now included in Website insights.');
     }
 
     public function map(Request $request): Response
     {
         $this->requirePermission('demand.view');
-        [$from, $to, $label, $range] = $this->range($request);
-
-        return $this->view('admin.demand.map', [
-            'title' => 'Demand map',
-            'range' => $range, 'from' => $from, 'to' => $to, 'rangeLabel' => $label,
-            'mapData' => ReportingService::demandMap($from, $to),
-        ]);
+        return $this->redirectWith('/admin/demand', 'info', 'Location demand is now included in Website insights.');
     }
 
     /** Permission-controlled CSV exports honouring the active filters. */
@@ -96,32 +101,30 @@ final class DemandController extends Controller
         switch ($type) {
             case 'providers':
                 $rows = array_map(static fn ($r) => [
-                    $r['provider_id'], $r['business_name'], $r['is_verified'] ? 'yes' : 'no',
-                    $r['impressions'], $r['profile_views'], $r['contacts'], $r['engagements'],
-                    $r['customer_confirmed'], $r['provider_confirmed'], $r['mutually_confirmed'], $r['cancellations'],
-                ], ReportingService::providerPerformance($from, $to, 5000));
+                    $r['provider_id'], $r['label'], $r['impressions'], $r['profile_views'], $r['contacts'],
+                ], WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to)['providers']);
                 return CsvExport::download(
-                    "provider-usage_{$from}_{$to}.csv",
-                    ['Provider ID', 'Business', 'Verified', 'Impressions', 'Profile views', 'Contacts', 'Engagements',
-                        'Customer-confirmed', 'Provider-reported', 'Mutually confirmed', 'Cancellations'],
+                    "provider-interest_{$from}_{$to}.csv",
+                    ['Provider ID', 'Business', 'Result appearances', 'Profile views', 'Contact actions'],
                     $rows
                 );
 
             case 'funnel':
-                $rows = array_map(static fn ($s) => [$s['label'], $s['count'], $s['rate'] === null ? '' : $s['rate'] . '%'], ReportingService::funnel($from, $to));
+                $summary = WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to)['summary'];
+                $raw = [['Searches', (int) $summary['searches']], ['Provider profiles opened', (int) $summary['profile_views']],
+                    ['Contact actions', (int) $summary['contact_actions']], ['Confirmed provider use', (int) $summary['confirmed_uses']]];
+                $rows = [];
+                $previous = null;
+                foreach ($raw as [$stage, $count]) {
+                    $rate = $previous === null ? null : ReportingService::rate($count, $previous);
+                    $rows[] = [$stage, $count, $rate === null ? '' : $rate . '%'];
+                    $previous = $count;
+                }
                 return CsvExport::download("funnel_{$from}_{$to}.csv", ['Stage', 'Count', 'Conversion from previous'], $rows);
-
-            case 'demand_category':
-                $rows = array_map(static fn ($r) => [$r['name'], $r['c']], ReportingService::needsBy('category', $from, $to, 1000));
-                return CsvExport::download("demand-by-category_{$from}_{$to}.csv", ['Category', 'Needs'], $rows);
-
-            case 'demand_town':
-                $rows = array_map(static fn ($r) => [$r['name'], $r['c']], ReportingService::needsBy('town', $from, $to, 5000));
-                return CsvExport::download("demand-by-town_{$from}_{$to}.csv", ['Town', 'Needs'], $rows);
 
             case 'overview':
             default:
-                $o = ReportingService::platformOverview($from, $to);
+                $o = WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to)['summary'];
                 $rows = [];
                 foreach ($o as $k => $v) {
                     $rows[] = [$k, $v];

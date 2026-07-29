@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Settings;
+use App\Services\Demand\WebsiteInsightsService;
 use Throwable;
 
 final class AdminController extends Controller
@@ -68,6 +69,14 @@ final class AdminController extends Controller
             'SELECT task_key, last_status, last_run_at FROM scheduled_tasks ORDER BY task_key'
         )) : [];
 
+        $websiteSummary = null;
+        if (can('demand.view')) {
+            $to = date('Y-m-d');
+            $from = date('Y-m-d', strtotime('-29 days'));
+            $report = $this->safe(fn () => WebsiteInsightsService::report($brandId, $from, $to));
+            $websiteSummary = $report['summary'] ?? null;
+        }
+
         return $this->view('admin.dashboard', [
             'title'          => 'Dashboard',
             'dashboardBrand' => $brand,
@@ -78,6 +87,7 @@ final class AdminController extends Controller
             'canViewHealth'  => $canViewHealth,
             'launchMode'     => Settings::launchMode(),
             'maintenance'    => Settings::isMaintenanceMode(),
+            'websiteSummary' => $websiteSummary,
         ]);
     }
 

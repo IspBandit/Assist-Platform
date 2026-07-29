@@ -49,6 +49,30 @@ $destinations = [
     <?php endforeach; ?>
 </div>
 
+<?php if (is_array($websiteSummary)): ?>
+<section class="card dashboard-insights-card">
+    <div class="admin-section-heading">
+        <div>
+            <p class="eyebrow">Last 30 days</p>
+            <h2>Website activity</h2>
+            <p class="muted">Anonymous visitor behaviour and provider-interest signals for this workspace.</p>
+        </div>
+        <a class="btn btn-ghost" href="<?= e(url('admin/demand')) ?>">Open website insights</a>
+    </div>
+    <div class="dashboard-insight-row">
+        <?php foreach ([
+            ['Visitors', $websiteSummary['visitors'] ?? 0],
+            ['Page views', $websiteSummary['page_views'] ?? 0],
+            ['Searches', $websiteSummary['searches'] ?? 0],
+            ['Profiles opened', $websiteSummary['profile_views'] ?? 0],
+            ['Contact actions', $websiteSummary['contact_actions'] ?? 0],
+        ] as [$label, $value]): ?>
+            <div><strong><?= number_format((int) $value) ?></strong><span><?= $this->e($label) ?></span></div>
+        <?php endforeach; ?>
+    </div>
+</section>
+<?php endif; ?>
+
 <?php if ($canViewAudit || $canViewHealth): ?>
 <div class="grid grid-2" style="margin-top:1.5rem">
     <?php if ($canViewAudit): ?>

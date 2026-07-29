@@ -15,7 +15,7 @@ a domain map, not a substitute for reading the relevant ordered migration.
 | Parks | `caravan_parks` and user/document/service-day tables | Park membership/ownership |
 | Content | `content_pages`, blocks, FAQs, settings and feature flags | Brand scope is mandatory for public content |
 | Email/notifications | templates, `email_queue`, `email_log`, notifications, staged/test deliveries, recipients and `notification_provider_exclusions` | Queue rows have required `brand_id`; marketing requires suppression, documented consent, campaign recipient review, internal test, pilot and reviewed rolling limits |
-| Analytics | sessions, events, searches/results/contact actions, daily aggregates and follow-ups | Privacy/retention controls apply; reports must respect brand scope |
+| Analytics | `page_views`, `tracking_sessions`, `analytics_events`, searches/results/contact actions, daily aggregates and follow-ups | New observations carry the trusted `brand_id`; anonymous visitors use a random first-party session id, IP addresses are not stored, retention controls apply and administrator reports enforce brand scope |
 | Billing | plans/prices/features/limits, subscriptions, entitlements, invoices, payments, refunds, discounts, webhooks, commissions and fees | Dormant until explicitly enabled; financial integrity required |
 | Owner finance | accounts, tax codes, periods, journal entries/lines, source/audit events | Platform owner ledger, never provider bookkeeping |
 | TowSmart | `tow_vehicles`, `towable_assets`, `towing_combinations` | User-owned and TowSmart brand-scoped |

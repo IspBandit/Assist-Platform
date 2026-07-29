@@ -12,6 +12,8 @@ use App\Helpers\Geo;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
+use App\Services\Demand\ActivityTracker;
+use App\Services\Demand\DemandRecorder;
 
 /**
  * Public service-category pages generated from the database.
@@ -95,6 +97,15 @@ final class CategoryController extends Controller
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townId);
         }
 
+        ActivityTracker::record('category_viewed', ['category_id' => (int) $category['id'], 'town_id' => $townId]);
+        $shown = array_merge($matches, $possible);
+        $searchId = DemandRecorder::recordSearch([
+            'town_id' => $townId,
+            'category_id' => (int) $category['id'],
+            'result_count' => count($shown),
+        ]);
+        DemandRecorder::recordImpressions($searchId, $shown, (int) $category['id']);
+
         $titleName = (string) $category['name'];
         if ($selectedTown !== null) {
             $titleName .= ' in ' . $selectedTown['name'];
@@ -157,6 +168,13 @@ final class CategoryController extends Controller
         }
         $townId = (int) $request->input('town') ?: null;
         $providers = Provider::brandDirectory($brand->databaseId(), $townId, (int) $category['id'], '', 60, 0)['rows'];
+        ActivityTracker::record('category_viewed', ['category_id' => (int) $category['id'], 'town_id' => $townId]);
+        $searchId = DemandRecorder::recordSearch([
+            'town_id' => $townId,
+            'category_id' => (int) $category['id'],
+            'result_count' => count($providers),
+        ]);
+        DemandRecorder::recordImpressions($searchId, $providers, (int) $category['id']);
 
         return $this->view('localtorque.categories', [
             'title' => $category['name'] . ' — LocalTorque',

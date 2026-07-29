@@ -49,11 +49,12 @@ final class DemandRecorder
             $sessionId = TrackingSession::id();
             $searchId = Database::insert(
                 'INSERT INTO provider_searches '
-                . '(session_id, user_id, request_id, town_id, region_id, state_id, postcode, category_id, '
+                . '(brand_id, session_id, user_id, request_id, town_id, region_id, state_id, postcode, category_id, '
                 . 'subcategory_id, urgency, service_type, radius_km, result_count, exact_match_count, '
                 . 'used_nearby_fallback, radius_expanded, led_to_request, is_excluded, created_at) '
-                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NOW())',
+                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, NOW())',
                 [
+                    current_brand()->databaseId(),
                     $sessionId,
                     self::nullableInt($p['user_id'] ?? null),
                     self::nullableInt($p['request_id'] ?? null),
@@ -162,9 +163,9 @@ final class DemandRecorder
             if ($sessionId !== null) {
                 $recent = (int) Database::scalar(
                     'SELECT COUNT(*) FROM provider_contact_actions '
-                    . 'WHERE provider_id = ? AND action_type = ? AND session_id = ? '
+                    . 'WHERE brand_id = ? AND provider_id = ? AND action_type = ? AND session_id = ? '
                     . 'AND created_at >= DATE_SUB(NOW(), INTERVAL ? SECOND)',
-                    [$providerId, $actionType, $sessionId, self::DEDUPE_SECONDS]
+                    [current_brand()->databaseId(), $providerId, $actionType, $sessionId, self::DEDUPE_SECONDS]
                 );
                 if ($recent > 0) {
                     return;
@@ -173,9 +174,10 @@ final class DemandRecorder
 
             Database::query(
                 'INSERT INTO provider_contact_actions '
-                . '(provider_id, session_id, user_id, request_id, search_id, match_id, action_type, source_route, is_excluded, created_at) '
-                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, NOW())',
+                . '(brand_id, provider_id, session_id, user_id, request_id, search_id, match_id, action_type, source_route, is_excluded, created_at) '
+                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW())',
                 [
+                    current_brand()->databaseId(),
                     $providerId,
                     $sessionId,
                     self::nullableInt($ctx['user_id'] ?? null),
@@ -213,7 +215,18 @@ final class DemandRecorder
             return;
         }
         try {
-            ActivityTracker::record('provider_profile_viewed', ['provider_id' => $providerId]);
+            $sessionId = TrackingSession::id();
+            if ($sessionId !== null) {
+                $recent = (int) Database::scalar(
+                    "SELECT COUNT(*) FROM analytics_events WHERE brand_id=? AND event_name='provider_profile_viewed' "
+                    . 'AND provider_id=? AND session_id=? AND created_at >= DATE_SUB(NOW(), INTERVAL ? SECOND)',
+                    [current_brand()->databaseId(), $providerId, $sessionId, self::DEDUPE_SECONDS]
+                );
+                if ($recent > 0) {
+                    return;
+                }
+            }
+            ActivityTracker::record('provider_profile_viewed', ['provider_id' => $providerId, 'session_id' => $sessionId]);
         } catch (Throwable) {
         }
     }
@@ -230,9 +243,10 @@ final class DemandRecorder
         try {
             Database::query(
                 'INSERT INTO demand_gap_feedback '
-                . '(session_id, user_id, request_id, search_id, town_id, region_id, category_id, reason, comment, created_at) '
-                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+                . '(brand_id, session_id, user_id, request_id, search_id, town_id, region_id, category_id, reason, comment, created_at) '
+                . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
                 [
+                    current_brand()->databaseId(),
                     TrackingSession::id(),
                     self::nullableInt($ctx['user_id'] ?? null),
                     self::nullableInt($ctx['request_id'] ?? null),
