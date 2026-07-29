@@ -67,6 +67,9 @@ final class StagedProviderCampaignTest extends TestCase
     {
         self::assertSame(0, ProviderCampaignDrafts::prepareForBrand(2));
         $source = $this->source('app/Services/ProviderCampaignDrafts.php');
+        self::assertStringContainsString("'directory_accuracy','providers','draft','draft'", $source);
+        self::assertStringContainsString('DirectoryAccuracyNotice::subject()', $source);
+        self::assertStringContainsString("status<>'cancelled'", $source);
         self::assertStringContainsString("'provider_category'", $source);
         self::assertStringContainsString("'draft','draft'", $source);
         self::assertStringContainsString('NOT EXISTS', $source);

@@ -6,7 +6,7 @@ namespace App\Services;
 
 use App\Core\Database;
 
-/** Prepares idempotent, review-only VanAssist provider category campaigns. */
+/** Prepares idempotent, review-only VanAssist provider campaigns. */
 final class ProviderCampaignDrafts
 {
     public static function prepareForBrand(int $brandId): int
@@ -14,6 +14,13 @@ final class ProviderCampaignDrafts
         if ($brandId !== 1) {
             return 0;
         }
+
+        $created = Database::affecting(
+            "INSERT INTO notifications (brand_id,title,body,channel,campaign_type,audience_type,status,delivery_stage,recipient_count,scheduled_at,created_by,created_at,updated_at) "
+            . "SELECT ?,?,?,'email','directory_accuracy','providers','draft','draft',0,NULL,NULL,NOW(),NOW() "
+            . "WHERE NOT EXISTS (SELECT 1 FROM notifications WHERE brand_id=? AND campaign_type='directory_accuracy' AND audience_type='providers' AND status<>'cancelled')",
+            [$brandId, DirectoryAccuracyNotice::subject(), DirectoryAccuracyNotice::previewBody(), $brandId]
+        );
 
         $categories = Database::select(
             "SELECT DISTINCT sc.id,sc.name,sc.slug FROM service_categories sc "
@@ -26,7 +33,6 @@ final class ProviderCampaignDrafts
             [$brandId, $brandId]
         );
 
-        $created = 0;
         foreach ($categories as $category) {
             $copy = ProviderCampaignCopy::forCategory((string) $category['name'], (string) $category['slug']);
             $created += Database::affecting(
