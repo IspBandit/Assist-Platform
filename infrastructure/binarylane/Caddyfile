@@ -19,6 +19,8 @@
 	import security_headers
 	root * /var/www/html/public
 	encode zstd gzip
+	@serviceWorker path /service-worker.js
+	header @serviceWorker Cache-Control "no-cache, no-store, must-revalidate"
 	route {
 		@unfinishedInstaller path /install /install/*
 		respond @unfinishedInstaller "Installation is restricted to the server administrator." 403

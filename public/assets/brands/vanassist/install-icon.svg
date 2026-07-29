@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">VanAssist</title>
+  <rect width="512" height="512" fill="#10272b"/>
+  <rect x="24" y="24" width="464" height="464" rx="96" fill="none" stroke="#5fc8c2" stroke-width="16"/>
+  <path d="M132 156 256 364l124-208" fill="none" stroke="#f8f5ed" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="389" cy="129" r="30" fill="#d7a14a"/>
+</svg>

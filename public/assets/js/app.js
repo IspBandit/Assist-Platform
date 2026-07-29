@@ -12,6 +12,51 @@
         });
     }
 
+    // VanAssist home-screen installation. Android receives the native prompt;
+    // iOS receives the exact Safari steps because Apple exposes no prompt API.
+    if (document.body.getAttribute('data-brand') === 'vanassist') {
+        var installPrompt = null;
+        var installButtons = document.querySelectorAll('[data-install-app]');
+        var installDialog = document.querySelector('[data-install-dialog]');
+        var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        var appleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent)
+            || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        var hideInstallButtons = function () { installButtons.forEach(function (button) { button.hidden = true; }); };
+        var showInstallInstructions = function () {
+            if (!installDialog) { return; }
+            var ios = installDialog.querySelector('[data-install-ios]');
+            var android = installDialog.querySelector('[data-install-android]');
+            if (ios) { ios.hidden = !appleMobile; }
+            if (android) { android.hidden = appleMobile; }
+            if (typeof installDialog.showModal === 'function') { installDialog.showModal(); }
+            else { installDialog.setAttribute('open', ''); }
+        };
+        if (standalone) { hideInstallButtons(); }
+        window.addEventListener('beforeinstallprompt', function (event) { event.preventDefault(); installPrompt = event; });
+        window.addEventListener('appinstalled', function () {
+            installPrompt = null;
+            hideInstallButtons();
+            if (installDialog && installDialog.open) { installDialog.close(); }
+        });
+        installButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                if (installPrompt) {
+                    installPrompt.prompt();
+                    installPrompt.userChoice.finally(function () { installPrompt = null; });
+                    return;
+                }
+                showInstallInstructions();
+            });
+        });
+        installDialog?.querySelector('[data-install-close]')?.addEventListener('click', function () { installDialog.close(); });
+        installDialog?.addEventListener('click', function (event) { if (event.target === installDialog) { installDialog.close(); } });
+        if ('serviceWorker' in navigator && window.isSecureContext) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js').catch(function () { /* Optional enhancement. */ });
+            });
+        }
+    }
+
     // Mobile navigation toggle (admin sidebar).
     var adminToggle = document.querySelector('.admin-nav-toggle');
     var sidebar = document.querySelector('.admin-sidebar');

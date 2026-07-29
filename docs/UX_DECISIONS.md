@@ -270,3 +270,15 @@ search-visible brand listings rather than shared master-provider slugs. Google
 and Bing verification tokens are optional administrator settings; robots,
 sitemap, metadata and structured data remain server-rendered and brand-aware.
 Search results and ranking are never represented as guaranteed outcomes.
+
+## 2026-07-29 — VanAssist can be saved without pretending to be a native app
+
+**Context:** EXP-005. Travellers need fast repeat access on iPhone and Android,
+but browser installation differs by platform and must remain optional.
+**Decision:** VanAssist publishes a scoped install manifest and a visible footer
+action. Android receives the browser's native install prompt when available;
+Safari users receive the exact Share → Add to Home Screen steps. Installed mode
+hides the action. A minimal service worker caches public versioned assets only
+and never caches dynamic, authenticated, provider or admin pages. The control is
+touch-sized, keyboard operable, dismissible and does not compete with primary
+search or assistance actions.
