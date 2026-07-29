@@ -79,12 +79,13 @@ final class Kernel
         if (!$response instanceof Response) {
             throw new \RuntimeException('Kernel middleware did not return a Response');
         }
-        $response->send();
-
-        // First-party page-view recording (no-op unless analytics is enabled).
+        // Record before sending the response so a first-time anonymous visitor
+        // can receive the privacy-conscious first-party session cookie.
         if (self::isInstalled()) {
             \App\Services\Analytics::record($request, $response);
         }
+
+        $response->send();
     }
 
     public function handle(Request $request): Response

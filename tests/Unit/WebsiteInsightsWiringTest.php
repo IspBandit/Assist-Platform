@@ -8,6 +8,32 @@ use PHPUnit\Framework\TestCase;
 
 final class WebsiteInsightsWiringTest extends TestCase
 {
+    public function testAnalyticsRunsBeforeResponseIsSent(): void
+    {
+        $source = (string) file_get_contents(base_path('app/Core/Kernel.php'));
+        $analyticsPosition = strpos($source, 'Analytics::record($request, $response)');
+        $sendPosition = strpos($source, '$response->send()');
+
+        self::assertNotFalse($analyticsPosition);
+        self::assertNotFalse($sendPosition);
+        self::assertLessThan(
+            $sendPosition,
+            $analyticsPosition,
+            'Analytics must run before response headers are sent so first-time visitors receive a session cookie.'
+        );
+    }
+
+    public function testMobileHomeHeroDoesNotReserveAnEmptyImageScreen(): void
+    {
+        $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
+
+        self::assertStringContainsString(
+            '.hero--visual{min-height:0;padding-top:clamp(2rem,8vw,3rem);padding-bottom:1rem}',
+            $css
+        );
+        self::assertStringNotContainsString('padding-top:13rem', $css);
+    }
+
     public function testForwardMigrationScopesEveryWebsiteInterestTableByBrand(): void
     {
         $sql = (string) file_get_contents(base_path('database/migrations/077_brand_scoped_website_analytics.sql'));
