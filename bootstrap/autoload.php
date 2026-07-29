@@ -28,7 +28,7 @@ spl_autoload_register(static function (string $class): void {
 
 // Composer dependencies (PHPMailer, PHPUnit, optional libs) when available.
 $composerAutoload = BASE_PATH . '/vendor/autoload.php';
-if (is_file($composerAutoload)) {
+if (!class_exists(Composer\Autoload\ClassLoader::class, false) && is_file($composerAutoload)) {
     require $composerAutoload;
 }
 

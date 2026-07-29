@@ -16,9 +16,32 @@
     var adminToggle = document.querySelector('.admin-nav-toggle');
     var sidebar = document.querySelector('.admin-sidebar');
     if (adminToggle && sidebar) {
+        var closeAdminNav = function () {
+            sidebar.classList.remove('open');
+            document.body.classList.remove('admin-nav-open');
+            document.querySelector('.admin-main')?.removeAttribute('inert');
+            adminToggle.setAttribute('aria-expanded', 'false');
+        };
         adminToggle.addEventListener('click', function () {
             var open = sidebar.classList.toggle('open');
+            document.body.classList.toggle('admin-nav-open', open);
+            var main = document.querySelector('.admin-main');
+            if (open) {
+                main?.setAttribute('inert', '');
+                window.setTimeout(function () { sidebar.querySelector('nav a')?.focus(); }, 0);
+            } else {
+                main?.removeAttribute('inert');
+            }
             adminToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        sidebar.querySelectorAll('nav a').forEach(function (link) {
+            link.addEventListener('click', closeAdminNav);
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && sidebar.classList.contains('open')) {
+                closeAdminNav();
+                adminToggle.focus();
+            }
         });
     }
 

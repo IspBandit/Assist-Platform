@@ -49,3 +49,32 @@ must not contain API credentials.
 | Failed requests | 0 |
 
 These figures are discovery results, not verified or publishable provider counts.
+
+## Dashboard review workflow
+
+After migration `080_national_route_import_review.sql` is deployed:
+
+1. Switch the admin workspace to **VanAssist**.
+2. Open **Directory → Import review**.
+3. Expand **National caravan-route discovery file** and upload the generated
+   `.jsonl.gz` file.
+4. Keep the page open while it screens resumable 500-row batches. The process
+   survives a refresh and does not publish anything.
+5. Filter by state, route hub, suggested service, contact availability,
+   evidence status or possible duplicate.
+6. Open a candidate, visit the business website or authoritative register,
+   correct the service category, record the evidence URL and review note, then
+   approve or merge. Google Search/Maps URLs do not qualify as independent
+   evidence.
+7. Use bulk actions only for hold, reject or return-to-pending. Bulk approval is
+   deliberately unavailable.
+
+Automatic pre-screening holds non-operational businesses, candidates with no
+phone or website, and likely retail-only results. All remaining Google candidates
+still begin with `evidence required`; a high confidence score is not verification.
+
+All Google-derived candidate details expire after 30 days, regardless of review
+status. The screening service also expires abandoned staged files and reports
+malformed or failed rows in the job record instead of silently skipping them.
+A Place ID may be retained separately as discovery provenance, while public
+business details require independent retention evidence or a provider claim.

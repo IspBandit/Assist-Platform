@@ -240,3 +240,13 @@ progressively stronger interest, while completed or confirmed work remains a
 separate outcome. Staff and bots are excluded. **Accessibility:** all insight
 tables retain headings and textual empty/disabled states, cards collapse to one
 column on phones and no meaning depends on charts, colour or hover.
+
+## 2026-07-29 — Mobile administration is an operating view, not a compressed desktop
+
+At 720px and below the administration shell uses a full-height navigation drawer,
+a compact sticky context bar and touch-sized controls without horizontal page
+overflow. Dense review tables become labelled record cards. Website Insights keeps
+its headline measures visible in a compact two-column grid; detailed reports are
+collapsed initially, expand on demand and use a bounded internal scroll area. The
+VanAssist public hero applies stronger local contrast on small screens so live text
+remains readable over photography without replacing the relevant image.

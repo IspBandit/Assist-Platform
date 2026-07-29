@@ -28,10 +28,11 @@ final class WebsiteInsightsWiringTest extends TestCase
         $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
 
         self::assertStringContainsString(
-            '.hero--visual{min-height:0;padding-top:clamp(2rem,8vw,3rem);padding-bottom:1rem}',
+            '.hero--visual{min-height:0;padding-top:clamp(1.25rem,5vw,2rem);padding-bottom:1rem}',
             $css
         );
         self::assertStringNotContainsString('padding-top:13rem', $css);
+        self::assertStringContainsString('rgba(4,19,25,.84)', $css);
     }
 
     public function testForwardMigrationScopesEveryWebsiteInterestTableByBrand(): void
@@ -97,5 +98,21 @@ final class WebsiteInsightsWiringTest extends TestCase
         $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
         self::assertStringContainsString('overflow-x:clip', $css);
         self::assertStringContainsString('.hero-search-panel .search-card{width:100%;min-width:0;max-width:100%}', $css);
+    }
+
+    public function testMobileAdminAndInsightReportsUseCompactDisclosurePatterns(): void
+    {
+        $layout = (string) file_get_contents(base_path('app/Views/layouts/admin.php'));
+        $insights = (string) file_get_contents(base_path('app/Views/admin/demand/index.php'));
+        $review = (string) file_get_contents(base_path('app/Views/admin/data-sources/queue.php'));
+        $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
+        $script = (string) file_get_contents(base_path('public/assets/js/admin-platform.js'));
+
+        self::assertStringContainsString('aria-controls="admin-nav"', $layout);
+        self::assertStringContainsString('data-mobile-collapse', $insights);
+        self::assertStringContainsString('max-height:min(62vh,34rem)', $css);
+        self::assertStringContainsString("matchMedia('(max-width: 720px)')", $script);
+        self::assertStringContainsString('review-queue-table', $review);
+        self::assertStringContainsString('content:attr(data-label)', $css);
     }
 }

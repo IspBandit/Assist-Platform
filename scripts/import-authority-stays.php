@@ -11,6 +11,7 @@ $path=$arguments[1]??'';$apply=in_array('--apply',$arguments,true); if(!is_file(
 $pdo=Database::connection();$pdo->beginTransaction();
 $fh=fopen($path,'rb'); $headers=fgetcsv($fh); if(!is_array($headers)){exit(1);} $headers=array_map('trim',$headers);
 $created=0;$updated=0;$matched=0;$rejected=0;
+$stayTypes=['caravan_park','campground','free_camp','national_park','showground','rest_area','council_camp','farm_stay','station_stay','other'];$priceTypes=['free','donation','low_cost','paid','unknown'];
 while(($row=fgetcsv($fh))!==false){$r=array_combine($headers,array_pad($row,count($headers),''));if(!is_array($r))continue;
     $source=trim((string)($r['source_url']??''));$host=strtolower((string)parse_url($source,PHP_URL_HOST));
     if($source===''||!str_ends_with($host,'.gov.au')){$rejected++;continue;}
@@ -22,7 +23,8 @@ while(($row=fgetcsv($fh))!==false){$r=array_combine($headers,array_pad($row,coun
         $existing=Database::selectOne('SELECT id FROM caravan_parks WHERE state_id=? AND LOWER(TRIM(name))=LOWER(TRIM(?)) AND latitude IS NOT NULL AND longitude IS NOT NULL AND ABS(latitude-?)<=0.001 AND ABS(longitude-?)<=0.001 AND deleted_at IS NULL ORDER BY id LIMIT 1',[(int)$state['id'],trim((string)$r['name']),(float)$r['latitude'],(float)$r['longitude']]);
         if($existing){$matched++;}
     }
-    $data=[trim((string)$r['name']),$town['id']??null,$town['region_id']??null,(int)$state['id'],is_numeric($r['latitude']??null)?(float)$r['latitude']:null,is_numeric($r['longitude']??null)?(float)$r['longitude']:null,trim((string)($r['address']??''))?:null,trim((string)($r['website']??''))?:null,trim((string)($r['stay_type']??''))?:'free_camp',trim((string)($r['price_type']??''))?:'free',$source];
+    $stayType=trim((string)($r['stay_type']??''))?:'free_camp';$priceType=trim((string)($r['price_type']??''))?:'free';if(!in_array($stayType,$stayTypes,true)||!in_array($priceType,$priceTypes,true)){$rejected++;continue;}
+    $data=[trim((string)$r['name']),$town['id']??null,$town['region_id']??null,(int)$state['id'],is_numeric($r['latitude']??null)?(float)$r['latitude']:null,is_numeric($r['longitude']??null)?(float)$r['longitude']:null,trim((string)($r['address']??''))?:null,trim((string)($r['website']??''))?:null,$stayType,$priceType,$source];
     if($existing){Database::query("UPDATE caravan_parks SET name=?,town_id=COALESCE(?,town_id),region_id=COALESCE(?,region_id),state_id=?,latitude=COALESCE(?,latitude),longitude=COALESCE(?,longitude),address=COALESCE(?,address),website=COALESCE(?,website),stay_type=?,price_type=?,source_url=?,verification_type=IF(verification_type='operator','operator','authority'),verified_at=COALESCE(verified_at,NOW()),source_checked_at=NOW(),public_page_enabled=1,status='active',updated_at=NOW() WHERE id=?",[...$data,(int)$existing['id']]);$updated++;}
     else{Database::query("INSERT INTO caravan_parks (name,slug,town_id,region_id,state_id,latitude,longitude,address,website,stay_type,price_type,source_url,verification_type,verified_at,source_checked_at,source_type,external_id,public_page_enabled,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?, 'authority',NOW(),NOW(),'authority',?,1,'active',NOW(),NOW())",[$data[0],CaravanPark::uniqueSlug($data[0].'-'.($r['town']??'')),...array_slice($data,1),(string)$r['external_id']]);$created++;}
 }

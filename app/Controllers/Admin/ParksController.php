@@ -107,7 +107,7 @@ final class ParksController extends Controller
                 trim((string) $request->input('website')) ?: null,
                 trim((string) $request->input('booking_url')) ?: null,
                 (int) $request->input('number_of_sites') ?: null,
-                in_array($request->input('stay_type'), ['caravan_park','campground','free_camp','showground','rest_area','farm_stay','other'], true) ? $request->input('stay_type') : 'caravan_park',
+                in_array($request->input('stay_type'), ['caravan_park','campground','free_camp','national_park','showground','rest_area','council_camp','farm_stay','station_stay','other'], true) ? $request->input('stay_type') : 'caravan_park',
                 in_array($request->input('price_type'), ['free','donation','low_cost','paid','unknown'], true) ? $request->input('price_type') : 'unknown',
                 in_array($request->input('verification_type'), ['unverified','community','authority','operator'], true) ? $request->input('verification_type') : 'unverified',
                 in_array($request->input('listing_plan'), ['free','verified','premium','featured'], true) ? $request->input('listing_plan') : 'free',
