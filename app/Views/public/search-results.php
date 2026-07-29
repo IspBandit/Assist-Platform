@@ -149,6 +149,7 @@ $this->extend('layouts.public');
             <?php if ($town !== null || $category !== null): ?>
                 <form class="card stack" method="post" action="<?= e(url('find/feedback')) ?>" style="margin-top:1rem">
                     <?= csrf_field() ?>
+                    <?php $this->include('partials.turnstile'); ?>
                     <input type="hidden" name="town_id" value="<?= (int) ($town['id'] ?? 0) ?>">
                     <input type="hidden" name="region_id" value="<?= (int) ($town['region_id'] ?? 0) ?>">
                     <input type="hidden" name="category_id" value="<?= (int) ($category['id'] ?? 0) ?>">

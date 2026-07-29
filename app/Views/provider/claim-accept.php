@@ -30,6 +30,7 @@ $err = static fn (string $k) => isset($formErrors[$k]) ? '<p class="field-error"
 
     <form method="post" action="<?= e(url('provider/claim/' . $token)) ?>" class="stack">
         <?= csrf_field() ?>
+        <?php $this->include('partials.turnstile'); ?>
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" value="<?= e_attr($email) ?>" disabled>

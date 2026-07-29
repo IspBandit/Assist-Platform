@@ -133,7 +133,7 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
     <meta name="theme-color" content="<?= e($adminBrandTheme['brand'] ?? '#0f6e6e') ?>">
     <link rel="icon" type="image/svg+xml" href="<?= e(asset($adminBrandAssets['favicon'] ?? '/assets/brands/vanassist/mark.svg')) ?>">
 </head>
-<body>
+<body<?= in_array($current, ['/admin', '/admin/demand'], true) ? ' data-auto-refresh-seconds="10"' : '' ?>>
 <div class="admin-body">
     <aside class="admin-sidebar">
         <a class="brand brand-admin" href="<?= e(url('admin')) ?>" aria-label="Assist Platform admin home">

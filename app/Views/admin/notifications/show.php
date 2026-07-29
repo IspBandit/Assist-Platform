@@ -12,6 +12,7 @@ $this->extend('layouts.admin');
 $status = (string) $notification['status'];
 $stage = (string) ($notification['delivery_stage'] ?? 'draft');
 $canCancel = !in_array($status, ['sent', 'cancelled'], true);
+$isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'directory_accuracy';
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
@@ -22,6 +23,7 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
     <p class="muted">
         Status: <strong><?= $this->e($status) ?></strong> ·
         Stage: <strong><?= $this->e($stage) ?></strong> ·
+        Type: <strong><?= $this->e($isDirectoryAccuracy ? 'Factual listing accuracy' : 'Consent-gated marketing') ?></strong> ·
         Audience: <strong><?= $this->e((string) $notification['audience_type']) ?></strong> ·
         <?php if ($status === 'sent'): ?>Sent to <strong><?= (int) $notification['recipient_count'] ?></strong> recipient(s)<?php else: ?>Estimated recipients: <strong><?= (int) $previewCount ?></strong><?php endif; ?>
     </p>
@@ -38,7 +40,7 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
             <h2 style="margin-top:0">Safe delivery stages</h2>
             <ol>
                 <li>Send and inspect an internal test.</li>
-                <li>Queue no more than 25 consent-eligible providers, then review replies, complaints, bounces and opt-outs.</li>
+                <li>Queue no more than 25 eligible providers, then review replies, corrections, complaints, bounces and opt-outs.</li>
                 <li>After review, queue no more than 50 in any rolling 24 hours.</li>
                 <li>Only after another review, raise the hard cap to 100 in any rolling 24 hours.</li>
             </ol>
@@ -81,7 +83,7 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
         <div>
             <p class="eyebrow">Campaign audience</p>
             <h2 id="provider-recipient-heading">Provider recipients</h2>
-            <p class="muted">Review every matching provider with an email. A public business address is not, by itself, permission to send marketing email.</p>
+            <p class="muted"><?= $isDirectoryAccuracy ? 'Review unclaimed records backed by a recorded public source. The email wording is locked and strictly factual.' : 'Review every matching provider with an email. A public business address is not, by itself, permission to send marketing email.' ?></p>
         </div>
         <form method="get" action="<?= e(url('admin/notifications/show')) ?>" class="campaign-recipient-search">
             <input type="hidden" name="id" value="<?= (int) $notification['id'] ?>">
@@ -97,14 +99,14 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
         <span><strong><?= (int) $providerSummary['excluded'] ?></strong> removed</span>
         <span class="is-suppressed"><strong><?= (int) $providerSummary['suppressed'] ?></strong> suppressed</span>
     </div>
-    <div class="alert alert-warning"><strong>Before adding anyone:</strong> record the real consent basis, date and evidence. Suppressed addresses cannot be restored here, and campaign removal takes effect before any batch is queued.</div>
+    <div class="alert alert-warning"><?php if ($isDirectoryAccuracy): ?><strong>Factual notices only:</strong> eligible records must be unclaimed and carry public-source evidence. The system prevents promotional copy and records the source used for every recipient.<?php else: ?><strong>Before adding anyone:</strong> record the real consent basis, date and evidence.<?php endif; ?> Suppressed addresses cannot be restored here, and campaign removal takes effect before any batch is queued.</div>
 
     <?php if ($providerCandidates === []): ?>
         <div class="empty-state"><h3>No matching providers</h3><p>Try another search or confirm that this service category has active provider listings with valid email addresses.</p></div>
     <?php else: ?>
         <div class="table-wrap">
             <table class="data campaign-recipient-table">
-                <thead><tr><th>Provider</th><th>Review status</th><th>Consent record</th><th>Campaign action</th></tr></thead>
+                <thead><tr><th>Provider</th><th>Review status</th><th><?= $isDirectoryAccuracy ? 'Public source evidence' : 'Consent record' ?></th><th>Campaign action</th></tr></thead>
                 <tbody>
                 <?php foreach ($providerCandidates as $candidate): ?>
                     <?php $candidateStatus = (string) $candidate['status']; ?>
@@ -112,7 +114,11 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
                         <td><strong><?= $this->e((string) $candidate['business_name']) ?></strong><small><?= $this->e((string) $candidate['email']) ?></small></td>
                         <td><span class="badge campaign-recipient-status status-<?= e_attr($candidateStatus) ?>"><?= $this->e(ucfirst($candidateStatus)) ?></span><?php if ($candidateStatus === 'excluded'): ?><small><?= $this->e((string) $candidate['exclusion_reason']) ?></small><?php elseif ($candidateStatus === 'suppressed'): ?><small><?= $this->e((string) $candidate['suppression_reason']) ?></small><?php endif; ?></td>
                         <td>
-                            <?php if (!empty($candidate['has_documented_consent'])): ?>
+                            <?php if ($isDirectoryAccuracy && !empty($candidate['has_directory_evidence'])): ?>
+                                <strong>Unclaimed public record</strong>
+                                <small><?= $this->e((string) $candidate['source_evidence']) ?></small>
+                            <?php elseif ($isDirectoryAccuracy): ?><span class="muted">Held: no adequate public source recorded</span>
+                            <?php elseif (!empty($candidate['has_documented_consent'])): ?>
                                 <strong><?= $this->e($consentBases[(string) $candidate['marketing_consent_source']] ?? (string) $candidate['marketing_consent_source']) ?></strong>
                                 <small><?= $this->e(substr((string) $candidate['marketing_consented_at'], 0, 10)) ?> · <?= $this->e((string) $candidate['marketing_consent_evidence']) ?></small>
                             <?php else: ?><span class="muted">No complete evidence recorded</span><?php endif; ?>
@@ -124,12 +130,12 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
                                     <label>Removal note <input name="reason" maxlength="500" placeholder="Optional internal reason"></label>
                                     <button class="btn btn-ghost" type="submit">Remove from campaign</button>
                                 </form>
-                            <?php elseif ($candidateStatus === 'excluded' && !empty($candidate['has_documented_consent'])): ?>
+                            <?php elseif ($candidateStatus === 'excluded' && ($isDirectoryAccuracy ? !empty($candidate['has_directory_evidence']) : !empty($candidate['has_documented_consent']))): ?>
                                 <form method="post" action="<?= e(url('admin/notifications/recipient-restore')) ?>" class="campaign-recipient-action">
                                     <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="provider_id" value="<?= (int) $candidate['provider_id'] ?>">
                                     <button class="btn btn-secondary" type="submit">Restore recipient</button>
                                 </form>
-                            <?php elseif ($candidateStatus !== 'suppressed'): ?>
+                            <?php elseif (!$isDirectoryAccuracy && $candidateStatus !== 'suppressed'): ?>
                                 <details class="campaign-recipient-consent">
                                     <summary>Record consent and add</summary>
                                     <form method="post" action="<?= e(url('admin/notifications/recipient-include')) ?>" class="campaign-recipient-action">
@@ -146,6 +152,11 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
                                         <button class="btn btn-ghost" type="submit">Remove candidate</button>
                                     </form>
                                 <?php endif; ?>
+                            <?php elseif ($candidateStatus === 'held'): ?>
+                                <form method="post" action="<?= e(url('admin/notifications/recipient-exclude')) ?>" class="campaign-recipient-action campaign-recipient-remove-held">
+                                    <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="provider_id" value="<?= (int) $candidate['provider_id'] ?>"><input type="hidden" name="reason" value="Held factual notice removed from review by an administrator.">
+                                    <button class="btn btn-ghost" type="submit">Remove candidate</button>
+                                </form>
                             <?php else: ?><span class="muted">Blocked platform-wide</span><?php endif; ?>
                         </td>
                     </tr>

@@ -95,16 +95,17 @@ $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $
 
 <div class="insight-grid insight-grid--three">
     <?php foreach ([
-        ['Top pages', $insights['pages'], 'Page', 'Views', 'Visitors'],
+        ['Most viewed pages', $insights['pages'], 'Page people opened', 'Times viewed', 'Different visitors'],
         ['Visitor sources', $insights['sources'], 'Source', 'Visitors', 'Views'],
         ['Devices', $insights['devices'], 'Device', 'Visitors', 'Views'],
     ] as [$heading, $rows, $first, $second, $third]): ?>
         <section class="card">
             <h2><?= $this->e($heading) ?></h2>
+            <?php if ($heading === 'Most viewed pages'): ?><p class="muted">Plain-English page names are shown first; the smaller path underneath is the website address used by the system.</p><?php endif; ?>
             <div class="table-wrap"><table class="data data--compact">
                 <thead><tr><th><?= $this->e($first) ?></th><th><?= $this->e($second) ?></th><th><?= $this->e($third) ?></th></tr></thead>
                 <tbody>
-                <?php foreach ($rows as $row): ?><tr><td><?= $this->e((string) $row['label']) ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
+                <?php foreach ($rows as $row): ?><tr><td><strong><?= $this->e((string) $row['label']) ?></strong><?php if ($heading === 'Most viewed pages' && isset($row['route'])): ?><small><?= $this->e((string) $row['route']) ?></small><?php endif; ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
                 <?php if ($rows === []): ?><tr><td colspan="3" class="muted">No data yet.</td></tr><?php endif; ?>
                 </tbody>
             </table></div>
@@ -119,6 +120,28 @@ $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $
         <tbody>
         <?php foreach ($insights['locations'] as $row): ?><tr><td><?= $this->e((string) $row['label']) ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
         <?php if ($insights['locations'] === []): ?><tr><td colspan="3" class="muted">No location demand recorded.</td></tr><?php endif; ?>
+        </tbody>
+    </table></div>
+</section>
+
+<section class="card">
+    <div class="admin-section-heading">
+        <div><h2>Coverage gaps needing attention</h2><p class="muted">Real searches that returned no providers. Repeated gaps are the best places to verify and recruit suitable providers next.</p></div>
+    </div>
+    <div class="table-wrap"><table class="data">
+        <thead><tr><th>Location</th><th>Service wanted</th><th>Empty searches</th><th>Most recent</th><th></th></tr></thead>
+        <tbody>
+        <?php foreach ($insights['coverage_gaps'] as $row): ?>
+            <?php $location = trim((string) $row['location_name'] . (!empty($row['state_abbr']) ? ', ' . $row['state_abbr'] : '')); ?>
+            <tr>
+                <td><strong><?= $this->e($location) ?></strong></td>
+                <td><?= $this->e((string) $row['service_name']) ?></td>
+                <td><?= number_format((int) $row['searches']) ?></td>
+                <td><?= $this->e((string) $row['last_searched']) ?></td>
+                <td><a class="btn btn-ghost btn-sm" href="<?= e(url('admin/providers?' . http_build_query(['town' => $row['location_name'], 'category' => $row['category_id']]))) ?>">Inspect providers</a></td>
+            </tr>
+        <?php endforeach; ?>
+        <?php if ($insights['coverage_gaps'] === []): ?><tr><td colspan="5" class="muted">No zero-result searches were recorded in this period.</td></tr><?php endif; ?>
         </tbody>
     </table></div>
 </section>

@@ -74,6 +74,13 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString('Services people wanted', $view);
         self::assertStringContainsString('Providers attracting interest', $view);
         self::assertStringContainsString('What visitors clicked', $view);
+        self::assertStringContainsString('Coverage gaps needing attention', $view);
+        self::assertStringContainsString('underneath is the website address used by the system', $view);
+
+        $service = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
+        self::assertStringContainsString("'/' => 'Home page'", $service);
+        self::assertStringContainsString("'/find' => 'Provider search results'", $service);
+        self::assertStringContainsString("'coverage_gaps'", $service);
     }
 
     public function testBrandDashboardLinksToWebsiteInsights(): void
@@ -82,5 +89,13 @@ final class WebsiteInsightsWiringTest extends TestCase
         $layout = (string) file_get_contents(base_path('app/Views/layouts/admin.php'));
         self::assertStringContainsString('Website activity', $dashboard);
         self::assertStringContainsString("['Website insights', '/admin/demand']", $layout);
+        self::assertStringContainsString('data-auto-refresh-seconds="10"', $layout);
+    }
+
+    public function testMobileHeroClipsHorizontalOverflowAndConstrainsSearchPanel(): void
+    {
+        $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
+        self::assertStringContainsString('overflow-x:clip', $css);
+        self::assertStringContainsString('.hero-search-panel .search-card{width:100%;min-width:0;max-width:100%}', $css);
     }
 }

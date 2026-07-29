@@ -23,3 +23,19 @@
     options[next]?.focus();
   });
 })();
+
+(() => {
+  const seconds = Number(document.body.dataset.autoRefreshSeconds || 0);
+  if (!Number.isFinite(seconds) || seconds < 5) return;
+
+  let formChanged = false;
+  document.addEventListener('input', () => { formChanged = true; }, { passive: true });
+  document.addEventListener('change', () => { formChanged = true; }, { passive: true });
+
+  window.setInterval(() => {
+    const active = document.activeElement;
+    const editing = active && ['INPUT', 'SELECT', 'TEXTAREA'].includes(active.tagName);
+    if (document.visibilityState !== 'visible' || formChanged || editing) return;
+    window.location.reload();
+  }, seconds * 1000);
+})();

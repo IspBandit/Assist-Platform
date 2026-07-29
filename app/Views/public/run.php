@@ -86,6 +86,7 @@ $open = in_array($run['status'], \App\Models\ServiceRun::PUBLIC_STATUSES, true);
                     <p class="muted">Let the provider know you'd join this run if it goes ahead. There's no charge to register.</p>
                     <form method="post" action="<?= e(url('service-runs/' . $run['slug'] . '/join')) ?>" class="stack">
                         <?= csrf_field() ?>
+                        <?php $this->include('partials.turnstile'); ?>
                         <?php if ($towns !== []): ?>
                             <div class="form-group mb-0">
                                 <label for="town_id">Which stop suits you?</label>

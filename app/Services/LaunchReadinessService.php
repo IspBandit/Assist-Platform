@@ -122,12 +122,20 @@ final class LaunchReadinessService
         $offsite = self::statusEvidence('offsite-backup.status.json', 36);
         $restore = self::statusEvidence('offsite-restore-drill.status.json', 24 * 8);
         $release = trim((string) config('app.release', ''));
+        $turnstileEnabled = (bool) config('security.turnstile.enabled', false);
+        $turnstileKeysReady = trim((string) config('security.turnstile.site_key', '')) !== ''
+            && trim((string) config('security.turnstile.secret_key', '')) !== '';
         $checks = [
             self::check('Migration integrity', $dirtyMigrations === 0 ? 'pass' : 'fail', $dirtyMigrations === null ? 'evidence unavailable' : $dirtyMigrations . ' incomplete migrations'),
             self::check('Local scheduled database backup', $localBackup ? 'pass' : 'fail', $localBackupCount === null ? 'evidence unavailable' : ($localBackup ? 'successful task recorded' : 'no successful task recorded')),
             self::check('Encrypted independent off-site backup', $offsite['status'], $offsite['detail']),
             self::check('Independent restore rehearsal', $restore['status'], $restore['detail']),
             self::check('Traceable immutable release', $release !== '' ? 'pass' : 'fail', $release !== '' ? $release : 'release identifier missing'),
+            self::check(
+                'Public form bot challenge',
+                $turnstileEnabled && $turnstileKeysReady ? 'pass' : 'warning',
+                $turnstileEnabled && $turnstileKeysReady ? 'server-verified Turnstile enabled' : 'rate limits and honeypots active; Turnstile is not enabled'
+            ),
         ];
         return self::group('Operational proof', $checks);
     }

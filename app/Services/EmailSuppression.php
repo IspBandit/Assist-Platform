@@ -17,7 +17,11 @@ final class EmailSuppression
             return true;
         }
 
-        $scope = $messageType === 'marketing' ? ['all', 'marketing'] : ['all'];
+        $scope = match ($messageType) {
+            'marketing' => ['all', 'marketing'],
+            'directory_accuracy' => ['all', 'directory_accuracy'],
+            default => ['all'],
+        };
         $placeholders = implode(',', array_fill(0, count($scope), '?'));
         return (int) Database::scalar(
             "SELECT COUNT(*) FROM email_suppressions WHERE email=? AND scope IN ({$placeholders})",
@@ -54,6 +58,20 @@ final class EmailSuppression
         );
     }
 
+    public static function suppressDirectoryAccuracy(string $email, string $source = 'public_directory_notice_opt_out'): void
+    {
+        $email = self::normalise($email);
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return;
+        }
+
+        Database::query(
+            "INSERT INTO email_suppressions (email,reason,scope,source,created_at) VALUES (?,'directory_notice_opt_out','directory_accuracy',?,NOW()) "
+            . "ON DUPLICATE KEY UPDATE scope='directory_accuracy',source=VALUES(source),updated_at=NOW()",
+            [$email, mb_substr($source, 0, 80)]
+        );
+    }
+
     public static function unsubscribeUrl(string $email): string
     {
         $email = self::normalise($email);
@@ -65,6 +83,22 @@ final class EmailSuppression
     {
         $email = self::normalise($email);
         return $email !== '' && hash_equals(hash_hmac('sha256', $email, self::key()), strtolower(trim($signature)));
+    }
+
+    public static function directoryNoticeOptOutUrl(string $email): string
+    {
+        $email = self::normalise($email);
+        $signature = hash_hmac('sha256', 'directory_accuracy|' . $email, self::key());
+        return url('email/listing-notices/stop?email=' . rawurlencode($email) . '&signature=' . $signature);
+    }
+
+    public static function verifyDirectoryNotice(string $email, string $signature): bool
+    {
+        $email = self::normalise($email);
+        return $email !== '' && hash_equals(
+            hash_hmac('sha256', 'directory_accuracy|' . $email, self::key()),
+            strtolower(trim($signature))
+        );
     }
 
     private static function normalise(string $email): string

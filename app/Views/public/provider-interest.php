@@ -12,7 +12,8 @@ $this->extend('layouts.public');
         <p class="lead">Tell us about your business and we'll send your secure onboarding link as provider sign-ups open. Free founding-provider access during launch — no fees, and you only ever accept the work you want.</p>
 
         <form method="post" action="<?= e(url('for-providers/register')) ?>" class="card stack" style="margin-top:1.5rem">
-            <?= csrf_field() ?>
+        <?= csrf_field() ?>
+        <?php $this->include('partials.turnstile'); ?>
             <div style="position:absolute;left:-9999px" aria-hidden="true">
                 <label>Company URL <input type="text" name="company_url" tabindex="-1" autocomplete="off"></label>
             </div>
