@@ -38,6 +38,24 @@ CREATE TABLE organisation_outreach_contacts (
     CONSTRAINT fk_organisation_outreach_reviewer FOREIGN KEY (reviewed_by) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE organisation_outreach_events (
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    organisation_contact_id BIGINT UNSIGNED NOT NULL,
+    notification_id INT UNSIGNED NULL,
+    notification_recipient_id BIGINT UNSIGNED NULL,
+    event_type ENUM('reviewed','queued','sent','failed','suppressed','replied','interested','shared','declined','bounced','opted_out','follow_up') NOT NULL,
+    actor_user_id INT UNSIGNED NULL,
+    notes VARCHAR(1000) NULL,
+    created_at DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_outreach_event_contact (organisation_contact_id, created_at),
+    KEY idx_outreach_event_campaign (notification_id, event_type),
+    CONSTRAINT fk_outreach_event_contact FOREIGN KEY (organisation_contact_id) REFERENCES organisation_outreach_contacts (id) ON DELETE CASCADE,
+    CONSTRAINT fk_outreach_event_notification FOREIGN KEY (notification_id) REFERENCES notifications (id) ON DELETE SET NULL,
+    CONSTRAINT fk_outreach_event_recipient FOREIGN KEY (notification_recipient_id) REFERENCES notification_recipients (id) ON DELETE SET NULL,
+    CONSTRAINT fk_outreach_event_actor FOREIGN KEY (actor_user_id) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 ALTER TABLE notifications
     ADD COLUMN organisation_type VARCHAR(40) NULL AFTER provider_brand_category_id,
     MODIFY COLUMN campaign_type ENUM(

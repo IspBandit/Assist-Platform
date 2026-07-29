@@ -60,6 +60,8 @@ final class OrganisationOutreachTest extends TestCase
         self::assertStringContainsString('Published does not mean permission', $view);
         self::assertStringContainsString('Import for review', $view);
         self::assertStringContainsString('Record outcome', $view);
+        self::assertStringContainsString('Recent outreach history', $view);
+        self::assertStringContainsString('Sent by platform', $view);
         self::assertStringContainsString('max-height:68vh', $css);
     }
 
@@ -72,6 +74,13 @@ final class OrganisationOutreachTest extends TestCase
         self::assertStringContainsString('organisation_contact_id', $migration);
         self::assertStringContainsString('role_relevant_publication', $delivery);
         self::assertStringContainsString('one-time introduction', $delivery);
+        self::assertStringContainsString('CREATE TABLE organisation_outreach_events', $migration);
+        self::assertStringContainsString("OrganisationOutreach::event((int) \$recipient['organisation_contact_id'], 'queued'", $delivery);
+        self::assertStringNotContainsString('SET last_contacted_at=NOW()', $delivery);
+
+        $mailer = $this->source('app/Services/Mailer.php');
+        self::assertStringContainsString("'sent','Accepted by the configured outbound mail transport.'", $mailer);
+        self::assertStringContainsString("'suppressed','Suppressed before transport.'", $mailer);
     }
 
     public function testReleaseIncludesAValidIdempotentResearchSeed(): void

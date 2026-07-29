@@ -30,6 +30,11 @@ final class OutreachHubController extends Controller
                 "SELECT id,title,status,delivery_stage,recipient_count,created_at FROM notifications WHERE brand_id=? AND campaign_type='organisation_outreach' ORDER BY id DESC LIMIT 20",
                 [current_brand()->databaseId()]
             ),
+            'recentEvents' => Database::select(
+                'SELECT e.event_type,e.notes,e.created_at,o.organisation_name,n.title AS campaign_title '
+                . 'FROM organisation_outreach_events e JOIN organisation_outreach_contacts o ON o.id=e.organisation_contact_id '
+                . 'LEFT JOIN notifications n ON n.id=e.notification_id ORDER BY e.id DESC LIMIT 50'
+            ),
             'types' => OrganisationOutreach::TYPES,
             'statuses' => OrganisationOutreach::STATUSES,
             'outcomes' => OrganisationOutreach::OUTCOMES,

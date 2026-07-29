@@ -1490,6 +1490,7 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .outreach-target-table td{min-width:13rem;vertical-align:top}
 .outreach-target-table td:first-child{min-width:15rem}.outreach-target-table small,.outreach-target-table a{display:block;margin-top:.35rem}
 .outreach-target-table details{min-width:16rem}.outreach-target-table summary{cursor:pointer;font-weight:700;color:var(--brand)}
+.outreach-history{margin-top:1rem}.outreach-history>summary{display:flex;align-items:center;justify-content:space-between;gap:1rem;cursor:pointer}.outreach-history>summary h2{margin:0}.outreach-history>summary span{color:var(--color-text-muted,var(--muted));font-size:.78rem}.outreach-history[open]>summary{margin-bottom:1rem}
 @media (max-width:760px){
   .outreach-hub-header,.outreach-import,.campaign-recipient-heading{display:grid}
   .outreach-hub-header .btn{width:100%}.outreach-import-form,.outreach-filters{display:grid;width:100%}

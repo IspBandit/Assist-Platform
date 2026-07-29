@@ -46,11 +46,11 @@ final class OrganisationOutreach
         'opted_out' => 'Opted out',
     ];
 
-    /** @return array{total:int,research:int,held:int,eligible:int,do_not_contact:int,contacted:int,positive:int} */
+    /** @return array{total:int,research:int,held:int,eligible:int,do_not_contact:int,contacted:int,positive:int,follow_ups_due:int,sent_by_platform:int} */
     public static function summary(): array
     {
         $rows = Database::select('SELECT review_status,COUNT(*) AS total FROM organisation_outreach_contacts GROUP BY review_status');
-        $out = ['total' => 0, 'research' => 0, 'held' => 0, 'eligible' => 0, 'do_not_contact' => 0, 'contacted' => 0, 'positive' => 0];
+        $out = ['total' => 0, 'research' => 0, 'held' => 0, 'eligible' => 0, 'do_not_contact' => 0, 'contacted' => 0, 'positive' => 0, 'follow_ups_due' => 0, 'sent_by_platform' => 0];
         foreach ($rows as $row) {
             $status = (string) $row['review_status'];
             $count = (int) $row['total'];
@@ -61,6 +61,8 @@ final class OrganisationOutreach
         }
         $out['contacted'] = (int) Database::scalar('SELECT COUNT(*) FROM organisation_outreach_contacts WHERE last_contacted_at IS NOT NULL');
         $out['positive'] = (int) Database::scalar("SELECT COUNT(*) FROM organisation_outreach_contacts WHERE outcome_status IN ('interested','shared')");
+        $out['follow_ups_due'] = (int) Database::scalar('SELECT COUNT(*) FROM organisation_outreach_contacts WHERE next_follow_up_at IS NOT NULL AND next_follow_up_at<=NOW() AND review_status<>\'do_not_contact\'');
+        $out['sent_by_platform'] = (int) Database::scalar("SELECT COUNT(*) FROM organisation_outreach_events WHERE event_type='sent'");
         return $out;
     }
 
@@ -149,6 +151,7 @@ final class OrganisationOutreach
             'UPDATE organisation_outreach_contacts SET review_status=?,consent_basis=?,consent_evidence=?,reviewed_at=NOW(),reviewed_by=?,updated_at=NOW() WHERE id=?',
             [$status, $status === 'eligible' ? $basis : null, $status === 'eligible' ? mb_substr(trim($evidence), 0, 1000) : null, $reviewerId, $id]
         );
+        self::event($id, 'reviewed', null, null, $reviewerId, $status . ($status === 'eligible' ? ': ' . trim($evidence) : ''));
     }
 
     public static function recordOutcome(int $id, string $outcome, string $notes, ?string $followUp): void
@@ -168,5 +171,21 @@ final class OrganisationOutreach
         if ($outcome === 'opted_out') {
             EmailSuppression::suppressMarketing((string) $contact['email'], 'admin_pr_outreach_outcome');
         }
+        $event = in_array($outcome, ['replied','interested','shared','declined','bounced','opted_out'], true)
+            ? $outcome
+            : 'follow_up';
+        self::event($id, $event, null, null, isset(current_user()['id']) ? (int) current_user()['id'] : null, trim($notes));
+    }
+
+    public static function event(int $contactId, string $type, ?int $notificationId = null, ?int $recipientId = null, ?int $actorId = null, string $notes = ''): void
+    {
+        $allowed = ['reviewed','queued','sent','failed','suppressed','replied','interested','shared','declined','bounced','opted_out','follow_up'];
+        if (!in_array($type, $allowed, true)) {
+            throw new RuntimeException('Invalid organisation outreach event.');
+        }
+        Database::query(
+            'INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,actor_user_id,notes,created_at) VALUES (?,?,?,?,?,?,NOW())',
+            [$contactId, $notificationId, $recipientId, $type, $actorId, mb_substr(trim($notes), 0, 1000) ?: null]
+        );
     }
 }

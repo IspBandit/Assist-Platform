@@ -43,7 +43,7 @@ business or reviewed by an administrator before a verified badge is granted.
 
 ## Provider email campaigns
 
-Open **Growth → Provider email campaigns**. VanAssist prepares two clearly
+Open **Growth → Growth & outreach**, then choose **Email campaigns**. VanAssist prepares two clearly
 separated drafts for each active service category that has at least one provider
 email: a fixed factual listing-accuracy notice and a consent-gated marketing
 campaign. Each remains a draft until an administrator reviews its audience and
@@ -70,7 +70,7 @@ consent and do not edit database consent fields merely to increase reach.
 
 ## PR and organisation outreach
 
-Open **Growth → PR & outreach hub** to manage caravan/RV clubs, federations,
+Open **Growth → Growth & outreach** to manage caravan/RV clubs, federations,
 industry bodies, manufacturers, dealer and rental networks, park groups,
 tourism organisations, 4WD/touring associations and publications. Research is
 imported with an official source URL, date checked, published role, publication
@@ -92,6 +92,8 @@ The platform retains the organisation contact and evidence used for each queued
 recipient and honours marketing/all suppression. Record replies, interest,
 sharing, declines, bounces and opt-outs in the hub; an opted-out outcome adds
 marketing suppression and cancels applicable pending mail.
+
+The hub distinguishes an address accepted into the application queue from a message accepted by the configured outbound mail transport. Its append-only history records queue, sent, failure, suppression and manual response/outcome events. A campaign marked complete means the current reviewed audience was queued; it is not a delivery or mailbox-read claim.
 
 ## Paid caravan-stay discovery review
 

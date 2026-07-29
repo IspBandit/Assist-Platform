@@ -170,7 +170,7 @@ final class NotificationService
                     if ($queueId !== null) {
                         Database::query("UPDATE notification_recipients SET queue_id=?,status='queued' WHERE id=?", [$queueId, $recipientId]);
                         if (!empty($recipient['organisation_contact_id'])) {
-                            Database::query('UPDATE organisation_outreach_contacts SET last_contacted_at=NOW(),updated_at=NOW() WHERE id=?', [(int) $recipient['organisation_contact_id']]);
+                            OrganisationOutreach::event((int) $recipient['organisation_contact_id'], 'queued', $notificationId, $recipientId, $reviewedBy, 'Accepted into the platform email queue; not yet sent.');
                         }
                         $count++;
                     }

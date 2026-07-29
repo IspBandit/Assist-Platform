@@ -66,6 +66,7 @@ may remain as dated files and are linked here rather than copied.
   copy, retain recipient evidence, honour suppression and progress through the
   existing test, 25-recipient pilot and reviewed daily limits. Automatic sending
   and member/customer-list ingestion are not provided. The controlled release
+  now consolidates growth tools behind one navigation entry, preserves review evidence and append-only queue/transport/outcome history, and no longer presents queue completion as proof of delivery.
   loader idempotently places the initial 63 official-source targets directly in
   the production register as research/held records; no manual upload and no
   automatic eligibility or delivery is required.

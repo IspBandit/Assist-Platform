@@ -165,6 +165,11 @@ final class NotificationsController extends Controller
             'title'        => 'Broadcast: ' . $notification['title'],
             'notification' => $notification,
             'recipients'   => Database::select('SELECT email, status FROM notification_recipients WHERE notification_id = ? ORDER BY id LIMIT 200', [(int) $notification['id']]),
+            'deliverySummary' => array_column(
+                Database::select('SELECT status,COUNT(*) AS total FROM notification_recipients WHERE notification_id=? GROUP BY status', [(int) $notification['id']]),
+                'total',
+                'status'
+            ),
             'tests'        => Database::select('SELECT recipient_email,created_at FROM notification_test_deliveries WHERE notification_id=? ORDER BY id DESC LIMIT 10', [(int) $notification['id']]),
             'previewCount' => $previewCount,
             'providerSummary' => $isProviderCampaign ? CampaignRecipientManager::summary($notification) : null,

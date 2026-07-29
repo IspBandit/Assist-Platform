@@ -4,6 +4,7 @@ $this->extend('layouts.admin');
 /** @var array<string,int> $summary */
 /** @var array<int,array<string,mixed>> $contacts */
 /** @var array<int,array<string,mixed>> $campaigns */
+/** @var array<int,array<string,mixed>> $recentEvents */
 /** @var array<string,string> $types */
 /** @var array<string,string> $statuses */
 /** @var array<string,string> $outcomes */
@@ -13,18 +14,17 @@ $this->extend('layouts.admin');
 <header class="page-header outreach-hub-header">
     <div>
         <p class="eyebrow">Audience growth, with evidence</p>
-        <h1>PR &amp; Outreach Hub</h1>
+        <h1>Growth &amp; outreach</h1>
         <p>Manage clubs, peak bodies, manufacturers, dealer and rental networks, park groups, publications and tourism partners without mixing them into provider or customer mailing lists.</p>
     </div>
-    <a class="btn btn-primary" href="<?= e(url('admin/notifications/compose?campaign_type=organisation_outreach&audience_type=organisations')) ?>">Plan organisation campaign</a>
+    <div class="btn-row"><a class="btn btn-primary" href="<?= e(url('admin/notifications/compose?campaign_type=organisation_outreach&audience_type=organisations')) ?>">Plan organisation campaign</a><a class="btn btn-secondary" href="<?= e(url('admin/notifications')) ?>">Email campaigns</a><?php if (can('prospects.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/prospects')) ?>">Provider prospects</a><?php endif; ?><?php if (can('content.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/social-media')) ?>">Social studio</a><?php endif; ?></div>
 </header>
 
 <div class="metric-grid outreach-summary" aria-label="Organisation outreach summary">
-    <div class="metric-card"><span>Targets researched</span><strong><?= (int) $summary['total'] ?></strong></div>
     <div class="metric-card"><span>Needs review</span><strong><?= (int) $summary['research'] ?></strong></div>
     <div class="metric-card"><span>Send-eligible</span><strong><?= (int) $summary['eligible'] ?></strong></div>
-    <div class="metric-card"><span>Held / do not contact</span><strong><?= (int) $summary['held'] + (int) $summary['do_not_contact'] ?></strong></div>
-    <div class="metric-card"><span>Contacted</span><strong><?= (int) $summary['contacted'] ?></strong></div>
+    <div class="metric-card"><span>Follow-ups due</span><strong><?= (int) $summary['follow_ups_due'] ?></strong></div>
+    <div class="metric-card"><span>Sent by platform</span><strong><?= (int) $summary['sent_by_platform'] ?></strong></div>
     <div class="metric-card"><span>Interested / shared</span><strong><?= (int) $summary['positive'] ?></strong></div>
 </div>
 
@@ -74,8 +74,9 @@ $this->extend('layouts.admin');
                                 <form method="post" action="<?= e(url('admin/outreach-hub/review')) ?>" class="campaign-recipient-action">
                                     <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $contact['id'] ?>">
                                     <label>Decision<select name="review_status" required><?php foreach ($statuses as $key => $label): ?><option value="<?= e_attr($key) ?>" <?= (string) $contact['review_status'] === $key ? 'selected' : '' ?>><?= $this->e($label) ?></option><?php endforeach; ?></select></label>
-                                    <label>Basis<select name="consent_basis"><option value="">Required only when eligible</option><option value="inferred_role_relevant">Role-relevant published address</option><option value="express_written">Express written</option><option value="express_phone">Express phone</option><option value="express_web">Express web</option></select></label>
-                                    <label>Evidence<textarea name="consent_evidence" rows="4" maxlength="1000" placeholder="Why this published role and this exact message are directly relevant; include the official source context"></textarea></label>
+                                    <label>Basis<select name="consent_basis"><option value="">Required only when eligible</option><?php foreach (['inferred_role_relevant'=>'Role-relevant published address','express_written'=>'Express written','express_phone'=>'Express phone','express_web'=>'Express web'] as $basisKey=>$basisLabel): ?><option value="<?= e_attr($basisKey) ?>" <?= (string) ($contact['consent_basis'] ?? '') === $basisKey ? 'selected' : '' ?>><?= $this->e($basisLabel) ?></option><?php endforeach; ?></select></label>
+                                    <label>Evidence<textarea name="consent_evidence" rows="4" maxlength="1000" placeholder="Why this published role and this exact message are directly relevant; include the official source context"><?= e((string) ($contact['consent_evidence'] ?? '')) ?></textarea></label>
+                                    <?php if (!empty($contact['reviewed_at'])): ?><small>Last reviewed <?= $this->e((string) $contact['reviewed_at']) ?> by user #<?= (int) $contact['reviewed_by'] ?>.</small><?php endif; ?>
                                     <button class="btn btn-primary" type="submit">Save review</button>
                                 </form>
                             </details>
@@ -97,6 +98,14 @@ $this->extend('layouts.admin');
         </div>
     <?php endif; ?>
 </section>
+
+<details class="card outreach-history" data-mobile-collapse>
+    <summary><h2>Recent outreach history</h2><span>Queued, transport and outcome evidence</span></summary>
+    <div class="table-wrap"><table class="data data--compact"><thead><tr><th>When</th><th>Organisation</th><th>Event</th><th>Campaign / note</th></tr></thead><tbody>
+    <?php foreach ($recentEvents as $event): ?><tr><td><?= $this->e((string) $event['created_at']) ?></td><td><?= $this->e((string) $event['organisation_name']) ?></td><td><strong><?= $this->e(str_replace('_', ' ', (string) $event['event_type'])) ?></strong></td><td><?= $this->e((string) ($event['campaign_title'] ?: $event['notes'])) ?></td></tr><?php endforeach; ?>
+    <?php if ($recentEvents === []): ?><tr><td colspan="4" class="muted">No outreach events recorded yet.</td></tr><?php endif; ?>
+    </tbody></table></div>
+</details>
 
 <section class="card" aria-labelledby="outreach-campaign-heading">
     <div class="campaign-recipient-heading"><div><p class="eyebrow">Campaign pipeline</p><h2 id="outreach-campaign-heading">Organisation campaigns</h2></div><a class="btn btn-secondary" href="<?= e(url('admin/notifications')) ?>">All email campaigns</a></div>
