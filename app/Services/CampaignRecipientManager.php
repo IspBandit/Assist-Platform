@@ -1,0 +1,270 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Core\Database;
+use DateTimeImmutable;
+use RuntimeException;
+
+/**
+ * Admin review controls for provider campaigns. Every provider with a usable
+ * email can be reviewed, but only documented consent can make them sendable.
+ * Campaign exclusions never override global unsubscribe/bounce suppressions.
+ */
+final class CampaignRecipientManager
+{
+    public const CONSENT_BASES = [
+        'express_written' => 'Express written consent',
+        'express_phone' => 'Express consent by phone',
+        'express_web' => 'Express consent through a web form',
+        'inferred_role_relevant' => 'Inferred consent — directly relevant business role',
+    ];
+
+    /** @return array<int,array<string,mixed>> */
+    public static function candidates(array $notification, string $search = '', int $limit = 250): array
+    {
+        self::assertProviderCampaign($notification);
+        [$joins, $params] = self::scope((int) $notification['brand_id'], self::categoryId($notification));
+        $where = self::emailWhere();
+        $searchParams = [];
+        $search = trim($search);
+        if ($search !== '') {
+            $where .= " AND (p.business_name LIKE ? OR COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')) LIKE ?)";
+            $needle = '%' . mb_substr($search, 0, 100) . '%';
+            $searchParams[] = $needle;
+            $searchParams[] = $needle;
+        }
+        $params[] = (int) $notification['id'];
+        $params = array_merge($params, $searchParams);
+        $limit = max(1, min(500, $limit));
+
+        $rows = Database::select(
+            "SELECT DISTINCT p.id AS provider_id,p.business_name,LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AS email,"
+            . "p.marketing_opt_in,p.marketing_consented_at,p.marketing_consent_source,p.marketing_consent_evidence,"
+            . "npe.reason AS exclusion_reason,"
+            . "(SELECT GROUP_CONCAT(DISTINCT es.reason ORDER BY es.reason SEPARATOR ', ') FROM email_suppressions es "
+            . "WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) AS suppression_reason "
+            . "FROM providers p{$joins} LEFT JOIN notification_provider_exclusions npe ON npe.provider_id=p.id AND npe.notification_id=? "
+            . "WHERE p.status='active' AND p.deleted_at IS NULL{$where} ORDER BY p.business_name,p.id LIMIT {$limit}",
+            $params
+        );
+        foreach ($rows as &$row) {
+            $row['status'] = self::status($row);
+            $row['has_documented_consent'] = self::hasDocumentedConsent($row);
+        }
+        unset($row);
+        return $rows;
+    }
+
+    /** @return array{with_email:int,eligible:int,held:int,excluded:int,suppressed:int} */
+    public static function summary(array $notification): array
+    {
+        self::assertProviderCampaign($notification);
+        [$joins, $params] = self::scope((int) $notification['brand_id'], self::categoryId($notification));
+        $params[] = (int) $notification['id'];
+        $row = Database::selectOne(
+            "SELECT COUNT(DISTINCT p.id) AS with_email,"
+            . "COUNT(DISTINCT CASE WHEN npe.id IS NULL AND NOT EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) "
+            . "AND p.marketing_opt_in=1 AND p.marketing_consented_at IS NOT NULL AND p.marketing_consent_source IN ('express_written','express_phone','express_web','inferred_role_relevant') AND NULLIF(TRIM(p.marketing_consent_evidence),'') IS NOT NULL THEN p.id END) AS eligible,"
+            . "COUNT(DISTINCT CASE WHEN npe.id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) THEN p.id END) AS excluded,"
+            . "COUNT(DISTINCT CASE WHEN EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) THEN p.id END) AS suppressed "
+            . "FROM providers p{$joins} LEFT JOIN notification_provider_exclusions npe ON npe.provider_id=p.id AND npe.notification_id=? "
+            . "WHERE p.status='active' AND p.deleted_at IS NULL" . self::emailWhere(),
+            $params
+        ) ?? [];
+        $withEmail = (int) ($row['with_email'] ?? 0);
+        $eligible = (int) ($row['eligible'] ?? 0);
+        $excluded = (int) ($row['excluded'] ?? 0);
+        $suppressed = (int) ($row['suppressed'] ?? 0);
+        return [
+            'with_email' => $withEmail,
+            'eligible' => $eligible,
+            'held' => max(0, $withEmail - $eligible - $excluded - $suppressed),
+            'excluded' => $excluded,
+            'suppressed' => $suppressed,
+        ];
+    }
+
+    public static function exclude(array $notification, int $providerId, string $reason, ?int $userId): void
+    {
+        $provider = self::assertCandidate($notification, $providerId);
+        $reason = trim($reason);
+        if ($reason === '') {
+            $reason = 'Removed by an administrator for this campaign.';
+        }
+        $notificationId = (int) $notification['id'];
+        $email = strtolower(trim((string) $provider['email']));
+        Database::beginTransaction();
+        try {
+            Database::query(
+                'INSERT INTO notification_provider_exclusions (notification_id,provider_id,reason,excluded_by,created_at) VALUES (?,?,?,?,NOW()) '
+                . 'ON DUPLICATE KEY UPDATE reason=VALUES(reason),excluded_by=VALUES(excluded_by),updated_at=NOW()',
+                [$notificationId, $providerId, mb_substr($reason, 0, 500), $userId]
+            );
+            $queued = Database::select(
+                "SELECT queue_id FROM notification_recipients WHERE notification_id=? AND LOWER(email)=? AND status='queued' AND queue_id IS NOT NULL",
+                [$notificationId, $email]
+            );
+            foreach ($queued as $row) {
+                Database::query("UPDATE email_queue SET status='cancelled' WHERE id=? AND status='pending'", [(int) $row['queue_id']]);
+            }
+            Database::query(
+                "UPDATE notification_recipients SET status='suppressed' WHERE notification_id=? AND LOWER(email)=? AND status='queued'",
+                [$notificationId, $email]
+            );
+            Database::commit();
+        } catch (\Throwable $error) {
+            Database::rollBack();
+            throw $error;
+        }
+    }
+
+    public static function restore(array $notification, int $providerId): void
+    {
+        $provider = self::assertCandidate($notification, $providerId);
+        if (!self::hasDocumentedConsent($provider)) {
+            throw new RuntimeException('Record a valid consent basis and evidence before adding this provider.');
+        }
+        self::assertNotSuppressed((string) $provider['email']);
+        $notificationId = (int) $notification['id'];
+        Database::beginTransaction();
+        try {
+            Database::query('DELETE FROM notification_provider_exclusions WHERE notification_id=? AND provider_id=?', [$notificationId, $providerId]);
+            self::clearCancelledRecipient($notificationId, (string) $provider['email']);
+            Database::commit();
+        } catch (\Throwable $error) {
+            Database::rollBack();
+            throw $error;
+        }
+    }
+
+    public static function recordConsentAndInclude(array $notification, int $providerId, string $basis, string $evidence, string $consentedAt): void
+    {
+        $provider = self::assertCandidate($notification, $providerId);
+        self::assertNotSuppressed((string) $provider['email']);
+        if (!isset(self::CONSENT_BASES[$basis])) {
+            throw new RuntimeException('Choose a valid consent basis.');
+        }
+        $evidence = trim($evidence);
+        if (mb_strlen($evidence) < 10) {
+            throw new RuntimeException('Add enough evidence to show when, where and how consent was obtained.');
+        }
+        $date = DateTimeImmutable::createFromFormat('!Y-m-d', $consentedAt);
+        if ($date === false || $date->format('Y-m-d') !== $consentedAt || $date > new DateTimeImmutable('today')) {
+            throw new RuntimeException('Enter a valid consent date that is not in the future.');
+        }
+        Database::beginTransaction();
+        try {
+            Database::query(
+                'UPDATE providers SET marketing_opt_in=1,marketing_consented_at=?,marketing_consent_source=?,marketing_consent_evidence=?,updated_at=NOW() WHERE id=?',
+                [$date->format('Y-m-d 00:00:00'), $basis, mb_substr($evidence, 0, 500), $providerId]
+            );
+            Database::query('DELETE FROM notification_provider_exclusions WHERE notification_id=? AND provider_id=?', [(int) $notification['id'], $providerId]);
+            self::clearCancelledRecipient((int) $notification['id'], (string) $provider['email']);
+            Database::commit();
+        } catch (\Throwable $error) {
+            Database::rollBack();
+            throw $error;
+        }
+    }
+
+    /** @param array<int,array<string,mixed>> $recipients @return array<int,array<string,mixed>> */
+    public static function filter(int $notificationId, array $recipients): array
+    {
+        $rows = Database::select(
+            "SELECT npe.provider_id,LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AS email "
+            . 'FROM notification_provider_exclusions npe INNER JOIN providers p ON p.id=npe.provider_id WHERE npe.notification_id=?',
+            [$notificationId]
+        );
+        $excluded = array_fill_keys(array_map(static fn (array $row): int => (int) $row['provider_id'], $rows), true);
+        $excludedEmails = array_fill_keys(array_filter(array_map(static fn (array $row): string => strtolower(trim((string) $row['email'])), $rows)), true);
+        return array_values(array_filter($recipients, static function (array $recipient) use ($excluded, $excludedEmails): bool {
+            $providerId = isset($recipient['provider_id']) ? (int) $recipient['provider_id'] : 0;
+            $email = strtolower(trim((string) ($recipient['email'] ?? '')));
+            return ($providerId === 0 || !isset($excluded[$providerId])) && !isset($excludedEmails[$email]);
+        }));
+    }
+
+    /** @return array<string,mixed> */
+    private static function assertCandidate(array $notification, int $providerId): array
+    {
+        self::assertProviderCampaign($notification);
+        [$joins, $params] = self::scope((int) $notification['brand_id'], self::categoryId($notification));
+        $params[] = $providerId;
+        $provider = Database::selectOne(
+            "SELECT DISTINCT p.*,LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AS email FROM providers p{$joins} "
+            . "WHERE p.status='active' AND p.deleted_at IS NULL" . self::emailWhere() . ' AND p.id=?',
+            $params
+        );
+        if ($provider === null) {
+            throw new RuntimeException('That provider is not part of this campaign audience.');
+        }
+        return $provider;
+    }
+
+    private static function assertProviderCampaign(array $notification): void
+    {
+        if (!in_array((string) ($notification['audience_type'] ?? ''), ['providers', 'provider_category'], true)) {
+            throw new RuntimeException('Recipient controls apply only to provider campaigns.');
+        }
+    }
+
+    /** @return array{0:string,1:array<int,int>} */
+    private static function scope(int $brandId, ?int $categoryId): array
+    {
+        $joins = " INNER JOIN provider_brand_listings bl ON bl.provider_id=p.id AND bl.brand_id=? AND bl.status='active' AND bl.deleted_at IS NULL";
+        $params = [$brandId];
+        if ($categoryId !== null) {
+            $joins .= ' INNER JOIN provider_services ps ON ps.provider_id=p.id AND ps.category_id=?';
+            $params[] = $categoryId;
+        }
+        return [$joins, $params];
+    }
+
+    private static function categoryId(array $notification): ?int
+    {
+        return $notification['category_id'] !== null ? (int) $notification['category_id'] : null;
+    }
+
+    private static function emailWhere(): string
+    {
+        return " AND COALESCE(NULLIF(TRIM(p.email),''),NULLIF(TRIM(p.public_email),'')) IS NOT NULL";
+    }
+
+    private static function hasDocumentedConsent(array $provider): bool
+    {
+        return (int) ($provider['marketing_opt_in'] ?? 0) === 1
+            && !empty($provider['marketing_consented_at'])
+            && isset(self::CONSENT_BASES[(string) ($provider['marketing_consent_source'] ?? '')])
+            && trim((string) ($provider['marketing_consent_evidence'] ?? '')) !== '';
+    }
+
+    private static function status(array $provider): string
+    {
+        if (trim((string) ($provider['suppression_reason'] ?? '')) !== '') {
+            return 'suppressed';
+        }
+        if (trim((string) ($provider['exclusion_reason'] ?? '')) !== '') {
+            return 'excluded';
+        }
+        return self::hasDocumentedConsent($provider) ? 'eligible' : 'held';
+    }
+
+    private static function assertNotSuppressed(string $email): void
+    {
+        if (EmailSuppression::isSuppressed($email, 'marketing')) {
+            throw new RuntimeException('This email is globally suppressed because of an opt-out, complaint or delivery failure and cannot be added.');
+        }
+    }
+
+    private static function clearCancelledRecipient(int $notificationId, string $email): void
+    {
+        Database::query(
+            "DELETE nr FROM notification_recipients nr LEFT JOIN email_queue eq ON eq.id=nr.queue_id "
+            . "WHERE nr.notification_id=? AND LOWER(nr.email)=? AND nr.status='suppressed' AND (nr.queue_id IS NULL OR eq.status='cancelled')",
+            [$notificationId, strtolower(trim($email))]
+        );
+    }
+}

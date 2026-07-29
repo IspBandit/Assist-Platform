@@ -27,6 +27,15 @@ roles require an assigned permission.
 Adding a route requires appropriate middleware, controller ownership checks,
 brand isolation tests and an update here when it creates a new surface.
 
+## Provider email campaign recipients
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/notifications/show` | `notifications.send` | Selected-brand campaign and searchable provider candidate pool |
+| `POST /admin/notifications/recipient-exclude` | `notifications.send` | Remove one in-scope provider from one campaign |
+| `POST /admin/notifications/recipient-restore` | `notifications.send` | Restore a consent-eligible provider; global suppression still wins |
+| `POST /admin/notifications/recipient-include` | `notifications.send` | Record dated consent evidence and add one in-scope provider |
+
 # Data Sources
 
 | Route | Permission | Scope |

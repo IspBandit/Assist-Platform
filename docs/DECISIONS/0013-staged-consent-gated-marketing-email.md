@@ -35,6 +35,14 @@ with complete consent evidence and the remainder held for review. A lightweight
 service-family image and human category-specific copy can be prepared in a
 draft, but neither changes recipient eligibility.
 
+The campaign detail screen exposes every matching active provider with a usable
+email as a review pool, grouped as eligible, held, campaign-removed or globally
+suppressed. Administrators may remove an eligible provider from one campaign,
+restore an eligible provider, or record the actual consent basis, date and
+evidence before adding a held provider. These actions are audited. A campaign
+exclusion is applied again at queue time; a global opt-out, complaint or bounce
+cannot be overridden by the campaign screen.
+
 ## Consequences
 
 - Provider seed/import data cannot silently become a marketing audience.
@@ -42,6 +50,9 @@ draft, but neither changes recipient eligibility.
   to be reviewed before volume increases.
 - Campaigns above 100 recipients require repeated daily admin actions.
 - Existing scheduled broadcasts return to draft for review.
+- An empty eligible count no longer hides providers that need consent review.
+- Recorded consent updates the canonical provider, so its evidence must genuinely
+  apply to future relevant provider communications, not merely one draft.
 - When an administrator opens VanAssist email campaigns, the platform
   idempotently prepares a review-only draft for each active provider service
   category that has at least one listed provider email. No draft is queued.

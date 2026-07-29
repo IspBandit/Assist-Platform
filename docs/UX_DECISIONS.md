@@ -215,3 +215,14 @@ backup and maintenance tools remain owner-only. The internal general-ledger
 routes remain available for compatibility but are removed from primary
 navigation. Normal commercial work is plans, invoices and reviewed CSV export
 to Xero or MYOB; bookkeeping remains in the external accounting product.
+
+## 2026-07-29 — Provider campaign candidates stay visible, sending stays fail-closed
+
+An empty sendable audience must not look like an empty provider database. The
+campaign detail screen shows every matching active provider with a valid email
+and separates eligible, held, campaign-removed and globally suppressed records.
+Administrators can search, remove, restore, or record genuine dated consent
+evidence without leaving the campaign. Public contact data never becomes consent
+automatically, and opt-outs, complaints and bounces cannot be overridden. The
+review table becomes stacked controls on phones and retains native labels,
+visible focus behaviour and textual statuses.
