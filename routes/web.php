@@ -14,6 +14,7 @@ return static function (Router $router): void {
         $router->get('/runtime-assets/{group}/{name}', 'Site\AssetController@file', 'assets.file');
         $router->get('/', 'Site\HomeController@index', 'home');
         $router->get('/email/unsubscribe', 'Site\EmailPreferenceController@unsubscribe', 'email.unsubscribe');
+        $router->get('/email/listing-notices/stop', 'Site\EmailPreferenceController@stopDirectoryNotices', 'email.directory-notices.stop');
         $router->get('/calculator', 'Site\TowSmartController@calculator', 'towsmart.calculator');
         $router->get('/calculator/catalogue/{type}', 'Site\TowSmartController@catalogue', 'towsmart.catalogue');
         $router->get('/calculator/catalogue/{type}/{id}', 'Site\TowSmartController@catalogueItem', 'towsmart.catalogue.item');
@@ -29,7 +30,7 @@ return static function (Router $router): void {
         $router->get('/how-it-works', 'Site\PageController@howItWorks', 'how-it-works');
         $router->get('/for-providers', 'Site\PageController@forProviders', 'for-providers');
         $router->get('/for-providers/register', 'Site\PageController@providerInterest', 'for-providers.register');
-        $router->group(['middleware' => ['rate:public.provider-interest,5,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.provider-interest,5,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/for-providers/register', 'Site\PageController@submitProviderInterest');
         });
         $router->get('/for-caravan-parks', 'Site\PageController@forCaravanParks', 'for-caravan-parks');
@@ -67,23 +68,23 @@ return static function (Router $router): void {
 
         // Provider invitation acceptance (Phase 3): tokenised onboarding entry point.
         $router->get('/provider/join/{token}', 'Provider\InvitationController@accept', 'provider.join');
-        $router->group(['middleware' => ['rate:public.provider-invitation,10,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.provider-invitation,10,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/provider/join/{token}', 'Provider\InvitationController@store', 'provider.join.store');
         });
         // Self-serve claim for unclaimed directory listings.
         $router->get('/provider/claim/{token}', 'Provider\ClaimController@show', 'provider.claim');
-        $router->group(['middleware' => ['rate:public.provider-claim,10,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.provider-claim,10,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/provider/claim/{token}', 'Provider\ClaimController@store', 'provider.claim.store');
         });
 
         // Caravan park partners (Phase 7): public application and public park pages.
         // The literal /apply route must precede the {slug} catch-all.
         $router->get('/caravan-parks/apply', 'Site\ParkController@apply', 'caravan-parks.apply');
-        $router->group(['middleware' => ['rate:public.park-application,5,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.park-application,5,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/caravan-parks/apply', 'Site\ParkController@applyStore', 'caravan-parks.apply.store');
         });
         $router->get('/caravan-parks/{slug}/claim', 'Site\ParkController@claim', 'caravan-parks.claim');
-        $router->group(['middleware' => ['rate:public.park-claim,5,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.park-claim,5,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/caravan-parks/{slug}/claim', 'Site\ParkController@claimStore', 'caravan-parks.claim.store');
         });
         $router->get('/caravan-parks/{slug}', 'Site\ParkController@show', 'caravan-parks.show');
@@ -91,7 +92,7 @@ return static function (Router $router): void {
 
         // Customer service-request flow (Phase 4).
         $router->get('/request-assistance', 'Site\RequestController@form', 'request-assistance');
-        $router->group(['middleware' => ['rate:public.assistance-request,10,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.assistance-request,10,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/request-assistance', 'Site\RequestController@submit', 'request-assistance.submit');
         });
         $router->get('/request-assistance/submitted', 'Site\RequestController@submitted', 'request-assistance.submitted');
@@ -100,20 +101,20 @@ return static function (Router $router): void {
         // Public service runs and the join-run flow (Phase 6).
         $router->get('/service-runs', 'Site\RunController@index', 'service-runs');
         $router->get('/service-runs/{slug}', 'Site\RunController@show', 'service-runs.show');
-        $router->group(['middleware' => ['rate:public.run-join,10,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.run-join,10,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/service-runs/{slug}/join', 'Site\RunController@join', 'service-runs.join');
         });
 
         // Homepage "Find a service" search (town/postcode + optional category).
         $router->get('/find', 'Site\SearchController@find', 'find');
         // Structured "couldn't find a suitable provider" feedback (Phase 11).
-        $router->group(['middleware' => ['rate:public.search-feedback,30,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.search-feedback,30,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/find/feedback', 'Site\SearchController@feedback', 'find.feedback');
         });
 
         // Login-free customer outcome follow-up landing (Phase 11).
         $router->get('/followup/{token}', 'Site\FollowupController@show', 'followup');
-        $router->group(['middleware' => ['rate:public.followup,10,3600,3600']], static function (Router $router): void {
+        $router->group(['middleware' => ['rate:public.followup,10,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/followup/{token}', 'Site\FollowupController@submit', 'followup.submit');
         });
 

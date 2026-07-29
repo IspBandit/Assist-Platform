@@ -31,4 +31,13 @@ final class EmailSuppressionTest extends TestCase
         self::assertTrue(EmailSuppression::verify((string) $query['email'], (string) $query['signature']));
         self::assertFalse(EmailSuppression::verify('other@example.com', (string) $query['signature']));
     }
+
+    public function testDirectoryNoticePreferenceUsesASeparateSignaturePurpose(): void
+    {
+        $url = EmailSuppression::directoryNoticeOptOutUrl('Provider@Example.com');
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+
+        self::assertTrue(EmailSuppression::verifyDirectoryNotice((string) $query['email'], (string) $query['signature']));
+        self::assertFalse(EmailSuppression::verify((string) $query['email'], (string) $query['signature']));
+    }
 }

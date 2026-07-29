@@ -50,6 +50,16 @@ providers in that category. Review the copy and recipient summary before use.
 
 The summary deliberately separates all active providers with email from those
 with documented marketing consent. Addresses held for review cannot be queued.
+
+Choose the campaign type before selecting recipients:
+
+- **Provider marketing** is promotional and requires recorded consent evidence.
+- **Factual listing accuracy** uses locked wording for an unclaimed, sourced
+  public record. It asks for CONFIRM, CORRECT or REMOVE and cannot contain a
+  promotional offer or commercial link.
+
+Never use the factual notice as a marketing workaround. Remove questionable
+recipients from the review pool and keep source evidence with the provider.
 For every campaign, send an internal test, inspect it in the mailbox, run the
 25-provider pilot and review bounces, replies, complaints and opt-outs before
 using the 50/day and 100/day stages. Do not treat a public business email as

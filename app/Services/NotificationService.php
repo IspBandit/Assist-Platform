@@ -13,8 +13,9 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Staged marketing broadcasts. Every campaign must pass an internal test,
- * a 25-recipient pilot and an explicit review before larger daily batches.
+ * Staged campaign delivery. Provider marketing requires recorded consent;
+ * factual directory notices use fixed server-owned copy and source evidence.
+ * Every campaign must pass a test, pilot and explicit batch review.
  */
 final class NotificationService
 {
@@ -41,14 +42,30 @@ final class NotificationService
             if (in_array((string) $notification['status'], ['sent', 'cancelled'], true)) {
                 throw new RuntimeException('This campaign can no longer be tested.');
             }
+            $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'directory_accuracy';
+            if ($isDirectoryAccuracy) {
+                DirectoryAccuracyNotice::assertFixed($notification);
+            }
             $subject = '[TEST — NOT SENT TO PROVIDERS] ' . (string) $notification['title'];
-            $unsubscribeUrl = EmailSuppression::unsubscribeUrl($email);
+            $testProvider = [
+                'email' => $email,
+                'business_name' => 'Example provider record',
+                'town_name' => 'Example locality',
+                'state_abbr' => 'QLD',
+                'services' => 'Example service category',
+            ];
+            $html = $isDirectoryAccuracy
+                ? DirectoryAccuracyNotice::html($testProvider)
+                : self::wrap($subject, (string) ($notification['body'] ?? ''), $email, true);
+            $text = $isDirectoryAccuracy
+                ? DirectoryAccuracyNotice::text($testProvider) . "\n\nINTERNAL TEST — NOT SENT TO PROVIDERS."
+                : trim(strip_tags((string) ($notification['body'] ?? ''))) . "\n\nInternal campaign test.\nUnsubscribe: " . EmailSuppression::unsubscribeUrl($email);
             $queueId = EmailQueue::queueRawId(
                 $email,
                 null,
                 $subject,
-                self::wrap($subject, (string) ($notification['body'] ?? ''), $email, true),
-                trim(strip_tags((string) ($notification['body'] ?? ''))) . "\n\nInternal campaign test.\nUnsubscribe: {$unsubscribeUrl}",
+                $html,
+                $text,
                 null,
                 null,
                 'transactional',
@@ -79,13 +96,19 @@ final class NotificationService
                 throw new RuntimeException('This campaign can no longer be queued.');
             }
 
-            $recipients = BroadcastAudience::resolve(
-                (string) $notification['audience_type'],
-                $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
-                $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
-                $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
-            );
-            $recipients = CampaignRecipientManager::filter($notificationId, $recipients);
+            $providerCampaign = in_array((string) ($notification['campaign_type'] ?? ''), ['provider_marketing', 'directory_accuracy'], true);
+            $directoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'directory_accuracy';
+            if ($directoryAccuracy) {
+                DirectoryAccuracyNotice::assertFixed($notification);
+            }
+            $recipients = $providerCampaign
+                ? CampaignRecipientManager::eligibleRecipients($notification)
+                : BroadcastAudience::resolve(
+                    (string) $notification['audience_type'],
+                    $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
+                    $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
+                    $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
+                );
             $existing = Database::select('SELECT email FROM notification_recipients WHERE notification_id=?', [$notificationId]);
             $seen = array_fill_keys(array_map(static fn (array $row): string => strtolower((string) $row['email']), $existing), true);
             $eligible = array_values(array_filter($recipients, static fn (array $row): bool => !isset($seen[strtolower($row['email'])])));
@@ -103,22 +126,33 @@ final class NotificationService
             $count = 0;
             foreach ($batch as $recipient) {
                 $email = (string) $recipient['email'];
-                $unsubscribeUrl = EmailSuppression::unsubscribeUrl($email);
+                $subject = $directoryAccuracy ? DirectoryAccuracyNotice::subject() : (string) $notification['title'];
+                $html = $directoryAccuracy
+                    ? DirectoryAccuracyNotice::html($recipient)
+                    : self::wrap($subject, (string) ($notification['body'] ?? ''), $email);
+                $text = $directoryAccuracy
+                    ? DirectoryAccuracyNotice::text($recipient)
+                    : trim(strip_tags((string) ($notification['body'] ?? ''))) . "\n\nUnsubscribe from marketing email: " . EmailSuppression::unsubscribeUrl($email);
+                $messageType = $directoryAccuracy ? 'directory_accuracy' : 'marketing';
+                $complianceBasis = $directoryAccuracy ? 'factual_directory_record' : 'marketing_consent';
+                $complianceEvidence = $directoryAccuracy
+                    ? 'Public unclaimed record: ' . (string) ($recipient['source_evidence'] ?? '')
+                    : (string) ($recipient['compliance_evidence'] ?? '');
                 Database::beginTransaction();
                 try {
                     $recipientId = Database::insert(
-                        "INSERT INTO notification_recipients (notification_id,queue_id,user_id,email,status,delivery_stage,created_at) VALUES (?,NULL,?,?,'suppressed',?,NOW())",
-                        [$notificationId, $recipient['user_id'], $email, $targetStage]
+                        "INSERT INTO notification_recipients (notification_id,queue_id,user_id,provider_id,email,status,delivery_stage,compliance_basis,compliance_evidence,created_at) VALUES (?,NULL,?,?,?,'suppressed',?,?,?,NOW())",
+                        [$notificationId, $recipient['user_id'], $recipient['provider_id'] ?? null, $email, $targetStage, $complianceBasis, mb_substr($complianceEvidence, 0, 1000)]
                     );
                     $queueId = EmailQueue::queueRawId(
                         $email,
                         $recipient['name'] ?: null,
-                        (string) $notification['title'],
-                        self::wrap((string) $notification['title'], (string) ($notification['body'] ?? ''), $email),
-                        trim(strip_tags((string) ($notification['body'] ?? ''))) . "\n\nUnsubscribe from marketing email: {$unsubscribeUrl}",
+                        $subject,
+                        $html,
+                        $text,
                         null,
                         null,
-                        'marketing',
+                        $messageType,
                         $notificationId
                     );
                     if ($queueId !== null) {

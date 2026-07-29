@@ -68,7 +68,9 @@ final class EmailQueue
         string $messageType = 'transactional',
         ?int $notificationId = null
     ): ?int {
-        $messageType = $messageType === 'marketing' ? 'marketing' : 'transactional';
+        $messageType = in_array($messageType, ['marketing', 'directory_accuracy'], true)
+            ? $messageType
+            : 'transactional';
         if (EmailSuppression::isSuppressed($recipientEmail, $messageType)) {
             return null;
         }
