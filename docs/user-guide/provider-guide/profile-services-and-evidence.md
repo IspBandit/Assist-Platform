@@ -12,6 +12,8 @@ Authenticated provider users and administrators using the provider portal for an
 
 The provider route group requires authentication plus a provider or administrator role. Controllers also enforce provider ownership. Documents remain private and downloads use the same ownership boundary.
 
+An unclaimed public profile offers **Request to claim or correct this listing**. The form identifies the exact listing and records the claimant's details for review; submitting it does not prove ownership or grant access. Onboarding contact permission is limited to the request. Promotional provider email uses a separate, optional checkbox that is unticked by default.
+
 ## Fields
 
 The profile form supplies the supported business and contact fields. Services reference existing service categories; areas reference existing locations. Documents and licences use the type, expiry and evidence fields shown by their forms.
@@ -19,6 +21,8 @@ The profile form supplies the supported business and contact fields. Services re
 ## Actions
 
 Update the profile, add or remove a service, add or remove a service area, upload or delete a document, download an owned document, save or delete a licence, and manage availability.
+
+Provider navigation is grouped as **Overview**, **Your listing**, **Trust**, **Work** and **Growth**. Phones use one compact provider-menu disclosure so the workspace does not require scrolling through a long horizontal menu.
 
 ## Workflows
 
@@ -33,6 +37,8 @@ A mobile repair provider can add the relevant service category and towns it serv
 - Adding unrelated categories to gain visibility.
 - Treating an uploaded document as verified before review.
 - Entering public contact details that the business does not monitor.
+- Assuming a claim/correction request immediately transfers control of a listing.
+- Assuming onboarding contact permission also consents to promotional email.
 
 ## Related pages
 

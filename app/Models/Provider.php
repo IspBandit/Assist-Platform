@@ -246,7 +246,7 @@ final class Provider extends Model
         }
 
         return Database::select(
-            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.phone, p.public_phone, p.show_public_phone, '
+            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
             . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
             . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, "
@@ -283,7 +283,7 @@ final class Provider extends Model
         $lngDelta = min(180.0, $radiusKm / (111.32 * $longitudeScale));
 
         return Database::select(
-            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.phone, p.public_phone, p.show_public_phone, '
+            'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
             . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
             . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, s.abbreviation AS state_abbr, "
@@ -334,7 +334,7 @@ final class Provider extends Model
         }
 
         return Database::select(
-            'SELECT DISTINCT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.phone, p.public_phone, p.show_public_phone, '
+            'SELECT DISTINCT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.description, p.street_address, '
             . 't.name AS town_name, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
             . 'CASE WHEN ' . $covers . ' THEN 0 '

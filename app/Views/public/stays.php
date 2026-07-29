@@ -54,6 +54,8 @@ $facilityLabels = [
             <div class="actions" style="margin-top:1rem"><button class="btn btn-primary btn-lg" type="submit">Find places to stay</button><a class="btn btn-ghost" href="<?= e(url('stays')) ?>">Clear</a></div>
         </form>
 
+        <?php $this->include('partials.listing-accuracy-notice'); ?>
+
         <div class="section-heading" style="margin-top:2rem"><h2><?= $searched ? count($stays) . ' places within a ' . (int) $selectedDistance . ' km radius' : 'Choose where you need to stop' ?></h2><p><?= $hasOrigin ? 'Radius filtering is a straight-line estimate. Use Directions for the current road route and driving distance. Community and operator details can change.' : 'Enter a town, suburb or postcode, or use your current location. VanAssist will show stays within the selected radius.' ?></p></div>
         <?php if ($stays === []): ?>
             <div class="empty-state"><h3><?= $hasOrigin ? 'No matching stays found within ' . (int) $selectedDistance . ' km' : 'Start with your location' ?></h3><p><?= $hasOrigin ? 'Try a larger distance or remove a stay-type or cost filter. Park operators can add or claim their listing.' : 'This prevents distant, irrelevant places from appearing before VanAssist knows where you are travelling.' ?></p><?php if ($hasOrigin): ?><a class="btn btn-primary" href="<?= e(url('caravan-parks/apply')) ?>">List a park or campground</a><?php endif; ?></div>

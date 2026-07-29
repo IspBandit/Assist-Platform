@@ -24,6 +24,8 @@ No account is required. Device location is optional and is requested only after 
 
 Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Open directions only when safely stopped.
 
+A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
+
 ## Examples
 
 Select **12 volt electrical**, enter **Boyne Island**, and choose a distance. The map shows only located providers returned by that same search; listings without usable coordinates still appear in the list rather than being silently discarded.
@@ -44,6 +46,8 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 **Why are there more list results than pins?** A public listing can be useful without having coordinates reliable enough to map.
 
 **Which map opens for directions?** iPhone and iPad use Apple Maps, Android hands off to the device's map handler, and desktop retains the Google Maps web fallback.
+
+**How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile; VanAssist reviews authority before granting control.
 
 ## Version introduced
 

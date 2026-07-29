@@ -17,8 +17,8 @@ $resultCardId = trim((string) ($resultCardId ?? ''));
 $compact = !empty($compact);
 $searchId = isset($searchId) ? (int) $searchId : 0;
 $contactQuery = $searchId > 0 ? '?s=' . $searchId : '';
-$hasListedPhone = trim((string) ($p['public_phone'] ?? '')) !== '' || trim((string) ($p['phone'] ?? '')) !== '';
-$canCall = $hasListedPhone && (!empty($p['is_unclaimed']) || !empty($p['show_public_phone']));
+$hasListedPhone = trim((string) ($p['public_phone'] ?? '')) !== '';
+$canCall = $hasListedPhone && !empty($p['show_public_phone']);
 ?>
 <article<?= $resultCardId !== '' ? ' id="' . e_attr($resultCardId) . '"' : '' ?> class="provider-card<?= !empty($p['is_featured']) ? ' provider-card--featured' : '' ?><?= $compact ? ' provider-card--compact' : '' ?>"<?= $resultCardId !== '' ? ' tabindex="-1"' : '' ?>>
     <?php if (!empty($p['is_featured'])): ?><span class="provider-featured-label">Featured</span><?php endif; ?>

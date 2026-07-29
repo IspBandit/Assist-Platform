@@ -44,6 +44,20 @@ may remain as dated files and are linked here rather than copied.
   action. Phones default to compact list rows with a List/Map control, preserve
   a prominent nearby Places to stay path, separate Featured and related-service
   results, and keep the list as the no-JavaScript/map-failure fallback.
+- Added a compact listing-accuracy notice to the VanAssist homepage, results
+  and Places to stay, with direct disclaimer and correction links. Public
+  contact actions now use only explicitly public phone/email fields; an
+  unclaimed listing can no longer expose private canonical contact data.
+- Changed unclaimed-profile handoff into a listing-specific claim/correction
+  request. Authority remains subject to review. Provider registration now
+  separates request-related contact from optional, unticked promotional email
+  consent, and the provider workspace uses grouped desktop navigation plus a
+  compact phone menu.
+- Replaced the provider-acquisition image containing invented-looking business
+  signage and contact details with a neutral, unbranded caravan service scene.
+- Corrected production and maintenance workflows to run the safeguarded
+  provider worker non-interactively inside the existing application container,
+  avoiding the remote password prompt that interrupted the previous release.
 
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.

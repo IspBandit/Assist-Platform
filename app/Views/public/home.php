@@ -134,6 +134,10 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
     </div>
 </section>
 
+<div class="container listing-accuracy-notice-wrap">
+    <?php $this->include('partials.listing-accuracy-notice'); ?>
+</div>
+
 <section class="evidence-ribbon" aria-label="Current VanAssist directory evidence">
     <div class="container evidence-ribbon-grid">
         <?php if ($directoryCount > 0): ?><div><strong><?= number_format($directoryCount) ?></strong><span>active service listings</span></div><?php endif; ?>
@@ -175,7 +179,6 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                 <b aria-hidden="true">&rarr;</b>
             </a>
         </div>
-        <p class="journey-trust-note"><strong>Know what you are viewing.</strong> VanAssist distinguishes claimed, verified, featured and unclaimed listings. Always confirm current contact details, access, facilities and availability before travelling.</p>
     </div>
 </section>
 
