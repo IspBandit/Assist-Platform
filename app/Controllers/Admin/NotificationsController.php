@@ -34,12 +34,21 @@ final class NotificationsController extends Controller
     {
         $this->requirePermission('notifications.send');
         ProviderCampaignDrafts::prepareForBrand(current_brand()->databaseId());
+        $notifications = Database::select(
+            'SELECT n.*,u.name AS author,sc.name AS category_name FROM notifications n LEFT JOIN users u ON u.id=n.created_by LEFT JOIN service_categories sc ON sc.id=n.category_id WHERE n.brand_id=? ORDER BY n.id DESC LIMIT 50',
+            [current_brand()->databaseId()]
+        );
+        $audienceSummaries = [];
+        foreach ($notifications as $notification) {
+            if (!in_array((string) ($notification['campaign_type'] ?? ''), ['provider_marketing', 'directory_accuracy'], true)) {
+                continue;
+            }
+            $audienceSummaries[(int) $notification['id']] = CampaignRecipientManager::summary($notification);
+        }
         return $this->view('admin.notifications.index', [
             'title'         => 'Provider email campaigns',
-            'notifications' => Database::select(
-                'SELECT n.*,u.name AS author,sc.name AS category_name FROM notifications n LEFT JOIN users u ON u.id=n.created_by LEFT JOIN service_categories sc ON sc.id=n.category_id WHERE n.brand_id=? ORDER BY n.id DESC LIMIT 200',
-                [current_brand()->databaseId()]
-            ),
+            'notifications' => $notifications,
+            'audienceSummaries' => $audienceSummaries,
             'queue'         => $this->queueStats(),
         ]);
     }
@@ -232,6 +241,40 @@ final class NotificationsController extends Controller
         return $this->redirectWith('/admin/notifications/show?id=' . $id, $result['limited'] ? 'error' : 'success', $message);
     }
 
+    public function autoContinue(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $notification = $this->findBrandNotification($id);
+        $enable = (string) $request->input('enabled') === '1';
+
+        if ($enable) {
+            if ((string) ($notification['campaign_type'] ?? '') !== 'directory_accuracy') {
+                return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'Automatic continuation is available only for fixed factual directory notices.');
+            }
+            if ((string) ($notification['status'] ?? '') !== 'sending'
+                || (string) ($notification['delivery_stage'] ?? '') !== 'daily_100'
+                || empty($notification['stage_reviewed_at'])
+                || empty($notification['stage_reviewed_by'])) {
+                return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'Complete and review the test, pilot and 50/day stages, then manually approve the 100/day stage first.');
+            }
+            Database::query(
+                'UPDATE notifications SET auto_continue_enabled=1,auto_continue_enabled_at=NOW(),auto_continue_enabled_by=?, '
+                . 'auto_continue_next_at=COALESCE(DATE_ADD(last_batch_at,INTERVAL 24 HOUR),NOW()),auto_continue_last_error=NULL,updated_at=NOW() WHERE id=?',
+                [$this->currentUserId(), $id]
+            );
+            AuditLog::record('notification.auto_continue.enabled', 'notification', (string) $id, 'off', 'directory_accuracy:100/day');
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Automatic factual batches enabled. The next reviewed batch remains capped at 100 in a rolling 24 hours.');
+        }
+
+        Database::query(
+            'UPDATE notifications SET auto_continue_enabled=0,auto_continue_next_at=NULL,updated_at=NOW() WHERE id=?',
+            [$id]
+        );
+        AuditLog::record('notification.auto_continue.disabled', 'notification', (string) $id, 'on', 'off');
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Automatic continuation switched off. Already-sent email is unaffected; pending email can still be cancelled with the campaign control.');
+    }
+
     public function cancel(Request $request): Response
     {
         $this->requirePermission('notifications.send');
@@ -247,7 +290,7 @@ final class NotificationsController extends Controller
         }
         Database::query("UPDATE email_queue SET status='cancelled' WHERE notification_id=? AND status='pending'", [$id]);
         Database::query("UPDATE notification_recipients SET status='failed' WHERE notification_id=? AND status='queued'", [$id]);
-        Database::query("UPDATE notifications SET status = 'cancelled', updated_at = NOW() WHERE id = ?", [$id]);
+        Database::query("UPDATE notifications SET status='cancelled',auto_continue_enabled=0,auto_continue_next_at=NULL,updated_at=NOW() WHERE id=?", [$id]);
         AuditLog::record('notification.cancel', 'notification', (string) $id);
         return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Broadcast cancelled.');
     }

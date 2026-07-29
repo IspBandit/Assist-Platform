@@ -4,6 +4,7 @@
 /** @var array<string,mixed> $filters */
 /** @var array<string,int> $summary */
 /** @var array<string,mixed>|null $nationalImportJob */
+/** @var array<string,mixed>|null $eligibleQueueRun */
 $this->extend('layouts.admin');
 $pages = (int)ceil(max(1, $total) / $perPage);
 $filterQuery = static function (array $extra = []) use ($filters): string {
@@ -110,19 +111,42 @@ $jobScope = $nationalImportJob ? (json_decode((string)($nationalImportJob['scope
 <section class="card empty-state"><h2>No matching candidates</h2><p>Try another status or widen the filters.</p></section>
 <?php else: ?>
 <section class="card">
+    <?php if (!empty($eligibleQueueRun)): ?>
+        <div class="alert alert-info">
+            <strong>Safeguarded queue processing is continuing automatically.</strong>
+            <?= number_format((int)($eligibleQueueRun['merged']??0)) ?> duplicates merged ·
+            <?= number_format((int)($eligibleQueueRun['approved']??0)) ?> eligible providers published ·
+            <?= number_format((int)($eligibleQueueRun['remaining']??0)) ?> eligible records remain.
+        </div>
+        <form method="post" action="<?= e(url('admin/data-sources/review/process-eligible')) ?>" data-auto-submit="1200">
+            <?= csrf_field() ?><input type="hidden" name="run_token" value="<?= e_attr((string)$eligibleQueueRun['token']) ?>">
+            <button class="btn btn-primary" type="submit">Continue safeguarded processing now</button>
+        </form>
+    <?php endif; ?>
     <div class="btn-row">
         <strong><?= number_format($total) ?> matching candidates</strong>
-        <form method="post" action="<?= e(url('admin/data-sources/review/resolve-exact')) ?>" onsubmit="return confirm('Automatically link exact duplicate candidates to existing unclaimed providers? No provider details will be overwritten.');">
-            <?= csrf_field() ?><button class="btn btn-primary" type="submit">Auto-resolve exact duplicates</button>
+        <?php if ($isVanAssist && ($filters['status']??'pending') === 'pending' && empty($eligibleQueueRun)): ?>
+        <form method="post" action="<?= e(url('admin/data-sources/review/process-eligible')) ?>">
+            <?= csrf_field() ?><input type="hidden" name="confirmed" value="1">
+            <?php foreach (['state','category','evidence','duplicate','contact','route'] as $filterKey): ?>
+                <input type="hidden" name="<?= e_attr($filterKey) ?>" value="<?= e_attr((string)($filters[$filterKey]??'')) ?>">
+            <?php endforeach; ?>
+            <input type="hidden" name="q" value="<?= e_attr((string)($filters['search']??'')) ?>">
+            <button class="btn btn-primary" type="submit">Process every eligible filtered record</button>
+        </form>
+        <?php endif; ?>
+        <form method="post" action="<?= e(url('admin/data-sources/review/resolve-exact')) ?>" onsubmit="return confirm('Automatically link strong duplicate candidates to existing unclaimed providers? No provider details will be overwritten.');">
+            <?= csrf_field() ?><button class="btn btn-primary" type="submit">Auto-resolve 70%+ duplicates</button>
         </form>
         <form id="bulk-review-form" method="post" action="<?= e(url('admin/data-sources/review/bulk')) ?>" class="btn-row">
             <?= csrf_field() ?><input type="hidden" name="return_to" value="<?= e_attr($returnTo) ?>">
-            <select name="bulk_decision" required><option value="">Selected records…</option><option value="approve_eligible">Approve eligible new listings</option><option value="merge_exact_duplicates">Merge exact duplicates</option><option value="hold">Place on hold</option><option value="reject">Reject</option><option value="restore">Return to pending</option></select>
+            <select name="bulk_decision" required><option value="">Selected records…</option><option value="approve_eligible">Approve eligible new listings</option><option value="merge_exact_duplicates">Merge 70%+ duplicates</option><option value="hold">Place on hold</option><option value="reject">Reject</option><option value="restore">Return to pending</option></select>
             <label class="review-bulk-confirm"><input type="checkbox" name="bulk_confirmed" value="1"> Confirm controlled bulk action</label>
             <button class="btn btn-secondary" type="submit">Apply to selected</button>
         </form>
     </div>
-    <p class="muted"><strong>Safety rules:</strong> approval only accepts independently confirmed records with a mapped service and no duplicate. Duplicate merge requires an unclaimed target, at least 90% confidence, an exact business name and an exact phone or website match. Claimed provider details are never changed.</p>
+    <p class="muted"><strong>One-click eligible processing:</strong> runs in bounded, resumable batches; merges safe 70%+ unclaimed duplicates first, then publishes only nonduplicates whose service, independent evidence and retention rights are already confirmed. Ineligible records stay in review with reason counts.</p>
+    <p class="muted"><strong>Safety rules:</strong> approval only accepts independently confirmed records with a mapped service and no duplicate. Duplicate merge requires an unclaimed target, at least 70% confidence, a strong business-name match and an exact phone or website match. Claimed provider details are never changed.</p>
     <div class="table-wrap">
         <table class="data review-queue-table">
             <thead><tr><th><span class="sr-only">Select</span></th><th>Business</th><th>Route</th><th>Suggested service</th><th>Evidence</th><th>Duplicate</th><th>Review</th></tr></thead>

@@ -76,13 +76,17 @@ final class CampaignRecipientManager
         [$joins, $params] = self::scope((int) $notification['brand_id'], self::categoryId($notification));
         $params[] = (int) $notification['id'];
         $row = Database::selectOne(
-            "SELECT COUNT(DISTINCT p.id) AS with_email,"
-            . "COUNT(DISTINCT CASE WHEN npe.id IS NULL AND NOT EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) "
-            . "AND p.marketing_opt_in=1 AND p.marketing_consented_at IS NOT NULL AND p.marketing_consent_source IN ('express_written','express_phone','express_web','inferred_role_relevant') AND NULLIF(TRIM(p.marketing_consent_evidence),'') IS NOT NULL THEN p.id END) AS eligible,"
-            . "COUNT(DISTINCT CASE WHEN npe.id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) THEN p.id END) AS excluded,"
-            . "COUNT(DISTINCT CASE WHEN EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) THEN p.id END) AS suppressed "
+            "SELECT COUNT(*) AS with_email,"
+            . "SUM(CASE WHEN audience.suppressed=0 AND audience.excluded=0 AND audience.consented=1 THEN 1 ELSE 0 END) AS eligible,"
+            . "SUM(CASE WHEN audience.suppressed=0 AND audience.excluded=1 THEN 1 ELSE 0 END) AS excluded,"
+            . "SUM(CASE WHEN audience.suppressed=1 THEN 1 ELSE 0 END) AS suppressed FROM ("
+            . "SELECT LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AS email,"
+            . "MAX(CASE WHEN npe.id IS NOT NULL THEN 1 ELSE 0 END) AS excluded,"
+            . "MAX(CASE WHEN EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('marketing','all')) THEN 1 ELSE 0 END) AS suppressed,"
+            . "MAX(CASE WHEN p.marketing_opt_in=1 AND p.marketing_consented_at IS NOT NULL AND p.marketing_consent_source IN ('express_written','express_phone','express_web','inferred_role_relevant') AND NULLIF(TRIM(p.marketing_consent_evidence),'') IS NOT NULL THEN 1 ELSE 0 END) AS consented "
             . "FROM providers p{$joins} LEFT JOIN notification_provider_exclusions npe ON npe.provider_id=p.id AND npe.notification_id=? "
-            . "WHERE p.status='active' AND p.deleted_at IS NULL" . self::emailWhere(),
+            . "WHERE p.status='active' AND p.deleted_at IS NULL" . self::emailWhere()
+            . " GROUP BY LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,'')))) audience",
             $params
         ) ?? [];
         $withEmail = (int) ($row['with_email'] ?? 0);
@@ -197,10 +201,14 @@ final class CampaignRecipientManager
         );
         $excluded = array_fill_keys(array_map(static fn (array $row): int => (int) $row['provider_id'], $rows), true);
         $excludedEmails = array_fill_keys(array_filter(array_map(static fn (array $row): string => strtolower(trim((string) $row['email'])), $rows)), true);
-        return array_values(array_filter($recipients, static function (array $recipient) use ($excluded, $excludedEmails): bool {
+        $suppressedRows = Database::select("SELECT LOWER(email) AS email FROM email_suppressions WHERE scope IN ('marketing','all')");
+        $suppressedEmails = array_fill_keys(array_filter(array_map(static fn (array $row): string => strtolower(trim((string) $row['email'])), $suppressedRows)), true);
+        return array_values(array_filter($recipients, static function (array $recipient) use ($excluded, $excludedEmails, $suppressedEmails): bool {
             $providerId = isset($recipient['provider_id']) ? (int) $recipient['provider_id'] : 0;
             $email = strtolower(trim((string) ($recipient['email'] ?? '')));
-            return ($providerId === 0 || !isset($excluded[$providerId])) && !isset($excludedEmails[$email]);
+            return ($providerId === 0 || !isset($excluded[$providerId]))
+                && !isset($excludedEmails[$email])
+                && !isset($suppressedEmails[$email]);
         }));
     }
 
@@ -228,7 +236,8 @@ final class CampaignRecipientManager
             . "FROM providers p{$joins} LEFT JOIN towns t ON t.id=p.base_town_id LEFT JOIN states st ON st.id=t.state_id "
             . "WHERE p.status='active' AND p.deleted_at IS NULL AND p.is_unclaimed=1" . self::emailWhere()
             . " AND (NULLIF(TRIM(p.source_url),'') IS NOT NULL OR EXISTS (SELECT 1 FROM provider_source_records psr2 WHERE psr2.provider_id=p.id AND NULLIF(TRIM(psr2.source_url),'') IS NOT NULL))"
-            . " AND NOT EXISTS (SELECT 1 FROM notification_provider_exclusions npe WHERE npe.notification_id=? AND npe.provider_id=p.id)"
+            . " AND NOT EXISTS (SELECT 1 FROM notification_provider_exclusions npe INNER JOIN providers ep ON ep.id=npe.provider_id "
+            . "WHERE npe.notification_id=? AND LOWER(COALESCE(NULLIF(ep.email,''),NULLIF(ep.public_email,'')))=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))))"
             . " AND NOT EXISTS (SELECT 1 FROM email_suppressions es WHERE LOWER(es.email)=LOWER(COALESCE(NULLIF(p.email,''),NULLIF(p.public_email,''))) AND es.scope IN ('directory_accuracy','all'))"
             . ' ORDER BY p.business_name,p.id',
             $params
@@ -360,17 +369,26 @@ final class CampaignRecipientManager
             . "WHERE p.status='active' AND p.deleted_at IS NULL" . self::emailWhere(),
             $params
         );
-        $summary = ['with_email' => count($rows), 'eligible' => 0, 'held' => 0, 'excluded' => 0, 'suppressed' => 0];
+        $statusByEmail = [];
+        $priority = ['held' => 1, 'eligible' => 2, 'excluded' => 3, 'suppressed' => 4];
         foreach ($rows as $row) {
             if ((int) $row['suppressed'] > 0) {
-                $summary['suppressed']++;
+                $status = 'suppressed';
             } elseif (trim((string) ($row['exclusion_reason'] ?? '')) !== '') {
-                $summary['excluded']++;
+                $status = 'excluded';
             } elseif (self::hasDirectoryEvidence($row)) {
-                $summary['eligible']++;
+                $status = 'eligible';
             } else {
-                $summary['held']++;
+                $status = 'held';
             }
+            $email = strtolower(trim((string) $row['email']));
+            if (!isset($statusByEmail[$email]) || $priority[$status] > $priority[$statusByEmail[$email]]) {
+                $statusByEmail[$email] = $status;
+            }
+        }
+        $summary = ['with_email' => count($statusByEmail), 'eligible' => 0, 'held' => 0, 'excluded' => 0, 'suppressed' => 0];
+        foreach ($statusByEmail as $status) {
+            $summary[$status]++;
         }
         return $summary;
     }

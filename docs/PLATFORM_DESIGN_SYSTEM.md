@@ -35,6 +35,15 @@ tests enforce dimensions, formats and transfer budgets. Above-the-fold heroes
 use `fetchpriority="high"`; below-the-fold editorial images must be lazy-loaded.
 Images never replace a usable text, list, map-fallback or form experience.
 
+VanAssist's travel-companion homepage is an approved art-direction variant of
+that contract. It uses a panoramic 1920 × 800 desktop crop and a portrait
+768 × 1619 mobile crop so the caravan road remains visible beside, rather than
+behind, the live search journey. The compressed WebP files are each below
+180 KB, contain no baked-in copy or interface, and are selected with a native
+`picture` source. The live navy/cobalt headline, search console, bookmark action
+and capability rail remain usable when imagery is unavailable. This variant
+must be acceptance-tested at 1440 × 900 and 390 × 844 before release.
+
 LocalTorque motorsport uses the same art-directed contract. Its hero may
 combine several credible competition disciplines but carries no sanctioning-body
 marks, sponsor liveries or implication that one authority governs every sport.
@@ -179,6 +188,17 @@ rather than illustrative vehicle icons. Trust copy describes claimed, verified,
 featured and unclaimed states precisely and never implies universal provider or
 remote-town verification. Fuel, charging and stay paths still ask for location
 before presenting nearby relevance.
+
+### VanAssist travel-companion identity
+
+The VanAssist public header uses the transparent road wordmark with the exact
+descriptor “FIND. CONNECT. GET ASSISTED.” This horizontal wordmark is separate
+from the small geometric browser-tab mark and must not be substituted with a
+cartoon vehicle, app tile or generic text-only lock-up. The homepage uses a
+deep-navy and cobalt palette over a relevant coastal-road scene; teal or green
+hero washes are not part of this treatment. On phones the wordmark, menu,
+headline, save action and start of the search console remain in the first screen
+without horizontal overflow. Search and installation stay live HTML controls.
 
 ### Enterprise admin shell
 

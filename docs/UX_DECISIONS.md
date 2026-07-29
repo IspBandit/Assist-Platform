@@ -293,3 +293,34 @@ exact-duplicate linking. Each action states its boundary and reports both proces
 and skipped counts. Automatic linking never changes provider fields; ambiguous,
 claimed or cross-workspace-only matches remain visible for human review. Controls
 remain native, labelled and usable in the existing mobile review-card layout.
+
+## 2026-07-30 — VanAssist visual parity means travel-companion identity
+
+**Context:** EXP-001/005. Earlier iterations retained the old generic colour
+treatment and did not faithfully carry the approved VanAssist travel-companion
+reference onto either desktop or mobile. **Decision:** the public header uses the
+transparent road wordmark and exact “FIND. CONNECT. GET ASSISTED.” descriptor.
+The homepage uses separate lightweight coastal-road crops, a navy/cobalt live
+headline, roadline, save-to-phone action, search console and four concise
+capability cues. Teal/green hero washes, cartoon vehicle artwork and baked-in
+interface mock-ups are rejected. **Accessibility and performance:** copy and
+controls remain live HTML, the image is decorative, focus states remain visible,
+the primary action meets contrast requirements, reduced motion is preserved and
+the page has no horizontal overflow at 1440 × 900 or 390 × 844. **Evidence:**
+Playwright image-selection, first-viewport, PWA-header and install-dialog checks,
+plus reviewed desktop and mobile screenshots.
+
+## 2026-07-30 — Large provider queues automate only safe decisions
+
+**Context:** CORE-003/005. A national queue cannot be operated record by record,
+but volume is not permission to overwrite claimed businesses or publish weak
+source data. **Decision:** an administrator may start a resumable, bounded run
+over the complete filtered eligible queue. Strong name plus matching phone or
+website evidence is required for the 70% duplicate path; claimed and cross-brand
+targets remain blocked. New publication still requires valid retention evidence
+and category mapping. Directory-accuracy campaign continuation is a separate,
+off-by-default factual workflow available only after reviewed test, pilot and
+100-per-day stages. Marketing never auto-enables from a public email address.
+Suppressions are rechecked immediately before transport. **Evidence:** policy,
+workflow, suppression, migration, campaign and database integration tests plus
+audited per-batch outcomes.

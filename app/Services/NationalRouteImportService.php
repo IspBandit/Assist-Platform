@@ -255,7 +255,7 @@ final class NationalRouteImportService
                 $row['latitude'] ?? null, $row['longitude'] ?? null, $classification['state'] ?: null,
                 $classification['route_hub'] ?: null, json_encode($raw, JSON_THROW_ON_ERROR),
                 $classification['hold_reason'], $classification['confidence'], $classification['review_status'],
-                $duplicate['score'] >= 60 ? $duplicate['id'] : null, $duplicate['score'],
+                $duplicate['score'] >= BulkReviewPolicy::STRONG_DUPLICATE_SCORE ? $duplicate['id'] : null, $duplicate['score'],
                 json_encode($duplicate['reasons'], JSON_THROW_ON_ERROR),
             ]
         );
@@ -263,8 +263,8 @@ final class NationalRouteImportService
             return 'skipped';
         }
         $candidateId = (int)Database::scalar(
-            'SELECT id FROM data_source_import_candidates WHERE connector_id=? AND external_id=?',
-            [$connectorId,$externalId]
+            'SELECT id FROM data_source_import_candidates WHERE connector_id=? AND brand_id=? AND external_id=?',
+            [$connectorId,$brandId,$externalId]
         );
         $target = $duplicate['id'] !== null ? ($providerIndex['id'][(int)$duplicate['id']] ?? null) : null;
         if ($candidateId > 0 && is_array($target)) {
@@ -276,12 +276,16 @@ final class NationalRouteImportService
                 'target_has_brand_listing'=>$target['has_brand_listing'] ?? 0,
             ];
             if ((new BulkReviewPolicy())->automaticLinkProblems($identity) === []) {
-                Database::query(
+                $linked = Database::affecting(
                     "UPDATE data_source_import_candidates SET review_status='merged',provider_id=?,reviewed_at=NOW(),"
-                    . "review_notes='Automatically linked as an exact duplicate; no candidate fields were copied to the provider.' WHERE id=?",
-                    [(int)$duplicate['id'],$candidateId]
+                    . "review_notes='Automatically linked as a strong 70%+ duplicate; no candidate fields were copied to the provider.' "
+                    . "WHERE id=? AND brand_id=? AND review_status IN ('pending','held') AND duplicate_provider_id=? AND duplicate_score>=? "
+                    . "AND EXISTS(SELECT 1 FROM providers p JOIN provider_brand_listings pbl ON pbl.provider_id=p.id AND pbl.brand_id=data_source_import_candidates.brand_id AND pbl.deleted_at IS NULL WHERE p.id=data_source_import_candidates.duplicate_provider_id AND p.deleted_at IS NULL AND p.is_unclaimed=1) "
+                    . "AND (JSON_CONTAINS(duplicate_reasons_json,'\"same normalised name\"') OR JSON_CONTAINS(duplicate_reasons_json,'\"similar business name\"')) "
+                    . "AND (JSON_CONTAINS(duplicate_reasons_json,'\"same phone\"') OR JSON_CONTAINS(duplicate_reasons_json,'\"same website\"'))",
+                    [(int)$duplicate['id'],$candidateId,$brandId,(int)$duplicate['id'],BulkReviewPolicy::STRONG_DUPLICATE_SCORE]
                 );
-                return 'merged';
+                if ($linked > 0) return 'merged';
             }
         }
         return $classification['review_status'] === 'held' ? 'held' : 'inserted';

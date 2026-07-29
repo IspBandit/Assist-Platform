@@ -1,4 +1,4 @@
-# ADR 0015: Controlled bulk provider review and exact duplicate linking
+# ADR 0015: Controlled bulk provider review and strong duplicate linking
 
 - **Status:** accepted
 - **Date:** 2026-07-29
@@ -19,14 +19,23 @@ provider-controlled profile.
 The review queue supports controlled batches of at most 100 selected records.
 Bulk approval requires a confirmed independent evidence URL, an active mapped
 service category and no possible duplicate. Bulk merge additionally requires an
-unclaimed target, a duplicate score of at least 90, the same normalised business
-name, and the same phone or website.
+unclaimed target, a duplicate score of at least 70, a strong business-name
+match, and the same phone or website.
 
-Exact duplicates of an existing unclaimed listing in the same brand workspace
+Strong 70%+ duplicates of an existing unclaimed listing in the same brand workspace
 are linked automatically during import and may be resolved later in batches of
 1,000. Automatic linking closes the duplicate candidate but copies no candidate
 fields to the canonical provider. Claimed providers and cross-workspace-only
 records always remain for review.
+
+An administrator may process the entire current VanAssist filter with one
+explicit action. The browser continues bounded, CSRF-protected server requests:
+each request links safe strong duplicates before publishing any independently
+confirmed nonduplicates. The operation is idempotent and resumable because each
+candidate transition is conditional on pending status. Every batch records an
+audit summary with processed, skipped, blocker-reason and remaining counts.
+Candidates without an active category, independent evidence URL or confirmed
+publication rights remain in review.
 
 ## Alternatives considered
 

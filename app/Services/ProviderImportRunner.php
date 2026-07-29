@@ -224,6 +224,9 @@ final class ProviderImportRunner
         }
 
         $complete = $next < 0;
+        $campaignDraftsCreated = $complete
+            ? ProviderCampaignDrafts::prepareForBrand(1)
+            : 0;
 
         return [
             'providers' => $providers,
@@ -234,6 +237,7 @@ final class ProviderImportRunner
             'next' => $complete ? -1 : $next,
             'complete' => $complete,
             'offset' => $offset,
+            'campaign_drafts_created' => $campaignDraftsCreated,
         ];
     }
 
@@ -295,7 +299,12 @@ final class ProviderImportRunner
         $savedOff = (string) Settings::get($offKey, '0');
 
         if ($savedFp === $fp && $savedOff === 'done') {
-            return ['skipped' => true, 'note' => 'up to date', 'fingerprint' => $fp];
+            return [
+                'skipped' => true,
+                'note' => 'up to date',
+                'fingerprint' => $fp,
+                'campaign_drafts_created' => ProviderCampaignDrafts::prepareForBrand(1),
+            ];
         }
 
         if ($savedFp !== $fp) {

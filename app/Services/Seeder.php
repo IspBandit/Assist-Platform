@@ -41,6 +41,7 @@ final class Seeder
         $this->seedServiceCategories();
         $this->seedNationalTowns();
         $this->seedNationalImport();
+        ProviderCampaignDrafts::prepareForBrand(1);
         $this->seedSettings();
         $this->seedFeatureFlags();
         $this->seedScheduledTasks();

@@ -738,7 +738,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testStagedCampaignSchemaIsInstalled(): void
     {
         self::assertTrue(Database::tableExists('notification_test_deliveries'));
-        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by'] as $column) {
+        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by','auto_continue_enabled','auto_continue_enabled_at','auto_continue_enabled_by','auto_continue_next_at','auto_continue_last_run_at','auto_continue_last_error'] as $column) {
             self::assertSame(1, (int) Database::scalar(
                 "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name=?",
                 [$column]

@@ -165,6 +165,9 @@ final class CronRunner
     /** Dispatch any scheduled broadcasts that have come due. */
     private function processNotifications(): array
     {
+        // Keep reviewed factual campaigns moving even if an unrelated legacy
+        // scheduled broadcast later fails during this cron invocation.
+        $directoryAutoContinue = NotificationService::continueDirectoryCampaigns();
         $due = Database::select(
             "SELECT id FROM notifications WHERE status = 'scheduled' AND scheduled_at IS NOT NULL AND scheduled_at <= NOW() ORDER BY scheduled_at ASC LIMIT 50"
         );
@@ -175,7 +178,11 @@ final class CronRunner
             $dispatched++;
             $recipients += $result['recipients'];
         }
-        return ['dispatched' => $dispatched, 'recipients' => $recipients];
+        return [
+            'dispatched' => $dispatched,
+            'recipients' => $recipients,
+            'directory_auto_continue' => $directoryAutoContinue,
+        ];
     }
 
     /** Email a reminder to customers booked on runs starting in N days. */

@@ -17,7 +17,7 @@ final class BulkReviewPolicyTest extends TestCase
         self::assertContains('possible duplicate', (new BulkReviewPolicy())->approvalProblems($candidate));
     }
 
-    public function testExactMergeRequiresStrongIdentityMatchAndUnclaimedTarget(): void
+    public function testStrongMergeRequiresSeventyPointIdentityMatchAndUnclaimedTarget(): void
     {
         $candidate = $this->eligibleCandidate();
         $candidate = array_replace($candidate, [
@@ -39,7 +39,21 @@ final class BulkReviewPolicyTest extends TestCase
         self::assertContains('target is not yet listed in this workspace', (new BulkReviewPolicy())->automaticLinkProblems($candidate));
     }
 
-    public function testGoogleEvidenceAndFuzzyDuplicatesAreRejected(): void
+    public function testSimilarNameAndExactPhoneQualifyAtSeventyPoints(): void
+    {
+        $candidate = array_replace($this->eligibleCandidate(), [
+            'duplicate_provider_id' => 41,
+            'duplicate_score' => 70,
+            'duplicate_reasons_json' => json_encode(['similar business name', 'same phone']),
+            'target_is_unclaimed' => 1,
+            'target_has_brand_listing' => 1,
+        ]);
+
+        self::assertSame([], (new BulkReviewPolicy())->exactMergeProblems($candidate));
+        self::assertSame([], (new BulkReviewPolicy())->automaticLinkProblems($candidate));
+    }
+
+    public function testGoogleEvidenceIsRejectedEvenForStrongFuzzyDuplicate(): void
     {
         $candidate = $this->eligibleCandidate();
         $candidate = array_replace($candidate, [
@@ -51,7 +65,21 @@ final class BulkReviewPolicyTest extends TestCase
         $candidate['evidence_url'] = 'https://maps.google.com/example';
         $problems = (new BulkReviewPolicy())->exactMergeProblems($candidate);
         self::assertContains('valid independent evidence URL missing', $problems);
-        self::assertContains('business name is not an exact match', $problems);
+        self::assertNotContains('business name is not a strong match', $problems);
+    }
+
+    public function testScoreBelowSeventyOrMissingExactContactIsRejected(): void
+    {
+        $candidate = array_replace($this->eligibleCandidate(), [
+            'duplicate_provider_id' => 41,
+            'duplicate_score' => 69,
+            'duplicate_reasons_json' => json_encode(['similar business name']),
+            'target_is_unclaimed' => 1,
+        ]);
+
+        $problems = (new BulkReviewPolicy())->exactIdentityProblems($candidate);
+        self::assertContains('duplicate confidence below 70%', $problems);
+        self::assertContains('phone or website is not an exact match', $problems);
     }
 
     /** @return array<string,mixed> */
