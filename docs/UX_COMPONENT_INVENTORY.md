@@ -216,3 +216,9 @@ respect reduced motion and use the shared brand tokens and premium symbol family
   Places to stay stays visible as a touch-safe shortcut using search context.
 - Map tiles come from OpenStreetMap with visible attribution. Failure of script
   or external tiles leaves search, provider cards and directions usable.
+- Once Map is explicitly selected, its canvas owns drag and two-pointer pinch
+  gestures instead of scaling the surrounding page. Zoom in, zoom out and fit
+  controls remain keyboard/touch accessible; arrow keys pan and `0`/`F` fits.
+  Provider summaries can collapse or move so they do not permanently cover
+  pins. Non-essential provenance and distance guidance follows the results
+  rather than interrupting the search/list/map task flow.

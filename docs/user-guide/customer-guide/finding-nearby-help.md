@@ -18,7 +18,7 @@ No account is required. Device location is optional and is requested only after 
 
 ## Actions
 
-**Use my current location** asks the browser for coordinates. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. A numbered map pin opens the exact returned provider summary, including **Details**, **Show in list** and **Directions** when the listing has a navigable workshop address. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The provider list remains fully usable without JavaScript or map tiles.
+**Use my current location** asks the browser for coordinates. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. Drag the map to move it, pinch or use **Zoom in**/**Zoom out**, and use **Fit results** to restore every returned pin. A numbered pin opens the exact provider summary, including **Details**, **Show in list** and **Directions** when the listing has a navigable workshop address. The summary can be collapsed or moved with pointer, touch or arrow keys so it does not hide the map. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The provider list remains fully usable without JavaScript or map tiles.
 
 ## Workflows
 
@@ -44,6 +44,8 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 ## FAQ
 
 **Why are there more list results than pins?** A public listing can be useful without having coordinates reliable enough to map.
+
+**How do I reset the map after moving or zooming it?** Choose **Fit results** or focus the map and press `0` or `F`.
 
 **Which map opens for directions?** iPhone and iPad use Apple Maps, Android hands off to the device's map handler, and desktop retains the Google Maps web fallback.
 

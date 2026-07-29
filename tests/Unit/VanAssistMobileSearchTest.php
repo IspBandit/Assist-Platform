@@ -32,12 +32,23 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('data-results-view="list"', $view);
         self::assertStringContainsString('data-results-view="map"', $view);
         self::assertStringContainsString('data-results-map-summary-list', $view);
+        self::assertStringContainsString('data-results-map-zoom-in', $view);
+        self::assertStringContainsString('data-results-map-zoom-out', $view);
+        self::assertStringContainsString('data-results-map-fit', $view);
+        self::assertStringContainsString('data-results-map-summary-toggle', $view);
+        self::assertStringContainsString('data-results-map-summary-drag', $view);
         self::assertStringContainsString('Places to stay', $view);
         self::assertStringContainsString('provider-result-', $view);
         self::assertStringContainsString("tile.openstreetmap.org/", $script);
         self::assertStringContainsString("card.addEventListener('focusin'", $script);
         self::assertStringContainsString("setResultsView('list')", $script);
+        self::assertStringContainsString("mapCanvas.addEventListener('pointermove'", $script);
+        self::assertStringContainsString('Math.log2(distance /', $script);
+        self::assertStringContainsString("mapCanvas.addEventListener('wheel'", $script);
+        self::assertStringContainsString("event.key === 'ArrowLeft'", $script);
         self::assertStringContainsString('.provider-card--compact', $css);
+        self::assertStringContainsString('touch-action:none', $css);
+        self::assertStringContainsString('.results-map-summary.is-collapsed', $css);
         self::assertStringContainsString('min-height:44px', $css);
     }
 
