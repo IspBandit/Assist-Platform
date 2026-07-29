@@ -17,14 +17,15 @@ use RuntimeException;
  */
 final class DirectoryAccuracyNotice
 {
-    public static function subject(): string
+    public static function subject(?string $brandName = null): string
     {
-        return 'Please check the business information ' . current_brand()->name() . ' currently displays';
+        $brandName = trim((string) $brandName) ?: current_brand()->name();
+        return 'Please check the business information ' . $brandName . ' currently displays';
     }
 
-    public static function previewBody(): string
+    public static function previewBody(?string $brandName = null): string
     {
-        $brandName = self::e(current_brand()->name());
+        $brandName = self::e(trim((string) $brandName) ?: current_brand()->name());
         return '<p><strong>Fixed factual notice.</strong> Each recipient receives the business name, locality, '
             . 'currently displayed services and public-source record held by ' . $brandName . ', with instructions to reply '
             . 'CONFIRM, CORRECT or REMOVE. Promotional copy and commercial links are not permitted.</p>';

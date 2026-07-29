@@ -6,6 +6,7 @@ namespace Tests\Unit;
 
 use App\Services\NotificationService;
 use App\Services\CampaignRecipientManager;
+use App\Services\DirectoryAccuracyNotice;
 use App\Services\ProviderCampaignCopy;
 use App\Services\ProviderCampaignDrafts;
 use App\Services\ProviderPackActivation;
@@ -66,10 +67,12 @@ final class StagedProviderCampaignTest extends TestCase
     public function testCampaignDraftPreparationIsVanAssistScoped(): void
     {
         self::assertSame(0, ProviderCampaignDrafts::prepareForBrand(2));
+        self::assertSame('Please check the business information VanAssist currently displays', DirectoryAccuracyNotice::subject('VanAssist'));
+        self::assertStringContainsString('VanAssist', DirectoryAccuracyNotice::previewBody('VanAssist'));
         $source = $this->source('app/Services/ProviderCampaignDrafts.php');
         self::assertStringContainsString("'provider_category'", $source);
         self::assertStringContainsString("'directory_accuracy'", $source);
-        self::assertStringContainsString('DirectoryAccuracyNotice::previewBody()', $source);
+        self::assertStringContainsString('DirectoryAccuracyNotice::previewBody($brandName)', $source);
         self::assertStringContainsString("'draft','draft'", $source);
         self::assertStringContainsString('NOT EXISTS', $source);
     }
