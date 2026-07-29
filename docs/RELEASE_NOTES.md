@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Remaining Queensland provider discovery scope (DATA-006)
+
+- Added a separate, review-only Google Places discovery scope for 63 regional
+  Queensland hubs outside the existing south-east and central Queensland run.
+  Coordinates come from the committed national town seed, town/query overlap is
+  rejected, and the supplied request budget remains a hard stop.
+- This change only produces local import candidates for independent evidence
+  review. It does not write providers to production or publish Places content.
+
 ### GitHub Actions Node.js 24 maintenance (OPS-006)
 
 - Updated the official checkout and dependency-cache actions used by CI,
