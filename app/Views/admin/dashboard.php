@@ -51,7 +51,7 @@ $inventoryStats = array_diff_key($stats, array_flip($attentionKeys));
             <h2 id="dashboard-campaign-heading">Email campaigns</h2>
             <p class="muted">Review recipients, send the preview to yourself, then start the controlled provider batch.</p>
         </div>
-        <a class="btn btn-primary" href="<?= e(url('admin/notifications')) ?>">Open email campaigns</a>
+        <div class="btn-row"><a class="btn btn-primary" href="<?= e(url('admin/notifications')) ?>">Open email campaigns</a><a class="btn btn-secondary" href="<?= e(url('admin/outreach-hub')) ?>">Open free growth hub</a></div>
     </div>
 </section>
 <?php endif; ?>

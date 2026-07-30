@@ -18,6 +18,7 @@ final class DocumentationChangeValidator
             'patterns' => [
                 '#^app/Views/admin/#i',
                 '#^app/Views/layouts/admin\.php$#i',
+                '#^public/assets/js/admin-platform\.js$#i',
                 '#^app/Views/install/#i',
                 '#^app/Controllers/Admin/#i',
                 '#^app/Controllers/Install/#i',
@@ -49,7 +50,8 @@ final class DocumentationChangeValidator
                 '#^app/Views/layouts/(?!admin\.php$)#i',
                 '#^app/Controllers/(Site|Account|Auth)/#i',
                 '#^routes/(web|account|auth)\.php$#i',
-                '#^public/assets/(css|js)/#i',
+                '#^public/assets/css/#i',
+                '#^public/assets/js/(?!admin-platform\.js$)#i',
                 '#^public/(manifest\.webmanifest|service-worker\.js)$#i',
             ],
             'guides' => [

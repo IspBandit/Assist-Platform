@@ -13,15 +13,18 @@
 /** @var array{with_email:int,eligible:int,held:int,excluded:int,suppressed:int}|null $providerSummary */
 $this->extend('layouts.admin');
 $v = static fn (string $k, $d = '') => $values[$k] ?? $d;
+$isOrganisationCampaign = (string) $v('campaign_type') === 'organisation_outreach';
+$selectedOrganisationLabel = $organisationTypes[(string) $v('organisation_type')] ?? '';
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
     <div class="btn-row" style="justify-content:space-between">
-        <h1 style="margin:0">Compose broadcast</h1>
+        <h1 style="margin:0"><?= $isOrganisationCampaign ? 'Create ' . $this->e($selectedOrganisationLabel ?: 'organisation') . ' email campaign' : 'Compose broadcast' ?></h1>
         <a class="btn btn-ghost" href="<?= e(url('admin/notifications')) ?>">Back to notifications</a>
     </div>
 
     <?php if ($formError): ?><div class="alert alert-error"><?= $this->e($formError) ?></div><?php endif; ?>
+    <?php if ($isOrganisationCampaign): ?><div class="alert alert-info"><strong>Ready to use:</strong> the target type, audience, subject and relevant human wording have been filled in. Preview the recipients, make any wording changes, then save the campaign.</div><?php endif; ?>
     <?php if ($previewCount !== null && $formError === null): ?>
         <div class="alert alert-success">This audience currently has <strong><?= (int) $previewCount ?></strong> eligible recipient(s). Save the draft, send an internal test, then use the staged pilot.</div>
         <?php if ($providerSummary !== null): ?>

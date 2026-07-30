@@ -116,6 +116,20 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString('Recent administrative activity', $dashboard);
     }
 
+    public function testFreeGrowthLinksAreRecordedAndShownInPlainEnglish(): void
+    {
+        $tracking = (string) file_get_contents(base_path('app/Services/Demand/TrackingSession.php'));
+        $insights = (string) file_get_contents(base_path('app/Views/admin/demand/index.php'));
+        $adminScript = (string) file_get_contents(base_path('public/assets/js/admin-platform.js'));
+
+        self::assertStringContainsString("\$_GET['utm_source']", $tracking);
+        self::assertStringContainsString("'utm:'", $tracking);
+        self::assertStringContainsString('Direct or untagged visit', $insights);
+        self::assertStringContainsString("\$heading === 'Visitor sources'", $insights);
+        self::assertStringContainsString('[data-copy-target]', $adminScript);
+        self::assertStringContainsString('[data-native-share]', $adminScript);
+    }
+
     public function testMobileHeroClipsHorizontalOverflowAndConstrainsSearchPanel(): void
     {
         $css = (string) file_get_contents(base_path('public/assets/css/app.css'));

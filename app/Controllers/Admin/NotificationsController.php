@@ -64,10 +64,22 @@ final class NotificationsController extends Controller
         $this->requirePermission('notifications.send');
         $campaignType = (string) $request->input('campaign_type');
         $audienceType = (string) $request->input('audience_type');
-        return $this->renderForm([
+        $organisationType = (string) $request->input('organisation_type');
+        $copyStyle = (string) $request->input('copy_style');
+        $values = [
             'campaign_type' => isset(self::CAMPAIGN_TYPES[$campaignType]) ? $campaignType : 'provider_marketing',
             'audience_type' => isset(BroadcastAudience::TYPES[$audienceType]) ? $audienceType : 'providers',
-        ], null);
+            'organisation_type' => isset(OrganisationOutreach::TYPES[$organisationType]) ? $organisationType : '',
+            'copy_style' => $copyStyle,
+        ];
+        if ($values['campaign_type'] === 'organisation_outreach') {
+            $style = OrganisationCampaignCopy::styles()[$copyStyle] ?? null;
+            if ($style !== null) {
+                $values['title'] = $style['subject'];
+                $values['body'] = $style['body'];
+            }
+        }
+        return $this->renderForm($values, null);
     }
 
     public function store(Request $request): Response
@@ -133,7 +145,7 @@ final class NotificationsController extends Controller
             ]
         );
         AuditLog::record('notification.create', 'notification', (string) $id, null, $action);
-        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Draft saved. Send an internal test before the 25-provider pilot can be queued.');
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Campaign saved. Send the preview to yourself, then start the first batch of up to 25 recipients.');
     }
 
     public function show(Request $request): Response

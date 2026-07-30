@@ -6,6 +6,14 @@ $this->extend('layouts.admin');
 $summary = $insights['summary'];
 $qs = http_build_query(['range' => $range, 'from' => $from, 'to' => $to]);
 $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $value));
+$sourceHumanise = static function (string $value) use ($humanise): string {
+    if (!str_starts_with($value, 'utm:')) {
+        return $value === 'direct' ? 'Direct or untagged visit' : $value;
+    }
+    $parts = explode('/', substr($value, 4));
+    $labels = array_map($humanise, $parts);
+    return implode(' · ', $labels);
+};
 ?>
 <?php $this->section('content'); ?>
 
@@ -131,7 +139,7 @@ $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $
             <div class="table-wrap"><table class="data data--compact">
                 <thead><tr><th><?= $this->e($first) ?></th><th><?= $this->e($second) ?></th><th><?= $this->e($third) ?></th></tr></thead>
                 <tbody>
-                <?php foreach ($rows as $row): ?><tr><td><strong><?= $this->e((string) $row['label']) ?></strong><?php if ($heading === 'Most viewed pages' && isset($row['route'])): ?><small><?= $this->e((string) $row['route']) ?></small><?php endif; ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
+                <?php foreach ($rows as $row): ?><tr><td><strong><?= $this->e($heading === 'Visitor sources' ? $sourceHumanise((string) $row['label']) : (string) $row['label']) ?></strong><?php if ($heading === 'Most viewed pages' && isset($row['route'])): ?><small><?= $this->e((string) $row['route']) ?></small><?php endif; ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
                 <?php if ($rows === []): ?><tr><td colspan="3" class="muted">No data yet.</td></tr><?php endif; ?>
                 </tbody>
             </table></div></div>
