@@ -35,6 +35,12 @@ permission for the root-owned `/usr/local/sbin/assist-platform-release`
 command. The deploy user must not be able to replace or modify that command;
 release archives and checksum files are the only writable incoming artefacts.
 
+Provider-import processing resumes through the root-owned
+`process_provider_import_queue` cron entry every five minutes. The production
+release workflow must not run Docker Compose directly as the restricted deploy
+user. Review current queue counts in **Admin → Provider data**; use the
+root-owned cron runner for an authorised server-side diagnostic.
+
 The workflow cannot run from a pull request or feature branch. A human must type
 `DEPLOY`, approve the protected environment and allow the complete reusable CI
 workflow to pass before upload. The remote release script verifies the archive,

@@ -74,6 +74,10 @@ may remain as dated files and are linked here rather than copied.
 - Corrected production and maintenance workflows to run the safeguarded
   provider worker non-interactively inside the existing application container,
   avoiding the remote password prompt that interrupted the previous release.
+- Corrected the production release result so it no longer fails after a
+  successful live deployment by attempting Docker Compose through the
+  deliberately restricted deploy account. Provider imports continue through
+  the root-owned five-minute cron task, with current counts in Provider data.
 - Added a focused PR & Outreach Hub for clubs, peak bodies, manufacturers,
   dealer/rental networks, park groups, tourism organisations, touring bodies and
   publications. Imports remain research-only until a human verifies the current
