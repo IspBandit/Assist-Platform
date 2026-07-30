@@ -44,6 +44,13 @@ final class DocumentationChangeValidatorTest extends TestCase
         ]));
     }
 
+    public function testAdministratorLayoutIsNotMisclassifiedAsPublicInterface(): void
+    {
+        self::assertSame(['administrator'], $this->validator->affectedScopes([
+            'app/Views/layouts/admin.php',
+        ]));
+    }
+
     public function testReleaseNotesAloneDoNotReplaceTheMatchingGuide(): void
     {
         $errors = $this->validator->validate([

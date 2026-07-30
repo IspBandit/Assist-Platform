@@ -60,4 +60,34 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("img-src 'self' data: https://tile.openstreetmap.org", $security['csp']);
         self::assertStringNotContainsString('img-src *', $security['csp']);
     }
+
+    public function testEveryPublicDiscoveryJourneyCanInheritDeviceLocation(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $script = (string) file_get_contents($root . '/public/assets/js/app.js');
+        $home = (string) file_get_contents($root . '/app/Views/public/home.php');
+        $services = (string) file_get_contents($root . '/app/Views/public/services-index.php');
+
+        foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php'] as $view) {
+            self::assertStringContainsString('data-auto-location', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
+        }
+        self::assertGreaterThanOrEqual(8, substr_count($home, 'data-location-link'));
+        self::assertGreaterThanOrEqual(5, substr_count($services, 'data-location-link'));
+        self::assertStringContainsString("sessionStorage.setItem('va-current-location'", $script);
+        self::assertStringContainsString("document.querySelectorAll('a[data-location-link]')", $script);
+        self::assertStringContainsString("form[data-location-manual=\"1\"] input[name=\"location\"]", $script);
+        self::assertStringContainsString("target.searchParams.set('lat'", $script);
+        self::assertStringContainsString("target.searchParams.set('location'", $script);
+    }
+
+    public function testGpsRemainsTheDistanceOriginForServiceAndStayPages(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $category = (string) file_get_contents($root . '/app/Controllers/Site/CategoryController.php');
+        $parks = (string) file_get_contents($root . '/app/Controllers/Site/ParkController.php');
+
+        self::assertStringContainsString('$originLat = $gpsLat ??', $category);
+        self::assertStringContainsString('if ($gpsLat !== null && $gpsLng !== null)', $category);
+        self::assertStringContainsString('Device coordinates are the accurate origin', $parks);
+    }
 }

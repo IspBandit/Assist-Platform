@@ -77,7 +77,7 @@ foreach ($allResults as $provider) {
             <?php endif; ?>
         <?php endif; ?>
 
-        <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" style="margin:1rem 0 1.5rem">
+        <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location style="margin:1rem 0 1.5rem">
             <div class="grid grid-2 home-search-primary">
                 <div class="form-group mb-0">
                     <label for="category">Service category</label>

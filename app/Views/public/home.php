@@ -112,9 +112,9 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                     </div>
                 </form>
                 <nav class="mobile-travel-shortcuts" aria-label="Traveller shortcuts">
-                    <a href="<?= e(url('find')) ?>"><strong>Services</strong><span>Repairs &amp; help</span></a>
-                    <a href="<?= e(url('stays')) ?>"><strong>Stays</strong><span>Caravan stops</span></a>
-                    <a href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><strong>Fuel</strong><span>Servos nearby</span></a>
+                    <a data-location-link href="<?= e(url('find')) ?>"><strong>Services</strong><span>Repairs &amp; help</span></a>
+                    <a data-location-link href="<?= e(url('stays')) ?>"><strong>Stays</strong><span>Caravan stops</span></a>
+                    <a data-location-link href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><strong>Fuel</strong><span>Servos nearby</span></a>
                     <a href="<?= e(url('services')) ?>"><strong>Essentials</strong><span>Browse all</span></a>
                 </nav>
             </div>
@@ -158,22 +158,22 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
             <p>Each search remains free to browse. Location helps VanAssist show useful nearby results instead of a national list.</p>
         </div>
         <div class="journey-launcher-grid">
-            <a class="journey-launcher-card" href="<?= e(url('find')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('find')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">01</span>
                 <span><strong>Repairs &amp; mobile help</strong><small>Caravan, RV, vehicle and roadside services</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
-            <a class="journey-launcher-card" href="<?= e(url('find?category=fuel-and-travel-stops')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('find?category=fuel-and-travel-stops')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">02</span>
                 <span><strong>Fuel &amp; travel stops</strong><small>Find fuel stations for the next leg</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
-            <a class="journey-launcher-card" href="<?= e(url('find?category=ev-charging')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('find?category=ev-charging')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">03</span>
                 <span><strong>EV charging</strong><small>Locate charging options along your journey</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
-            <a class="journey-launcher-card" href="<?= e(url('stays')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('stays')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">04</span>
                 <span><strong>Places to stay</strong><small>Parks, campgrounds, showgrounds and low-cost stops</small></span>
                 <b aria-hidden="true">&rarr;</b>
@@ -218,7 +218,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
 <section class="section section-sand">
     <div class="container"><div class="product-cta">
         <div><div class="eyebrow">Plan a safe stop</div><h2>Getting tired? Find a place to stay.</h2><p>Use your location or search a town for caravan parks, campgrounds, showgrounds and free or low-cost stays nearby.</p></div>
-        <a class="btn btn-primary btn-lg" href="<?= e(url('stays')) ?>">Find a stay near me</a>
+                    <a class="btn btn-primary btn-lg" data-location-link href="<?= e(url('stays')) ?>">Find a stay near me</a>
     </div></div>
 </section>
 
@@ -296,7 +296,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
         <h2>Popular service categories</h2>
         <div class="btn-row">
             <?php foreach ($popularCategories as $cat): ?>
-                <a class="btn btn-ghost" href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
+                    <a class="btn btn-ghost" data-location-link href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
             <?php endforeach; ?>
         </div>
     </div>

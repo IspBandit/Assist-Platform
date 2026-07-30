@@ -16,6 +16,16 @@ $canCancel = !in_array($status, ['sent', 'cancelled'], true);
 $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'directory_accuracy';
 $isOrganisationOutreach = (string) ($notification['campaign_type'] ?? '') === 'organisation_outreach';
 $deliveryCounts = $deliverySummary;
+$nextStep = match (true) {
+    $status === 'sent' => 'Delivery is complete. Review the delivery results below.',
+    $status === 'cancelled' => 'This campaign is cancelled.',
+    $stage === 'draft' => 'Send a preview to yourself, check it, then start the provider pilot.',
+    $stage === 'test' => 'Preview sent. If it looks right, start the 25-recipient provider pilot.',
+    $stage === 'pilot' => 'Review the pilot results, then approve sending at 50 per day.',
+    $stage === 'daily_50' => 'Continue the next batch or approve the 100-per-day cap.',
+    $stage === 'daily_100' => 'Continue the next approved batch, or enable automatic factual batches where allowed.',
+    default => 'Review the campaign and continue with the available sending action.',
+};
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
@@ -35,15 +45,22 @@ $deliveryCounts = $deliverySummary;
         <div class="alert alert-info"><strong><?= (int) $providerSummary['with_email'] ?></strong> active provider(s) have an email address in this audience. <strong><?= (int) $providerSummary['eligible'] ?></strong> can be included now; every other address remains visible below for review.</div>
     <?php endif; ?>
 
+    <div class="alert alert-info">
+        <strong>Next step:</strong> <?= $this->e($nextStep) ?>
+        <?php if (!in_array($status, ['sent', 'cancelled'], true)): ?>
+            <a class="btn btn-primary" href="#delivery-controls">Continue sending</a>
+        <?php endif; ?>
+    </div>
+
     <div style="border:1px solid #e3e0d8;border-radius:8px;padding:1rem;background:#fff;margin:1rem 0">
         <?= $notification['body'] /* trusted admin-authored HTML */ ?>
     </div>
 
     <?php if (!in_array($status, ['sent', 'cancelled'], true)): ?>
-        <div class="card" style="margin:1rem 0">
-            <h2 style="margin-top:0">Safe delivery stages</h2>
+        <div class="card" id="delivery-controls" style="margin:1rem 0" tabindex="-1">
+            <h2 style="margin-top:0">Send this campaign</h2>
             <ol>
-                <li>Send and inspect an internal test.</li>
+                <li>Email a preview to yourself and check the sender, wording, graphics and links.</li>
                 <li>Queue no more than 25 eligible recipients, then review replies, corrections, complaints, bounces and opt-outs.</li>
                 <li>After review, queue no more than 50 in any rolling 24 hours.</li>
                 <li>Only after another review, raise the hard cap to 100 in any rolling 24 hours.</li>
@@ -51,14 +68,14 @@ $deliveryCounts = $deliverySummary;
             <?php if (in_array($stage, ['draft', 'test'], true)): ?>
                 <form method="post" action="<?= e(url('admin/notifications/test')) ?>" class="btn-row">
                     <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>">
-                    <label for="test_email" class="sr-only">Internal test email</label>
-                    <input type="email" id="test_email" name="test_email" placeholder="Internal test email" required>
-                    <button type="submit" class="btn btn-secondary">Queue internal test</button>
+                    <label for="test_email" class="sr-only">Your preview email address</label>
+                    <input type="email" id="test_email" name="test_email" placeholder="Your email address" required>
+                    <button type="submit" class="btn btn-primary">Email preview to me</button>
                 </form>
             <?php endif; ?>
             <div class="btn-row" style="margin-top:1rem">
                 <?php if ($stage === 'test'): ?>
-                    <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary">Test checked — queue pilot (max 25)</button></form>
+                    <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary">Preview checked — start provider pilot (max 25)</button></form>
                 <?php elseif ($stage === 'pilot'): ?>
                     <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="daily_50"><button class="btn btn-primary">Pilot reviewed — start 50/day</button></form>
                 <?php elseif ($stage === 'daily_50'): ?>

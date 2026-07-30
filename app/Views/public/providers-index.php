@@ -28,7 +28,7 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
 
 <section class="section directory-section">
     <div class="container">
-        <form method="get" action="<?= e(url('providers')) ?>" class="directory-search" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+        <form method="get" action="<?= e(url('providers')) ?>" class="directory-search" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
             <div class="form-group mb-0">
                 <label for="q">What do you need?</label>
                 <input type="search" id="q" name="q" value="<?= e_attr($search) ?>" placeholder="<?= e_attr($directoryCopy['search_placeholder']) ?>">

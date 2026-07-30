@@ -67,7 +67,11 @@ final class ParkController extends Controller
         if ($lng !== null && ($lng < -180 || $lng > 180)) {
             $lng = null;
         }
-        if ($townId !== null) {
+        if ($lat !== null && $lng !== null) {
+            // Device coordinates are the accurate origin. The nearest-town
+            // label remains useful, but must not replace the phone's position.
+            $townId = null;
+        } elseif ($townId !== null) {
             $lat = null;
             $lng = null;
         }

@@ -58,12 +58,16 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
         </div>
 
         <h2 style="margin-top:2rem"><?= $this->e((string) $category['name']) ?> providers<?= $this->e($inArea) ?></h2>
-        <form method="get" action="<?= e(url('services/' . $category['slug'])) ?>" class="btn-row" style="margin:.5rem 0 1rem;align-items:flex-end;gap:.5rem;flex-wrap:wrap">
+        <form method="get" action="<?= e(url('services/' . $category['slug'])) ?>" class="btn-row" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location style="margin:.5rem 0 1rem;align-items:flex-end;gap:.5rem;flex-wrap:wrap">
             <div class="form-group mb-0 location-field" style="min-width:280px">
                 <label for="town_search">Filter by town, suburb or postcode</label>
                 <input type="text" id="town_search" name="location" value="<?= e_attr($selectedTownLabel ?? '') ?>" placeholder="Start typing…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                 <input type="hidden" id="town_id" name="town" value="<?= $townId ? (int) $townId : '' ?>">
+                <input type="hidden" name="lat" value="<?= isset($lat) && $lat !== null ? e_attr((string) $lat) : '' ?>">
+                <input type="hidden" name="lng" value="<?= isset($lng) && $lng !== null ? e_attr((string) $lng) : '' ?>">
                 <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
+                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'selectTarget' => '#town_id']); ?>
+                <p class="location-status muted" role="status" aria-live="polite" hidden></p>
             </div>
             <?php $this->include('partials.search-distance-filter', [
                 'selected' => $distanceSelection ?? ($selectedTown !== null ? 'town' : 'any'),
@@ -109,7 +113,7 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
             <h2 style="margin-top:2rem">Related services</h2>
             <div class="btn-row">
                 <?php foreach ($children as $child): ?>
-                    <a class="btn btn-ghost" href="<?= e(url('services/' . $child['slug'])) ?>"><?= $this->e((string) $child['name']) ?></a>
+                    <a class="btn btn-ghost" data-location-link href="<?= e(url('services/' . $child['slug'])) ?>"><?= $this->e((string) $child['name']) ?></a>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
