@@ -32,6 +32,9 @@ $destinations = [
     'trailer_listings' => can('providers.manage') ? '/admin/trailer-listings' : null,
     'regulatory_documents' => can('regulatory.manage') ? '/admin/trust-growth' : null,
 ];
+$attentionKeys = ['new_requests', 'open_requests', 'pending_providers', 'pending_documents', 'failed_emails'];
+$attentionStats = array_intersect_key($stats, array_flip($attentionKeys));
+$inventoryStats = array_diff_key($stats, array_flip($attentionKeys));
 ?>
 <?php $this->section('content'); ?>
 
@@ -48,8 +51,10 @@ $destinations = [
 </div>
 <?php endif; ?>
 
-<div class="stat-grid">
-    <?php foreach ($stats as $key => $value): ?>
+<section aria-labelledby="dashboard-attention-heading">
+<div class="admin-section-heading"><div><p class="eyebrow">Act first</p><h2 id="dashboard-attention-heading">Needs attention</h2><p class="muted">Live queues that can block customers, providers or outreach.</p></div></div>
+<div class="stat-grid stat-grid--attention">
+    <?php foreach ($attentionStats as $key => $value): ?>
         <?php $destination = $destinations[$key] ?? null; ?>
         <?php if ($destination !== null && $value !== null): ?><a class="stat stat-link" href="<?= e(url(ltrim($destination, '/'))) ?>"><?php else: ?><div class="stat<?= $value === null ? ' stat-unavailable' : '' ?>"><?php endif; ?>
             <div class="num"><?= $value === null ? '—' : (int) $value ?></div>
@@ -57,6 +62,7 @@ $destinations = [
         <?php if ($destination !== null && $value !== null): ?></a><?php else: ?></div><?php endif; ?>
     <?php endforeach; ?>
 </div>
+</section>
 
 <?php if (is_array($websiteSummary)): ?>
 <section class="card dashboard-insights-card">
@@ -82,11 +88,25 @@ $destinations = [
 </section>
 <?php endif; ?>
 
+<?php if ($inventoryStats !== []): ?>
+<details class="card dashboard-secondary" data-mobile-collapse>
+    <summary><h2>Directory and workspace totals</h2><span>Reference information</span></summary>
+    <div class="stat-grid">
+        <?php foreach ($inventoryStats as $key => $value): ?>
+            <?php $destination = $destinations[$key] ?? null; ?>
+            <?php if ($destination !== null && $value !== null): ?><a class="stat stat-link" href="<?= e(url(ltrim($destination, '/'))) ?>"><?php else: ?><div class="stat<?= $value === null ? ' stat-unavailable' : '' ?>"><?php endif; ?>
+                <div class="num"><?= $value === null ? '—' : (int) $value ?></div><div class="label"><?= $this->e($labels[$key] ?? $key) ?></div>
+            <?php if ($destination !== null && $value !== null): ?></a><?php else: ?></div><?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+</details>
+<?php endif; ?>
+
 <?php if ($canViewAudit || $canViewHealth): ?>
 <div class="grid grid-2" style="margin-top:1.5rem">
     <?php if ($canViewAudit): ?>
-    <div class="card">
-        <h2>Recent activity</h2>
+    <details class="card dashboard-secondary">
+        <summary><h2>Recent administrative activity</h2><span>System detail</span></summary>
         <?php if ($recentActivity === []): ?>
             <p class="muted">No activity recorded yet.</p>
         <?php else: ?>
@@ -106,12 +126,12 @@ $destinations = [
                 </table>
             </div>
         <?php endif; ?>
-    </div>
+    </details>
     <?php endif; ?>
 
     <?php if ($canViewHealth): ?>
-    <div class="card">
-        <h2>Scheduled tasks</h2>
+    <details class="card dashboard-secondary">
+        <summary><h2>Scheduled tasks</h2><span>System detail</span></summary>
         <?php if ($tasks === []): ?>
             <p class="muted">No scheduled tasks registered.</p>
         <?php else: ?>
@@ -130,7 +150,7 @@ $destinations = [
                 </table>
             </div>
         <?php endif; ?>
-    </div>
+    </details>
     <?php endif; ?>
 </div>
 <?php endif; ?>

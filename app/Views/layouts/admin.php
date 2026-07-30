@@ -61,14 +61,15 @@ if ($customerOperations !== []) {
 }
 
 $growth = [];
-if ($permitted('prospects.manage')) {
-    $growth[] = ['Provider outreach', '/admin/prospects'];
-}
-if ($permitted('content.manage')) {
-    $growth[] = ['Social studio', '/admin/social-media'];
-}
 if ($permitted('notifications.send')) {
-    $growth[] = ['Provider email campaigns', '/admin/notifications'];
+    $growth[] = ['Growth & outreach', '/admin/outreach-hub'];
+} else {
+    if ($permitted('prospects.manage')) {
+        $growth[] = ['Provider outreach', '/admin/prospects'];
+    }
+    if ($permitted('content.manage')) {
+        $growth[] = ['Social studio', '/admin/social-media'];
+    }
 }
 if ($growth !== []) {
     $nav['Growth'] = $growth;
@@ -157,6 +158,8 @@ $documentationTarget = \App\Services\Documentation\DocumentationLinkResolver::fo
             <?php endforeach; ?>
         </nav>
     </aside>
+
+    <button type="button" class="admin-nav-scrim" aria-label="Close administration menu" tabindex="-1"></button>
 
     <div class="admin-main">
         <div class="admin-topbar">

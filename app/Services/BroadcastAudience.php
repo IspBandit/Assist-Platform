@@ -25,12 +25,13 @@ final class BroadcastAudience
         'town'           => 'By town (customers + local providers)',
         'region'         => 'By region (customers + providers)',
         'category'       => 'By service category (customers + providers)',
+        'organisations'  => 'Reviewed organisations with role-relevant evidence',
     ];
 
     /**
      * @return array<int,array{user_id:?int,provider_id:?int,email:string,name:string}>
      */
-    public static function resolve(string $type, ?int $townId, ?int $regionId, ?int $categoryId): array
+    public static function resolve(string $type, ?int $townId, ?int $regionId, ?int $categoryId, ?string $organisationType = null): array
     {
         $rows = [];
         try {
@@ -63,6 +64,10 @@ final class BroadcastAudience
                         . "AND status IN ('open','matching','provider_interested','information_requested','offered_appointment','added_to_run') "
                         . "AND contact_email <> ''"
                     );
+                    break;
+
+                case 'organisations':
+                    $rows = OrganisationOutreach::eligibleRecipients($organisationType);
                     break;
 
                 case 'town':
@@ -103,9 +108,9 @@ final class BroadcastAudience
     }
 
     /** Count without materialising names (used for the compose preview). */
-    public static function count(string $type, ?int $townId, ?int $regionId, ?int $categoryId): int
+    public static function count(string $type, ?int $townId, ?int $regionId, ?int $categoryId, ?string $organisationType = null): int
     {
-        return count(self::resolve($type, $townId, $regionId, $categoryId));
+        return count(self::resolve($type, $townId, $regionId, $categoryId, $organisationType));
     }
 
     /** @return array{with_email:int,consent_eligible:int,held_for_review:int} */
@@ -181,7 +186,7 @@ final class BroadcastAudience
 
     /**
      * @param array<int,array<string,mixed>> $rows
-     * @return array<int,array{user_id:?int,provider_id:?int,email:string,name:string}>
+     * @return array<int,array{user_id:?int,provider_id:?int,organisation_contact_id:?int,email:string,name:string}>
      */
     private static function dedupe(array $rows): array
     {
@@ -196,6 +201,7 @@ final class BroadcastAudience
             $out[] = [
                 'user_id' => isset($row['user_id']) ? (int) $row['user_id'] ?: null : null,
                 'provider_id' => isset($row['provider_id']) ? (int) $row['provider_id'] ?: null : null,
+                'organisation_contact_id' => isset($row['organisation_contact_id']) ? (int) $row['organisation_contact_id'] ?: null : null,
                 'email'   => $email,
                 'name'    => trim((string) ($row['name'] ?? '')),
                 'marketing_consent_source' => trim((string) ($row['marketing_consent_source'] ?? '')),

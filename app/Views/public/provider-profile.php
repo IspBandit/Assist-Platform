@@ -2,11 +2,11 @@
 /** @var \App\Core\View $this */
 $this->extend('layouts.public');
 $isUnclaimed = !empty($provider['is_unclaimed']);
-$showPhone = (!empty($provider['show_public_phone']) || $isUnclaimed);
-$phone = $showPhone ? trim((string) (($provider['public_phone'] ?? '') ?: ($provider['phone'] ?? ''))) : '';
+$showPhone = !empty($provider['show_public_phone']);
+$phone = $showPhone ? trim((string) ($provider['public_phone'] ?? '')) : '';
 $showPhone = $phone !== '';
-$showEmail = (!empty($provider['show_public_email']) || $isUnclaimed);
-$email = $showEmail ? trim((string) (($provider['public_email'] ?? '') ?: ($provider['email'] ?? ''))) : '';
+$showEmail = !empty($provider['show_public_email']);
+$email = $showEmail ? trim((string) ($provider['public_email'] ?? '')) : '';
 $showEmail = $email !== '';
 $website = trim((string) ($provider['website'] ?? ''));
 $address = trim((string) ($provider['street_address'] ?? ''));
@@ -17,6 +17,8 @@ $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) $provider['business_name'];
 $initial = mb_strtoupper(mb_substr(trim($name), 0, 1));
 $slug = (string) $provider['slug'];
+$searchId = isset($searchId) ? (int) $searchId : 0;
+$contactQuery = $searchId > 0 ? '?s=' . $searchId : '';
 $canNavigate = $isWorkshop && is_navigable_street_address($address);
 $locationLabel = $townName;
 if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .= ', ' . $provider['state_abbr']; }
@@ -48,7 +50,7 @@ $mapDestination = map_destination(null, null, [$address, $townName, (string) ($p
             <?php if ($isUnclaimed): ?>
                 <aside class="trust-notice">
                     <div><strong>This business has not claimed this profile yet.</strong><p>Details come from public sources and may change. Confirm services, qualifications, pricing and availability directly with the business.</p><?php if (!empty($provider['source_note'])): ?><p><small>Source: <?= $this->e((string) $provider['source_note']) ?><?php if (!empty($provider['source_url'])): ?> · <a href="<?= e_attr((string) $provider['source_url']) ?>" target="_blank" rel="noopener nofollow">view source</a><?php endif; ?></small></p><?php endif; ?></div>
-                    <a class="btn btn-secondary btn-sm" href="<?= e(url('contact')) ?>">Claim this business</a>
+                    <a class="btn btn-secondary btn-sm" href="<?= e(url('for-providers/register?listing=' . rawurlencode($slug))) ?>">Request to claim or correct this listing</a>
                 </aside>
             <?php endif; ?>
 
@@ -92,10 +94,10 @@ $mapDestination = map_destination(null, null, [$address, $townName, (string) ($p
                 <h2>Contact <?= $this->e($name) ?></h2>
                 <?php if ($address !== ''): ?><div class="contact-detail"><span>Location</span><strong><?= $this->e($address) ?></strong></div><?php elseif ($locationLabel !== ''): ?><div class="contact-detail"><span>Based near</span><strong><?= $this->e($locationLabel) ?></strong></div><?php endif; ?>
                 <div class="profile-actions">
-                    <?php if ($showPhone): ?><a class="btn btn-primary btn-block" href="<?= e(url('go/phone/' . $slug)) ?>">Call <?= $this->e($phone) ?></a><?php endif; ?>
-                    <?php if ($showEmail): ?><a class="btn btn-secondary btn-block" href="<?= e(url('go/email/' . $slug)) ?>">Email business</a><?php endif; ?>
-                    <?php if ($website !== ''): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/website/' . $slug)) ?>" target="_blank" rel="noopener nofollow">Visit business website</a><?php endif; ?>
-                    <?php if ($canNavigate): ?><a class="btn btn-ghost btn-block" href="<?= e(map_directions_url($mapDestination)) ?>" target="_blank" rel="noopener" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>">Get directions</a><?php endif; ?>
+                    <?php if ($showPhone): ?><a class="btn btn-primary btn-block" href="<?= e(url('go/phone/' . $slug) . $contactQuery) ?>">Call <?= $this->e($phone) ?></a><?php endif; ?>
+                    <?php if ($showEmail): ?><a class="btn btn-secondary btn-block" href="<?= e(url('go/email/' . $slug) . $contactQuery) ?>">Email business</a><?php endif; ?>
+                    <?php if ($website !== ''): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/website/' . $slug) . $contactQuery) ?>" target="_blank" rel="noopener nofollow">Visit business website</a><?php endif; ?>
+                    <?php if ($canNavigate): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/directions/' . $slug) . $contactQuery) ?>" target="_blank" rel="noopener" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>">Get directions</a><?php endif; ?>
                 </div>
                 <?php if (!$showPhone && !$showEmail && $website === ''): ?><div class="inline-empty"><strong>Contact details unavailable</strong><span>This business has not supplied public contact information.</span></div><?php endif; ?>
                 <p class="contact-disclaimer"><?= $this->e($brand->name()) ?> does not guarantee availability, pricing or suitability. Confirm important details with the provider.</p>

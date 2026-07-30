@@ -56,6 +56,16 @@ catalogue boundary.
 | `POST /admin/notifications/recipient-restore` | `notifications.send` | Restore a consent-eligible provider; global suppression still wins |
 | `POST /admin/notifications/recipient-include` | `notifications.send` | Record dated consent evidence and add one in-scope provider |
 
+## PR and organisation outreach
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/outreach-hub` | `notifications.send` | Selected-brand PR dashboard; global organisation research register and selected-brand campaigns |
+| `GET /admin/outreach-hub/template` | `notifications.send` | Download the required evidence CSV headers |
+| `POST /admin/outreach-hub/import` | `notifications.send` | Import or refresh research-only organisation contacts; never auto-eligible |
+| `POST /admin/outreach-hub/review` | `notifications.send` | Record held, eligible or do-not-contact status and human review evidence |
+| `POST /admin/outreach-hub/outcome` | `notifications.send` | Record reply/interest/share/decline/bounce/opt-out and optional follow-up; opt-out adds marketing suppression |
+
 # Data Sources
 
 | Route | Permission | Scope |

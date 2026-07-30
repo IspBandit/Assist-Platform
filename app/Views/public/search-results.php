@@ -53,8 +53,8 @@ foreach ($allResults as $provider) {
         'location' => trim((string) ($provider['town_name'] ?? '') . (!empty($provider['state_abbr']) ? ', ' . $provider['state_abbr'] : '')),
         'possible' => (int) ($provider['is_inferred'] ?? 0) === 1,
         'featured' => !empty($provider['is_featured']),
-        'profile' => url('providers/' . (string) ($provider['slug'] ?? '')),
-        'directions' => $providerDestination !== '' ? map_directions_url($providerDestination) : null,
+        'profile' => url('providers/' . (string) ($provider['slug'] ?? '')) . ($searchId ? '?s=' . (int) $searchId : ''),
+        'directions' => $providerDestination !== '' ? url('go/directions/' . (string) ($provider['slug'] ?? '')) . ($searchId ? '?s=' . (int) $searchId : '') : null,
         'destination' => $providerDestination !== '' ? $providerDestination : null,
     ];
 }
@@ -136,10 +136,6 @@ foreach ($allResults as $provider) {
             </p>
         <?php endif; ?>
 
-        <?php if (!empty($hasOrigin) && ($matches !== [] || $possible !== [])): ?>
-            <p class="muted" style="font-size:.9rem;margin:.5rem 0 0">Distances are approximate straight-line estimates to each provider's base town — not driving distance. <span class="badge badge-confirmed">&#128666; Mobile service</span> providers travel to you.</p>
-        <?php endif; ?>
-
         <?php if ($mappedResults !== []): ?>
             <section class="results-map-shell" data-results-view-shell data-active-view="list" aria-labelledby="results-map-heading">
                 <div class="results-view-switch" role="group" aria-label="Choose results view"><button type="button" data-results-view="list" aria-pressed="true">List</button><button type="button" data-results-view="map" aria-pressed="false">Map</button></div>
@@ -148,13 +144,24 @@ foreach ($allResults as $provider) {
                     <p>Tap a numbered pin to jump to that provider. Pins show the listed business or base locality; confirm the address before travelling.</p>
                 </div>
                 <div class="results-map" data-results-map hidden aria-label="Map of providers returned by this search">
-                    <div class="results-map-canvas" data-results-map-canvas></div>
+                    <div class="results-map-canvas" data-results-map-canvas tabindex="0" aria-label="Interactive results map. Drag to move, pinch or use the controls to zoom."></div>
+                    <div class="results-map-controls" role="group" aria-label="Map controls">
+                        <button type="button" data-results-map-zoom-in aria-label="Zoom in">+</button>
+                        <button type="button" data-results-map-zoom-out aria-label="Zoom out">&minus;</button>
+                        <button type="button" data-results-map-fit>Fit results</button>
+                    </div>
                     <aside class="results-map-summary" data-results-map-summary hidden aria-live="polite">
                         <button type="button" data-results-map-summary-close aria-label="Close provider summary">&times;</button>
+                        <div class="results-map-summary-tools">
+                            <button type="button" data-results-map-summary-drag aria-label="Move provider summary" title="Drag to move provider summary">Move</button>
+                            <button type="button" data-results-map-summary-toggle aria-expanded="true">Collapse</button>
+                        </div>
                         <span data-results-map-summary-position></span>
                         <strong data-results-map-summary-name></strong>
-                        <small data-results-map-summary-location></small>
-                        <div><a class="btn btn-primary btn-sm" data-results-map-summary-profile href="#">Details</a><button class="btn btn-secondary btn-sm" type="button" data-results-map-summary-list>Show in list</button><a class="btn btn-secondary btn-sm" data-results-map-summary-directions href="#" target="_blank" rel="noopener noreferrer">Directions</a></div>
+                        <div class="results-map-summary-body" data-results-map-summary-body>
+                            <small data-results-map-summary-location></small>
+                            <div><a class="btn btn-primary btn-sm" data-results-map-summary-profile href="#">Details</a><button class="btn btn-secondary btn-sm" type="button" data-results-map-summary-list>Show in list</button><a class="btn btn-secondary btn-sm" data-results-map-summary-directions href="#" target="_blank" rel="noopener noreferrer">Directions</a></div>
+                        </div>
                     </aside>
                     <div class="results-map-key"><span><i class="results-map-key__origin"></i>Your search</span><span><i class="is-featured"></i>Featured</span><span><i></i>Direct match</span><span><i class="is-possible"></i>Related service</span></div>
                     <p class="results-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">Map © OpenStreetMap contributors</a></p>
@@ -180,7 +187,7 @@ foreach ($allResults as $provider) {
         <?php endif; ?>
 
         <?php if ($organicMatches !== []): ?>
-            <p class="muted" style="margin-top:.5rem"><strong>Direct matches</strong> explicitly offer the service you searched for. Unclaimed listings were compiled from public sources — confirm details before booking.</p>
+            <p class="muted result-section-note"><strong>Direct matches</strong> list this service. Confirm unclaimed details.</p>
             <h2 style="margin-top:1.5rem">Direct providers<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
             <div class="provider-card-grid provider-result-list">
                 <?php foreach ($organicMatches as $p): ?>
@@ -191,7 +198,7 @@ foreach ($allResults as $provider) {
 
         <?php if ($possible !== []): ?>
             <h2 style="margin-top:1.5rem">Businesses that may offer this service<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
-            <p class="muted">These work in a related trade and <em>may</em> be able to help — they are not verified for this exact service. Confirm before booking; contact details may be limited for unclaimed listings.</p>
+            <p class="muted result-section-note">Related trades may help, but are not confirmed for this exact service.</p>
             <div class="provider-card-grid provider-result-list">
                 <?php foreach ($possible as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id']]); ?>
@@ -262,6 +269,15 @@ foreach ($allResults as $provider) {
                 <a class="btn btn-primary" href="<?= e($requestUrl) ?>">Request assistance</a>
             </div>
         <?php endif; ?>
+
+        <section class="result-guidance" aria-labelledby="result-guidance-heading">
+            <h2 id="result-guidance-heading">Understanding these results</h2>
+            <?php if (!empty($hasOrigin) && ($matches !== [] || $possible !== [])): ?>
+                <p>Distances are approximate straight-line estimates to each provider's base town, not driving distance. Mobile-service providers travel to customers; a base-town pin is not necessarily a workshop destination.</p>
+            <?php endif; ?>
+            <p>Direct matches explicitly list the selected service. Related-service results work in an adjacent trade and require confirmation. Unclaimed listings come from public sources; confirm current services and contact details before relying on them.</p>
+            <?php $this->include('partials.listing-accuracy-notice'); ?>
+        </section>
     </div>
 </section>
 <?php $this->endSection(); ?>

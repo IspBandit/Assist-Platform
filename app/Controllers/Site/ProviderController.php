@@ -111,7 +111,8 @@ final class ProviderController extends Controller
         }
 
         $id = (int) $provider['id'];
-        DemandRecorder::recordProfileView($id);
+        $searchId = (int) $request->input('s') ?: null;
+        DemandRecorder::recordProfileView($id, $searchId);
         $runs = [];
         if ($brand->id() === 'vanassist' && Database::tableExists('service_runs')) {
             $runs = Database::select(
@@ -127,6 +128,7 @@ final class ProviderController extends Controller
             'metaDescription' => ($provider['brand_seo_description'] ?? $provider['seo_description'] ?? null) ?: ('Services from ' . $provider['business_name'] . ' on ' . $brand->name() . '.'),
             'canonical' => url($profilePath),
             'provider' => $provider,
+            'searchId' => $searchId,
             'services' => $brandScoped ? Provider::brandServices($brand->databaseId(), $id) : Provider::services($id),
             'areas' => Provider::areas($id),
             'licences' => Database::select(

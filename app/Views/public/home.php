@@ -58,7 +58,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                     <p>Nearby services, fuel, stays and practical help. Search before you set off or while safely stopped.</p>
                     <button type="button" data-install-app>Save VanAssist to your phone</button>
                 </div>
-                <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+                <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         Find help for the road ahead
@@ -83,7 +83,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                             <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
                             <input type="hidden" name="lat" value="">
                             <input type="hidden" name="lng" value="">
-                            <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
+                            <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => 'false']); ?>
                             <p class="location-status muted" role="status" aria-live="polite" hidden></p>
                         </div>
                     </div>
@@ -134,6 +134,10 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
     </div>
 </section>
 
+<div class="container listing-accuracy-notice-wrap">
+    <?php $this->include('partials.listing-accuracy-notice'); ?>
+</div>
+
 <section class="evidence-ribbon" aria-label="Current VanAssist directory evidence">
     <div class="container evidence-ribbon-grid">
         <?php if ($directoryCount > 0): ?><div><strong><?= number_format($directoryCount) ?></strong><span>active service listings</span></div><?php endif; ?>
@@ -175,7 +179,6 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                 <b aria-hidden="true">&rarr;</b>
             </a>
         </div>
-        <p class="journey-trust-note"><strong>Know what you are viewing.</strong> VanAssist distinguishes claimed, verified, featured and unclaimed listings. Always confirm current contact details, access, facilities and availability before travelling.</p>
     </div>
 </section>
 

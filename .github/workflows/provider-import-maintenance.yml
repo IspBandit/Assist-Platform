@@ -36,7 +36,7 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           set -euo pipefail
-          ssh "$VPS_USER@$VPS_HOST" "sudo /usr/local/sbin/assist-cron process_provider_import_queue"
+          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php cron/run.php process_provider_import_queue"
           status="$(ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php scripts/provider-import-status.php")"
           printf 'Production provider status: `%s`\n' "$status" >> "$GITHUB_STEP_SUMMARY"
           printf '%s\n' "$status"

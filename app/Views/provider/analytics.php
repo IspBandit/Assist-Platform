@@ -21,7 +21,7 @@ $ranges = ['7d' => 'Last 7 days', '30d' => 'Last 30 days', '90d' => 'Last 90 day
         <?php $this->include('partials.provider-nav', ['active' => 'analytics']); ?>
 
         <?php if ($disabled): ?>
-            <div class="card"><p class="mb-0">Analytics is not enabled yet. Once VanAssist turns on demand analytics, your search appearances, profile views, contacts and confirmed jobs will appear here.</p></div>
+            <div class="card"><p class="mb-0">Analytics is not enabled yet. Once <?= $this->e(current_brand()->name()) ?> turns on demand analytics, your search appearances, profile views, contacts and confirmed jobs will appear here.</p></div>
         <?php else: $s = $summary; ?>
             <form method="get" action="<?= e(url('provider/analytics')) ?>" class="card btn-row" style="align-items:flex-end;gap:1rem">
                 <label>Period

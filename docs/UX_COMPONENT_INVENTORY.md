@@ -21,7 +21,7 @@ and remove VanAssist-specific presentation assumptions gradually.
 | --- | --- | --- | --- |
 | Theme injection | `partials/brand-theme.php`, brand registry theme maps | shared | Rename legacy tokens and document semantic aliases |
 | Public shell | `layouts/public.php`, header, footer, SEO partials | shared | Verify all four brands and private-brand behaviour |
-| Admin shell | `layouts/admin.php`, `admin-platform.js` | shared | Enterprise workspace selector implemented; rendered desktop/mobile and assistive-technology acceptance remains release evidence |
+| Admin shell | `layouts/admin.php`, `app.js`, `admin-platform.js` | shared | Enterprise workspace selector plus touch/keyboard tablet drawer implemented; rendered desktop/tablet/mobile and assistive-technology acceptance remains release evidence |
 | Minimal/auth shell | `layouts/minimal.php` | shared | Verify brand sender/support/legal states |
 | Navigation | shared header plus configuration-driven links | shared | Add active/current semantics and overflow tests |
 | Buttons | `.btn` variants and sizes | reusable | Replace brand-colour legacy references with semantic tokens |
@@ -46,6 +46,11 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Controlled provider queue processor | `/admin/data-sources/review`, migration 083 and `process_provider_import_queue` | VanAssist admin data operation | Server-owned resumable work, explicit ready-versus-review counts, claimed-provider, brand-scope, provenance, CSRF, idempotency and no-progress acceptance |
 | Factual directory campaign continuation | `/admin/notifications`, migration 082 and scheduled notification worker | shared campaign operation | Off by default; directory-accuracy only; reviewed-stage, suppression and rate-limit acceptance |
 | Canonical service campaign list | `/admin/notifications`, migration 083 | VanAssist growth operation | Factual and consent-gated drafts for every active brand category; live eligible/held/suppressed/removed counts and recipient controls |
+| PR & outreach hub | `/admin/outreach-hub`, migration 084 | shared growth operation | Mobile-friendly research register; official-source evidence, human eligibility review, role-relevant campaign staging, suppression and outcome tracking |
+| Listing accuracy notice | `partials/listing-accuracy-notice.php` | VanAssist homepage, provider results and Places to stay | Compact desktop/mobile warning, disclaimer link and correction path; never substitutes for record-level status labels |
+| Grouped provider navigation | `partials/provider-nav.php` | Provider workspace | Five task groups on desktop and one accessible disclosure menu on phones; active page remains explicit |
+| Listing-specific claim/correction request | Provider profile and `/for-providers/register?listing={slug}` | Public-to-provider handoff | Existing rate limit and anti-bot gate; authority review before access; onboarding and optional marketing permission separated |
+| Provider acquisition hero | `public/for-providers.php`, `provider-rv.webp` | VanAssist provider acquisition | Neutral unbranded caravan service scene with empty decorative alt; no invented provider name, phone number or implied testimonial |
 
 ### Current token debt
 
@@ -212,3 +217,9 @@ respect reduced motion and use the shared brand tokens and premium symbol family
   Places to stay stays visible as a touch-safe shortcut using search context.
 - Map tiles come from OpenStreetMap with visible attribution. Failure of script
   or external tiles leaves search, provider cards and directions usable.
+- Once Map is explicitly selected, its canvas owns drag and two-pointer pinch
+  gestures instead of scaling the surrounding page. Zoom in, zoom out and fit
+  controls remain keyboard/touch accessible; arrow keys pan and `0`/`F` fits.
+  Provider summaries can collapse or move so they do not permanently cover
+  pins. Non-essential provenance and distance guidance follows the results
+  rather than interrupting the search/list/map task flow.
