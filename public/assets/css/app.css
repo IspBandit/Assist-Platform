@@ -381,7 +381,17 @@ select:focus-visible, textarea:focus-visible {
 .grid > * { min-width: 0; }
 .intelligence-map { overflow:auto; border-radius:var(--radius-md,12px); background:linear-gradient(180deg,#e8f2f4,#f7f4ec); border:1px solid var(--border); }
 .intelligence-map svg { display:block; width:100%; min-height:320px; }
-.intelligence-map circle { fill:var(--brand); stroke:color-mix(in srgb,var(--brand) 75%,#000); stroke-width:.7; }
+.intelligence-map .map-land { fill:#f8fbfc; stroke:#53666d; stroke-width:2.5; stroke-linejoin:round; }
+.intelligence-map .map-boundary { fill:none; stroke:#91a2a8; stroke-width:1.5; stroke-dasharray:4 3; }
+.intelligence-map .map-state-label { fill:#41545c; font-size:18px; font-weight:800; text-anchor:middle; paint-order:stroke; stroke:#f8fbfc; stroke-width:4px; stroke-linejoin:round; }
+.intelligence-map .map-capital-territory { fill:#fff; stroke:#53666d; stroke-width:2; }
+.intelligence-map .heat-point { fill:var(--brand); stroke:color-mix(in srgb,var(--brand) 75%,#000); stroke-width:.7; transform-box:fill-box; transform-origin:center; transition:transform .15s ease,opacity .15s ease; }
+.intelligence-map .heat-point:hover,.intelligence-map .heat-point:focus { opacity:1; transform:scale(1.35); outline:none; stroke-width:1.5; }
+.map-legend { display:flex; flex-wrap:wrap; gap:.65rem 1.25rem; margin-top:.75rem; color:var(--muted); font-size:.85rem; }
+.map-legend span { display:inline-flex; align-items:center; gap:.4rem; }
+.map-legend-dot { display:inline-block; width:.65rem; height:.65rem; border-radius:50%; background:var(--brand); opacity:.35; }
+.map-legend-dot--high { width:1rem; height:1rem; opacity:.9; }
+@media (prefers-reduced-motion:reduce) { .intelligence-map .heat-point { transition:none; } }
 .metric-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; margin:0; }
 .metric-list div,.task-card { border:1px solid var(--border); border-radius:var(--radius-md,12px); padding:1rem; background:var(--surface); }
 .metric-list dt { color:var(--muted); font-size:.85rem; }.metric-list dd { margin:.2rem 0 0; font-size:1.35rem; font-weight:750; }

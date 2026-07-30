@@ -5,6 +5,10 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### National coverage map
+
+- Replaced the floating heat points with a recognisable Australia map including mainland and Tasmania outlines, state/territory boundaries and labels, an opportunity-score legend, and keyboard-focusable town/category points.
+
 ### Free Growth Hub
 
 - Added direct, prominently labelled email campaign actions for caravan/RV clubs, club federations, 4WD/touring groups, publications, tourism organisations, industry bodies, manufacturers, dealers, rental fleets and caravan park networks. Each action shows the reviewed eligible count and opens a correctly targeted, prefilled campaign instead of making administrators reconstruct the audience and message manually.

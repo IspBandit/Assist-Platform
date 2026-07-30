@@ -56,13 +56,15 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 **Did the tablet administration update change public search?** No. Its shared stylesheet changes are restricted to `admin-*` controls inside the authenticated administration shell; customer search, map, tracking and provider-ranking behaviour are unchanged.
 
+**Is the national coverage heat map the customer results map?** No. The Australia/state heat map is an authenticated administrator planning view. Customer searches continue to use the interactive nearby-results map and its matching provider list.
+
 ## Version introduced
 
 2026-07 VanAssist mobile map increment.
 
 ## Last updated
 
-2026-07-30 (location inheritance extended across all public discovery journeys).
+2026-07-30 (clarified the separate administrator coverage map; location inheritance remains available across all public discovery journeys).
 
 ## Owner
 
