@@ -69,13 +69,13 @@ $nextStep = match (true) {
                 <form method="post" action="<?= e(url('admin/notifications/test')) ?>" class="btn-row">
                     <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>">
                     <label for="test_email" class="sr-only">Your preview email address</label>
-                    <input type="email" id="test_email" name="test_email" placeholder="Your email address" required>
+                    <input type="email" id="test_email" name="test_email" value="<?= e_attr((string) (current_user()['email'] ?? '')) ?>" placeholder="Your email address" required>
                     <button type="submit" class="btn btn-primary">Email preview to me</button>
                 </form>
             <?php endif; ?>
             <div class="btn-row" style="margin-top:1rem">
                 <?php if ($stage === 'test'): ?>
-                    <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary">Preview checked — start provider pilot (max 25)</button></form>
+                    <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary">Preview checked — start sending (max 25)</button></form>
                 <?php elseif ($stage === 'pilot'): ?>
                     <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="daily_50"><button class="btn btn-primary">Pilot reviewed — start 50/day</button></form>
                 <?php elseif ($stage === 'daily_50'): ?>

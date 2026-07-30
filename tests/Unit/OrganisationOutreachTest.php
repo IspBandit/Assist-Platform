@@ -55,6 +55,7 @@ final class OrganisationOutreachTest extends TestCase
         $routes = $this->source('routes/admin.php');
         $view = $this->source('app/Views/admin/outreach-hub/index.php');
         $css = $this->source('public/assets/css/app.css');
+        $controller = $this->source('app/Controllers/Admin/OutreachHubController.php');
         self::assertStringContainsString("/outreach-hub", $routes);
         self::assertStringContainsString('/outreach-hub/outcome', $routes);
         self::assertStringContainsString('Published does not mean permission', $view);
@@ -64,13 +65,23 @@ final class OrganisationOutreachTest extends TestCase
         self::assertStringContainsString('Sent by platform', $view);
         self::assertStringContainsString('Free Growth Hub', $view);
         self::assertStringContainsString('Tracked free-share kit', $view);
+        self::assertStringContainsString('Email clubs and relevant organisations', $view);
+        self::assertStringContainsString('Create email campaign', $view);
+        self::assertStringContainsString("'organisation_type' => \$segment['type']", $controller);
+        self::assertStringContainsString("'copy_style' => \$segment['style']", $controller);
         self::assertStringContainsString('data-copy-target', $view);
         self::assertStringContainsString('Google Search Console', $view);
         self::assertStringContainsString('Free growth hub', $this->source('app/Views/layouts/admin.php'));
         self::assertStringContainsString('Open free growth hub', $this->source('app/Views/admin/dashboard.php'));
-        $controller = $this->source('app/Controllers/Admin/OutreachHubController.php');
         self::assertStringContainsString("'utm_source'", $controller);
         self::assertStringContainsString("'facebook_group'", $controller);
+        $notifications = $this->source('app/Controllers/Admin/NotificationsController.php');
+        self::assertStringContainsString("OrganisationCampaignCopy::styles()[\$copyStyle]", $notifications);
+        self::assertStringContainsString("\$values['title'] = \$style['subject']", $notifications);
+        $campaignList = $this->source('app/Views/admin/notifications/index.php');
+        self::assertStringContainsString('Send preview to me', $campaignList);
+        self::assertStringContainsString('Start sending (max 25)', $campaignList);
+        self::assertStringContainsString('Send next batch (50/day)', $campaignList);
         self::assertStringContainsString('max-height:68vh', $css);
     }
 

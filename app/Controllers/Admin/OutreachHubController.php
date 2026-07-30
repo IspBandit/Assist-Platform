@@ -45,6 +45,32 @@ final class OutreachHubController extends Controller
         $newsletterUrl = $trackedUrl('club_newsletter', 'partner');
         $providerUrl = $trackedUrl('provider_share', 'partner');
         $signatureUrl = $trackedUrl('email_signature', 'owned');
+        $campaignSegments = [
+            ['type' => 'club', 'label' => 'Caravan and RV clubs', 'style' => 'club_member_resource'],
+            ['type' => 'club_federation', 'label' => 'Club federations', 'style' => 'club_member_resource'],
+            ['type' => 'touring_association', 'label' => '4WD and touring clubs', 'style' => 'club_member_resource'],
+            ['type' => 'publication', 'label' => 'Publications and media', 'style' => 'editorial_story'],
+            ['type' => 'tourism_body', 'label' => 'Tourism organisations', 'style' => 'tourism_visitor_resource'],
+            ['type' => 'industry_association', 'label' => 'Industry associations', 'style' => 'industry_data_collaboration'],
+            ['type' => 'manufacturer', 'label' => 'Manufacturers', 'style' => 'fleet_dealer_owner_support'],
+            ['type' => 'dealer_network', 'label' => 'Dealers and sales networks', 'style' => 'fleet_dealer_owner_support'],
+            ['type' => 'rental_fleet', 'label' => 'Rental fleets and marketplaces', 'style' => 'fleet_dealer_owner_support'],
+            ['type' => 'park_network', 'label' => 'Caravan park networks', 'style' => 'tourism_visitor_resource'],
+        ];
+        foreach ($campaignSegments as &$segment) {
+            $segment['eligible'] = count(OrganisationOutreach::eligibleRecipients($segment['type']));
+            $segment['compose_url'] = url('admin/notifications/compose?' . http_build_query([
+                'campaign_type' => 'organisation_outreach',
+                'audience_type' => 'organisations',
+                'organisation_type' => $segment['type'],
+                'copy_style' => $segment['style'],
+            ]));
+            $segment['review_url'] = url('admin/outreach-hub?' . http_build_query([
+                'status' => 'research',
+                'type' => $segment['type'],
+            ]) . '#target-register-heading');
+        }
+        unset($segment);
 
         return $this->view('admin.outreach-hub.index', [
             'title' => 'PR & Outreach Hub',
@@ -63,6 +89,7 @@ final class OutreachHubController extends Controller
             'statuses' => OrganisationOutreach::STATUSES,
             'outcomes' => OrganisationOutreach::OUTCOMES,
             'filters' => ['q' => $query, 'status' => $status, 'type' => $type, 'state' => $state],
+            'campaignSegments' => $campaignSegments,
             'freeChannelStatus' => [
                 'indexing' => (string) Settings::get('seo_allow_indexing', '0') === '1',
                 'facebook' => FacebookPagePublisher::configured($brand->id()),

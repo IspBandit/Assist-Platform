@@ -9,6 +9,7 @@ $this->extend('layouts.admin');
 /** @var array<string,string> $statuses */
 /** @var array<string,string> $outcomes */
 /** @var array<string,string> $filters */
+/** @var array<int,array{type:string,label:string,style:string,eligible:int,compose_url:string,review_url:string}> $campaignSegments */
 /** @var array{indexing:bool,facebook:bool,factual_campaigns:int,approved_social_assets:int} $freeChannelStatus */
 /** @var array<int,array{key:string,title:string,url:string,copy:string}> $shareKits */
 ?>
@@ -19,8 +20,28 @@ $this->extend('layouts.admin');
         <h1>Free Growth Hub</h1>
         <p>Get <?= $this->e(current_brand()->name()) ?> in front of travellers and relevant organisations using no-cost channels, tracked links and the correct outreach boundary.</p>
     </div>
-    <div class="btn-row"><a class="btn btn-primary" href="<?= e(url('admin/notifications/compose?campaign_type=organisation_outreach&audience_type=organisations')) ?>">Plan organisation campaign</a><a class="btn btn-secondary" href="<?= e(url('admin/notifications')) ?>">Email campaigns</a><?php if (can('prospects.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/prospects')) ?>">Provider prospects</a><?php endif; ?><?php if (can('content.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/social-media')) ?>">Social studio</a><?php endif; ?></div>
+    <div class="btn-row"><a class="btn btn-primary" href="#organisation-email-campaigns">Email clubs and organisations</a><a class="btn btn-secondary" href="<?= e(url('admin/notifications')) ?>">Email campaigns</a><?php if (can('prospects.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/prospects')) ?>">Provider prospects</a><?php endif; ?><?php if (can('content.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/social-media')) ?>">Social studio</a><?php endif; ?></div>
 </header>
+
+<section class="card" id="organisation-email-campaigns" aria-labelledby="organisation-email-campaigns-heading">
+    <div class="campaign-recipient-heading">
+        <div><p class="eyebrow">Direct email actions</p><h2 id="organisation-email-campaigns-heading">Email clubs and relevant organisations</h2><p class="muted">Choose who you want to contact. The correct audience and human message are filled in automatically; the number shown is the reviewed, send-eligible audience.</p></div>
+        <a class="btn btn-ghost" href="#target-register-heading">Review more contacts</a>
+    </div>
+    <div class="grid grid-3 organisation-campaign-grid">
+        <?php foreach ($campaignSegments as $segment): ?>
+            <article class="card">
+                <span class="badge <?= $segment['eligible'] > 0 ? 'badge-confirmed' : 'badge-neutral' ?>"><?= (int) $segment['eligible'] ?> ready to email</span>
+                <h3><?= $this->e($segment['label']) ?></h3>
+                <p><?= $segment['eligible'] > 0 ? 'Create a prefilled campaign for these reviewed recipients.' : 'No reviewed recipient is ready yet. You can still prepare the campaign or review the matching contacts first.' ?></p>
+                <div class="btn-row">
+                    <a class="btn btn-primary" href="<?= e_attr($segment['compose_url']) ?>">Create email campaign</a>
+                    <a class="btn btn-ghost" href="<?= e_attr($segment['review_url']) ?>">Review contacts</a>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </div>
+</section>
 
 <section class="card" aria-labelledby="free-growth-actions-heading">
     <div class="campaign-recipient-heading">
