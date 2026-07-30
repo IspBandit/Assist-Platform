@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Clear email campaign sending path
+
+- Added a direct **Email campaigns** item to the admin Growth navigation and a prominent dashboard shortcut.
+- Reworked the campaign list around a visible four-step path: open, review recipients, email a preview to the administrator, and start staged delivery.
+- Added a plain-English next action and **Open & send** control to each active campaign.
+- Added an in-campaign **Next step** prompt and direct jump to the delivery controls.
+- Renamed the internal test action to **Email preview to me** so it is clear that this is a one-time preflight check, not the provider campaign.
+
 ### Website interaction recording repaired
 
 - Made the permission-scoped administrator shell practical on portrait and landscape tablets: navigation now uses a touch-friendly side drawer up to 1100px, supports outside-tap/Escape dismissal and keyboard focus containment, compacts crowded header actions, keeps forms within the viewport and contains wide tables in their own scroll area.

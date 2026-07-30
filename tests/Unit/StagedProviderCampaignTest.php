@@ -169,6 +169,12 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('held', $view);
         self::assertStringContainsString('suppressed', $view);
         self::assertStringContainsString('not inserted into delivery records', $view);
+        self::assertStringContainsString('How to send a campaign', $view);
+        self::assertStringContainsString('Open & send', $view);
+        self::assertStringContainsString('Email campaigns', $this->source('app/Views/layouts/admin.php'));
+        self::assertStringContainsString('Open email campaigns', $this->source('app/Views/admin/dashboard.php'));
+        self::assertStringContainsString('Email preview to me', $this->source('app/Views/admin/notifications/show.php'));
+        self::assertStringContainsString('id="delivery-controls"', $this->source('app/Views/admin/notifications/show.php'));
     }
 
     public function testCampaignRecipientsUseCanonicalBrandAssignmentsAndRejectInvalidEmail(): void

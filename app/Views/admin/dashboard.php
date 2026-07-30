@@ -43,6 +43,19 @@ $inventoryStats = array_diff_key($stats, array_flip($attentionKeys));
     <?php if ($maintenance): ?> <strong style="color:var(--red)">Maintenance mode is ON.</strong><?php endif; ?>
 </div>
 
+<?php if (can('notifications.send')): ?>
+<section class="card" aria-labelledby="dashboard-campaign-heading">
+    <div class="admin-section-heading">
+        <div>
+            <p class="eyebrow">Provider growth</p>
+            <h2 id="dashboard-campaign-heading">Email campaigns</h2>
+            <p class="muted">Review recipients, send the preview to yourself, then start the controlled provider batch.</p>
+        </div>
+        <a class="btn btn-primary" href="<?= e(url('admin/notifications')) ?>">Open email campaigns</a>
+    </div>
+</section>
+<?php endif; ?>
+
 <?php if ($dashboardWarnings !== []): ?>
 <div class="alert alert-error" role="alert">
     <strong>Some dashboard data is unavailable.</strong>
