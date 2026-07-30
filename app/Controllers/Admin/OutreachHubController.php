@@ -9,8 +9,10 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
+use App\Services\FacebookPagePublisher;
 use App\Services\OrganisationOutreach;
 use App\Services\OrganisationOutreachImporter;
+use App\Services\Settings;
 use RuntimeException;
 
 final class OutreachHubController extends Controller
@@ -22,13 +24,35 @@ final class OutreachHubController extends Controller
         $status = (string) $request->input('status');
         $type = (string) $request->input('type');
         $state = strtoupper(trim((string) $request->input('state')));
+        $brand = current_brand();
+        $brandId = $brand->databaseId();
+        $brandName = $brand->name();
+        $resourceDescription = match ($brand->id()) {
+            'vanassist' => 'nearby caravan and RV services, fuel, EV charging and caravan-friendly places to stay across Australia',
+            'towsmart' => 'practical towing calculations, safety guidance and towing specialists',
+            'trailerwise' => 'trailer ownership guidance, relevant services and trailer listings',
+            'localtorque' => 'automotive specialists, modification and roadworthy rules, motorsport information and local services',
+            default => 'useful local services and practical information',
+        };
+        $launchCampaign = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $brandName) ?? 'assist') . '-free-launch';
+        $trackedUrl = static fn (string $source, string $medium): string => rtrim(url('/'), '/') . '/?' . http_build_query([
+            'utm_source' => $source,
+            'utm_medium' => $medium,
+            'utm_campaign' => $launchCampaign,
+        ]);
+        $communityUrl = $trackedUrl('facebook_group', 'community');
+        $messengerUrl = $trackedUrl('messenger', 'personal_share');
+        $newsletterUrl = $trackedUrl('club_newsletter', 'partner');
+        $providerUrl = $trackedUrl('provider_share', 'partner');
+        $signatureUrl = $trackedUrl('email_signature', 'owned');
+
         return $this->view('admin.outreach-hub.index', [
             'title' => 'PR & Outreach Hub',
             'summary' => OrganisationOutreach::summary(),
             'contacts' => OrganisationOutreach::search($query, $status, $type, $state),
             'campaigns' => Database::select(
                 "SELECT id,title,status,delivery_stage,recipient_count,created_at FROM notifications WHERE brand_id=? AND campaign_type='organisation_outreach' ORDER BY id DESC LIMIT 20",
-                [current_brand()->databaseId()]
+                [$brandId]
             ),
             'recentEvents' => Database::select(
                 'SELECT e.event_type,e.notes,e.created_at,o.organisation_name,n.title AS campaign_title '
@@ -39,6 +63,50 @@ final class OutreachHubController extends Controller
             'statuses' => OrganisationOutreach::STATUSES,
             'outcomes' => OrganisationOutreach::OUTCOMES,
             'filters' => ['q' => $query, 'status' => $status, 'type' => $type, 'state' => $state],
+            'freeChannelStatus' => [
+                'indexing' => (string) Settings::get('seo_allow_indexing', '0') === '1',
+                'facebook' => FacebookPagePublisher::configured($brand->id()),
+                'factual_campaigns' => (int) Database::scalar(
+                    "SELECT COUNT(*) FROM notifications WHERE brand_id=? AND campaign_type='directory_accuracy' AND status NOT IN ('sent','cancelled')",
+                    [$brandId]
+                ),
+                'approved_social_assets' => (int) Database::scalar(
+                    "SELECT COUNT(*) FROM social_media_assets WHERE brand_id=? AND status='approved'",
+                    [$brandId]
+                ),
+            ],
+            'shareKits' => [
+                [
+                    'key' => 'community',
+                    'title' => 'Community or Facebook group',
+                    'url' => $communityUrl,
+                    'copy' => "Admin — hope this is okay to post. If not, please delete it gently and pretend I was never here.\n\nWe have launched {$brandName}, a free way to find {$resourceDescription}. We are asking users and relevant local businesses to try it and tell us what is missing or wrong.\n\n{$communityUrl}",
+                ],
+                [
+                    'key' => 'messenger',
+                    'title' => 'Messenger or personal share',
+                    'url' => $messengerUrl,
+                    'copy' => "{$brandName} is a free way to find {$resourceDescription}. Have a look and tell me what needs fixing: {$messengerUrl}",
+                ],
+                [
+                    'key' => 'newsletter',
+                    'title' => 'Club newsletter or member resource',
+                    'url' => $newsletterUrl,
+                    'copy' => "Free member resource: {$brandName} helps people find {$resourceDescription}. No account is required to browse the public information. Clubs and relevant organisations are welcome to share the link as a member resource and send corrections or coverage gaps to us: {$newsletterUrl}",
+                ],
+                [
+                    'key' => 'provider',
+                    'title' => 'Provider, park or dealer share',
+                    'url' => $providerUrl,
+                    'copy' => "Customers can use {$brandName} free to find {$resourceDescription}. If it is useful to your customers, you are welcome to share it: {$providerUrl}",
+                ],
+                [
+                    'key' => 'signature',
+                    'title' => 'Your everyday email signature',
+                    'url' => $signatureUrl,
+                    'copy' => "{$brandName} — free public access to {$resourceDescription}: {$signatureUrl}",
+                ],
+            ],
         ]);
     }
 

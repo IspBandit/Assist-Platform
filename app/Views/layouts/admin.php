@@ -63,7 +63,7 @@ if ($customerOperations !== []) {
 $growth = [];
 if ($permitted('notifications.send')) {
     $growth[] = ['Email campaigns', '/admin/notifications'];
-    $growth[] = ['PR & outreach', '/admin/outreach-hub'];
+    $growth[] = ['Free growth hub', '/admin/outreach-hub'];
 }
 if ($permitted('prospects.manage')) {
     $growth[] = ['Provider prospects', '/admin/prospects'];

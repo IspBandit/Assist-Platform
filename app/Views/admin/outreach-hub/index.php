@@ -9,16 +9,85 @@ $this->extend('layouts.admin');
 /** @var array<string,string> $statuses */
 /** @var array<string,string> $outcomes */
 /** @var array<string,string> $filters */
+/** @var array{indexing:bool,facebook:bool,factual_campaigns:int,approved_social_assets:int} $freeChannelStatus */
+/** @var array<int,array{key:string,title:string,url:string,copy:string}> $shareKits */
 ?>
 <?php $this->section('content'); ?>
 <header class="page-header outreach-hub-header">
     <div>
         <p class="eyebrow">Audience growth, with evidence</p>
-        <h1>Growth &amp; outreach</h1>
-        <p>Manage clubs, peak bodies, manufacturers, dealer and rental networks, park groups, publications and tourism partners without mixing them into provider or customer mailing lists.</p>
+        <h1>Free Growth Hub</h1>
+        <p>Get <?= $this->e(current_brand()->name()) ?> in front of travellers and relevant organisations using no-cost channels, tracked links and the correct outreach boundary.</p>
     </div>
     <div class="btn-row"><a class="btn btn-primary" href="<?= e(url('admin/notifications/compose?campaign_type=organisation_outreach&audience_type=organisations')) ?>">Plan organisation campaign</a><a class="btn btn-secondary" href="<?= e(url('admin/notifications')) ?>">Email campaigns</a><?php if (can('prospects.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/prospects')) ?>">Provider prospects</a><?php endif; ?><?php if (can('content.manage')): ?><a class="btn btn-ghost" href="<?= e(url('admin/social-media')) ?>">Social studio</a><?php endif; ?></div>
 </header>
+
+<section class="card" aria-labelledby="free-growth-actions-heading">
+    <div class="campaign-recipient-heading">
+        <div><p class="eyebrow">Start here</p><h2 id="free-growth-actions-heading">Free ways to grow the audience</h2><p class="muted">Use several small, relevant channels consistently. Website Insights records the tracked links below so you can see what actually sends visitors.</p></div>
+        <?php if (can('demand.view')): ?><a class="btn btn-ghost" href="<?= e(url('admin/demand')) ?>">Measure results</a><?php endif; ?>
+    </div>
+    <div class="grid grid-3 free-growth-channel-grid">
+        <article class="card">
+            <span class="badge <?= $freeChannelStatus['factual_campaigns'] > 0 ? 'badge-confirmed' : 'badge-neutral' ?>"><?= (int) $freeChannelStatus['factual_campaigns'] ?> prepared</span>
+            <h3>Provider listing checks</h3>
+            <p>Send factual, non-promotional accuracy notices to source-backed unclaimed providers. This improves data and introduces the claim path without pretending a public email is general marketing consent.</p>
+            <a class="btn btn-primary" href="<?= e(url('admin/notifications')) ?>">Open email campaigns</a>
+        </article>
+        <article class="card">
+            <span class="badge <?= (int) $summary['eligible'] > 0 ? 'badge-confirmed' : 'badge-neutral' ?>"><?= (int) $summary['eligible'] ?> reviewed contacts</span>
+            <h3>Clubs, media and partners</h3>
+            <p>Approach relevant published roles with a specific member resource, correction request, story idea or partnership proposal. Review evidence below before sending.</p>
+            <a class="btn btn-primary" href="#target-register-heading">Review organisations</a>
+        </article>
+        <article class="card">
+            <span class="badge <?= $freeChannelStatus['facebook'] ? 'badge-confirmed' : 'badge-neutral' ?>"><?= $freeChannelStatus['facebook'] ? 'Facebook connected' : 'Manual sharing ready' ?></span>
+            <h3>Social and community</h3>
+            <p>Publish approved Page assets, then share a useful feedback-led post only where group rules allow it. Downloaded assets also work for Instagram and community pages.</p>
+            <?php if (can('content.manage')): ?><a class="btn btn-primary" href="<?= e(url('admin/social-media')) ?>">Open Social Studio</a><?php endif; ?>
+        </article>
+        <article class="card">
+            <span class="badge <?= $freeChannelStatus['indexing'] ? 'badge-confirmed' : 'badge-neutral' ?>"><?= $freeChannelStatus['indexing'] ? 'Indexing on' : 'Indexing needs attention' ?></span>
+            <h3>Google and Bing discovery</h3>
+            <p>Keep indexing on, submit <a href="<?= e(url('sitemap.xml')) ?>" target="_blank" rel="noopener">the sitemap</a> in Google Search Console and import it into Bing Webmaster Tools. This is free and compounds over time.</p>
+            <div class="btn-row"><?php if (can('seo.manage')): ?><a class="btn btn-secondary" href="<?= e(url('admin/seo')) ?>">Check SEO settings</a><?php endif; ?><a class="btn btn-ghost" href="https://search.google.com/search-console" target="_blank" rel="noopener">Google Search Console ↗</a><a class="btn btn-ghost" href="https://www.bing.com/webmasters" target="_blank" rel="noopener">Bing Webmaster Tools ↗</a></div>
+        </article>
+        <article class="card">
+            <span class="badge badge-neutral"><?= (int) $freeChannelStatus['approved_social_assets'] ?> approved assets</span>
+            <h3>Provider and park referrals</h3>
+            <p>Give claimed providers, caravan parks, dealers and rental businesses a tracked link for their website, counter sign, booking email or customer handover message.</p>
+            <a class="btn btn-secondary" href="#free-share-kits">Copy partner message</a>
+        </article>
+        <article class="card">
+            <span class="badge badge-neutral">No ad spend</span>
+            <h3>Your everyday channels</h3>
+            <p>Add a tracked link to your email signature, Facebook Page details and Messenger replies. Ask real users for feedback and useful corrections—not generic likes or spammy reposts.</p>
+            <a class="btn btn-secondary" href="#free-share-kits">Open share kit</a>
+        </article>
+    </div>
+</section>
+
+<section class="card" id="free-share-kits" aria-labelledby="free-share-kits-heading">
+    <div class="campaign-recipient-heading"><div><p class="eyebrow">Copy, share, measure</p><h2 id="free-share-kits-heading">Tracked free-share kit</h2><p class="muted">Each channel has its own link. Website Insights can distinguish community, Messenger, newsletter and partner traffic.</p></div></div>
+    <div class="grid grid-2 free-share-kit-grid">
+        <?php foreach ($shareKits as $kit): ?>
+            <article class="card">
+                <h3><?= $this->e($kit['title']) ?></h3>
+                <label for="share-copy-<?= e_attr($kit['key']) ?>">Ready-to-use wording</label>
+                <textarea id="share-copy-<?= e_attr($kit['key']) ?>" rows="7" readonly><?= $this->e($kit['copy']) ?></textarea>
+                <label for="share-url-<?= e_attr($kit['key']) ?>">Tracked link</label>
+                <input id="share-url-<?= e_attr($kit['key']) ?>" value="<?= e_attr($kit['url']) ?>" readonly>
+                <div class="btn-row">
+                    <button class="btn btn-primary" type="button" data-copy-target="#share-copy-<?= e_attr($kit['key']) ?>">Copy message</button>
+                    <button class="btn btn-secondary" type="button" data-copy-target="#share-url-<?= e_attr($kit['key']) ?>">Copy link</button>
+                    <button class="btn btn-ghost" type="button" data-native-share data-share-title="<?= e_attr(current_brand()->name()) ?>" data-share-text="<?= e_attr($kit['copy']) ?>" data-share-url="<?= e_attr($kit['url']) ?>">Share from device</button>
+                </div>
+                <p class="muted small" data-copy-status aria-live="polite"></p>
+            </article>
+        <?php endforeach; ?>
+    </div>
+    <div class="alert alert-warning"><strong>Email boundary:</strong> do not turn these messages into a scraped bulk list. Commercial email requires a defensible consent basis, sender identification and a working unsubscribe. Provider factual checks and reviewed organisation outreach remain separate controlled campaign types. <a href="https://www.acma.gov.au/avoid-sending-spam" target="_blank" rel="noopener">Read the current ACMA guidance ↗</a></div>
+</section>
 
 <div class="metric-grid outreach-summary" aria-label="Organisation outreach summary">
     <div class="metric-card"><span>Needs review</span><strong><?= (int) $summary['research'] ?></strong></div>

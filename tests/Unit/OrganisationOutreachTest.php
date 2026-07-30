@@ -62,6 +62,15 @@ final class OrganisationOutreachTest extends TestCase
         self::assertStringContainsString('Record outcome', $view);
         self::assertStringContainsString('Recent outreach history', $view);
         self::assertStringContainsString('Sent by platform', $view);
+        self::assertStringContainsString('Free Growth Hub', $view);
+        self::assertStringContainsString('Tracked free-share kit', $view);
+        self::assertStringContainsString('data-copy-target', $view);
+        self::assertStringContainsString('Google Search Console', $view);
+        self::assertStringContainsString('Free growth hub', $this->source('app/Views/layouts/admin.php'));
+        self::assertStringContainsString('Open free growth hub', $this->source('app/Views/admin/dashboard.php'));
+        $controller = $this->source('app/Controllers/Admin/OutreachHubController.php');
+        self::assertStringContainsString("'utm_source'", $controller);
+        self::assertStringContainsString("'facebook_group'", $controller);
         self::assertStringContainsString('max-height:68vh', $css);
     }
 

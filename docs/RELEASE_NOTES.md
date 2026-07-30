@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Free Growth Hub
+
+- Consolidated provider factual notices, reviewed organisation outreach, Social Studio, Facebook/community sharing, partner referrals, search indexing and Website Insights into one dashboard workflow.
+- Added ready-to-copy community, Messenger, club-newsletter and provider/park share messages with distinct tracked links and mobile native sharing.
+- Added first-party UTM source capture without collecting visitor IP addresses; Website Insights renders tracked sources in plain English.
+- Added live channel status for prepared factual campaigns, reviewed organisation contacts, Facebook connection, indexing and approved social assets.
+- Kept Facebook-group posting manual so administrators can follow each group’s rules, and retained consent, suppression, sender-identification and unsubscribe boundaries for electronic messages.
+
 ### Location-first behaviour across every discovery journey
 
 - Extended optional current-location resolution beyond the homepage to Fuel, EV charging, Places to Stay, the service directory, every service-category page, provider browsing, result refinements and assistance requests.
