@@ -17,6 +17,7 @@ final class DocumentationChangeValidator
             'label' => 'administrator interface',
             'patterns' => [
                 '#^app/Views/admin/#i',
+                '#^app/Views/layouts/admin\.php$#i',
                 '#^app/Views/install/#i',
                 '#^app/Controllers/Admin/#i',
                 '#^app/Controllers/Install/#i',
@@ -44,7 +45,8 @@ final class DocumentationChangeValidator
         'public' => [
             'label' => 'public or customer interface',
             'patterns' => [
-                '#^app/Views/(public|account|auth|brands|documentation|errors|layouts|localtorque|partials|towsmart|trailerwise)/#i',
+                '#^app/Views/(public|account|auth|brands|documentation|errors|localtorque|partials|towsmart|trailerwise)/#i',
+                '#^app/Views/layouts/(?!admin\.php$)#i',
                 '#^app/Controllers/(Site|Account|Auth)/#i',
                 '#^routes/(web|account|auth)\.php$#i',
                 '#^public/assets/(css|js)/#i',
