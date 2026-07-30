@@ -100,13 +100,15 @@ final class ProviderTrustPrivacyTest extends TestCase
         self::assertStringContainsString('alt=""', $view);
     }
 
-    public function testProductionWorkflowsUseNonInteractiveContainerWorker(): void
+    public function testProductionReleaseDefersProviderProcessingToRootCron(): void
     {
-        foreach (['production-release.yml', 'provider-import-maintenance.yml'] as $workflow) {
-            $source = $this->source('.github/workflows/' . $workflow);
-            self::assertStringContainsString('docker compose exec -T app php cron/run.php process_provider_import_queue', $source);
-            self::assertStringNotContainsString('sudo /usr/local/sbin/assist-cron process_provider_import_queue', $source);
-        }
+        $release = $this->source('.github/workflows/production-release.yml');
+        self::assertStringContainsString('root-owned `process_provider_import_queue` cron task', $release);
+        self::assertStringNotContainsString('docker compose exec -T app php cron/run.php process_provider_import_queue', $release);
+
+        $maintenance = $this->source('.github/workflows/provider-import-maintenance.yml');
+        self::assertStringContainsString('docker compose exec -T app php cron/run.php process_provider_import_queue', $maintenance);
+        self::assertStringNotContainsString('sudo /usr/local/sbin/assist-cron process_provider_import_queue', $maintenance);
     }
 
     private function source(string $path): string
