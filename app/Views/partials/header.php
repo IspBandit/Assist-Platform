@@ -46,8 +46,8 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
                         <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                     <?php endif; ?>
                 <?php else: ?>
-                <li><a href="<?= e(url('find')) ?>">Find help</a></li>
-                <li><a href="<?= e(url('stays')) ?>">Places to stay</a></li>
+                <li><a data-location-link href="<?= e(url('find')) ?>">Find help</a></li>
+                <li><a data-location-link href="<?= e(url('stays')) ?>">Places to stay</a></li>
                 <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
                 <li><a href="<?= e(url('rules')) ?>">Rules & safety</a></li>
                 <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>

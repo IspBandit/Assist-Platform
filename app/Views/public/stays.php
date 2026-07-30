@@ -25,7 +25,7 @@ $facilityLabels = [
 
 <section class="section">
     <div class="container">
-        <form class="search-card" method="get" action="<?= e(url('stays')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+        <form class="search-card" method="get" action="<?= e(url('stays')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
             <div class="grid grid-4">
                 <div class="form-group mb-0 location-field">
                     <label for="town_search">Town, suburb or postcode</label>

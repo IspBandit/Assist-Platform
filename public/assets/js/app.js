@@ -215,6 +215,16 @@
 
         var dist = town.distance_km != null ? ' (~' + town.distance_km + ' km)' : '';
         setLocationStatus(form, 'Location set: ' + (town.label || town.name) + dist, true);
+        try {
+            sessionStorage.setItem('va-current-location', JSON.stringify({
+                lat: lat,
+                lng: lng,
+                label: town.label || town.name || '',
+                savedAt: Date.now()
+            }));
+        } catch (e) {
+            // Location still works when browser storage is unavailable.
+        }
 
         if (autoSubmit) {
             form.submit();
@@ -339,7 +349,7 @@
             var loc = form.querySelector('input[name="location"]');
             var lat = form.querySelector('input[name="lat"]');
             var empty = (!loc || loc.value.trim() === '') && (!lat || lat.value === '');
-            var trigger = form.querySelector('[data-use-location][data-auto-submit="false"]');
+            var trigger = form.querySelector('[data-use-location]');
             if (!empty || !trigger) { return; }
             window.setTimeout(function () {
                 if (form.getAttribute('data-location-manual') !== '1' && (!loc || loc.value.trim() === '')) {
@@ -348,6 +358,68 @@
             }, 250);
         });
     }
+
+    // Nearby discovery links (Fuel, EV charging, services and stays) inherit
+    // the traveller's location. A typed place always wins over GPS.
+    var locationForLink = function () {
+        var manual = document.querySelector('form[data-location-manual="1"] input[name="location"]');
+        if (manual && manual.value.trim() !== '') {
+            return { location: manual.value.trim() };
+        }
+        try {
+            var cached = JSON.parse(sessionStorage.getItem('va-current-location') || 'null');
+            if (cached && cached.lat && cached.lng && Date.now() - Number(cached.savedAt || 0) < 900000) {
+                return { lat: cached.lat, lng: cached.lng };
+            }
+        } catch (e) {
+            return null;
+        }
+        return null;
+    };
+
+    var navigateWithLocation = function (link, location) {
+        var target = new URL(link.href, window.location.href);
+        if (target.searchParams.has('location') || (target.searchParams.has('lat') && target.searchParams.has('lng'))) {
+            window.location.assign(target.toString());
+            return;
+        }
+        if (location.location) {
+            target.searchParams.delete('lat');
+            target.searchParams.delete('lng');
+            target.searchParams.set('location', location.location);
+        } else {
+            target.searchParams.set('lat', location.lat);
+            target.searchParams.set('lng', location.lng);
+        }
+        window.location.assign(target.toString());
+    };
+
+    document.querySelectorAll('a[data-location-link]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) { return; }
+            var target = new URL(link.href, window.location.href);
+            if (target.searchParams.has('location') || (target.searchParams.has('lat') && target.searchParams.has('lng'))) { return; }
+            event.preventDefault();
+            var known = locationForLink();
+            if (known) {
+                navigateWithLocation(link, known);
+                return;
+            }
+            if (!('geolocation' in navigator)) {
+                window.location.assign(link.href);
+                return;
+            }
+            link.setAttribute('aria-busy', 'true');
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                navigateWithLocation(link, {
+                    lat: pos.coords.latitude.toFixed(6),
+                    lng: pos.coords.longitude.toFixed(6)
+                });
+            }, function () {
+                window.location.assign(link.href);
+            }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+        });
+    });
 
     // Town type-ahead: query the JSON endpoint and, when a town is chosen, fill
     // the linked region (and hidden region id) fields. Progressive enhancement —

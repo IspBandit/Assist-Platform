@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Location-first behaviour across every discovery journey
+
+- Extended optional current-location resolution beyond the homepage to Fuel, EV charging, Places to Stay, the service directory, every service-category page, provider browsing, result refinements and assistance requests.
+- Nearby shortcut links reuse a recent device location and carry coordinates into the destination search instead of opening an unfiltered national page.
+- Preserved the rule that a typed town, suburb or postcode immediately overrides stored or device coordinates.
+- Kept the phone's coordinates as the distance origin for service-category and Places to Stay searches rather than silently replacing them with a town-centre estimate.
+
 ### Clear email campaign sending path
 
 - Added a direct **Email campaigns** item to the admin Growth navigation and a prominent dashboard shortcut.
