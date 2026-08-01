@@ -14,6 +14,7 @@ use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Services\Demand\ActivityTracker;
 use App\Services\Demand\DemandRecorder;
+use App\Services\SeoSchema;
 
 /**
  * Public service-category pages generated from the database.
@@ -57,7 +58,14 @@ final class CategoryController extends Controller
         // Optional area filter (e.g. "Brakes & bearings in Gympie").
         $townId = (int) $request->input('town') ?: null;
         $location = trim((string) $request->input('location', ''));
-        if ($location !== '') {
+        $gpsLat = is_numeric($request->input('lat')) ? (float) $request->input('lat') : null;
+        $gpsLng = is_numeric($request->input('lng')) ? (float) $request->input('lng') : null;
+        if ($gpsLat !== null && ($gpsLat < -90 || $gpsLat > 90)) { $gpsLat = null; }
+        if ($gpsLng !== null && ($gpsLng < -180 || $gpsLng > 180)) { $gpsLng = null; }
+        if ($gpsLat !== null && $gpsLng !== null) {
+            $nearestTown = Town::nearestActive($gpsLat, $gpsLng);
+            $townId = isset($nearestTown['id']) ? (int) $nearestTown['id'] : null;
+        } elseif ($location !== '') {
             $townMatches = Town::searchActive($location, 1);
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
@@ -80,8 +88,8 @@ final class CategoryController extends Controller
         // Reference point for approximate distances (the searched town's centre).
         $trustedOrigin = $selectedTown !== null
             && in_array(($selectedTown['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true);
-        $originLat = $trustedOrigin && $selectedTown['latitude'] !== null ? (float) $selectedTown['latitude'] : null;
-        $originLng = $trustedOrigin && $selectedTown['longitude'] !== null ? (float) $selectedTown['longitude'] : null;
+        $originLat = $gpsLat ?? ($trustedOrigin && $selectedTown['latitude'] !== null ? (float) $selectedTown['latitude'] : null);
+        $originLng = $gpsLng ?? ($trustedOrigin && $selectedTown['longitude'] !== null ? (float) $selectedTown['longitude'] : null);
 
         $matches = [];
         $possible = [];
@@ -117,6 +125,11 @@ final class CategoryController extends Controller
                 : ($titleName . ' — VanAssist'),
             'metaDescription' => $category['seo_description'] ?: $category['short_description'],
             'canonical'       => url('services/' . $category['slug']),
+            'jsonLd'          => SeoSchema::breadcrumbs([
+                ['name'=>'Home','url'=>url('/')],
+                ['name'=>'Services','url'=>url('services')],
+                ['name'=>(string)$category['name'],'url'=>url('services/'.$category['slug'])],
+            ]),
             'category'        => $category,
             'children'        => $children,
             'parent'          => $parent,
@@ -133,6 +146,8 @@ final class CategoryController extends Controller
             'distanceScope'   => $distanceFilter['scope'],
             'distanceSelection' => $distanceSelection,
             'hasOrigin'       => $originLat !== null && $originLng !== null,
+            'lat'             => $gpsLat,
+            'lng'             => $gpsLng,
         ]);
     }
 

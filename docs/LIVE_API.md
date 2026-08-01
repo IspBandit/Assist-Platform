@@ -8,7 +8,7 @@ evidence are recorded.**
 
 - System of record: Assist Platform Enterprise (PHP / MariaDB).
 - External tools (Assist RIC, importers): **HTTPS `/api/v1/admin` only**.
-- Never connect desktop tools to production MariaDB (ADR 0015).
+- Never connect desktop tools to production MariaDB (ADR 0018).
 
 ## Documents
 
@@ -16,9 +16,9 @@ evidence are recorded.**
 | --- | --- |
 | `docs/PHASE1_ADMIN_API_DESIGN.md` | Phase 1 endpoint inventory, auth, lifecycle, migrations, tests |
 | `docs/API.md` | Cross-cutting envelope, pagination and mutation standards |
-| `docs/DECISIONS/0015-admin-api-no-direct-db.md` | No direct DB |
-| `docs/DECISIONS/0016-stays-vs-traveller-facilities.md` | `/stays` vs future traveller facilities |
-| `docs/DECISIONS/0017-ric-as-management-client.md` | Option B |
+| `docs/DECISIONS/0018-admin-api-no-direct-db.md` | No direct DB |
+| `docs/DECISIONS/0019-stays-vs-traveller-facilities.md` | `/stays` vs future traveller facilities |
+| `docs/DECISIONS/0020-ric-as-management-client.md` | Option B |
 | `docs/openapi/admin-v1.yaml` | Contract (added during implementation) |
 
 ## Sibling client

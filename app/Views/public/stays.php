@@ -14,7 +14,7 @@ $facilityLabels = [
     <div class="container">
         <div class="eyebrow">VanAssist stays</div>
         <h1>Getting tired? Find a place to stay.</h1>
-        <p>Search nearby caravan parks, campgrounds, showgrounds and free or low-cost stays. Always confirm access, fees and restrictions before arrival.</p>
+        <p>Search nearby caravan parks, campgrounds, national-park camping, showgrounds, permitted rest areas and free or low-cost caravan stays. Hotels and motels are not included. Always confirm access, fees and restrictions before arrival.</p>
         <ul class="page-trust-list" aria-label="Search information">
             <li>Choose up to 150 km by default</li>
             <li>Unverified listings are identified</li>
@@ -25,7 +25,7 @@ $facilityLabels = [
 
 <section class="section">
     <div class="container">
-        <form class="search-card" method="get" action="<?= e(url('stays')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+        <form class="search-card" method="get" action="<?= e(url('stays')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
             <div class="grid grid-4">
                 <div class="form-group mb-0 location-field">
                     <label for="town_search">Town, suburb or postcode</label>
@@ -53,6 +53,8 @@ $facilityLabels = [
             </div>
             <div class="actions" style="margin-top:1rem"><button class="btn btn-primary btn-lg" type="submit">Find places to stay</button><a class="btn btn-ghost" href="<?= e(url('stays')) ?>">Clear</a></div>
         </form>
+
+        <?php $this->include('partials.listing-accuracy-notice'); ?>
 
         <div class="section-heading" style="margin-top:2rem"><h2><?= $searched ? count($stays) . ' places within a ' . (int) $selectedDistance . ' km radius' : 'Choose where you need to stop' ?></h2><p><?= $hasOrigin ? 'Radius filtering is a straight-line estimate. Use Directions for the current road route and driving distance. Community and operator details can change.' : 'Enter a town, suburb or postcode, or use your current location. VanAssist will show stays within the selected radius.' ?></p></div>
         <?php if ($stays === []): ?>

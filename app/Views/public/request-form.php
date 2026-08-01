@@ -28,7 +28,7 @@ $maxImages = (int) config('uploads.max_request_images', 6);
             </div>
         <?php endif; ?>
 
-        <form method="post" action="<?= e(url('request-assistance')) ?>" enctype="multipart/form-data" class="stack" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+        <form method="post" action="<?= e(url('request-assistance')) ?>" enctype="multipart/form-data" class="stack" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
             <?= csrf_field() ?>
             <?php $this->include('partials.turnstile'); ?>
             <?php if ($park !== null): ?><input type="hidden" name="park" value="<?= e_attr((string) $park['slug']) ?>"><?php endif; ?>

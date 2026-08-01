@@ -86,6 +86,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
 | OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
+| OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
 | OPS-010 | Admin API security, service accounts and cost controls | ready | Tokens, scopes, throttling, MFA scaffolding then MFA gate, paid-connector hard limits; pairs with CORE-011 |
 | OPS-011 | Record lifecycle and Recycle Bin for providers and stays | ready | Soft delete, restore, retention, purge permission, dependency checks, audited bulk actions |
 
@@ -94,8 +95,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | COM-001 | Transactional email transport and sender reputation | in progress | Direct shared-mailbox send/receive passes; brand-neutral templates, application probes and central bounce/complaint suppression implemented; production application-probe acceptance remains |
-| COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
-| COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
+| COM-002 | Consent-aware bulk provider campaign sending | in progress | Canonical brand-category drafts, searchable candidate pool, campaign exclusions, factual-source and marketing-consent boundaries, bounded queue batches, suppression and signed unsubscribe complete; production recipient-count and throughput acceptance remains |
+| COM-003 | Provider launch and audience-growth programme | in progress | Provider conversion plus evidence-backed organisation PR register, segmented message tracks and staged delivery implemented; first monitored live pilots remain |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
 | COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |
 | COM-006 | Verified provider capability credentials | done | Private evidence, expiry, reviewer audit, public labels and explicit no-endorsement controls |
@@ -125,7 +126,7 @@ Phase 0 requested IDs that collided with existing outcomes. Collision-free IDs:
 | DATA-014 Duplicate review/merge | **DATA-002** | Consolidated into existing DATA-002 |
 | VAN-010 / VAN-011 / OPS-010 / OPS-011 | unchanged | No collision |
 
-See `docs/PHASE1_ADMIN_API_DESIGN.md` and ADRs 0015–0017.
+See `docs/PHASE1_ADMIN_API_DESIGN.md` and ADRs 0018–0020.
 
 ## Reconciled experience delivery
 

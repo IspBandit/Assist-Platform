@@ -1,4 +1,4 @@
-# ADR 0015: Admin API is the only external write path to production
+# ADR 0018: Admin API is the only external write path to production
 
 - **Status:** accepted
 - **Date:** 2026-08-01

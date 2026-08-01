@@ -84,7 +84,7 @@ final class SystemController extends Controller
                 'MFA challenge/verify endpoints are scaffolded; TOTP validation returns 501 until OPS-010 ships.',
                 'Search gaps aggregate zero-result rows from provider_searches; empty when analytics is off.',
                 'Set ADMIN_API_MFA_REQUIRED only after full TOTP verification is implemented.',
-                'Standalone traveller facilities are not exposed as /facilities (ADR 0016).',
+                'Standalone traveller facilities are not exposed as /facilities (ADR 0019).',
             ],
         ]);
     }

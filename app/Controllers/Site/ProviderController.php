@@ -13,6 +13,7 @@ use App\Models\Town;
 use App\Services\Demand\DemandRecorder;
 use App\Services\DirectoryPresentation;
 use App\Services\FoundingGraphicService;
+use App\Services\SeoSchema;
 
 final class ProviderController extends Controller
 {
@@ -110,7 +111,8 @@ final class ProviderController extends Controller
         }
 
         $id = (int) $provider['id'];
-        DemandRecorder::recordProfileView($id);
+        $searchId = (int) $request->input('s') ?: null;
+        DemandRecorder::recordProfileView($id, $searchId);
         $runs = [];
         if ($brand->id() === 'vanassist' && Database::tableExists('service_runs')) {
             $runs = Database::select(
@@ -119,12 +121,14 @@ final class ProviderController extends Controller
             );
         }
         $publicSlug = (string) ($provider['brand_slug'] ?? $provider['slug']);
+        $profilePath = $brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug;
 
         return $this->view('public.provider-profile', [
             'title' => ($provider['brand_seo_title'] ?? $provider['seo_title'] ?? null) ?: ($provider['business_name'] . ' — ' . $brand->name()),
             'metaDescription' => ($provider['brand_seo_description'] ?? $provider['seo_description'] ?? null) ?: ('Services from ' . $provider['business_name'] . ' on ' . $brand->name() . '.'),
-            'canonical' => url($brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug),
+            'canonical' => url($profilePath),
             'provider' => $provider,
+            'searchId' => $searchId,
             'services' => $brandScoped ? Provider::brandServices($brand->databaseId(), $id) : Provider::services($id),
             'areas' => Provider::areas($id),
             'licences' => Database::select(
@@ -136,7 +140,14 @@ final class ProviderController extends Controller
                 [$id, $brand->databaseId()]
             ),
             'runs' => $runs,
-            'jsonLd' => $this->providerSchema($provider, $publicSlug),
+            'jsonLd' => [
+                $this->providerSchema($provider, $publicSlug),
+                SeoSchema::breadcrumbs([
+                    ['name'=>'Home','url'=>url('/')],
+                    ['name'=>'Providers','url'=>url('providers')],
+                    ['name'=>(string)$provider['business_name'],'url'=>url($profilePath)],
+                ]),
+            ],
             'promotionAd' => $brand->id() === 'vanassist' ? FoundingGraphicService::deliveredAd($id) : null,
             'brand' => $brand,
             'requestsEnabled' => $brand->moduleEnabled('requests'),

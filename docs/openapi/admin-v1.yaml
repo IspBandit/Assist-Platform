@@ -719,7 +719,7 @@ paths:
     get:
       tags: [Stays]
       operationId: adminStaysIndex
-      summary: List stays (caravan_parks); ADR 0016
+      summary: List stays (caravan_parks); ADR 0019
       security:
         - bearerAuth: []
       parameters:

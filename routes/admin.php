@@ -14,6 +14,10 @@ return static function (Router $router): void {
         'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator,platform-administrator,brand-administrator,editor,support,finance,marketing'],
     ], static function (Router $router): void {
         $router->get('', 'Admin\AdminController@dashboard', 'admin');
+        $router->get('/help', 'Admin\DocumentationController@index', 'admin.documentation.index');
+        $router->get('/help/whats-new', 'Admin\DocumentationController@whatsNew', 'admin.documentation.whats-new');
+        $router->get('/help/{guide}', 'Admin\DocumentationController@guide', 'admin.documentation.guide');
+        $router->get('/help/{guide}/{article}', 'Admin\DocumentationController@article', 'admin.documentation.article');
         $router->get('/control-centre', 'Admin\PlatformController@controlCentre', 'admin.control-centre');
         $router->post('/switch-brand', 'Admin\PlatformController@switchBrand', 'admin.switch-brand');
         $router->get('/brand-builder', 'Admin\PlatformController@brandBuilder', 'admin.brand-builder');
@@ -26,6 +30,12 @@ return static function (Router $router): void {
         $router->post('/data-sources/run', 'Admin\DataSourcesController@run', 'admin.data-sources.run');
         $router->get('/data-sources/review', 'Admin\DataSourcesController@queue', 'admin.data-sources.review');
         $router->post('/data-sources/review', 'Admin\DataSourcesController@review');
+        $router->post('/data-sources/review/bulk', 'Admin\DataSourcesController@bulkReview');
+        $router->post('/data-sources/review/process-eligible', 'Admin\DataSourcesController@processEligibleQueue');
+        $router->post('/data-sources/review/process-server', 'Admin\DataSourcesController@processServerQueue');
+        $router->post('/data-sources/review/resolve-exact', 'Admin\DataSourcesController@resolveExactDuplicates');
+        $router->post('/data-sources/national-route/upload', 'Admin\DataSourcesController@uploadNationalRoute');
+        $router->post('/data-sources/national-route/process', 'Admin\DataSourcesController@processNationalRoute');
         $router->post('/data-sources/schedule', 'Admin\DataSourcesController@saveSchedule', 'admin.data-sources.schedule');
         $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
 
@@ -176,13 +186,26 @@ return static function (Router $router): void {
         $router->get('/notifications/show', 'Admin\NotificationsController@show', 'admin.notifications.show');
         $router->post('/notifications/test', 'Admin\NotificationsController@test');
         $router->post('/notifications/stage', 'Admin\NotificationsController@stage');
+        $router->post('/notifications/auto-continue', 'Admin\NotificationsController@autoContinue');
         $router->post('/notifications/recipient-exclude', 'Admin\NotificationsController@recipientExclude');
         $router->post('/notifications/recipient-restore', 'Admin\NotificationsController@recipientRestore');
         $router->post('/notifications/recipient-include', 'Admin\NotificationsController@recipientInclude');
         $router->post('/notifications/cancel', 'Admin\NotificationsController@cancel');
 
+        // PR and organisation outreach: researched targets remain review-only
+        // until an administrator records role relevance and source evidence.
+        $router->get('/outreach-hub', 'Admin\OutreachHubController@index', 'admin.outreach-hub');
+        $router->get('/outreach-hub/template', 'Admin\OutreachHubController@template');
+        $router->post('/outreach-hub/import', 'Admin\OutreachHubController@import');
+        $router->post('/outreach-hub/review', 'Admin\OutreachHubController@review');
+        $router->post('/outreach-hub/outcome', 'Admin\OutreachHubController@outcome');
+
         // Caravan parks (Phase 7): applications, approval, documents, service-day requests.
         $router->get('/parks', 'Admin\ParksController@index', 'admin.parks');
+        $router->get('/parks/import', 'Admin\ParksController@importQueue', 'admin.parks.import');
+        $router->post('/parks/import/upload', 'Admin\ParksController@importUpload');
+        $router->post('/parks/import/process', 'Admin\ParksController@importProcess');
+        $router->post('/parks/import/review', 'Admin\ParksController@importReview');
         $router->get('/parks/show', 'Admin\ParksController@show', 'admin.parks.show');
         $router->get('/parks/form', 'Admin\ParksController@form');
         $router->post('/parks/save', 'Admin\ParksController@save');

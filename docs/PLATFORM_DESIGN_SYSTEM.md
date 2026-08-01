@@ -35,6 +35,15 @@ tests enforce dimensions, formats and transfer budgets. Above-the-fold heroes
 use `fetchpriority="high"`; below-the-fold editorial images must be lazy-loaded.
 Images never replace a usable text, list, map-fallback or form experience.
 
+VanAssist's travel-companion homepage is an approved art-direction variant of
+that contract. It uses a panoramic 1920 × 800 desktop crop and a portrait
+768 × 1619 mobile crop so the caravan road remains visible beside, rather than
+behind, the live search journey. The compressed WebP files are each below
+180 KB, contain no baked-in copy or interface, and are selected with a native
+`picture` source. The live navy/cobalt headline, search console, bookmark action
+and capability rail remain usable when imagery is unavailable. This variant
+must be acceptance-tested at 1440 × 900 and 390 × 844 before release.
+
 LocalTorque motorsport uses the same art-directed contract. Its hero may
 combine several credible competition disciplines but carries no sanctioning-body
 marks, sponsor liveries or implication that one authority governs every sport.
@@ -169,6 +178,13 @@ column at phone width and may expand to three columns on desktop. One provider
 identity is explained as a reduction in administration, never as automatic or
 irrelevant cross-brand exposure.
 
+Provider workspace navigation groups tasks as Overview, Your listing, Trust,
+Work and Growth. Desktop may show the groups in one contained navigation strip;
+phones use one native disclosure showing the current page and touch-sized
+links. Claim/correction pages use plain language, distinguish public and private
+information, never imply that submission proves ownership, and keep optional
+promotional consent separate and unticked.
+
 ### VanAssist traveller-intent launcher
 
 VanAssist keeps one location-first service form, then exposes repairs, fuel, EV
@@ -180,15 +196,44 @@ featured and unclaimed states precisely and never implies universal provider or
 remote-town verification. Fuel, charging and stay paths still ask for location
 before presenting nearby relevance.
 
+### VanAssist travel-companion identity
+
+The VanAssist public header uses the transparent road wordmark with the exact
+descriptor “FIND. CONNECT. GET ASSISTED.” This horizontal wordmark is separate
+from the small geometric browser-tab mark and must not be substituted with a
+cartoon vehicle, app tile or generic text-only lock-up. The homepage uses a
+deep-navy and cobalt palette over a relevant coastal-road scene; teal or green
+hero washes are not part of this treatment. On phones the wordmark, menu,
+headline, save action and start of the search console remain in the first screen
+without horizontal overflow. Search and installation stay live HTML controls.
+
 ### Enterprise admin shell
 
 The admin shell uses a neutral charcoal navigation surface and raised white
 work surfaces. Brand colour is limited to active/focus accents. The workspace
 selector shows the active brand icon, name and platform context; available
 brands keep server-authorised POST switching. It supports Escape, Home, End and
-arrow-key movement, visible focus and 44px-class touch targets. At 720px and
-below navigation collapses and top-bar actions remain horizontally reachable.
+arrow-key movement, visible focus and 44px-class touch targets. At 1100px and
+below navigation becomes a full-height scrollable drawer so both portrait and
+landscape tablets retain useful working width. The drawer has a touch-dismiss
+scrim, contains keyboard focus while open and leaves the main workspace inert.
+Below 900px secondary top-bar labels become compact touch controls; at 720px
+and below the drawer spans the phone viewport. The page itself must not scroll horizontally. Dense
+review data uses labelled record cards rather than squeezed table columns.
 Motion is restrained and disabled when `prefers-reduced-motion` is requested.
+
+Operational analytics use compact headline measures followed by disclosure-based
+detail. On phones, secondary reports begin collapsed and expanded content is
+bounded to the viewport with internal scrolling. Critical alerts and coverage gaps
+remain visible without opening a disclosure.
+
+The PR & Outreach Hub follows the same compact-admin rule: five headline counts,
+one filter row, an evidence-backed target register and a separate campaign
+pipeline. Desktop may use a contained table. Phones stack the header, import and
+filter controls, keep every action touch-sized and bound the target register to
+an internal vertical/horizontal scroll region rather than forcing the admin page
+outside the viewport. Official website and evidence links remain visible; source,
+role and relevance information must not be hidden behind colour alone.
 
 ## UX change workflow
 
@@ -234,3 +279,29 @@ The VanAssist first screen uses an editorial two-column layout on desktop: the
 value proposition and trust statements sit beside a dedicated search console.
 At 919px and below it becomes a single-column journey, and at phone widths the
 trust chips are removed so the primary search remains concise and unobstructed.
+
+### VanAssist home-screen installation
+
+VanAssist exposes one clearly labelled “Save VanAssist to your phone” action in
+the public footer. Supporting Android browsers use their native install prompt;
+iPhone and iPad users receive short Safari Share → Add to Home Screen steps.
+The control disappears in standalone mode. Installation is optional and never
+blocks search, contact or assistance journeys.
+
+The installed experience uses the dedicated geometric VanAssist lettermark, a
+brand-scoped web manifest and a minimal service worker. The worker may cache
+release-owned public assets only; dynamic pages, searches, provider details,
+accounts and administration are always network-controlled and are never placed
+in an offline cache.
+
+## Living documentation surfaces
+
+Documentation reuses the existing typography, card, form, button, focus and
+responsive tokens. Its shared shell contains a narrow-width scrollable guide
+navigation, labelled search/filter form, result cards, article metadata and
+safe server-rendered Markdown. Operational guides are available only through
+the authenticated admin surface; public help exposes customer/provider guidance
+and release information. Every dashboard layout supplies a contextual Help
+action resolved from the current route. Help remains keyboard reachable,
+readable at 360px, usable without JavaScript and must not expose administrator
+or developer material through public routes.

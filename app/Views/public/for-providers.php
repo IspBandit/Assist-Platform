@@ -6,8 +6,8 @@ $this->extend('layouts.public');
 
 <section class="provider-acquisition-hero" aria-labelledby="provider-acquisition-heading">
     <picture class="provider-acquisition-media">
-        <img src="<?= e(asset('img/hero-providers.jpg')) ?>" width="1536" height="1024"
-             alt="A mobile caravan and RV technician beside a fitted service vehicle"
+        <img src="<?= e(asset('img/provider-rv.webp')) ?>" width="1200" height="400"
+             alt=""
              loading="eager" fetchpriority="high">
     </picture>
     <div class="provider-acquisition-shade" aria-hidden="true"></div>

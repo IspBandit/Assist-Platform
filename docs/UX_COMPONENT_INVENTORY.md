@@ -21,12 +21,13 @@ and remove VanAssist-specific presentation assumptions gradually.
 | --- | --- | --- | --- |
 | Theme injection | `partials/brand-theme.php`, brand registry theme maps | shared | Rename legacy tokens and document semantic aliases |
 | Public shell | `layouts/public.php`, header, footer, SEO partials | shared | Verify all four brands and private-brand behaviour |
-| Admin shell | `layouts/admin.php`, `admin-platform.js` | shared | Enterprise workspace selector implemented; rendered desktop/mobile and assistive-technology acceptance remains release evidence |
+| Admin shell | `layouts/admin.php`, `app.js`, `admin-platform.js` | shared | Enterprise workspace selector plus touch/keyboard tablet drawer implemented; rendered desktop/tablet/mobile and assistive-technology acceptance remains release evidence |
 | Minimal/auth shell | `layouts/minimal.php` | shared | Verify brand sender/support/legal states |
 | Navigation | shared header plus configuration-driven links | shared | Add active/current semantics and overflow tests |
 | Buttons | `.btn` variants and sizes | reusable | Replace brand-colour legacy references with semantic tokens |
 | Cards/grids | `.card`, `.grid-*` | reusable | Document density and interactive-card rules |
 | Hero/search | `.hero`, `.search-card`, variants | reusable pattern | Separate content hero from intent/search hero variants |
+| VanAssist travel-companion hero | `.hero--visual`, `.hero-roadline`, `.hero-capabilities`, `.hero-bookmark` | VanAssist public journey | 1440 × 900 and 390 × 844 acceptance; keep live search and install controls |
 | Provider cards | `partials/provider-result-card.php` | shared domain component | Verify badges, sponsorship labels and brand context |
 | Location controls | `use-location-btn`, distance filter | shared domain component | Document permission-denied and unavailable states |
 | Status badges | verified/confirmed/neutral and related styles | partially shared | Define one semantic status matrix |
@@ -42,6 +43,14 @@ and remove VanAssist-specific presentation assumptions gradually.
 | Provider trust and campaign workspace | `/provider/growth`, `.growth-*` | provider-owned component | Pending-by-default evidence and ads; organic analytics remain separate |
 | Trust, rules and growth control | `/admin/trust-growth`, `.admin-trust-*` | permission-scoped admin component | Source fail-closed queue, evidence review, pricing/relevance approval and alert audit |
 | Website insights | `/admin/demand`, `.insight-*`, `.dashboard-insight-*` | permission- and brand-scoped admin component | Aggregate visits, intent and provider interest; explicit estimated-versus-confirmed language; no anonymous identity disclosure |
+| Controlled provider queue processor | `/admin/data-sources/review`, migration 083 and `process_provider_import_queue` | VanAssist admin data operation | Server-owned resumable work, explicit ready-versus-review counts, claimed-provider, brand-scope, provenance, CSRF, idempotency and no-progress acceptance |
+| Factual directory campaign continuation | `/admin/notifications`, migration 082 and scheduled notification worker | shared campaign operation | Off by default; directory-accuracy only; reviewed-stage, suppression and rate-limit acceptance |
+| Canonical service campaign list | `/admin/notifications`, migration 083 | VanAssist growth operation | Factual and consent-gated drafts for every active brand category; live eligible/held/suppressed/removed counts and recipient controls |
+| PR & outreach hub | `/admin/outreach-hub`, migration 084 | shared growth operation | Mobile-friendly research register; official-source evidence, human eligibility review, role-relevant campaign staging, suppression and outcome tracking |
+| Listing accuracy notice | `partials/listing-accuracy-notice.php` | VanAssist homepage, provider results and Places to stay | Compact desktop/mobile warning, disclaimer link and correction path; never substitutes for record-level status labels |
+| Grouped provider navigation | `partials/provider-nav.php` | Provider workspace | Five task groups on desktop and one accessible disclosure menu on phones; active page remains explicit |
+| Listing-specific claim/correction request | Provider profile and `/for-providers/register?listing={slug}` | Public-to-provider handoff | Existing rate limit and anti-bot gate; authority review before access; onboarding and optional marketing permission separated |
+| Provider acquisition hero | `public/for-providers.php`, `provider-rv.webp` | VanAssist provider acquisition | Neutral unbranded caravan service scene with empty decorative alt; no invented provider name, phone number or implied testimonial |
 
 ### Current token debt
 
@@ -178,3 +187,39 @@ documented and verified. Merely sharing a CSS class does not qualify.
 
 All components collapse to one column at phone widths, preserve visible focus,
 respect reduced motion and use the shared brand tokens and premium symbol family.
+
+## Living documentation components
+
+- `documentation-navigation`: shared guide index and What's new entry point.
+- `documentation-search`: labelled query plus audience, brand, module and
+  version filters with server-rendered results and empty state.
+- `documentation-article`: repository-backed article body with audience,
+  version, update date and owner metadata.
+- `context-help`: route-resolved Help action in admin, customer, provider and
+  park dashboard layouts.
+
+## VanAssist mobile search and result map
+
+- The 390px first screen uses the compact road wordmark, a navy/white
+  daylight-readable intro, immediate service and location inputs, explicit
+  current-location action and four touch-safe traveller shortcuts. It does not
+  reuse a compressed desktop composition or a green/teal hero wash.
+- The result map is progressive enhancement over the canonical provider list.
+  It maps only providers returned by the current server-side search, numbers
+  pins in list order, distinguishes direct and related-service results with
+  words as well as colour, and marks the searched origin separately.
+- A pin opens the exact provider summary with profile and directions actions;
+  focusing or selecting its result card identifies the corresponding pin.
+  Missing coordinates never remove a provider from the list.
+- Phones default to a clean compact list and expose Map through a two-option
+  segmented control. Featured results are explicitly separate, organic direct
+  results rank verified then nearest, related services remain separate, and
+  Places to stay stays visible as a touch-safe shortcut using search context.
+- Map tiles come from OpenStreetMap with visible attribution. Failure of script
+  or external tiles leaves search, provider cards and directions usable.
+- Once Map is explicitly selected, its canvas owns drag and two-pointer pinch
+  gestures instead of scaling the surrounding page. Zoom in, zoom out and fit
+  controls remain keyboard/touch accessible; arrow keys pan and `0`/`F` fits.
+  Provider summaries can collapse or move so they do not permanently cover
+  pins. Non-essential provenance and distance guidance follows the results
+  rather than interrupting the search/list/map task flow.

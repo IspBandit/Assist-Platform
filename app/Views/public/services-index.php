@@ -15,10 +15,10 @@ $this->extend('layouts.public');
         <p class="muted service-directory-intro">Browse repairs, roadside help, travel essentials, fuel, charging, inspections and places for travellers to stop. Choose a category, then add a town or use your current location.</p>
 
         <nav class="service-intent-grid" aria-label="Popular service searches">
-            <a href="<?= e(url('find')) ?>"><strong>Find any service</strong><span>Search the whole provider directory</span><b aria-hidden="true">&rarr;</b></a>
-            <a href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><strong>Fuel stations</strong><span>Fuel and practical travel stops</span><b aria-hidden="true">&rarr;</b></a>
-            <a href="<?= e(url('find?category=ev-charging')) ?>"><strong>EV charging</strong><span>Charging options for the next leg</span><b aria-hidden="true">&rarr;</b></a>
-            <a href="<?= e(url('stays')) ?>"><strong>Places to stay</strong><span>Search within your chosen radius</span><b aria-hidden="true">&rarr;</b></a>
+            <a data-location-link href="<?= e(url('find')) ?>"><strong>Find any service</strong><span>Search the whole provider directory</span><b aria-hidden="true">&rarr;</b></a>
+            <a data-location-link href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><strong>Fuel stations</strong><span>Fuel and practical travel stops</span><b aria-hidden="true">&rarr;</b></a>
+            <a data-location-link href="<?= e(url('find?category=ev-charging')) ?>"><strong>EV charging</strong><span>Charging options for the next leg</span><b aria-hidden="true">&rarr;</b></a>
+            <a data-location-link href="<?= e(url('stays')) ?>"><strong>Places to stay</strong><span>Search within your chosen radius</span><b aria-hidden="true">&rarr;</b></a>
         </nav>
 
         <?php if ($categories === []): ?>
@@ -29,7 +29,7 @@ $this->extend('layouts.public');
                     <h2 id="service-group-<?= e_attr(md5($groupName)) ?>"><?= $this->e($groupName) ?></h2>
                     <div class="service-directory-grid">
                         <?php foreach ($groupCategories as $cat): ?>
-                            <a class="card service-directory-card" href="<?= e(url('services/' . $cat['slug'])) ?>">
+                            <a class="card service-directory-card" data-location-link href="<?= e(url('services/' . $cat['slug'])) ?>">
                                 <h3><?= $this->e((string) $cat['name']) ?></h3>
                                 <?php if (!empty($cat['short_description'])): ?>
                                     <p class="muted mb-0"><?= $this->e((string) $cat['short_description']) ?></p>

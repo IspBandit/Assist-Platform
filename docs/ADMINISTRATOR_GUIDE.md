@@ -43,10 +43,13 @@ business or reviewed by an administrator before a verified badge is granted.
 
 ## Provider email campaigns
 
-Open **Growth → Email campaigns**. VanAssist prepares a separate draft for each
-active service category that has at least one provider email. Each draft uses
-relevant human copy and a compressed service-family header, and targets only
-providers in that category. Review the copy and recipient summary before use.
+Open **Growth → Growth & outreach**, then choose **Email campaigns**. VanAssist prepares two clearly
+separated drafts for each active service category that has at least one provider
+email: a fixed factual listing-accuracy notice and a consent-gated marketing
+campaign. Each remains a draft until an administrator reviews its audience and
+uses the staged delivery controls. Marketing drafts use relevant human copy and
+a compressed service-family header. Review the copy and recipient summary before
+use.
 
 The summary deliberately separates all active providers with email from those
 with documented marketing consent. Addresses held for review cannot be queued.
@@ -64,6 +67,54 @@ For every campaign, send an internal test, inspect it in the mailbox, run the
 25-provider pilot and review bounces, replies, complaints and opt-outs before
 using the 50/day and 100/day stages. Do not treat a public business email as
 consent and do not edit database consent fields merely to increase reach.
+
+## PR and organisation outreach
+
+Open **Growth → Growth & outreach** to manage caravan/RV clubs, federations,
+industry bodies, manufacturers, dealer and rental networks, park groups,
+tourism organisations, 4WD/touring associations and publications. Research is
+imported with an official source URL, date checked, published role, publication
+context and relevance reason. Importing an address never makes it sendable.
+The initial official-source research set is loaded idempotently by the release
+migration command, so deployment does not leave contacts in a local file waiting
+for an operator upload.
+
+Review the official page and destination restrictions before marking a contact
+eligible. Personal or ambiguous addresses, stale sources and any no-unsolicited
+warning remain held. Prefer one peak-body approach before writing to every
+affiliated club. Never request or upload member, customer or subscriber lists.
+
+Organisation campaigns select one target type and matching copy: club member
+resource, industry/data collaboration, fleet/dealer owner support, tourism
+visitor resource or earned editorial pitch. Use the normal internal test,
+maximum-25 pilot and reviewed daily stages. There is no automatic continuation.
+The platform retains the organisation contact and evidence used for each queued
+recipient and honours marketing/all suppression. Record replies, interest,
+sharing, declines, bounces and opt-outs in the hub; an opted-out outcome adds
+marketing suppression and cancels applicable pending mail.
+
+The hub distinguishes an address accepted into the application queue from a message accepted by the configured outbound mail transport. Its append-only history records queue, sent, failure, suppression and manual response/outcome events. A campaign marked complete means the current reviewed audience was queued; it is not a delivery or mailbox-read claim.
+
+## Paid caravan-stay discovery review
+
+Open **Customer operations → Stay discovery review** in the VanAssist workspace
+and upload the generated JSONL discovery pack. The pack is screened in bounded
+batches into a private queue. It never creates public stays automatically.
+Before creating a private draft, open and retain a current independent operator
+or authority page. Free camps, rest areas, showgrounds, council camps and
+national parks require an Australian government or council URL because lawful
+overnight access, permits and restrictions can change. Review the resulting
+draft in **Places to stay** before separately enabling its public page.
+
+## Search discovery
+
+Open **Content → SEO**. Keep indexing enabled for the public VanAssist launch,
+maintain an accurate default description and social image, and paste the token
+values supplied by Google Search Console and Bing Webmaster Tools. After each is
+verified, submit the displayed sitemap URL in both webmaster consoles. The
+platform emits self-canonical URLs, brand-aware public provider URLs, robots
+directives, Open Graph/Twitter metadata and structured data; search engines
+still control crawl timing and rankings.
 
 ## Sensitive changes
 

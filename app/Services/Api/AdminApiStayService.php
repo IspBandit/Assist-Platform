@@ -9,7 +9,7 @@ use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
 
 /**
- * Read-only Admin API access to stays (`caravan_parks`, ADR 0016).
+ * Read-only Admin API access to stays (`caravan_parks`, ADR 0019).
  */
 final class AdminApiStayService
 {

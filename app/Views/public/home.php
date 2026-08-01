@@ -24,10 +24,8 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
 
 <section class="hero hero--visual">
     <picture class="hero-media" aria-hidden="true">
-        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/vanassist-hero-mobile.avif')) ?>">
-        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/vanassist-hero-mobile.webp')) ?>">
-        <source type="image/avif" srcset="<?= e(asset('img/vanassist-hero-desktop.avif')) ?>">
-        <img src="<?= e(asset('img/vanassist-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/vanassist-coastal-hero-mobile-v1.webp')) ?>">
+        <img src="<?= e(asset('img/vanassist-coastal-hero-desktop-v1.webp')) ?>" width="1920" height="800" alt="" fetchpriority="high">
     </picture>
     <div class="hero-media-shade" aria-hidden="true"></div>
     <div class="container">
@@ -37,8 +35,14 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                     Right across regional Australia
                 </span>
-                <h1>Caravan help, <span class="accent">wherever you travel.</span></h1>
-                <p class="lead">Find repairs, mobile help, fuel, EV charging and practical places to stop across Australia—all from one location-first search.</p>
+                <h1><span class="hero-title-primary">Your travel</span> <span class="accent">companion.</span></h1>
+                <p class="hero-roadline">Wherever the road takes you.</p>
+                <p class="lead">Find trusted caravan, motorhome and RV services, places to stay, fuel and local help anywhere in Australia.</p>
+
+                <button class="hero-bookmark" type="button" data-install-app>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>
+                    Save VanAssist before you go
+                </button>
 
                 <ul class="hero-trust">
                     <li>Claimed and verified status shown clearly</li>
@@ -48,10 +52,16 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
             </div>
 
             <div class="hero-search-panel">
-                <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+                <div class="mobile-hero-intro">
+                    <span>Right across regional Australia</span>
+                    <h1>Your travel <strong>companion.</strong></h1>
+                    <p>Nearby services, fuel, stays and practical help. Search before you set off or while safely stopped.</p>
+                    <button type="button" data-install-app>Save VanAssist to your phone</button>
+                </div>
+                <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                        What do you need near you?
+                        Find help for the road ahead
                     </div>
                     <div class="grid grid-2 home-search-primary">
                         <div class="form-group mb-0">
@@ -73,7 +83,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                             <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
                             <input type="hidden" name="lat" value="">
                             <input type="hidden" name="lng" value="">
-                            <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
+                            <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => 'false']); ?>
                             <p class="location-status muted" role="status" aria-live="polite" hidden></p>
                         </div>
                     </div>
@@ -95,21 +105,38 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                             ]); ?>
                         </div>
                     </details>
-                    <div class="btn-row" style="margin-top:1rem">
+                    <div class="btn-row home-search-actions">
                         <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary btn-lg']); ?>
                         <button type="submit" class="btn btn-primary btn-lg">Show nearby help</button>
                         <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
                 </form>
+                <nav class="mobile-travel-shortcuts" aria-label="Traveller shortcuts">
+                    <a data-location-link href="<?= e(url('find')) ?>"><strong>Services</strong><span>Repairs &amp; help</span></a>
+                    <a data-location-link href="<?= e(url('stays')) ?>"><strong>Stays</strong><span>Caravan stops</span></a>
+                    <a data-location-link href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><strong>Fuel</strong><span>Servos nearby</span></a>
+                    <a href="<?= e(url('services')) ?>"><strong>Essentials</strong><span>Browse all</span></a>
+                </nav>
             </div>
 
         </div>
+
+        <ul class="hero-capabilities" aria-label="VanAssist travel coverage">
+            <li><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.4 5.4l-6.6 6.6a2.1 2.1 0 0 0 3 3l6.6-6.6a4.2 4.2 0 0 1 5.4-5.4l-3 3"/></svg></span><strong>Trusted services</strong><small>Repairs and mobile help</small></li>
+            <li><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-7h18v7M5 11V7h6v4M3 18v3m18-3v3M3 15h18"/></svg></span><strong>Places to stay</strong><small>Caravan-friendly stops</small></li>
+            <li><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M4 10h10M7 6h4M14 8h2l3 3v7a2 2 0 0 0 2 2"/></svg></span><strong>Fuel &amp; essentials</strong><small>Useful stops nearby</small></li>
+            <li><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><strong>Australia wide</strong><small>Location-first search</small></li>
+        </ul>
     </div>
 
     <div class="hero-wave" aria-hidden="true">
         <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 42 C 240 84 480 4 720 26 C 960 48 1200 82 1440 40 L1440 80 L0 80 Z" fill="#fbf8f1"/></svg>
     </div>
 </section>
+
+<div class="container listing-accuracy-notice-wrap">
+    <?php $this->include('partials.listing-accuracy-notice'); ?>
+</div>
 
 <section class="evidence-ribbon" aria-label="Current VanAssist directory evidence">
     <div class="container evidence-ribbon-grid">
@@ -131,28 +158,27 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
             <p>Each search remains free to browse. Location helps VanAssist show useful nearby results instead of a national list.</p>
         </div>
         <div class="journey-launcher-grid">
-            <a class="journey-launcher-card" href="<?= e(url('find')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('find')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">01</span>
                 <span><strong>Repairs &amp; mobile help</strong><small>Caravan, RV, vehicle and roadside services</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
-            <a class="journey-launcher-card" href="<?= e(url('find?category=fuel-and-travel-stops')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('find?category=fuel-and-travel-stops')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">02</span>
                 <span><strong>Fuel &amp; travel stops</strong><small>Find fuel stations for the next leg</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
-            <a class="journey-launcher-card" href="<?= e(url('find?category=ev-charging')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('find?category=ev-charging')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">03</span>
                 <span><strong>EV charging</strong><small>Locate charging options along your journey</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
-            <a class="journey-launcher-card" href="<?= e(url('stays')) ?>">
+            <a class="journey-launcher-card" data-location-link href="<?= e(url('stays')) ?>">
                 <span class="journey-launcher-number" aria-hidden="true">04</span>
                 <span><strong>Places to stay</strong><small>Parks, campgrounds, showgrounds and low-cost stops</small></span>
                 <b aria-hidden="true">&rarr;</b>
             </a>
         </div>
-        <p class="journey-trust-note"><strong>Know what you are viewing.</strong> VanAssist distinguishes claimed, verified, featured and unclaimed listings. Always confirm current contact details, access, facilities and availability before travelling.</p>
     </div>
 </section>
 
@@ -192,7 +218,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
 <section class="section section-sand">
     <div class="container"><div class="product-cta">
         <div><div class="eyebrow">Plan a safe stop</div><h2>Getting tired? Find a place to stay.</h2><p>Use your location or search a town for caravan parks, campgrounds, showgrounds and free or low-cost stays nearby.</p></div>
-        <a class="btn btn-primary btn-lg" href="<?= e(url('stays')) ?>">Find a stay near me</a>
+                    <a class="btn btn-primary btn-lg" data-location-link href="<?= e(url('stays')) ?>">Find a stay near me</a>
     </div></div>
 </section>
 
@@ -270,7 +296,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
         <h2>Popular service categories</h2>
         <div class="btn-row">
             <?php foreach ($popularCategories as $cat): ?>
-                <a class="btn btn-ghost" href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
+                    <a class="btn btn-ghost" data-location-link href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
             <?php endforeach; ?>
         </div>
     </div>

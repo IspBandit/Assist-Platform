@@ -39,3 +39,73 @@
     window.location.reload();
   }, seconds * 1000);
 })();
+
+(() => {
+  const form = document.querySelector('form[data-auto-submit]');
+  if (!form) return;
+  const delay = Math.max(500, Number(form.dataset.autoSubmit || 1200));
+  window.setTimeout(() => {
+    if (document.visibilityState === 'visible') form.requestSubmit();
+  }, delay);
+})();
+
+(() => {
+  if (!window.matchMedia('(max-width: 720px)').matches) return;
+  document.querySelectorAll('details[data-mobile-collapse]').forEach((panel) => {
+    panel.removeAttribute('open');
+  });
+})();
+
+(() => {
+  const writeClipboard = async (value) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(value);
+      return;
+    }
+    const fallback = document.createElement('textarea');
+    fallback.value = value;
+    fallback.setAttribute('readonly', '');
+    fallback.style.position = 'fixed';
+    fallback.style.opacity = '0';
+    document.body.appendChild(fallback);
+    fallback.select();
+    document.execCommand('copy');
+    fallback.remove();
+  };
+
+  document.querySelectorAll('[data-copy-target]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const target = document.querySelector(button.dataset.copyTarget || '');
+      if (!target) return;
+      const value = 'value' in target ? target.value : target.textContent;
+      const status = button.closest('.card')?.querySelector('[data-copy-status]');
+      try {
+        await writeClipboard(String(value || ''));
+        if (status) status.textContent = 'Copied.';
+      } catch (error) {
+        if (status) status.textContent = 'Copy failed. Select the text and copy it manually.';
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-native-share]').forEach((button) => {
+    if (!navigator.share) {
+      button.hidden = true;
+      return;
+    }
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.share({
+          title: button.dataset.shareTitle || document.title,
+          text: button.dataset.shareText || '',
+          url: button.dataset.shareUrl || window.location.href,
+        });
+      } catch (error) {
+        if (error && error.name !== 'AbortError') {
+          const status = button.closest('.card')?.querySelector('[data-copy-status]');
+          if (status) status.textContent = 'Sharing was unavailable. Copy the message instead.';
+        }
+      }
+    });
+  });
+})();

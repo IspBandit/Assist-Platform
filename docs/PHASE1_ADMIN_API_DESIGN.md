@@ -2,15 +2,15 @@
 
 **Status:** design complete — implementation may begin in small increments after
 owner review of this package.  
-**Architecture:** Option B (ADR 0015, 0017).  
+**Architecture:** Option B (ADR 0018, 0020).  
 **Backlog:** CORE-011, OPS-010, OPS-011, DATA-011, DATA-014 (plus links to
 DATA-001, DATA-002, DATA-006, VAN-002, VAN-010).
 
 Related ADRs:
 
-- [0015 — Admin API is the only external write path](DECISIONS/0015-admin-api-no-direct-db.md)
-- [0016 — Stays vs traveller facilities](DECISIONS/0016-stays-vs-traveller-facilities.md)
-- [0017 — RIC as initial local management client](DECISIONS/0017-ric-as-management-client.md)
+- [0018 — Admin API is the only external write path](DECISIONS/0018-admin-api-no-direct-db.md)
+- [0019 — Stays vs traveller facilities](DECISIONS/0019-stays-vs-traveller-facilities.md)
+- [0020 — RIC as initial local management client](DECISIONS/0020-ric-as-management-client.md)
 
 This document is the pre-implementation gate for Phase 1. It does **not**
 authorise production deployment.
@@ -23,9 +23,9 @@ Accepted (see files above). Summary:
 
 | ADR | Decision |
 | --- | --- |
-| 0015 | No direct production DB from RIC/importers/AI; only `/api/v1/admin` |
-| 0016 | Phase 1 uses `/stays` (`caravan_parks`); do not overload parks for toilets/dump points; narrow `traveller_facilities` later |
-| 0017 | Extend Assist RIC; no new Tauri/React/FastAPI app or third staging DB |
+| 0018 | No direct production DB from RIC/importers/AI; only `/api/v1/admin` |
+| 0019 | Phase 1 uses `/stays` (`caravan_parks`); do not overload parks for toilets/dump points; narrow `traveller_facilities` later |
+| 0020 | Extend Assist RIC; no new Tauri/React/FastAPI app or third staging DB |
 
 Publication policy (owner-confirmed): web research, AI-only, and community
 submissions never auto-publish; only explicitly documented
@@ -102,7 +102,7 @@ source, geo bounding box / town / state, field selection.
 ### 2.5 Stays (caravan_parks)
 
 Same lifecycle shape under `/stays` and `/stays/{id}/…`.  
-**Not** `/facilities` in Phase 1 (ADR 0016).
+**Not** `/facilities` in Phase 1 (ADR 0019).
 
 ### 2.6 Draft / import submission (RIC)
 
@@ -401,14 +401,14 @@ current max **079**):
 
 | Migration | Purpose |
 | --- | --- |
-| `080_admin_api_credentials.sql` | clients, access/refresh tokens, throttle, security events |
-| `081_admin_api_mfa_scaffold.sql` | `user_mfa_methods` (unused until MFA enabled) |
+| `085_admin_api_credentials.sql` | clients, access/refresh tokens, throttle, security events |
+| `086_admin_api_mfa_scaffold.sql` | `user_mfa_methods` (unused until MFA enabled) |
 | `082_entity_lifecycle_recycle.sql` | lifecycle columns, delete reason/by/purge_after on providers + caravan_parks |
 | `083_entity_source_links.sql` | canonical source link table + backfill from known columns |
 | `084_admin_api_idempotency.sql` | idempotency key store for bulk/create |
 | `085_admin_api_seed_permissions.sql` | permission slugs for API scopes if needed |
 
-No Phase 1 migration for `traveller_facilities` (ADR 0016).
+No Phase 1 migration for `traveller_facilities` (ADR 0019).
 
 ---
 
@@ -436,7 +436,7 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 | `docs/LIVE_API.md` | Operator/developer reference |
 | `docs/API.md` | Point at live admin v1 status |
 | `docs/START_HERE.md` | Link RIC + Phase 1 design |
-| `docs/ARCHITECTURE_DECISION_RECORDS.md` | Index 0015–0017 |
+| `docs/ARCHITECTURE_DECISION_RECORDS.md` | Index 0018–0020 |
 | `docs/PRODUCT_BACKLOG.md` | Done in design pass |
 | `.env.example` | `ADMIN_API_*` flags, token TTLs, restricted mode |
 
@@ -521,7 +521,7 @@ Phase 1 live API foundation is **complete** except enabling `ADMIN_API_MFA_REQUI
 | GET | `/api/v1/admin/auth/sessions` | Active refresh families for actor |
 | DELETE | `/api/v1/admin/auth/sessions/{id}` | Revoke session family |
 
-Migrations `080_admin_api_credentials.sql` and `081_admin_api_mfa_scaffold.sql`.
+Migrations `085_admin_api_credentials.sql` and `086_admin_api_mfa_scaffold.sql`.
 Flag `ADMIN_API_ENABLED=false` by default. Restricted mode defaults on.
 Errors use `{error:{code,message,request_id}}`. See `docs/openapi/admin-v1.yaml`.
 
@@ -606,7 +606,7 @@ Purge reasons are stored in audit only (no recycle metadata migration).
 | POST | `/imports/{id}/validate` | `imports:write` | Validates payloads; sets item statuses |
 | POST | `/imports/{id}/stage` | `imports:write` | Creates `api_drafts` from valid items |
 
-Migration `082_admin_api_drafts_imports.sql` adds `api_drafts`, `api_import_jobs`,
+Migration `087_admin_api_drafts_imports.sql` adds `api_drafts`, `api_import_jobs`,
 `api_import_job_items`, `api_idempotency_keys`. Service accounts receive
 `drafts:write` and `imports:write` by default; `drafts:approve` is human-elevated.
 

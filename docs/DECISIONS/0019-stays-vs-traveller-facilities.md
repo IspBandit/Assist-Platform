@@ -1,4 +1,4 @@
-# ADR 0016: Stays vs traveller facilities
+# ADR 0019: Stays vs traveller facilities
 
 - **Status:** accepted
 - **Date:** 2026-08-01

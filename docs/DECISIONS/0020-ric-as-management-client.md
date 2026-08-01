@@ -1,4 +1,4 @@
-# ADR 0017: Assist RIC as initial local management client (Option B)
+# ADR 0020: Assist RIC as initial local management client (Option B)
 
 - **Status:** accepted
 - **Date:** 2026-08-01

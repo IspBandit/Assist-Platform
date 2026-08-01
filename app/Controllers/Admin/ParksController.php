@@ -11,8 +11,10 @@ use App\Core\Response;
 use App\Models\CaravanPark;
 use App\Models\User;
 use App\Services\AuditLog;
+use App\Services\CaravanStayImportService;
 use App\Services\EmailQueue;
 use App\Services\FileStorage;
+use Throwable;
 
 /**
  * Admin management of caravan park partners: review applications, approve/reject/
@@ -45,6 +47,78 @@ final class ParksController extends Controller
             'search'   => $search,
             'statuses' => self::STATUSES,
         ]);
+    }
+
+    public function importQueue(Request $request): Response
+    {
+        $this->requireStayImportAccess();
+        $brandId=current_brand()->databaseId();
+        $filters=[
+            'status'=>(string)$request->query('status','pending'),
+            'stay_type'=>(string)$request->query('stay_type',''),
+            'state'=>(string)$request->query('state',''),
+            'duplicate'=>(string)$request->query('duplicate',''),
+            'q'=>(string)$request->query('q',''),
+            'page'=>(int)$request->query('page',1),
+        ];
+        $service=new CaravanStayImportService();
+        $queue=$service->queue($brandId,$filters);
+        $jobs=$service->recentJobs($brandId);
+        $jobId=(int)$request->query('job',0);
+        $selectedJob=null;
+        foreach($jobs as $job)if((int)$job['id']===$jobId)$selectedJob=$job;
+        return $this->view('admin.parks.import',[
+            'title'=>'Stay discovery review',
+            'candidates'=>$queue['rows'],'total'=>$queue['total'],'page'=>$queue['page'],'perPage'=>$queue['perPage'],
+            'summary'=>$queue['summary'],'filters'=>$filters,'jobs'=>$jobs,'selectedJob'=>$selectedJob,
+            'stayTypes'=>['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','national_park'=>'National park camping','showground'=>'Showground','rest_area'=>'Permitted overnight rest area','council_camp'=>'Council camp','farm_stay'=>'Farm stay','station_stay'=>'Station stay','other'=>'Other'],
+        ]);
+    }
+
+    public function importUpload(Request $request): Response
+    {
+        $this->requireStayImportAccess();
+        try {
+            $jobId=(new CaravanStayImportService())->stageUpload($request->file('discovery_file')??[],current_brand()->databaseId(),(int)auth()->id());
+            return $this->redirectWith('/admin/parks/import?job='.$jobId,'success','Stay discovery file staged privately. Start screening to populate the review queue.');
+        } catch(Throwable $exception) {
+            return $this->redirectWith('/admin/parks/import','error',$exception->getMessage());
+        }
+    }
+
+    public function importProcess(Request $request): Response
+    {
+        $this->requireStayImportAccess();
+        $jobId=(int)$request->input('job_id');
+        try {
+            $result=(new CaravanStayImportService())->processJob($jobId,current_brand()->databaseId(),500);
+            $message=$result['done']
+                ? number_format($result['total_processed']).' rows screened; review can begin.'
+                : number_format($result['total_processed']).' rows screened so far. Continue with the next safe batch.';
+            return $this->redirectWith('/admin/parks/import?job='.$jobId,'success',$message);
+        } catch(Throwable $exception) {
+            return $this->redirectWith('/admin/parks/import?job='.$jobId,'error',$exception->getMessage());
+        }
+    }
+
+    public function importReview(Request $request): Response
+    {
+        $this->requireStayImportAccess();
+        $returnTo=$this->importReturnTo((string)$request->input('return_to',''));
+        try {
+            $decision=(string)$request->input('decision');
+            $parkId=(new CaravanStayImportService())->review(
+                (int)$request->input('candidate_id'),current_brand()->databaseId(),$decision,
+                (int)$request->input('park_id')?:null,(int)auth()->id(),$request->input('retention_confirmed')==='1',
+                (string)$request->input('evidence_url',''),(string)$request->input('review_notes','')
+            );
+            $message=$parkId>0
+                ? ($decision==='approve'?'A private draft stay listing was created for final checking.':'The discovery record was linked to the existing stay listing.')
+                : match($decision){'hold'=>'Candidate placed on hold.','restore'=>'Candidate returned to pending.','reject'=>'Candidate rejected.',default=>'Candidate updated.'};
+            return $this->redirectWith($returnTo,'success',$message);
+        } catch(Throwable $exception) {
+            return $this->redirectWith($returnTo,'error',$exception->getMessage());
+        }
     }
 
     public function show(Request $request): Response
@@ -107,7 +181,7 @@ final class ParksController extends Controller
                 trim((string) $request->input('website')) ?: null,
                 trim((string) $request->input('booking_url')) ?: null,
                 (int) $request->input('number_of_sites') ?: null,
-                in_array($request->input('stay_type'), ['caravan_park','campground','free_camp','showground','rest_area','farm_stay','other'], true) ? $request->input('stay_type') : 'caravan_park',
+                in_array($request->input('stay_type'), ['caravan_park','campground','free_camp','national_park','showground','rest_area','council_camp','farm_stay','station_stay','other'], true) ? $request->input('stay_type') : 'caravan_park',
                 in_array($request->input('price_type'), ['free','donation','low_cost','paid','unknown'], true) ? $request->input('price_type') : 'unknown',
                 in_array($request->input('verification_type'), ['unverified','community','authority','operator'], true) ? $request->input('verification_type') : 'unverified',
                 in_array($request->input('listing_plan'), ['free','verified','premium','featured'], true) ? $request->input('listing_plan') : 'free',
@@ -229,5 +303,19 @@ final class ParksController extends Controller
             $this->abort(404, 'Park not found.');
         }
         return $park;
+    }
+
+    private function requireStayImportAccess(): void
+    {
+        $this->requirePermission('parks.manage');
+        if(current_brand()->id()!=='vanassist')$this->abort(404);
+        if(!auth()->isSuperAdmin()&&!auth()->hasAnyRole('administrator','platform-administrator'))$this->abort(403);
+    }
+
+    private function importReturnTo(string $value): string
+    {
+        return preg_match('#^/admin/parks/import(?:\?[A-Za-z0-9_=&%+.-]*)?$#',$value)===1
+            ? $value
+            : '/admin/parks/import';
     }
 }

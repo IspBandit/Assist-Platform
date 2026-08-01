@@ -7,8 +7,12 @@
 
 # Composer
 /vendor/
+/.vendor-local/
 /.phpunit.cache/
 /.phpstan.cache/
+
+# Browser acceptance dependencies
+/node_modules/
 
 # Installation lock
 /storage/installed.lock

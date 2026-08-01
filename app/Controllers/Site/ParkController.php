@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Helpers\Geo;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
+use App\Services\SeoSchema;
 use App\Validation\Validator;
 
 /**
@@ -29,9 +30,12 @@ final class ParkController extends Controller
         'caravan_park' => 'Caravan park',
         'campground' => 'Campground',
         'free_camp' => 'Free camp',
+        'national_park' => 'National park camping',
         'showground' => 'Showground',
-        'rest_area' => 'Rest area',
+        'rest_area' => 'Permitted overnight rest area',
+        'council_camp' => 'Council camp',
         'farm_stay' => 'Farm stay',
+        'station_stay' => 'Station stay',
         'other' => 'Other stay',
     ];
 
@@ -63,7 +67,11 @@ final class ParkController extends Controller
         if ($lng !== null && ($lng < -180 || $lng > 180)) {
             $lng = null;
         }
-        if ($townId !== null) {
+        if ($lat !== null && $lng !== null) {
+            // Device coordinates are the accurate origin. The nearest-town
+            // label remains useful, but must not replace the phone's position.
+            $townId = null;
+        } elseif ($townId !== null) {
             $lat = null;
             $lng = null;
         }
@@ -76,7 +84,7 @@ final class ParkController extends Controller
 
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',
-            'metaDescription' => 'Find caravan parks, campgrounds and free or low-cost stays near your town or current location across Australia.',
+            'metaDescription' => 'Find caravan parks, campgrounds, national-park camping and free or low-cost caravan stays near your location across Australia.',
             'canonical' => url('stays'),
             'stays' => $hasOrigin
                 ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm)
@@ -272,6 +280,11 @@ final class ParkController extends Controller
             'title'           => ($park['seo_title'] ?: $park['name']) . ' — VanAssist',
             'metaDescription' => $park['seo_description'] ?: ('Find caravan and RV service near ' . $park['name'] . '.'),
             'canonical'       => url('caravan-parks/' . $park['slug']),
+            'jsonLd'          => SeoSchema::breadcrumbs([
+                ['name'=>'Home','url'=>url('/')],
+                ['name'=>'Places to stay','url'=>url('stays')],
+                ['name'=>(string)$park['name'],'url'=>url('caravan-parks/'.$park['slug'])],
+            ]),
             'park'            => $park,
             'runs'            => CaravanPark::nearbyRuns($park['town_id'] ? (int) $park['town_id'] : null, $park['region_id'] ? (int) $park['region_id'] : null),
             'isManaged'       => (int) Database::scalar('SELECT COUNT(*) FROM caravan_park_users WHERE park_id = ?', [$id]) > 0,

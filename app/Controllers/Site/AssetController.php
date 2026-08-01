@@ -47,6 +47,25 @@ final class AssetController extends Controller
     /** @var list<string> */
     private const BRANDS = ['vanassist', 'towsmart', 'trailerwise', 'localtorque'];
 
+    public function manifest(Request $request): Response
+    {
+        return $this->serveVanAssistFile(
+            'manifest.webmanifest',
+            'application/manifest+json; charset=UTF-8',
+            'public, max-age=3600, must-revalidate'
+        );
+    }
+
+    public function serviceWorker(Request $request): Response
+    {
+        return $this->serveVanAssistFile(
+            'service-worker.js',
+            'application/javascript; charset=UTF-8',
+            'no-cache, no-store, must-revalidate',
+            ['Service-Worker-Allowed' => '/']
+        );
+    }
+
     public function file(Request $request): Response
     {
         $group = (string) $request->route('group');
@@ -62,6 +81,26 @@ final class AssetController extends Controller
         }
 
         return $this->serve('brands/' . $brand, (string) $request->route('name'), self::TYPES['img']);
+    }
+
+    /** @param array<string,string> $headers */
+    private function serveVanAssistFile(string $name, string $contentType, string $cacheControl, array $headers = []): Response
+    {
+        if (current_brand()->id() !== 'vanassist') {
+            $this->abort(404, 'Asset not found');
+        }
+
+        $file = base_path('public/' . $name);
+        $content = is_file($file) ? file_get_contents($file) : false;
+        if ($content === false) {
+            $this->abort(404, 'Asset not found');
+        }
+
+        return new Response($content, 200, $headers + [
+            'Content-Type' => $contentType,
+            'Cache-Control' => $cacheControl,
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
     }
 
     /** @param array<string,string>|null $types */

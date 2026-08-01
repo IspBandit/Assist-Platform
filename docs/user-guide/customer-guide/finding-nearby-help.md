@@ -1,0 +1,71 @@
+# Finding nearby help
+
+## Purpose
+
+Find VanAssist service listings near a town, postcode or the device's current location and compare the returned providers in a map and accessible list.
+
+## Intended users
+
+Caravan, motorhome and RV travellers planning before departure or searching while safely stopped. VanAssist is not intended to be operated by a driver while a vehicle is moving.
+
+## Permissions
+
+No account is required. On the main VanAssist search, the browser may ask for optional device-location permission automatically so the nearest town can be prepared. Denying permission leaves the full manual search available.
+
+## Fields
+
+**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or an available straight-line radius; it is not a road-distance claim.
+
+## Actions
+
+The main search attempts to resolve the current location without submitting the form. **Use my current location** repeats that request when needed. Fuel, EV charging, Places to Stay, service-category buttons, the provider directory, result refinements and assistance requests all inherit the same recent device location. A discovery page with no location automatically resolves it; nearby shortcut links carry the coordinates into the destination page. Typing any town, suburb or postcode clears the device coordinates immediately, so the typed place always wins. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. Drag the map to move it, pinch or use **Zoom in**/**Zoom out**, and use **Fit results** to restore every returned pin. A numbered pin opens the exact provider summary, including **Details**, **Show in list** and **Directions** when the listing has a navigable workshop address. The summary can be collapsed or moved with pointer, touch or arrow keys so it does not hide the map. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The provider list remains fully usable without JavaScript or map tiles.
+
+## Workflows
+
+Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Open directions only when safely stopped.
+
+A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
+
+## Examples
+
+Select **12 volt electrical**, enter **Boyne Island**, and choose a distance. The map shows only located providers returned by that same search; listings without usable coordinates still appear in the list rather than being silently discarded.
+
+## Common mistakes
+
+- Treating a straight-line distance as current driving distance.
+- Assuming a base-locality pin is an exact mobile-provider destination.
+- Assuming an unclaimed or related-service listing has confirmed the requested work.
+- Assuming a club, publication or tourism organisation that shares VanAssist has endorsed every listing. An endorsement or partnership is never implied unless stated explicitly.
+- Operating the search or map while driving.
+
+## Related pages
+
+Use **Places to stay** for caravan-friendly stops, the service directory to browse all categories, or **Request assistance** when the right listing is not available.
+
+## FAQ
+
+**Why are there more list results than pins?** A public listing can be useful without having coordinates reliable enough to map.
+
+**How do I reset the map after moving or zooming it?** Choose **Fit results** or focus the map and press `0` or `F`.
+
+**Which map opens for directions?** iPhone and iPad use Apple Maps, Android hands off to the device's map handler, and desktop retains the Google Maps web fallback.
+
+**How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile; VanAssist reviews authority before granting control.
+
+**A club or organisation shared the VanAssist link. Do I need to join or pay?** No. Public search remains free and does not require membership of the organisation that shared it. Check each listing's claimed and verified status and confirm important details with the business.
+
+**Did the tablet administration update change public search?** No. Its shared stylesheet changes are restricted to `admin-*` controls inside the authenticated administration shell; customer search, map, tracking and provider-ranking behaviour are unchanged.
+
+**Is the national coverage heat map the customer results map?** No. The Australia/state heat map is an authenticated administrator planning view. Customer searches continue to use the interactive nearby-results map and its matching provider list.
+
+## Version introduced
+
+2026-07 VanAssist mobile map increment.
+
+## Last updated
+
+2026-07-30 (clarified the separate administrator coverage map; location inheritance remains available across all public discovery journeys).
+
+## Owner
+
+Assist Platform product and engineering.

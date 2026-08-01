@@ -2,14 +2,21 @@
 /** @var \App\Core\View $this */
 $headerBrand = current_brand();
 $headerBrandMeta = $headerBrand->metadata();
+$headerPlatformContext = array_key_exists('header_platform_context', $headerBrandMeta)
+    ? (string)$headerBrandMeta['header_platform_context']
+    : 'Assist Platform';
 ?>
 <header class="site-header">
     <div class="container">
-        <a class="brand brand--wordmark" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
-            <span class="brand-copy">
-                <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>
-                <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?> · Assist Platform</span>
-            </span>
+        <a class="brand brand--wordmark brand--<?= e_attr($headerBrand->id()) ?>" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
+            <?php if ($headerBrand->id() === 'vanassist'): ?>
+                <img class="vanassist-road-wordmark" src="<?= e(asset('brands/vanassist/wordmark-road.png')) ?>" width="1200" height="340" alt="VanAssist — Find. Connect. Get Assisted.">
+            <?php else: ?>
+                <span class="brand-copy">
+                    <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>
+                    <span class="brand-descriptor"><?= e($headerBrandMeta['header_descriptor'] ?? $headerBrandMeta['tagline'] ?? '') ?><?php if ($headerPlatformContext !== ''): ?> · <?= e($headerPlatformContext) ?><?php endif; ?></span>
+                </span>
+            <?php endif; ?>
         </a>
 
         <div class="header-actions">
@@ -39,8 +46,8 @@ $headerBrandMeta = $headerBrand->metadata();
                         <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                     <?php endif; ?>
                 <?php else: ?>
-                <li><a href="<?= e(url('find')) ?>">Find help</a></li>
-                <li><a href="<?= e(url('stays')) ?>">Places to stay</a></li>
+                <li><a data-location-link href="<?= e(url('find')) ?>">Find help</a></li>
+                <li><a data-location-link href="<?= e(url('stays')) ?>">Places to stay</a></li>
                 <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
                 <li><a href="<?= e(url('rules')) ?>">Rules & safety</a></li>
                 <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>

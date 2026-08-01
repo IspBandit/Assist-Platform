@@ -93,17 +93,25 @@ jobs:
           homepage="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
           grep -q '/runtime-assets/css/app.css' <<<"$homepage"
           grep -q '/runtime-assets/js/app.js' <<<"$homepage"
-          grep -q 'class="brand brand--wordmark"' <<<"$homepage"
+          grep -q 'class="brand brand--wordmark' <<<"$homepage"
           grep -q 'class="hero-search-panel"' <<<"$homepage"
+          grep -q '/runtime-assets/brands/vanassist/wordmark-road.png' <<<"$homepage"
+          grep -q '/runtime-assets/img/vanassist-coastal-hero-desktop-v1.webp' <<<"$homepage"
+          grep -q '/runtime-assets/img/vanassist-coastal-hero-mobile-v1.webp' <<<"$homepage"
           grep -q '/runtime-assets/brands/vanassist/favicon.svg' <<<"$homepage"
           if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$homepage"; then
             echo "Public VanAssist identity unexpectedly contains a retired platform symbol."
             exit 1
           fi
 
+          manifest="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/manifest.webmanifest)"
+          grep -q '"short_name": "VanAssist"' <<<"$manifest"
+          worker="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/service-worker.js)"
+          grep -q "self.addEventListener('fetch'" <<<"$worker"
+
           for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
             brand_homepage="$(curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
-            grep -q 'class="brand brand--wordmark"' <<<"$brand_homepage"
+            grep -q 'class="brand brand--wordmark' <<<"$brand_homepage"
             grep -q '/runtime-assets/brands/' <<<"$brand_homepage"
             grep -q '/favicon.svg' <<<"$brand_homepage"
             if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$brand_homepage"; then
@@ -118,5 +126,11 @@ jobs:
             --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
           curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
+      - name: Record safeguarded provider processing
+        run: |
+          {
+            echo 'Provider imports resume through the root-owned `process_provider_import_queue` cron task.'
+            echo 'The task runs every five minutes; current counts remain available in Admin → Provider data.'
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

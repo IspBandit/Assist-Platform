@@ -1,0 +1,10 @@
+{
+  "name": "assist-platform-browser-acceptance",
+  "private": true,
+  "scripts": {
+    "test:acceptance": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.0"
+  }
+}

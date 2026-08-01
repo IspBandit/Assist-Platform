@@ -240,3 +240,103 @@ progressively stronger interest, while completed or confirmed work remains a
 separate outcome. Staff and bots are excluded. **Accessibility:** all insight
 tables retain headings and textual empty/disabled states, cards collapse to one
 column on phones and no meaning depends on charts, colour or hover.
+
+## 2026-07-29 — Mobile administration is an operating view, not a compressed desktop
+
+At 720px and below the administration shell uses a full-height navigation drawer,
+a compact sticky context bar and touch-sized controls without horizontal page
+overflow. Dense review tables become labelled record cards. Website Insights keeps
+its headline measures visible in a compact two-column grid; detailed reports are
+collapsed initially, expand on demand and use a bounded internal scroll area. The
+VanAssist public hero applies stronger local contrast on small screens so live text
+remains readable over photography without replacing the relevant image.
+
+## 2026-07-29 — Paid discovery becomes evidence-gated drafts, never instant claims
+
+Google Places discovery is useful coverage research, not proof that a place is
+lawful or suitable for an overnight caravan stay. VanAssist therefore stages the
+Queensland discovery pack in a private, expiring review queue. Approval requires
+a current independent source and creates a non-public, unverified draft. Sensitive
+stay types require a government or council source. This preserves the value of
+paid discovery while preventing hotels, stale businesses or legally unsuitable
+stops from appearing as trusted traveller advice. The queue uses the existing
+mobile review-card pattern and exposes held, duplicate, empty and failed states.
+
+## 2026-07-29 — VanAssist can be saved without pretending to be a native app
+
+**Context:** EXP-005. Travellers need fast repeat access on iPhone and Android,
+but browser installation differs by platform and must remain optional.
+**Decision:** VanAssist publishes a scoped install manifest and a visible footer
+action. Android receives the browser's native install prompt when available;
+Safari users receive the exact Share → Add to Home Screen steps. Installed mode
+hides the action. A minimal service worker caches public versioned assets only
+and never caches dynamic, authenticated, provider or admin pages. The control is
+touch-sized, keyboard operable, dismissible and does not compete with primary
+search or assistance actions.
+
+## 2026-07-29 — Search controls use one canonical public URL per page
+
+Every public render now supplies a self-canonical URL even when a controller did
+not explicitly provide one. VanAssist provider sitemap rows come from active,
+search-visible brand listings rather than shared master-provider slugs. Google
+and Bing verification tokens are optional administrator settings; robots,
+sitemap, metadata and structured data remain server-rendered and brand-aware.
+Search results and ranking are never represented as guaranteed outcomes.
+
+## 2026-07-29 — National provider review uses controlled automation
+
+**Context:** CORE-003. National discovery files are too large for one-record-at-a-
+time administration, but publication and claimed-provider ownership must remain
+fail-closed. **Decision:** the import queue exposes separate actions for evidence
+confirmation, eligible new-listing approval, strict duplicate merge and automatic
+exact-duplicate linking. Each action states its boundary and reports both processed
+and skipped counts. Automatic linking never changes provider fields; ambiguous,
+claimed or cross-workspace-only matches remain visible for human review. Controls
+remain native, labelled and usable in the existing mobile review-card layout.
+
+## 2026-07-30 — VanAssist visual parity means travel-companion identity
+
+**Context:** EXP-001/005. Earlier iterations retained the old generic colour
+treatment and did not faithfully carry the approved VanAssist travel-companion
+reference onto either desktop or mobile. **Decision:** the public header uses the
+transparent road wordmark and exact “FIND. CONNECT. GET ASSISTED.” descriptor.
+The homepage uses separate lightweight coastal-road crops, a navy/cobalt live
+headline, roadline, save-to-phone action, search console and four concise
+capability cues. Teal/green hero washes, cartoon vehicle artwork and baked-in
+interface mock-ups are rejected. **Accessibility and performance:** copy and
+controls remain live HTML, the image is decorative, focus states remain visible,
+the primary action meets contrast requirements, reduced motion is preserved and
+the page has no horizontal overflow at 1440 × 900 or 390 × 844. **Evidence:**
+Playwright image-selection, first-viewport, PWA-header and install-dialog checks,
+plus reviewed desktop and mobile screenshots.
+
+## 2026-07-30 — Large provider queues automate only safe decisions
+
+**Context:** CORE-003/005. A national queue cannot be operated record by record,
+but volume is not permission to overwrite claimed businesses or publish weak
+source data. **Decision:** an administrator may start a resumable, bounded run
+over the complete filtered eligible queue. Strong name plus matching phone or
+website evidence is required for the 70% duplicate path; claimed and cross-brand
+targets remain blocked. New publication still requires valid retention evidence
+and category mapping. Directory-accuracy campaign continuation is a separate,
+off-by-default factual workflow available only after reviewed test, pilot and
+100-per-day stages. Marketing never auto-enables from a public email address.
+Suppressions are rechecked immediately before transport. **Evidence:** policy,
+workflow, suppression, migration, campaign and database integration tests plus
+audited per-batch outcomes.
+
+## 2026-07-30 — Product documentation is a versioned interface
+
+**Context:** OPS-006. Dashboard functions had no reliable page-level guide and
+historical prose could drift away from routes, permissions and controller
+behaviour. **Decision:** one repository-backed registry owns Customer, Provider,
+Administrator, Developer, API, Release Notes and Changelog articles. Shared
+public/admin views provide search and filters; every dashboard layout resolves a
+contextual Help target from its current route. Operational guides remain behind
+the administrator role gate. Articles require structured metadata and standard
+sections, and CI rejects interface changes without a scope-matched guide plus
+release-note update. A database CMS is deliberately not introduced because
+version control, review and deploy parity are the required source-of-truth
+properties. **Accessibility:** search is server-rendered, controls are labelled,
+navigation is keyboard reachable, mobile content reflows without horizontal
+page overflow and raw Markdown HTML is escaped.

@@ -21,6 +21,8 @@ use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
 use App\Services\TownCoordinateActivation;
 use App\Services\CampaignMetrics;
+use App\Services\DataSourceService;
+use App\Services\NationalRouteImportService;
 use App\Models\GarageAsset;
 use App\Models\Provider;
 use PHPUnit\Framework\TestCase;
@@ -147,6 +149,124 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(1,(int)Database::scalar("SELECT COUNT(*) FROM data_source_connectors WHERE connector_key='google_places'"));
         self::assertSame(4,(int)Database::scalar("SELECT COUNT(*) FROM permissions WHERE slug LIKE 'data_sources.%'"));
         self::assertGreaterThanOrEqual(4,(int)Database::scalar("SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON r.id=rp.role_id JOIN permissions p ON p.id=rp.permission_id WHERE r.slug='platform-administrator' AND p.slug LIKE 'data_sources.%'"));
+        self::assertSame(1,(int)Database::scalar("SELECT COUNT(*) FROM data_source_connectors WHERE connector_key='national_route_places'"));
+        foreach (['candidate_state','route_hub','evidence_status','evidence_url','review_notes','hold_reason'] as $column) {
+            self::assertSame(1, (int)Database::scalar(
+                'SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name=\'data_source_import_candidates\' AND column_name=?',
+                [$column]
+            ));
+        }
+        self::assertSame(5,(int)Database::scalar(
+            "SELECT COUNT(*) FROM brand_provider_categories WHERE brand_id=1 AND category_key IN ('caravan-gas-appliances','trailer-brakes-suspension','mobile-diesel-mechanics','fuel-travel-stops','ev-charging')"
+        ));
+    }
+
+    public function testNationalRouteCandidateRequiresIndependentEvidenceBeforeApproval(): void
+    {
+        $source = tempnam(sys_get_temp_dir(), 'national-route-');
+        self::assertNotFalse($source);
+        $jsonl = $source . '.jsonl';
+        rename($source, $jsonl);
+        file_put_contents($jsonl, json_encode([
+            'external_id'=>'places:integration-national-route-evidence',
+            'google_place_id'=>'integration-national-route-evidence',
+            'business_name'=>'Integration Highway Fuel',
+            'formatted_address'=>'1 Test Highway, Dubbo NSW',
+            'phone'=>'02 1234 5678',
+            'website'=>'https://example.test/fuel',
+            'latitude'=>-32.25,
+            'longitude'=>148.60,
+            'business_status'=>'OPERATIONAL',
+            'place_types'=>['gas_station'],
+            'category_slugs'=>['fuel-station'],
+            'route_hubs'=>['Dubbo, NSW'],
+            'discovery_queries'=>['fuel station diesel'],
+            'state'=>'NSW',
+        ], JSON_THROW_ON_ERROR) . "\n\n{malformed-json\n");
+
+        $jobId = 0;
+        $providerId = 0;
+        $reviewerId = 0;
+        try {
+            $import = new NationalRouteImportService();
+            $jobId = $import->stageLocalFile($jsonl, 1);
+            $result = $import->processJob($jobId, 1, 10);
+            self::assertTrue($result['done']);
+            self::assertSame(3, $result['processed']);
+            self::assertSame(1, $result['inserted']);
+            self::assertSame(1, $result['skipped']);
+            $jobScope = json_decode((string)Database::scalar('SELECT scope_json FROM data_source_import_jobs WHERE id=?',[$jobId]), true, 512, JSON_THROW_ON_ERROR);
+            self::assertSame(3, $jobScope['processed_lines']);
+            self::assertSame(1, $jobScope['skipped_lines']);
+            self::assertNotEmpty($jobScope['errors']);
+            $candidate = Database::selectOne(
+                'SELECT c.*,b.category_key FROM data_source_import_candidates c LEFT JOIN brand_provider_categories b ON b.id=c.category_id WHERE c.job_id=?',
+                [$jobId]
+            );
+            self::assertNotNull($candidate);
+            self::assertSame('required', $candidate['evidence_status']);
+            self::assertSame('pending', $candidate['review_status']);
+            self::assertSame('NSW', $candidate['candidate_state']);
+            self::assertSame('fuel-travel-stops', $candidate['category_key']);
+            self::assertSame('national_route_places', Database::scalar(
+                'SELECT connector_key FROM data_source_connectors WHERE id=?',
+                [$candidate['connector_id']]
+            ));
+            $reviewerId = Database::insert(
+                "INSERT INTO users (name,email,password_hash,status,created_at) VALUES ('Route Reviewer',?,'test','active',NOW())",
+                ['route-review-' . bin2hex(random_bytes(5)) . '@example.test']
+            );
+
+            $crossBrandBlocked = false;
+            try {
+                (new DataSourceService())->review((int)$candidate['id'], 2, 'hold', null, 1);
+            } catch (\RuntimeException) {
+                $crossBrandBlocked = true;
+            }
+            self::assertTrue($crossBrandBlocked, 'A candidate must not be reviewable outside its active brand workspace.');
+
+            (new DataSourceService())->review((int)$candidate['id'], 1, 'hold', null, $reviewerId, false, (int)$candidate['category_id'], 'https://maps.google.com/example');
+            self::assertSame('held', Database::scalar('SELECT review_status FROM data_source_import_candidates WHERE id=?',[$candidate['id']]));
+            (new DataSourceService())->review((int)$candidate['id'], 1, 'restore', null, $reviewerId);
+
+            $blockedMessage = '';
+            try {
+                (new DataSourceService())->review((int)$candidate['id'], 1, 'approve', null, 1, true, (int)$candidate['category_id']);
+            } catch (\RuntimeException $exception) {
+                $blockedMessage = $exception->getMessage();
+            }
+            self::assertStringContainsString('independent source', $blockedMessage);
+            self::assertSame('pending', Database::scalar(
+                'SELECT review_status FROM data_source_import_candidates WHERE id=?',
+                [$candidate['id']]
+            ));
+
+            $providerId = (new DataSourceService())->review(
+                (int)$candidate['id'], 1, 'approve', null, $reviewerId, true,
+                (int)$candidate['category_id'], 'https://example.test/fuel', 'Fuel service confirmed on the independent business page.'
+            );
+            self::assertGreaterThan(0, $providerId);
+            self::assertSame('approved', Database::scalar('SELECT review_status FROM data_source_import_candidates WHERE id=?',[$candidate['id']]));
+            self::assertSame('confirmed', Database::scalar('SELECT evidence_status FROM data_source_import_candidates WHERE id=?',[$candidate['id']]));
+            self::assertSame('admin_verified', Database::scalar('SELECT verification_status FROM provider_discovery_evidence WHERE provider_id=?',[$providerId]));
+            self::assertSame(1, (int)Database::scalar(
+                "SELECT COUNT(*) FROM provider_services ps JOIN service_categories sc ON sc.id=ps.category_id WHERE ps.provider_id=? AND sc.slug='fuel-and-travel-stops'",
+                [$providerId]
+            ));
+            self::assertSame('-32.2500000', (string)Database::scalar('SELECT latitude FROM providers WHERE id=?',[$providerId]));
+            self::assertNotEmpty(\App\Models\Provider::forCategoryNear(
+                (int)Database::scalar("SELECT id FROM service_categories WHERE slug='fuel-and-travel-stops'"),
+                -32.25, 148.60, 10
+            ));
+            Database::query('UPDATE data_source_import_candidates SET expires_at=DATE_SUB(NOW(),INTERVAL 1 DAY) WHERE id=?',[$candidate['id']]);
+            self::assertSame(1, $import->purgeExpiredCandidates(), 'Approved Google-derived candidate details must also expire.');
+            self::assertSame(0, (int)Database::scalar('SELECT COUNT(*) FROM data_source_import_candidates WHERE id=?',[$candidate['id']]));
+        } finally {
+            if ($providerId > 0) Database::query('DELETE FROM providers WHERE id=?', [$providerId]);
+            if ($jobId > 0) Database::query('DELETE FROM data_source_import_jobs WHERE id=?', [$jobId]);
+            if ($reviewerId > 0) Database::query('DELETE FROM users WHERE id=?', [$reviewerId]);
+            @unlink($jsonl);
+        }
     }
 
     public function testDataIntelligenceSchemaAndPlatformPermissionsAreInstalled(): void
@@ -618,7 +738,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testStagedCampaignSchemaIsInstalled(): void
     {
         self::assertTrue(Database::tableExists('notification_test_deliveries'));
-        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by'] as $column) {
+        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by','auto_continue_enabled','auto_continue_enabled_at','auto_continue_enabled_by','auto_continue_next_at','auto_continue_last_run_at','auto_continue_last_error'] as $column) {
             self::assertSame(1, (int) Database::scalar(
                 "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name=?",
                 [$column]
