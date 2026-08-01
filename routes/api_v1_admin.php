@@ -10,6 +10,8 @@ declare(strict_types=1);
  * Increment 3: service accounts + machine tokens + scopes.
  * Increment 4: read-only providers + stays.
  * Increment 5: audited provider/stay writes + lifecycle.
+ * Increment 6: recycle bin list/restore/purge.
+ * Increment 7: drafts + import package ingest.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -94,6 +96,62 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/stays/{id}/archive', 'Api\\V1\\Admin\\StayController@archive', 'api.v1.admin.stays.archive');
                 $router->post('/stays/{id}/restore', 'Api\\V1\\Admin\\StayController@restore', 'api.v1.admin.stays.restore');
                 $router->delete('/stays/{id}', 'Api\\V1\\Admin\\StayController@destroy', 'api.v1.admin.stays.destroy');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:recycle_bin:restore,recycle_bin:purge'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/recycle-bin', 'Api\\V1\\Admin\\RecycleBinController@index', 'api.v1.admin.recycle_bin.index');
+                $router->get('/recycle-bin/{entity_type}/{id}', 'Api\\V1\\Admin\\RecycleBinController@show', 'api.v1.admin.recycle_bin.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:recycle_bin:restore'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/recycle-bin/{entity_type}/{id}/restore', 'Api\\V1\\Admin\\RecycleBinController@restore', 'api.v1.admin.recycle_bin.restore');
+                $router->post('/recycle-bin/bulk-restore', 'Api\\V1\\Admin\\RecycleBinController@bulkRestore', 'api.v1.admin.recycle_bin.bulk_restore');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:recycle_bin:purge'],
+            ], static function (\App\Core\Router $router): void {
+                $router->delete('/recycle-bin/{entity_type}/{id}/purge', 'Api\\V1\\Admin\\RecycleBinController@purge', 'api.v1.admin.recycle_bin.purge');
+                $router->post('/recycle-bin/bulk-purge', 'Api\\V1\\Admin\\RecycleBinController@bulkPurge', 'api.v1.admin.recycle_bin.bulk_purge');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:drafts:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/drafts', 'Api\\V1\\Admin\\DraftController@index', 'api.v1.admin.drafts.index');
+                $router->get('/drafts/{id}', 'Api\\V1\\Admin\\DraftController@show', 'api.v1.admin.drafts.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:drafts:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/drafts', 'Api\\V1\\Admin\\DraftController@store', 'api.v1.admin.drafts.store');
+                $router->patch('/drafts/{id}', 'Api\\V1\\Admin\\DraftController@update', 'api.v1.admin.drafts.update');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:drafts:approve'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/drafts/{id}/approve', 'Api\\V1\\Admin\\DraftController@approve', 'api.v1.admin.drafts.approve');
+                $router->post('/drafts/{id}/reject', 'Api\\V1\\Admin\\DraftController@reject', 'api.v1.admin.drafts.reject');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:imports:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/imports/{id}', 'Api\\V1\\Admin\\ImportController@show', 'api.v1.admin.imports.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:imports:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/imports', 'Api\\V1\\Admin\\ImportController@store', 'api.v1.admin.imports.store');
+                $router->post('/imports/{id}/validate', 'Api\\V1\\Admin\\ImportController@validateJob', 'api.v1.admin.imports.validate');
+                $router->post('/imports/{id}/stage', 'Api\\V1\\Admin\\ImportController@stage', 'api.v1.admin.imports.stage');
             });
         });
     });
