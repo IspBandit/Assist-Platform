@@ -3,6 +3,13 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 7 (CORE-011)** — draft and import package submission for RIC:
+  `api_drafts` / `api_import_jobs` tables (migration 082), draft CRUD + approve/reject,
+  import validate/stage pipeline, idempotency keys for bulk/package writes.
+- **Admin API Increment 6 (CORE-011)** — recycle bin list/detail, restore, permanent
+  purge (single + bulk with idempotency), brand-scoped provider purge semantics.
+
+### Added
 - **Admin API Increment 5 (CORE-011)** — audited provider and stay create/update,
   lifecycle transitions (publish/unpublish/archive/restore/soft-delete), `AdminApiAudit`
   integration, and `read_write` capabilities for providers/stays.

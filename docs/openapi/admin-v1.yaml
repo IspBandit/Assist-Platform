@@ -1,9 +1,12 @@
 openapi: 3.1.0
 info:
   title: Assist Platform Admin API
-  version: 1.0.0-increment-4
+  version: 1.0.0-increment-7
   description: |
     Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
+    Increment 7 adds draft/import submission, validation and staging for RIC.
+    Increment 6 adds recycle bin list, restore and permanent purge.
+    Increment 5 adds audited provider/stay writes and lifecycle transitions.
     Increment 4 adds read-only providers and stays with cursor pagination.
     Increment 3 adds service accounts, machine token exchange and scope enforcement.
     Increment 2 ships human login, refresh rotation, logout, me and sessions.
@@ -19,6 +22,9 @@ tags:
   - name: ServiceAccounts
   - name: Providers
   - name: Stays
+  - name: RecycleBin
+  - name: Drafts
+  - name: Imports
 paths:
   /health:
     get:
@@ -920,6 +926,311 @@ paths:
               schema:
                 $ref: '#/components/schemas/StayDetailResponse'
 
+  /recycle-bin:
+    get:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinIndex
+      summary: List soft-deleted providers and stays
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: entity_type
+          in: query
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recycle bin collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecycleBinCollection'
+  /recycle-bin/{entity_type}/{id}:
+    get:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinShow
+      summary: Deleted item detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: entity_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Recycle bin item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecycleBinItemResponse'
+  /recycle-bin/{entity_type}/{id}/restore:
+    post:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinRestore
+      summary: Restore soft-deleted item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: entity_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Restored entity
+  /recycle-bin/{entity_type}/{id}/purge:
+    delete:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinPurge
+      summary: Permanently purge deleted item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: entity_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirm, reason]
+              properties:
+                confirm:
+                  type: boolean
+                reason:
+                  type: string
+                  minLength: 3
+      responses:
+        '200':
+          description: Purge result
+  /recycle-bin/bulk-restore:
+    post:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinBulkRestore
+      summary: Bulk restore with idempotency key
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecycleBinBulkRequest'
+      responses:
+        '200':
+          description: Bulk restore results
+  /recycle-bin/bulk-purge:
+    post:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinBulkPurge
+      summary: Bulk purge with idempotency key and reason
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/RecycleBinBulkRequest'
+                - type: object
+                  required: [reason]
+                  properties:
+                    reason:
+                      type: string
+                      minLength: 3
+      responses:
+        '200':
+          description: Bulk purge results
+  /drafts:
+    get:
+      tags: [Drafts]
+      operationId: adminDraftsIndex
+      summary: List draft submissions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Draft collection
+    post:
+      tags: [Drafts]
+      operationId: adminDraftsStore
+      summary: Create draft from RIC payload
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Draft created
+  /drafts/{id}:
+    get:
+      tags: [Drafts]
+      operationId: adminDraftsShow
+      summary: Draft detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft detail
+    patch:
+      tags: [Drafts]
+      operationId: adminDraftsUpdate
+      summary: Update draft payload or status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft updated
+  /drafts/{id}/approve:
+    post:
+      tags: [Drafts]
+      operationId: adminDraftsApprove
+      summary: Approve draft and create/update live entity
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft approved
+  /drafts/{id}/reject:
+    post:
+      tags: [Drafts]
+      operationId: adminDraftsReject
+      summary: Reject draft submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft rejected
+  /imports:
+    post:
+      tags: [Imports]
+      operationId: adminImportsStore
+      summary: Submit checksummed RIC import package
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: Import job received
+  /imports/{id}:
+    get:
+      tags: [Imports]
+      operationId: adminImportsShow
+      summary: Import job status and item results
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Import job detail
+  /imports/{id}/validate:
+    post:
+      tags: [Imports]
+      operationId: adminImportsValidate
+      summary: Validate import package items
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Validation results
+  /imports/{id}/stage:
+    post:
+      tags: [Imports]
+      operationId: adminImportsStage
+      summary: Stage valid items as drafts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Staging results
+
 components:
 
   parameters:
@@ -936,6 +1247,13 @@ components:
       in: query
       schema:
         type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        maxLength: 128
     QueryQ:
       name: q
       in: query
@@ -1516,6 +1834,61 @@ components:
               type: boolean
             reason:
               type: string
+    RecycleBinCollection:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecycleBinItem'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    RecycleBinItemResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/RecycleBinItem'
+    RecycleBinItem:
+      type: object
+      required: [entity_type, id, name, deleted_at, lifecycle]
+      properties:
+        entity_type:
+          type: string
+          enum: [provider, stay]
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        deleted_at:
+          type: string
+        lifecycle:
+          type: string
+          enum: [deleted]
+    RecycleBinBulkRequest:
+      type: object
+      required: [confirm, items]
+      properties:
+        confirm:
+          type: boolean
+        items:
+          type: array
+          items:
+            type: object
+            required: [entity_type, id]
+            properties:
+              entity_type:
+                type: string
+                enum: [provider, stay]
+              id:
+                type: integer
     ErrorEnvelope:
       type: object
       required: [error]

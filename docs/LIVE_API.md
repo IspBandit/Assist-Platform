@@ -71,15 +71,27 @@ Increment 5 (audited writes + lifecycle) adds:
 - Same write/lifecycle pattern for `/stays` with `stays:write` + `lifecycle:write`
 - All mutations audited via `AdminApiAudit`; capabilities report `read_write`
 
+Increment 6 (recycle bin) adds:
+
+- `GET /api/v1/admin/recycle-bin` — list soft-deleted providers/stays (`recycle_bin:restore` or `recycle_bin:purge`)
+- `GET /api/v1/admin/recycle-bin/{entity_type}/{id}` — deleted item detail
+- `POST /api/v1/admin/recycle-bin/{entity_type}/{id}/restore` — restore (`recycle_bin:restore`)
+- `DELETE /api/v1/admin/recycle-bin/{entity_type}/{id}/purge` — permanent purge; `{confirm:true, reason}` (`recycle_bin:purge`)
+- `POST /api/v1/admin/recycle-bin/bulk-restore` and `/bulk-purge` — batch with `Idempotency-Key`
+
+Increment 7 (drafts + imports) adds:
+
+- `GET/POST /api/v1/admin/drafts`, `GET/PATCH /drafts/{id}` — RIC draft queue (`drafts:read` / `drafts:write`)
+- `POST /api/v1/admin/drafts/{id}/approve|reject` — human-elevated (`drafts:approve`)
+- `POST /api/v1/admin/imports` — checksummed package ingest (`imports:write`, `Idempotency-Key`)
+- `GET /api/v1/admin/imports/{id}`, `POST .../validate`, `POST .../stage` — validation and draft staging
+
 Enable only with `ADMIN_API_ENABLED=true` on non-production first. Keep
 `ADMIN_API_RESTRICTED=true` and configure `ADMIN_API_ALLOWED_USER_IDS` (or rely
 on super-administrator-only when empty). Do not set `ADMIN_API_MFA_REQUIRED`
 until MFA verify endpoints exist. OpenAPI: `docs/openapi/admin-v1.yaml`.
 
 Remaining Phase 1 targets:
-- Recycle Bin list/purge
-- Draft and import package submission for RIC
-- Limited search-gap analytics read
 
 ## Out of scope for first production enablement
 

@@ -493,8 +493,8 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 4. Health / version / capabilities — **Increment 1 skeletons shipped**
 5. Read-only providers + stays — **Increment 4 complete**
 6. Audited create/update + lifecycle — **Increment 5 complete**
-7. Recycle Bin list/purge — planned
-8. Draft/import submission — planned
+7. Recycle Bin list/purge — **Increment 6 complete**
+8. Draft/import submission — **Increment 7 complete**
 9. RIC mock-client contract tests  
 10. OpenAPI + operating docs — **Increment 1–4 contract updates**
 
@@ -571,3 +571,37 @@ Query params: `limit` (1–100), `cursor`, `q`, `status` (DB status or lifecycle
 
 All writes record `AdminApiAudit` events. No approval emails. Recycle-bin list/purge
 remains a later increment; restore is available via `POST .../restore`.
+
+### Increment 6 shipped surface
+
+| Method | Path | Scope | Behaviour |
+| --- | --- | --- | --- |
+| GET | `/recycle-bin` | `recycle_bin:restore` or `recycle_bin:purge` | Cursor list; `entity_type`, `q` filters |
+| GET | `/recycle-bin/{entity_type}/{id}` | restore or purge | Deleted item detail |
+| POST | `/recycle-bin/{entity_type}/{id}/restore` | `recycle_bin:restore` | Reuses provider/stay restore services |
+| DELETE | `/recycle-bin/{entity_type}/{id}/purge` | `recycle_bin:purge` | Permanent delete; body `{confirm:true, reason}` |
+| POST | `/recycle-bin/bulk-restore` | `recycle_bin:restore` | `Idempotency-Key`; `{items, confirm:true}` |
+| POST | `/recycle-bin/bulk-purge` | `recycle_bin:purge` | Same + reason; idempotent |
+
+Provider purge removes brand listing first; provider row is hard-deleted only when no
+other brand listings remain. Stay purge hard-deletes `caravan_parks` row (CASCADE children).
+Purge reasons are stored in audit only (no recycle metadata migration).
+
+### Increment 7 shipped surface
+
+| Method | Path | Scope | Behaviour |
+| --- | --- | --- | --- |
+| GET | `/drafts` | `drafts:read` | List brand-scoped drafts |
+| GET | `/drafts/{id}` | `drafts:read` | Draft detail + payload |
+| POST | `/drafts` | `drafts:write` | Create draft; requires `entity_type` + payload keys |
+| PATCH | `/drafts/{id}` | `drafts:write` | Update draft payload/status |
+| POST | `/drafts/{id}/approve` | `drafts:approve` | Creates/updates live provider or stay |
+| POST | `/drafts/{id}/reject` | `drafts:approve` | Sets rejected + optional review note |
+| POST | `/imports` | `imports:write` | `Idempotency-Key`; checksum + items array |
+| GET | `/imports/{id}` | `imports:read` | Job status + per-line results |
+| POST | `/imports/{id}/validate` | `imports:write` | Validates payloads; sets item statuses |
+| POST | `/imports/{id}/stage` | `imports:write` | Creates `api_drafts` from valid items |
+
+Migration `082_admin_api_drafts_imports.sql` adds `api_drafts`, `api_import_jobs`,
+`api_import_job_items`, `api_idempotency_keys`. Service accounts receive
+`drafts:write` and `imports:write` by default; `drafts:approve` is human-elevated.
