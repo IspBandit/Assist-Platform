@@ -28,12 +28,13 @@ final class AdminApiRoutingTest extends TestCase
         Config::set('admin_api.max_batch_size', 100);
         Config::set('admin_api.recycle_retention_days', 90);
         Config::set('admin_api.access_token_ttl_seconds', 900);
+        Config::set('admin_api.refresh_token_ttl_seconds', 604800);
         Config::set('app.release', 'test-release');
 
         $this->router = new Router();
         $this->router->aliasMiddleware('admin_api_enabled', \App\Middleware\RequireAdminApiEnabled::class);
         $this->router->aliasMiddleware('admin_api_request', \App\Middleware\AdminApiRequest::class);
-        $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearerPlaceholder::class);
+        $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearer::class);
         $register = require base_path('routes/api_v1_admin.php');
         self::assertIsCallable($register);
         $register($this->router);
@@ -64,6 +65,8 @@ final class AdminApiRoutingTest extends TestCase
 
         $capabilities = $this->json($this->dispatch('GET', '/api/v1/admin/capabilities'));
         self::assertTrue($capabilities['data']['enabled']);
+        self::assertSame('active', $capabilities['data']['authentication']['human_password']);
+        self::assertSame('active', $capabilities['data']['authentication']['refresh_tokens']);
         self::assertSame('planned', $capabilities['data']['resources']['stays']);
         self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
         self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
@@ -97,7 +100,7 @@ final class AdminApiRoutingTest extends TestCase
         }
     }
 
-    public function testProtectedRouteRequiresBearerPlaceholder(): void
+    public function testProtectedRouteRequiresBearer(): void
     {
         try {
             $this->dispatch('GET', '/api/v1/admin/auth/me');
@@ -109,12 +112,36 @@ final class AdminApiRoutingTest extends TestCase
 
         try {
             $this->dispatch('GET', '/api/v1/admin/auth/me', [
-                'HTTP_AUTHORIZATION' => 'Bearer not-yet-verified',
+                'HTTP_AUTHORIZATION' => 'Token not-a-bearer',
             ]);
             self::fail('Expected AdminApiException');
         } catch (AdminApiException $e) {
             self::assertSame(401, $e->getStatusCode());
             self::assertSame('unauthenticated', $e->errorCode());
+        }
+    }
+
+    public function testLoginValidationFailsClosedWithoutDatabase(): void
+    {
+        try {
+            $this->dispatch('POST', '/api/v1/admin/auth/login', [], []);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(422, $e->getStatusCode());
+            self::assertSame('validation_failed', $e->errorCode());
+            self::assertArrayHasKey('email', $e->fields());
+            self::assertArrayHasKey('password', $e->fields());
+        }
+    }
+
+    public function testRefreshValidationRequiresToken(): void
+    {
+        try {
+            $this->dispatch('POST', '/api/v1/admin/auth/refresh', [], ['refresh_token' => '']);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(422, $e->getStatusCode());
+            self::assertSame('validation_failed', $e->errorCode());
         }
     }
 
@@ -139,11 +166,14 @@ final class AdminApiRoutingTest extends TestCase
         self::assertFalse(Kernel::isAdminApiPath('/api/v1/public'));
     }
 
-    /** @param array<string,string> $server */
-    private function dispatch(string $method, string $path, array $server = []): Response
+    /**
+     * @param array<string,string> $server
+     * @param array<string,mixed> $body
+     */
+    private function dispatch(string $method, string $path, array $server = [], array $body = []): Response
     {
         RequestContext::clear();
-        $request = new Request([], [], array_merge([
+        $request = new Request([], $body, array_merge([
             'REQUEST_METHOD' => $method,
             'REQUEST_URI' => $path,
             'HTTP_HOST' => 'localhost',

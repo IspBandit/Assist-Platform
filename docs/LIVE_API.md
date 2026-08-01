@@ -30,19 +30,27 @@ live-api sync ADR in that repo.
 
 ## Phase 1 capabilities (target)
 
-Increment 1 (routing foundation) currently exposes:
+Increment 1 (routing foundation) exposes:
 
 - `GET /api/v1/admin/health`
 - `GET /api/v1/admin/version`
 - `GET /api/v1/admin/capabilities`
-- `GET /api/v1/admin/auth/me` (always 401 until Increment 2 auth)
 
-Enable only with `ADMIN_API_ENABLED=true` on non-production first. OpenAPI skeleton:
-`docs/openapi/admin-v1.yaml`.
+Increment 2 (human auth) adds:
+
+- `POST /api/v1/admin/auth/login`
+- `POST /api/v1/admin/auth/refresh`
+- `POST /api/v1/admin/auth/logout`
+- `GET /api/v1/admin/auth/me`
+- `GET /api/v1/admin/auth/sessions`
+- `DELETE /api/v1/admin/auth/sessions/{id}`
+
+Enable only with `ADMIN_API_ENABLED=true` on non-production first. Keep
+`ADMIN_API_RESTRICTED=true` and configure `ADMIN_API_ALLOWED_USER_IDS` (or rely
+on super-administrator-only when empty). Do not set `ADMIN_API_MFA_REQUIRED`
+until MFA verify endpoints exist. OpenAPI: `docs/openapi/admin-v1.yaml`.
 
 Remaining Phase 1 targets:
-
-- Human login + refresh tokens (restricted rollout until MFA enforced)
 - Service accounts with least-privilege scopes
 - Providers and stays read/write with audited lifecycle
 - Soft delete / Recycle Bin

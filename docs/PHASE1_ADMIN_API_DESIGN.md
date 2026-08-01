@@ -487,8 +487,8 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 
 ## Implementation order (confirmed)
 
-1. API routing + envelopes/errors — **Increment 1 complete (design)**
-2. Authentication + admin sessions  
+1. API routing + envelopes/errors — **Increment 1 complete**
+2. Authentication + admin sessions — **Increment 2 complete (restricted / MFA scaffold)**
 3. Service accounts + scopes  
 4. Health / version / capabilities — **Increment 1 skeletons shipped**
 5. Read-only providers + stays  
@@ -496,7 +496,7 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 7. Lifecycle + Recycle Bin  
 8. Draft/import submission  
 9. RIC mock-client contract tests  
-10. OpenAPI + operating docs — **Increment 1 skeleton + LIVE_API updates**
+10. OpenAPI + operating docs — **Increment 1–2 contract updates**
 
 ### Increment 1 shipped surface
 
@@ -505,7 +505,18 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 | GET | `/api/v1/admin/health` | Envelope `{data.status=ok}` when `ADMIN_API_ENABLED` |
 | GET | `/api/v1/admin/version` | API/product/release metadata |
 | GET | `/api/v1/admin/capabilities` | Planned vs active resources; no `/facilities` |
-| GET | `/api/v1/admin/auth/me` | 401 placeholder until Increment 2 |
 
-Flag `ADMIN_API_ENABLED=false` by default. Errors use
-`{error:{code,message,request_id}}`. See `docs/openapi/admin-v1.yaml`.
+### Increment 2 shipped surface
+
+| Method | Path | Behaviour |
+| --- | --- | --- |
+| POST | `/api/v1/admin/auth/login` | Email/password; access + refresh; throttled |
+| POST | `/api/v1/admin/auth/refresh` | Rotate refresh; revoke previous; reuse detection |
+| POST | `/api/v1/admin/auth/logout` | Revoke current session (optional all) |
+| GET | `/api/v1/admin/auth/me` | Actor, roles, scopes, MFA status |
+| GET | `/api/v1/admin/auth/sessions` | Active refresh families for actor |
+| DELETE | `/api/v1/admin/auth/sessions/{id}` | Revoke session family |
+
+Migrations `080_admin_api_credentials.sql` and `081_admin_api_mfa_scaffold.sql`.
+Flag `ADMIN_API_ENABLED=false` by default. Restricted mode defaults on.
+Errors use `{error:{code,message,request_id}}`. See `docs/openapi/admin-v1.yaml`.

@@ -3,6 +3,12 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 2 (CORE-011)** — human login/refresh/logout/me/sessions,
+  token tables (migration 080), MFA scaffold (081), restricted allowlist,
+  bearer verification and OpenAPI auth paths. Still disabled by default; MFA
+  verify endpoints not shipped.
+
+### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +
   `php scripts/coverage-report.php` (local 0 / 1–2 / 3+ and serving coverage by state;
   `--thin` exports a gap-fill queue).

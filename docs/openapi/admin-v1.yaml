@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: Assist Platform Admin API
-  version: 1.0.0-increment-1
+  version: 1.0.0-increment-2
   description: |
     Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
-    Increment 1 ships routing, JSON envelopes, system skeletons and auth placeholders.
+    Increment 2 ships human login, refresh rotation, logout, me and sessions.
     Not a supported production partner API until MFA enforcement and Quality Gate evidence.
 servers:
   - url: https://{host}/api/v1/admin
@@ -60,16 +60,190 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CapabilitiesResponse'
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: adminAuthLogin
+      summary: Exchange email and password for access and refresh tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                session_label:
+                  type: string
+                  maxLength: 120
+      responses:
+        '200':
+          description: Token bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid credentials or MFA required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Role or restricted-mode denial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Login throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      operationId: adminAuthRefresh
+      summary: Rotate refresh token and issue a new access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Rotated token bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid, expired or reused refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: adminAuthLogout
+      summary: Revoke the current session (or all sessions)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                all_sessions:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /auth/me:
     get:
       tags: [Auth]
       operationId: adminAuthMe
-      summary: Current authenticated actor (Increment 2)
+      summary: Current authenticated actor
       security:
         - bearerAuth: []
       responses:
+        '200':
+          description: Actor profile and scopes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
         '401':
-          description: Missing or unverified bearer token (Increment 1 placeholder)
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/sessions:
+    get:
+      tags: [Auth]
+      operationId: adminAuthSessions
+      summary: List active Admin API sessions for the current actor
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Session collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionsResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/sessions/{id}:
+    delete:
+      tags: [Auth]
+      operationId: adminAuthRevokeSession
+      summary: Revoke a session family by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeSessionResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Session not found for this actor
           content:
             application/json:
               schema:
@@ -79,7 +253,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-      description: Opaque or JWT access token issued by Admin API auth (Increment 2).
+      description: Opaque access token from /auth/login or /auth/refresh. Only hashes are stored.
   schemas:
     HealthResponse:
       type: object
@@ -147,6 +321,111 @@ components:
               type: array
               items:
                 type: string
+    TokenResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [access_token, refresh_token, token_type, expires_in, scopes, user]
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+            token_type:
+              type: string
+              enum: [Bearer]
+            expires_in:
+              type: integer
+            scopes:
+              type: array
+              items:
+                type: string
+            user:
+              $ref: '#/components/schemas/AdminUser'
+    MeResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [user, scopes, actor_type]
+          properties:
+            user:
+              $ref: '#/components/schemas/AdminUser'
+            scopes:
+              type: array
+              items:
+                type: string
+            actor_type:
+              type: string
+              enum: [user]
+    LogoutResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [logged_out]
+          properties:
+            logged_out:
+              type: boolean
+    SessionsResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required: [id, active]
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+                nullable: true
+              ip_address:
+                type: string
+                nullable: true
+              user_agent:
+                type: string
+                nullable: true
+              created_at:
+                type: string
+              expires_at:
+                type: string
+              active:
+                type: boolean
+    RevokeSessionResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [revoked, id]
+          properties:
+            revoked:
+              type: boolean
+            id:
+              type: string
+    AdminUser:
+      type: object
+      required: [id, name, email, roles, mfa_enabled]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        mfa_enabled:
+          type: boolean
     ErrorEnvelope:
       type: object
       required: [error]
