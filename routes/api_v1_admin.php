@@ -12,6 +12,7 @@ declare(strict_types=1);
  * Increment 5: audited provider/stay writes + lifecycle.
  * Increment 6: recycle bin list/restore/purge.
  * Increment 7: drafts + import package ingest.
+ * Increment 8: audit read + search-gap analytics + MFA scaffold.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -37,6 +38,8 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/auth/logout', 'Api\\V1\\Admin\\AuthController@logout', 'api.v1.admin.auth.logout');
                 $router->get('/auth/sessions', 'Api\\V1\\Admin\\AuthController@sessions', 'api.v1.admin.auth.sessions');
                 $router->delete('/auth/sessions/{id}', 'Api\\V1\\Admin\\AuthController@revokeSession', 'api.v1.admin.auth.sessions.revoke');
+                $router->post('/auth/mfa/challenge', 'Api\\V1\\Admin\\AuthController@mfaChallenge', 'api.v1.admin.auth.mfa.challenge');
+                $router->post('/auth/mfa/verify', 'Api\\V1\\Admin\\AuthController@mfaVerify', 'api.v1.admin.auth.mfa.verify');
             });
 
             $router->group([
@@ -152,6 +155,19 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/imports', 'Api\\V1\\Admin\\ImportController@store', 'api.v1.admin.imports.store');
                 $router->post('/imports/{id}/validate', 'Api\\V1\\Admin\\ImportController@validateJob', 'api.v1.admin.imports.validate');
                 $router->post('/imports/{id}/stage', 'Api\\V1\\Admin\\ImportController@stage', 'api.v1.admin.imports.stage');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:audit:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/audit', 'Api\\V1\\Admin\\AuditController@index', 'api.v1.admin.audit.index');
+                $router->get('/audit/{id}', 'Api\\V1\\Admin\\AuditController@show', 'api.v1.admin.audit.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:analytics:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/search-gaps', 'Api\\V1\\Admin\\SearchGapController@index', 'api.v1.admin.search_gaps.index');
             });
         });
     });

@@ -63,8 +63,8 @@ final class SystemController extends Controller
                 'drafts' => 'read_write',
                 'imports' => 'read_write',
                 'recycle_bin' => 'read_write',
-                'audit' => 'planned',
-                'search_gaps' => 'planned',
+                'audit' => 'read',
+                'search_gaps' => 'read',
             ],
             'limits' => [
                 'max_batch_size' => (int) Config::get('admin_api.max_batch_size', 100),
@@ -74,13 +74,16 @@ final class SystemController extends Controller
                 'service_token_ttl_seconds' => (int) Config::get('admin_api.service_token_ttl_seconds', 3600),
             ],
             'notes' => [
+                'Phase 1 Increment 8 adds audit read, search-gap analytics and MFA verify scaffold.',
                 'Phase 1 Increment 7 adds draft/import submission, validation and staging for RIC.',
                 'Phase 1 Increment 6 adds recycle bin list, restore and permanent purge.',
                 'Phase 1 Increment 5 adds audited provider and stay create/update plus lifecycle transitions.',
                 'Phase 1 Increment 4 adds read-only providers and stays with cursor pagination.',
                 'Brand scope is resolved from host/deployment context, not client brand_id.',
                 'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',
-                'MFA methods are scaffolded; set ADMIN_API_MFA_REQUIRED only after verify endpoints exist.',
+                'MFA challenge/verify endpoints are scaffolded; TOTP validation returns 501 until OPS-010 ships.',
+                'Search gaps aggregate zero-result rows from provider_searches; empty when analytics is off.',
+                'Set ADMIN_API_MFA_REQUIRED only after full TOTP verification is implemented.',
                 'Standalone traveller facilities are not exposed as /facilities (ADR 0016).',
             ],
         ]);
