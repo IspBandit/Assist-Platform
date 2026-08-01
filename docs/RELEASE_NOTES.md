@@ -10,6 +10,8 @@ may remain as dated files and are linked here rather than copied.
 - Documented the staging-only sequence to migrate Admin API tables, enroll TOTP,
   create a least-privilege RIC service account, and rehearse import submit before
   any production `ADMIN_API_ENABLED` change (`docs/LIVE_API.md`).
+- Added CLI helpers `scripts/admin-api-create-ric-service-account.php` and
+  `scripts/admin-api-probe.php` for safe staging bootstrap and health checks.
 
 ### Admin API TOTP MFA (OPS-010)
 

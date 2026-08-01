@@ -48,6 +48,23 @@ final class AdminApiScopes
         'audit:read',
     ];
 
+    /**
+     * Least-privilege scopes for Assist RIC live sync (DATA-011).
+     *
+     * @var list<string>
+     */
+    public const RIC_SERVICE = [
+        'providers:read',
+        'stays:read',
+        'drafts:read',
+        'drafts:write',
+        'imports:read',
+        'imports:write',
+        'sync:read',
+        'analytics:read',
+        'audit:read',
+    ];
+
     /** @var list<string> */
     public const NEVER_SERVICE = [
         'recycle_bin:purge',
