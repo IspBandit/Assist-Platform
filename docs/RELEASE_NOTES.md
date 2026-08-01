@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Admin API TOTP MFA (OPS-010)
+
+- Replaced the MFA verify scaffold with RFC 6238 TOTP validation (pure PHP).
+- Added enrollment endpoints `POST /auth/mfa/enroll/begin` and
+  `POST /auth/mfa/enroll/confirm` for authenticated humans.
+- When `ADMIN_API_MFA_REQUIRED=true`, password login returns a short-lived
+  `mfa_token` (`mfa:verify` scope); `POST /auth/mfa/verify` exchanges a valid
+  authenticator code for a full session. Enroll MFA before enabling the flag.
+- `ADMIN_API_MFA_REQUIRED` remains **false** by default.
+
 ### Admin API Phase 1 foundation (CORE-011)
 
 - Added the versioned `/api/v1/admin` surface for Assist RIC and other management

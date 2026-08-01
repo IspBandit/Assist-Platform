@@ -1238,15 +1238,14 @@ paths:
     post:
       tags: [Auth]
       operationId: adminAuthMfaChallenge
-      summary: Return MFA enrollment status for the authenticated human actor (scaffolded)
+      summary: Return MFA enrollment status for the authenticated human actor
       description: |
-        Requires a bearer human access token. TOTP verification is not enforced in Phase 1;
-        `/auth/mfa/verify` returns 501 until OPS-010 ships full validation.
+        Requires a bearer human access token (full session or MFA challenge token).
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: MFA challenge scaffold document
+          description: MFA challenge status
           content:
             application/json:
               schema:
@@ -1257,11 +1256,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/mfa/enroll/begin:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaEnrollBegin
+      summary: Begin TOTP enrollment for the authenticated human
+      description: |
+        Requires a full human session (not an MFA challenge token). Returns a
+        base32 secret and otpauth URI once; confirm with /auth/mfa/enroll/confirm.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+      responses:
+        '200':
+          description: Enrollment secret issued
+        '401':
+          description: Missing or non-human bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: MFA already enrolled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/mfa/enroll/confirm:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaEnrollConfirm
+      summary: Confirm TOTP enrollment with an authenticator code
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+      responses:
+        '200':
+          description: MFA enrolled
+        '422':
+          description: Invalid code or enrollment not started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /auth/mfa/verify:
     post:
       tags: [Auth]
       operationId: adminAuthMfaVerify
-      summary: Verify MFA code (scaffolded — returns 501 until TOTP ships)
+      summary: Verify TOTP code (and complete MFA login when using mfa_token)
       security:
         - bearerAuth: []
       requestBody:
@@ -1276,12 +1337,8 @@ paths:
                   type: string
                   minLength: 1
       responses:
-        '501':
-          description: TOTP validation not implemented yet
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorEnvelope'
+        '200':
+          description: MFA verified (may include full token bundle after login challenge)
         '422':
           description: Validation failed or no enrolled method
           content:
@@ -2085,7 +2142,7 @@ components:
                     type: boolean
             verify_status:
               type: string
-              enum: [scaffolded]
+              enum: [active, ok]
             message:
               type: string
     AuditEvent:

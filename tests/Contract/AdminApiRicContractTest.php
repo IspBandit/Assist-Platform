@@ -32,6 +32,8 @@ final class AdminApiRicContractTest extends TestCase
         'GET /auth/sessions',
         'DELETE /auth/sessions/{id}',
         'POST /auth/mfa/challenge',
+        'POST /auth/mfa/enroll/begin',
+        'POST /auth/mfa/enroll/confirm',
         'POST /auth/mfa/verify',
         'GET /service-accounts',
         'POST /service-accounts',
@@ -117,7 +119,7 @@ final class AdminApiRicContractTest extends TestCase
         }
         self::assertNotEmpty($paths);
 
-        foreach (['/health', '/audit', '/search-gaps', '/auth/mfa/challenge', '/auth/mfa/verify'] as $required) {
+        foreach (['/health', '/audit', '/search-gaps', '/auth/mfa/challenge', '/auth/mfa/enroll/begin', '/auth/mfa/verify'] as $required) {
             self::assertContains($required, $paths, 'OpenAPI missing path ' . $required);
         }
     }

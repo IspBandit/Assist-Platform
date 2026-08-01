@@ -48,7 +48,8 @@ final class AdminApiAuditSearchMfaTest extends TestCase
 
         self::assertSame('read', $payload['data']['resources']['audit']);
         self::assertSame('read', $payload['data']['resources']['search_gaps']);
-        self::assertSame('scaffolded', $payload['data']['authentication']['mfa_verify']);
+        self::assertSame('active', $payload['data']['authentication']['mfa_verify']);
+        self::assertSame('active', $payload['data']['authentication']['mfa_enroll']);
     }
 
     public function testAuditAndSearchGapsRequireBearer(): void
@@ -69,6 +70,8 @@ final class AdminApiAuditSearchMfaTest extends TestCase
         foreach (
             [
                 ['POST', '/api/v1/admin/auth/mfa/challenge', []],
+                ['POST', '/api/v1/admin/auth/mfa/enroll/begin', []],
+                ['POST', '/api/v1/admin/auth/mfa/enroll/confirm', ['code' => '123456']],
                 ['POST', '/api/v1/admin/auth/mfa/verify', ['code' => '123456']],
             ] as [$method, $path, $body]
         ) {
