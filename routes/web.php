@@ -117,6 +117,10 @@ return static function (Router $router): void {
         $router->group(['middleware' => ['rate:public.search-feedback,30,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/find/feedback', 'Site\SearchController@feedback', 'find.feedback');
         });
+        // Ask VanAssist (CORE-012 / AI-1) — parallel NL search; feature-flagged off by default.
+        $router->group(['middleware' => ['rate:public.ask-vanassist,30,3600,3600']], static function (Router $router): void {
+            $router->get('/ask', 'Site\AssistSearchController@form', 'ask');
+        });
 
         // Login-free customer outcome follow-up landing (Phase 11).
         $router->get('/followup/{token}', 'Site\FollowupController@show', 'followup');

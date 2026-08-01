@@ -7,9 +7,6 @@ See [ADR 0012](DECISIONS/0012-authoritative-provider-pack-routing.md) for canoni
 See [ADR 0013](DECISIONS/0013-staged-consent-gated-marketing-email.md) for consent-gated provider audiences and reviewed campaign limits.
 
 See [ADR 0014](DECISIONS/0014-separate-directory-accuracy-from-marketing.md) for the locked factual listing-notice boundary and type-specific suppression.
-See [ADR 0015](DECISIONS/0015-controlled-bulk-provider-review.md) for controlled bulk publication and strong duplicate linking.
-See [ADR 0016](DECISIONS/0016-server-owned-provider-import-and-campaign-taxonomy.md) for server-owned import processing and canonical provider-campaign category scope.
-See [ADR 0017](DECISIONS/0017-review-first-organisation-pr-outreach.md) for evidence-backed organisation targeting and separate staged PR campaigns.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -58,9 +55,21 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0011: Separate motorsport rule, discipline, venue and calendar catalogue.
 - 0012: Authoritative provider pack with canonical identity and taxonomy-controlled brand routing.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
-- 0014: Separate directory-accuracy notices from marketing communication.
-- 0015: Controlled bulk provider review and strong duplicate linking.
-- 0016: Server-owned provider import processing and canonical provider-campaign taxonomy.
-- 0017: Review-first organisation PR outreach with source, role and relevance evidence.
+- 0014: Separate directory accuracy from marketing outreach.
+- 0015: Admin API is the only external write path to production (no direct DB).
+- 0016: Stays vs narrowly scoped traveller facilities.
+- 0017: Assist RIC is the initial local management client (Option B).
+- 0018: Shared Assist AI Orchestrator (accepted; AI-1 foundation).
+- 0019: AI is interpretation, not factual authority.
+- 0020: Provider-neutral AI abstraction.
+- 0021: Deterministic and cache-first routing.
+- 0022: Hard AI budget enforcement.
+- 0023: Natural-language search alongside structured search.
+- 0024: Knowledge-gap-driven database growth.
+- 0025: External results are staged with provenance.
+- 0026: No direct AI publishing.
+- 0027: Traveller facilities remain separate from stays — AI workstream.
+
+Gate: `docs/PHASE_AI0_DESIGN.md`. Owner brief: `docs/AI0_OWNER_DECISION_BRIEF.md`.
 
 The index must be updated whenever an ADR is accepted.

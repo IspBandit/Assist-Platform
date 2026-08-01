@@ -3,6 +3,14 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Phase AI-1 — deterministic Assist AI Orchestrator (CORE-012 / VAN-011)** —
+  shared `App\Platform\AiSearch` with keyword intent engine, provider/stay
+  adapters, `/ask` Ask VanAssist UI (feature flag `assist_ai_search` **off** by
+  default), migration `085_assist_ai_search.sql`, and unit tests. No paid AI,
+  no external datasets, structured `/find` unchanged. AI-0 design package and
+  ADRs 0018–0027 accepted.
+
+### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +
   `php scripts/coverage-report.php` (local 0 / 1–2 / 3+ and serving coverage by state;
   `--thin` exports a gap-fill queue).

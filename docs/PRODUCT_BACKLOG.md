@@ -17,6 +17,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
 | CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | done | Owner isolation, mobile asset wallet, private document storage, expiry delivery and brand-aware actions |
 | CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | done | Explicit consent, limited preserved context, source/destination brand audit and private-field exclusion |
+| CORE-011 | Versioned Admin API (`/api/v1/admin`) for RIC and trusted management clients | ready | OpenAPI contract, auth/scopes, providers/stays lifecycle, draft ingest, recycle bin, contract tests; no direct DB access from clients |
+| CORE-012 | Shared Assist AI Orchestrator (NL search + knowledge growth) | in progress | AI-0 approved; AI-1 deterministic foundation shipped (`App\Platform\AiSearch`, `/ask`, migration 085, flag off); AI-2+ pending |
 
 ## Experience
 
@@ -37,6 +39,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | --- | --- | --- | --- |
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
 | VAN-002 | Provider claims, assistance and nearby-help launch readiness | ready | End-to-end provider/customer acceptance |
+| VAN-010 | Claim-first provider onboarding before new listing creation | ready | Search-before-create UX, “Is this your business?”, claim priority, duplicate hold, linked to VAN-002 and DATA-002 |
+| VAN-011 | AI-assisted natural-language search (intent → location/category) | in progress | Ask VanAssist `/ask` (AI-1) alongside structured search; flag `assist_ai_search` off by default; never factual authority; CORE-012 |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
 | TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
@@ -51,7 +55,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls |
-| DATA-002 | Duplicate detection and merge with audit preservation | ready | Dry run, merge tests and administrator workflow |
+| DATA-002 | Duplicate detection and merge with audit preservation | ready | Dry run, merge tests, administrator workflow, Admin API merge/review actions and RIC hand-off (absorbs former DATA-014 request) |
 | DATA-003 | Cross-brand recommendation policies | ready | Relevance rules, labelled origin and analytics |
 | DATA-004 | Brand-scoped website, provider-interest and coverage-gap reporting | in progress | Shared first-party event scope, admin website-insights summary and zero-result/provider-interest reporting implemented; production data collection and acceptance remain |
 | DATA-005 | Data Intelligence, opportunity scoring and action queue | in progress | Modular metric sources, population-aware scoring, verification/import quality and direct Data Sources hand-off |
@@ -60,6 +64,10 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-008 | Four-brand authoritative Australian vehicle rules library | done | All-jurisdiction official-source catalogue, brand relevance, genuine downloads, source-change review, mobile filters and labelled local sponsorship |
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
 | DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
+| DATA-011 | Assist RIC live Admin API synchronisation | ready | RIC pulls canonical records, submits approved export/draft packages, reads sync status; depends on CORE-011 |
+| DATA-012 | Government dataset catalogue and import connectors | ready | Catalogue, CKAN/ArcGIS/CSV/GeoJSON adapters, provenance, review-first ingest; extends DATA-006 |
+| DATA-013 | Search gap and knowledge growth engine | ready | Ranked zero/weak searches → research jobs via RIC; Admin API `/search-gaps` planned; AI-1 logs `assist_searches`; AI-4 implements gap engine; depends on DATA-004 and DATA-011 |
+| DATA-014 | Canonical entity and source provenance model | ready | Stable entity IDs, source links, field-level provenance where practical; extends DATA-001 |
 
 ## Infrastructure
 
@@ -79,15 +87,16 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
 | OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
-| OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
+| OPS-010 | Admin API security, service accounts and cost controls | ready | Tokens, scopes, throttling, MFA scaffolding then MFA gate, paid-connector hard limits; pairs with CORE-011 |
+| OPS-011 | Record lifecycle and Recycle Bin for providers and stays | ready | Soft delete, restore, retention, purge permission, dependency checks, audited bulk actions |
 
 ## Commercial
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | COM-001 | Transactional email transport and sender reputation | in progress | Direct shared-mailbox send/receive passes; brand-neutral templates, application probes and central bounce/complaint suppression implemented; production application-probe acceptance remains |
-| COM-002 | Consent-aware bulk provider campaign sending | in progress | Canonical brand-category drafts, searchable candidate pool, campaign exclusions, factual-source and marketing-consent boundaries, bounded queue batches, suppression and signed unsubscribe complete; production recipient-count and throughput acceptance remains |
-| COM-003 | Provider launch and audience-growth programme | in progress | Provider conversion plus evidence-backed organisation PR register, segmented message tracks and staged delivery implemented; first monitored live pilots remain |
+| COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
+| COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
 | COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |
 | COM-006 | Verified provider capability credentials | done | Private evidence, expiry, reviewer audit, public labels and explicit no-endorsement controls |
@@ -102,6 +111,29 @@ implementation detail belongs in linked issues and pull requests. Status values:
 - Blocked external prerequisites remain explicit; code must fail closed.
 - Production defects can interrupt sequencing, but their resolution must update
   this backlog and the relevant operational record.
+
+## Local management / Admin API ID remapping
+
+Phase 0 requested IDs that collided with existing outcomes. Collision-free IDs:
+
+| Requested | Assigned | Notes |
+| --- | --- | --- |
+| CORE-010 Versioned Admin API | **CORE-011** | CORE-010 already = cross-brand Garage handoffs |
+| DATA-010 RIC Live API Sync | **DATA-011** | DATA-010 already = motorsport catalogue |
+| DATA-011 Government datasets | **DATA-012** | Extends DATA-006 |
+| DATA-012 Search gaps | **DATA-013** | Extends DATA-004 |
+| DATA-013 Canonical entity/provenance | **DATA-014** | Extends DATA-001 |
+| DATA-014 Duplicate review/merge | **DATA-002** | Consolidated into existing DATA-002 |
+| VAN-010 / VAN-011 / OPS-010 / OPS-011 | unchanged | No collision |
+
+See `docs/PHASE1_ADMIN_API_DESIGN.md` and ADRs 0015–0017.
+
+## Assist AI Orchestration workstream
+
+Separate from Admin API Phase 1 (CORE-011). Gate: `docs/PHASE_AI0_DESIGN.md`
+(approved). AI-1 deterministic foundation complete on branch
+`feature/core-012-ai-1-deterministic`. Next: AI-2 cache/budget. Primary IDs:
+**CORE-012**, **VAN-011**, **DATA-013**. ADRs 0018–0027 accepted.
 
 ## Reconciled experience delivery
 

@@ -395,6 +395,7 @@ return [
         'public_phone'           => [false, 'Allow providers to display a public phone number.'],
         'demand_analytics'       => [false, 'Enable demand-to-outcome funnel tracking, provider usage analytics and demand dashboards.'],
         'auto_matching'          => [false, 'Automatically score, invite providers and release contact on interest for approved requests (no manual dispatch).'],
+        'assist_ai_search'       => [false, 'Ask VanAssist natural-language search (deterministic orchestrator; off by default).'],
     ],
 
     // Australian GST / tax-invoice defaults -> tax_settings table.

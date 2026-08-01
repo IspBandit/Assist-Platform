@@ -3,9 +3,18 @@
 ## Current status
 
 The application is server-rendered. Existing JSON location/search endpoints are
-first-party web endpoints, not a stable public API. There is no separately
-versioned `/api/v1` contract and no token-authentication product today. This
-must not be represented as a supported partner API.
+first-party web endpoints, not a stable public API. A versioned Admin API under
+`/api/v1/admin` is specified for Assist RIC and trusted management clients
+(CORE-011). Until that surface is implemented, MFA-gated and Quality Gate
+approved, it must not be represented as a supported partner API. See
+`docs/LIVE_API.md` and `docs/PHASE1_ADMIN_API_DESIGN.md`.
+
+Ask VanAssist natural-language search is a parallel **web** entry at `GET /ask`
+(VanAssist only), gated by feature flag `assist_ai_search` (default off). It
+calls the internal Assist AI Orchestrator (`App\Platform\AiSearch`). A future
+`POST /api/v1/search/assist` is not finalised. Vendor AI HTTP APIs are never
+exposed to browsers. See `docs/PHASE_AI0_DESIGN.md` and
+`docs/NATURAL_LANGUAGE_SEARCH.md`. Admin API Phase 1 inventory is unchanged.
 
 ## Future contract
 
