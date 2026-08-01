@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Admin API staging enablement checklist
+
+- Documented the staging-only sequence to migrate Admin API tables, enroll TOTP,
+  create a least-privilege RIC service account, and rehearse import submit before
+  any production `ADMIN_API_ENABLED` change (`docs/LIVE_API.md`).
+
 ### Admin API TOTP MFA (OPS-010)
 
 - Replaced the MFA verify scaffold with RFC 6238 TOTP validation (pure PHP).

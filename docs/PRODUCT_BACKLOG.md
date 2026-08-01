@@ -17,7 +17,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
 | CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | done | Owner isolation, mobile asset wallet, private document storage, expiry delivery and brand-aware actions |
 | CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | done | Explicit consent, limited preserved context, source/destination brand audit and private-field exclusion |
-| CORE-011 | Versioned Admin API (`/api/v1/admin`) for RIC and trusted management clients | ready | OpenAPI contract, auth/scopes, providers/stays lifecycle, draft ingest, recycle bin, contract tests; no direct DB access from clients |
+| CORE-011 | Versioned Admin API (`/api/v1/admin`) for RIC and trusted management clients | done | OpenAPI contract, auth/scopes, providers/stays lifecycle, draft ingest, recycle bin, contract tests; no direct DB access from clients (PRs #139–#140) |
 
 ## Experience
 
