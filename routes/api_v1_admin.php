@@ -9,6 +9,7 @@ declare(strict_types=1);
  * Increment 2: human authentication sessions.
  * Increment 3: service accounts + machine tokens + scopes.
  * Increment 4: read-only providers + stays.
+ * Increment 5: audited provider/stay writes + lifecycle.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -55,10 +56,44 @@ return static function (\App\Core\Router $router): void {
             });
 
             $router->group([
+                'middleware' => ['admin_api_scope:providers:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/providers', 'Api\\V1\\Admin\\ProviderController@store', 'api.v1.admin.providers.store');
+                $router->patch('/providers/{id}', 'Api\\V1\\Admin\\ProviderController@update', 'api.v1.admin.providers.update');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:lifecycle:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/providers/{id}/publish', 'Api\\V1\\Admin\\ProviderController@publish', 'api.v1.admin.providers.publish');
+                $router->post('/providers/{id}/unpublish', 'Api\\V1\\Admin\\ProviderController@unpublish', 'api.v1.admin.providers.unpublish');
+                $router->post('/providers/{id}/archive', 'Api\\V1\\Admin\\ProviderController@archive', 'api.v1.admin.providers.archive');
+                $router->post('/providers/{id}/restore', 'Api\\V1\\Admin\\ProviderController@restore', 'api.v1.admin.providers.restore');
+                $router->delete('/providers/{id}', 'Api\\V1\\Admin\\ProviderController@destroy', 'api.v1.admin.providers.destroy');
+            });
+
+            $router->group([
                 'middleware' => ['admin_api_scope:stays:read'],
             ], static function (\App\Core\Router $router): void {
                 $router->get('/stays', 'Api\\V1\\Admin\\StayController@index', 'api.v1.admin.stays.index');
                 $router->get('/stays/{id}', 'Api\\V1\\Admin\\StayController@show', 'api.v1.admin.stays.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:stays:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/stays', 'Api\\V1\\Admin\\StayController@store', 'api.v1.admin.stays.store');
+                $router->patch('/stays/{id}', 'Api\\V1\\Admin\\StayController@update', 'api.v1.admin.stays.update');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:lifecycle:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/stays/{id}/publish', 'Api\\V1\\Admin\\StayController@publish', 'api.v1.admin.stays.publish');
+                $router->post('/stays/{id}/unpublish', 'Api\\V1\\Admin\\StayController@unpublish', 'api.v1.admin.stays.unpublish');
+                $router->post('/stays/{id}/archive', 'Api\\V1\\Admin\\StayController@archive', 'api.v1.admin.stays.archive');
+                $router->post('/stays/{id}/restore', 'Api\\V1\\Admin\\StayController@restore', 'api.v1.admin.stays.restore');
+                $router->delete('/stays/{id}', 'Api\\V1\\Admin\\StayController@destroy', 'api.v1.admin.stays.destroy');
             });
         });
     });

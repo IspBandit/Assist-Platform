@@ -57,8 +57,8 @@ final class SystemController extends Controller
             ],
             'scopes' => AdminApiScopes::catalog(),
             'resources' => [
-                'providers' => 'read',
-                'stays' => 'read',
+                'providers' => 'read_write',
+                'stays' => 'read_write',
                 'traveller_facilities' => 'planned',
                 'drafts' => 'planned',
                 'imports' => 'planned',
@@ -74,6 +74,7 @@ final class SystemController extends Controller
                 'service_token_ttl_seconds' => (int) Config::get('admin_api.service_token_ttl_seconds', 3600),
             ],
             'notes' => [
+                'Phase 1 Increment 5 adds audited provider and stay create/update plus lifecycle transitions.',
                 'Phase 1 Increment 4 adds read-only providers and stays with cursor pagination.',
                 'Brand scope is resolved from host/deployment context, not client brand_id.',
                 'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',

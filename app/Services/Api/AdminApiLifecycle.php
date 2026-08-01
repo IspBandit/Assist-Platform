@@ -141,4 +141,74 @@ final class AdminApiLifecycle
 
         return 'unpublished';
     }
+
+    /** @return array<string,mixed> */
+    public static function providerFieldsAfterPublish(): array
+    {
+        return [
+            'provider_status' => 'active',
+            'listing_status' => 'active',
+            'search_visible' => 1,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    public static function providerFieldsAfterUnpublish(): array
+    {
+        return ['search_visible' => 0];
+    }
+
+    /** @return array<string,mixed> */
+    public static function providerFieldsAfterArchive(): array
+    {
+        return [
+            'provider_status' => 'suspended',
+            'search_visible' => 0,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    public static function providerFieldsAfterRestore(): array
+    {
+        return [
+            'provider_status' => 'pending',
+            'listing_status' => 'pending',
+            'search_visible' => 0,
+            'deleted_at' => null,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    public static function stayFieldsAfterPublish(): array
+    {
+        return [
+            'status' => 'active',
+            'public_page_enabled' => 1,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    public static function stayFieldsAfterUnpublish(): array
+    {
+        return ['public_page_enabled' => 0];
+    }
+
+    /** @return array<string,mixed> */
+    public static function stayFieldsAfterArchive(): array
+    {
+        return [
+            'status' => 'suspended',
+            'public_page_enabled' => 0,
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    public static function stayFieldsAfterRestore(): array
+    {
+        return [
+            'status' => 'pending',
+            'public_page_enabled' => 0,
+            'deleted_at' => null,
+        ];
+    }
 }
