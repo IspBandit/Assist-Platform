@@ -1,10 +1,12 @@
 # Phase 1 — Admin API design package
 
-**Status:** design complete — implementation may begin in small increments after
-owner review of this package.  
+**Status:** Phase 1 foundation **implemented** (Increments 1–9 + OPS-010 TOTP).
+Production enablement remains gated (see `docs/LIVE_API.md` and
+`docs/evidence/admin-api-2026-08-02/`).  
 **Architecture:** Option B (ADR 0018, 0020).  
-**Backlog:** CORE-011, OPS-010, OPS-011, DATA-011, DATA-014 (plus links to
-DATA-001, DATA-002, DATA-006, VAN-002, VAN-010).
+**Backlog:** CORE-011 (done), OPS-010 (code done / production flags gated),
+OPS-011 (done in Phase 1), DATA-011 (RIC client done; staging rehearsal ops),
+DATA-014 (plus links to DATA-001, DATA-002, DATA-006, VAN-002, VAN-010).
 
 Related ADRs:
 
@@ -53,9 +55,9 @@ Base path: `/api/v1/admin`. Brand scope from verified host/deployment context
 | GET | `/auth/sessions` | List active API sessions for human actor |
 | DELETE | `/auth/sessions/{id}` | Revoke session |
 
-MFA verify endpoints are **scaffolded** in schema/OpenAPI in Phase 1 but not
-required for the initial restricted rollout. General remote admin access waits
-until MFA is enforced (OPS-010).
+MFA enrollment and TOTP verify are **implemented** (OPS-010). Enforcement via
+`ADMIN_API_MFA_REQUIRED` stays **false** by default until operators enroll and
+Quality Gate evidence allows production flip.
 
 ### 2.2 Service accounts (management)
 
@@ -215,7 +217,7 @@ OpenAPI still lists deferred paths as `planned` in `/capabilities` where useful.
 
 | email_hash / ip | attempts | window_start | locked_until |
 
-**`user_mfa_methods`** (scaffold)
+**`user_mfa_methods`** (TOTP)
 
 | user_id | method `totp` | secret_encrypted | enabled_at | verified_at |
 
@@ -229,8 +231,8 @@ Reuse existing `audit_logs` for resource mutations; security events for auth.
 
 1. Validate credentials against `users` + admin-capable roles.
 2. Check throttle / status / deleted_at.
-3. If MFA enabled and enforced, return `mfa_required` challenge (Phase 1
-   scaffold; enforcement gate before broad remote use).
+3. If MFA enrolled and `ADMIN_API_MFA_REQUIRED=true`, return `mfa_required`
+   with short-lived `mfa_token`; complete via `POST /auth/mfa/verify`.
 4. Issue access + refresh; write security event.
 5. Until MFA enforced: allowlist of administrator user IDs and/or deployment
    flag `ADMIN_API_RESTRICTED=1` limiting callers.
@@ -402,7 +404,7 @@ current max **079**):
 | Migration | Purpose |
 | --- | --- |
 | `085_admin_api_credentials.sql` | clients, access/refresh tokens, throttle, security events |
-| `086_admin_api_mfa_scaffold.sql` | `user_mfa_methods` (unused until MFA enabled) |
+| `086_admin_api_mfa_scaffold.sql` | `user_mfa_methods` (TOTP; enforcement flag off by default) |
 | `082_entity_lifecycle_recycle.sql` | lifecycle columns, delete reason/by/purge_after on providers + caravan_parks |
 | `083_entity_source_links.sql` | canonical source link table + backfill from known columns |
 | `084_admin_api_idempotency.sql` | idempotency key store for bulk/create |
@@ -466,7 +468,7 @@ No Phase 1 migration for `traveller_facilities` (ADR 0019).
 | Drafts/Imports | Validate-only, stage, reject unknown fields, idempotent replay |
 | Audit | Mutation writes audit row with actor_type service/user |
 | Security | No secret in logs; error envelope redaction |
-| MFA scaffold | Schema present; enforcement flag off in restricted mode |
+| MFA TOTP | Enroll begin/confirm + verify; enforcement flag off by default |
 | Contract | OpenAPI response shape fixtures; RIC mock client against recorded OpenAPI |
 | Non-goals | No production DB; no live Google calls in CI |
 
@@ -488,7 +490,7 @@ No Phase 1 migration for `traveller_facilities` (ADR 0019).
 ## Implementation order (confirmed)
 
 1. API routing + envelopes/errors — **Increment 1 complete**
-2. Authentication + admin sessions — **Increment 2 complete (restricted / MFA scaffold)**
+2. Authentication + admin sessions — **Increment 2 complete (restricted mode)**
 3. Service accounts + scopes — **Increment 3 complete**
 4. Health / version / capabilities — **Increment 1 skeletons shipped**
 5. Read-only providers + stays — **Increment 4 complete**
@@ -496,11 +498,14 @@ No Phase 1 migration for `traveller_facilities` (ADR 0019).
 7. Recycle Bin list/purge — **Increment 6 complete**
 8. Draft/import submission — **Increment 7 complete**
 9. Audit read + search-gap analytics — **Increment 8 complete**
-10. MFA verify scaffold — **Increment 8b complete (501 until TOTP ships)**
+10. MFA TOTP enroll/verify — **Increment 8b complete (PR #140)**
 11. RIC mock-client contract tests — **Increment 9 complete**
-12. OpenAPI + operating docs — **Increment 1–9 contract updates**
+12. OpenAPI + operating docs — **Increment 1–9 + closeout evidence**
 
-Phase 1 live API foundation is **complete** except enabling `ADMIN_API_MFA_REQUIRED` in production.
+Phase 1 live API foundation is **complete**. Production
+`ADMIN_API_ENABLED` / `ADMIN_API_MFA_REQUIRED` still require staging rehearsal
+and Quality Gate (conditional-pass pack under
+`docs/evidence/admin-api-2026-08-02/`).
 
 ### Increment 1 shipped surface
 
@@ -620,12 +625,14 @@ Migration `087_admin_api_drafts_imports.sql` adds `api_drafts`, `api_import_jobs
 
 No new migration: search gaps aggregate existing demand analytics tables.
 
-### Increment 8b shipped surface (OPS-010 scaffold)
+### Increment 8b shipped surface (OPS-010 TOTP)
 
 | Method | Path | Behaviour |
 | --- | --- | --- |
+| POST | `/auth/mfa/enroll/begin` | Human bearer; returns otpauth URI + encrypted secret pending confirm |
+| POST | `/auth/mfa/enroll/confirm` | Body `{code}`; enables TOTP for the actor |
 | POST | `/auth/mfa/challenge` | Human bearer; enrollment status from `user_mfa_methods` |
-| POST | `/auth/mfa/verify` | Body `{code}`; 501 `not_implemented` until TOTP library ships |
+| POST | `/auth/mfa/verify` | Body `{code}` or MFA login via `mfa_token`; RFC 6238 TOTP |
 
 `ADMIN_API_MFA_REQUIRED` remains **false** by default.
 

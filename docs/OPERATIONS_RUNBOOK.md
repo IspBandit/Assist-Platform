@@ -62,6 +62,26 @@ Never print secrets in logs or command history. Use distinct brand sender
 addresses even when the SMTP transport account is shared. DNS and Cloudflare
 changes are separate owner-approved operations.
 
+## Admin API (`/api/v1/admin`)
+
+Disabled by default. Do **not** set `ADMIN_API_ENABLED=true` in production
+without staging rehearsal and an updated Platform Quality Gate pass (see
+`docs/LIVE_API.md` and `docs/evidence/admin-api-2026-08-02/`).
+
+Non-production enablement:
+
+1. Apply migrations through `087_admin_api_drafts_imports.sql`.
+2. Set `ADMIN_API_ENABLED=true`, keep `ADMIN_API_RESTRICTED=true`.
+3. Bootstrap RIC service account:
+   `php scripts/admin-api-create-ric-service-account.php --email=…`
+4. Probe: `php scripts/admin-api-probe.php --base-url=… --client-key=… --client-secret=…`
+5. Assist RIC: Test connection → Validate-only import before write submit.
+6. Enroll human TOTP before `ADMIN_API_MFA_REQUIRED=true`.
+
+Rollback: set `ADMIN_API_ENABLED=false` (and MFA flag false), revoke
+`api_oauth_clients`, rotate secrets. RIC falls back to checksummed export
+packages. Never open production MariaDB from RIC or importers (ADR 0018).
+
 ## Incident evidence
 
 Record timestamps, release, affected brand/routes, request IDs, symptoms,

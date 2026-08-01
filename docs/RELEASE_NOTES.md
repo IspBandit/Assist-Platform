@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Admin API Option B closeout (CORE-011 / OPS-010 / DATA-011 / OPS-011)
+
+- Recorded conditional Platform Quality Gate evidence for Admin API + Assist RIC
+  client foundation (`docs/evidence/admin-api-2026-08-02/`). Production
+  `ADMIN_API_ENABLED` / MFA flags remain off until staging rehearsal is appended.
+- Synced Phase 1 design, LIVE_API, OPERATIONS_RUNBOOK and backlog statuses:
+  CORE-011 / OPS-011 / DATA-011 client work done; OPS-010 production enablement
+  still gated.
+
 ### Admin API staging enablement checklist
 
 - Documented the staging-only sequence to migrate Admin API tables, enroll TOTP,
@@ -31,12 +40,12 @@ may remain as dated files and are linked here rather than copied.
 - Locked the boundary so external tools must not open production MariaDB
   (ADRs 0018–0020). Stays remain `caravan_parks`; traveller facilities stay out
   of Phase 1. Assist RIC is the initial local management client.
-- Migrations `085`–`087` create Admin API credentials, MFA scaffold tables and
+- Migrations `085`–`087` create Admin API credentials, MFA tables and
   draft/import job storage. The API remains disabled by default
-  (`ADMIN_API_ENABLED=false`) until MFA and Platform Quality Gate evidence are
-  recorded.
-- MFA challenge/verify endpoints are scaffolded; verify still returns 501 while
-  `ADMIN_API_MFA_REQUIRED` stays false.
+  (`ADMIN_API_ENABLED=false`) until staging rehearsal and an updated Quality
+  Gate allow production flags.
+- TOTP MFA enrollment/verify shipped in a follow-up (OPS-010); enforcement flag
+  stays false by default.
 
 ### National coverage map
 

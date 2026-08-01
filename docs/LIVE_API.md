@@ -136,6 +136,9 @@ Do this on a disposable or staging deployment before production:
    small JSON export package with **Validate only** checked first.
 9. Record Architecture, UX, Engineering and Business Quality Gate evidence
    before any production enablement (`docs/PLATFORM_QUALITY_GATE.md`).
+   Code-complete conditional-pass pack:
+   `docs/evidence/admin-api-2026-08-02/PLATFORM_QUALITY_GATE.md`
+   (append staging probe + RIC validate-only results before flipping production).
 
 Production still requires the four Quality Gate pillars. Application code alone
 does not authorise DNS, live migrations or turning `ADMIN_API_ENABLED` on in
