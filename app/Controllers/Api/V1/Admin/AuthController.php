@@ -69,6 +69,8 @@ final class AuthController extends Controller
 
     public function logout(Request $request): Response
     {
+        (new AdminApiAuthService())->assertNotMfaChallengeOnly('logout');
+
         $all = filter_var($request->input('all_sessions', false), FILTER_VALIDATE_BOOL);
         $refresh = $request->input('refresh_token');
         (new AdminApiAuthService())->logout(
@@ -86,6 +88,8 @@ final class AuthController extends Controller
         if (!AdminApiContext::isHuman() && !AdminApiContext::isService()) {
             throw new AdminApiException(401, 'unauthenticated', 'Bearer access token required.');
         }
+
+        (new AdminApiAuthService())->assertNotMfaChallengeOnly('reading the current actor profile');
 
         $payload = [
             'scopes' => AdminApiContext::scopes(),
@@ -116,6 +120,8 @@ final class AuthController extends Controller
             throw new AdminApiException(401, 'unauthenticated', 'Bearer access token required.');
         }
 
+        (new AdminApiAuthService())->assertNotMfaChallengeOnly('listing sessions');
+
         return AdminApiEnvelope::collection((new AdminApiAuthService())->listSessions($userId));
     }
 
@@ -145,6 +151,41 @@ final class AuthController extends Controller
         return AdminApiEnvelope::data((new AdminApiMfaService())->challenge($userId));
     }
 
+    public function mfaEnrollBegin(Request $request): Response
+    {
+        $user = AdminApiContext::user();
+        if ($user === null || !AdminApiContext::isHuman()) {
+            throw new AdminApiException(401, 'unauthenticated', 'Bearer human access token required.');
+        }
+
+        (new AdminApiAuthService())->assertNotMfaChallengeOnly('enrolling MFA');
+
+        $label = $request->input('label');
+        $account = (string) ($user['email'] ?? ('user-' . (int) $user['id']));
+
+        return AdminApiEnvelope::data(
+            (new AdminApiMfaService())->beginEnrollment(
+                (int) $user['id'],
+                $account,
+                is_string($label) ? trim($label) : null
+            )
+        );
+    }
+
+    public function mfaEnrollConfirm(Request $request): Response
+    {
+        $userId = AdminApiContext::userId();
+        if ($userId === null || !AdminApiContext::isHuman()) {
+            throw new AdminApiException(401, 'unauthenticated', 'Bearer human access token required.');
+        }
+
+        (new AdminApiAuthService())->assertNotMfaChallengeOnly('confirming MFA enrollment');
+
+        return AdminApiEnvelope::data(
+            (new AdminApiMfaService())->confirmEnrollment($userId, (string) $request->input('code', ''))
+        );
+    }
+
     public function mfaVerify(Request $request): Response
     {
         $userId = AdminApiContext::userId();
@@ -152,8 +193,8 @@ final class AuthController extends Controller
             throw new AdminApiException(401, 'unauthenticated', 'Bearer human access token required.');
         }
 
-        (new AdminApiMfaService())->verify($userId, (string) $request->input('code', ''));
-
-        throw new AdminApiException(501, 'not_implemented', 'MFA verify did not return.');
+        return AdminApiEnvelope::data(
+            (new AdminApiMfaService())->verify($userId, (string) $request->input('code', ''), $request)
+        );
     }
 }

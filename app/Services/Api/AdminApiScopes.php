@@ -32,6 +32,7 @@ final class AdminApiScopes
         'users:admin',
         'billing:admin',
         'duplicates:merge',
+        'mfa:verify',
     ];
 
     /** @var list<string> */
@@ -54,6 +55,7 @@ final class AdminApiScopes
         'users:admin',
         'billing:admin',
         'duplicates:merge',
+        'mfa:verify',
     ];
 
     /**

@@ -12,6 +12,7 @@ return [
     'enabled' => (bool) Env::get('ADMIN_API_ENABLED', false),
     'restricted' => (bool) Env::get('ADMIN_API_RESTRICTED', true),
     'mfa_required' => (bool) Env::get('ADMIN_API_MFA_REQUIRED', false),
+    'mfa_challenge_ttl_seconds' => max(60, min(900, (int) Env::get('ADMIN_API_MFA_CHALLENGE_TTL', 300))),
     'access_token_ttl_seconds' => max(60, (int) Env::get('ADMIN_API_ACCESS_TOKEN_TTL', 900)),
     'refresh_token_ttl_seconds' => max(300, (int) Env::get('ADMIN_API_REFRESH_TOKEN_TTL', 604800)),
     'service_token_ttl_seconds' => max(60, min(3600, (int) Env::get('ADMIN_API_SERVICE_TOKEN_TTL', 3600))),

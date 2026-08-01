@@ -91,14 +91,32 @@ final class AdminApiAuthService
         }
 
         if ($this->mfaChallengeRequired((int) $user['id'])) {
-            $this->securityEvent('login_mfa_required', 'user', (int) $user['id'], null, $request);
-            throw new AdminApiException(
-                401,
-                'mfa_required',
-                'Multi-factor authentication is required before Admin API tokens can be issued.',
-                [],
-                ['mfa_enforced' => true]
-            );
+            if (!$this->userHasEnabledMfa((int) $user['id'])) {
+                $this->securityEvent('login_mfa_enrollment_required', 'user', (int) $user['id'], null, $request);
+                throw new AdminApiException(
+                    403,
+                    'mfa_enrollment_required',
+                    'Enroll MFA while ADMIN_API_MFA_REQUIRED is false, then enable the flag.',
+                    [],
+                    ['mfa_enforced' => true, 'enrolled' => false]
+                );
+            }
+
+            $this->clearThrottle($email, $ip);
+            $challenge = $this->issueMfaChallengeToken($user, $request);
+            $this->securityEvent('login_mfa_required', 'user', (int) $user['id'], null, $request, [
+                'access_token_id' => $challenge['access_token_id'],
+            ]);
+
+            return [
+                'mfa_required' => true,
+                'mfa_token' => $challenge['access_token'],
+                'token_type' => 'Bearer',
+                'expires_in' => $challenge['expires_in'],
+                'scopes' => $challenge['scopes'],
+                'user' => $this->publicUser($user),
+                'message' => 'Complete MFA with POST /auth/mfa/verify using this mfa_token as Bearer.',
+            ];
         }
 
         $this->clearThrottle($email, $ip);
@@ -491,10 +509,100 @@ final class AdminApiAuthService
 
     private function mfaChallengeRequired(int $userId): bool
     {
-        // Until MFA verify endpoints ship, refuse all token issuance when the
-        // deployment flag is on (OPS-010). Restricted mode covers interim access.
-        // $userId is reserved for per-user enrollment once verify exists.
+        unset($userId);
+
         return (bool) Config::get('admin_api.mfa_required', false);
+    }
+
+    /**
+     * @param array<string,mixed> $user
+     * @return array{access_token:string,access_token_id:string,expires_in:int,scopes:list<string>}
+     */
+    private function issueMfaChallengeToken(array $user, Request $request): array
+    {
+        $ttl = (int) Config::get('admin_api.mfa_challenge_ttl_seconds', 300);
+        $accessId = AdminApiToken::uuid();
+        $accessToken = AdminApiToken::generate();
+        $scopes = ['mfa:verify'];
+        $now = date('Y-m-d H:i:s');
+        $accessExpiry = date('Y-m-d H:i:s', time() + $ttl);
+        $requestId = RequestContext::hasRequestId() ? RequestContext::requestId() : null;
+
+        Database::query(
+            'INSERT INTO api_access_tokens (
+                id, token_hash, actor_type, user_id, client_id, scopes_json, expires_at,
+                request_id_created, ip_address, user_agent, created_at
+            ) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)',
+            [
+                $accessId,
+                AdminApiToken::hash($accessToken),
+                'user',
+                (int) $user['id'],
+                json_encode($scopes, JSON_THROW_ON_ERROR),
+                $accessExpiry,
+                $requestId,
+                $request->ip(),
+                $request->userAgent(),
+                $now,
+            ]
+        );
+
+        return [
+            'access_token' => $accessToken,
+            'access_token_id' => $accessId,
+            'expires_in' => $ttl,
+            'scopes' => $scopes,
+        ];
+    }
+
+    public function tokenIsMfaChallenge(): bool
+    {
+        $scopes = AdminApiContext::scopes();
+
+        return AdminApiContext::isHuman()
+            && $scopes === ['mfa:verify'];
+    }
+
+    /**
+     * Exchange a successful MFA verify for a full human token bundle.
+     *
+     * @return array<string,mixed>
+     */
+    public function completeMfaChallenge(Request $request): array
+    {
+        $user = AdminApiContext::user();
+        $challengeTokenId = AdminApiContext::accessTokenId();
+        if ($user === null || $challengeTokenId === null || !$this->tokenIsMfaChallenge()) {
+            throw new AdminApiException(
+                403,
+                'forbidden',
+                'MFA login completion requires a valid MFA challenge token.'
+            );
+        }
+
+        Database::query(
+            'UPDATE api_access_tokens SET revoked_at = NOW() WHERE id = ? AND revoked_at IS NULL',
+            [$challengeTokenId]
+        );
+
+        $bundle = $this->issueTokenBundle($user, $request, 'mfa-verified');
+        $this->securityEvent('login_mfa_verified', 'user', (int) $user['id'], null, $request, [
+            'access_token_id' => $bundle['access_token_id'],
+            'challenge_token_id' => $challengeTokenId,
+        ]);
+
+        return $this->publicTokenResponse($bundle, $user);
+    }
+
+    public function assertNotMfaChallengeOnly(string $action = 'this action'): void
+    {
+        if ($this->tokenIsMfaChallenge()) {
+            throw new AdminApiException(
+                403,
+                'forbidden',
+                'MFA challenge tokens may only call MFA verify. Complete MFA before ' . $action . '.'
+            );
+        }
     }
 
     private function assertCredentialStoreReady(): void

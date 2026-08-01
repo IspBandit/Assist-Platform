@@ -92,23 +92,27 @@ Increment 8 (audit + search gaps) adds:
 - `GET /api/v1/admin/audit/{id}` — single audit event
 - `GET /api/v1/admin/search-gaps` — ranked zero-result gaps from `provider_searches` (`analytics:read`); sparse/empty when analytics off
 
-Increment 8b (MFA scaffold, OPS-010) adds:
+Increment 8b / OPS-010 (MFA TOTP) adds:
 
-- `POST /api/v1/admin/auth/mfa/challenge` — human bearer; returns enrollment status (scaffolded)
-- `POST /api/v1/admin/auth/mfa/verify` — body `{code}`; returns 501 until TOTP validation ships
+- `POST /api/v1/admin/auth/mfa/challenge` — human bearer; enrollment status
+- `POST /api/v1/admin/auth/mfa/enroll/begin` — issue TOTP secret + otpauth URI
+- `POST /api/v1/admin/auth/mfa/enroll/confirm` — confirm with authenticator code
+- `POST /api/v1/admin/auth/mfa/verify` — validate TOTP; completes MFA login when
+  using an `mfa_token` from password login under `ADMIN_API_MFA_REQUIRED=true`
 
 Increment 9 (RIC contract tests) adds:
 
 - `tests/Contract/AdminApiRicContractTest.php` — Phase 1 path inventory, OpenAPI parity, mock-client health/auth checks
 
-Phase 1 live API foundation is complete except production MFA gate (`ADMIN_API_MFA_REQUIRED`).
+Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
+until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.
 
 Enable only with `ADMIN_API_ENABLED=true` on non-production first. Keep
 `ADMIN_API_RESTRICTED=true` and configure `ADMIN_API_ALLOWED_USER_IDS` (or rely
-on super-administrator-only when empty). Do not set `ADMIN_API_MFA_REQUIRED`
-until MFA verify endpoints exist. OpenAPI: `docs/openapi/admin-v1.yaml`.
+on super-administrator-only when empty). Enroll MFA before setting
+`ADMIN_API_MFA_REQUIRED=true`. OpenAPI: `docs/openapi/admin-v1.yaml`.
 
-**Phase 1 foundation complete** (Increments 1–9) except production MFA gate.
+**Phase 1 foundation complete** (Increments 1–9) plus OPS-010 TOTP.
 
 Remaining after Phase 1:
 

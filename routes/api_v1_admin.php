@@ -39,6 +39,8 @@ return static function (\App\Core\Router $router): void {
                 $router->get('/auth/sessions', 'Api\\V1\\Admin\\AuthController@sessions', 'api.v1.admin.auth.sessions');
                 $router->delete('/auth/sessions/{id}', 'Api\\V1\\Admin\\AuthController@revokeSession', 'api.v1.admin.auth.sessions.revoke');
                 $router->post('/auth/mfa/challenge', 'Api\\V1\\Admin\\AuthController@mfaChallenge', 'api.v1.admin.auth.mfa.challenge');
+                $router->post('/auth/mfa/enroll/begin', 'Api\\V1\\Admin\\AuthController@mfaEnrollBegin', 'api.v1.admin.auth.mfa.enroll.begin');
+                $router->post('/auth/mfa/enroll/confirm', 'Api\\V1\\Admin\\AuthController@mfaEnrollConfirm', 'api.v1.admin.auth.mfa.enroll.confirm');
                 $router->post('/auth/mfa/verify', 'Api\\V1\\Admin\\AuthController@mfaVerify', 'api.v1.admin.auth.mfa.verify');
             });
 

@@ -7,12 +7,11 @@ namespace App\Services\Api;
 use App\Core\Config;
 use App\Core\Database;
 use App\Core\Exceptions\AdminApiException;
+use App\Core\Request;
+use App\Services\SecretCipher;
 
 /**
- * MFA challenge/verify scaffold for Admin API (OPS-010 / CORE-011 Increment 8b).
- *
- * Enrollment is stored in `user_mfa_methods` (migration 081). Full TOTP validation
- * is not shipped in Phase 1; verify returns 501 until a vetted OTP library lands.
+ * Admin API MFA enrollment and TOTP verification (OPS-010).
  */
 final class AdminApiMfaService
 {
@@ -26,15 +25,101 @@ final class AdminApiMfaService
             'mfa_required' => (bool) Config::get('admin_api.mfa_required', false),
             'enrolled' => $enrolled,
             'methods' => $methods,
-            'verify_status' => 'scaffolded',
+            'verify_status' => 'active',
             'message' => $enrolled
-                ? 'MFA method enrolled; verify endpoint remains scaffolded until TOTP validation ships.'
-                : 'No verified MFA method enrolled for this account.',
+                ? 'Submit a current authenticator code to POST /auth/mfa/verify.'
+                : 'No verified MFA method enrolled. Use POST /auth/mfa/enroll/begin while authenticated.',
         ];
     }
 
-    public function verify(int $userId, string $code): never
+    /** @return array<string,mixed> */
+    public function beginEnrollment(int $userId, string $accountLabel, ?string $label = null): array
     {
+        $this->assertTable();
+        if ($this->userHasEnabledMfa($userId)) {
+            throw new AdminApiException(
+                409,
+                'conflict',
+                'An MFA method is already enrolled for this account.'
+            );
+        }
+
+        $secret = AdminApiTotp::generateSecret();
+        $now = date('Y-m-d H:i:s');
+        $existing = Database::selectOne(
+            'SELECT id FROM user_mfa_methods WHERE user_id = ? AND method = ? LIMIT 1',
+            [$userId, 'totp']
+        );
+
+        if ($existing !== null) {
+            Database::query(
+                'UPDATE user_mfa_methods SET secret_encrypted = ?, label = ?, enabled_at = NULL, '
+                . 'verified_at = NULL, updated_at = ? WHERE id = ?',
+                [SecretCipher::encrypt($secret), $label, $now, $existing['id']]
+            );
+        } else {
+            Database::query(
+                'INSERT INTO user_mfa_methods (user_id, method, secret_encrypted, label, enabled_at, verified_at, created_at, updated_at) '
+                . 'VALUES (?, ?, ?, ?, NULL, NULL, ?, ?)',
+                [$userId, 'totp', SecretCipher::encrypt($secret), $label, $now, $now]
+            );
+        }
+
+        return [
+            'method' => 'totp',
+            'secret' => $secret,
+            'otpauth_uri' => AdminApiTotp::provisioningUri($secret, $accountLabel),
+            'label' => $label,
+            'message' => 'Scan the otpauth URI or enter the secret in an authenticator, then confirm with a code.',
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    public function confirmEnrollment(int $userId, string $code): array
+    {
+        $this->assertTable();
+        $row = Database::selectOne(
+            'SELECT id, secret_encrypted FROM user_mfa_methods WHERE user_id = ? AND method = ? LIMIT 1',
+            [$userId, 'totp']
+        );
+        if ($row === null || empty($row['secret_encrypted'])) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['code' => ['Begin MFA enrollment before confirming.']]
+            );
+        }
+
+        $secret = SecretCipher::decrypt((string) $row['secret_encrypted']);
+        if (!AdminApiTotp::verify($code, $secret)) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['code' => ['Authenticator code is invalid or expired.']]
+            );
+        }
+
+        $now = date('Y-m-d H:i:s');
+        Database::query(
+            'UPDATE user_mfa_methods SET enabled_at = ?, verified_at = ?, updated_at = ? WHERE id = ?',
+            [$now, $now, $now, $row['id']]
+        );
+
+        return [
+            'enrolled' => true,
+            'method' => 'totp',
+            'verified_at' => $now,
+        ];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function verify(int $userId, string $code, Request $request): array
+    {
+        $this->assertTable();
         $code = trim($code);
         if ($code === '') {
             throw new AdminApiException(
@@ -45,21 +130,12 @@ final class AdminApiMfaService
             );
         }
 
-        if (!Database::tableExists('user_mfa_methods')) {
-            throw new AdminApiException(
-                501,
-                'not_implemented',
-                'MFA verification is not available on this deployment.'
-            );
-        }
-
-        $method = Database::selectOne(
-            'SELECT id, method, label FROM user_mfa_methods '
+        $row = Database::selectOne(
+            'SELECT id, method, secret_encrypted, label FROM user_mfa_methods '
             . 'WHERE user_id = ? AND enabled_at IS NOT NULL AND verified_at IS NOT NULL LIMIT 1',
             [$userId]
         );
-
-        if ($method === null) {
+        if ($row === null || empty($row['secret_encrypted'])) {
             throw new AdminApiException(
                 422,
                 'validation_failed',
@@ -68,16 +144,45 @@ final class AdminApiMfaService
             );
         }
 
-        throw new AdminApiException(
-            501,
-            'not_implemented',
-            'TOTP verification is scaffolded only. Full validation ships before ADMIN_API_MFA_REQUIRED=true in production.',
-            [],
-            [
-                'method' => (string) $method['method'],
-                'verify_status' => 'scaffolded',
-            ]
+        $secret = SecretCipher::decrypt((string) $row['secret_encrypted']);
+        if (!AdminApiTotp::verify($code, $secret)) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['code' => ['Authenticator code is invalid or expired.']]
+            );
+        }
+
+        $auth = new AdminApiAuthService();
+        if ($auth->tokenIsMfaChallenge()) {
+            $bundle = $auth->completeMfaChallenge($request);
+
+            return array_merge($bundle, [
+                'mfa_verified' => true,
+                'method' => (string) $row['method'],
+            ]);
+        }
+
+        return [
+            'mfa_verified' => true,
+            'method' => (string) $row['method'],
+            'verify_status' => 'ok',
+        ];
+    }
+
+    public function userHasEnabledMfa(int $userId): bool
+    {
+        if (!Database::tableExists('user_mfa_methods')) {
+            return false;
+        }
+
+        $row = Database::selectOne(
+            'SELECT id FROM user_mfa_methods WHERE user_id = ? AND enabled_at IS NOT NULL AND verified_at IS NOT NULL LIMIT 1',
+            [$userId]
         );
+
+        return $row !== null;
     }
 
     /** @return list<array<string,mixed>> */
@@ -106,5 +211,16 @@ final class AdminApiMfaService
         }
 
         return $methods;
+    }
+
+    private function assertTable(): void
+    {
+        if (!Database::tableExists('user_mfa_methods')) {
+            throw new AdminApiException(
+                503,
+                'api_unavailable',
+                'MFA storage is not migrated on this deployment.'
+            );
+        }
     }
 }

@@ -20,8 +20,9 @@ CSRF.
 The versioned Admin API (`/api/v1/admin`) is a separate, token-authenticated
 management surface for Assist RIC and service accounts. It is disabled by
 default (`ADMIN_API_ENABLED=false`), brand-scoped, audited, and least-privilege
-by scope. It is not a public partner API and must not be enabled in production
-until MFA and Platform Quality Gate evidence are recorded. See
+by scope. Human sessions support optional TOTP MFA (`ADMIN_API_MFA_REQUIRED`,
+default false). It is not a public partner API and must not be enabled in
+production until Platform Quality Gate evidence is recorded. See
 `docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md` and ADRs 0018–0020.
 
 No general public token-authenticated `/api/v1` product for third parties exists
@@ -110,3 +111,4 @@ Assist Platform product and engineering.
 | --- | --- |
 | 2026-07-30 | Initial living-documentation page for the current first-party API boundary. |
 | 2026-08-01 | Documented `/api/v1/admin` Phase 1 foundation as a restricted, default-off management API (CORE-011). |
+| 2026-08-01 | Documented OPS-010 TOTP enrollment and MFA login challenge for Admin API humans. |
