@@ -491,12 +491,12 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 2. Authentication + admin sessions — **Increment 2 complete (restricted / MFA scaffold)**
 3. Service accounts + scopes — **Increment 3 complete**
 4. Health / version / capabilities — **Increment 1 skeletons shipped**
-5. Read-only providers + stays  
+5. Read-only providers + stays — **Increment 4 complete**
 6. Audited create/update  
 7. Lifecycle + Recycle Bin  
 8. Draft/import submission  
 9. RIC mock-client contract tests  
-10. OpenAPI + operating docs — **Increment 1–2 contract updates**
+10. OpenAPI + operating docs — **Increment 1–4 contract updates**
 
 ### Increment 1 shipped surface
 
@@ -537,3 +537,15 @@ Errors use `{error:{code,message,request_id}}`. See `docs/openapi/admin-v1.yaml`
 Human-only routes (logout, sessions) remain gated by `admin_api_human`.
 Service accounts receive `DEFAULT_SERVICE` scopes unless specified; `NEVER_SERVICE`
 scopes are rejected. Machine token TTL capped at 3600s via `ADMIN_API_SERVICE_TOKEN_TTL`.
+
+### Increment 4 shipped surface
+
+| Method | Path | Behaviour |
+| --- | --- | --- |
+| GET | `/providers` | Cursor list; brand-scoped listings; `providers:read` |
+| GET | `/providers/{id}` | Detail for brand listing; 404 if out of scope |
+| GET | `/stays` | Cursor list of `caravan_parks`; empty when parks module off |
+| GET | `/stays/{id}` | Stay detail; 404 when parks module off or missing |
+
+Query params: `limit` (1–100), `cursor`, `q`, `status` (DB status or lifecycle alias),
+`town`, `state` (id/abbrev/name). Lifecycle mapped per §5. No `/facilities`.

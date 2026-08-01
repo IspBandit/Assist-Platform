@@ -3,6 +3,11 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 4 (CORE-011)** — read-only `GET /providers` and
+  `GET /stays` with cursor pagination, lifecycle mapping, brand scope from host
+  context, and `providers:read` / `stays:read` enforcement.
+
+### Added
 - **Admin API Increment 3 (CORE-011)** — service accounts, machine token exchange
   (`POST /auth/token`), scope catalog, human-only vs scope middleware, service
   account CRUD and secret rotation. Capabilities reports `service_accounts: active`.

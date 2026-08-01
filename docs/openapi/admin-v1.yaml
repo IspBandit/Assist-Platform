@@ -1,9 +1,10 @@
 openapi: 3.1.0
 info:
   title: Assist Platform Admin API
-  version: 1.0.0-increment-3
+  version: 1.0.0-increment-4
   description: |
     Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
+    Increment 4 adds read-only providers and stays with cursor pagination.
     Increment 3 adds service accounts, machine token exchange and scope enforcement.
     Increment 2 ships human login, refresh rotation, logout, me and sessions.
     Not a supported production partner API until MFA enforcement and Quality Gate evidence.
@@ -16,6 +17,8 @@ tags:
   - name: System
   - name: Auth
   - name: ServiceAccounts
+  - name: Providers
+  - name: Stays
 paths:
   /health:
     get:
@@ -427,7 +430,158 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+
+  /providers:
+    get:
+      tags: [Providers]
+      operationId: adminProvidersIndex
+      summary: List providers in the current brand scope
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Town'
+        - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: Provider collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderCollection'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing providers:read scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /providers/{id}:
+    get:
+      tags: [Providers]
+      operationId: adminProvidersShow
+      summary: Provider detail in the current brand scope
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '404':
+          description: Not found in brand scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /stays:
+    get:
+      tags: [Stays]
+      operationId: adminStaysIndex
+      summary: List stays (caravan_parks); ADR 0016
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Town'
+        - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: Stay collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayCollection'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /stays/{id}:
+    get:
+      tags: [Stays]
+      operationId: adminStaysShow
+      summary: Stay detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+        '404':
+          description: Not found or stays unavailable for brand
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
 components:
+
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+    QueryQ:
+      name: q
+      in: query
+      schema:
+        type: string
+    Status:
+      name: status
+      in: query
+      description: DB status or lifecycle alias (published, unpublished, pending_review, inactive)
+      schema:
+        type: string
+    Town:
+      name: town
+      in: query
+      schema:
+        type: string
+    State:
+      name: state
+      in: query
+      description: State id, abbreviation, or name
+      schema:
+        type: string
   securitySchemes:
     bearerAuth:
       type: http
@@ -739,6 +893,97 @@ components:
             type: string
         mfa_enabled:
           type: boolean
+
+    ProviderCollection:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderSummary'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    ProviderDetailResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/ProviderDetail'
+    ProviderSummary:
+      type: object
+      required: [id, business_name, lifecycle]
+      properties:
+        id:
+          type: string
+        business_name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+        lifecycle:
+          type: string
+        town:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+    ProviderDetail:
+      allOf:
+        - $ref: '#/components/schemas/ProviderSummary'
+        - type: object
+          additionalProperties: true
+    StayCollection:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaySummary'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    StayDetailResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/StayDetail'
+    StaySummary:
+      type: object
+      required: [id, name, lifecycle]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+        lifecycle:
+          type: string
+        town:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+    StayDetail:
+      allOf:
+        - $ref: '#/components/schemas/StaySummary'
+        - type: object
+          additionalProperties: true
     ErrorEnvelope:
       type: object
       required: [error]
