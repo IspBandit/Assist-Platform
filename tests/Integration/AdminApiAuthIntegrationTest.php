@@ -65,8 +65,8 @@ final class AdminApiAuthIntegrationTest extends TestCase
         self::assertSame('Bearer', $bundle['token_type']);
 
         $user = $auth->authenticateAccessToken($bundle['access_token'], $request);
-        self::assertNotNull($user);
-        self::assertSame((int) $bundle['user']['id'], (int) $user['id']);
+        self::assertTrue($user);
+        self::assertSame((int) $bundle['user']['id'], AdminApiContext::userId());
 
         $refreshed = $auth->refresh($bundle['refresh_token'], $request);
         self::assertNotSame($bundle['access_token'], $refreshed['access_token']);
@@ -81,11 +81,11 @@ final class AdminApiAuthIntegrationTest extends TestCase
 
         AdminApiContext::clear();
         $authed = $auth->authenticateAccessToken($refreshed['access_token'], $request);
-        self::assertNotNull($authed);
+        self::assertTrue($authed);
         $auth->logout($refreshed['refresh_token'], AdminApiContext::accessTokenId(), $request, false);
 
         AdminApiContext::clear();
-        self::assertNull($auth->authenticateAccessToken($refreshed['access_token'], $request));
+        self::assertFalse($auth->authenticateAccessToken($refreshed['access_token'], $request));
     }
 
     public function testProtectedMeRouteRejectsMissingBearerViaRouter(): void
@@ -94,6 +94,8 @@ final class AdminApiAuthIntegrationTest extends TestCase
         $router->aliasMiddleware('admin_api_enabled', \App\Middleware\RequireAdminApiEnabled::class);
         $router->aliasMiddleware('admin_api_request', \App\Middleware\AdminApiRequest::class);
         $router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearer::class);
+        $router->aliasMiddleware('admin_api_human', \App\Middleware\RequireAdminApiHuman::class);
+        $router->aliasMiddleware('admin_api_scope', \App\Middleware\RequireAdminApiScope::class);
         $register = require base_path('routes/api_v1_admin.php');
         self::assertIsCallable($register);
         $register($router);

@@ -29,12 +29,15 @@ final class AdminApiRoutingTest extends TestCase
         Config::set('admin_api.recycle_retention_days', 90);
         Config::set('admin_api.access_token_ttl_seconds', 900);
         Config::set('admin_api.refresh_token_ttl_seconds', 604800);
+        Config::set('admin_api.service_token_ttl_seconds', 3600);
         Config::set('app.release', 'test-release');
 
         $this->router = new Router();
         $this->router->aliasMiddleware('admin_api_enabled', \App\Middleware\RequireAdminApiEnabled::class);
         $this->router->aliasMiddleware('admin_api_request', \App\Middleware\AdminApiRequest::class);
         $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearer::class);
+        $this->router->aliasMiddleware('admin_api_human', \App\Middleware\RequireAdminApiHuman::class);
+        $this->router->aliasMiddleware('admin_api_scope', \App\Middleware\RequireAdminApiScope::class);
         $register = require base_path('routes/api_v1_admin.php');
         self::assertIsCallable($register);
         $register($this->router);
@@ -67,6 +70,9 @@ final class AdminApiRoutingTest extends TestCase
         self::assertTrue($capabilities['data']['enabled']);
         self::assertSame('active', $capabilities['data']['authentication']['human_password']);
         self::assertSame('active', $capabilities['data']['authentication']['refresh_tokens']);
+        self::assertSame('active', $capabilities['data']['authentication']['service_accounts']);
+        self::assertArrayHasKey('scopes', $capabilities['data']);
+        self::assertTrue($capabilities['data']['scopes']['providers:read']['service']);
         self::assertSame('planned', $capabilities['data']['resources']['stays']);
         self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
         self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
@@ -142,6 +148,33 @@ final class AdminApiRoutingTest extends TestCase
         } catch (AdminApiException $e) {
             self::assertSame(422, $e->getStatusCode());
             self::assertSame('validation_failed', $e->errorCode());
+        }
+    }
+
+    public function testServiceAccountsRequireBearer(): void
+    {
+        try {
+            $this->dispatch('GET', '/api/v1/admin/service-accounts');
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(401, $e->getStatusCode());
+            self::assertSame('unauthenticated', $e->errorCode());
+        }
+    }
+
+    public function testTokenValidationFailsClosedWithoutDatabase(): void
+    {
+        try {
+            $this->dispatch('POST', '/api/v1/admin/auth/token', [], [
+                'client_key' => '',
+                'client_secret' => '',
+            ]);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(422, $e->getStatusCode());
+            self::assertSame('validation_failed', $e->errorCode());
+            self::assertArrayHasKey('client_key', $e->fields());
+            self::assertArrayHasKey('client_secret', $e->fields());
         }
     }
 

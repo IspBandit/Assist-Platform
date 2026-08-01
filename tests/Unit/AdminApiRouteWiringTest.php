@@ -49,5 +49,7 @@ final class AdminApiRouteWiringTest extends TestCase
         self::assertStringContainsString("'api_v1_admin'", $kernel);
         self::assertStringContainsString('admin_api_enabled', $kernel);
         self::assertStringContainsString('admin_api_bearer', $kernel);
+        self::assertStringContainsString('admin_api_human', $kernel);
+        self::assertStringContainsString('admin_api_scope', $kernel);
     }
 }
