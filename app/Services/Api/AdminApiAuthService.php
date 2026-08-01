@@ -45,6 +45,7 @@ final class AdminApiAuthService
         'audit:read',
         'lifecycle:write',
         'recycle_bin:restore',
+        'service_accounts:admin',
     ];
 
     /**
@@ -270,13 +271,10 @@ final class AdminApiAuthService
         $this->revokeRefreshFamily($familyId, 'session_revoked');
     }
 
-    /**
-     * @return array<string,mixed>|null
-     */
-    public function authenticateAccessToken(string $rawToken, Request $request): ?array
+    public function authenticateAccessToken(string $rawToken, Request $request): bool
     {
         if (!Database::tableExists('api_access_tokens')) {
-            return null;
+            return false;
         }
 
         $row = Database::selectOne(
@@ -284,30 +282,65 @@ final class AdminApiAuthService
             [AdminApiToken::hash($rawToken)]
         );
         if ($row === null || $row['revoked_at'] !== null) {
-            return null;
+            return false;
         }
         if (strtotime((string) $row['expires_at']) < time()) {
-            return null;
-        }
-        if (($row['actor_type'] ?? '') !== 'user' || empty($row['user_id'])) {
-            return null;
+            return false;
         }
 
-        $user = User::find((int) $row['user_id']);
-        if (
-            $user === null
-            || ($user['status'] ?? '') === 'suspended'
-            || ($user['deleted_at'] ?? null) !== null
-            || !$this->userHasAdminRole((int) $user['id'])
-            || !$this->userAllowedInRestrictedMode((int) $user['id'], $user)
-        ) {
-            return null;
+        $scopes = AdminApiScopes::normalize($row['scopes_json'] ?? []);
+        $actorType = (string) ($row['actor_type'] ?? '');
+
+        if ($actorType === 'user') {
+            if (empty($row['user_id'])) {
+                return false;
+            }
+
+            $user = User::find((int) $row['user_id']);
+            if (
+                $user === null
+                || ($user['status'] ?? '') === 'suspended'
+                || ($user['deleted_at'] ?? null) !== null
+                || !$this->userHasAdminRole((int) $user['id'])
+                || !$this->userAllowedInRestrictedMode((int) $user['id'], $user)
+            ) {
+                return false;
+            }
+
+            AdminApiContext::setUser($user, $scopes, (string) $row['id']);
+
+            return true;
         }
 
-        $scopes = $this->decodeScopes($row['scopes_json'] ?? []);
-        AdminApiContext::setUser($user, $scopes, (string) $row['id']);
+        if ($actorType === 'service') {
+            if (empty($row['client_id']) || !Database::tableExists('api_oauth_clients')) {
+                return false;
+            }
 
-        return $user;
+            $client = Database::selectOne(
+                'SELECT * FROM api_oauth_clients WHERE id = ? LIMIT 1',
+                [$row['client_id']]
+            );
+            if (
+                $client === null
+                || ($client['status'] ?? '') !== 'active'
+                || (!empty($client['expires_at']) && strtotime((string) $client['expires_at']) < time())
+            ) {
+                return false;
+            }
+
+            try {
+                AdminApiScopes::rejectForbiddenForService($scopes);
+            } catch (AdminApiException) {
+                return false;
+            }
+
+            AdminApiContext::setService($client, $scopes, (string) $row['id']);
+
+            return true;
+        }
+
+        return false;
     }
 
     /** @return list<string> */

@@ -9,6 +9,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Api\AdminApiEnvelope;
+use App\Services\Api\AdminApiScopes;
 
 /**
  * System endpoints for the versioned Admin API.
@@ -50,9 +51,11 @@ final class SystemController extends Controller
                 'human_password' => 'active',
                 'refresh_tokens' => 'active',
                 'sessions' => 'active',
-                'service_accounts' => 'planned',
+                'service_accounts' => 'active',
+                'service_token' => 'active',
                 'mfa_verify' => 'scaffolded',
             ],
+            'scopes' => AdminApiScopes::catalog(),
             'resources' => [
                 'providers' => 'planned',
                 'stays' => 'planned',
@@ -68,9 +71,10 @@ final class SystemController extends Controller
                 'recycle_retention_days' => (int) Config::get('admin_api.recycle_retention_days', 90),
                 'access_token_ttl_seconds' => (int) Config::get('admin_api.access_token_ttl_seconds', 900),
                 'refresh_token_ttl_seconds' => (int) Config::get('admin_api.refresh_token_ttl_seconds', 604800),
+                'service_token_ttl_seconds' => (int) Config::get('admin_api.service_token_ttl_seconds', 3600),
             ],
             'notes' => [
-                'Phase 1 Increment 2 provides human login, refresh rotation, logout and sessions.',
+                'Phase 1 Increment 3 adds service accounts, machine tokens and scope enforcement.',
                 'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',
                 'MFA methods are scaffolded; set ADMIN_API_MFA_REQUIRED only after verify endpoints exist.',
                 'Standalone traveller facilities are not exposed as /facilities (ADR 0016).',

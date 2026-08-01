@@ -28,8 +28,8 @@ final class RequireAdminApiBearer implements Middleware
             );
         }
 
-        $user = (new AdminApiAuthService())->authenticateAccessToken($matches[1], $request);
-        if ($user === null) {
+        $authenticated = (new AdminApiAuthService())->authenticateAccessToken($matches[1], $request);
+        if (!$authenticated) {
             throw new AdminApiException(
                 401,
                 'unauthenticated',

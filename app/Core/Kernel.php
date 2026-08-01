@@ -316,6 +316,8 @@ final class Kernel
         $this->router->aliasMiddleware('admin_api_enabled', \App\Middleware\RequireAdminApiEnabled::class);
         $this->router->aliasMiddleware('admin_api_request', \App\Middleware\AdminApiRequest::class);
         $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearer::class);
+        $this->router->aliasMiddleware('admin_api_human', \App\Middleware\RequireAdminApiHuman::class);
+        $this->router->aliasMiddleware('admin_api_scope', \App\Middleware\RequireAdminApiScope::class);
     }
 
     private function loadRoutes(): void

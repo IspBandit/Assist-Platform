@@ -11,6 +11,7 @@ use App\Core\Response;
 use App\Services\Api\AdminApiAuthService;
 use App\Services\Api\AdminApiContext;
 use App\Services\Api\AdminApiEnvelope;
+use App\Services\Api\AdminApiServiceAccountService;
 
 final class AuthController extends Controller
 {
@@ -55,6 +56,16 @@ final class AuthController extends Controller
         return AdminApiEnvelope::data((new AdminApiAuthService())->refresh($refresh, $request));
     }
 
+    public function token(Request $request): Response
+    {
+        $clientKey = trim((string) $request->input('client_key', ''));
+        $secret = (string) $request->input('client_secret', '');
+
+        return AdminApiEnvelope::data(
+            (new AdminApiServiceAccountService())->issueAccessToken($clientKey, $secret, $request)
+        );
+    }
+
     public function logout(Request $request): Response
     {
         $all = filter_var($request->input('all_sessions', false), FILTER_VALIDATE_BOOL);
@@ -71,18 +82,30 @@ final class AuthController extends Controller
 
     public function me(Request $request): Response
     {
-        $user = AdminApiContext::user();
-        if ($user === null) {
+        if (!AdminApiContext::isHuman() && !AdminApiContext::isService()) {
             throw new AdminApiException(401, 'unauthenticated', 'Bearer access token required.');
         }
 
-        $auth = new AdminApiAuthService();
-
-        return AdminApiEnvelope::data([
-            'user' => $auth->publicUser($user),
+        $payload = [
             'scopes' => AdminApiContext::scopes(),
             'actor_type' => AdminApiContext::actorType(),
-        ]);
+        ];
+
+        if (AdminApiContext::isHuman()) {
+            $user = AdminApiContext::user();
+            if ($user === null) {
+                throw new AdminApiException(401, 'unauthenticated', 'Bearer access token required.');
+            }
+            $payload['user'] = (new AdminApiAuthService())->publicUser($user);
+        } else {
+            $client = AdminApiContext::client();
+            if ($client === null) {
+                throw new AdminApiException(401, 'unauthenticated', 'Bearer access token required.');
+            }
+            $payload['client'] = (new AdminApiServiceAccountService())->publicClient($client);
+        }
+
+        return AdminApiEnvelope::data($payload);
     }
 
     public function sessions(Request $request): Response
