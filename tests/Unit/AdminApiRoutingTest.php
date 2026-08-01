@@ -75,6 +75,9 @@ final class AdminApiRoutingTest extends TestCase
         self::assertTrue($capabilities['data']['scopes']['providers:read']['service']);
         self::assertSame('read_write', $capabilities['data']['resources']['providers']);
         self::assertSame('read_write', $capabilities['data']['resources']['stays']);
+        self::assertSame('read_write', $capabilities['data']['resources']['recycle_bin']);
+        self::assertSame('read_write', $capabilities['data']['resources']['drafts']);
+        self::assertSame('read_write', $capabilities['data']['resources']['imports']);
         self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
         self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
     }
@@ -189,6 +192,14 @@ final class AdminApiRoutingTest extends TestCase
             ['PATCH', '/api/v1/admin/stays/1', ['name' => 'Test Stay']],
             ['POST', '/api/v1/admin/stays/1/publish', []],
             ['DELETE', '/api/v1/admin/stays/1', ['reason' => 'closed permanently']],
+            ['GET', '/api/v1/admin/recycle-bin', []],
+            ['POST', '/api/v1/admin/recycle-bin/provider/1/restore', []],
+            ['DELETE', '/api/v1/admin/recycle-bin/provider/1/purge', ['confirm' => true, 'reason' => 'duplicate']],
+            ['POST', '/api/v1/admin/recycle-bin/bulk-restore', ['confirm' => true, 'items' => []]],
+            ['GET', '/api/v1/admin/drafts', []],
+            ['POST', '/api/v1/admin/drafts', ['entity_type' => 'provider', 'payload' => ['business_name' => 'Test']]],
+            ['POST', '/api/v1/admin/drafts/abc/approve', []],
+            ['POST', '/api/v1/admin/imports', ['checksum' => str_repeat('a', 64), 'items' => []]],
         ];
 
         foreach ($routes as [$method, $path, $body]) {
