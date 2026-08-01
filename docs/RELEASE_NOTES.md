@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Admin API Phase 1 foundation (CORE-011)
+
+- Added the versioned `/api/v1/admin` surface for Assist RIC and other management
+  clients: health/capabilities, human and service-account auth, providers/stays
+  read and write, recycle bin, drafts/imports, audit and search-gaps.
+- Locked the boundary so external tools must not open production MariaDB
+  (ADRs 0018–0020). Stays remain `caravan_parks`; traveller facilities stay out
+  of Phase 1. Assist RIC is the initial local management client.
+- Migrations `085`–`087` create Admin API credentials, MFA scaffold tables and
+  draft/import job storage. The API remains disabled by default
+  (`ADMIN_API_ENABLED=false`) until MFA and Platform Quality Gate evidence are
+  recorded.
+- MFA challenge/verify endpoints are scaffolded; verify still returns 501 while
+  `ADMIN_API_MFA_REQUIRED` stays false.
+
 ### National coverage map
 
 - Replaced the floating heat points with a recognisable Australia map including mainland and Tasmania outlines, state/territory boundaries and labels, an opportunity-score legend, and keyboard-focusable town/category points.
