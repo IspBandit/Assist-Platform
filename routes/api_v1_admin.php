@@ -8,6 +8,7 @@ declare(strict_types=1);
  * Increment 1: system skeletons + envelopes.
  * Increment 2: human authentication sessions.
  * Increment 3: service accounts + machine tokens + scopes.
+ * Increment 4: read-only providers + stays.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -44,6 +45,20 @@ return static function (\App\Core\Router $router): void {
                 $router->patch('/service-accounts/{id}', 'Api\\V1\\Admin\\ServiceAccountController@update', 'api.v1.admin.service_accounts.update');
                 $router->post('/service-accounts/{id}/rotate', 'Api\\V1\\Admin\\ServiceAccountController@rotate', 'api.v1.admin.service_accounts.rotate');
                 $router->delete('/service-accounts/{id}', 'Api\\V1\\Admin\\ServiceAccountController@destroy', 'api.v1.admin.service_accounts.destroy');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:providers:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/providers', 'Api\\V1\\Admin\\ProviderController@index', 'api.v1.admin.providers.index');
+                $router->get('/providers/{id}', 'Api\\V1\\Admin\\ProviderController@show', 'api.v1.admin.providers.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:stays:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/stays', 'Api\\V1\\Admin\\StayController@index', 'api.v1.admin.stays.index');
+                $router->get('/stays/{id}', 'Api\\V1\\Admin\\StayController@show', 'api.v1.admin.stays.show');
             });
         });
     });

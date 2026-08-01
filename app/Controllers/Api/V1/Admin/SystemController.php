@@ -57,8 +57,8 @@ final class SystemController extends Controller
             ],
             'scopes' => AdminApiScopes::catalog(),
             'resources' => [
-                'providers' => 'planned',
-                'stays' => 'planned',
+                'providers' => 'read',
+                'stays' => 'read',
                 'traveller_facilities' => 'planned',
                 'drafts' => 'planned',
                 'imports' => 'planned',
@@ -74,7 +74,8 @@ final class SystemController extends Controller
                 'service_token_ttl_seconds' => (int) Config::get('admin_api.service_token_ttl_seconds', 3600),
             ],
             'notes' => [
-                'Phase 1 Increment 3 adds service accounts, machine tokens and scope enforcement.',
+                'Phase 1 Increment 4 adds read-only providers and stays with cursor pagination.',
+                'Brand scope is resolved from host/deployment context, not client brand_id.',
                 'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',
                 'MFA methods are scaffolded; set ADMIN_API_MFA_REQUIRED only after verify endpoints exist.',
                 'Standalone traveller facilities are not exposed as /facilities (ADR 0016).',
