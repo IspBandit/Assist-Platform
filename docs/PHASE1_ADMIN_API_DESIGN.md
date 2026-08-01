@@ -489,7 +489,7 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 
 1. API routing + envelopes/errors — **Increment 1 complete**
 2. Authentication + admin sessions — **Increment 2 complete (restricted / MFA scaffold)**
-3. Service accounts + scopes  
+3. Service accounts + scopes — **Increment 3 complete**
 4. Health / version / capabilities — **Increment 1 skeletons shipped**
 5. Read-only providers + stays  
 6. Audited create/update  
@@ -520,3 +520,20 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 Migrations `080_admin_api_credentials.sql` and `081_admin_api_mfa_scaffold.sql`.
 Flag `ADMIN_API_ENABLED=false` by default. Restricted mode defaults on.
 Errors use `{error:{code,message,request_id}}`. See `docs/openapi/admin-v1.yaml`.
+
+### Increment 3 shipped surface
+
+| Method | Path | Behaviour |
+| --- | --- | --- |
+| POST | `/auth/token` | Service client key + secret → access token (no refresh) |
+| GET | `/auth/me` | Human or service actor with scopes |
+| GET | `/service-accounts` | List service accounts (human + scope) |
+| POST | `/service-accounts` | Create account; secret returned once |
+| GET | `/service-accounts/{id}` | Metadata (no secret) |
+| PATCH | `/service-accounts/{id}` | Update name, scopes, status, TTL, expiry |
+| POST | `/service-accounts/{id}/rotate` | Rotate secret; revoke outstanding tokens |
+| DELETE | `/service-accounts/{id}` | Revoke account and tokens |
+
+Human-only routes (logout, sessions) remain gated by `admin_api_human`.
+Service accounts receive `DEFAULT_SERVICE` scopes unless specified; `NEVER_SERVICE`
+scopes are rejected. Machine token TTL capped at 3600s via `ADMIN_API_SERVICE_TOKEN_TTL`.

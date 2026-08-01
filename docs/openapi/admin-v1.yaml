@@ -1,9 +1,10 @@
 openapi: 3.1.0
 info:
   title: Assist Platform Admin API
-  version: 1.0.0-increment-2
+  version: 1.0.0-increment-3
   description: |
     Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
+    Increment 3 adds service accounts, machine token exchange and scope enforcement.
     Increment 2 ships human login, refresh rotation, logout, me and sessions.
     Not a supported production partner API until MFA enforcement and Quality Gate evidence.
 servers:
@@ -14,6 +15,7 @@ servers:
 tags:
   - name: System
   - name: Auth
+  - name: ServiceAccounts
 paths:
   /health:
     get:
@@ -143,6 +145,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/token:
+    post:
+      tags: [Auth]
+      operationId: adminAuthServiceToken
+      summary: Exchange service client credentials for a short-lived access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [client_key, client_secret]
+              properties:
+                client_key:
+                  type: string
+                client_secret:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Service access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTokenResponse'
+        '401':
+          description: Invalid client credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Service account inactive or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /auth/logout:
     post:
       tags: [Auth]
@@ -195,6 +241,139 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+  /service-accounts:
+    get:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsIndex
+      summary: List service accounts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Service account collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountsResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Human actor with service_accounts:admin required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsStore
+      summary: Create a service account
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceAccountCreate'
+      responses:
+        '201':
+          description: Created service account with secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountSecretResponse'
+  /service-accounts/{id}:
+    get:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsShow
+      summary: Read service account metadata
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Service account metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountResponse'
+    patch:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsUpdate
+      summary: Update service account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceAccountUpdate'
+      responses:
+        '200':
+          description: Updated service account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountResponse'
+    delete:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsDestroy
+      summary: Revoke service account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Revoked service account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountResponse'
+  /service-accounts/{id}/rotate:
+    post:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsRotate
+      summary: Rotate service account secret
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Rotated secret returned once
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountSecretResponse'
   /auth/sessions:
     get:
       tags: [Auth]
@@ -253,7 +432,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-      description: Opaque access token from /auth/login or /auth/refresh. Only hashes are stored.
+      description: Opaque access token from /auth/login, /auth/refresh or /auth/token. Only hashes are stored.
   schemas:
     HealthResponse:
       type: object
@@ -317,6 +496,17 @@ components:
             limits:
               type: object
               additionalProperties: true
+            scopes:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  human:
+                    type: boolean
+                  service:
+                    type: boolean
+                  description:
+                    type: string
             notes:
               type: array
               items:
@@ -350,17 +540,140 @@ components:
       properties:
         data:
           type: object
-          required: [user, scopes, actor_type]
+          required: [scopes, actor_type]
           properties:
             user:
               $ref: '#/components/schemas/AdminUser'
+              nullable: true
+            client:
+              $ref: '#/components/schemas/ServiceAccount'
+              nullable: true
             scopes:
               type: array
               items:
                 type: string
             actor_type:
               type: string
-              enum: [user]
+              enum: [user, service]
+    ServiceTokenResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [access_token, token_type, expires_in, scopes, actor_type, client]
+          properties:
+            access_token:
+              type: string
+            token_type:
+              type: string
+              enum: [Bearer]
+            expires_in:
+              type: integer
+            scopes:
+              type: array
+              items:
+                type: string
+            actor_type:
+              type: string
+              enum: [service]
+            client:
+              $ref: '#/components/schemas/ServiceAccount'
+    ServiceAccount:
+      type: object
+      required: [id, name, client_key, status, scopes]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        client_key:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled, revoked]
+        scopes:
+          type: array
+          items:
+            type: string
+        token_ttl_seconds:
+          type: integer
+        expires_at:
+          type: string
+          nullable: true
+        last_used_at:
+          type: string
+          nullable: true
+        created_by:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+          nullable: true
+    ServiceAccountCreate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        token_ttl_seconds:
+          type: integer
+        expires_at:
+          type: string
+          nullable: true
+    ServiceAccountUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        token_ttl_seconds:
+          type: integer
+        expires_at:
+          type: string
+          nullable: true
+    ServiceAccountResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceAccount'
+    ServiceAccountSecretResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ServiceAccount'
+            - type: object
+              required: [client_secret]
+              properties:
+                client_secret:
+                  type: string
+    ServiceAccountsResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceAccount'
     LogoutResponse:
       type: object
       required: [data]

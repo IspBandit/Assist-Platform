@@ -3,6 +3,11 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 3 (CORE-011)** — service accounts, machine token exchange
+  (`POST /auth/token`), scope catalog, human-only vs scope middleware, service
+  account CRUD and secret rotation. Capabilities reports `service_accounts: active`.
+
+### Added
 - **Admin API Increment 2 (CORE-011)** — human login/refresh/logout/me/sessions,
   token tables (migration 080), MFA scaffold (081), restricted allowlist,
   bearer verification and OpenAPI auth paths. Still disabled by default; MFA

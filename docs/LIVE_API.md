@@ -45,13 +45,21 @@ Increment 2 (human auth) adds:
 - `GET /api/v1/admin/auth/sessions`
 - `DELETE /api/v1/admin/auth/sessions/{id}`
 
+Increment 3 (service accounts) adds:
+
+- `POST /api/v1/admin/auth/token` — client id + secret → short-lived access token
+- `GET /api/v1/admin/service-accounts` — list (human + `service_accounts:admin`)
+- `POST /api/v1/admin/service-accounts` — create (secret returned once)
+- `GET/PATCH/DELETE /api/v1/admin/service-accounts/{id}` — read, update, revoke
+- `POST /api/v1/admin/service-accounts/{id}/rotate` — rotate secret
+- `/capabilities` includes scope catalog and `service_accounts: active`
+
 Enable only with `ADMIN_API_ENABLED=true` on non-production first. Keep
 `ADMIN_API_RESTRICTED=true` and configure `ADMIN_API_ALLOWED_USER_IDS` (or rely
 on super-administrator-only when empty). Do not set `ADMIN_API_MFA_REQUIRED`
 until MFA verify endpoints exist. OpenAPI: `docs/openapi/admin-v1.yaml`.
 
 Remaining Phase 1 targets:
-- Service accounts with least-privilege scopes
 - Providers and stays read/write with audited lifecycle
 - Soft delete / Recycle Bin
 - Draft and import package submission for RIC
