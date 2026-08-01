@@ -114,7 +114,30 @@ on super-administrator-only when empty). Enroll MFA before setting
 
 **Phase 1 foundation complete** (Increments 1–9) plus OPS-010 TOTP.
 
-Remaining after Phase 1:
+## Staging enablement checklist
+
+Do this on a disposable or staging deployment before production:
+
+1. Apply migrations through `087_admin_api_drafts_imports.sql` (includes MFA table `086`).
+2. Set `ADMIN_API_ENABLED=true`, keep `ADMIN_API_RESTRICTED=true`.
+3. Set `ADMIN_API_ALLOWED_USER_IDS` to known admin IDs (or leave empty for
+   super-administrator only).
+4. Keep `ADMIN_API_MFA_REQUIRED=false` until step 7.
+5. Human login → `POST /auth/mfa/enroll/begin` → authenticator scan →
+   `POST /auth/mfa/enroll/confirm`.
+6. Create a least-privilege service account for Assist RIC (`imports:*`,
+   `drafts:*`, `providers:read`, `stays:read`, `analytics:read`). Store the
+   client key/secret only in the RIC OS credential vault.
+7. Optionally set `ADMIN_API_MFA_REQUIRED=true` and confirm human login returns
+   `mfa_token` then completes via `/auth/mfa/verify`.
+8. From Assist RIC: enable live API, set base URL, Test connection, submit a
+   small JSON export package with `validate_only` if desired.
+9. Record Architecture, UX, Engineering and Business Quality Gate evidence
+   before any production enablement (`docs/PLATFORM_QUALITY_GATE.md`).
+
+Production still requires the four Quality Gate pillars. Application code alone
+does not authorise DNS, live migrations or turning `ADMIN_API_ENABLED` on in
+production.
 
 ## Out of scope for first production enablement
 

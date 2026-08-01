@@ -17,7 +17,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
 | CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | done | Owner isolation, mobile asset wallet, private document storage, expiry delivery and brand-aware actions |
 | CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | done | Explicit consent, limited preserved context, source/destination brand audit and private-field exclusion |
-| CORE-011 | Versioned Admin API (`/api/v1/admin`) for RIC and trusted management clients | ready | OpenAPI contract, auth/scopes, providers/stays lifecycle, draft ingest, recycle bin, contract tests; no direct DB access from clients |
+| CORE-011 | Versioned Admin API (`/api/v1/admin`) for RIC and trusted management clients | done | OpenAPI contract, auth/scopes, providers/stays lifecycle, draft ingest, recycle bin, contract tests; no direct DB access from clients (PRs #139–#140) |
 
 ## Experience
 
@@ -63,7 +63,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-008 | Four-brand authoritative Australian vehicle rules library | done | All-jurisdiction official-source catalogue, brand relevance, genuine downloads, source-change review, mobile filters and labelled local sponsorship |
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
 | DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
-| DATA-011 | Assist RIC live Admin API synchronisation | ready | RIC pulls canonical records, submits approved export/draft packages, reads sync status; depends on CORE-011 |
+| DATA-011 | Assist RIC live Admin API synchronisation | in progress | RIC live client, package mapper and minimal Settings/Exports UI shipped; staging sync rehearsal and Quality Gate remain |
 | DATA-012 | Government dataset catalogue and import connectors | ready | Catalogue, CKAN/ArcGIS/CSV/GeoJSON adapters, provenance, review-first ingest; extends DATA-006 |
 | DATA-013 | Search gap and knowledge growth engine | ready | Ranked zero/weak searches → research jobs via RIC; depends on DATA-004 and DATA-011 |
 | DATA-014 | Canonical entity and source provenance model | ready | Stable entity IDs, source links, field-level provenance where practical; extends DATA-001 |
@@ -87,7 +87,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
 | OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
 | OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
-| OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, throttling and TOTP MFA shipped; keep MFA flag off until Quality Gate; paid-connector hard limits remain |
+| OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, throttling and TOTP MFA shipped; staging enablement + Quality Gate before production MFA flag; paid-connector hard limits remain |
 | OPS-011 | Record lifecycle and Recycle Bin for providers and stays | ready | Soft delete, restore, retention, purge permission, dependency checks, audited bulk actions |
 
 ## Commercial
