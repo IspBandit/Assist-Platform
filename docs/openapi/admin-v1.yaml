@@ -1,9 +1,11 @@
 openapi: 3.1.0
 info:
   title: Assist Platform Admin API
-  version: 1.0.0-increment-7
+  version: 1.0.0-increment-9
   description: |
     Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
+    Increment 9 completes Phase 1 foundation with RIC contract tests.
+    Increment 8 adds audit read, search-gap analytics and MFA verify scaffold.
     Increment 7 adds draft/import submission, validation and staging for RIC.
     Increment 6 adds recycle bin list, restore and permanent purge.
     Increment 5 adds audited provider/stay writes and lifecycle transitions.
@@ -25,6 +27,8 @@ tags:
   - name: RecycleBin
   - name: Drafts
   - name: Imports
+  - name: Audit
+  - name: Analytics
 paths:
   /health:
     get:
@@ -1230,6 +1234,170 @@ paths:
       responses:
         '200':
           description: Staging results
+  /auth/mfa/challenge:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaChallenge
+      summary: Return MFA enrollment status for the authenticated human actor (scaffolded)
+      description: |
+        Requires a bearer human access token. TOTP verification is not enforced in Phase 1;
+        `/auth/mfa/verify` returns 501 until OPS-010 ships full validation.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: MFA challenge scaffold document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MfaChallengeResponse'
+        '401':
+          description: Missing or non-human bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/mfa/verify:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaVerify
+      summary: Verify MFA code (scaffolded — returns 501 until TOTP ships)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  minLength: 1
+      responses:
+        '501':
+          description: TOTP validation not implemented yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed or no enrolled method
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing or non-human bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /audit:
+    get:
+      tags: [Audit]
+      operationId: adminAuditIndex
+      summary: List audit events with cursor pagination
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: object_type
+          in: query
+          schema:
+            type: string
+        - name: object_id
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Audit event collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditCollectionResponse'
+  /audit/{id}:
+    get:
+      tags: [Audit]
+      operationId: adminAuditShow
+      summary: Read one audit event
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Audit event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /search-gaps:
+    get:
+      tags: [Analytics]
+      operationId: adminSearchGapsIndex
+      summary: Ranked zero-result search gaps for RIC research workbench
+      description: |
+        Aggregates zero-result rows from `provider_searches` when demand analytics
+        tables exist. Returns an empty collection when analytics is disabled or no
+        rows match the brand/date filters.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Search gap collection (may be sparse/empty)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchGapCollectionResponse'
 
 components:
 
@@ -1889,6 +2057,132 @@ components:
                 enum: [provider, stay]
               id:
                 type: integer
+    MfaChallengeResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [mfa_required, enrolled, methods, verify_status]
+          properties:
+            mfa_required:
+              type: boolean
+            enrolled:
+              type: boolean
+            methods:
+              type: array
+              items:
+                type: object
+                required: [method, enabled]
+                properties:
+                  method:
+                    type: string
+                    enum: [totp]
+                  label:
+                    type: string
+                    nullable: true
+                  enabled:
+                    type: boolean
+            verify_status:
+              type: string
+              enum: [scaffolded]
+            message:
+              type: string
+    AuditEvent:
+      type: object
+      required: [id, action]
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        object_type:
+          type: string
+          nullable: true
+        object_id:
+          type: string
+          nullable: true
+        user_id:
+          type: integer
+          nullable: true
+        previous_value:
+          type: string
+          nullable: true
+        new_value:
+          type: string
+          nullable: true
+        ip_address:
+          type: string
+          nullable: true
+        user_agent:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          nullable: true
+    AuditResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/AuditEvent'
+    AuditCollectionResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    SearchGap:
+      type: object
+      required: [query_text, result_count, search_count, first_seen, last_seen]
+      properties:
+        query_text:
+          type: string
+        location_text:
+          type: string
+          nullable: true
+        result_count:
+          type: integer
+        search_count:
+          type: integer
+        first_seen:
+          type: string
+        last_seen:
+          type: string
+        intent:
+          type: string
+          nullable: true
+        urgency_score:
+          type: number
+          nullable: true
+        town_id:
+          type: integer
+          nullable: true
+        category_id:
+          type: integer
+          nullable: true
+    SearchGapCollectionResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchGap'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
     ErrorEnvelope:
       type: object
       required: [error]

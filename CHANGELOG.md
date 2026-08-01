@@ -3,6 +3,13 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 9 (CORE-011)** — RIC mock-client contract tests:
+  `tests/Contract/AdminApiRicContractTest.php`, Contract phpunit suite, Phase 1 path
+  inventory vs routes and OpenAPI parity checks.
+- **Admin API Increment 8b (OPS-010)** — MFA challenge/verify scaffold:
+  `POST /auth/mfa/challenge` and `/auth/mfa/verify` (501 until TOTP validation ships).
+- **Admin API Increment 8 (CORE-011)** — audit read (`GET /audit`, `/audit/{id}`) and
+  search-gap analytics (`GET /search-gaps`) aggregating `provider_searches` zero-result rows.
 - **Admin API Increment 7 (CORE-011)** — draft and import package submission for RIC:
   `api_drafts` / `api_import_jobs` tables (migration 082), draft CRUD + approve/reject,
   import validate/stage pipeline, idempotency keys for bulk/package writes.

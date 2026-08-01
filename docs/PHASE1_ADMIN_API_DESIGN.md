@@ -495,8 +495,12 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 6. Audited create/update + lifecycle — **Increment 5 complete**
 7. Recycle Bin list/purge — **Increment 6 complete**
 8. Draft/import submission — **Increment 7 complete**
-9. RIC mock-client contract tests  
-10. OpenAPI + operating docs — **Increment 1–4 contract updates**
+9. Audit read + search-gap analytics — **Increment 8 complete**
+10. MFA verify scaffold — **Increment 8b complete (501 until TOTP ships)**
+11. RIC mock-client contract tests — **Increment 9 complete**
+12. OpenAPI + operating docs — **Increment 1–9 contract updates**
+
+Phase 1 live API foundation is **complete** except enabling `ADMIN_API_MFA_REQUIRED` in production.
 
 ### Increment 1 shipped surface
 
@@ -605,3 +609,29 @@ Purge reasons are stored in audit only (no recycle metadata migration).
 Migration `082_admin_api_drafts_imports.sql` adds `api_drafts`, `api_import_jobs`,
 `api_import_job_items`, `api_idempotency_keys`. Service accounts receive
 `drafts:write` and `imports:write` by default; `drafts:approve` is human-elevated.
+
+### Increment 8 shipped surface
+
+| Method | Path | Scope | Behaviour |
+| --- | --- | --- | --- |
+| GET | `/audit` | `audit:read` | Cursor list from `audit_logs`; filters action/object/user/date/q |
+| GET | `/audit/{id}` | `audit:read` | Single audit row mapped to stable JSON |
+| GET | `/search-gaps` | `analytics:read` | Ranked zero-result gaps from `provider_searches`; sparse when analytics off |
+
+No new migration: search gaps aggregate existing demand analytics tables.
+
+### Increment 8b shipped surface (OPS-010 scaffold)
+
+| Method | Path | Behaviour |
+| --- | --- | --- |
+| POST | `/auth/mfa/challenge` | Human bearer; enrollment status from `user_mfa_methods` |
+| POST | `/auth/mfa/verify` | Body `{code}`; 501 `not_implemented` until TOTP library ships |
+
+`ADMIN_API_MFA_REQUIRED` remains **false** by default.
+
+### Increment 9 shipped surface
+
+| Area | Behaviour |
+| --- | --- |
+| `tests/Contract/AdminApiRicContractTest.php` | Phase 1 path inventory vs routes; OpenAPI parity; mock-client health/capabilities/auth validation |
+| `phpunit.xml` | Contract testsuite added |

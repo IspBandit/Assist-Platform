@@ -86,12 +86,31 @@ Increment 7 (drafts + imports) adds:
 - `POST /api/v1/admin/imports` — checksummed package ingest (`imports:write`, `Idempotency-Key`)
 - `GET /api/v1/admin/imports/{id}`, `POST .../validate`, `POST .../stage` — validation and draft staging
 
+Increment 8 (audit + search gaps) adds:
+
+- `GET /api/v1/admin/audit` — cursor list (`audit:read`); filters `action`, `object_type`, `object_id`, `user_id`, `from`, `to`, `q`
+- `GET /api/v1/admin/audit/{id}` — single audit event
+- `GET /api/v1/admin/search-gaps` — ranked zero-result gaps from `provider_searches` (`analytics:read`); sparse/empty when analytics off
+
+Increment 8b (MFA scaffold, OPS-010) adds:
+
+- `POST /api/v1/admin/auth/mfa/challenge` — human bearer; returns enrollment status (scaffolded)
+- `POST /api/v1/admin/auth/mfa/verify` — body `{code}`; returns 501 until TOTP validation ships
+
+Increment 9 (RIC contract tests) adds:
+
+- `tests/Contract/AdminApiRicContractTest.php` — Phase 1 path inventory, OpenAPI parity, mock-client health/auth checks
+
+Phase 1 live API foundation is complete except production MFA gate (`ADMIN_API_MFA_REQUIRED`).
+
 Enable only with `ADMIN_API_ENABLED=true` on non-production first. Keep
 `ADMIN_API_RESTRICTED=true` and configure `ADMIN_API_ALLOWED_USER_IDS` (or rely
 on super-administrator-only when empty). Do not set `ADMIN_API_MFA_REQUIRED`
 until MFA verify endpoints exist. OpenAPI: `docs/openapi/admin-v1.yaml`.
 
-Remaining Phase 1 targets:
+**Phase 1 foundation complete** (Increments 1–9) except production MFA gate.
+
+Remaining after Phase 1:
 
 ## Out of scope for first production enablement
 
