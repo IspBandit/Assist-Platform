@@ -25,7 +25,19 @@ final class Request
 
     public static function capture(): self
     {
-        return new self($_GET, $_POST, $_SERVER, $_FILES);
+        $body = $_POST;
+        $contentType = strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? ''));
+        if (str_contains($contentType, 'application/json')) {
+            $raw = file_get_contents('php://input');
+            if (is_string($raw) && $raw !== '') {
+                $decoded = json_decode($raw, true);
+                if (is_array($decoded)) {
+                    $body = $decoded;
+                }
+            }
+        }
+
+        return new self($_GET, $body, $_SERVER, $_FILES);
     }
 
     public function method(): string
