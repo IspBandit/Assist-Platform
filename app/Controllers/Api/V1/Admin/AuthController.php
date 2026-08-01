@@ -11,6 +11,7 @@ use App\Core\Response;
 use App\Services\Api\AdminApiAuthService;
 use App\Services\Api\AdminApiContext;
 use App\Services\Api\AdminApiEnvelope;
+use App\Services\Api\AdminApiMfaService;
 use App\Services\Api\AdminApiServiceAccountService;
 
 final class AuthController extends Controller
@@ -132,5 +133,27 @@ final class AuthController extends Controller
         (new AdminApiAuthService())->revokeSession($userId, $sessionId);
 
         return AdminApiEnvelope::data(['revoked' => true, 'id' => $sessionId]);
+    }
+
+    public function mfaChallenge(Request $request): Response
+    {
+        $userId = AdminApiContext::userId();
+        if ($userId === null || !AdminApiContext::isHuman()) {
+            throw new AdminApiException(401, 'unauthenticated', 'Bearer human access token required.');
+        }
+
+        return AdminApiEnvelope::data((new AdminApiMfaService())->challenge($userId));
+    }
+
+    public function mfaVerify(Request $request): Response
+    {
+        $userId = AdminApiContext::userId();
+        if ($userId === null || !AdminApiContext::isHuman()) {
+            throw new AdminApiException(401, 'unauthenticated', 'Bearer human access token required.');
+        }
+
+        (new AdminApiMfaService())->verify($userId, (string) $request->input('code', ''));
+
+        throw new AdminApiException(501, 'not_implemented', 'MFA verify did not return.');
     }
 }

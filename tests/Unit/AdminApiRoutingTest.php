@@ -78,6 +78,8 @@ final class AdminApiRoutingTest extends TestCase
         self::assertSame('read_write', $capabilities['data']['resources']['recycle_bin']);
         self::assertSame('read_write', $capabilities['data']['resources']['drafts']);
         self::assertSame('read_write', $capabilities['data']['resources']['imports']);
+        self::assertSame('read', $capabilities['data']['resources']['audit']);
+        self::assertSame('read', $capabilities['data']['resources']['search_gaps']);
         self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
         self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
     }
@@ -200,6 +202,10 @@ final class AdminApiRoutingTest extends TestCase
             ['POST', '/api/v1/admin/drafts', ['entity_type' => 'provider', 'payload' => ['business_name' => 'Test']]],
             ['POST', '/api/v1/admin/drafts/abc/approve', []],
             ['POST', '/api/v1/admin/imports', ['checksum' => str_repeat('a', 64), 'items' => []]],
+            ['GET', '/api/v1/admin/audit', []],
+            ['GET', '/api/v1/admin/search-gaps', []],
+            ['POST', '/api/v1/admin/auth/mfa/challenge', []],
+            ['POST', '/api/v1/admin/auth/mfa/verify', ['code' => '123456']],
         ];
 
         foreach ($routes as [$method, $path, $body]) {
