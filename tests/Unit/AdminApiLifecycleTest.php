@@ -52,4 +52,21 @@ final class AdminApiLifecycleTest extends TestCase
 
         self::assertNull(AdminApiLifecycle::providerFilterClause('nope'));
     }
+
+    public function testLifecycleTransitionFieldMaps(): void
+    {
+        self::assertSame(
+            ['provider_status' => 'active', 'listing_status' => 'active', 'search_visible' => 1],
+            AdminApiLifecycle::providerFieldsAfterPublish()
+        );
+        self::assertSame(['search_visible' => 0], AdminApiLifecycle::providerFieldsAfterUnpublish());
+        self::assertSame(
+            ['status' => 'active', 'public_page_enabled' => 1],
+            AdminApiLifecycle::stayFieldsAfterPublish()
+        );
+        self::assertSame(
+            ['status' => 'pending', 'public_page_enabled' => 0, 'deleted_at' => null],
+            AdminApiLifecycle::stayFieldsAfterRestore()
+        );
+    }
 }

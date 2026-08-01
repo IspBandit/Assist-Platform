@@ -73,8 +73,8 @@ final class AdminApiRoutingTest extends TestCase
         self::assertSame('active', $capabilities['data']['authentication']['service_accounts']);
         self::assertArrayHasKey('scopes', $capabilities['data']);
         self::assertTrue($capabilities['data']['scopes']['providers:read']['service']);
-        self::assertSame('read', $capabilities['data']['resources']['providers']);
-        self::assertSame('read', $capabilities['data']['resources']['stays']);
+        self::assertSame('read_write', $capabilities['data']['resources']['providers']);
+        self::assertSame('read_write', $capabilities['data']['resources']['stays']);
         self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
         self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
     }
@@ -165,12 +165,38 @@ final class AdminApiRoutingTest extends TestCase
 
     public function testProvidersAndStaysRequireBearer(): void
     {
-        foreach (['/api/v1/admin/providers', '/api/v1/admin/stays'] as $path) {
-            try {
+        foreach (['/api/v1/admin/providers', '/api/v1/admin/stays'] as $path) {            try {
                 $this->dispatch('GET', $path);
                 self::fail('Expected AdminApiException for ' . $path);
             } catch (AdminApiException $e) {
                 self::assertSame(401, $e->getStatusCode());
+                self::assertSame('unauthenticated', $e->errorCode());
+            }
+        }
+    }
+
+    public function testWriteRoutesRequireBearer(): void
+    {
+        $routes = [
+            ['POST', '/api/v1/admin/providers', ['business_name' => 'Test Co']],
+            ['PATCH', '/api/v1/admin/providers/1', ['business_name' => 'Test Co']],
+            ['POST', '/api/v1/admin/providers/1/publish', []],
+            ['POST', '/api/v1/admin/providers/1/unpublish', []],
+            ['POST', '/api/v1/admin/providers/1/archive', []],
+            ['POST', '/api/v1/admin/providers/1/restore', []],
+            ['DELETE', '/api/v1/admin/providers/1', ['reason' => 'duplicate listing']],
+            ['POST', '/api/v1/admin/stays', ['name' => 'Test Stay']],
+            ['PATCH', '/api/v1/admin/stays/1', ['name' => 'Test Stay']],
+            ['POST', '/api/v1/admin/stays/1/publish', []],
+            ['DELETE', '/api/v1/admin/stays/1', ['reason' => 'closed permanently']],
+        ];
+
+        foreach ($routes as [$method, $path, $body]) {
+            try {
+                $this->dispatch($method, $path, [], $body);
+                self::fail('Expected AdminApiException for ' . $method . ' ' . $path);
+            } catch (AdminApiException $e) {
+                self::assertSame(401, $e->getStatusCode(), $method . ' ' . $path);
                 self::assertSame('unauthenticated', $e->errorCode());
             }
         }
