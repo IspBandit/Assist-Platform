@@ -1,0 +1,91 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers\Api\V1\Admin;
+
+use App\Core\Config;
+use App\Core\Controller;
+use App\Core\Request;
+use App\Core\Response;
+use App\Services\Api\AdminApiEnvelope;
+use App\Services\Api\AdminApiScopes;
+
+/**
+ * System endpoints for the versioned Admin API.
+ */
+final class SystemController extends Controller
+{
+    public function health(Request $request): Response
+    {
+        return AdminApiEnvelope::data([
+            'status' => 'ok',
+            'service' => 'assist-platform-admin-api',
+            'api_version' => 'v1',
+        ]);
+    }
+
+    public function version(Request $request): Response
+    {
+        $release = trim((string) Config::get('app.release', ''));
+
+        return AdminApiEnvelope::data([
+            'api_version' => 'v1',
+            'product' => 'Assist Platform Enterprise',
+            'release' => $release !== '' ? $release : null,
+            'php' => PHP_VERSION,
+        ]);
+    }
+
+    public function capabilities(Request $request): Response
+    {
+        $mfaRequired = (bool) Config::get('admin_api.mfa_required', false);
+
+        return AdminApiEnvelope::data([
+            'api_version' => 'v1',
+            'enabled' => (bool) Config::get('admin_api.enabled', false),
+            'restricted' => (bool) Config::get('admin_api.restricted', true),
+            'mfa_required' => $mfaRequired,
+            'mfa_enforced' => $mfaRequired,
+            'authentication' => [
+                'human_password' => 'active',
+                'refresh_tokens' => 'active',
+                'sessions' => 'active',
+                'service_accounts' => 'active',
+                'service_token' => 'active',
+                'mfa_verify' => 'scaffolded',
+            ],
+            'scopes' => AdminApiScopes::catalog(),
+            'resources' => [
+                'providers' => 'read_write',
+                'stays' => 'read_write',
+                'traveller_facilities' => 'planned',
+                'drafts' => 'read_write',
+                'imports' => 'read_write',
+                'recycle_bin' => 'read_write',
+                'audit' => 'read',
+                'search_gaps' => 'read',
+            ],
+            'limits' => [
+                'max_batch_size' => (int) Config::get('admin_api.max_batch_size', 100),
+                'recycle_retention_days' => (int) Config::get('admin_api.recycle_retention_days', 90),
+                'access_token_ttl_seconds' => (int) Config::get('admin_api.access_token_ttl_seconds', 900),
+                'refresh_token_ttl_seconds' => (int) Config::get('admin_api.refresh_token_ttl_seconds', 604800),
+                'service_token_ttl_seconds' => (int) Config::get('admin_api.service_token_ttl_seconds', 3600),
+            ],
+            'notes' => [
+                'Phase 1 Increment 8 adds audit read, search-gap analytics and MFA verify scaffold.',
+                'Phase 1 Increment 7 adds draft/import submission, validation and staging for RIC.',
+                'Phase 1 Increment 6 adds recycle bin list, restore and permanent purge.',
+                'Phase 1 Increment 5 adds audited provider and stay create/update plus lifecycle transitions.',
+                'Phase 1 Increment 4 adds read-only providers and stays with cursor pagination.',
+                'Brand scope is resolved from host/deployment context, not client brand_id.',
+                'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',
+                'MFA challenge/verify endpoints are scaffolded; TOTP validation returns 501 until OPS-010 ships.',
+                'Search gaps aggregate zero-result rows from provider_searches; empty when analytics is off.',
+                'Set ADMIN_API_MFA_REQUIRED only after full TOTP verification is implemented.',
+                'Standalone traveller facilities are not exposed as /facilities (ADR 0019).',
+            ],
+        ]);
+    }
+}

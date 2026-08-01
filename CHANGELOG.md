@@ -3,6 +3,41 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 9 (CORE-011)** — RIC mock-client contract tests:
+  `tests/Contract/AdminApiRicContractTest.php`, Contract phpunit suite, Phase 1 path
+  inventory vs routes and OpenAPI parity checks.
+- **Admin API Increment 8b (OPS-010)** — MFA challenge/verify scaffold:
+  `POST /auth/mfa/challenge` and `/auth/mfa/verify` (501 until TOTP validation ships).
+- **Admin API Increment 8 (CORE-011)** — audit read (`GET /audit`, `/audit/{id}`) and
+  search-gap analytics (`GET /search-gaps`) aggregating `provider_searches` zero-result rows.
+- **Admin API Increment 7 (CORE-011)** — draft and import package submission for RIC:
+  `api_drafts` / `api_import_jobs` tables (migration 082), draft CRUD + approve/reject,
+  import validate/stage pipeline, idempotency keys for bulk/package writes.
+- **Admin API Increment 6 (CORE-011)** — recycle bin list/detail, restore, permanent
+  purge (single + bulk with idempotency), brand-scoped provider purge semantics.
+
+### Added
+- **Admin API Increment 5 (CORE-011)** — audited provider and stay create/update,
+  lifecycle transitions (publish/unpublish/archive/restore/soft-delete), `AdminApiAudit`
+  integration, and `read_write` capabilities for providers/stays.
+
+### Added
+- **Admin API Increment 4 (CORE-011)** — read-only `GET /providers` and
+  `GET /stays` with cursor pagination, lifecycle mapping, brand scope from host
+  context, and `providers:read` / `stays:read` enforcement.
+
+### Added
+- **Admin API Increment 3 (CORE-011)** — service accounts, machine token exchange
+  (`POST /auth/token`), scope catalog, human-only vs scope middleware, service
+  account CRUD and secret rotation. Capabilities reports `service_accounts: active`.
+
+### Added
+- **Admin API Increment 2 (CORE-011)** — human login/refresh/logout/me/sessions,
+  token tables (migration 080), MFA scaffold (081), restricted allowlist,
+  bearer verification and OpenAPI auth paths. Still disabled by default; MFA
+  verify endpoints not shipped.
+
+### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +
   `php scripts/coverage-report.php` (local 0 / 1–2 / 3+ and serving coverage by state;
   `--thin` exports a gap-fill queue).

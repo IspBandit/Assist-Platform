@@ -10,6 +10,9 @@ See [ADR 0014](DECISIONS/0014-separate-directory-accuracy-from-marketing.md) for
 See [ADR 0015](DECISIONS/0015-controlled-bulk-provider-review.md) for controlled bulk publication and strong duplicate linking.
 See [ADR 0016](DECISIONS/0016-server-owned-provider-import-and-campaign-taxonomy.md) for server-owned import processing and canonical provider-campaign category scope.
 See [ADR 0017](DECISIONS/0017-review-first-organisation-pr-outreach.md) for evidence-backed organisation targeting and separate staged PR campaigns.
+See [ADR 0018](DECISIONS/0018-admin-api-no-direct-db.md) for Admin API as the only external write path to production.
+See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus narrowly scoped traveller facilities.
+See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -62,5 +65,8 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0015: Controlled bulk provider review and strong duplicate linking.
 - 0016: Server-owned provider import processing and canonical provider-campaign taxonomy.
 - 0017: Review-first organisation PR outreach with source, role and relevance evidence.
+- 0018: Admin API is the only external write path to production (no direct DB).
+- 0019: Stays vs narrowly scoped traveller facilities.
+- 0020: Assist RIC is the initial local management client (Option B).
 
 The index must be updated whenever an ADR is accepted.

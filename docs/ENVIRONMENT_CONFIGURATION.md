@@ -27,6 +27,7 @@ Supported controlled values:
 | Billing/tax | `ENABLE_*`, `BILLING_*`, `STRIPE_*`, `GST_*` | All charging flags remain off until COM-004; `free_listing` is the safe fallback plan |
 | Uploads | `MAX_*`, `IMAGE_*`, `THUMBNAIL_WIDTH` | Limits are validated by upload services; production changes require capacity/security review |
 | Backup/security | `BACKUP_RETENTION_*`, login/admin timeouts | Credentials for independent backups live only in the protected backup environment |
+| Admin API | `ADMIN_API_ENABLED`, `ADMIN_API_RESTRICTED`, `ADMIN_API_ALLOWED_USER_IDS`, `ADMIN_API_MFA_REQUIRED`, `ADMIN_API_*_TTL`, `ADMIN_API_MAX_BATCH_SIZE`, `ADMIN_API_RECYCLE_RETENTION_DAYS` | Disabled by default; never a substitute for production DB access; restricted allowlist or super-admin only until MFA; service token TTL max 3600s; MFA required before general remote admin use (CORE-011 / OPS-010) |
 
 ## Integration activation rule
 
