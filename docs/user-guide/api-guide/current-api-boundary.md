@@ -83,6 +83,27 @@ probe endpoints when the feature flag is on.
 See **Repository workflow**, `docs/API.md`, `docs/LIVE_API.md` and
 `docs/openapi/admin-v1.yaml`.
 
+## FAQ
+
+**Is `/api/v1/admin` a public partner API?** No. It is a restricted management
+surface for Assist RIC and service accounts, disabled by default until MFA and
+Quality Gate evidence are recorded.
+
+**Can Assist RIC open production MariaDB?** No. Production writes and reads for
+management clients must use `/api/v1/admin` only (ADR 0018).
+
+## Version introduced
+
+Current repository baseline.
+
+## Last updated
+
+2026-08-01.
+
+## Owner
+
+Assist Platform product and engineering.
+
 ## Changelog
 
 | Date | Change |
