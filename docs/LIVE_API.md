@@ -125,13 +125,15 @@ Do this on a disposable or staging deployment before production:
 4. Keep `ADMIN_API_MFA_REQUIRED=false` until step 7.
 5. Human login → `POST /auth/mfa/enroll/begin` → authenticator scan →
    `POST /auth/mfa/enroll/confirm`.
-6. Create a least-privilege service account for Assist RIC (`imports:*`,
-   `drafts:*`, `providers:read`, `stays:read`, `analytics:read`). Store the
-   client key/secret only in the RIC OS credential vault.
+6. Create a least-privilege Assist RIC service account and print credentials
+   once (store only in the RIC OS vault):
+   `php scripts/admin-api-create-ric-service-account.php --email=admin@example.test`
+   Probe with:
+   `php scripts/admin-api-probe.php --base-url=https://staging…/api/v1/admin --client-key=… --client-secret=…`
 7. Optionally set `ADMIN_API_MFA_REQUIRED=true` and confirm human login returns
    `mfa_token` then completes via `/auth/mfa/verify`.
 8. From Assist RIC: enable live API, set base URL, Test connection, submit a
-   small JSON export package with `validate_only` if desired.
+   small JSON export package with **Validate only** checked first.
 9. Record Architecture, UX, Engineering and Business Quality Gate evidence
    before any production enablement (`docs/PLATFORM_QUALITY_GATE.md`).
 
