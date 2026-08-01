@@ -73,7 +73,8 @@ final class AdminApiRoutingTest extends TestCase
         self::assertSame('active', $capabilities['data']['authentication']['service_accounts']);
         self::assertArrayHasKey('scopes', $capabilities['data']);
         self::assertTrue($capabilities['data']['scopes']['providers:read']['service']);
-        self::assertSame('planned', $capabilities['data']['resources']['stays']);
+        self::assertSame('read', $capabilities['data']['resources']['providers']);
+        self::assertSame('read', $capabilities['data']['resources']['stays']);
         self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
         self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
     }
@@ -159,6 +160,19 @@ final class AdminApiRoutingTest extends TestCase
         } catch (AdminApiException $e) {
             self::assertSame(401, $e->getStatusCode());
             self::assertSame('unauthenticated', $e->errorCode());
+        }
+    }
+
+    public function testProvidersAndStaysRequireBearer(): void
+    {
+        foreach (['/api/v1/admin/providers', '/api/v1/admin/stays'] as $path) {
+            try {
+                $this->dispatch('GET', $path);
+                self::fail('Expected AdminApiException for ' . $path);
+            } catch (AdminApiException $e) {
+                self::assertSame(401, $e->getStatusCode());
+                self::assertSame('unauthenticated', $e->errorCode());
+            }
         }
     }
 
