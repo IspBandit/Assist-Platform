@@ -492,9 +492,9 @@ No Phase 1 migration for `traveller_facilities` (ADR 0016).
 3. Service accounts + scopes — **Increment 3 complete**
 4. Health / version / capabilities — **Increment 1 skeletons shipped**
 5. Read-only providers + stays — **Increment 4 complete**
-6. Audited create/update  
-7. Lifecycle + Recycle Bin  
-8. Draft/import submission  
+6. Audited create/update + lifecycle — **Increment 5 complete**
+7. Recycle Bin list/purge — planned
+8. Draft/import submission — planned
 9. RIC mock-client contract tests  
 10. OpenAPI + operating docs — **Increment 1–4 contract updates**
 
@@ -549,3 +549,25 @@ scopes are rejected. Machine token TTL capped at 3600s via `ADMIN_API_SERVICE_TO
 
 Query params: `limit` (1–100), `cursor`, `q`, `status` (DB status or lifecycle alias),
 `town`, `state` (id/abbrev/name). Lifecycle mapped per §5. No `/facilities`.
+
+### Increment 5 shipped surface
+
+| Method | Path | Scope | Behaviour |
+| --- | --- | --- | --- |
+| POST | `/providers` | `providers:write` | Create provider + brand listing; default `pending`; audit |
+| PATCH | `/providers/{id}` | `providers:write` | Patch allowed provider/listing fields; audit |
+| POST | `/providers/{id}/publish` | `lifecycle:write` | `active` + listing visible; sets `approved_at` when null |
+| POST | `/providers/{id}/unpublish` | `lifecycle:write` | `search_visible=0`; provider stays `active` |
+| POST | `/providers/{id}/archive` | `lifecycle:write` | `status=suspended`, `search_visible=0` |
+| POST | `/providers/{id}/restore` | `lifecycle:write` | Clears soft-delete; status `pending` |
+| DELETE | `/providers/{id}` | `lifecycle:write` | Soft-delete provider + listing; `reason` required (≥3 chars) |
+| POST | `/stays` | `stays:write` | Create stay; gated when parks module off |
+| PATCH | `/stays/{id}` | `stays:write` | Patch allowed stay fields |
+| POST | `/stays/{id}/publish` | `lifecycle:write` | `active`, `public_page_enabled=1` |
+| POST | `/stays/{id}/unpublish` | `lifecycle:write` | `public_page_enabled=0` |
+| POST | `/stays/{id}/archive` | `lifecycle:write` | `status=suspended`, `public_page_enabled=0` |
+| POST | `/stays/{id}/restore` | `lifecycle:write` | Clears soft-delete; status `pending` |
+| DELETE | `/stays/{id}` | `lifecycle:write` | Soft-delete; `reason` required (≥3 chars) |
+
+All writes record `AdminApiAudit` events. No approval emails. Recycle-bin list/purge
+remains a later increment; restore is available via `POST .../restore`.

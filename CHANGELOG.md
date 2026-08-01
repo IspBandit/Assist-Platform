@@ -3,6 +3,11 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API Increment 5 (CORE-011)** — audited provider and stay create/update,
+  lifecycle transitions (publish/unpublish/archive/restore/soft-delete), `AdminApiAudit`
+  integration, and `read_write` capabilities for providers/stays.
+
+### Added
 - **Admin API Increment 4 (CORE-011)** — read-only `GET /providers` and
   `GET /stays` with cursor pagination, lifecycle mapping, brand scope from host
   context, and `providers:read` / `stays:read` enforcement.

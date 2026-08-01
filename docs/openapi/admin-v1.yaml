@@ -464,6 +464,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      tags: [Providers]
+      operationId: adminProvidersStore
+      summary: Create a provider in the current brand scope
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderCreateRequest'
+      responses:
+        '201':
+          description: Provider created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing providers:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /providers/{id}:
     get:
       tags: [Providers]
@@ -490,6 +527,184 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      tags: [Providers]
+      operationId: adminProvidersUpdate
+      summary: Update provider and brand listing fields
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderPatchRequest'
+      responses:
+        '200':
+          description: Provider updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing providers:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Not found in brand scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      tags: [Providers]
+      operationId: adminProvidersDestroy
+      summary: Soft-delete a provider (reason required)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LifecycleDeleteRequest'
+      responses:
+        '200':
+          description: Provider soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing lifecycle:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /providers/{id}/publish:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersPublish
+      summary: Publish provider listing
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '403':
+          description: Missing lifecycle:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /providers/{id}/unpublish:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersUnpublish
+      summary: Unpublish provider listing (search_visible=0)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider unpublished
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+  /providers/{id}/archive:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersArchive
+      summary: Archive provider (status=suspended)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+  /providers/{id}/restore:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersRestore
+      summary: Restore soft-deleted provider
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider restored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
   /stays:
     get:
       tags: [Stays]
@@ -513,6 +728,37 @@ paths:
                 $ref: '#/components/schemas/StayCollection'
         '401':
           description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      tags: [Stays]
+      operationId: adminStaysStore
+      summary: Create a stay
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StayCreateRequest'
+      responses:
+        '201':
+          description: Stay created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+        '403':
+          description: Missing stays:write scope or stays unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
           content:
             application/json:
               schema:
@@ -543,6 +789,136 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      tags: [Stays]
+      operationId: adminStaysUpdate
+      summary: Update stay fields
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StayPatchRequest'
+      responses:
+        '200':
+          description: Stay updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+    delete:
+      tags: [Stays]
+      operationId: adminStaysDestroy
+      summary: Soft-delete a stay (reason required)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LifecycleDeleteRequest'
+      responses:
+        '200':
+          description: Stay soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+  /stays/{id}/publish:
+    post:
+      tags: [Stays]
+      operationId: adminStaysPublish
+      summary: Publish stay
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+  /stays/{id}/unpublish:
+    post:
+      tags: [Stays]
+      operationId: adminStaysUnpublish
+      summary: Unpublish stay (public_page_enabled=0)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay unpublished
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+  /stays/{id}/archive:
+    post:
+      tags: [Stays]
+      operationId: adminStaysArchive
+      summary: Archive stay (status=suspended)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+  /stays/{id}/restore:
+    post:
+      tags: [Stays]
+      operationId: adminStaysRestore
+      summary: Restore soft-deleted stay
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay restored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
 
 components:
 
@@ -984,6 +1360,162 @@ components:
         - $ref: '#/components/schemas/StaySummary'
         - type: object
           additionalProperties: true
+    ProviderCreateRequest:
+      type: object
+      required: [business_name]
+      properties:
+        business_name:
+          type: string
+        display_name:
+          type: string
+        status:
+          type: string
+          enum: [draft, pending]
+        contact_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        public_email:
+          type: string
+        public_phone:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        service_model:
+          type: string
+          enum: [mobile, workshop, both]
+        street_address:
+          type: string
+        base_town_id:
+          type: integer
+        region_id:
+          type: integer
+    ProviderPatchRequest:
+      type: object
+      properties:
+        business_name:
+          type: string
+        contact_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        public_email:
+          type: string
+        public_phone:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        service_model:
+          type: string
+          enum: [mobile, workshop, both]
+        street_address:
+          type: string
+        base_town_id:
+          type: integer
+        region_id:
+          type: integer
+        display_name:
+          type: string
+        search_visible:
+          type: boolean
+        listing_status:
+          type: string
+          enum: [draft, pending, active, suspended, rejected]
+    StayCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [draft, pending]
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        town_id:
+          type: integer
+        state_id:
+          type: integer
+        region_id:
+          type: integer
+        stay_type:
+          type: string
+        price_type:
+          type: string
+        number_of_sites:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    StayPatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        town_id:
+          type: integer
+        state_id:
+          type: integer
+        region_id:
+          type: integer
+        stay_type:
+          type: string
+        price_type:
+          type: string
+        number_of_sites:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    LifecycleDeleteRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 3
+    DeleteResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [id, deleted, reason]
+          properties:
+            id:
+              type: string
+            deleted:
+              type: boolean
+            reason:
+              type: string
     ErrorEnvelope:
       type: object
       required: [error]

@@ -62,14 +62,22 @@ Increment 4 (read-only directory) adds:
 - `GET /api/v1/admin/stays/{id}` — detail
 - Filters: `q`, `status`/`lifecycle`, `town`, `state`; brand from host context
 
+Increment 5 (audited writes + lifecycle) adds:
+
+- `POST /api/v1/admin/providers` — create (`providers:write`)
+- `PATCH /api/v1/admin/providers/{id}` — update allowed fields
+- `POST /api/v1/admin/providers/{id}/publish|unpublish|archive|restore` — lifecycle (`lifecycle:write`)
+- `DELETE /api/v1/admin/providers/{id}` — soft-delete; JSON body `reason` (min 3 chars)
+- Same write/lifecycle pattern for `/stays` with `stays:write` + `lifecycle:write`
+- All mutations audited via `AdminApiAudit`; capabilities report `read_write`
+
 Enable only with `ADMIN_API_ENABLED=true` on non-production first. Keep
 `ADMIN_API_RESTRICTED=true` and configure `ADMIN_API_ALLOWED_USER_IDS` (or rely
 on super-administrator-only when empty). Do not set `ADMIN_API_MFA_REQUIRED`
 until MFA verify endpoints exist. OpenAPI: `docs/openapi/admin-v1.yaml`.
 
 Remaining Phase 1 targets:
-- Providers and stays audited create/update + lifecycle mutations
-- Soft delete / Recycle Bin
+- Recycle Bin list/purge
 - Draft and import package submission for RIC
 - Limited search-gap analytics read
 
