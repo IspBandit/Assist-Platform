@@ -11,7 +11,7 @@ use App\Core\Response;
 use App\Services\Api\AdminApiEnvelope;
 
 /**
- * System endpoints for the versioned Admin API (Increment 1 skeletons).
+ * System endpoints for the versioned Admin API.
  */
 final class SystemController extends Controller
 {
@@ -38,17 +38,20 @@ final class SystemController extends Controller
 
     public function capabilities(Request $request): Response
     {
+        $mfaRequired = (bool) Config::get('admin_api.mfa_required', false);
+
         return AdminApiEnvelope::data([
             'api_version' => 'v1',
             'enabled' => (bool) Config::get('admin_api.enabled', false),
             'restricted' => (bool) Config::get('admin_api.restricted', true),
-            'mfa_required' => (bool) Config::get('admin_api.mfa_required', false),
-            'mfa_enforced' => false,
+            'mfa_required' => $mfaRequired,
+            'mfa_enforced' => $mfaRequired,
             'authentication' => [
-                'human_password' => 'planned',
-                'refresh_tokens' => 'planned',
+                'human_password' => 'active',
+                'refresh_tokens' => 'active',
+                'sessions' => 'active',
                 'service_accounts' => 'planned',
-                'bearer_placeholder' => 'active',
+                'mfa_verify' => 'scaffolded',
             ],
             'resources' => [
                 'providers' => 'planned',
@@ -64,9 +67,12 @@ final class SystemController extends Controller
                 'max_batch_size' => (int) Config::get('admin_api.max_batch_size', 100),
                 'recycle_retention_days' => (int) Config::get('admin_api.recycle_retention_days', 90),
                 'access_token_ttl_seconds' => (int) Config::get('admin_api.access_token_ttl_seconds', 900),
+                'refresh_token_ttl_seconds' => (int) Config::get('admin_api.refresh_token_ttl_seconds', 604800),
             ],
             'notes' => [
-                'Phase 1 Increment 1 provides routing, envelopes and system skeletons only.',
+                'Phase 1 Increment 2 provides human login, refresh rotation, logout and sessions.',
+                'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',
+                'MFA methods are scaffolded; set ADMIN_API_MFA_REQUIRED only after verify endpoints exist.',
                 'Standalone traveller facilities are not exposed as /facilities (ADR 0016).',
             ],
         ]);

@@ -315,7 +315,7 @@ final class Kernel
         $this->router->aliasMiddleware('turnstile', \App\Middleware\VerifyTurnstile::class);
         $this->router->aliasMiddleware('admin_api_enabled', \App\Middleware\RequireAdminApiEnabled::class);
         $this->router->aliasMiddleware('admin_api_request', \App\Middleware\AdminApiRequest::class);
-        $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearerPlaceholder::class);
+        $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearer::class);
     }
 
     private function loadRoutes(): void

@@ -16,4 +16,9 @@ return [
     'refresh_token_ttl_seconds' => max(300, (int) Env::get('ADMIN_API_REFRESH_TOKEN_TTL', 604800)),
     'max_batch_size' => max(1, min(500, (int) Env::get('ADMIN_API_MAX_BATCH_SIZE', 100))),
     'recycle_retention_days' => max(1, (int) Env::get('ADMIN_API_RECYCLE_RETENTION_DAYS', 90)),
+    // Comma-separated user IDs for restricted mode. Empty → super-administrator only.
+    'allowed_user_ids' => array_values(array_filter(array_map(
+        static fn (string $id): int => (int) trim($id),
+        explode(',', (string) Env::get('ADMIN_API_ALLOWED_USER_IDS', ''))
+    ), static fn (int $id): bool => $id > 0)),
 ];
