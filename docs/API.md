@@ -3,9 +3,11 @@
 ## Current status
 
 The application is server-rendered. Existing JSON location/search endpoints are
-first-party web endpoints, not a stable public API. There is no separately
-versioned `/api/v1` contract and no token-authentication product today. This
-must not be represented as a supported partner API.
+first-party web endpoints, not a stable public API. A versioned Admin API under
+`/api/v1/admin` is specified for Assist RIC and trusted management clients
+(CORE-011). Until that surface is implemented, MFA-gated and Quality Gate
+approved, it must not be represented as a supported partner API. See
+`docs/LIVE_API.md` and `docs/PHASE1_ADMIN_API_DESIGN.md`.
 
 ## Future contract
 

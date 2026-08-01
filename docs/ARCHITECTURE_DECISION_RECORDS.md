@@ -55,5 +55,9 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0011: Separate motorsport rule, discipline, venue and calendar catalogue.
 - 0012: Authoritative provider pack with canonical identity and taxonomy-controlled brand routing.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
+- 0014: Separate directory accuracy from marketing outreach.
+- 0015: Admin API is the only external write path to production (no direct DB).
+- 0016: Stays vs narrowly scoped traveller facilities.
+- 0017: Assist RIC is the initial local management client (Option B).
 
 The index must be updated whenever an ADR is accepted.

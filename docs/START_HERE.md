@@ -23,6 +23,10 @@ This is the authoritative orientation page for developers and AI agents.
    `docs/RELEASE_NOTES.md`.
 10. For product-specific data, `docs/TOWSMART_CATALOGUE.md`,
     `docs/VANASSIST_STAYS.md` and `docs/LOCALTORQUE.md`.
+11. For the versioned Admin API and Assist RIC synchronisation (CORE-011,
+    DATA-011): `docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`,
+    ADRs 0015–0017, and the sibling repo `assist-ric`
+    (`docs/architecture/adr/0003-sibling-repository.md`).
 
 ## Sources of truth
 
@@ -48,4 +52,9 @@ features, modules, SEO and data scoping.
 
 Never use production credentials for local development. A code change is not
 permission to deploy, migrate live data, change DNS or enable charging.
+
+Assist RIC (Regional Intelligence Collector) is a sibling desktop application
+used for research, staging and synchronisation. It must not open the production
+database; it talks to Assist Platform only through `/api/v1/admin` once that
+API is enabled (ADR 0015).
 

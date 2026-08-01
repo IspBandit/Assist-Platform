@@ -1,0 +1,172 @@
+openapi: 3.1.0
+info:
+  title: Assist Platform Admin API
+  version: 1.0.0-increment-1
+  description: |
+    Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
+    Increment 1 ships routing, JSON envelopes, system skeletons and auth placeholders.
+    Not a supported production partner API until MFA enforcement and Quality Gate evidence.
+servers:
+  - url: https://{host}/api/v1/admin
+    variables:
+      host:
+        default: vanassist.com.au
+tags:
+  - name: System
+  - name: Auth
+paths:
+  /health:
+    get:
+      tags: [System]
+      operationId: adminHealth
+      summary: Liveness for the Admin API surface
+      security: []
+      responses:
+        '200':
+          description: API process is responding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Admin API disabled or platform unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /version:
+    get:
+      tags: [System]
+      operationId: adminVersion
+      summary: API and product version metadata
+      security: []
+      responses:
+        '200':
+          description: Version document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+  /capabilities:
+    get:
+      tags: [System]
+      operationId: adminCapabilities
+      summary: Declares implemented and planned Admin API capabilities
+      security: []
+      responses:
+        '200':
+          description: Capability document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilitiesResponse'
+  /auth/me:
+    get:
+      tags: [Auth]
+      operationId: adminAuthMe
+      summary: Current authenticated actor (Increment 2)
+      security:
+        - bearerAuth: []
+      responses:
+        '401':
+          description: Missing or unverified bearer token (Increment 1 placeholder)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque or JWT access token issued by Admin API auth (Increment 2).
+  schemas:
+    HealthResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [status, service, api_version]
+          properties:
+            status:
+              type: string
+              enum: [ok]
+            service:
+              type: string
+            api_version:
+              type: string
+              enum: [v1]
+    VersionResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [api_version, product]
+          properties:
+            api_version:
+              type: string
+            product:
+              type: string
+            release:
+              type: string
+              nullable: true
+            php:
+              type: string
+    CapabilitiesResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [api_version, enabled, resources]
+          properties:
+            api_version:
+              type: string
+            enabled:
+              type: boolean
+            restricted:
+              type: boolean
+            mfa_required:
+              type: boolean
+            mfa_enforced:
+              type: boolean
+            authentication:
+              type: object
+              additionalProperties:
+                type: string
+            resources:
+              type: object
+              additionalProperties:
+                type: string
+            limits:
+              type: object
+              additionalProperties: true
+            notes:
+              type: array
+              items:
+                type: string
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            request_id:
+              type: string
+            fields:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+        meta:
+          type: object
+          additionalProperties: true
