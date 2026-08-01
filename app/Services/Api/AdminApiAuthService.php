@@ -49,14 +49,25 @@ final class AdminApiAuthService
     ];
 
     /**
-     * @return array{
-     *   access_token:string,
-     *   refresh_token:string,
-     *   token_type:string,
-     *   expires_in:int,
-     *   scopes:list<string>,
-     *   user:array<string,mixed>
-     * }
+     * @return (
+     *   array{
+     *     access_token:string,
+     *     refresh_token:string,
+     *     token_type:string,
+     *     expires_in:int,
+     *     scopes:list<string>,
+     *     user:array<string,mixed>
+     *   }|
+     *   array{
+     *     mfa_required:true,
+     *     mfa_token:string,
+     *     token_type:string,
+     *     expires_in:int,
+     *     scopes:list<string>,
+     *     user:array<string,mixed>,
+     *     message:string
+     *   }
+     * )
      */
     public function login(string $email, string $password, Request $request, ?string $sessionLabel = null): array
     {
