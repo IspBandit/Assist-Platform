@@ -155,12 +155,10 @@ final class AdminApiDatasetService
         }
 
         $now = date('Y-m-d H:i:s');
-        Database::query(
+        $runId = Database::insert(
             'INSERT INTO government_dataset_sync_runs (dataset_id, status, started_at, created_at) VALUES (?, ?, ?, ?)',
             [$id, 'queued', null, $now]
         );
-
-        $runId = (int) Database::lastInsertId();
 
         AdminApiAudit::record(
             'dataset.sync_queued',

@@ -87,7 +87,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
 | OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
 | OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
-| OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, throttling and TOTP MFA shipped; conditional Quality Gate recorded (`docs/evidence/admin-api-2026-08-02/`); production MFA/enable flags + paid-connector hard limits remain |
+| OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, MFA, service-account HTML admin shipped; Option B programme conditional QG (`docs/evidence/option-b-programme-2026-08-02/`); production enable flags await staging rehearsal |
 | OPS-011 | Record lifecycle and Recycle Bin for providers and stays | done | Soft delete, restore, retention, purge permission and audited recycle APIs shipped in CORE-011 Phase 1 |
 
 ## Commercial

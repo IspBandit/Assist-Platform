@@ -26,7 +26,8 @@ This is the authoritative orientation page for developers and AI agents.
 11. For living customer, provider, administrator, developer and API guidance,
     read `docs/user-guide/README.md` and `docs/user-guide/registry.php`.
 12. For the versioned Admin API and Assist RIC synchronisation (CORE-011,
-    DATA-011): `docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`,
+    DATA-011, Option B programme): `docs/OPTION_B_MANAGEMENT_PROGRAMME.md`,
+    `docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`,
     ADRs 0018–0020, and the sibling repo `assist-ric`
     (`docs/architecture/adr/0003-sibling-repository.md`).
 

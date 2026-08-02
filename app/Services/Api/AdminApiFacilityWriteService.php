@@ -68,7 +68,7 @@ final class AdminApiFacilityWriteService
             $status = 'draft';
         }
 
-        Database::query(
+        $id = Database::insert(
             'INSERT INTO traveller_facilities (facility_type, name, slug, formatted_address, locality, town_id, state_id, latitude, longitude, '
             . 'operating_status, opening_hours, accessibility_notes, verification_status, status, confidence, brand_id, created_at, updated_at) '
             . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -93,8 +93,6 @@ final class AdminApiFacilityWriteService
                 $now,
             ]
         );
-
-        $id = (int) Database::lastInsertId();
 
         AdminApiAudit::record('facility.created', 'traveller_facility', $id, null, ['name' => $name], $request);
 

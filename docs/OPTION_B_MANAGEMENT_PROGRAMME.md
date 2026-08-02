@@ -1,6 +1,7 @@
 # Option B — Management Platform Programme
 
-**Status:** in progress  
+**Status:** code-complete (Increments A–L) — production Admin API enablement
+remains gated on staging rehearsal  
 **Architecture:** ADRs 0018–0020 and Assist RIC ADR 0010 (authoritative)  
 **Goal:** Functional coverage of the original VanAssist Management Platform
 specification via Platform `/api/v1/admin`, PHP HTML admin, and Assist RIC —
@@ -29,10 +30,10 @@ not a new Tauri/React/FastAPI stack.
 | F | Sync conflicts + import lifecycle | **done** | DATA-011 |
 | G | Traveller facilities Admin API | **done** | ADR 0019, DATA-012 |
 | H | Claim-first onboarding + PHP admin polish | **done** | VAN-010, OPS-010/011 |
-| I | RIC canonical pull + sync console | pending | DATA-011+ |
-| J | RIC search-gap research workflow | pending | DATA-013 |
-| K | RIC dataset catalogue + budgets | pending | DATA-012, OPS-010 |
-| L | Staging hardening + Quality Gate | pending | OPS-010 |
+| I | RIC canonical pull + sync console | **done** (assist-ric `2c8bf53`) | DATA-011+ |
+| J | RIC search-gap research workflow | **done** | DATA-013 |
+| K | RIC dataset catalogue + budgets | **done** | DATA-012, OPS-010 |
+| L | Staging hardening + Quality Gate | **done** (conditional) | OPS-010 |
 
 ## Rollback
 
@@ -48,3 +49,4 @@ sync; forward-only compensating migrations; claim-first feature flag restore.
 - [DECISIONS/0020-ric-as-management-client.md](DECISIONS/0020-ric-as-management-client.md)
 - [PRODUCT_BACKLOG.md](PRODUCT_BACKLOG.md)
 - [evidence/admin-api-2026-08-02/](evidence/admin-api-2026-08-02/)
+- [evidence/option-b-programme-2026-08-02/](evidence/option-b-programme-2026-08-02/)

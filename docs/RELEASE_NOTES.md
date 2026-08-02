@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Option B programme Increments A–L (functional management coverage)
+
+- Programme tracker: `docs/OPTION_B_MANAGEMENT_PROGRAMME.md`.
+- Conditional Quality Gate:
+  `docs/evidence/option-b-programme-2026-08-02/PLATFORM_QUALITY_GATE.md`.
+- Assist RIC Option B sync console shipped on sibling branch
+  `feature/option-b-ric-management` (pull providers/stays, conflicts, gap→research,
+  dataset catalogue, budget guardrails).
+- Production `ADMIN_API_ENABLED` remains off until staging rehearsal is recorded.
+
 ### Option B Increment H — claim-first onboarding + PHP admin polish (VAN-010 / OPS-010)
 
 - Added claim-first provider onboarding on `/for-providers/register`: search-before-create,

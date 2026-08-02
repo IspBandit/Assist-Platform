@@ -100,7 +100,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-02.
+2026-08-02 (Option B programme).
 
 ## Owner
 
