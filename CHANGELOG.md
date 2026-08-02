@@ -3,6 +3,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-002 demo catalogue volume** — migration `119` expands Polaris
+  demonstration fixtures (new manufacturer + six models/variants, `is_demo`
+  only). Not production national catalogue data.
 - **POL-007 manufacturer portal data quality** — completeness checklist on
   `/portal/manufacturer/data-quality` for claimed makers (ATM/length/berths/price
   gaps). Guidance only, not a Quality Gate verdict.

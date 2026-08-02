@@ -144,7 +144,7 @@
             <p><?php if (!empty(array_filter($models ?? [], static fn ($m) => !empty($m['is_demo'])))): ?>Demonstration fixtures are labelled. <?php endif; ?>Pricing and specs show verification status where available.</p>
         </div>
         <?php if (empty($models)): ?>
-            <p class="empty-state">No published models yet. Catalogue seed data appears after migration <code>087</code>.</p>
+            <p class="empty-state">No published models yet. Demo catalogue fixtures appear after migrations <code>103</code>–<code>119</code> (is_demo only).</p>
         <?php else: ?>
             <div class="polaris-model-grid">
                 <?php foreach ($models as $model): ?>

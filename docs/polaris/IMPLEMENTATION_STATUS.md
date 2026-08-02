@@ -9,7 +9,7 @@
 ## Completed (honest)
 
 - Repository audit + full `docs/polaris/` suite + DECISIONS 0001–0013 + platform ADR 0031
-- Private brand registration, migrations `087`/`088`/`095`/`096`/`099`, demo fixtures
+- Private brand registration, migrations `103`–`119` demo fixtures (expanded catalogue volume; still `is_demo` only)
 - Homepage hero (loading state, example rotation, reduced-motion aware)
 - Nav: Find, Browse, Compare, Manufacturers, Tow Match, Buying Guides, Saved
 - Catalogue browse/detail/manufacturer pages

@@ -5,6 +5,11 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-002 demo catalogue volume
+
+- Migration `119` adds Demo Alpine Family plus six more demo models/variants
+  (`is_demo` only). Not national production catalogue data.
+
 ### POL-007 manufacturer portal data quality
 
 - Claimed manufacturers see a completeness checklist on

@@ -48,7 +48,7 @@ Exit: Owner sign-off on boundaries and roadmap.
 Deliverables:
 
 - [x] Brand row + `config/brands.php` entry (`private`)
-- [x] Migration `087`: core catalogue tables + demo fixtures
+- [x] Migration `103` (+ `118`/`119`): core catalogue tables + expanded demo fixtures (`is_demo` only)
 - [x] Admin nav module `rv_catalogue`
 - [x] Public homepage with hero
 - [x] `/rvs`, `/manufacturers`, model detail
