@@ -13,6 +13,8 @@ may remain as dated files and are linked here rather than copied.
   (`meta.source=dual`). No second API path. Production flags remain off.
 - Wired `POST /api/v1/admin/datasets/{id}/sync` to real government dataset fetch
   (review-first facility candidates; optional fixture mode).
+- **DATA-011A** National Dataset Catalogue on `government_datasets` (`117` +
+  ADR 0033): RIC acquires; Platform catalogue SoR; no direct production publish.
 
 ### Government datasets and traveller facilities (DATA-012 / AI-6)
 

@@ -90,7 +90,7 @@ final class GovernmentDatasetService
         if ($key === '' || $publisher === '' || $title === '') {
             throw new RuntimeException('Dataset key, publisher and title are required.');
         }
-        if (!in_array($connectorKey, ['gov_ckan', 'gov_arcgis', 'gov_csv', 'gov_geojson'], true)) {
+        if (!in_array($connectorKey, ['gov_ckan', 'gov_arcgis', 'gov_csv', 'gov_geojson', 'osm_offline_seed'], true)) {
             throw new RuntimeException('Unsupported connector key.');
         }
         if (!in_array($fetchMethod, ['ckan', 'arcgis', 'csv', 'geojson', 'url'], true)) {
@@ -125,25 +125,59 @@ final class GovernmentDatasetService
         $settings['default_facility_type'] = $facilityType;
 
         $recordTypes = array_values(array_filter(array_map(
-            static fn (string $v): string => FacilityTypeMapper::normalise($v),
+            static fn (string $v): string => trim($v),
             preg_split('/\s*,\s*/', trim((string) ($input['record_types'] ?? $facilityType))) ?: []
         )));
+        $recordTypes = array_values(array_filter(array_map(
+            static function (string $v) use ($facilityType): string {
+                if (in_array($v, ['portal', 'osm', 'council', 'stay', 'caravan_park', 'campground'], true)) {
+                    return $v;
+                }
+
+                return FacilityTypeMapper::normalise($v !== '' ? $v : $facilityType);
+            },
+            $recordTypes
+        )));
+
+        $catalogueStatus = trim((string) ($input['catalogue_status'] ?? 'planned'));
+        if (!in_array($catalogueStatus, ['planned', 'indexed', 'active', 'paused', 'retired'], true)) {
+            throw new RuntimeException('Unsupported catalogue status.');
+        }
+
+        $duplicateRules = null;
+        if (!empty($input['duplicate_rules_json']) && is_string($input['duplicate_rules_json'])) {
+            $decodedRules = json_decode($input['duplicate_rules_json'], true);
+            if (!is_array($decodedRules)) {
+                throw new RuntimeException('duplicate_rules_json must be valid JSON object.');
+            }
+            $duplicateRules = json_encode($decodedRules, JSON_THROW_ON_ERROR);
+        } elseif (isset($input['duplicate_rules']) && is_array($input['duplicate_rules'])) {
+            $duplicateRules = json_encode($input['duplicate_rules'], JSON_THROW_ON_ERROR);
+        }
 
         $params = [
             $key,
             $publisher,
             $title,
             trim((string) ($input['coverage'] ?? '')) ?: null,
+            trim((string) ($input['jurisdiction'] ?? '')) ?: null,
             json_encode($recordTypes === [] ? [$facilityType] : $recordTypes, JSON_THROW_ON_ERROR),
+            $duplicateRules,
             trim((string) ($input['licence'] ?? '')) ?: null,
             trim((string) ($input['attribution'] ?? '')) ?: null,
             $trust,
             $fetchMethod,
+            trim((string) ($input['source_format'] ?? $input['format'] ?? '')) ?: null,
+            trim((string) ($input['update_frequency'] ?? '')) ?: null,
             $connectorKey,
             trim((string) ($input['endpoint_url'] ?? '')) ?: null,
+            trim((string) ($input['source_url'] ?? '')) ?: null,
             json_encode($settings, JSON_THROW_ON_ERROR),
             $facilityType,
             !empty($input['is_enabled']) ? 1 : 0,
+            !empty($input['auto_update_enabled']) ? 1 : 0,
+            $catalogueStatus,
+            trim((string) ($input['notes'] ?? '')) ?: null,
         ];
 
         if ($id > 0) {
@@ -152,9 +186,11 @@ final class GovernmentDatasetService
                 throw new RuntimeException('Dataset not found.');
             }
             Database::affecting(
-                'UPDATE government_datasets SET dataset_key = ?, publisher = ?, title = ?, coverage = ?, record_types_json = ?,
-                    licence = ?, attribution = ?, trust_policy = ?, fetch_method = ?, connector_key = ?, endpoint_url = ?,
-                    settings_json = ?, default_facility_type = ?, is_enabled = ?, updated_at = NOW()
+                'UPDATE government_datasets SET dataset_key = ?, publisher = ?, title = ?, coverage = ?, jurisdiction = ?,
+                    record_types_json = ?, duplicate_rules_json = ?, licence = ?, attribution = ?, trust_policy = ?,
+                    fetch_method = ?, source_format = ?, update_frequency = ?, connector_key = ?, endpoint_url = ?,
+                    source_url = ?, settings_json = ?, default_facility_type = ?, is_enabled = ?, auto_update_enabled = ?,
+                    catalogue_status = ?, notes = ?, updated_at = NOW()
                  WHERE id = ?',
                 [...$params, $id]
             );
@@ -164,9 +200,11 @@ final class GovernmentDatasetService
 
         $newId = Database::insert(
             'INSERT INTO government_datasets
-                (dataset_key, publisher, title, coverage, record_types_json, licence, attribution, trust_policy,
-                 fetch_method, connector_key, endpoint_url, settings_json, default_facility_type, is_enabled, created_at)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+                (dataset_key, publisher, title, coverage, jurisdiction, record_types_json, duplicate_rules_json,
+                 licence, attribution, trust_policy, fetch_method, source_format, update_frequency, connector_key,
+                 endpoint_url, source_url, settings_json, default_facility_type, is_enabled, auto_update_enabled,
+                 catalogue_status, notes, created_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
             $params
         );
         AuditLog::record('gov_dataset.catalogue_created', 'government_dataset', (string) $newId, null, $key);

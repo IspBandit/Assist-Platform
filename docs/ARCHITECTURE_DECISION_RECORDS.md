@@ -13,8 +13,7 @@ See [ADR 0017](DECISIONS/0017-review-first-organisation-pr-outreach.md) for evid
 See [ADR 0018](DECISIONS/0018-admin-api-no-direct-db.md) for Admin API as the only external write path to production.
 See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus narrowly scoped traveller facilities.
 See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
-See [ADR 0021](DECISIONS/0021-shared-assist-ai-orchestrator.md) for the shared Assist AI Orchestrator.
-See [ADR 0022](DECISIONS/0022-ai-interpretation-not-authority.md) for AI as interpretation, not factual authority.
+See [ADR 0033](DECISIONS/0033-ric-national-dataset-acquisition.md) for RIC as the national dataset acquisition engine.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -83,6 +82,8 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0031: Polaris is a fifth Assist Platform brand (private until domain confirmed);
   detail ADRs under `docs/polaris/DECISIONS/`.
 - 0032: Stays vs narrowly scoped traveller facilities (AI elaboration; aligns with 0019).
+- 0033: RIC is the national dataset acquisition engine; Platform `government_datasets`
+  is the catalogue SoR (DATA-011A).
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;

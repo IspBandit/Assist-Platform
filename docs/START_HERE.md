@@ -33,6 +33,9 @@ This is the authoritative orientation page for developers and AI agents.
     `docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`,
     ADRs 0018–0020, and the sibling repo `assist-ric`
     (`docs/architecture/adr/0003-sibling-repository.md`).
+    National Dataset Catalogue (DATA-011A): `docs/DATA_011A.md`, ADR 0033 —
+    catalogue before additional importers; RIC acquires, Platform publishes via
+    Admin API only.
 14. For Assist AI Search and Knowledge Orchestration (CORE-012 / VAN-011 /
     DATA-013 / DATA-012): `docs/AI_WORKSTREAM_STATUS.md`,
     `docs/DATA_012.md`, `docs/TRAVELLER_FACILITIES.md`,

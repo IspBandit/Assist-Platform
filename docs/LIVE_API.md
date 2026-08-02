@@ -112,7 +112,9 @@ Option B Increments B–G add:
 - `GET /api/v1/admin/duplicates`, `POST /duplicates/check`, merge/defer/not-duplicate, merge-history
 - `GET/PATCH /api/v1/admin/datasets`, `POST /datasets/{id}/sync` (runs
   `GovernmentDatasetService::fetchDataset` / optional fixture; review-first),
-  `GET .../sync-history`
+  `GET .../sync-history`. DATA-011A expands catalogue fields (jurisdiction,
+  source/API URLs, auto-update, duplicate rules, status, notes) — see
+  `docs/DATA_011A.md`.
 - `GET /api/v1/admin/ai/usage/*`, `GET /ai/cache-performance` — empty-safe AI reporting (`ai:read`)
 - `GET /searches`, `/search-intents`, `/search-results-performance` — demand analytics (`analytics:read`)
 - `GET /sync-conflicts`, `POST /sync-conflicts/{id}/resolve` — RIC conflict queue (`sync:read`)

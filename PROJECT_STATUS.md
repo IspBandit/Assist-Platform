@@ -5,6 +5,7 @@
 - CORE-011 Admin API Phase 1 + Option B A–L on unified tree + dual-source `/search-gaps`
 - CORE-012 Assist AI Orchestrator (AI-0–AI-7); flags off; QG CONDITIONAL PASS
 - DATA-006 Connectors; DATA-008/009 Regulatory; DATA-011 RIC live sync (code)
+- **DATA-011A National Dataset Catalogue** (`117`, ADR 0033) — portals/themes seeded; no auto-publish
 - DATA-012 Dataset Engine including Admin API sync wire
 - DATA-013 Knowledge gaps + dual-source `/search-gaps`
 - DATA-002 Duplicate management (Admin API check/dry_run/merge/defer; soft-delete+audit)
@@ -30,26 +31,31 @@
 ## Deferred
 - Soft-dedupe across SearchGap dual sources; true dual-cursor pagination
 - LPG/fuel facility coverage; FK-repoint duplicate merges
-- Polaris AI import (`polaris_ai_import`) — paid AI; needs owner approval before wiring
+- Dataset-specific importers **after** DATA-011A (catalogue-first rule)
+- Polaris AI import (`polaris_ai_import`) — paid AI; needs owner approval
 - OPS-005 / COM-005 sale-readiness packs
 
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Polaris non-AI roadmap residuals only (no paid AI without approval)
-4. Full Platform Quality Gate
-5. Production release package
+3. Traveller Facilities residuals (DATA-012 coverage) only if gaps remain
+4. Polaris non-AI roadmap residuals
+5. Full Platform Quality Gate
+6. Production release package
 
 ## Dependencies
+- Task order: CORE-011 → DATA-011 → **DATA-011A** → Dataset Engine residuals → …
+- Additional dataset importers blocked until DATA-011A catalogue is used
 - Production Admin API enablement depends on OPS-010 staging evidence (owner)
-- Paid AI / facilities / Polaris AI import require owner approval
-- Polaris / LocalTorque launch need domains + QG
+- Paid AI / facilities require owner approval
 
 ## Current Task
-Paused for owner: staging enablement and VAN-002 acceptance. No further unblocked critical-path code without expanding Polaris (master prompt) or paid AI.
+DATA-011A National Dataset Catalogue — verify tests/analysis and commit.
 
 ## Next Highest Priority Unblocked Task
-Polaris non-AI roadmap residual from `docs/polaris/IMPLEMENTATION_STATUS.md` (avoid `polaris_ai_import` until owner approves paid AI), or owner-driven staging rehearsal.
+Traveller Facilities / Dataset Engine residuals only if still open; otherwise VAN-002/staging (owner) or Polaris non-AI gaps.
 
 ## Overall Completion %
-84%
+85%
+
+*Reason for order change vs prior pause: owner programme addendum inserted DATA-011A immediately after RIC synchronisation; catalogue before importers.*

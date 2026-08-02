@@ -30,14 +30,17 @@ $isEdit = is_array($dataset);
                 <input name="publisher" required value="<?= e_attr((string) ($dataset['publisher'] ?? '')) ?>">
             </label>
         </div>
-        <label>Title
+        <label>Title / dataset name
             <input name="title" required value="<?= e_attr((string) ($dataset['title'] ?? '')) ?>">
         </label>
         <div class="form-grid">
             <label>Coverage
                 <input name="coverage" value="<?= e_attr((string) ($dataset['coverage'] ?? '')) ?>" placeholder="AU national / QLD / …">
             </label>
-            <label>Record types (comma-separated)
+            <label>Jurisdiction
+                <input name="jurisdiction" value="<?= e_attr((string) ($dataset['jurisdiction'] ?? '')) ?>" placeholder="AU / QLD / NSW / …">
+            </label>
+            <label>Record / entity types (comma-separated)
                 <input name="record_types" value="<?= e_attr(implode(', ', (array) (json_decode((string) ($dataset['record_types_json'] ?? '[]'), true) ?: [($dataset['default_facility_type'] ?? 'public_toilet')]))) ?>">
             </label>
         </div>
@@ -50,10 +53,17 @@ $isEdit = is_array($dataset);
             </label>
         </div>
         <div class="form-grid">
-            <label>Trust policy
+            <label>Trust policy / level
                 <select name="trust_policy">
                     <?php foreach (['trusted_review', 'community_review', 'web_research_review', 'prohibited'] as $policy): ?>
                         <option value="<?= e($policy) ?>" <?= (($dataset['trust_policy'] ?? 'trusted_review') === $policy) ? 'selected' : '' ?>><?= e($policy) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label>Catalogue status
+                <select name="catalogue_status">
+                    <?php foreach (['planned', 'indexed', 'active', 'paused', 'retired'] as $status): ?>
+                        <option value="<?= e($status) ?>" <?= (($dataset['catalogue_status'] ?? 'planned') === $status) ? 'selected' : '' ?>><?= e($status) ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
@@ -69,16 +79,31 @@ $isEdit = is_array($dataset);
                     <?php endforeach; ?>
                 </select>
             </label>
+            <label>Source format
+                <input name="source_format" value="<?= e_attr((string) ($dataset['source_format'] ?? ($settings['format'] ?? ''))) ?>" placeholder="CSV / GeoJSON / portal / osm">
+            </label>
+            <label>Update frequency
+                <input name="update_frequency" value="<?= e_attr((string) ($dataset['update_frequency'] ?? '')) ?>" placeholder="daily / weekly / continuous / irregular">
+            </label>
             <label>Connector
                 <select name="connector_key" required>
-                    <?php foreach (['gov_ckan', 'gov_arcgis', 'gov_csv', 'gov_geojson'] as $ck): ?>
+                    <?php foreach (['gov_ckan', 'gov_arcgis', 'gov_csv', 'gov_geojson', 'osm_offline_seed'] as $ck): ?>
                         <option value="<?= e($ck) ?>" <?= (($dataset['connector_key'] ?? 'gov_ckan') === $ck) ? 'selected' : '' ?>><?= e($ck) ?></option>
                     <?php endforeach; ?>
                 </select>
             </label>
         </div>
-        <label>Landing / endpoint URL
-            <input name="endpoint_url" value="<?= e_attr((string) ($dataset['endpoint_url'] ?? '')) ?>" placeholder="https://data.gov.au/data/dataset/…">
+        <label>Source URL (landing / publisher page)
+            <input name="source_url" value="<?= e_attr((string) ($dataset['source_url'] ?? '')) ?>" placeholder="https://data.gov.au/data/dataset/…">
+        </label>
+        <label>API URL / endpoint
+            <input name="endpoint_url" value="<?= e_attr((string) ($dataset['endpoint_url'] ?? '')) ?>" placeholder="https://data.gov.au/data/api">
+        </label>
+        <label>Duplicate rules JSON
+            <textarea name="duplicate_rules_json" rows="3" placeholder='{"match_on":["source_record_id","geo_proximity"],"geo_metres":25}'><?= e((string) ($dataset['duplicate_rules_json'] ?? '')) ?></textarea>
+        </label>
+        <label>Notes
+            <textarea name="notes" rows="3"><?= e((string) ($dataset['notes'] ?? '')) ?></textarea>
         </label>
 
         <h2 class="h3">Connector settings</h2>
@@ -133,6 +158,10 @@ $isEdit = is_array($dataset);
         <label>
             <input type="checkbox" name="is_enabled" value="1" <?= !empty($dataset['is_enabled']) ? 'checked' : '' ?>>
             Enable for Fetch (still review-first; never auto-publish)
+        </label>
+        <label>
+            <input type="checkbox" name="auto_update_enabled" value="1" <?= !empty($dataset['auto_update_enabled']) ? 'checked' : '' ?>>
+            Auto update enabled for RIC (Platform still never auto-publishes)
         </label>
         <button class="btn btn-primary" type="submit">Save catalogue row</button>
     </form>

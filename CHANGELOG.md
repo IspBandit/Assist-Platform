@@ -3,6 +3,13 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **DATA-011A National Dataset Catalogue** — extended `government_datasets`
+  (`117`) with jurisdiction, source/API URLs, format, update frequency,
+  download/import timestamps, record count, auto-update, catalogue status,
+  duplicate rules and notes; seeded national portals/themes; ADR 0033 (RIC
+  acquisition engine). No auto-publish; no new dataset-specific importers.
+
+### Added
 - **DATA-002 duplicate workflow closeout** — OpenAPI coverage for show / merge-history /
   not-duplicate / defer; dry-run-before-transaction and human-only merge scope tests;
   Phase 1 design wording updated. Merge remains soft-delete + audit (no FK repoint).

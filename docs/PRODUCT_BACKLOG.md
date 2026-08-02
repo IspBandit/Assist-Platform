@@ -74,6 +74,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
 | DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
 | DATA-011 | Assist RIC live Admin API synchronisation | done | RIC live client, package mapper, validate-only submit, search-gaps pull and sync status shipped; staging rehearsal is operational (not a code gap) |
+| DATA-011A | National Dataset Catalogue (RIC acquisition SoR) | done | Extends `government_datasets` (`117`); portals/themes seeded; Admin API/HTML fields; ADR 0033; no auto-publish; no new importers |
 | DATA-012 | Government dataset catalogue and import connectors | done | Migrations `109`/`110` + Admin API `/datasets`; CKAN/ArcGIS/CSV/GeoJSON; admin catalogue + review; demo fixtures (disabled) |
 | DATA-013 | Search gap and knowledge growth engine | done | AI-4 tables + admin/CSV + SearchGap JSON export + `SearchGapDualSource`; dual-source wire into `GET /search-gaps` on unify branch |
 | DATA-014 | Canonical entity and source provenance model | ready | Stable entity IDs, source links, field-level provenance where practical; extends DATA-001 |
