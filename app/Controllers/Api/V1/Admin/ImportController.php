@@ -54,4 +54,34 @@ final class ImportController extends Controller
             (new AdminApiImportService())->stage($id, $request)
         );
     }
+
+    public function publish(Request $request): Response
+    {
+        $id = trim((string) $request->route('id', ''));
+        if ($id === '') {
+            throw new AdminApiException(404, 'not_found', 'Import job not found.');
+        }
+
+        return AdminApiEnvelope::data((new AdminApiImportService())->publish($id, $request));
+    }
+
+    public function cancel(Request $request): Response
+    {
+        $id = trim((string) $request->route('id', ''));
+        if ($id === '') {
+            throw new AdminApiException(404, 'not_found', 'Import job not found.');
+        }
+
+        return AdminApiEnvelope::data((new AdminApiImportService())->cancel($id, $request));
+    }
+
+    public function retry(Request $request): Response
+    {
+        $id = trim((string) $request->route('id', ''));
+        if ($id === '') {
+            throw new AdminApiException(404, 'not_found', 'Import job not found.');
+        }
+
+        return AdminApiEnvelope::data((new AdminApiImportService())->retry($id, $request));
+    }
 }

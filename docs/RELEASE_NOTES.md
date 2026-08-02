@@ -5,6 +5,43 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Option B programme Increments A–L (functional management coverage)
+
+- Programme tracker: `docs/OPTION_B_MANAGEMENT_PROGRAMME.md`.
+- Conditional Quality Gate:
+  `docs/evidence/option-b-programme-2026-08-02/PLATFORM_QUALITY_GATE.md`.
+- Assist RIC Option B sync console shipped on sibling branch
+  `feature/option-b-ric-management` (pull providers/stays, conflicts, gap→research,
+  dataset catalogue, budget guardrails).
+- Production `ADMIN_API_ENABLED` remains off until staging rehearsal is recorded.
+
+### Option B Increment H — claim-first onboarding + PHP admin polish (VAN-010 / OPS-010)
+
+- Added claim-first provider onboarding on `/for-providers/register`: search-before-create,
+  “Is this your business?” match step, explicit none-of-these confirmation, second
+  duplicate check on submit with pending hold (no publication) and internal note /
+  `listing_corrections` row when tables exist. Controlled by `CLAIM_FIRST_ONBOARDING`
+  (default true).
+- Added PHP admin pages: **Administration → API service accounts** (list/create/rotate/disable
+  via `AdminApiServiceAccountService`) and **Directory → Recycle bin** (list/restore via
+  `AdminApiRecycleBinService`).
+- PHPUnit coverage for duplicate scoring/hold decision logic (`ClaimFirstOnboardingTest`).
+
+### Admin API Option B Increments B–G (CORE-011 / VAN-002 / DATA-002 / DATA-012 / DATA-013)
+
+- Added Admin API resources for claims, listing corrections, duplicate review/merge
+  (with `dry_run`), government datasets, AI usage summaries, search analytics,
+  sync conflicts, traveller facilities (`/facilities`, ADR 0019) and import
+  publish/cancel/retry lifecycle actions.
+- Extended scopes: `claims:*`, `corrections:*`, `duplicates:read`, `datasets:*`,
+  `facilities:*`, `ai:read`; `duplicates:merge` and `drafts:approve` remain
+  human-only (`NEVER_SERVICE`). RIC least-privilege adds `claims:read`,
+  `datasets:read`, `facilities:read`.
+- Forward migrations `088`–`092` create listing corrections, duplicate decisions,
+  dataset/facility tables, AI usage reporting tables and sync conflict queue.
+- Contract tests and OpenAPI paths updated; apply migrations before enabling new
+  routes in staging.
+
 ### Admin API Option B closeout (CORE-011 / OPS-010 / DATA-011 / OPS-011)
 
 - Recorded conditional Platform Quality Gate evidence for Admin API + Assist RIC

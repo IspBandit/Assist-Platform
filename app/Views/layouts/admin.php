@@ -17,6 +17,9 @@ $nav = [
 $directory = [];
 if ($permitted('providers.manage')) {
     $directory[] = ['Providers', '/admin/providers'];
+    if ($platformAdmin) {
+        $directory[] = ['Recycle bin', '/admin/recycle-bin'];
+    }
 }
 if ($permitted('categories.manage')) {
     $directory[] = ['Service categories', '/admin/categories'];
@@ -120,6 +123,9 @@ if ($permitted('settings.manage')) {
 if (auth()->isSuperAdmin()) {
     $administration[] = ['Backups', '/admin/backups'];
     $administration[] = ['Maintenance', '/admin/maintenance'];
+}
+if ($platformAdmin) {
+    $administration[] = ['API service accounts', '/admin/api-service-accounts'];
 }
 if ($administration !== []) {
     $nav['Administration'] = $administration;

@@ -80,8 +80,10 @@ final class AdminApiRoutingTest extends TestCase
         self::assertSame('read_write', $capabilities['data']['resources']['imports']);
         self::assertSame('read', $capabilities['data']['resources']['audit']);
         self::assertSame('read', $capabilities['data']['resources']['search_gaps']);
-        self::assertSame('planned', $capabilities['data']['resources']['traveller_facilities']);
-        self::assertArrayNotHasKey('facilities', $capabilities['data']['resources']);
+        self::assertSame('read_write', $capabilities['data']['resources']['facilities']);
+        self::assertSame('read_write', $capabilities['data']['resources']['claims']);
+        self::assertSame('read', $capabilities['data']['resources']['ai_usage']);
+        self::assertArrayNotHasKey('traveller_facilities', $capabilities['data']['resources']);
     }
 
     public function testDisabledApiReturnsJsonUnavailable(): void

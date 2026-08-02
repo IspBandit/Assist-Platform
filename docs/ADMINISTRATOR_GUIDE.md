@@ -41,6 +41,29 @@ TrailerWise brand listings and category assignments. Automated matches are
 always unverified and retain discovery evidence; they must be claimed by the
 business or reviewed by an administrator before a verified badge is granted.
 
+### Claim-first public onboarding (VAN-010)
+
+When `CLAIM_FIRST_ONBOARDING=true` (default), `/for-providers/register` on
+VanAssist runs search-before-create:
+
+1. The business enters name and town, then sees “Is this your business?” matches.
+2. They may claim an existing unclaimed listing or confirm **none of these** before
+   the full registration form appears.
+3. On submit, a second duplicate check runs. Likely duplicates create a **pending
+   hold** provider (not published) with an internal note and optional
+   `listing_corrections` row; clean submissions continue into Provider prospects.
+
+Disable with `CLAIM_FIRST_ONBOARDING=false` in `.env` if the flow must be rolled
+back without redeploying code.
+
+### Recycle bin and API service accounts
+
+- **Directory → Recycle bin** lists soft-deleted providers and stays (and facilities
+  when migrated). Restore actions reuse the Admin API recycle-bin service.
+- **Administration → API service accounts** manages machine credentials for
+  `/api/v1/admin` (create, rotate secret, disable). Requires administrator or
+  super-administrator role; secrets are shown once at creation or rotation.
+
 ## Provider email campaigns
 
 Open **Growth → Growth & outreach**, then choose **Email campaigns**. VanAssist prepares two clearly

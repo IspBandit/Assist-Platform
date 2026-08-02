@@ -2,16 +2,91 @@
 /** @var \App\Core\View $this */
 /** @var array<string,string> $errors */
 /** @var array<string,mixed>|null $listingProvider */
+/** @var string $step */
+/** @var list<array<string,mixed>> $matches */
+/** @var array<string,mixed> $search */
 $err = static fn (string $k): string => isset($errors[$k]) ? '<span class="field-error" style="display:block;color:#c0392b;font-size:.85rem;margin-top:.25rem">' . htmlspecialchars($errors[$k], ENT_QUOTES) . '</span>' : '';
 $listingProvider = $listingProvider ?? null;
+$step = $step ?? 'form';
+$matches = $matches ?? [];
+$search = $search ?? [];
 $businessValue = (string) old('business_name');
-if ($businessValue === '' && $listingProvider !== null) { $businessValue = (string) $listingProvider['business_name']; }
+if ($businessValue === '' && $listingProvider !== null) {
+    $businessValue = (string) $listingProvider['business_name'];
+}
+if ($businessValue === '' && !empty($search['business_name'])) {
+    $businessValue = (string) $search['business_name'];
+}
 $this->extend('layouts.public');
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
     <div class="container" style="max-width:760px">
         <a class="muted" href="<?= e(url('for-providers')) ?>">&laquo; Back to provider info</a>
+
+        <?php if ($step === 'search'): ?>
+            <h1 style="margin-top:.5rem">Find your business listing</h1>
+            <p class="lead">Search before creating a new listing. If your business is already in the directory, claim or correct that profile instead.</p>
+            <form method="post" action="<?= e(url('for-providers/register/search')) ?>" class="card stack" style="margin-top:1.5rem">
+                <?= csrf_field() ?>
+                <?php $this->include('partials.turnstile'); ?>
+                <div class="form-group">
+                    <label for="business_name">Business name <span style="color:#c0392b">*</span></label>
+                    <input type="text" id="business_name" name="business_name" value="<?= e_attr($businessValue) ?>" required>
+                    <?= $err('business_name') ?>
+                </div>
+                <div class="grid grid-2">
+                    <div class="form-group" style="position:relative">
+                        <label for="town">Town you're based in</label>
+                        <input type="text" id="town" name="town" value="<?= e_attr((string) ($search['town'] ?? old('town'))) ?>" placeholder="Start typing a town or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>">
+                        <input type="hidden" id="region_id" name="region_id" value="<?= e_attr((string) ($search['base_town_id'] ?? old('region_id'))) ?>">
+                        <div class="town-suggest" id="town-suggest" role="listbox" hidden></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <input type="text" id="region" name="region" value="<?= e_attr((string) ($search['region'] ?? old('region'))) ?>" placeholder="Filled in from your town" readonly>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-primary btn-lg">Search directory</button>
+                </div>
+            </form>
+        <?php elseif ($step === 'matches'): ?>
+            <h1 style="margin-top:.5rem">Is this your business?</h1>
+            <p class="lead">We found <?= count($matches) > 0 ? 'possible matches' : 'no close matches' ?> for <strong><?= e((string) ($search['business_name'] ?? '')) ?></strong><?php if (!empty($search['town'])): ?> near <?= e((string) $search['town']) ?><?php endif; ?>.</p>
+
+            <?php if ($matches !== []): ?>
+                <div class="stack" style="margin-top:1.25rem">
+                    <?php foreach ($matches as $match): ?>
+                        <article class="card" style="display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+                            <div>
+                                <h2 style="margin:0;font-size:1.1rem"><?= e((string) $match['business_name']) ?></h2>
+                                <?php if (!empty($match['town_name'])): ?>
+                                    <p class="muted" style="margin:.35rem 0 0"><?= e((string) $match['town_name']) ?><?php if (!empty($match['state_abbr'])): ?>, <?= e((string) $match['state_abbr']) ?><?php endif; ?></p>
+                                <?php endif; ?>
+                                <?php if (!empty($match['is_unclaimed'])): ?><span class="badge badge-neutral">Unclaimed listing</span><?php endif; ?>
+                            </div>
+                            <div class="btn-row">
+                                <a class="btn btn-primary" href="<?= e(url('for-providers/register?listing=' . rawurlencode((string) $match['slug']))) ?>">Claim or correct this listing</a>
+                                <a class="btn btn-ghost" href="<?= e(url('providers/' . rawurlencode((string) $match['slug']))) ?>">View profile</a>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="card" style="margin-top:1.25rem"><p class="muted" style="margin:0">No similar listings were found. You can continue to register a new business if none of the suggestions above would apply.</p></div>
+            <?php endif; ?>
+
+            <form method="post" action="<?= e(url('for-providers/register/confirm-new')) ?>" class="card stack" style="margin-top:1.5rem">
+                <?= csrf_field() ?>
+                <?php $this->include('partials.turnstile'); ?>
+                <label><input type="checkbox" name="confirm_none" value="1" required> None of these listings match my business — continue to register a new listing</label>
+                <div class="btn-row">
+                    <button type="submit" class="btn btn-secondary btn-lg">Continue with new listing</button>
+                    <a class="btn btn-outline btn-lg" href="<?= e(url('for-providers/register')) ?>">Search again</a>
+                </div>
+            </form>
+        <?php else: ?>
         <h1 style="margin-top:.5rem"><?= $listingProvider !== null ? 'Request to claim or correct this listing' : 'Register your business' ?></h1>
         <p class="lead"><?= $listingProvider !== null ? 'Tell us who you are and how you are authorised to act for this business. We will review the request before giving anyone control of the listing.' : 'Tell us about your business so we can review the details and guide you through onboarding. Registration does not start billing or guarantee leads.' ?></p>
 
@@ -51,13 +126,13 @@ $this->extend('layouts.public');
             <div class="grid grid-2">
                 <div class="form-group" style="position:relative">
                     <label for="town">Town you're based in</label>
-                    <input type="text" id="town" name="town" value="<?= e_attr((string) old('town')) ?>" placeholder="Start typing a town or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>">
-                    <input type="hidden" id="region_id" name="region_id" value="<?= e_attr((string) old('region_id')) ?>">
+                    <input type="text" id="town" name="town" value="<?= e_attr((string) ($search['town'] ?? old('town'))) ?>" placeholder="Start typing a town or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>">
+                    <input type="hidden" id="region_id" name="region_id" value="<?= e_attr((string) ($search['base_town_id'] ?? old('region_id'))) ?>">
                     <div class="town-suggest" id="town-suggest" role="listbox" hidden></div>
                 </div>
                 <div class="form-group">
                     <label for="region">Region</label>
-                    <input type="text" id="region" name="region" value="<?= e_attr((string) old('region')) ?>" placeholder="Filled in from your town" readonly>
+                    <input type="text" id="region" name="region" value="<?= e_attr((string) ($search['region'] ?? old('region'))) ?>" placeholder="Filled in from your town" readonly>
                 </div>
             </div>
 
@@ -108,6 +183,7 @@ $this->extend('layouts.public');
             </div>
             <p class="muted" style="font-size:.85rem">By submitting, you consent to contact about this onboarding or listing request. We use the details to review authority, prevent misuse and respond to you. See our <a href="<?= e(url('privacy-policy')) ?>">privacy policy</a>. A submission does not prove ownership or grant listing access.</p>
         </form>
+        <?php endif; ?>
     </div>
 </section>
 <?php $this->endSection(); ?>

@@ -60,12 +60,19 @@ final class SystemController extends Controller
             'resources' => [
                 'providers' => 'read_write',
                 'stays' => 'read_write',
-                'traveller_facilities' => 'planned',
+                'facilities' => 'read_write',
+                'claims' => 'read_write',
+                'corrections' => 'read_write',
+                'duplicates' => 'read_write',
+                'datasets' => 'read_write',
+                'ai_usage' => 'read',
+                'sync_conflicts' => 'read_write',
                 'drafts' => 'read_write',
                 'imports' => 'read_write',
                 'recycle_bin' => 'read_write',
                 'audit' => 'read',
                 'search_gaps' => 'read',
+                'search_analytics' => 'read',
             ],
             'limits' => [
                 'max_batch_size' => (int) Config::get('admin_api.max_batch_size', 100),
@@ -83,7 +90,9 @@ final class SystemController extends Controller
                 'Brand scope is resolved from host/deployment context, not client brand_id.',
                 'Restricted mode defaults on; empty ADMIN_API_ALLOWED_USER_IDS limits to super-administrator.',
                 'Search gaps aggregate zero-result rows from provider_searches; empty when analytics is off.',
-                'Standalone traveller facilities are not exposed as /facilities (ADR 0019).',
+                'Standalone traveller facilities are exposed as /facilities (ADR 0019).',
+                'Claims review covers caravan park claims and provider invite tokens.',
+                'Duplicate merge requires duplicates:merge scope and a human session.',
             ],
         ]);
     }

@@ -104,6 +104,19 @@ Increment 9 (RIC contract tests) adds:
 
 - `tests/Contract/AdminApiRicContractTest.php` — Phase 1 path inventory, OpenAPI parity, mock-client health/auth checks
 
+Option B Increments B–G add:
+
+- `GET /api/v1/admin/claims`, `GET /claims/{id}` — park claims + provider invites (`claims:read`)
+- `POST /claims/{id}/approve|reject|request-evidence` — human park-claim review (`claims:write`)
+- `GET /api/v1/admin/corrections`, `GET /corrections/{id}`, `POST .../approve|reject` — listing corrections
+- `GET /api/v1/admin/duplicates`, `POST /duplicates/check`, merge/defer/not-duplicate, merge-history
+- `GET/PATCH /api/v1/admin/datasets`, `POST /datasets/{id}/sync`, sync-history
+- `GET /api/v1/admin/ai/usage/*`, `GET /ai/cache-performance` — empty-safe AI reporting (`ai:read`)
+- `GET /searches`, `/search-intents`, `/search-results-performance` — demand analytics (`analytics:read`)
+- `GET /sync-conflicts`, `POST /sync-conflicts/{id}/resolve` — RIC conflict queue (`sync:read`)
+- `GET/POST/PATCH /api/v1/admin/facilities` + lifecycle — traveller facilities (`facilities:*`, ADR 0019)
+- `POST /imports/{id}/publish|cancel|retry` — import job lifecycle extensions
+
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.
 
@@ -118,7 +131,7 @@ on super-administrator-only when empty). Enroll MFA before setting
 
 Do this on a disposable or staging deployment before production:
 
-1. Apply migrations through `087_admin_api_drafts_imports.sql` (includes MFA table `086`).
+1. Apply migrations through `092_admin_api_sync_conflicts.sql` (includes Option B tables `088`–`092`).
 2. Set `ADMIN_API_ENABLED=true`, keep `ADMIN_API_RESTRICTED=true`.
 3. Set `ADMIN_API_ALLOWED_USER_IDS` to known admin IDs (or leave empty for
    super-administrator only).
@@ -136,8 +149,9 @@ Do this on a disposable or staging deployment before production:
    small JSON export package with **Validate only** checked first.
 9. Record Architecture, UX, Engineering and Business Quality Gate evidence
    before any production enablement (`docs/PLATFORM_QUALITY_GATE.md`).
-   Code-complete conditional-pass pack:
-   `docs/evidence/admin-api-2026-08-02/PLATFORM_QUALITY_GATE.md`
+   Code-complete conditional-pass packs:
+   `docs/evidence/admin-api-2026-08-02/PLATFORM_QUALITY_GATE.md` and
+   `docs/evidence/option-b-programme-2026-08-02/PLATFORM_QUALITY_GATE.md`
    (append staging probe + RIC validate-only results before flipping production).
 
 Production still requires the four Quality Gate pillars. Application code alone
@@ -146,7 +160,6 @@ production.
 
 ## Out of scope for first production enablement
 
-- Unrestricted service-account publish/merge/purge
-- Traveller-facility CRUD (planned entity)
+- Unrestricted service-account publish/merge/purge (merge and draft approve remain human-preferred)
 - Bing Search
 - Auto-publish of research or AI-only records

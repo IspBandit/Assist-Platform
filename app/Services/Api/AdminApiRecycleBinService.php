@@ -15,23 +15,29 @@ use App\Core\Request;
 final class AdminApiRecycleBinService
 {
     /** @var list<string> */
-    private const ENTITY_TYPES = ['provider', 'stay'];
+    private const ENTITY_TYPES = ['provider', 'stay', 'facility'];
 
     private AdminApiProviderWriteService $providerWrites;
     private AdminApiStayWriteService $stayWrites;
+    private AdminApiFacilityWriteService $facilityWrites;
     private AdminApiProviderService $providerReader;
     private AdminApiStayService $stayReader;
+    private AdminApiFacilityService $facilityReader;
 
     public function __construct(
         ?AdminApiProviderWriteService $providerWrites = null,
         ?AdminApiStayWriteService $stayWrites = null,
+        ?AdminApiFacilityWriteService $facilityWrites = null,
         ?AdminApiProviderService $providerReader = null,
-        ?AdminApiStayService $stayReader = null
+        ?AdminApiStayService $stayReader = null,
+        ?AdminApiFacilityService $facilityReader = null
     ) {
         $this->providerWrites = $providerWrites ?? new AdminApiProviderWriteService();
         $this->stayWrites = $stayWrites ?? new AdminApiStayWriteService();
+        $this->facilityWrites = $facilityWrites ?? new AdminApiFacilityWriteService();
         $this->providerReader = $providerReader ?? new AdminApiProviderService();
         $this->stayReader = $stayReader ?? new AdminApiStayService();
+        $this->facilityReader = $facilityReader ?? new AdminApiFacilityService();
     }
 
     /**
@@ -53,7 +59,7 @@ final class AdminApiRecycleBinService
                 422,
                 'validation_failed',
                 'Validation failed.',
-                ['entity_type' => ['Entity type must be provider or stay.']]
+                ['entity_type' => ['Entity type must be provider, stay or facility.']]
             );
         }
 
@@ -66,6 +72,12 @@ final class AdminApiRecycleBinService
 
         if (($entityType === '' || $entityType === 'stay') && AdminApiBrandScope::staysEnabled()) {
             $parts[] = $this->stayRecycleSelect($search, $cursor, $params);
+        }
+
+        if ($entityType === '' || $entityType === 'facility') {
+            if (Database::tableExists('traveller_facilities')) {
+                $parts[] = $this->facilityRecycleSelect($search, $cursor, $params);
+            }
         }
 
         if ($parts === []) {
@@ -138,6 +150,7 @@ final class AdminApiRecycleBinService
         return match ($entityType) {
             'provider' => $this->providerWrites->restore($id, $request),
             'stay' => $this->stayWrites->restore($id, $request),
+            'facility' => $this->facilityWrites->restore($id, $request),
         };
     }
 
@@ -156,6 +169,7 @@ final class AdminApiRecycleBinService
         return match ($entityType) {
             'provider' => $this->purgeProvider($id, $row, $reason, $request),
             'stay' => $this->purgeStay($id, $row, $reason, $request),
+            'facility' => $this->purgeFacility($id, $row, $reason, $request),
         };
     }
 
@@ -395,6 +409,65 @@ final class AdminApiRecycleBinService
             . 'FROM caravan_parks cp WHERE ' . implode(' AND ', $where);
     }
 
+    /**
+     * @param array<string,mixed> $row
+     * @return array<string,mixed>
+     */
+    private function purgeFacility(int $id, array $row, string $reason, Request $request): array
+    {
+        $affected = Database::query(
+            'DELETE FROM traveller_facilities WHERE id = ? AND deleted_at IS NOT NULL',
+            [$id]
+        )->rowCount();
+
+        if ($affected === 0) {
+            throw new AdminApiException(404, 'not_found', 'Facility not found in recycle bin.');
+        }
+
+        AdminApiAudit::record(
+            'recycle_bin.purged',
+            'traveller_facility',
+            $id,
+            ['name' => (string) ($row['name'] ?? '')],
+            ['reason' => $reason],
+            $request
+        );
+
+        return [
+            'entity_type' => 'facility',
+            'id' => (string) $id,
+            'purged' => true,
+            'reason' => $reason,
+        ];
+    }
+
+    /**
+     * @param list<mixed> $params
+     */
+    private function facilityRecycleSelect(string $search, ?array $cursor, array &$params): string
+    {
+        $brandId = AdminApiBrandScope::brandId();
+        $where = ['tf.deleted_at IS NOT NULL', '(tf.brand_id = ? OR tf.brand_id IS NULL)'];
+        $params[] = $brandId;
+
+        if ($search !== '') {
+            $where[] = 'tf.name LIKE ?';
+            $params[] = '%' . $search . '%';
+        }
+
+        if ($cursor !== null && ($cursor['entity_type'] ?? '') === 'facility') {
+            $where[] = '(tf.deleted_at < ? OR (tf.deleted_at = ? AND tf.id < ?))';
+            array_push($params, $cursor['deleted_at'], $cursor['deleted_at'], $cursor['id']);
+        } elseif ($cursor !== null) {
+            $where[] = 'tf.deleted_at <= ?';
+            $params[] = $cursor['deleted_at'];
+        }
+
+        return 'SELECT \'facility\' AS entity_type, tf.id, tf.name, tf.slug, '
+            . 'NULL AS provider_id, NULL AS listing_id, NULL AS stay_id, tf.deleted_at AS deleted_at '
+            . 'FROM traveller_facilities tf WHERE ' . implode(' AND ', $where);
+    }
+
     /** @return array<string,mixed> */
     private function findDeleted(string $entityType, int $id): array
     {
@@ -416,6 +489,10 @@ final class AdminApiRecycleBinService
             return $row;
         }
 
+        if ($entityType === 'facility') {
+            return $this->findDeletedFacility($id);
+        }
+
         AdminApiBrandScope::assertStaysEnabled();
         $row = Database::selectOne(
             'SELECT id, name, slug, status, deleted_at FROM caravan_parks WHERE id = ? AND deleted_at IS NOT NULL',
@@ -423,6 +500,24 @@ final class AdminApiRecycleBinService
         );
         if ($row === null) {
             throw new AdminApiException(404, 'not_found', 'Stay not found in recycle bin.');
+        }
+
+        return $row;
+    }
+
+    /** @return array<string,mixed> */
+    private function findDeletedFacility(int $id): array
+    {
+        if (!Database::tableExists('traveller_facilities')) {
+            throw new AdminApiException(404, 'not_found', 'Facility not found in recycle bin.');
+        }
+
+        $row = Database::selectOne(
+            'SELECT id, name, slug, status, deleted_at FROM traveller_facilities WHERE id = ? AND deleted_at IS NOT NULL',
+            [$id]
+        );
+        if ($row === null) {
+            throw new AdminApiException(404, 'not_found', 'Facility not found in recycle bin.');
         }
 
         return $row;
@@ -467,7 +562,7 @@ final class AdminApiRecycleBinService
                 422,
                 'validation_failed',
                 'Validation failed.',
-                ['entity_type' => ['Entity type must be provider or stay.']]
+                ['entity_type' => ['Entity type must be provider, stay or facility.']]
             );
         }
 
@@ -517,7 +612,7 @@ final class AdminApiRecycleBinService
                     422,
                     'validation_failed',
                     'Validation failed.',
-                    ['items.' . $index => ['Each item requires entity_type (provider|stay) and a positive id.']]
+                    ['items.' . $index => ['Each item requires entity_type (provider|stay|facility) and a positive id.']]
                 );
             }
 
