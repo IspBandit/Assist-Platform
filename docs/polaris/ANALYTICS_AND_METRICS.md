@@ -14,7 +14,7 @@ failures never break product flows.
 
 - First-party events only at launch
 - No fake engagement metrics in UI
-- Distinguish structured vs NL search (ADR 0023)
+- Distinguish structured vs NL search (ADR 0026)
 - PII minimisation in event payloads
 
 ---
@@ -65,7 +65,7 @@ No public view counts displayed to visitors.
 
 ## Knowledge gaps
 
-Feed platform gap pipeline (ADR 0024):
+Feed platform gap pipeline (ADR 0027):
 
 - Zero-result filter sets
 - NL intents with no adapter match

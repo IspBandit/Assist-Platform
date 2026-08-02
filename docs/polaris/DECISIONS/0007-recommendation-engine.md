@@ -26,7 +26,7 @@ LLMs may not compute or override match rankings.
 ## Alternatives considered
 
 - Collaborative filtering: rejected (cold start, no behavioural data at launch).
-- LLM “best match” narrative: rejected (ADR 0019).
+- LLM “best match” narrative: rejected (ADR 0022).
 - Manual curator-only rankings: rejected (non-scalable).
 
 ## Consequences

@@ -1,4 +1,4 @@
-# ADR 0018: Shared Assist AI Orchestrator
+# ADR 0024: Shared Assist AI Orchestrator
 
 - **Status:** accepted
 - **Date:** 2026-08-01

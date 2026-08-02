@@ -45,7 +45,7 @@ orchestrator. VanAssist is the first public surface (“Ask VanAssist”).
 - Public controllers, importers, brand modules, scheduled jobs and Admin API
   clients must not call AI vendors directly.
 - Assist RIC remains the research client (ADR 0017); no production MariaDB from
-  RIC (ADR 0015); AI never publishes (ADR 0026).
+  RIC (ADR 0015); AI never publishes (ADR 0029).
 
 ## Success metric
 
@@ -66,4 +66,4 @@ AI is disabled or budget-exhausted.
 
 ## Related ADRs
 
-0018–0027, 0029.
+0021–030, 0032.

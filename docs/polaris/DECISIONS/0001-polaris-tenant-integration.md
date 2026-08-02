@@ -37,7 +37,7 @@ Polaris does not receive separate authentication, database or deployment pipelin
 - `HomeController` and admin nav require explicit Polaris branches until policy-based
   routing exists.
 - Migration `087+` introduces Polaris-specific tables prefixed or namespaced logically.
-- Platform ADR 0028 should record fifth-brand policy for global index consistency.
+- Platform ADR 0031 should record fifth-brand policy for global index consistency.
 
 ## Quality Gate impact
 

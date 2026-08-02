@@ -115,7 +115,7 @@ cherry-picking AI knowledge gaps into admin-api). Order:
 
 ### Step A — Bring code together
 
-1. Ensure migrations `089_assist_knowledge_gaps.sql` (+ later AI migrations as
+1. Ensure migrations `105_assist_knowledge_gaps.sql` (+ later AI migrations as
    needed) apply on the target DB.
 2. Ensure these AI-branch files are present:
    - `app/Platform/AiSearch/Knowledge/KnowledgeGapService.php`

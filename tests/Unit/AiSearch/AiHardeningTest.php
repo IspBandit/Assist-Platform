@@ -51,7 +51,7 @@ final class AiHardeningTest extends TestCase
         $cron = (string) file_get_contents(dirname(__DIR__, 3) . '/app/Services/CronRunner.php');
         self::assertStringContainsString("'ai_retention'", $cron);
 
-        $migration = (string) file_get_contents(dirname(__DIR__, 3) . '/database/migrations/091_assist_ai_hardening.sql');
+        $migration = (string) file_get_contents(dirname(__DIR__, 3) . '/database/migrations/107_assist_ai_hardening.sql');
         self::assertStringContainsString('ai_retention', $migration);
     }
 

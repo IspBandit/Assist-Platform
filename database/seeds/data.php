@@ -400,7 +400,7 @@ return [
         'auto_matching'          => [false, 'Automatically score, invite providers and release contact on interest for approved requests (no manual dispatch).'],
         'assist_ai_search'       => [false, 'Ask VanAssist natural-language search (deterministic orchestrator; off by default).'],
         'assist_ai_datasets'     => [false, 'Ask VanAssist dataset routing: show staged DATA-006 candidates with provenance (AI-5; off by default).'],
-        'assist_ai_traveller_facilities' => [false, 'Ask VanAssist traveller_facilities adapter (AI-6; off by default). Separate from caravan_parks (ADR 0029).'],
+        'assist_ai_traveller_facilities' => [false, 'Ask VanAssist traveller_facilities adapter (AI-6; off by default). Separate from caravan_parks (ADR 0032).'],
         'polaris_brochure_extract' => [false, 'Polaris deterministic brochure/text → import drafts (never auto-publish).'],
         'polaris_ai_import' => [false, 'Polaris paid AI brochure extraction via Assist AI orchestrator (planned; keep OFF).'],
     ],

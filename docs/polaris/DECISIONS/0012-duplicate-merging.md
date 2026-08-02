@@ -16,7 +16,7 @@ Imports and manual entry will create duplicate manufacturers and model families
 Provide **administrator-controlled merge** workflow:
 
 - Duplicate detection: exact slug collision blocked; fuzzy name match suggests candidates
-  (AI may suggest — not auto-merge per ADR 0019)
+  (AI may suggest — not auto-merge per ADR 0022)
 - Merge UI selects survivor entity; merges slugs as aliases where supported
 - Related variants, spec values and sources re-point to survivor in transaction
 - Full audit log: merged_from_id, merged_to_id, actor, timestamp

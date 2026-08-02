@@ -1,4 +1,4 @@
-# ADR 0022: Hard AI budget enforcement
+# ADR 0028: Hard AI budget enforcement
 
 - **Status:** accepted
 - **Date:** 2026-08-01

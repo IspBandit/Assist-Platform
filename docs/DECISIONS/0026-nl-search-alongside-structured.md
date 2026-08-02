@@ -1,4 +1,4 @@
-# ADR 0023: Natural-language search alongside structured search
+# ADR 0029: Natural-language search alongside structured search
 
 - **Status:** accepted
 - **Date:** 2026-08-01

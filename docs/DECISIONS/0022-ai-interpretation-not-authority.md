@@ -1,4 +1,4 @@
-# ADR 0019: AI is interpretation, not factual authority
+# ADR 0025: AI is interpretation, not factual authority
 
 - **Status:** accepted
 - **Date:** 2026-08-01

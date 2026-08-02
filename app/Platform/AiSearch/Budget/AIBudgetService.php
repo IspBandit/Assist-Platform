@@ -8,7 +8,7 @@ use App\Core\Database;
 use Throwable;
 
 /**
- * Hard-stop AI budget enforcement (ADR 0022).
+ * Hard-stop AI budget enforcement (ADR 0025).
  * Paid AI stays off until configured; rules/cache/local search always continue.
  */
 final class AIBudgetService

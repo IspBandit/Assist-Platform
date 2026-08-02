@@ -83,7 +83,7 @@ final class TravellerFacilitiesTest extends TestCase
 
     public function testMigrationDefinesFacilitiesTableNotCaravanParks(): void
     {
-        $sql = (string) file_get_contents(dirname(__DIR__, 3) . '/database/migrations/092_assist_traveller_facilities.sql');
+        $sql = (string) file_get_contents(dirname(__DIR__, 3) . '/database/migrations/108_assist_traveller_facilities.sql');
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS traveller_facilities', $sql);
         self::assertStringNotContainsString('ALTER TABLE caravan_parks', $sql);
         self::assertStringContainsString('assist_ai_traveller_facilities', $sql);

@@ -74,9 +74,9 @@ final class BuyerStateAndFindWiringTest extends TestCase
         $adminRoutes = (string) file_get_contents($root . '/routes/admin.php');
         self::assertStringContainsString('PolarisAdminController@mergeManufacturers', $adminRoutes);
 
-        $sql = (string) file_get_contents($root . '/database/migrations/095_polaris_comparisons.sql');
+        $sql = (string) file_get_contents($root . '/database/migrations/111_polaris_comparisons.sql');
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS polaris_comparisons', $sql);
-        $sql096 = (string) file_get_contents($root . '/database/migrations/096_polaris_dealers_media_team.sql');
+        $sql096 = (string) file_get_contents($root . '/database/migrations/112_polaris_dealers_media_team.sql');
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS polaris_dealers', $sql096);
         self::assertStringContainsString('polaris_manufacturer_media', $sql096);
 
@@ -93,7 +93,7 @@ final class BuyerStateAndFindWiringTest extends TestCase
         $controller = (string) file_get_contents($root . '/app/Controllers/Site/PolarisController.php');
         self::assertStringContainsString('NaturalLanguagePreferenceMapper', $controller);
 
-        $sql099 = (string) file_get_contents($root . '/database/migrations/099_polaris_provenance_extract_flags.sql');
+        $sql099 = (string) file_get_contents($root . '/database/migrations/115_polaris_provenance_extract_flags.sql');
         self::assertStringContainsString('polaris_model_sources', $sql099);
         self::assertStringContainsString('polaris_brochure_extract', $sql099);
 

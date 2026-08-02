@@ -13,7 +13,7 @@
 4. Phased delivery AI-1 → AI-7, with AI off by default and hard cost stops.
 5. Admin API Phase 1 scope **unchanged**; AI only documents dependencies on
    planned `/search-gaps`, drafts and imports.
-6. Traveller facilities remain a **future** entity (ADR 0029 / 0027);
+6. Traveller facilities remain a **future** entity (ADR 0032 / 0027);
    no facility migration in early AI phases.
 
 ## Decisions (AI-0)
@@ -34,5 +34,5 @@ feature flag **off by default**.
 | Role | Name | Date | Decision |
 | --- | --- | --- | --- |
 | Business owner | (chat) | 2026-08-01 | Approve AI-0 |
-| Architecture | | 2026-08-01 | ADRs 0018–0027 accepted |
+| Architecture | | 2026-08-01 | ADRs 0021–030 accepted |
 | Engineering | | 2026-08-01 | Proceed AI-1 |

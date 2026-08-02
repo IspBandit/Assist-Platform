@@ -44,9 +44,9 @@ Polaris-specific risks and controls.
 ## AI-specific
 
 - AI flags off by default
-- Budget enforcement fail-closed (ADR 0022)
+- Budget enforcement fail-closed (ADR 0025)
 - No PII in AI logs; query hashing only
-- AI cannot write production catalogue rows (ADR 0026)
+- AI cannot write production catalogue rows (ADR 0029)
 
 ---
 

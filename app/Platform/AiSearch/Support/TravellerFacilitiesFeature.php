@@ -7,7 +7,7 @@ namespace App\Platform\AiSearch\Support;
 use App\Services\FeatureFlag;
 
 /**
- * Feature gate for dedicated traveller_facilities search (AI-6 / ADR 0029).
+ * Feature gate for dedicated traveller_facilities search (AI-6 / ADR 0032).
  */
 final class TravellerFacilitiesFeature
 {

@@ -5,7 +5,7 @@
 - **Backlog:** POL-004, POL-007
 - **ADR:** [0008-ai-provider-abstraction.md](DECISIONS/0008-ai-provider-abstraction.md)
 
-Polaris AI usage aligns with platform ADRs **0018–0027**. Polaris does not
+Polaris AI usage aligns with platform ADRs **0021–030**. Polaris does not
 operate a separate model stack.
 
 ---
@@ -135,4 +135,4 @@ See [TESTING_STRATEGY.md](TESTING_STRATEGY.md).
 
 - [SEARCH_ARCHITECTURE.md](SEARCH_ARCHITECTURE.md)
 - [DATA_ACQUISITION.md](DATA_ACQUISITION.md)
-- [docs/DECISIONS/0019-ai-interpretation-not-authority.md](../DECISIONS/0019-ai-interpretation-not-authority.md)
+- [docs/DECISIONS/0022-ai-interpretation-not-authority.md](../DECISIONS/0022-ai-interpretation-not-authority.md)

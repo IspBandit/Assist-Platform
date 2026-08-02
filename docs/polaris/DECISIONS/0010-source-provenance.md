@@ -9,7 +9,7 @@
 ## Context
 
 RV specifications and prices affect purchasing decisions. Users and regulators
-expect clarity about where claims originate. Platform ADR 0025 requires staged
+expect clarity about where claims originate. Platform ADR 0028 requires staged
 provenance for external results.
 
 ## Decision
@@ -29,7 +29,7 @@ Manufacturer portal submissions create sources tied to organisation claim.
 
 - Single source per variant only: rejected (specs may come from multiple documents).
 - Hidden provenance for cleaner UI: rejected (trust requirement).
-- Trust AI without source attachment: rejected (ADR 0019).
+- Trust AI without source attachment: rejected (ADR 0022).
 
 ## Consequences
 

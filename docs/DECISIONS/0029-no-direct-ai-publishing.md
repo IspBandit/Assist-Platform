@@ -1,4 +1,4 @@
-# ADR 0026: No direct AI publishing
+# ADR 0032: No direct AI publishing
 
 - **Status:** accepted
 - **Date:** 2026-08-01

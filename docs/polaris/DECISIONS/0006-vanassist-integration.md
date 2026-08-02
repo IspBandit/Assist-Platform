@@ -19,7 +19,7 @@ Polaris **surfaces** VanAssist providers via read-only query:
 - Model pages show limited provider cards linking to VanAssist profiles
 - Empty state when no providers — no fabricated listings
 - Sponsored VanAssist content labelled per platform rules
-- AI search must not create provider records (platform ADR 0019, 0027)
+- AI search must not create provider records (platform ADR 0022, 0027)
 
 Polaris admin has no CRUD for VanAssist providers.
 

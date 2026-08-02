@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Intent\TaxonomyRegistry;
 use Throwable;
 
 /**
- * MariaDB-backed intent interpretation cache (ADR 0021).
+ * MariaDB-backed intent interpretation cache (ADR 0024).
  * Does not cache precise GPS; key uses brand + normalised query + versions.
  */
 final class IntentCache

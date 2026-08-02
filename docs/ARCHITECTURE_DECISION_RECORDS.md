@@ -56,22 +56,25 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0012: Authoritative provider pack with canonical identity and taxonomy-controlled brand routing.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
 - 0014: Separate directory accuracy from marketing outreach.
-- 0015: Admin API is the only external write path to production (no direct DB).
+- 0015: Controlled bulk provider review.
 - 0016: Server-owned provider import and canonical campaign taxonomy.
-- 0017: Assist RIC is the initial local management client (Option B).
-- 0018: Shared Assist AI Orchestrator (accepted; AI-1 foundation).
-- 0019: AI is interpretation, not factual authority (accepted).
-- 0020: Provider-neutral AI abstraction (accepted).
-- 0021: Deterministic and cache-first routing (accepted).
-- 0022: Hard AI budget enforcement (accepted).
-- 0023: Natural-language search alongside structured search (accepted).
-- 0024: Knowledge-gap-driven database growth (accepted).
-- 0025: External results are staged with provenance (accepted).
-- 0026: No direct AI publishing (accepted).
-- 0027: Traveller facilities remain separate from stays — AI workstream (accepted).
-- 0028: Polaris is a fifth Assist Platform brand (private until domain confirmed);
+- 0017: Review-first organisation PR outreach.
+- 0018: Admin API is the only external write path to production (no direct DB) — lands with CORE-011 merge.
+- 0019: Stays vs traveller facilities (Admin API / DATA-012) — lands with CORE-011 merge.
+- 0020: Assist RIC is the initial local management client (Option B) — lands with CORE-011 merge.
+- 0021: Shared Assist AI Orchestrator (accepted; AI-1 foundation).
+- 0022: AI is interpretation, not factual authority (accepted).
+- 0023: Provider-neutral AI abstraction (accepted).
+- 0024: Deterministic and cache-first routing (accepted).
+- 0025: Hard AI budget enforcement (accepted).
+- 0026: Natural-language search alongside structured search (accepted).
+- 0027: Knowledge-gap-driven database growth (accepted).
+- 0028: External results are staged with provenance (accepted).
+- 0029: No direct AI publishing (accepted).
+- 0030: Traveller facilities remain separate from stays — AI workstream (accepted).
+- 0031: Polaris is a fifth Assist Platform brand (private until domain confirmed);
   detail ADRs under `docs/polaris/DECISIONS/`.
-- 0029: Stays vs narrowly scoped traveller facilities (accepted; corrects earlier AI docs that mislabelled this as 0016).
+- 0032: Stays vs narrowly scoped traveller facilities (AI elaboration; aligns with 0019).
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;

@@ -3,7 +3,7 @@
 **Status:** implemented (AI-1 rules + AI-3 Structured Outputs).  
 **Version id:** `intent_schema_v1`  
 **Code:** `App\Platform\AiSearch\Intent\IntentJsonSchema`  
-**Related:** [`PHASE_AI0_DESIGN.md`](PHASE_AI0_DESIGN.md) §7, ADR 0019/0021.
+**Related:** [`PHASE_AI0_DESIGN.md`](PHASE_AI0_DESIGN.md) §7, ADR 0022/0021.
 
 ## JSON Schema (strict / Structured Outputs compatible)
 

@@ -14,7 +14,7 @@ dependency only).
 **Admin API Phase 1:** locked and preserved.
 
 Related design docs (detail): see Documentation plan (§21).  
-Related ADRs: 0018–0027 (accepted), plus accepted 0015–0017 and 0006–0007.
+Related ADRs: 0021–030 (accepted), plus accepted 0015–0017 and 0006–0007.
 
 **Owner sign-off:** [`AI0_OWNER_DECISION_BRIEF.md`](AI0_OWNER_DECISION_BRIEF.md)  
 **Appendices:** [`AI_INTENT_SCHEMA.md`](AI_INTENT_SCHEMA.md),
@@ -88,13 +88,13 @@ is backlog-only. LocalTorque docs mark AI search as staged.
 
 ### 1.4 Traveller facilities today
 
-Per **ADR 0029**:
+Per **ADR 0032**:
 
 - Amenity flags on `caravan_parks` (`toilets`, `dump_point`, …) are **display**,
   not `/stays` filters.
 - Some amenity-like needs are modelled as `service_categories` (e.g.
   `dump-points`, `lpg-refills-and-bottle-exchange`) when tagged as providers.
-- Dedicated `traveller_facilities` entity is **planned** (DATA-012 / ADR 0029);
+- Dedicated `traveller_facilities` entity is **planned** (DATA-012 / ADR 0032);
   **not** in Admin API Phase 1 schema.
 
 ### 1.5 Must remain unchanged
@@ -308,7 +308,7 @@ Design-only until DATA-012 / AI-6:
 **Reconciliation:** today’s provider slugs like `dump-points` remain valid for
 provider search; facility keys are a separate taxonomy. Orchestrator may map
 “dump point near X” to facility adapter when available, else provider category
-fallback, never inventing a park row (ADR 0029 / 0027).
+fallback, never inventing a park row (ADR 0032 / 0027).
 
 ---
 
@@ -497,11 +497,11 @@ Every result card carries:
 - `distance_km`, `is_temporary`, `pending_review`
 
 External/unverified results **labelled** distinctly from provider-confirmed
-canonical listings (`docs/DATA_TRUST_AND_PROVENANCE.md`, ADR 0025).
+canonical listings (`docs/DATA_TRUST_AND_PROVENANCE.md`, ADR 0028).
 
 Staging: only identifiable source + acceptable trust policy →
 `DraftCandidateService` → DATA-006 candidates or Admin API drafts. Duplicate
-check via DATA-002 signals; **no auto-merge**; **no AI publish** (ADR 0026).
+check via DATA-002 signals; **no auto-merge**; **no AI publish** (ADR 0029).
 
 Trust policies: `trusted_automatic` | `trusted_review` | `community_review` |
 `web_research_review` | `prohibited`. No `trusted_automatic` without written
@@ -640,7 +640,7 @@ See `docs/AI_TESTING.md`. Summary matrices:
 | `SEARCH_PIPELINE.md` | Step-by-step request flow |
 | `KNOWLEDGE_ENGINE.md` | Growth loop |
 | `KNOWLEDGE_GAPS.md` | Gap model + RIC hand-off |
-| `TRAVELLER_FACILITIES.md` | Future entity + taxonomy (cross-link ADR 0029) |
+| `TRAVELLER_FACILITIES.md` | Future entity + taxonomy (cross-link ADR 0032) |
 | `DATASET_ROUTING.md` | Source priority + DATA-006 reuse |
 | `AI_PROVIDER_ABSTRACTION.md` | Vendor port |
 | `OPENAI_INTEGRATION.md` | Official API notes; owner approval gate |
@@ -672,7 +672,7 @@ traveller-facility deferral.
 | R1 | Cost blowout | M | H | Off by default; hard stops; rules-first |
 | R2 | Hallucinated listings | M | H | AI never creates result facts |
 | R3 | Competing search UX confusion | M | M | Parallel Ask UI; preserve `/find` |
-| R4 | Taxonomy collision (dump as provider vs facility) | H | M | Explicit dual mapping; ADR 0029/0027 |
+| R4 | Taxonomy collision (dump as provider vs facility) | H | M | Explicit dual mapping; ADR 0032/0027 |
 | R5 | Interference with Admin API Phase 1 | M | H | Document-only dependencies; no scope change |
 | R6 | Privacy (GPS retention) | M | H | Rounding + retention policy |
 | R7 | Prompt injection | M | M | Structured output; no instruction following from sources |

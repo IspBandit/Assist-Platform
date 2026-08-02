@@ -82,7 +82,7 @@ final class AiReleaseGate
         ];
 
         $osmOffline = is_file(base_path('app/Platform/DataSources/Connectors/OsmOfflineSeedConnector.php'))
-            && is_file(base_path('database/migrations/097_osm_offline_seed_connector.sql'));
+            && is_file(base_path('database/migrations/113_osm_offline_seed_connector.sql'));
         $checks[] = [
             'id' => 'osm_offline_seed_wired',
             'ok' => $osmOffline,
@@ -93,15 +93,15 @@ final class AiReleaseGate
 
         $adminRoutes = (string) @file_get_contents(base_path('routes/admin.php'));
         $data012Wired = str_contains($adminRoutes, 'admin.data-sources.datasets')
-            && is_file(base_path('database/migrations/092_assist_traveller_facilities.sql'))
-            && is_file(base_path('database/migrations/093_government_datasets.sql'))
-            && is_file(base_path('database/migrations/094_government_dataset_au_toilet_map.sql'));
+            && is_file(base_path('database/migrations/108_assist_traveller_facilities.sql'))
+            && is_file(base_path('database/migrations/109_government_datasets.sql'))
+            && is_file(base_path('database/migrations/110_government_dataset_au_toilet_map.sql'));
         $checks[] = [
             'id' => 'data012_ingest_wired',
             'ok' => $data012Wired,
             'detail' => $data012Wired
-                ? 'DATA-012 catalogue routes and migrations 092–094 are present.'
-                : 'DATA-012 catalogue routes or migrations 092–094 missing.',
+                ? 'DATA-012 catalogue routes and migrations 108–110 are present.'
+                : 'DATA-012 catalogue routes or migrations 108–110 missing.',
         ];
 
         $facilitiesOn = TravellerFacilitiesFeature::enabled();

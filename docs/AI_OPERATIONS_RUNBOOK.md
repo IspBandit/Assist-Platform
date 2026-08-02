@@ -16,7 +16,7 @@ by default.
 
 ## Populate traveller facilities (DATA-012)
 
-1. Apply migrations `092`–`094`.  
+1. Apply migrations `108`–`110`.  
 2. Non-production CLI: `php scripts/import-demo-traveller-facilities.php --approve`  
    (refuses production `APP_ENV` unless `--force`).  
    Or `/admin/data-sources/datasets` → Import fixture / enable+Fetch → Facility review.  

@@ -1,4 +1,4 @@
-# ADR 0025: External results are staged with provenance
+# ADR 0031: External results are staged with provenance
 
 - **Status:** accepted
 - **Date:** 2026-08-01

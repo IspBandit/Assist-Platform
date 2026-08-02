@@ -96,7 +96,7 @@ Use brand URL helper from `Brand` registry — not hard-coded production URLs in
 
 ## AI boundary
 
-NL search must not invent providers (platform ADR 0019, 0027). Provider cards
+NL search must not invent providers (platform ADR 0022, 0027). Provider cards
 always originate from VanAssist adapters.
 
 ---

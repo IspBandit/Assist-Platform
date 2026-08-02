@@ -1,4 +1,4 @@
-# ADR 0021: Deterministic and cache-first routing
+# ADR 0027: Deterministic and cache-first routing
 
 - **Status:** accepted
 - **Date:** 2026-08-01

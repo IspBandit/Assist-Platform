@@ -64,11 +64,11 @@ All notable changes to VanAssist are documented here.
 ### Added
 - **DATA-012 finish-up** — town/state resolution on facility publish, job
   completion after review, bulk facility approve/reject, demo CLI production
-  guard, AiReleaseGate migrations 092–094, Assist AI admin link to government
+  guard, AiReleaseGate migrations 108–110, Assist AI admin link to government
   datasets, RELEASE_NOTES + admin/customer guide updates.
 
 ### Added
-- **CORE-012 closeout** — ADR 0029 (stays vs facilities), demo facility CLI
+- **CORE-012 closeout** — ADR 0032 (stays vs facilities), demo facility CLI
   bootstrap, SearchGap-shaped knowledge-gap JSON export
   (`/admin/ai-search/gaps/export?format=json`), Quality Gate CONDITIONAL PASS
   evidence (`docs/AI_QUALITY_GATE_EVIDENCE.md`). Production Ask still gated.
@@ -98,7 +98,7 @@ All notable changes to VanAssist are documented here.
 
 ### Added
 - **Phase AI-5 — dataset routing (CORE-012)** — `DatasetSearchAdapter` surfaces
-  staged `data_source_import_candidates` with ADR 0025 provenance labels;
+  staged `data_source_import_candidates` with ADR 0028 provenance labels;
   `DraftCandidateService` stages trusted-review hits into DATA-006 (never
   auto-publishes); Ask VanAssist never calls Google Places; flag
   `assist_ai_datasets` off by default (migration `090`). Weak local results
@@ -143,16 +143,16 @@ All notable changes to VanAssist are documented here.
 - **Project Polaris foundation (POL-001)** — private fifth brand `polaris`,
   migration `087` new-RV catalogue schema with demo fixtures, public homepage /
   browse / model / manufacturer / Find My RV shell, shared admin Polaris nav,
-  documentation suite under `docs/polaris/`, ADR 0028. TowSmart and VanAssist
+  documentation suite under `docs/polaris/`, ADR 0031. TowSmart and VanAssist
   data boundaries preserved. Production domain not enabled.
 
 ### Added
 - **Phase AI-1 — deterministic Assist AI Orchestrator (CORE-012 / VAN-011)** —
   shared `App\Platform\AiSearch` with keyword intent engine, provider/stay
   adapters, `/ask` Ask VanAssist UI (feature flag `assist_ai_search` **off** by
-  default), migration `085_assist_ai_search.sql`, and unit tests. No paid AI,
+  default), migration `101_assist_ai_search.sql`, and unit tests. No paid AI,
   no external datasets, structured `/find` unchanged. AI-0 design package and
-  ADRs 0018–0027 accepted.
+  ADRs 0021–030 accepted.
 
 ### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +

@@ -26,4 +26,4 @@ integration decisions live here.
 
 New Polaris ADRs use the next sequential number. Cross-brand decisions that
 affect all brands (e.g. fifth brand registration policy) may also appear as
-platform ADR 0028+.
+platform ADR 0031+.

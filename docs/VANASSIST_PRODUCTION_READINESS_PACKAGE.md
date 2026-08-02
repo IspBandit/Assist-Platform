@@ -24,7 +24,7 @@ verification, and a controlled release — not by expanding AI features.
 ### Non-goals (this workstream)
 
 - New AI capabilities, models, conversational UX, or public Ask enablement
-- Writing facilities into `caravan_parks` (ADR 0029)
+- Writing facilities into `caravan_parks` (ADR 0032)
 - Expanding Admin API OpenAPI beyond inventoried Phase 1 paths without CORE-011
   ownership
 - Enabling `assist_ai_search`, `assist_ai_traveller_facilities`,
@@ -182,7 +182,7 @@ a real NSW coastal locality without inventing data.
 
 | Precondition | Notes |
 | --- | --- |
-| Migrations through `094` (+ `097` if OSM staging used) | |
+| Migrations through `110` (+ `113` if OSM staging used) | |
 | Non-production environment | Never production flags |
 | Reviewed facilities near Batehaven / Batemans Bay | From demo and/or Toilet Map subset |
 | Town resolver knows Batehaven (or Batemans Bay fallback documented) | Record which town_id is used |

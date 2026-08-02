@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\AiSearch\Provenance;
 
 /**
- * Provenance labels for Assist AI result cards (ADR 0025).
+ * Provenance labels for Assist AI result cards (ADR 0028).
  */
 final class ResultProvenance
 {

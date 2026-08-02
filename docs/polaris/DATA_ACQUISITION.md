@@ -58,8 +58,8 @@ Each value requires `source_id` or explicit “unknown” with reason.
 
 - Uses shared Assist AI Orchestrator (ADR 0008)
 - Output: draft JSON mapped to spec definitions
-- Mandatory human review per ADR 0019 / 0026
-- Feature-flag and budget gated (ADR 0022)
+- Mandatory human review per ADR 0022 / 0026
+- Feature-flag and budget gated (ADR 0025)
 
 ---
 

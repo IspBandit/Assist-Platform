@@ -33,7 +33,7 @@ Deliverables:
 - [x] Repository audit (`POLARIS_REPOSITORY_AUDIT.md`)
 - [x] Product and architecture doc suite (this folder)
 - [x] Polaris ADRs 0001–0013
-- [x] Platform ADR 0028
+- [x] Platform ADR 0031
 - [x] Backlog entries POL-001–POL-009 in `PRODUCT_BACKLOG.md`
 
 Exit: Owner sign-off on boundaries and roadmap.

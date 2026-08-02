@@ -25,8 +25,8 @@ for design + implementation on this branch**:
 - Provider-neutral AI abstraction; OpenAI via orchestrator only
 - Deterministic → cache → budgeted AI → adapters → provenance → gaps → staging
 - Cost hard stops; AI off until configured
-- Traveller facilities separate from stays (ADR 0027/0029)
-- Required docs + ADRs 0018–0027/0029
+- Traveller facilities separate from stays (ADR 0030/0029)
+- Required docs + ADRs 0021–030/0032
 - Test matrix covered under `tests/Unit/AiSearch` (+ DataSources)
 - Locked Admin API Phase 1 OpenAPI **not** expanded
 - `POST /api/v1/search/assist` **not** finalised (per prompt / `API.md`)

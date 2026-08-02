@@ -30,7 +30,7 @@ Private vertical-slice foundation (Phases 0–8 partial) is documented in
 | # | Criterion | Status |
 | --- | --- | --- |
 | A1 | Polaris ADRs 0001–0013 accepted | Existing |
-| A2 | Platform ADR 0028 records fifth brand | Existing |
+| A2 | Platform ADR 0031 records fifth brand | Existing |
 | A3 | No TowSmart tow vehicle table duplication verified | Existing (service boundary) |
 | A4 | No VanAssist provider duplication verified | Existing (URL surfacing) |
 | A5 | Migration forward-only applied in staging | Planned |

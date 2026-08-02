@@ -218,7 +218,7 @@ final class AIBudgetAndCacheTest extends TestCase
 
     public function testMigrationDefinesCacheAndBudgetTablesWithoutSecrets(): void
     {
-        $sql = file_get_contents(dirname(__DIR__, 3) . '/database/migrations/086_assist_ai_cache_budget.sql');
+        $sql = file_get_contents(dirname(__DIR__, 3) . '/database/migrations/102_assist_ai_cache_budget.sql');
         self::assertNotFalse($sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS ai_settings', $sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS ai_intent_cache', $sql);

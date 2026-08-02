@@ -122,7 +122,7 @@ final class KnowledgeGapServiceTest extends TestCase
 
     public function testMigrationDefinesGapTables(): void
     {
-        $sql = file_get_contents(dirname(__DIR__, 3) . '/database/migrations/089_assist_knowledge_gaps.sql');
+        $sql = file_get_contents(dirname(__DIR__, 3) . '/database/migrations/105_assist_knowledge_gaps.sql');
         self::assertNotFalse($sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS knowledge_gaps', $sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS knowledge_gap_events', $sql);

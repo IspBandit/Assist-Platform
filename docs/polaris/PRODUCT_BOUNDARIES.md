@@ -74,7 +74,7 @@ AI may not:
 - Override verified manufacturer-supplied fields
 - Present generative text as factual specification
 
-See [AI_ARCHITECTURE.md](AI_ARCHITECTURE.md) and platform ADRs 0018–0027.
+See [AI_ARCHITECTURE.md](AI_ARCHITECTURE.md) and platform ADRs 0021–030.
 
 ## Integration boundary
 

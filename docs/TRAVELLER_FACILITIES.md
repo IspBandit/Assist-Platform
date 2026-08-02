@@ -1,8 +1,8 @@
 # Traveller facilities
 
 **Status:** AI-6 entity shipped behind `assist_ai_traveller_facilities` (default **off**).  
-**Authoritative entity decision:** [ADR 0029](DECISIONS/0029-stays-vs-traveller-facilities.md).  
-**AI reinforcement:** [ADR 0027](DECISIONS/0027-traveller-facilities-ai-boundary.md).  
+**Authoritative entity decision:** [ADR 0032](DECISIONS/0032-stays-vs-traveller-facilities.md).  
+**AI reinforcement:** [ADR 0030](DECISIONS/0030-traveller-facilities-ai-boundary.md).  
 **Ingest:** [DATA-012](DATA_012.md).  
 **Backlog:** DATA-012, DATA-014, VAN-001.  
 **Admin API Phase 1:** still advertises `traveller_facilities: planned` for OpenAPI inventory; Ask uses the table when the flag is on.

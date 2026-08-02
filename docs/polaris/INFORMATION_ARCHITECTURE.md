@@ -150,7 +150,7 @@ No inbound requirement for other brands to embed Polaris until API exists.
 2. **Find:** `/find` staged questionnaire → results.
 3. **NL (optional):** `/ask` when `assist_ai_search` or Polaris-specific flag enabled.
 
-Structured search remains primary per platform ADR 0023.
+Structured search remains primary per platform ADR 0026.
 
 ---
 

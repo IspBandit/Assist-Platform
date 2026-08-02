@@ -34,7 +34,7 @@ app/Controllers/Site/AssistSearchController.php
 app/Views/public/assist-search.php
 app/Views/partials/ask-vanassist.php
 config/ai_search.php
-database/migrations/085_assist_ai_search.sql
+database/migrations/101_assist_ai_search.sql
 tests/Unit/AiSearch/*
 ```
 

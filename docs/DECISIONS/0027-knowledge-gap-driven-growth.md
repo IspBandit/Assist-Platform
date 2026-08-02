@@ -1,4 +1,4 @@
-# ADR 0024: Knowledge-gap-driven database growth
+# ADR 0030: Knowledge-gap-driven database growth
 
 - **Status:** accepted
 - **Date:** 2026-08-01

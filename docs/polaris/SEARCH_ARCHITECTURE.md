@@ -13,7 +13,7 @@
 path. Optional natural-language search augments via shared AI orchestrator when
 flagged — never replaces structured browse.
 
-This matches platform ADR 0023 (NL alongside structured).
+This matches platform ADR 0026 (NL alongside structured).
 
 ---
 
@@ -80,7 +80,7 @@ User query → Orchestrator → Intent JSON
 ```
 
 Polaris adapter implements catalogue-only entities — no VanAssist/TowSmart
-invention (ADR 0027 boundary).
+invention (ADR 0030 boundary).
 
 **Fail closed:** budget denied → hide NL UI message; structured unaffected.
 
@@ -92,7 +92,7 @@ invention (ADR 0027 boundary).
 | --- | --- | --- |
 | HTTP cache | None on authenticated; short CDN for public assets only | Existing |
 | Query cache | Optional Redis/file for popular filter combos | Planned |
-| AI intent cache | Platform cache-first (ADR 0021) | Scaffolded |
+| AI intent cache | Platform cache-first (ADR 0024) | Scaffolded |
 
 Catalogue mutations invalidate filter count cache keys.
 
@@ -101,7 +101,7 @@ Catalogue mutations invalidate filter count cache keys.
 ## Knowledge gaps
 
 Unmatched NL queries or zero-result filter sets log to knowledge gap table
-(platform ADR 0024) for catalogue prioritisation — not user-visible errors.
+(platform ADR 0027) for catalogue prioritisation — not user-visible errors.
 
 ---
 

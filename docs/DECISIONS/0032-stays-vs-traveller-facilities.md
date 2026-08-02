@@ -1,4 +1,4 @@
-# ADR 0029: Stays vs narrowly scoped traveller facilities
+# ADR 0032: Stays vs narrowly scoped traveller facilities
 
 - **Status:** accepted
 - **Date:** 2026-08-02
@@ -13,7 +13,7 @@ water and similar point amenities. Historically some drafts numbered this
 decision as “ADR 0016”, but **ADR 0016 is already allocated** to server-owned
 provider import and campaign taxonomy
 (`0016-server-owned-provider-import-and-campaign-taxonomy.md`). This ADR is the
-authoritative stays-vs-facilities decision; ADR 0027 reaffirms it for Assist AI.
+authoritative stays-vs-facilities decision; ADR 0030 reaffirms it for Assist AI.
 
 ## Decision
 

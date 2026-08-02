@@ -146,7 +146,7 @@ Separate from Admin API Phase 1 (CORE-011). Gate: `docs/PHASE_AI0_DESIGN.md`
 design + implementation satisfied — see `docs/AI_WORKSTREAM_STATUS.md`.
 Quality Gate: **CONDITIONAL PASS** — `docs/AI_QUALITY_GATE_EVIDENCE.md`.
 Primary IDs: **CORE-012**, **VAN-011**, **DATA-012**, **DATA-013**.
-ADRs 0018–0027 + **0029** accepted.
+ADRs 0021–030 + **0032** accepted.
 
 ## Reconciled experience delivery
 

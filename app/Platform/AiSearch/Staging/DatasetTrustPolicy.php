@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\AiSearch\Staging;
 
 /**
- * Trust policies for staging external hits (ADR 0025 / 0026).
+ * Trust policies for staging external hits (ADR 0028 / 0026).
  * No trusted_automatic without a written owner decision.
  */
 final class DatasetTrustPolicy

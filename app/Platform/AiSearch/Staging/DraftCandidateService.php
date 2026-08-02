@@ -13,7 +13,7 @@ use Throwable;
 
 /**
  * Stages identifiable external hits into DATA-006 import candidates.
- * Runs DuplicateMatcher before insert; never auto-publishes (ADR 0026).
+ * Runs DuplicateMatcher before insert; never auto-publishes (ADR 0029).
  */
 final class DraftCandidateService
 {

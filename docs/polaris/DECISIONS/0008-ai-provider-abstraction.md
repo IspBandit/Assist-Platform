@@ -36,7 +36,7 @@ Site must function with all AI disabled.
 
 ## Alternatives considered
 
-- Polaris-specific OpenAI integration: rejected (ADR 0020 violation).
+- Polaris-specific OpenAI integration: rejected (ADR 0023 violation).
 - No AI ever for Polaris: rejected (optional acceleration for NL search/imports).
 - Generative buyer advice chatbot: rejected (out of scope, trust risk).
 
@@ -49,7 +49,7 @@ Site must function with all AI disabled.
 ## Quality Gate impact
 
 - Architecture: consistent AI boundary.
-- UX: NL is additive to structured search (ADR 0023).
+- UX: NL is additive to structured search (ADR 0026).
 - Engineering: adapter tests with mock provider.
 - Business: predictable AI cost.
 

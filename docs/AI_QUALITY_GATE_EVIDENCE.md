@@ -10,7 +10,7 @@ Production Ask + facilities + paid AI remain **prohibited** until a full Platfor
 
 | Evidence | Status |
 | --- | --- |
-| ADRs 0018–0027 + **0029** (stays vs facilities) | Present |
+| ADRs 0021–030 + **0032** (stays vs facilities) | Present |
 | Flags default off (`assist_ai_search`, `assist_ai_datasets`, `assist_ai_traveller_facilities`) | Seeded / migrations |
 | Never overload `caravan_parks` | Adapter + ingest publish to `traveller_facilities` only |
 | Catalogue provenance isolated per dataset (`gov:{dataset_key}`) | Toilet Map toilet vs dump rows cannot overwrite |
@@ -45,7 +45,7 @@ Production Ask + facilities + paid AI remain **prohibited** until a full Platfor
 | Evidence | Status |
 | --- | --- |
 | Paid AI off by default | Caps + allowlist required before enable |
-| No invented listings | ADR 0019 |
+| No invented listings | ADR 0022 |
 | Demo fixtures not official government truth | Catalogue attribution |
 | Curated AU Toilet Map rows disabled until operator Fetch + approve | Migration `094` |
 

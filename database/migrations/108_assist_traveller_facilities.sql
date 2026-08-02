@@ -1,4 +1,4 @@
--- Assist AI-6: traveller_facilities entity (ADR 0029 / 0027).
+-- Assist AI-6: traveller_facilities entity (ADR 0032 / 0027).
 -- Never overload caravan_parks with standalone amenity POIs.
 -- Feature flag off by default; Ask only surfaces status=active + reviewed/verified.
 
@@ -48,7 +48,7 @@ INSERT INTO feature_flags (flag_key, is_enabled, description, updated_at)
 VALUES (
     'assist_ai_traveller_facilities',
     0,
-    'Ask VanAssist traveller_facilities adapter (AI-6, off by default). Separate from caravan_parks (ADR 0029).',
+    'Ask VanAssist traveller_facilities adapter (AI-6, off by default). Separate from caravan_parks (ADR 0032).',
     NOW()
 )
 ON DUPLICATE KEY UPDATE description = VALUES(description);

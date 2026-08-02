@@ -2,7 +2,7 @@
 
 **Status:** complete (review-first; demo fixtures; live AU catalogue rows optional)  
 **Extends:** DATA-006 connector contract (ADR 0006)  
-**Feeds:** `traveller_facilities` (AI-6 / ADR 0029)  
+**Feeds:** `traveller_facilities` (AI-6 / ADR 0032)  
 **Does not:** change Admin API Phase 1 OpenAPI; write amenities into `caravan_parks`  
 **Readiness:** [`VANASSIST_PRODUCTION_READINESS_PACKAGE.md`](VANASSIST_PRODUCTION_READINESS_PACKAGE.md)
 
@@ -23,7 +23,7 @@ Mandatory acceptance:
 
 | Piece | Location |
 | --- | --- |
-| Migration | `database/migrations/093_government_datasets.sql` |
+| Migration | `database/migrations/109_government_datasets.sql` |
 | Catalogue | `government_datasets` |
 | Import jobs / candidates | `traveller_facility_import_*` |
 | Connectors | `gov_ckan`, `gov_arcgis`, `gov_csv`, `gov_geojson` |
@@ -47,7 +47,7 @@ php scripts/import-demo-traveller-facilities.php --approve
 
 Or via admin:
 
-1. Apply migrations through `093`.
+1. Apply migrations through `109`.
 2. Open **Admin → Data sources → Government datasets**.
 3. **Import fixture** for demo dump points and/or toilets (or enable a real catalogue row and Fetch).
 4. Open **Facility review** → approve candidates.
@@ -58,7 +58,7 @@ Or via admin:
 
 - Staging requires `trusted_review` or `community_review`.
 - `trusted_automatic` cannot be enabled from the UI without a recorded owner decision.
-- Approve never runs from Ask VanAssist (ADR 0026).
+- Approve never runs from Ask VanAssist (ADR 0029).
 - Published `source_key` is `gov:{dataset_key}` so shared external IDs (e.g. Toilet
   Map FacilityID) do not collide across toilet vs dump-point catalogue rows.
 

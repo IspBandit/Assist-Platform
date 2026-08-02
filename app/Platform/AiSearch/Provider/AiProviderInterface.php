@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\AiSearch\Provider;
 
 /**
- * Vendor-neutral structured AI completion port (ADR 0020).
+ * Vendor-neutral structured AI completion port (ADR 0023).
  */
 interface AiProviderInterface
 {

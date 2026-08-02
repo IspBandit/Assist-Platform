@@ -1,7 +1,7 @@
 # AI provider abstraction
 
 **Status:** implemented (Phase AI-3).  
-**ADR:** [0020](DECISIONS/0020-provider-neutral-ai-abstraction.md) (accepted).
+**ADR:** [0020](DECISIONS/0023-provider-neutral-ai-abstraction.md) (accepted).
 
 ## Port
 

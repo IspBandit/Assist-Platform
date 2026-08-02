@@ -61,7 +61,7 @@ and TrailerWise listings must **not** be treated as that catalogue.
 | VanAssist providers | Surface related services; do not duplicate |
 | Shared Garage | Owner tow vehicles / RV assets (`CORE-009`) |
 | Data Sources / review-first ingest | Pattern for draft imports (`DATA-006`) |
-| AI orchestrator (AI-1) | Interpretation only; ADR 0018–0027 — not factual authority |
+| AI orchestrator (AI-1) | Interpretation only; ADR 0021–0027 — not factual authority |
 | CI / analyse / PHPUnit | Existing quality gate tooling |
 
 ### Exists but needs extension
@@ -175,6 +175,6 @@ Non-goals for Phases 0–1: used marketplace, dealer stock inventory, paid AI, p
 The platform can host Polaris as a private fifth brand with a coherent Phase 1
 vertical slice without duplicating TowSmart or VanAssist data. The largest build
 is the RV catalogue and decision UX; the largest risk is treating incomplete
-tow/catalogue data as certain. Proceed with documentation, ADR 0028, brand
+tow/catalogue data as certain. Proceed with documentation, ADR 0031, brand
 registration, migration `087`, and a production-quality homepage under feature
 module `rv_catalogue`.

@@ -10,7 +10,7 @@
 
 Catalogue search must support filters on specifications, manufacturer, category and
 name. Introducing Elasticsearch or similar adds operational cost before catalogue
-volume justifies it. Platform ADR 0023 requires structured search to remain primary.
+volume justifies it. Platform ADR 0026 requires structured search to remain primary.
 
 ## Decision
 

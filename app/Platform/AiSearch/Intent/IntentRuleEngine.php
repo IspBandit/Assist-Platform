@@ -288,7 +288,7 @@ final class IntentRuleEngine
         $locationText = $this->extractLocationText($haystack, $matchedPatterns);
         $radius = $meta['radius_km'] ?? (int) config('ai_search.default_radius_km', 25);
 
-        // Toilets: no provider category (ADR 0029). Clarify only while AI-6 flag is off.
+        // Toilets: no provider category (ADR 0032). Clarify only while AI-6 flag is off.
         $clarification = false;
         $clarificationReason = null;
         $uniqueProviders = array_values(array_unique($providerKeys));

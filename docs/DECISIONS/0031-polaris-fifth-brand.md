@@ -1,4 +1,4 @@
-# ADR 0028: Polaris as a fifth Assist Platform brand
+# ADR 0031: Polaris as a fifth Assist Platform brand
 
 - **Status:** accepted
 - **Date:** 2026-08-01

@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Provider\AiProviderInterface;
 use App\Platform\AiSearch\Provider\OpenAiProvider;
 
 /**
- * Paid AI intent interpretation — structured metadata only (ADR 0019).
+ * Paid AI intent interpretation — structured metadata only (ADR 0022).
  * Never invents providers/facilities; never returns conversational answers.
  */
 final class IntentInterpreter

@@ -12,7 +12,7 @@ use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 use Throwable;
 
 /**
- * Searches canonical traveller_facilities (AI-6). Never writes to caravan_parks (ADR 0029).
+ * Searches canonical traveller_facilities (AI-6). Never writes to caravan_parks (ADR 0032).
  */
 final class TravellerFacilitySearchAdapter implements FacilitySearchPort
 {

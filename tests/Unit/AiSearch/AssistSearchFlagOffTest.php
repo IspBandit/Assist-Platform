@@ -47,7 +47,7 @@ final class AssistSearchFlagOffTest extends TestCase
 
     public function testMigrationCreatesAssistSearchesAndFlag(): void
     {
-        $sql = file_get_contents(dirname(__DIR__, 3) . '/database/migrations/085_assist_ai_search.sql');
+        $sql = file_get_contents(dirname(__DIR__, 3) . '/database/migrations/101_assist_ai_search.sql');
         self::assertNotFalse($sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS assist_searches', $sql);
         self::assertStringContainsString("'assist_ai_search'", $sql);

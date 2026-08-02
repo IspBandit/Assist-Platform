@@ -35,7 +35,7 @@ This is the authoritative orientation page for developers and AI agents.
     `docs/PHASE_AI0_DESIGN.md` (approved design baseline),
     `docs/AI_ORCHESTRATOR.md`, `docs/NATURAL_LANGUAGE_SEARCH.md`,
     `docs/KNOWLEDGE_GAPS.md`, `docs/SEARCH_GAP_DUAL_SOURCE.md` (Option B
-    dual-source into inventoried `GET /search-gaps`), ADRs 0018–0027 and 0029.
+    dual-source into inventoried `GET /search-gaps`), ADRs 0021–030 and 0032.
     AI-1–AI-7 + DATA-012 live in code behind flags; `/ask`, cache/budget,
     `/admin/ai-search`, government datasets → facility review. Do not invent a
     second search-gaps API or expand locked Phase 1 OpenAPI schemas. See

@@ -1,4 +1,4 @@
-# ADR 0020: Provider-neutral AI abstraction
+# ADR 0026: Provider-neutral AI abstraction
 
 - **Status:** accepted
 - **Date:** 2026-08-01

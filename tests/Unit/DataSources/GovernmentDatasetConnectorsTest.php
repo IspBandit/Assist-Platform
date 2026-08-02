@@ -108,14 +108,14 @@ final class GovernmentDatasetConnectorsTest extends TestCase
     public function testMigrationAdminAndCliWiring(): void
     {
         $root = dirname(__DIR__, 3);
-        $sql = (string) file_get_contents($root . '/database/migrations/093_government_datasets.sql');
+        $sql = (string) file_get_contents($root . '/database/migrations/109_government_datasets.sql');
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS government_datasets', $sql);
         self::assertStringContainsString('traveller_facility_import_candidates', $sql);
         self::assertStringContainsString('gov_geojson', $sql);
         self::assertStringContainsString('demo_geojson_dump_points', $sql);
         self::assertStringNotContainsString('ALTER TABLE caravan_parks', $sql);
 
-        $curated = (string) file_get_contents($root . '/database/migrations/094_government_dataset_au_toilet_map.sql');
+        $curated = (string) file_get_contents($root . '/database/migrations/110_government_dataset_au_toilet_map.sql');
         self::assertStringContainsString('au_national_public_toilet_map', $curated);
         self::assertStringContainsString('34076296-6692-4e30-b627-67b7c4eb1027', $curated);
         self::assertStringContainsString('filter_field', $curated);
@@ -127,7 +127,7 @@ final class GovernmentDatasetConnectorsTest extends TestCase
         self::assertStringContainsString('/data-sources/facilities/review', $routes);
 
         self::assertFileExists($root . '/scripts/import-demo-traveller-facilities.php');
-        self::assertFileExists($root . '/docs/DECISIONS/0029-stays-vs-traveller-facilities.md');
+        self::assertFileExists($root . '/docs/DECISIONS/0032-stays-vs-traveller-facilities.md');
     }
 
     public function testCsvFilterFieldKeepsMatchingRowsOnly(): void

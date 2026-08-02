@@ -8,7 +8,7 @@
 
 ## Completed (honest)
 
-- Repository audit + full `docs/polaris/` suite + DECISIONS 0001–0013 + platform ADR 0028
+- Repository audit + full `docs/polaris/` suite + DECISIONS 0001–0013 + platform ADR 0031
 - Private brand registration, migrations `087`/`088`/`095`/`096`/`099`, demo fixtures
 - Homepage hero (loading state, example rotation, reduced-motion aware)
 - Nav: Find, Browse, Compare, Manufacturers, Tow Match, Buying Guides, Saved

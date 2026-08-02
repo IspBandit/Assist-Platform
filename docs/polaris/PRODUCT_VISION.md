@@ -42,7 +42,7 @@ Polaris inventing tow ratings or duplicating service directories.
 1. **Catalogue truth is relational, not generative.** Specifications, prices and
    dimensions come from governed sources with provenance — not from LLM invention.
 2. **AI interprets; it does not authorise.** Natural-language search and import
-   assistance follow platform ADRs 0018–0027 and Polaris ADR 0008.
+   assistance follow platform ADRs 0021–030 and Polaris ADR 0008.
 3. **Reuse platform boundaries.** Tow vehicles and calculators remain TowSmart;
    service providers remain VanAssist.
 4. **Uncertainty is visible.** Missing specs, stale prices and low-confidence

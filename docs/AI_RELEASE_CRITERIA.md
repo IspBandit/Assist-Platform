@@ -8,7 +8,7 @@
 
 Ask VanAssist may be enabled when:
 
-1. Migrations through `094` + `097` applied (AI hardening `091`, facilities `092`, DATA-012 `093`/`094`, OSM offline `097`).
+1. Migrations through `110` + `097` applied (AI hardening `107`, facilities `108`, DATA-012 `109`/`110`, OSM offline `113`).
 2. Feature flags intentional (`assist_ai_search`, optional `assist_ai_datasets`, optional `assist_ai_traveller_facilities`).
 3. Paid AI remains off **or** caps + allowlist + env key are set.
 4. `/ask` rate limit middleware present (20 / hour / IP) with Turnstile unlock when enabled.
