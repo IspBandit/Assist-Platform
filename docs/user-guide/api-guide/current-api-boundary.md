@@ -114,3 +114,4 @@ Assist Platform product and engineering.
 | 2026-08-01 | Documented `/api/v1/admin` Phase 1 foundation as a restricted, default-off management API (CORE-011). |
 | 2026-08-01 | Documented OPS-010 TOTP enrollment and MFA login challenge for Admin API humans. |
 | 2026-08-02 | Documented Option B Admin API Increments B–G: claims, corrections, duplicates, datasets, AI usage, search analytics, sync conflicts and `/facilities`. |
+| 2026-08-02 | Recorded Option B programme A–L conditional Quality Gate; production Admin API flags remain gated. |
