@@ -12,8 +12,9 @@
 - VAN-010 Claim-first onboarding (flag); VAN-011 Ask VanAssist (flag off)
 - OPS-011 Recycle Bin (Admin API); INF-001/003; OPS-001; COM-006/007
 - POL-005 comparison history + saved browse searches
-- POL-002 year selector + a11y markup polish (`8581386`; CONDITIONAL a11y)
-- POL-003 Find hydration from saved preferences (this commit)
+- POL-002 year selector + a11y markup polish (`8581386`)
+- POL-003 Find hydration from saved preferences (`9a7a5a2`)
+- POL-007 manufacturer portal analytics views/saves (this commit)
 
 ## In Progress
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
@@ -39,12 +40,13 @@
 - Saved-search email/alert delivery (mailer/cron)
 - FULLTEXT catalogue name search
 - CI axe/Lighthouse for POL-009
+- Find-impression / dealer-enquiry portal metrics
 - OPS-005 / COM-005 sale-readiness packs
 
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Polaris non-AI residuals (catalogue volume, portal analytics)
+3. Polaris non-AI residuals (data-quality shell, catalogue volume)
 4. Full Platform Quality Gate
 5. Production release package
 
@@ -58,9 +60,9 @@
 None active.
 
 ## Next Highest Priority Unblocked Task
-Owner staging when available; otherwise Polaris portal analytics or catalogue demo volume. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
+Owner staging when available; otherwise Polaris data-quality shell or demo catalogue volume. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
 
 ## Overall Completion %
 89%
 
-*Tip commits: a11y `8581386`; Find hydration follows.*
+*Tip: a11y `8581386`, Find hydration `9a7a5a2`, portal analytics follows.*

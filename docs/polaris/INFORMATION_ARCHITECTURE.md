@@ -59,7 +59,7 @@ Account routes remain brand-aware but reuse platform controllers and layouts.
 | `/portal/manufacturer/models/{id}` | Edit model / variants | Planned |
 | `/portal/manufacturer/media` | Floorplans and images | Planned |
 | `/portal/manufacturer/team` | Organisation users | Planned |
-| `/portal/manufacturer/analytics` | Views and saves | Planned (Phase 9) |
+| `/portal/manufacturer/analytics` | Views and saves (manufacturer-scoped) | Partially implemented |
 
 Claim entry reuses platform organisation claim flow before portal access.
 

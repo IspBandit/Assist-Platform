@@ -48,4 +48,107 @@ final class AnalyticsService
             // Analytics must never break product flows.
         }
     }
+
+    /**
+     * Manufacturer-scoped portal rollup for model detail views and saves.
+     * Find impressions / dealer enquiry clicks remain planned until those events exist.
+     *
+     * @return array{
+     *   days: int,
+     *   views: int,
+     *   saves: int,
+     *   by_model: list<array{id:int,name:string,slug:string,views:int,saves:int}>
+     * }
+     */
+    public static function manufacturerSummary(int $brandId, int $manufacturerId, int $days = 30): array
+    {
+        $days = max(1, min(90, $days));
+        $empty = self::shapeManufacturerSummary($days, [], []);
+        if ($brandId < 1 || $manufacturerId < 1) {
+            return $empty;
+        }
+
+        try {
+            $totals = Database::select(
+                'SELECT e.event_name, COUNT(*) AS event_count
+                 FROM polaris_analytics_events e
+                 INNER JOIN polaris_rv_models m ON m.id = e.entity_id
+                   AND m.manufacturer_id = ?
+                   AND m.brand_id = ?
+                 WHERE e.brand_id = ?
+                   AND e.entity_type = \'model\'
+                   AND e.event_name IN (\'rv_viewed\', \'rv_saved\')
+                   AND e.created_at >= DATE_SUB(NOW(), INTERVAL ' . $days . ' DAY)
+                 GROUP BY e.event_name',
+                [$manufacturerId, $brandId, $brandId]
+            );
+            $byModel = Database::select(
+                'SELECT m.id, m.name, m.slug,
+                        SUM(CASE WHEN e.event_name = \'rv_viewed\' THEN 1 ELSE 0 END) AS views,
+                        SUM(CASE WHEN e.event_name = \'rv_saved\' THEN 1 ELSE 0 END) AS saves
+                 FROM polaris_rv_models m
+                 LEFT JOIN polaris_analytics_events e
+                   ON e.entity_id = m.id
+                  AND e.entity_type = \'model\'
+                  AND e.brand_id = ?
+                  AND e.event_name IN (\'rv_viewed\', \'rv_saved\')
+                  AND e.created_at >= DATE_SUB(NOW(), INTERVAL ' . $days . ' DAY)
+                 WHERE m.manufacturer_id = ?
+                   AND m.brand_id = ?
+                   AND m.deleted_at IS NULL
+                 GROUP BY m.id, m.name, m.slug
+                 ORDER BY views DESC, saves DESC, m.name ASC
+                 LIMIT 40',
+                [$brandId, $manufacturerId, $brandId]
+            );
+            return self::shapeManufacturerSummary($days, $totals, $byModel);
+        } catch (Throwable) {
+            return $empty;
+        }
+    }
+
+    /**
+     * Pure shaping helper for portal analytics (unit-testable without MariaDB).
+     *
+     * @param list<array<string,mixed>> $totals
+     * @param list<array<string,mixed>> $byModel
+     * @return array{
+     *   days: int,
+     *   views: int,
+     *   saves: int,
+     *   by_model: list<array{id:int,name:string,slug:string,views:int,saves:int}>
+     * }
+     */
+    public static function shapeManufacturerSummary(int $days, array $totals, array $byModel): array
+    {
+        $views = 0;
+        $saves = 0;
+        foreach ($totals as $row) {
+            $name = (string) ($row['event_name'] ?? '');
+            $count = (int) ($row['event_count'] ?? 0);
+            if ($name === 'rv_viewed') {
+                $views = $count;
+            } elseif ($name === 'rv_saved') {
+                $saves = $count;
+            }
+        }
+
+        $models = [];
+        foreach ($byModel as $row) {
+            $models[] = [
+                'id' => (int) ($row['id'] ?? 0),
+                'name' => (string) ($row['name'] ?? ''),
+                'slug' => (string) ($row['slug'] ?? ''),
+                'views' => (int) ($row['views'] ?? 0),
+                'saves' => (int) ($row['saves'] ?? 0),
+            ];
+        }
+
+        return [
+            'days' => max(1, min(90, $days)),
+            'views' => $views,
+            'saves' => $saves,
+            'by_model' => $models,
+        ];
+    }
 }

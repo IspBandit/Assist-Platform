@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-007 manufacturer portal analytics
+
+- Claimed manufacturers see 7/30/90-day detail views and saves for their models
+  on `/portal/manufacturer/analytics` (first-party events only). Find impressions
+  and dealer enquiry clicks remain planned.
+
 ### POL-003 Find preference hydration
 
 - Signed-in users opening Find without preference query fields use saved

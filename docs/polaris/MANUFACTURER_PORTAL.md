@@ -37,7 +37,7 @@ Object-level checks: claimed manufacturer must match the authenticated user.
 | Pricing | Submit RRP rows with effective date | Planned |
 | Media library | Upload within `config/uploads.php` limits | Planned |
 | Team | Invite org users (platform team UI) | Planned |
-| Analytics | Views, saves, find impressions | Scaffolded (events table) |
+| Analytics | Views and saves (7/30/90 day); find impressions planned | Partially implemented |
 
 ---
 

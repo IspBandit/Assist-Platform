@@ -55,7 +55,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | POL-004 | TowSmart compatibility service boundary for Polaris | in progress | `TowCompatibilityService` + `/tow-match` UX |
 | POL-005 | Multi-model comparison experience | in progress | Compare/share + account history + saved browse searches (alerts not delivered) |
 | POL-006 | Draft-first data acquisition and extraction review | in progress | CSV/JSON/XLSX + brochure text extract flags; AI import still off |
-| POL-007 | Manufacturer portal (claim-first) | in progress | Claim + model edit + profile/media/dealer/team write paths (`096`) |
+| POL-007 | Manufacturer portal (claim-first) | in progress | Claim + model edit + profile/media/dealer/team + views/saves analytics |
 | POL-008 | VanAssist provider surfacing on Polaris pages | in progress | Related services block; no provider duplication |
 | POL-009 | Polaris production hardening and public launch | blocked | Domain, Quality Gate, real catalogue; see `docs/polaris/RELEASE_CRITERIA.md` |
 

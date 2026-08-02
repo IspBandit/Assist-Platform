@@ -309,7 +309,26 @@ final class ManufacturerPortalController extends Controller
 
     public function analytics(Request $request): Response
     {
-        return $this->portalSection($request, 'analytics', 'Profile analytics');
+        $gate = $this->claimedOrRedirect();
+        if ($gate instanceof Response) {
+            return $gate;
+        }
+        $days = (int) $request->query('days', 30);
+        if (!in_array($days, [7, 30, 90], true)) {
+            $days = 30;
+        }
+        $summary = AnalyticsService::manufacturerSummary(
+            current_brand()->databaseId(),
+            (int) $gate['id'],
+            $days
+        );
+        return $this->view('polaris.portal.analytics', [
+            'title' => 'Profile analytics',
+            'manufacturer' => $gate,
+            'summary' => $summary,
+            'days' => $days,
+            'metaRobots' => 'noindex,nofollow',
+        ]);
     }
 
     public function team(Request $request): Response

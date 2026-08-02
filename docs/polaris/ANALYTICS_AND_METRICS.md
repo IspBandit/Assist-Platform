@@ -50,14 +50,14 @@ failures never break product flows.
 
 ---
 
-## Manufacturer analytics (Phase 9)
+## Manufacturer analytics (Phase 7 / 9)
 
-Portal dashboard aggregates:
+Portal `/portal/manufacturer/analytics` aggregates (manufacturer-scoped):
 
-- Detail views per variant (7/30 day)
-- Save count
-- Find impression count (in results)
-- Dealer enquiry clicks
+- Detail views per model (7/30/90 day) — **implemented** (`rv_viewed`)
+- Save count — **implemented** (`rv_saved`)
+- Find impression count (in results) — Planned (event not wired)
+- Dealer enquiry clicks — Planned
 
 No public view counts displayed to visitors.
 
@@ -90,7 +90,7 @@ Admin internal:
 | Event catalogue spec | Existing (this doc) |
 | Client instrumentation | Planned |
 | Server-side page_view | Planned |
-| Manufacturer dashboard | Planned |
+| Manufacturer dashboard | Views/saves implemented; find impressions planned |
 | Third-party analytics | Not planned at launch |
 
 ---

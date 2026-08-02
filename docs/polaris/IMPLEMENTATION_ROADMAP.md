@@ -147,6 +147,7 @@ Deliverables:
 - [x] `/portal/manufacturer` claim-first flow
 - [x] Admin claim approval
 - [x] Claimed manufacturer model edit (pending verification)
+- [x] Portal analytics for model views/saves (find impressions still planned)
 - [ ] Dealer portal / stock inventory (out of scope for launch)
 
 ---
