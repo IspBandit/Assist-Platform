@@ -3,6 +3,11 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **DATA-002 duplicate workflow closeout** — OpenAPI coverage for show / merge-history /
+  not-duplicate / defer; dry-run-before-transaction and human-only merge scope tests;
+  Phase 1 design wording updated. Merge remains soft-delete + audit (no FK repoint).
+
+### Added
 - **Admin API dataset sync wire (DATA-012)** — `POST /api/v1/admin/datasets/{id}/sync`
   executes `GovernmentDatasetService::fetchDataset` (optional `fixture=true`),
   updates `government_dataset_sync_runs` to completed/failed, and stages facility

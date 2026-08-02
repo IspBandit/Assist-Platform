@@ -1501,12 +1501,103 @@ paths:
       responses:
         '201':
           description: Duplicate decision created
+  /duplicates/merge-history:
+    get:
+      tags: [Duplicates]
+      operationId: adminDuplicatesMergeHistory
+      summary: List completed merge history rows
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Merge history collection
+  /duplicates/{id}:
+    get:
+      tags: [Duplicates]
+      operationId: adminDuplicatesShow
+      summary: Show a duplicate decision
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Duplicate decision
   /duplicates/{id}/merge:
     post:
       tags: [Duplicates]
       operationId: adminDuplicatesMerge
       summary: Merge duplicate providers (supports dry_run)
+      description: |
+        Human-only (`duplicates:merge`). Soft-deletes the absorbed provider,
+        closes the decision, and writes `api_merge_history`. When `dry_run` is
+        true, returns the planned actions without mutating the database.
+        `field_choices` are stored for audit; they are not applied as field
+        overlays in this increment.
       security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                surviving_id:
+                  type: integer
+                absorbed_id:
+                  type: integer
+                dry_run:
+                  type: boolean
+                field_choices:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Merge preview or completed merge
+  /duplicates/{id}/not-duplicate:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesNotDuplicate
+      summary: Close decision as not a duplicate
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated decision
+  /duplicates/{id}/defer:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesDefer
+      summary: Defer an open duplicate decision
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated decision
+  /datasets:
         - bearerAuth: []
       parameters:
         - name: id
