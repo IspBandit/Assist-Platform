@@ -56,10 +56,12 @@ final class GovernmentDatasetConnectorsTest extends TestCase
                 'address_field' => 'address',
             ]
         );
-        self::assertCount(2, $rows);
+        self::assertCount(3, $rows);
         self::assertSame('demo-toilet-1', $rows[0]['external_id']);
         self::assertSame('public_toilet', $rows[0]['facility_type']);
         self::assertStringContainsString('Roma', (string) $rows[0]['name']);
+        self::assertSame('demo-toilet-3', $rows[2]['external_id']);
+        self::assertStringContainsString('Batehaven', (string) $rows[2]['name']);
     }
 
     public function testCsvPayloadParsesInlineRows(): void

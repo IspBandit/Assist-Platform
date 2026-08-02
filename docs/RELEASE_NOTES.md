@@ -11,6 +11,8 @@ may remain as dated files and are linked here rather than copied.
 - AI/Polaris migrations renumbered to `101`–`116`; AI ADRs to `0021`–`0032`.
 - Wired dual-source Option B into inventoried `GET /api/v1/admin/search-gaps`
   (`meta.source=dual`). No second API path. Production flags remain off.
+- Wired `POST /api/v1/admin/datasets/{id}/sync` to real government dataset fetch
+  (review-first facility candidates; optional fixture mode).
 
 ### Government datasets and traveller facilities (DATA-012 / AI-6)
 

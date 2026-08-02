@@ -1527,6 +1527,80 @@ paths:
       responses:
         '200':
           description: Dataset collection
+  /datasets/{id}:
+    get:
+      tags: [Datasets]
+      operationId: adminDatasetsShow
+      summary: Government dataset detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dataset detail
+    patch:
+      tags: [Datasets]
+      operationId: adminDatasetsPatch
+      summary: Update government dataset catalogue fields
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Updated dataset
+  /datasets/{id}/sync:
+    post:
+      tags: [Datasets]
+      operationId: adminDatasetsSync
+      summary: Fetch dataset into facility import review queue
+      description: |
+        Creates a `government_dataset_sync_runs` row and immediately runs
+        `GovernmentDatasetService::fetchDataset` (or `importFixture` when
+        `fixture=true`). Stages traveller facility candidates for human review;
+        never auto-publishes. Failed fetches mark the sync run `failed`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: fixture
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: When true, import the registered local demo fixture for the dataset.
+      responses:
+        '200':
+          description: Sync run result (completed or error envelope on failure)
+  /datasets/{id}/sync-history:
+    get:
+      tags: [Datasets]
+      operationId: adminDatasetsSyncHistory
+      summary: List dataset sync runs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sync run collection
   /facilities:
     get:
       tags: [Facilities]

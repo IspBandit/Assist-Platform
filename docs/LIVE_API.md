@@ -110,7 +110,9 @@ Option B Increments B–G add:
 - `POST /claims/{id}/approve|reject|request-evidence` — human park-claim review (`claims:write`)
 - `GET /api/v1/admin/corrections`, `GET /corrections/{id}`, `POST .../approve|reject` — listing corrections
 - `GET /api/v1/admin/duplicates`, `POST /duplicates/check`, merge/defer/not-duplicate, merge-history
-- `GET/PATCH /api/v1/admin/datasets`, `POST /datasets/{id}/sync`, sync-history
+- `GET/PATCH /api/v1/admin/datasets`, `POST /datasets/{id}/sync` (runs
+  `GovernmentDatasetService::fetchDataset` / optional fixture; review-first),
+  `GET .../sync-history`
 - `GET /api/v1/admin/ai/usage/*`, `GET /ai/cache-performance` — empty-safe AI reporting (`ai:read`)
 - `GET /searches`, `/search-intents`, `/search-results-performance` — demand analytics (`analytics:read`)
 - `GET /sync-conflicts`, `POST /sync-conflicts/{id}/resolve` — RIC conflict queue (`sync:read`)
@@ -131,7 +133,9 @@ on super-administrator-only when empty). Enroll MFA before setting
 
 Do this on a disposable or staging deployment before production:
 
-1. Apply migrations through `092_admin_api_sync_conflicts.sql` (includes Option B tables `088`–`092`).
+1. Apply Admin API migrations through `092_admin_api_sync_conflicts.sql`
+   (Option B tables `088`–`092`). On the unified tree also apply Assist AI /
+   Polaris migrations `101`–`116` when those features are in scope.
 2. Set `ADMIN_API_ENABLED=true`, keep `ADMIN_API_RESTRICTED=true`.
 3. Set `ADMIN_API_ALLOWED_USER_IDS` to known admin IDs (or leave empty for
    super-administrator only).

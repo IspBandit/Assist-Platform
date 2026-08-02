@@ -3,6 +3,12 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Admin API dataset sync wire (DATA-012)** — `POST /api/v1/admin/datasets/{id}/sync`
+  executes `GovernmentDatasetService::fetchDataset` (optional `fixture=true`),
+  updates `government_dataset_sync_runs` to completed/failed, and stages facility
+  candidates for review. No auto-publish. OpenAPI documents show/patch/sync/history.
+
+### Added
 - **Unify CORE-011 + CORE-012 tree** — merged `origin/main` Admin API Phase 1 /
   Option B A–L into the Assist AI / Polaris line; renumbered AI/Polaris
   migrations to `101`–`116` and AI ADRs to `0021`–`0032` to clear Admin API

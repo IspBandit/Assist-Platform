@@ -7,9 +7,15 @@ namespace App\Services\Api;
 use App\Core\Database;
 use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
+use App\Services\GovernmentDatasetService;
+use Throwable;
 
 /**
- * Government dataset catalogue read/update and sync run stubs (Option B Increment D).
+ * Government dataset catalogue read/update and sync runs (Option B Increment D).
+ *
+ * `POST .../sync` creates a sync_run row and immediately executes
+ * GovernmentDatasetService::fetchDataset (review-first staging). Does not
+ * auto-publish facilities.
  */
 final class AdminApiDatasetService
 {
@@ -154,20 +160,86 @@ final class AdminApiDatasetService
             throw new AdminApiException(503, 'unavailable', 'Dataset sync runs are not available.');
         }
 
+        if (!Database::tableExists('traveller_facility_import_jobs')) {
+            throw new AdminApiException(
+                503,
+                'unavailable',
+                'Facility import jobs are not available. Apply Assist AI/DATA-012 migrations.'
+            );
+        }
+
         $now = date('Y-m-d H:i:s');
         $runId = Database::insert(
             'INSERT INTO government_dataset_sync_runs (dataset_id, status, started_at, created_at) VALUES (?, ?, ?, ?)',
-            [$id, 'queued', null, $now]
+            [$id, 'running', $now, $now]
         );
 
         AdminApiAudit::record(
-            'dataset.sync_queued',
+            'dataset.sync_started',
             'government_dataset',
             $id,
             null,
             ['sync_run_id' => $runId],
             $request
         );
+
+        $brandId = AdminApiBrandScope::brandId();
+        $userId = AdminApiContext::userId();
+        $useFixture = self::boolish($request->input('fixture', $request->query('fixture', false)));
+
+        try {
+            $gov = new GovernmentDatasetService();
+            $result = $useFixture
+                ? $gov->importFixture($id, $brandId, $userId)
+                : $gov->fetchDataset($id, $brandId, $userId);
+
+            $found = (int) ($result['found'] ?? 0);
+            Database::query(
+                'UPDATE government_dataset_sync_runs
+                 SET status = ?, finished_at = ?, records_fetched = ?, error_message = NULL
+                 WHERE id = ?',
+                ['completed', date('Y-m-d H:i:s'), $found, $runId]
+            );
+
+            AdminApiAudit::record(
+                'dataset.sync_completed',
+                'government_dataset',
+                $id,
+                null,
+                [
+                    'sync_run_id' => $runId,
+                    'job_id' => (int) ($result['job_id'] ?? 0),
+                    'found' => $found,
+                    'new' => (int) ($result['new'] ?? 0),
+                    'fixture' => $useFixture,
+                ],
+                $request
+            );
+        } catch (Throwable $e) {
+            $message = mb_substr($e->getMessage(), 0, 1000);
+            Database::query(
+                'UPDATE government_dataset_sync_runs
+                 SET status = ?, finished_at = ?, error_message = ?
+                 WHERE id = ?',
+                ['failed', date('Y-m-d H:i:s'), $message, $runId]
+            );
+
+            AdminApiAudit::record(
+                'dataset.sync_failed',
+                'government_dataset',
+                $id,
+                null,
+                ['sync_run_id' => $runId, 'error' => $message],
+                $request
+            );
+
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Dataset sync failed.',
+                ['sync' => [$message]]
+            );
+        }
 
         return [
             'dataset_id' => (string) $id,
