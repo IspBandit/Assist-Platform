@@ -37,6 +37,8 @@ return static function (Router $router): void {
         $router->get('/for-providers', 'Site\PageController@forProviders', 'for-providers');
         $router->get('/for-providers/register', 'Site\PageController@providerInterest', 'for-providers.register');
         $router->group(['middleware' => ['rate:public.provider-interest,5,3600,3600', 'turnstile']], static function (Router $router): void {
+            $router->post('/for-providers/register/search', 'Site\PageController@searchProviderMatches');
+            $router->post('/for-providers/register/confirm-new', 'Site\PageController@confirmNewProviderListing');
             $router->post('/for-providers/register', 'Site\PageController@submitProviderInterest');
         });
         $router->get('/for-caravan-parks', 'Site\PageController@forCaravanParks', 'for-caravan-parks');

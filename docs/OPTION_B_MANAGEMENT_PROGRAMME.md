@@ -28,7 +28,7 @@ not a new Tauri/React/FastAPI stack.
 | E | AI usage + search analytics Admin API | **done** | CORE-012, DATA-013, OPS-010 |
 | F | Sync conflicts + import lifecycle | **done** | DATA-011 |
 | G | Traveller facilities Admin API | **done** | ADR 0019, DATA-012 |
-| H | Claim-first onboarding + PHP admin polish | pending | VAN-010, OPS-010/011 |
+| H | Claim-first onboarding + PHP admin polish | **done** | VAN-010, OPS-010/011 |
 | I | RIC canonical pull + sync console | pending | DATA-011+ |
 | J | RIC search-gap research workflow | pending | DATA-013 |
 | K | RIC dataset catalogue + budgets | pending | DATA-012, OPS-010 |

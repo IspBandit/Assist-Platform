@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Option B Increment H — claim-first onboarding + PHP admin polish (VAN-010 / OPS-010)
+
+- Added claim-first provider onboarding on `/for-providers/register`: search-before-create,
+  “Is this your business?” match step, explicit none-of-these confirmation, second
+  duplicate check on submit with pending hold (no publication) and internal note /
+  `listing_corrections` row when tables exist. Controlled by `CLAIM_FIRST_ONBOARDING`
+  (default true).
+- Added PHP admin pages: **Administration → API service accounts** (list/create/rotate/disable
+  via `AdminApiServiceAccountService`) and **Directory → Recycle bin** (list/restore via
+  `AdminApiRecycleBinService`).
+- PHPUnit coverage for duplicate scoring/hold decision logic (`ClaimFirstOnboardingTest`).
+
 ### Admin API Option B Increments B–G (CORE-011 / VAN-002 / DATA-002 / DATA-012 / DATA-013)
 
 - Added Admin API resources for claims, listing corrections, duplicate review/merge
