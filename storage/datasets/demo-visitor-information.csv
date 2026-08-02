@@ -1,0 +1,3 @@
+id,name,facility_type,latitude,longitude,address,locality
+demo-visitor-1,Demo Batemans Bay Visitor Information,visitor_information,-35.7085,150.1745,Orient Street,Batemans Bay
+demo-visitor-2,Demo Eurobodalla Visitor Centre,visitor_information,-35.7750,150.1750,Vulcan Street,Moruya

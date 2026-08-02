@@ -37,6 +37,13 @@ return static function (Router $router): void {
         $router->post('/data-sources/national-route/upload', 'Admin\DataSourcesController@uploadNationalRoute');
         $router->post('/data-sources/national-route/process', 'Admin\DataSourcesController@processNationalRoute');
         $router->post('/data-sources/schedule', 'Admin\DataSourcesController@saveSchedule', 'admin.data-sources.schedule');
+        $router->get('/data-sources/datasets', 'Admin\GovernmentDatasetsController@index', 'admin.data-sources.datasets');
+        $router->get('/data-sources/datasets/edit', 'Admin\GovernmentDatasetsController@edit', 'admin.data-sources.datasets.edit');
+        $router->post('/data-sources/datasets/upsert', 'Admin\GovernmentDatasetsController@upsert', 'admin.data-sources.datasets.upsert');
+        $router->post('/data-sources/datasets/save', 'Admin\GovernmentDatasetsController@save', 'admin.data-sources.datasets.save');
+        $router->post('/data-sources/datasets/fetch', 'Admin\GovernmentDatasetsController@fetch', 'admin.data-sources.datasets.fetch');
+        $router->get('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@facilityReview', 'admin.data-sources.facilities.review');
+        $router->post('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@reviewFacility', 'admin.data-sources.facilities.review.post');
         $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
 
         // Platform intelligence derived from canonical provider, demand and
@@ -113,6 +120,21 @@ return static function (Router $router): void {
         $router->post('/providers/bulk-claim-invites', 'Admin\ProvidersController@bulkClaimInvites');
         $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
         $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
+
+        $router->get('/polaris', 'Admin\PolarisAdminController@index', 'admin.polaris');
+        $router->get('/polaris/manufacturers', 'Admin\PolarisAdminController@manufacturers', 'admin.polaris.manufacturers');
+        $router->get('/polaris/models', 'Admin\PolarisAdminController@models', 'admin.polaris.models');
+        $router->post('/polaris/models/lifecycle', 'Admin\PolarisAdminController@setModelLifecycle', 'admin.polaris.models.lifecycle');
+        $router->get('/polaris/recycle-bin', 'Admin\PolarisAdminController@recycleBin', 'admin.polaris.recycle-bin');
+        $router->get('/polaris/review-queue', 'Admin\PolarisAdminController@reviewQueue', 'admin.polaris.review-queue');
+        $router->post('/polaris/review-queue/draft', 'Admin\PolarisAdminController@reviewDraft', 'admin.polaris.review-draft');
+        $router->post('/polaris/review-queue/claim', 'Admin\PolarisAdminController@reviewClaim', 'admin.polaris.review-claim');
+        $router->get('/polaris/imports', 'Admin\PolarisAdminController@imports', 'admin.polaris.imports');
+        $router->post('/polaris/imports/upload', 'Admin\PolarisAdminController@uploadImport', 'admin.polaris.imports.upload');
+        $router->post('/polaris/manufacturers/merge', 'Admin\PolarisAdminController@mergeManufacturers', 'admin.polaris.manufacturers.merge');
+        $router->post('/polaris/review-queue/dealer', 'Admin\PolarisAdminController@reviewDealerClaim', 'admin.polaris.review-dealer');
+        $router->get('/polaris/settings', 'Admin\PolarisAdminController@settings', 'admin.polaris.settings');
+        $router->get('/polaris/{section}', 'Admin\PolarisAdminController@placeholder', 'admin.polaris.section');
         $router->get('/providers/duplicates', 'Admin\ProvidersController@duplicates', 'admin.providers.duplicates');
 
         // Provider prospect CRM (Phase 3): outreach, notes, CSV import/export, invitations.
@@ -259,6 +281,11 @@ return static function (Router $router): void {
         // Feature flags (Phase 10).
         $router->get('/feature-flags', 'Admin\FeatureFlagsController@index', 'admin.feature-flags');
         $router->post('/feature-flags', 'Admin\FeatureFlagsController@save');
+        $router->get('/ai-search', 'Admin\AiSearchAdminController@index', 'admin.ai-search');
+        $router->post('/ai-search', 'Admin\AiSearchAdminController@save');
+        $router->get('/ai-search/gaps', 'Admin\AiSearchAdminController@gaps', 'admin.ai-search.gaps');
+        $router->post('/ai-search/gaps', 'Admin\AiSearchAdminController@updateGap');
+        $router->get('/ai-search/gaps/export', 'Admin\AiSearchAdminController@exportGaps', 'admin.ai-search.gaps.export');
 
         // Backups — super administrators only (Phase 10).
         $router->get('/backups', 'Admin\BackupsController@index', 'admin.backups');

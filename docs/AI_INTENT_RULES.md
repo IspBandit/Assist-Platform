@@ -1,9 +1,9 @@
-# Deterministic intent rules (v1) — design
+# Deterministic intent rules (v1)
 
-**Status:** design (Phase AI-0). Version id: `intent_rules_v1`.  
-**Engine:** proposed `IntentRuleEngine` in AI-1.  
+**Status:** implemented (`IntentRuleEngine`, version id `intent_rules_v1`).  
 **Principle:** resolve obvious queries without AI; always enter orchestrator for
-logging/cache/knowledge growth.
+logging/cache/knowledge growth. Traveller-facility adapters run when
+`assist_ai_traveller_facilities` is on.
 
 ## Normalisation
 
@@ -41,7 +41,7 @@ logging/cache/knowledge growth.
 
 \* AI-1: facility-only intents fall back to matching provider categories when
 present; otherwise clarification or weak provider search + knowledge gap.
-`traveller_facilities` adapter stays stubbed until AI-6.
+`traveller_facilities` adapter is live when `assist_ai_traveller_facilities` is on (AI-6).
 
 ## Multi-match / ambiguity
 

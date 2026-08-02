@@ -78,6 +78,26 @@ records a non-Google independent evidence URL, selects the confirmed service and
 checks the retention confirmation. Bulk actions are restricted to holding,
 rejecting or restoring candidates; there is no bulk-publication path.
 
+## Government datasets (DATA-012)
+
+Catalogue table `government_datasets` plus review-first facility ingest into
+`traveller_facility_import_*` (migration `093`). Connectors reuse the DATA-006
+contract:
+
+| Key | Class | Fetch |
+| --- | --- | --- |
+| `gov_ckan` | `CkanDatasetConnector` | CKAN resource URL |
+| `gov_arcgis` | `ArcGisFeatureConnector` | ArcGIS Feature Service query |
+| `gov_csv` | `CsvDatasetConnector` | CSV payload or staged path |
+| `gov_geojson` | `GeoJsonDatasetConnector` | GeoJSON payload or staged path |
+
+Admin UI: `/admin/data-sources/datasets` (add/edit), and
+`/admin/data-sources/facilities/review`. Demo fixtures and curated National
+Public Toilet Map rows (migration `094`) ship **disabled**. Use “Import fixture”
+or enable + Fetch (row-capped) for review batches. Approved candidates publish
+into `traveller_facilities` (never `caravan_parks`). `trusted_automatic` is not
+enabled from this UI. HTTP connectors use SSRF host/IP guards.
+
 ## Scheduled work
 
 Run `php scripts/run-data-source-schedules.php` from the trusted scheduler. It

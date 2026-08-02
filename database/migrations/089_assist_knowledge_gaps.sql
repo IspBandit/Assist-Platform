@@ -1,0 +1,61 @@
+-- Assist AI Search (Phase AI-4): grouped knowledge gaps (DATA-013).
+-- Does not change Admin API Phase 1 OpenAPI. RIC hand-off via admin export
+-- until GET /api/v1/admin/search-gaps is implemented behind the planned contract.
+
+CREATE TABLE IF NOT EXISTS knowledge_gaps (
+    id                      BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    gap_key                 CHAR(64) NOT NULL,
+    brand_key               VARCHAR(40) NOT NULL,
+    brand_id                INT UNSIGNED NULL,
+    original_query_sample   VARCHAR(500) NOT NULL,
+    normalised_query        VARCHAR(500) NOT NULL,
+    intent_type             VARCHAR(40) NOT NULL DEFAULT 'unknown',
+    intent_json             JSON NULL,
+    provider_category_keys  JSON NULL,
+    stay_type_keys          JSON NULL,
+    facility_type_keys      JSON NULL,
+    town_id                 INT UNSIGNED NULL,
+    location_text           VARCHAR(120) NULL,
+    radius_bucket_km        INT UNSIGNED NULL,
+    result_quality          VARCHAR(20) NOT NULL DEFAULT 'none',
+    local_result_count_last SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    external_result_count_last SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    zero_result_count       INT UNSIGNED NOT NULL DEFAULT 0,
+    weak_result_count       INT UNSIGNED NOT NULL DEFAULT 0,
+    search_count            INT UNSIGNED NOT NULL DEFAULT 0,
+    approx_unique_sessions  INT UNSIGNED NOT NULL DEFAULT 0,
+    urgency_urgent_count    INT UNSIGNED NOT NULL DEFAULT 0,
+    ai_used_count           INT UNSIGNED NOT NULL DEFAULT 0,
+    safety_relevant         TINYINT(1) NOT NULL DEFAULT 0,
+    remote_location         TINYINT(1) NOT NULL DEFAULT 0,
+    click_through_count     INT UNSIGNED NOT NULL DEFAULT 0,
+    contact_action_count    INT UNSIGNED NOT NULL DEFAULT 0,
+    priority_score          INT UNSIGNED NOT NULL DEFAULT 0,
+    resolution_status       VARCHAR(30) NOT NULL DEFAULT 'open',
+    assigned_research_job   VARCHAR(120) NULL,
+    resolution_notes        VARCHAR(500) NULL,
+    resolved_at             DATETIME NULL,
+    first_seen_at           DATETIME NOT NULL,
+    last_seen_at            DATETIME NOT NULL,
+    updated_at              DATETIME NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_knowledge_gaps_key (gap_key),
+    KEY idx_kg_brand_priority (brand_key, resolution_status, priority_score),
+    KEY idx_kg_last_seen (last_seen_at),
+    KEY idx_kg_status (resolution_status, priority_score),
+    KEY idx_kg_town (town_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS knowledge_gap_events (
+    id                BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    knowledge_gap_id  BIGINT UNSIGNED NOT NULL,
+    assist_search_id  BIGINT UNSIGNED NULL,
+    session_id        BIGINT UNSIGNED NULL,
+    result_quality    VARCHAR(20) NOT NULL,
+    local_result_count SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    created_at        DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    KEY idx_kge_gap_created (knowledge_gap_id, created_at),
+    KEY idx_kge_assist (assist_search_id),
+    CONSTRAINT fk_kge_gap FOREIGN KEY (knowledge_gap_id) REFERENCES knowledge_gaps (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

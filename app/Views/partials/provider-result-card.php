@@ -16,7 +16,15 @@ $mapDestination = $isWorkshop && is_navigable_street_address($p['street_address'
 $resultCardId = trim((string) ($resultCardId ?? ''));
 $compact = !empty($compact);
 $searchId = isset($searchId) ? (int) $searchId : 0;
-$contactQuery = $searchId > 0 ? '?s=' . $searchId : '';
+$gapId = isset($gapId) ? (int) $gapId : 0;
+$contactParts = [];
+if ($searchId > 0) {
+    $contactParts[] = 's=' . $searchId;
+}
+if ($gapId > 0) {
+    $contactParts[] = 'g=' . $gapId;
+}
+$contactQuery = $contactParts !== [] ? '?' . implode('&', $contactParts) : '';
 $profileUrl = url($profilePath . $p['slug']) . $contactQuery;
 $hasListedPhone = trim((string) ($p['public_phone'] ?? '')) !== '';
 $canCall = $hasListedPhone && !empty($p['show_public_phone']);

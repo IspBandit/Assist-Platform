@@ -1,7 +1,8 @@
-# AI intent schema (v1) — design
+# AI intent schema (v1)
 
-**Status:** design (Phase AI-0). Not wired to production.  
+**Status:** implemented (AI-1 rules + AI-3 Structured Outputs).  
 **Version id:** `intent_schema_v1`  
+**Code:** `App\Platform\AiSearch\Intent\IntentJsonSchema`  
 **Related:** [`PHASE_AI0_DESIGN.md`](PHASE_AI0_DESIGN.md) §7, ADR 0019/0021.
 
 ## JSON Schema (strict / Structured Outputs compatible)
@@ -120,9 +121,10 @@
 ## Post-parse platform validation
 
 1. Reject unknown `provider_category_keys` not in active `service_categories.slug`.
-2. Reject `traveller_facilities` adapter until AI-6 / DATA-012 ships (treat as
-   provider-category fallback or clarification).
-3. Reject `datasets` adapter until AI-5.
+2. Allow `traveller_facilities` adapter when feature flag
+   `assist_ai_traveller_facilities` is on (AI-6); strip when off.
+3. `datasets` adapter is valid from AI-5; execution still requires feature flag
+   `assist_ai_datasets` (off by default).
 4. If `confidence < 0.55` (configurable): prefer clarification or rules-only.
 5. If `clarification_required`: do not call paid external search.
 6. Strip any unexpected keys; never accept free-form “answer” fields.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\AiSearch\Intent;
 
 /**
- * Stable taxonomy keys for providers, stays and future traveller facilities.
+ * Stable taxonomy keys for providers, stays and traveller facilities.
  */
 final class TaxonomyRegistry
 {

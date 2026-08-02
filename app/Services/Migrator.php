@@ -202,8 +202,44 @@ final class Migrator
         }
         $sql = implode("\n", $clean);
 
-        $parts = array_map('trim', explode(';', $sql));
-        return array_values(array_filter($parts, static fn ($s) => $s !== ''));
+        // Split on semicolons outside single-quoted string literals.
+        $parts = [];
+        $buffer = '';
+        $inString = false;
+        $len = strlen($sql);
+        for ($i = 0; $i < $len; $i++) {
+            $ch = $sql[$i];
+            if ($ch === "'" && $inString) {
+                // SQL escaped quote ''
+                if ($i + 1 < $len && $sql[$i + 1] === "'") {
+                    $buffer .= "''";
+                    $i++;
+                    continue;
+                }
+                $inString = false;
+                $buffer .= $ch;
+                continue;
+            }
+            if ($ch === "'" && !$inString) {
+                $inString = true;
+                $buffer .= $ch;
+                continue;
+            }
+            if ($ch === ';' && !$inString) {
+                $trimmed = trim($buffer);
+                if ($trimmed !== '') {
+                    $parts[] = $trimmed;
+                }
+                $buffer = '';
+                continue;
+            }
+            $buffer .= $ch;
+        }
+        $trimmed = trim($buffer);
+        if ($trimmed !== '') {
+            $parts[] = $trimmed;
+        }
+        return $parts;
     }
 
     public function pending(): array

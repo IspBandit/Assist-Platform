@@ -23,6 +23,10 @@ final class SearchController extends Controller
 {
     public function find(Request $request): Response
     {
+        if (current_brand()->id() === 'polaris' && current_brand()->moduleEnabled('rv_catalogue')) {
+            return (new PolarisController())->find($request);
+        }
+
         $location = trim((string) $request->input('location', ''));
         $categorySlug = trim((string) $request->input('category', ''));
         $timeframe = trim((string) $request->input('timeframe', ''));

@@ -8,28 +8,32 @@
 
 ## Context
 
-ADR 0016 already decided stays (`caravan_parks`) must not absorb standalone
-amenity POIs. The AI workstream will interpret queries for toilets, dump points,
-water, etc., and needs a clear adapter boundary without reopening Phase 1 Admin
-API naming (`/stays`).
+[ADR 0029](0029-stays-vs-traveller-facilities.md) decided stays (`caravan_parks`)
+must not absorb standalone amenity POIs. (Earlier AI drafts incorrectly cited
+this as “ADR 0016”; that number is the provider-import ADR.) The AI workstream
+interprets queries for toilets, dump points, water, etc., and needs a clear
+adapter boundary without reopening Phase 1 Admin API naming (`/stays`).
 
 ## Decision
 
-Reaffirm ADR 0016 for the AI workstream. Design facility taxonomy and a
-`TravellerFacilitySearchAdapter` stub. Do not add the traveller-facility
-production migration in AI-0–AI-5. AI-6 proceeds only after DATA-012 and schema
-approval. Until then, map amenity-like NL queries to provider category fallbacks
-and/or clarification — never invent park rows for pure amenities.
+Reaffirm ADR 0029 for the AI workstream. Design facility taxonomy and a
+`TravellerFacilitySearchAdapter`. Do not overload `caravan_parks`. AI-6 ships
+the entity behind a flag; DATA-012 populates via review-first ingest. Until the
+flag is on with reviewed rows, map amenity-like NL queries to provider category
+fallbacks and/or clarification — never invent park rows for pure amenities.
 
 ## Alternatives considered
 
-- Overload `caravan_parks` for AI results: rejected (ADR 0016).
+- Overload `caravan_parks` for AI results: rejected (ADR 0029).
 - Ship facility table inside AI-1: rejected (premature).
 
 ## Consequences
 
-Intent schema includes `facility_type_keys` early; adapter remains inert until
-AI-6. Admin API Phase 1 scope unchanged.
+Intent schema includes `facility_type_keys` early; adapter is flag-gated.
+Admin API Phase 1 scope unchanged.
+
+AI-6 shipped `traveller_facilities` behind `assist_ai_traveller_facilities`.
+Populate via DATA-012 ingest; keep Admin API Phase 1 scope unchanged.
 
 ## Quality Gate impact
 
@@ -39,4 +43,4 @@ AI-6. Admin API Phase 1 scope unchanged.
 
 ## Validation and rollback
 
-N/A for AI-0; future migration is forward-only and feature-flagged.
+Feature-flagged; migration is forward-only.

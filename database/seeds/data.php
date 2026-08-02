@@ -63,6 +63,9 @@ return [
         'social.manage'        => ['Manage social studio assets', 'marketing'],
         'marketing.manage'     => ['Manage campaigns and audiences', 'marketing'],
         'support.manage'       => ['Manage support operations', 'support'],
+        'polaris.manage'       => ['Manage Polaris RV catalogue', 'polaris'],
+        'polaris.review'       => ['Review Polaris extracted data', 'polaris'],
+        'polaris.manufacturer' => ['Manage claimed Polaris manufacturer profile', 'polaris'],
 
         // Owner finance (VanAssist platform-owner bookkeeping / general ledger)
         'owner_finance.view'             => ['View owner finance', 'owner_finance'],
@@ -85,7 +88,7 @@ return [
             'providers.approve', 'documents.verify', 'requests.manage',
             'content.moderate', 'complaints.manage',
         ],
-        'editor' => ['content.manage', 'seo.manage'],
+        'editor' => ['content.manage', 'seo.manage', 'polaris.manage', 'polaris.review'],
         'support' => ['providers.manage', 'customers.manage', 'requests.manage', 'complaints.manage', 'support.manage'],
         'finance' => ['billing.manage', 'reports.view', 'owner_finance.view', 'owner_finance.view_reports', 'owner_finance.export'],
         'marketing' => ['content.manage', 'email.manage', 'notifications.send', 'reports.view', 'social.manage', 'marketing.manage'],
@@ -95,7 +98,7 @@ return [
             'parks.manage', 'content.manage', 'content.moderate', 'email.manage', 'notifications.send',
             'seo.manage', 'reports.view', 'demand.view', 'demand.export', 'complaints.manage',
             'settings.manage', 'feature_flags.manage', 'billing.manage', 'social.manage',
-            'marketing.manage', 'support.manage', 'brands.switch',
+            'marketing.manage', 'support.manage', 'brands.switch', 'polaris.manage', 'polaris.review',
         ],
         'administrator' => [
             'users.manage', 'users.export', 'providers.manage', 'providers.approve',
@@ -108,7 +111,7 @@ return [
             'owner_finance.view_reports', 'owner_finance.export', 'owner_finance.manage_settings',
             'owner_finance.view_audit', 'owner_finance.close_period', 'owner_finance.reopen_period',
             'platform.control', 'platform.health', 'brands.switch', 'brands.manage',
-            'social.manage', 'marketing.manage', 'support.manage',
+            'social.manage', 'marketing.manage', 'support.manage', 'polaris.manage', 'polaris.review',
         ],
         'platform-administrator' => 'ALL',
         'super-administrator' => 'ALL',
@@ -396,6 +399,10 @@ return [
         'demand_analytics'       => [false, 'Enable demand-to-outcome funnel tracking, provider usage analytics and demand dashboards.'],
         'auto_matching'          => [false, 'Automatically score, invite providers and release contact on interest for approved requests (no manual dispatch).'],
         'assist_ai_search'       => [false, 'Ask VanAssist natural-language search (deterministic orchestrator; off by default).'],
+        'assist_ai_datasets'     => [false, 'Ask VanAssist dataset routing: show staged DATA-006 candidates with provenance (AI-5; off by default).'],
+        'assist_ai_traveller_facilities' => [false, 'Ask VanAssist traveller_facilities adapter (AI-6; off by default). Separate from caravan_parks (ADR 0029).'],
+        'polaris_brochure_extract' => [false, 'Polaris deterministic brochure/text → import drafts (never auto-publish).'],
+        'polaris_ai_import' => [false, 'Polaris paid AI brochure extraction via Assist AI orchestrator (planned; keep OFF).'],
     ],
 
     // Australian GST / tax-invoice defaults -> tax_settings table.
@@ -432,6 +439,7 @@ return [
         'aggregate_daily_metrics'  => 'Roll up daily provider & demand analytics metrics',
         'customer_followups'       => 'Send due customer outcome follow-ups',
         'analytics_retention'      => 'Purge analytics events/sessions past retention window',
+        'ai_retention'             => 'Purge Assist AI raw search/usage/cache/gap-event rows past retention windows',
         'refresh_osm'              => 'Refresh national OpenStreetMap provider and fuel-station data one state or city at a time',
         'import_osm'               => 'Import OpenStreetMap provider seed in batches (skips when up to date)',
         'import_locality'          => 'Import locality-provider research seed in batches (skips when up to date)',

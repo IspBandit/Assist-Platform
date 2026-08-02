@@ -30,6 +30,9 @@ final class HomeController extends Controller
                 'jsonLd' => $this->organisationSchema(),
             ]);
         }
+        if (current_brand()->id() === 'polaris') {
+            return (new PolarisController())->home($request);
+        }
         $blocks = $this->safe(
             fn () => Database::select(
                 "SELECT * FROM content_blocks WHERE block_group = 'homepage' AND is_active = 1 ORDER BY sort_order"

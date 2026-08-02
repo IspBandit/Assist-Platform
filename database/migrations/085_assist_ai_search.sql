@@ -32,7 +32,7 @@ INSERT INTO feature_flags (flag_key, is_enabled, description, updated_at)
 VALUES (
     'assist_ai_search',
     0,
-    'Ask VanAssist natural-language search (deterministic orchestrator; off by default).',
+    'Ask VanAssist natural-language search (deterministic orchestrator, off by default).',
     NOW()
 )
 ON DUPLICATE KEY UPDATE description = VALUES(description);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\AiSearch\Intent;
 
 use App\Platform\AiSearch\Dto\Intent;
+use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 
 /**
  * Validates structured intent against taxonomy allowlists (AI-1 rules path).
@@ -58,8 +59,8 @@ final class IntentSchemaValidator
         $adapters = [];
         foreach ($intent->adapterKeys as $key) {
             if (TaxonomyRegistry::isAdapterKey($key)) {
-                // AI-1: traveller_facilities and datasets are not executable yet.
-                if ($key === 'traveller_facilities' || $key === 'datasets') {
+                // traveller_facilities executable only when AI-6 flag is on.
+                if ($key === 'traveller_facilities' && !TravellerFacilitiesFeature::enabled()) {
                     continue;
                 }
                 $adapters[] = $key;
@@ -74,6 +75,9 @@ final class IntentSchemaValidator
         }
         if ($adapters === [] && $stays !== []) {
             $adapters[] = 'stays';
+        }
+        if ($adapters === [] && $facilities !== [] && TravellerFacilitiesFeature::enabled()) {
+            $adapters[] = 'traveller_facilities';
         }
 
         $urgency = in_array($intent->urgency, ['normal', 'urgent'], true) ? $intent->urgency : 'normal';

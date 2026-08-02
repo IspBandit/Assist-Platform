@@ -1,7 +1,28 @@
 # AI testing
 
-**Status:** design (Phase AI-0). Implement tests with each authorised increment.  
+**Status:** implemented with AI-1–AI-7 (`tests/Unit/AiSearch`,
+`tests/Unit/DataSources`).  
 **Rule:** no automated test may use or modify production data.
+
+## Coverage map (prompt matrix → tests)
+
+| Area | Covered by |
+| --- | --- |
+| Deterministic golden intents (toilet, dump, water, LPG, park, mobile, electrician, tyres, towing, brakes, ambiguous) | `IntentRuleEngineTest` |
+| Multiple-intent / mixed | `PromptMatrixCoverageTest` + rules engine |
+| AI valid / invalid schema / timeout / null parsed / no allowlist / injection | `IntentInterpreterTest` |
+| Provider failure (non-timeout) | `PromptMatrixCoverageTest` |
+| Low confidence / unsupported unknown AI payload | `PromptMatrixCoverageTest` |
+| Budget daily/monthly request+AUD, soft warn, provider disabled, zero caps | `AIBudgetAndCacheTest` |
+| Cache key stability; orchestrator budget/cache/no-AI path markers | `AIBudgetAndCacheTest`, `PromptMatrixCoverageTest` |
+| No silent model upgrade (allowlist reject) | `PromptMatrixCoverageTest` (OpenAiProvider) |
+| Routing provider/stay/facility/mixed/dataset augment | `SearchRouterTest`, `TravellerFacilities*` |
+| No Overpass from Ask; offline OSM seed | `OsmOfflineSeedConnectorTest` |
+| Gap key/priority/SearchGap export; click/contact scoring | `KnowledgeGapServiceTest` |
+| Staging policy / Ask-blocked / empty hits | `DraftCandidateServiceTest` |
+| Analytics wiring (routes, `?g=`, unlock, honeypot, logger classes) | `PromptMatrixCoverageTest`, `AiHardeningTest` |
+| Location privacy | `AiHardeningTest` |
+| Flag off defaults; `/ask` + `/find` registered | `AssistSearchFlagOffTest` |
 
 ## Deterministic intent engine
 
@@ -11,13 +32,13 @@ repair, auto electrician, tyres, towing, ambiguous query, multiple-intent query.
 ## AI interpreter
 
 Valid structured response, invalid schema, timeout, provider failure, budget
-exhausted, cache hit, low confidence, prompt injection attempt, unsupported
-intent.
+exhausted (orchestrator fallback reason), cache-first ordering, low confidence,
+prompt injection attempt, unsupported intent.
 
 ## Routing
 
 Provider-only, stay-only, facility-only, mixed; local adequate; external
-fallback required; external unavailable; no result.
+fallback / unavailable; no result messaging; no live Overpass.
 
 ## Cost control
 
@@ -26,16 +47,14 @@ model upgrade; no paid fallback; graceful no-AI operation.
 
 ## Knowledge engine
 
-Gap created; repeated gap grouped; priority increases; external staged;
-duplicate detected; untrusted not staged; trusted_automatic only when
-explicitly configured.
+Gap grouping keys; priority with click/contact; untrusted/prohibited not staged;
+Ask-blocked connectors rejected; trusted_automatic never auto-publishes.
 
 ## Analytics
 
-Search logged; AI usage logged; result click logged; contact action logged;
-precise location privacy rule applied.
+Search + usage loggers present; click/contact routes wired; location privacy
+applied.
 
 ## Tooling
 
-PHPUnit unit/feature tests; contract fixtures for vendor adapters (recorded
-responses, never live paid calls in CI by default).
+PHPUnit unit tests; never live paid calls in CI by default.

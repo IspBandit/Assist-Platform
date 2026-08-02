@@ -1,0 +1,33 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "demo-dump-1",
+      "properties": {
+        "id": "demo-dump-1",
+        "name": "Demo Batemans Bay Dump Point",
+        "facility_type": "dump_point",
+        "address": "1 Wharf Road, Batemans Bay NSW"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [150.1782, -35.7089]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "demo-dump-2",
+      "properties": {
+        "id": "demo-dump-2",
+        "name": "Demo Emerald Dump Point",
+        "facility_type": "dump_point",
+        "address": "Hospital Road, Emerald QLD"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [148.1625, -23.5251]
+      }
+    }
+  ]
+}

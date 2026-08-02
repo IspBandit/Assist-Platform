@@ -75,6 +75,19 @@ final class IntentRuleEngineTest extends TestCase
         self::assertSame(Intent::TYPE_FACILITY, $intent->intentType);
         self::assertContains('public_toilet', $intent->facilityTypeKeys);
         self::assertSame([], $intent->providerCategoryKeys);
+        self::assertContains('traveller_facilities', $intent->adapterKeys);
+        self::assertTrue($intent->clarificationRequired);
+    }
+
+    public function testBatehavenToiletsAndDumpPointsMandatoryQuery(): void
+    {
+        $intent = $this->engine->interpret('public toilets and dump points near Batehaven, NSW');
+        self::assertContains('public_toilet', $intent->facilityTypeKeys);
+        self::assertContains('dump_point', $intent->facilityTypeKeys);
+        self::assertContains('traveller_facilities', $intent->adapterKeys);
+        self::assertSame('Batehaven', $intent->locationText);
+        self::assertNotSame(Intent::TYPE_STAY, $intent->intentType);
+        self::assertNotContains('caravan_park', $intent->stayTypeKeys);
     }
 
     public function testSchemaValidatorStripsUnknownCategories(): void
@@ -96,6 +109,27 @@ final class IntentRuleEngineTest extends TestCase
         $validated = IntentSchemaValidator::validate($intent);
         self::assertTrue($validated['ok']);
         self::assertSame(['dump-points'], $validated['intent']->providerCategoryKeys);
+        self::assertSame(['providers', 'datasets'], $validated['intent']->adapterKeys);
+    }
+
+    public function testSchemaValidatorStripsTravellerFacilitiesWhenFlagOff(): void
+    {
+        $intent = Intent::fromArray([
+            'intent_type' => Intent::TYPE_FACILITY,
+            'provider_category_keys' => ['dump-points'],
+            'stay_type_keys' => [],
+            'facility_type_keys' => ['dump_point'],
+            'location_text' => null,
+            'use_current_location' => true,
+            'radius_km' => 25,
+            'urgency' => 'normal',
+            'adapter_keys' => ['traveller_facilities', 'providers'],
+            'confidence' => 0.9,
+            'clarification_required' => false,
+            'clarification_reason' => null,
+        ]);
+        $validated = IntentSchemaValidator::validate($intent);
+        self::assertTrue($validated['ok']);
         self::assertSame(['providers'], $validated['intent']->adapterKeys);
     }
 

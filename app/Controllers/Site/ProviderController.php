@@ -10,6 +10,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Models\Provider;
 use App\Models\Town;
+use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Services\Demand\DemandRecorder;
 use App\Services\DirectoryPresentation;
 use App\Services\FoundingGraphicService;
@@ -113,6 +114,10 @@ final class ProviderController extends Controller
         $id = (int) $provider['id'];
         $searchId = (int) $request->input('s') ?: null;
         DemandRecorder::recordProfileView($id, $searchId);
+        $gapId = (int) $request->input('g');
+        if ($gapId > 0) {
+            (new KnowledgeGapService())->recordClickThrough($gapId);
+        }
         $runs = [];
         if ($brand->id() === 'vanassist' && Database::tableExists('service_runs')) {
             $runs = Database::select(

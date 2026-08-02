@@ -16,9 +16,11 @@ searches → research jobs.
 
 Every NL search feeds a grouped knowledge-gap engine. Priority considers
 frequency, urgency, zero-result rate, safety, remoteness, contact demand and
-dataset availability. Gaps hand off to RIC via the planned Admin API
-`/search-gaps` surface (Phase 1 inventory preserved; implementation when
-authorised) and existing draft/import paths.
+dataset availability. Gaps hand off to RIC via the inventoried Admin API
+`/search-gaps` surface using Option B dual-source (`provider_searches` +
+`knowledge_gaps`, `meta.source` attribution — see
+`docs/SEARCH_GAP_DUAL_SOURCE.md`) and existing draft/import paths. No second
+Admin API path.
 
 ## Alternatives considered
 

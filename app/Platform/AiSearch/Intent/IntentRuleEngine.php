@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Platform\AiSearch\Intent;
 
 use App\Platform\AiSearch\Dto\Intent;
+use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 
 /**
  * Deterministic keyword/pattern intent engine (intent_rules_v1).
@@ -34,7 +35,7 @@ final class IntentRuleEngine
             'provider_category_keys' => ['dump-points'],
             'facility_type_keys' => ['dump_point'],
             'stay_type_keys' => [],
-            'adapter_keys' => ['providers'],
+            'adapter_keys' => ['providers', 'traveller_facilities'],
             'confidence' => 0.92,
         ],
         [
@@ -44,7 +45,7 @@ final class IntentRuleEngine
             'provider_category_keys' => ['potable-water-refill'],
             'facility_type_keys' => ['drinking_water'],
             'stay_type_keys' => [],
-            'adapter_keys' => ['providers'],
+            'adapter_keys' => ['providers', 'traveller_facilities'],
             'confidence' => 0.9,
         ],
         [
@@ -54,7 +55,7 @@ final class IntentRuleEngine
             'provider_category_keys' => [],
             'facility_type_keys' => ['public_toilet'],
             'stay_type_keys' => [],
-            'adapter_keys' => ['providers'],
+            'adapter_keys' => ['traveller_facilities'],
             'confidence' => 0.85,
         ],
         [
@@ -287,19 +288,21 @@ final class IntentRuleEngine
         $locationText = $this->extractLocationText($haystack, $matchedPatterns);
         $radius = $meta['radius_km'] ?? (int) config('ai_search.default_radius_km', 25);
 
-        // Toilets without a provider category: clarify weakly but still attempt empty provider search + gap log.
+        // Toilets: no provider category (ADR 0029). Clarify only while AI-6 flag is off.
         $clarification = false;
         $clarificationReason = null;
-        if ($intentType === Intent::TYPE_FACILITY && $providerKeys === [] && $stayKeys === []) {
+        $uniqueProviders = array_values(array_unique($providerKeys));
+        $uniqueFacilities = array_values(array_unique($facilityKeys));
+        if (in_array('public_toilet', $uniqueFacilities, true) && !TravellerFacilitiesFeature::enabled()) {
             $clarification = true;
-            $clarificationReason = 'Public toilets are not yet in a dedicated facility directory. Structured search and future traveller-facility data will cover this.';
+            $clarificationReason = 'Public toilet search is not available here yet. Try Find a service for nearby help, or ask again later.';
         }
 
         return new Intent(
             intentType: (string) $intentType,
-            providerCategoryKeys: array_values(array_unique($providerKeys)),
+            providerCategoryKeys: $uniqueProviders,
             stayTypeKeys: array_values(array_unique($stayKeys)),
-            facilityTypeKeys: array_values(array_unique($facilityKeys)),
+            facilityTypeKeys: $uniqueFacilities,
             locationText: $locationText,
             useCurrentLocation: $meta['use_current_location'],
             radiusKm: $radius,
@@ -327,13 +330,27 @@ final class IntentRuleEngine
      */
     private function extractLocationText(string $remainder, array $patterns): ?string
     {
+        // Prefer explicit "near/in/around <place>" when present.
+        if (preg_match('/\b(?:near|in|around|at)\s+([a-z0-9][a-z0-9\s\'-]{1,80}?)(?:\s*,\s*(?:nsw|vic|qld|sa|wa|tas|nt|act))?\s*$/ui', $remainder, $m) === 1) {
+            $place = trim((string) preg_replace('/\s+/u', ' ', $m[1]));
+            $place = trim($place, " \t\n\r\0\x0B,.-");
+            if ($place !== '' && mb_strlen($place) >= 2) {
+                return mb_convert_case($place, MB_CASE_TITLE, 'UTF-8');
+            }
+        }
+
         $text = $remainder;
         // Longer patterns first.
         usort($patterns, static fn (string $a, string $b): int => mb_strlen($b) <=> mb_strlen($a));
         foreach ($patterns as $pattern) {
             $text = (string) preg_replace('/\b' . preg_quote(mb_strtolower($pattern), '/') . '\b/u', ' ', $text);
         }
-        $text = (string) preg_replace('/\b(near|in|around|at|for|the|a|an|me|please|find|someone who can|repair|repairer)\b/u', ' ', $text);
+        $text = (string) preg_replace(
+            '/\b(near|in|around|at|for|the|a|an|me|please|find|someone who can|repair|repairer|and|or|with|within|km|of)\b/u',
+            ' ',
+            $text
+        );
+        $text = (string) preg_replace('/\b(nsw|vic|qld|sa|wa|tas|nt|act)\b/ui', ' ', $text);
         $text = trim((string) preg_replace('/\s+/u', ' ', $text));
         $text = trim($text, " \t\n\r\0\x0B,.-");
         if ($text === '' || mb_strlen($text) < 2) {

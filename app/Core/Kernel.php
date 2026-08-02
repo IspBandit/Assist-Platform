@@ -247,6 +247,7 @@ final class Kernel
         $this->router->aliasMiddleware('role', \App\Middleware\RequireRole::class);
         $this->router->aliasMiddleware('permission', \App\Middleware\RequirePermission::class);
         $this->router->aliasMiddleware('rate', \App\Middleware\RateLimit::class);
+        $this->router->aliasMiddleware('ask_rate', \App\Middleware\AskVanAssistRateLimit::class);
         $this->router->aliasMiddleware('turnstile', \App\Middleware\VerifyTurnstile::class);
     }
 

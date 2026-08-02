@@ -5,6 +5,17 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Government datasets and traveller facilities (DATA-012 / AI-6)
+
+- Added the government dataset catalogue under **Admin → Data sources → Government datasets**, with CKAN / ArcGIS / CSV / GeoJSON connectors, demo fixtures, and curated National Public Toilet Map rows (disabled until an administrator enables Fetch).
+- Facility import is review-first: candidates are approved into `traveller_facilities` only — never into caravan parks.
+- Ask VanAssist can show a separate **Traveller facilities** section when the `assist_ai_traveller_facilities` flag is on; the flag stays off by default until facilities are populated and Quality Gate evidence is recorded.
+- Administrators manage catalogue rows (add/edit), import fixtures or Fetch enabled sources, and bulk-approve or reject facility candidates.
+- CLI bootstrap: `php scripts/import-demo-traveller-facilities.php --approve`.
+- Knowledge gaps export SearchGap-shaped JSON for RIC (`/admin/ai-search/gaps/export?format=json`).
+- Dual-source SearchGap merge helper (`SearchGapDualSource`) and merge plan (`docs/SEARCH_GAP_DUAL_SOURCE.md`) for CORE-011 `GET /api/v1/admin/search-gaps` — no second API; production Ask remains off.
+- Quality Gate evidence: **CONDITIONAL PASS** only — `docs/AI_QUALITY_GATE_EVIDENCE.md`. Production Ask remains off until a full Platform Quality Gate pass.
+
 ### Location-first behaviour across every discovery journey
 
 - Extended optional current-location resolution beyond the homepage to Fuel, EV charging, Places to Stay, the service directory, every service-category page, provider browsing, result refinements and assistance requests.

@@ -1,7 +1,8 @@
 # Dataset routing
 
-**Status:** design (Phase AI-0).  
-**Reuse:** [`DATA_SOURCES.md`](DATA_SOURCES.md), ADR 0006/0007, DATA-006.  
+**Status:** AI-5 Ask dataset adapter live (flag off by default); DATA-012
+government catalogue/connectors stage facility candidates for review.  
+**Reuse:** [`DATA_SOURCES.md`](DATA_SOURCES.md), [`DATA_012.md`](DATA_012.md), ADR 0006/0007, DATA-006.  
 **Do not** invent a second connector framework unless a gap is documented.
 
 ## Orchestrator role
@@ -32,8 +33,18 @@ recorded decision.
 
 ## OpenStreetMap
 
-Configurable adapter. Prefer managed Overpass, AU extract or regional subsets
-over abusing public Overpass. Respect ODbL. Mappings documented and configurable.
+Configurable **offline seed** adapter (`osm_offline_seed`, migration `097`).
+Ask never calls live Overpass. Operators stage from the managed AU seed /
+server extract via:
+
+`php scripts/stage-osm-offline-seed.php [--query=…] [--state=…] [--limit=…] [--dry-run]`
+
+Gate with `AI_OSM_OFFLINE_ENABLED=1` (or `--force`). Hits enter DATA-006 as
+`trusted_review` candidates through `DraftCandidateService`. Live Overpass
+refresh remains an admin/cron path only (`OsmRefreshService`), separate from Ask.
+
+Prefer managed Overpass, AU extract or regional subsets over abusing public
+Overpass. Respect ODbL. Mappings documented and configurable.
 
 ## Paid APIs
 

@@ -33,6 +33,15 @@ formats include Instagram post, story and profile graphics plus Facebook post,
 cover and profile graphics. Campaign purposes include launch, provider
 recruitment, service discovery, education/safety and community engagement.
 
+## Government datasets and traveller facilities
+
+Open **Data sources → Government datasets** to manage the DATA-012 catalogue
+(CKAN / ArcGIS / CSV / GeoJSON). Demo fixtures and curated National Public Toilet
+Map rows ship disabled. Enable a row and **Fetch** (row-capped) or **Import
+fixture**, then approve candidates under **Facility review**. Approval writes
+`traveller_facilities` only — never `caravan_parks`. Use Assist AI Search to
+confirm the release gate before turning on `assist_ai_traveller_facilities`.
+
 ## Provider discovery and verification
 
 `php scripts/classify-brand-providers.php --dry-run` reports the canonical

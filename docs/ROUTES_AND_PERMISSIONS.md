@@ -9,6 +9,7 @@ state-changing browser routes use CSRF protection.
 | LocalTorque motorsport | `/motorsport` | LocalTorque host only; official sanctioning-body, venue and calendar links are public/read-only |
 | TowSmart | `/calculator`, `/account/towing-combinations` | TowSmart host/module; saving requires authenticated owner |
 | TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
+| Polaris | `/rvs`, `/find`, `/compare`, `/tow-match`, `/floorplans`, `/saved`, `/portal/manufacturer` | Polaris host + `rv_catalogue` module; brand remains private until launch |
 | Authentication | `/login`, `/register`, reset/verification/logout | Guest/auth state, CSRF and rate limiting |
 | Customer account | `/account/*` | `auth`; controllers must enforce user ownership and brand scope |
 | Provider portal | `/provider/*` | `auth` plus provider/administrator/super-administrator role; controllers enforce provider ownership |
@@ -32,6 +33,31 @@ roles require an assigned permission.
 | `GET /admin/demand/providers` | `demand.view` | Selected-brand provider result appearances, profile views and contact actions |
 | `GET /admin/demand/funnel` | `demand.view` | Selected-brand search-to-confirmed-use funnel |
 | `GET /admin/demand/export` | `demand.export` | Selected-brand date-filtered CSV output |
+
+## Assist AI Search (CORE-012)
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/ai-search` | `settings.manage` | AI settings, budget remaining, usage today/month, cache hit rate, paid-AI gate |
+| `POST /admin/ai-search` | `settings.manage` | Update caps/flags/allowlist; audit `ai.settings_updated`; no API keys stored |
+| `GET /admin/ai-search/gaps` | `demand.view` or `settings.manage` | Ranked knowledge gaps for selected brand |
+| `POST /admin/ai-search/gaps` | `settings.manage` | Update gap status / RIC job notes |
+| `GET /admin/ai-search/gaps/export` | `demand.export` or `settings.manage` | CSV for RIC research hand-off |
+
+## Polaris catalogue (POL-001…POL-009)
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/polaris` | `polaris.manage` | Selected brand with `rv_catalogue` |
+| `GET /admin/polaris/manufacturers` | `polaris.manage` | Lifecycle-filtered manufacturer list |
+| `GET /admin/polaris/models` | `polaris.manage` | Lifecycle-filtered model list |
+| `POST /admin/polaris/models/lifecycle` | `polaris.manage` | Soft lifecycle transitions |
+| `GET /admin/polaris/imports` | `polaris.manage` | CSV draft import jobs |
+| `POST /admin/polaris/imports/upload` | `polaris.manage` | Creates drafts only; never auto-publishes |
+| `GET /admin/polaris/review-queue` | `polaris.manage` | Pending drafts and manufacturer claims |
+| `POST /admin/polaris/review-queue/draft` | `polaris.review` | Approve (publish) or reject draft |
+| `POST /admin/polaris/review-queue/claim` | `polaris.manage` | Approve or reject manufacturer claim |
+| `GET/POST /portal/manufacturer*` | auth + claim gate | Claim-first; edits set verification pending |
 
 Anonymous session ids are never shown in the administrator UI. Signed-in and
 anonymous counts are aggregated; reports do not expose IP addresses or raw
@@ -59,6 +85,12 @@ brand isolation tests and an update here when it creates a new surface.
 | `POST /admin/data-sources/run` | `data_sources.run` | Platform Admin only |
 | `GET/POST /admin/data-sources/review` | `data_sources.review` | Platform Admin only |
 | `POST /admin/data-sources/schedule` | `data_sources.manage` | Platform Admin only |
+| `GET /admin/data-sources/datasets` | `data_sources.view` | Platform Admin only |
+| `GET /admin/data-sources/datasets/edit` | `data_sources.manage` | Platform Admin only |
+| `POST /admin/data-sources/datasets/upsert` | `data_sources.manage` | Platform Admin only |
+| `POST /admin/data-sources/datasets/save` | `data_sources.manage` | Platform Admin only |
+| `POST /admin/data-sources/datasets/fetch` | `data_sources.run` | Platform Admin only |
+| `GET/POST /admin/data-sources/facilities/review` | `data_sources.review` | Platform Admin only |
 
 # Data Intelligence
 

@@ -9,6 +9,7 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Models\Provider;
+use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Services\CampaignMetrics;
 use App\Services\Demand\DemandRecorder;
 
@@ -44,6 +45,10 @@ final class ContactActionController extends Controller
             'search_id' => (int) $request->input('s') ?: null,
             'route'     => 'providers/' . $provider['slug'],
         ]);
+        $gapId = (int) $request->input('g');
+        if ($gapId > 0) {
+            (new KnowledgeGapService())->recordContactAction($gapId);
+        }
         $attribution = Session::get('sponsored_attribution');
         if (is_array($attribution)
             && (int) ($attribution['provider_id'] ?? 0) === (int) $provider['id']

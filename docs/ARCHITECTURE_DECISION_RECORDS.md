@@ -57,19 +57,24 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
 - 0014: Separate directory accuracy from marketing outreach.
 - 0015: Admin API is the only external write path to production (no direct DB).
-- 0016: Stays vs narrowly scoped traveller facilities.
+- 0016: Server-owned provider import and canonical campaign taxonomy.
 - 0017: Assist RIC is the initial local management client (Option B).
 - 0018: Shared Assist AI Orchestrator (accepted; AI-1 foundation).
-- 0019: AI is interpretation, not factual authority.
-- 0020: Provider-neutral AI abstraction.
-- 0021: Deterministic and cache-first routing.
-- 0022: Hard AI budget enforcement.
-- 0023: Natural-language search alongside structured search.
-- 0024: Knowledge-gap-driven database growth.
-- 0025: External results are staged with provenance.
-- 0026: No direct AI publishing.
-- 0027: Traveller facilities remain separate from stays — AI workstream.
+- 0019: AI is interpretation, not factual authority (accepted).
+- 0020: Provider-neutral AI abstraction (accepted).
+- 0021: Deterministic and cache-first routing (accepted).
+- 0022: Hard AI budget enforcement (accepted).
+- 0023: Natural-language search alongside structured search (accepted).
+- 0024: Knowledge-gap-driven database growth (accepted).
+- 0025: External results are staged with provenance (accepted).
+- 0026: No direct AI publishing (accepted).
+- 0027: Traveller facilities remain separate from stays — AI workstream (accepted).
+- 0028: Polaris is a fifth Assist Platform brand (private until domain confirmed);
+  detail ADRs under `docs/polaris/DECISIONS/`.
+- 0029: Stays vs narrowly scoped traveller facilities (accepted; corrects earlier AI docs that mislabelled this as 0016).
 
-Gate: `docs/PHASE_AI0_DESIGN.md`. Owner brief: `docs/AI0_OWNER_DECISION_BRIEF.md`.
+Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
+`docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;
+production Ask requires Platform Quality Gate.
 
 The index must be updated whenever an ADR is accepted.

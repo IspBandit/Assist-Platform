@@ -58,14 +58,14 @@ final class Intent
     {
         return [
             'intent_type' => $this->intentType,
-            'provider_category_keys' => array_values($this->providerCategoryKeys),
-            'stay_type_keys' => array_values($this->stayTypeKeys),
-            'facility_type_keys' => array_values($this->facilityTypeKeys),
+            'provider_category_keys' => $this->providerCategoryKeys,
+            'stay_type_keys' => $this->stayTypeKeys,
+            'facility_type_keys' => $this->facilityTypeKeys,
             'location_text' => $this->locationText,
             'use_current_location' => $this->useCurrentLocation,
             'radius_km' => $this->radiusKm,
             'urgency' => $this->urgency,
-            'adapter_keys' => array_values($this->adapterKeys),
+            'adapter_keys' => $this->adapterKeys,
             'confidence' => $this->confidence,
             'clarification_required' => $this->clarificationRequired,
             'clarification_reason' => $this->clarificationReason,
@@ -75,23 +75,23 @@ final class Intent
     /** @param array<string,mixed> $data */
     public static function fromArray(array $data, string $source = 'rules'): self
     {
+        $location = $data['location_text'] ?? null;
+        $radius = $data['radius_km'] ?? null;
+        $reason = $data['clarification_reason'] ?? null;
+
         return new self(
             intentType: (string) ($data['intent_type'] ?? self::TYPE_UNKNOWN),
             providerCategoryKeys: self::stringList($data['provider_category_keys'] ?? []),
             stayTypeKeys: self::stringList($data['stay_type_keys'] ?? []),
             facilityTypeKeys: self::stringList($data['facility_type_keys'] ?? []),
-            locationText: isset($data['location_text']) && $data['location_text'] !== null && $data['location_text'] !== ''
-                ? (string) $data['location_text']
-                : null,
+            locationText: is_string($location) && $location !== '' ? $location : null,
             useCurrentLocation: (bool) ($data['use_current_location'] ?? false),
-            radiusKm: isset($data['radius_km']) && $data['radius_km'] !== null ? (int) $data['radius_km'] : null,
+            radiusKm: is_numeric($radius) ? (int) $radius : null,
             urgency: (string) ($data['urgency'] ?? 'normal'),
             adapterKeys: self::stringList($data['adapter_keys'] ?? []),
             confidence: (float) ($data['confidence'] ?? 0.0),
             clarificationRequired: (bool) ($data['clarification_required'] ?? false),
-            clarificationReason: isset($data['clarification_reason']) && $data['clarification_reason'] !== null
-                ? (string) $data['clarification_reason']
-                : null,
+            clarificationReason: is_string($reason) && $reason !== '' ? $reason : null,
             source: $source,
         );
     }

@@ -45,7 +45,7 @@ final class AssistSearchLogger
                     json_encode($intent->toArray(), JSON_THROW_ON_ERROR),
                     $intent->source,
                     $intent->confidence,
-                    json_encode(array_values($intent->adapterKeys), JSON_THROW_ON_ERROR),
+                    json_encode($intent->adapterKeys, JSON_THROW_ON_ERROR),
                     max(0, min(65535, $localCount)),
                     max(0, min(65535, $externalCount)),
                     $fallbackReason !== null && $fallbackReason !== '' ? mb_substr($fallbackReason, 0, 120) : null,
