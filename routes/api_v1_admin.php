@@ -13,6 +13,8 @@ declare(strict_types=1);
  * Increment 6: recycle bin list/restore/purge.
  * Increment 7: drafts + import package ingest.
  * Increment 8: audit read + search-gap analytics + MFA scaffold.
+ * Option B Increments B–G: claims, corrections, duplicates, datasets, AI usage,
+ * search analytics, sync conflicts, facilities and import lifecycle extensions.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -157,6 +159,116 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/imports', 'Api\\V1\\Admin\\ImportController@store', 'api.v1.admin.imports.store');
                 $router->post('/imports/{id}/validate', 'Api\\V1\\Admin\\ImportController@validateJob', 'api.v1.admin.imports.validate');
                 $router->post('/imports/{id}/stage', 'Api\\V1\\Admin\\ImportController@stage', 'api.v1.admin.imports.stage');
+                $router->post('/imports/{id}/publish', 'Api\\V1\\Admin\\ImportController@publish', 'api.v1.admin.imports.publish');
+                $router->post('/imports/{id}/cancel', 'Api\\V1\\Admin\\ImportController@cancel', 'api.v1.admin.imports.cancel');
+                $router->post('/imports/{id}/retry', 'Api\\V1\\Admin\\ImportController@retry', 'api.v1.admin.imports.retry');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:claims:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/claims', 'Api\\V1\\Admin\\ClaimController@index', 'api.v1.admin.claims.index');
+                $router->get('/claims/{id}', 'Api\\V1\\Admin\\ClaimController@show', 'api.v1.admin.claims.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:claims:write', 'admin_api_human'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/claims/{id}/approve', 'Api\\V1\\Admin\\ClaimController@approve', 'api.v1.admin.claims.approve');
+                $router->post('/claims/{id}/reject', 'Api\\V1\\Admin\\ClaimController@reject', 'api.v1.admin.claims.reject');
+                $router->post('/claims/{id}/request-evidence', 'Api\\V1\\Admin\\ClaimController@requestEvidence', 'api.v1.admin.claims.request_evidence');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:corrections:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/corrections', 'Api\\V1\\Admin\\CorrectionController@index', 'api.v1.admin.corrections.index');
+                $router->get('/corrections/{id}', 'Api\\V1\\Admin\\CorrectionController@show', 'api.v1.admin.corrections.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:corrections:write', 'admin_api_human'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/corrections/{id}/approve', 'Api\\V1\\Admin\\CorrectionController@approve', 'api.v1.admin.corrections.approve');
+                $router->post('/corrections/{id}/reject', 'Api\\V1\\Admin\\CorrectionController@reject', 'api.v1.admin.corrections.reject');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:duplicates:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/duplicates', 'Api\\V1\\Admin\\DuplicateController@index', 'api.v1.admin.duplicates.index');
+                $router->get('/duplicates/merge-history', 'Api\\V1\\Admin\\DuplicateController@mergeHistory', 'api.v1.admin.duplicates.merge_history');
+                $router->get('/duplicates/{id}', 'Api\\V1\\Admin\\DuplicateController@show', 'api.v1.admin.duplicates.show');
+                $router->post('/duplicates/check', 'Api\\V1\\Admin\\DuplicateController@check', 'api.v1.admin.duplicates.check');
+                $router->post('/duplicates/{id}/defer', 'Api\\V1\\Admin\\DuplicateController@defer', 'api.v1.admin.duplicates.defer');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:duplicates:merge', 'admin_api_human'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/duplicates/{id}/merge', 'Api\\V1\\Admin\\DuplicateController@merge', 'api.v1.admin.duplicates.merge');
+                $router->post('/duplicates/{id}/not-duplicate', 'Api\\V1\\Admin\\DuplicateController@notDuplicate', 'api.v1.admin.duplicates.not_duplicate');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:datasets:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/datasets', 'Api\\V1\\Admin\\DatasetController@index', 'api.v1.admin.datasets.index');
+                $router->get('/datasets/{id}', 'Api\\V1\\Admin\\DatasetController@show', 'api.v1.admin.datasets.show');
+                $router->get('/datasets/{id}/sync-history', 'Api\\V1\\Admin\\DatasetController@syncHistory', 'api.v1.admin.datasets.sync_history');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:datasets:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->patch('/datasets/{id}', 'Api\\V1\\Admin\\DatasetController@update', 'api.v1.admin.datasets.update');
+                $router->post('/datasets/{id}/sync', 'Api\\V1\\Admin\\DatasetController@sync', 'api.v1.admin.datasets.sync');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:ai:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/ai/usage/summary', 'Api\\V1\\Admin\\AiUsageController@summary', 'api.v1.admin.ai.usage.summary');
+                $router->get('/ai/usage/costs', 'Api\\V1\\Admin\\AiUsageController@costs', 'api.v1.admin.ai.usage.costs');
+                $router->get('/ai/usage/requests', 'Api\\V1\\Admin\\AiUsageController@requests', 'api.v1.admin.ai.usage.requests');
+                $router->get('/ai/cache-performance', 'Api\\V1\\Admin\\AiUsageController@cachePerformance', 'api.v1.admin.ai.cache_performance');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:sync:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/sync-conflicts', 'Api\\V1\\Admin\\SyncConflictController@index', 'api.v1.admin.sync_conflicts.index');
+                $router->get('/sync-conflicts/{id}', 'Api\\V1\\Admin\\SyncConflictController@show', 'api.v1.admin.sync_conflicts.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:sync:read', 'admin_api_human'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/sync-conflicts/{id}/resolve', 'Api\\V1\\Admin\\SyncConflictController@resolve', 'api.v1.admin.sync_conflicts.resolve');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:facilities:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/facilities', 'Api\\V1\\Admin\\FacilityController@index', 'api.v1.admin.facilities.index');
+                $router->get('/facilities/{id}', 'Api\\V1\\Admin\\FacilityController@show', 'api.v1.admin.facilities.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:facilities:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/facilities', 'Api\\V1\\Admin\\FacilityController@store', 'api.v1.admin.facilities.store');
+                $router->patch('/facilities/{id}', 'Api\\V1\\Admin\\FacilityController@update', 'api.v1.admin.facilities.update');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:lifecycle:write'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/facilities/{id}/publish', 'Api\\V1\\Admin\\FacilityController@publish', 'api.v1.admin.facilities.publish');
+                $router->post('/facilities/{id}/unpublish', 'Api\\V1\\Admin\\FacilityController@unpublish', 'api.v1.admin.facilities.unpublish');
+                $router->post('/facilities/{id}/archive', 'Api\\V1\\Admin\\FacilityController@archive', 'api.v1.admin.facilities.archive');
+                $router->post('/facilities/{id}/restore', 'Api\\V1\\Admin\\FacilityController@restore', 'api.v1.admin.facilities.restore');
+                $router->delete('/facilities/{id}', 'Api\\V1\\Admin\\FacilityController@destroy', 'api.v1.admin.facilities.destroy');
             });
 
             $router->group([
@@ -170,6 +282,9 @@ return static function (\App\Core\Router $router): void {
                 'middleware' => ['admin_api_scope:analytics:read'],
             ], static function (\App\Core\Router $router): void {
                 $router->get('/search-gaps', 'Api\\V1\\Admin\\SearchGapController@index', 'api.v1.admin.search_gaps.index');
+                $router->get('/searches', 'Api\\V1\\Admin\\SearchAnalyticsController@searches', 'api.v1.admin.searches.index');
+                $router->get('/search-intents', 'Api\\V1\\Admin\\SearchAnalyticsController@searchIntents', 'api.v1.admin.search_intents.index');
+                $router->get('/search-results-performance', 'Api\\V1\\Admin\\SearchAnalyticsController@searchResultsPerformance', 'api.v1.admin.search_results_performance.index');
             });
         });
     });

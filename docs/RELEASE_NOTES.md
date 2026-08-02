@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Admin API Option B Increments B–G (CORE-011 / VAN-002 / DATA-002 / DATA-012 / DATA-013)
+
+- Added Admin API resources for claims, listing corrections, duplicate review/merge
+  (with `dry_run`), government datasets, AI usage summaries, search analytics,
+  sync conflicts, traveller facilities (`/facilities`, ADR 0019) and import
+  publish/cancel/retry lifecycle actions.
+- Extended scopes: `claims:*`, `corrections:*`, `duplicates:read`, `datasets:*`,
+  `facilities:*`, `ai:read`; `duplicates:merge` and `drafts:approve` remain
+  human-only (`NEVER_SERVICE`). RIC least-privilege adds `claims:read`,
+  `datasets:read`, `facilities:read`.
+- Forward migrations `088`–`092` create listing corrections, duplicate decisions,
+  dataset/facility tables, AI usage reporting tables and sync conflict queue.
+- Contract tests and OpenAPI paths updated; apply migrations before enabling new
+  routes in staging.
+
 ### Admin API Option B closeout (CORE-011 / OPS-010 / DATA-011 / OPS-011)
 
 - Recorded conditional Platform Quality Gate evidence for Admin API + Assist RIC

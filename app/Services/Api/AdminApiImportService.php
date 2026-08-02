@@ -283,6 +283,101 @@ final class AdminApiImportService
     }
 
     /** @return array<string,mixed> */
+    public function publish(string $id, Request $request): array
+    {
+        $job = $this->findScoped($id);
+        if ((string) $job['status'] !== 'staged') {
+            throw new AdminApiException(409, 'conflict', 'Import job must be staged before publish.');
+        }
+
+        $draftIds = Database::select(
+            'SELECT draft_id FROM api_import_job_items WHERE job_id = ? AND status = ? AND draft_id IS NOT NULL',
+            [$id, 'staged']
+        );
+
+        $published = 0;
+        foreach ($draftIds as $row) {
+            try {
+                $this->drafts->approve((string) $row['draft_id'], $request);
+                ++$published;
+            } catch (\Throwable) {
+                // Continue with remaining drafts; job remains partially published.
+            }
+        }
+
+        Database::query(
+            'UPDATE api_import_jobs SET status = ?, updated_at = NOW() WHERE id = ?',
+            ['published', $id]
+        );
+
+        AdminApiAudit::record(
+            'import.published',
+            'api_import_job',
+            $id,
+            ['status' => 'staged'],
+            ['status' => 'published', 'published_drafts' => $published],
+            $request
+        );
+
+        return $this->show($id);
+    }
+
+    /** @return array<string,mixed> */
+    public function cancel(string $id, Request $request): array
+    {
+        $job = $this->findScoped($id);
+        if (in_array((string) $job['status'], ['cancelled', 'published'], true)) {
+            throw new AdminApiException(409, 'conflict', 'Import job cannot be cancelled in its current status.');
+        }
+
+        Database::query(
+            'UPDATE api_import_jobs SET status = ?, updated_at = NOW() WHERE id = ?',
+            ['cancelled', $id]
+        );
+
+        AdminApiAudit::record(
+            'import.cancelled',
+            'api_import_job',
+            $id,
+            ['status' => (string) $job['status']],
+            ['status' => 'cancelled'],
+            $request
+        );
+
+        return $this->show($id);
+    }
+
+    /** @return array<string,mixed> */
+    public function retry(string $id, Request $request): array
+    {
+        $job = $this->findScoped($id);
+        if (!in_array((string) $job['status'], ['failed', 'validated', 'received'], true)) {
+            throw new AdminApiException(409, 'conflict', 'Import job cannot be retried in its current status.');
+        }
+
+        Database::query(
+            'UPDATE api_import_job_items SET status = ?, error_json = NULL WHERE job_id = ? AND status IN (?, ?)',
+            ['pending', $id, 'invalid', 'failed']
+        );
+
+        Database::query(
+            'UPDATE api_import_jobs SET status = ?, updated_at = NOW() WHERE id = ?',
+            ['received', $id]
+        );
+
+        AdminApiAudit::record(
+            'import.retried',
+            'api_import_job',
+            $id,
+            ['status' => (string) $job['status']],
+            ['status' => 'received'],
+            $request
+        );
+
+        return $this->validate($id, $request);
+    }
+
+    /** @return array<string,mixed> */
     private function findScoped(string $id): array
     {
         $row = Database::selectOne(

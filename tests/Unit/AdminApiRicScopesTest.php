@@ -15,6 +15,10 @@ final class AdminApiRicScopesTest extends TestCase
         self::assertNotSame([], $scopes);
         self::assertContains('imports:write', $scopes);
         self::assertContains('analytics:read', $scopes);
+        self::assertContains('claims:read', $scopes);
+        self::assertContains('datasets:read', $scopes);
+        self::assertContains('facilities:read', $scopes);
+        self::assertContains('sync:read', $scopes);
         self::assertNotContains('recycle_bin:purge', $scopes);
         self::assertNotContains('mfa:verify', $scopes);
 

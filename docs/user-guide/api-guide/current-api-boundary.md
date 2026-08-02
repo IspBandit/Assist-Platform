@@ -46,8 +46,9 @@ providers, and load TowSmart catalogue data on the TowSmart brand. Consumers
 must handle validation and error responses implemented by each controller.
 
 When enabled, Assist RIC may authenticate as a service account, submit checksummed
-import packages, manage drafts, and read providers, stays, audit and search-gaps
-through `/api/v1/admin` only — never by opening production MariaDB.
+import packages, manage drafts, read providers, stays, facilities, claims,
+datasets, audit, search analytics and search-gaps through `/api/v1/admin` only —
+never by opening production MariaDB.
 
 ## Workflows
 
@@ -112,4 +113,4 @@ Assist Platform product and engineering.
 | 2026-07-30 | Initial living-documentation page for the current first-party API boundary. |
 | 2026-08-01 | Documented `/api/v1/admin` Phase 1 foundation as a restricted, default-off management API (CORE-011). |
 | 2026-08-01 | Documented OPS-010 TOTP enrollment and MFA login challenge for Admin API humans. |
-| 2026-08-02 | Recorded conditional Quality Gate evidence for Admin API + RIC client closeout; production flags still gated. |
+| 2026-08-02 | Documented Option B Admin API Increments B–G: claims, corrections, duplicates, datasets, AI usage, search analytics, sync conflicts and `/facilities`. |

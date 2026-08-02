@@ -1455,6 +1455,112 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchGapCollectionResponse'
+  /claims:
+    get:
+      tags: [Claims]
+      operationId: adminClaimsIndex
+      summary: List park claims and provider invite tokens
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Claim collection
+  /corrections:
+    get:
+      tags: [Corrections]
+      operationId: adminCorrectionsIndex
+      summary: List listing correction submissions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Correction collection
+  /duplicates:
+    get:
+      tags: [Duplicates]
+      operationId: adminDuplicatesIndex
+      summary: List duplicate review decisions and heuristic suspects
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Duplicate collection
+  /duplicates/check:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesCheck
+      summary: Score a provider pair and persist an open decision
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Duplicate decision created
+  /duplicates/{id}/merge:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesMerge
+      summary: Merge duplicate providers (supports dry_run)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Merge result or dry-run preview
+  /datasets:
+    get:
+      tags: [Datasets]
+      operationId: adminDatasetsIndex
+      summary: List government datasets
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dataset collection
+  /facilities:
+    get:
+      tags: [Facilities]
+      operationId: adminFacilitiesIndex
+      summary: List traveller facilities (ADR 0019)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Facility collection
+  /ai/usage/summary:
+    get:
+      tags: [AI]
+      operationId: adminAiUsageSummary
+      summary: AI usage summary for the current brand
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usage summary (empty-safe)
+  /searches:
+    get:
+      tags: [Analytics]
+      operationId: adminSearchesIndex
+      summary: Raw provider search events
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Search event collection
+  /sync-conflicts:
+    get:
+      tags: [Sync]
+      operationId: adminSyncConflictsIndex
+      summary: List RIC live sync conflicts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Sync conflict collection
 
 components:
 

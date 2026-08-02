@@ -37,7 +37,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
-| VAN-002 | Provider claims, assistance and nearby-help launch readiness | ready | End-to-end provider/customer acceptance |
+| VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Admin API claims/corrections shipped (Increment B); end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | ready | Search-before-create UX, “Is this your business?”, claim priority, duplicate hold, linked to VAN-002 and DATA-002 |
 | VAN-011 | AI-assisted natural-language search (intent → location/category) | later | Optional, budget-capped, off by default; never factual authority; depends on CORE-011 and OPS-010 |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
@@ -54,7 +54,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls |
-| DATA-002 | Duplicate detection and merge with audit preservation | ready | Dry run, merge tests, administrator workflow, Admin API merge/review actions and RIC hand-off (absorbs former DATA-014 request) |
+| DATA-002 | Duplicate detection and merge with audit preservation | in progress | Admin API duplicate review/merge + dry run shipped; full merge workflow QA remains |
 | DATA-003 | Cross-brand recommendation policies | ready | Relevance rules, labelled origin and analytics |
 | DATA-004 | Brand-scoped website, provider-interest and coverage-gap reporting | in progress | Shared first-party event scope, admin website-insights summary and zero-result/provider-interest reporting implemented; production data collection and acceptance remain |
 | DATA-005 | Data Intelligence, opportunity scoring and action queue | in progress | Modular metric sources, population-aware scoring, verification/import quality and direct Data Sources hand-off |
@@ -64,8 +64,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
 | DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
 | DATA-011 | Assist RIC live Admin API synchronisation | done | RIC live client, package mapper, validate-only submit, search-gaps pull and sync status shipped; staging rehearsal is operational (not a code gap) |
-| DATA-012 | Government dataset catalogue and import connectors | ready | Catalogue, CKAN/ArcGIS/CSV/GeoJSON adapters, provenance, review-first ingest; extends DATA-006 |
-| DATA-013 | Search gap and knowledge growth engine | ready | Ranked zero/weak searches → research jobs via RIC; depends on DATA-004 and DATA-011 |
+| DATA-012 | Government dataset catalogue and import connectors | in progress | Admin API dataset catalogue + sync-run stub shipped; connector workers remain |
+| DATA-013 | Search gap and knowledge growth engine | in progress | Admin API search analytics + gaps shipped; RIC research workflow remains (Increment J) |
 | DATA-014 | Canonical entity and source provenance model | ready | Stable entity IDs, source links, field-level provenance where practical; extends DATA-001 |
 
 ## Infrastructure

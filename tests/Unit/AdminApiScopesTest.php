@@ -70,7 +70,11 @@ final class AdminApiScopesTest extends TestCase
 
         self::assertFalse($catalog['recycle_bin:purge']['service']);
         self::assertFalse($catalog['service_accounts:admin']['service']);
+        self::assertFalse($catalog['duplicates:merge']['service']);
+        self::assertFalse($catalog['drafts:approve']['service']);
         self::assertTrue($catalog['providers:read']['service']);
+        self::assertTrue($catalog['claims:read']['service']);
+        self::assertTrue($catalog['facilities:read']['service']);
     }
 
     public function testDefaultServiceExcludesNeverScopes(): void
