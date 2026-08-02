@@ -8,7 +8,7 @@
 | AI-1 | Deterministic orchestrator | **Complete** |
 | AI-2 | Cache + budget | **Complete** |
 | AI-3 | OpenAI intent interpreter | **Complete (off until configured)** |
-| AI-4 / DATA-013 | Knowledge gaps + RIC SearchGap JSON + dual-source glue | **Complete on this branch** (Admin API wire on CORE-011 merge) |
+| AI-4 / DATA-013 | Knowledge gaps + RIC SearchGap JSON + dual-source `/search-gaps` | **Complete** (wired on unify branch) |
 | AI-5 | Dataset routing + offline OSM staging | **Complete (flag off)** |
 | AI-6 | Traveller facilities | **Complete (flag off)** |
 | AI-7 | Hardening + Ask CAPTCHA unlock | **Complete** |

@@ -1,7 +1,9 @@
 # SearchGap dual-source (Option B) — merge plan
 
 **Backlog:** DATA-013, CORE-011, DATA-011  
-**Status on AI branch:** glue + docs landed; Admin API wiring waits for CORE-011 merge  
+**Status:** dual-source wired on unified tree (`AdminApiSearchGapService` +
+`SearchGapDualSource`); production Ask / facilities / datasets / paid AI and
+`ADMIN_API_ENABLED` remain **off**  
 **Decision:** Prefer a single inventoried endpoint
 `GET /api/v1/admin/search-gaps` that unions `provider_searches` zeros and
 `knowledge_gaps`, distinguished by `meta.source` — **do not** invent a second

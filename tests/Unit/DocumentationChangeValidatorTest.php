@@ -51,6 +51,13 @@ final class DocumentationChangeValidatorTest extends TestCase
         ]));
     }
 
+    public function testAdministratorScriptIsNotMisclassifiedAsPublicInterface(): void
+    {
+        self::assertSame(['administrator'], $this->validator->affectedScopes([
+            'public/assets/js/admin-platform.js',
+        ]));
+    }
+
     public function testReleaseNotesAloneDoNotReplaceTheMatchingGuide(): void
     {
         $errors = $this->validator->validate([

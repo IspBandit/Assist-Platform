@@ -17,6 +17,9 @@ $nav = [
 $directory = [];
 if ($permitted('providers.manage')) {
     $directory[] = ['Providers', '/admin/providers'];
+    if ($platformAdmin) {
+        $directory[] = ['Recycle bin', '/admin/recycle-bin'];
+    }
 }
 if ($permitted('categories.manage')) {
     $directory[] = ['Service categories', '/admin/categories'];
@@ -79,7 +82,7 @@ if ($customerOperations !== []) {
 $growth = [];
 if ($permitted('notifications.send')) {
     $growth[] = ['Email campaigns', '/admin/notifications'];
-    $growth[] = ['PR & outreach', '/admin/outreach-hub'];
+    $growth[] = ['Free growth hub', '/admin/outreach-hub'];
 }
 if ($permitted('prospects.manage')) {
     $growth[] = ['Provider prospects', '/admin/prospects'];
@@ -138,6 +141,9 @@ if ($permitted('settings.manage')) {
 if (auth()->isSuperAdmin()) {
     $administration[] = ['Backups', '/admin/backups'];
     $administration[] = ['Maintenance', '/admin/maintenance'];
+}
+if ($platformAdmin) {
+    $administration[] = ['API service accounts', '/admin/api-service-accounts'];
 }
 if ($administration !== []) {
     $nav['Administration'] = $administration;

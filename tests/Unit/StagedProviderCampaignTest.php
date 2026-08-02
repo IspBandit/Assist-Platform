@@ -170,7 +170,9 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringContainsString('suppressed', $view);
         self::assertStringContainsString('not inserted into delivery records', $view);
         self::assertStringContainsString('How to send a campaign', $view);
-        self::assertStringContainsString('Open & send', $view);
+        self::assertStringContainsString('Send preview to me', $view);
+        self::assertStringContainsString('Start sending (max 25)', $view);
+        self::assertStringContainsString('Review details', $view);
         self::assertStringContainsString('Email campaigns', $this->source('app/Views/layouts/admin.php'));
         self::assertStringContainsString('Open email campaigns', $this->source('app/Views/admin/dashboard.php'));
         self::assertStringContainsString('Email preview to me', $this->source('app/Views/admin/notifications/show.php'));

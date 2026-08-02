@@ -7,6 +7,14 @@ See [ADR 0012](DECISIONS/0012-authoritative-provider-pack-routing.md) for canoni
 See [ADR 0013](DECISIONS/0013-staged-consent-gated-marketing-email.md) for consent-gated provider audiences and reviewed campaign limits.
 
 See [ADR 0014](DECISIONS/0014-separate-directory-accuracy-from-marketing.md) for the locked factual listing-notice boundary and type-specific suppression.
+See [ADR 0015](DECISIONS/0015-controlled-bulk-provider-review.md) for controlled bulk publication and strong duplicate linking.
+See [ADR 0016](DECISIONS/0016-server-owned-provider-import-and-campaign-taxonomy.md) for server-owned import processing and canonical provider-campaign category scope.
+See [ADR 0017](DECISIONS/0017-review-first-organisation-pr-outreach.md) for evidence-backed organisation targeting and separate staged PR campaigns.
+See [ADR 0018](DECISIONS/0018-admin-api-no-direct-db.md) for Admin API as the only external write path to production.
+See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus narrowly scoped traveller facilities.
+See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
+See [ADR 0021](DECISIONS/0021-shared-assist-ai-orchestrator.md) for the shared Assist AI Orchestrator.
+See [ADR 0022](DECISIONS/0022-ai-interpretation-not-authority.md) for AI as interpretation, not factual authority.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -56,12 +64,12 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0012: Authoritative provider pack with canonical identity and taxonomy-controlled brand routing.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
 - 0014: Separate directory accuracy from marketing outreach.
-- 0015: Controlled bulk provider review.
-- 0016: Server-owned provider import and canonical campaign taxonomy.
-- 0017: Review-first organisation PR outreach.
-- 0018: Admin API is the only external write path to production (no direct DB) — lands with CORE-011 merge.
-- 0019: Stays vs traveller facilities (Admin API / DATA-012) — lands with CORE-011 merge.
-- 0020: Assist RIC is the initial local management client (Option B) — lands with CORE-011 merge.
+- 0015: Controlled bulk provider review and strong duplicate linking.
+- 0016: Server-owned provider import processing and canonical provider-campaign taxonomy.
+- 0017: Review-first organisation PR outreach with source, role and relevance evidence.
+- 0018: Admin API is the only external write path to production (no direct DB).
+- 0019: Stays vs narrowly scoped traveller facilities.
+- 0020: Assist RIC is the initial local management client (Option B).
 - 0021: Shared Assist AI Orchestrator (accepted; AI-1 foundation).
 - 0022: AI is interpretation, not factual authority (accepted).
 - 0023: Provider-neutral AI abstraction (accepted).
@@ -78,6 +86,8 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;
-production Ask requires Platform Quality Gate.
+production Ask requires Platform Quality Gate. CORE-011 Admin API Phase 1 +
+Option B A–L are on this tree; production `ADMIN_API_ENABLED` remains off until
+staging rehearsal.
 
 The index must be updated whenever an ADR is accepted.

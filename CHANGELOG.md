@@ -3,6 +3,14 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **Unify CORE-011 + CORE-012 tree** — merged `origin/main` Admin API Phase 1 /
+  Option B A–L into the Assist AI / Polaris line; renumbered AI/Polaris
+  migrations to `101`–`116` and AI ADRs to `0021`–`0032` to clear Admin API
+  `085`–`092` / ADR `0018`–`0020`. Wired dual-source Option B into
+  `GET /api/v1/admin/search-gaps` via `SearchGapDualSource`. Production Admin
+  API / Ask / facilities / paid AI flags remain off.
+
+### Added
 - **VanAssist S1/S2 closeout (local)** — full Batehaven Ask acceptance PASS,
   demo rest/visitor catalogues (`100`), capped CKAN Toilet Map stage script,
   AI-flag rollback drill, LPG/fuel deferral note, SearchGap dual-source glue.
@@ -153,6 +161,39 @@ All notable changes to VanAssist are documented here.
   default), migration `101_assist_ai_search.sql`, and unit tests. No paid AI,
   no external datasets, structured `/find` unchanged. AI-0 design package and
   ADRs 0021–030 accepted.
+- **Admin API Increment 9 (CORE-011)** — RIC mock-client contract tests:
+  `tests/Contract/AdminApiRicContractTest.php`, Contract phpunit suite, Phase 1 path
+  inventory vs routes and OpenAPI parity checks.
+- **Admin API Increment 8b (OPS-010)** — MFA challenge/verify scaffold:
+  `POST /auth/mfa/challenge` and `/auth/mfa/verify` (501 until TOTP validation ships).
+- **Admin API Increment 8 (CORE-011)** — audit read (`GET /audit`, `/audit/{id}`) and
+  search-gap analytics (`GET /search-gaps`) aggregating `provider_searches` zero-result rows.
+- **Admin API Increment 7 (CORE-011)** — draft and import package submission for RIC:
+  `api_drafts` / `api_import_jobs` tables (migration 082), draft CRUD + approve/reject,
+  import validate/stage pipeline, idempotency keys for bulk/package writes.
+- **Admin API Increment 6 (CORE-011)** — recycle bin list/detail, restore, permanent
+  purge (single + bulk with idempotency), brand-scoped provider purge semantics.
+
+### Added
+- **Admin API Increment 5 (CORE-011)** — audited provider and stay create/update,
+  lifecycle transitions (publish/unpublish/archive/restore/soft-delete), `AdminApiAudit`
+  integration, and `read_write` capabilities for providers/stays.
+
+### Added
+- **Admin API Increment 4 (CORE-011)** — read-only `GET /providers` and
+  `GET /stays` with cursor pagination, lifecycle mapping, brand scope from host
+  context, and `providers:read` / `stays:read` enforcement.
+
+### Added
+- **Admin API Increment 3 (CORE-011)** — service accounts, machine token exchange
+  (`POST /auth/token`), scope catalog, human-only vs scope middleware, service
+  account CRUD and secret rotation. Capabilities reports `service_accounts: active`.
+
+### Added
+- **Admin API Increment 2 (CORE-011)** — human login/refresh/logout/me/sessions,
+  token tables (migration 080), MFA scaffold (081), restricted allowlist,
+  bearer verification and OpenAPI auth paths. Still disabled by default; MFA
+  verify endpoints not shipped.
 
 ### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +

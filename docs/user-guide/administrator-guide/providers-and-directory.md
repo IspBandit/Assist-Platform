@@ -38,6 +38,8 @@ Search the global provider table before creating a provider. Review business ide
 
 To invite a business to claim its listing, open the global provider record, confirm its explicit brand listings and public email, then use the claim-invite action. The controller records the action and does not grant ownership merely because an email exists.
 
+Soft-deleted providers, stays and traveller facilities appear under **Directory → Recycle bin** for restore. Admin API service accounts are managed under **Administration → API service accounts** (create, rotate, disable); secrets are shown once and must be stored in an OS vault, never in application SQLite.
+
 ## Common mistakes
 
 - Creating a duplicate instead of reviewing existing matches.

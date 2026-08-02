@@ -1,0 +1,2377 @@
+openapi: 3.1.0
+info:
+  title: Assist Platform Admin API
+  version: 1.0.0-increment-9
+  description: |
+    Versioned Admin API for Assist RIC and trusted management clients (CORE-011).
+    Increment 9 completes Phase 1 foundation with RIC contract tests.
+    Increment 8 adds audit read, search-gap analytics and MFA verify scaffold.
+    Increment 7 adds draft/import submission, validation and staging for RIC.
+    Increment 6 adds recycle bin list, restore and permanent purge.
+    Increment 5 adds audited provider/stay writes and lifecycle transitions.
+    Increment 4 adds read-only providers and stays with cursor pagination.
+    Increment 3 adds service accounts, machine token exchange and scope enforcement.
+    Increment 2 ships human login, refresh rotation, logout, me and sessions.
+    Not a supported production partner API until MFA enforcement and Quality Gate evidence.
+servers:
+  - url: https://{host}/api/v1/admin
+    variables:
+      host:
+        default: vanassist.com.au
+tags:
+  - name: System
+  - name: Auth
+  - name: ServiceAccounts
+  - name: Providers
+  - name: Stays
+  - name: RecycleBin
+  - name: Drafts
+  - name: Imports
+  - name: Audit
+  - name: Analytics
+paths:
+  /health:
+    get:
+      tags: [System]
+      operationId: adminHealth
+      summary: Liveness for the Admin API surface
+      security: []
+      responses:
+        '200':
+          description: API process is responding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+        '503':
+          description: Admin API disabled or platform unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /version:
+    get:
+      tags: [System]
+      operationId: adminVersion
+      summary: API and product version metadata
+      security: []
+      responses:
+        '200':
+          description: Version document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+  /capabilities:
+    get:
+      tags: [System]
+      operationId: adminCapabilities
+      summary: Declares implemented and planned Admin API capabilities
+      security: []
+      responses:
+        '200':
+          description: Capability document
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CapabilitiesResponse'
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: adminAuthLogin
+      summary: Exchange email and password for access and refresh tokens
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                session_label:
+                  type: string
+                  maxLength: 120
+      responses:
+        '200':
+          description: Token bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid credentials or MFA required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Role or restricted-mode denial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '429':
+          description: Login throttled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      operationId: adminAuthRefresh
+      summary: Rotate refresh token and issue a new access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Rotated token bundle
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid, expired or reused refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/token:
+    post:
+      tags: [Auth]
+      operationId: adminAuthServiceToken
+      summary: Exchange service client credentials for a short-lived access token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [client_key, client_secret]
+              properties:
+                client_key:
+                  type: string
+                client_secret:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Service access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceTokenResponse'
+        '401':
+          description: Invalid client credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Service account inactive or expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: adminAuthLogout
+      summary: Revoke the current session (or all sessions)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                all_sessions:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/me:
+    get:
+      tags: [Auth]
+      operationId: adminAuthMe
+      summary: Current authenticated actor
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Actor profile and scopes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /service-accounts:
+    get:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsIndex
+      summary: List service accounts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Service account collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountsResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Human actor with service_accounts:admin required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsStore
+      summary: Create a service account
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceAccountCreate'
+      responses:
+        '201':
+          description: Created service account with secret
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountSecretResponse'
+  /service-accounts/{id}:
+    get:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsShow
+      summary: Read service account metadata
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Service account metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountResponse'
+    patch:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsUpdate
+      summary: Update service account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceAccountUpdate'
+      responses:
+        '200':
+          description: Updated service account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountResponse'
+    delete:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsDestroy
+      summary: Revoke service account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Revoked service account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountResponse'
+  /service-accounts/{id}/rotate:
+    post:
+      tags: [ServiceAccounts]
+      operationId: adminServiceAccountsRotate
+      summary: Rotate service account secret
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Rotated secret returned once
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceAccountSecretResponse'
+  /auth/sessions:
+    get:
+      tags: [Auth]
+      operationId: adminAuthSessions
+      summary: List active Admin API sessions for the current actor
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Session collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionsResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/sessions/{id}:
+    delete:
+      tags: [Auth]
+      operationId: adminAuthRevokeSession
+      summary: Revoke a session family by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Session revoked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokeSessionResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Session not found for this actor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  /providers:
+    get:
+      tags: [Providers]
+      operationId: adminProvidersIndex
+      summary: List providers in the current brand scope
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Town'
+        - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: Provider collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderCollection'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing providers:read scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      tags: [Providers]
+      operationId: adminProvidersStore
+      summary: Create a provider in the current brand scope
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderCreateRequest'
+      responses:
+        '201':
+          description: Provider created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing providers:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /providers/{id}:
+    get:
+      tags: [Providers]
+      operationId: adminProvidersShow
+      summary: Provider detail in the current brand scope
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '404':
+          description: Not found in brand scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      tags: [Providers]
+      operationId: adminProvidersUpdate
+      summary: Update provider and brand listing fields
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderPatchRequest'
+      responses:
+        '200':
+          description: Provider updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing providers:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '404':
+          description: Not found in brand scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    delete:
+      tags: [Providers]
+      operationId: adminProvidersDestroy
+      summary: Soft-delete a provider (reason required)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LifecycleDeleteRequest'
+      responses:
+        '200':
+          description: Provider soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing lifecycle:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /providers/{id}/publish:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersPublish
+      summary: Publish provider listing
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+        '403':
+          description: Missing lifecycle:write scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /providers/{id}/unpublish:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersUnpublish
+      summary: Unpublish provider listing (search_visible=0)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider unpublished
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+  /providers/{id}/archive:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersArchive
+      summary: Archive provider (status=suspended)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+  /providers/{id}/restore:
+    post:
+      tags: [Providers]
+      operationId: adminProvidersRestore
+      summary: Restore soft-deleted provider
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Provider restored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderDetailResponse'
+  /stays:
+    get:
+      tags: [Stays]
+      operationId: adminStaysIndex
+      summary: List stays (caravan_parks); ADR 0019
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - $ref: '#/components/parameters/Status'
+        - $ref: '#/components/parameters/Town'
+        - $ref: '#/components/parameters/State'
+      responses:
+        '200':
+          description: Stay collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayCollection'
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    post:
+      tags: [Stays]
+      operationId: adminStaysStore
+      summary: Create a stay
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StayCreateRequest'
+      responses:
+        '201':
+          description: Stay created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+        '403':
+          description: Missing stays:write scope or stays unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /stays/{id}:
+    get:
+      tags: [Stays]
+      operationId: adminStaysShow
+      summary: Stay detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+        '404':
+          description: Not found or stays unavailable for brand
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+    patch:
+      tags: [Stays]
+      operationId: adminStaysUpdate
+      summary: Update stay fields
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StayPatchRequest'
+      responses:
+        '200':
+          description: Stay updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+    delete:
+      tags: [Stays]
+      operationId: adminStaysDestroy
+      summary: Soft-delete a stay (reason required)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LifecycleDeleteRequest'
+      responses:
+        '200':
+          description: Stay soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+  /stays/{id}/publish:
+    post:
+      tags: [Stays]
+      operationId: adminStaysPublish
+      summary: Publish stay
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+  /stays/{id}/unpublish:
+    post:
+      tags: [Stays]
+      operationId: adminStaysUnpublish
+      summary: Unpublish stay (public_page_enabled=0)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay unpublished
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+  /stays/{id}/archive:
+    post:
+      tags: [Stays]
+      operationId: adminStaysArchive
+      summary: Archive stay (status=suspended)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+  /stays/{id}/restore:
+    post:
+      tags: [Stays]
+      operationId: adminStaysRestore
+      summary: Restore soft-deleted stay
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stay restored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StayDetailResponse'
+
+  /recycle-bin:
+    get:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinIndex
+      summary: List soft-deleted providers and stays
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: entity_type
+          in: query
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Recycle bin collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecycleBinCollection'
+  /recycle-bin/{entity_type}/{id}:
+    get:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinShow
+      summary: Deleted item detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: entity_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Recycle bin item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecycleBinItemResponse'
+  /recycle-bin/{entity_type}/{id}/restore:
+    post:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinRestore
+      summary: Restore soft-deleted item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: entity_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Restored entity
+  /recycle-bin/{entity_type}/{id}/purge:
+    delete:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinPurge
+      summary: Permanently purge deleted item
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: entity_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [provider, stay]
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirm, reason]
+              properties:
+                confirm:
+                  type: boolean
+                reason:
+                  type: string
+                  minLength: 3
+      responses:
+        '200':
+          description: Purge result
+  /recycle-bin/bulk-restore:
+    post:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinBulkRestore
+      summary: Bulk restore with idempotency key
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecycleBinBulkRequest'
+      responses:
+        '200':
+          description: Bulk restore results
+  /recycle-bin/bulk-purge:
+    post:
+      tags: [RecycleBin]
+      operationId: adminRecycleBinBulkPurge
+      summary: Bulk purge with idempotency key and reason
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/RecycleBinBulkRequest'
+                - type: object
+                  required: [reason]
+                  properties:
+                    reason:
+                      type: string
+                      minLength: 3
+      responses:
+        '200':
+          description: Bulk purge results
+  /drafts:
+    get:
+      tags: [Drafts]
+      operationId: adminDraftsIndex
+      summary: List draft submissions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Draft collection
+    post:
+      tags: [Drafts]
+      operationId: adminDraftsStore
+      summary: Create draft from RIC payload
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Draft created
+  /drafts/{id}:
+    get:
+      tags: [Drafts]
+      operationId: adminDraftsShow
+      summary: Draft detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft detail
+    patch:
+      tags: [Drafts]
+      operationId: adminDraftsUpdate
+      summary: Update draft payload or status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft updated
+  /drafts/{id}/approve:
+    post:
+      tags: [Drafts]
+      operationId: adminDraftsApprove
+      summary: Approve draft and create/update live entity
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft approved
+  /drafts/{id}/reject:
+    post:
+      tags: [Drafts]
+      operationId: adminDraftsReject
+      summary: Reject draft submission
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Draft rejected
+  /imports:
+    post:
+      tags: [Imports]
+      operationId: adminImportsStore
+      summary: Submit checksummed RIC import package
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: Import job received
+  /imports/{id}:
+    get:
+      tags: [Imports]
+      operationId: adminImportsShow
+      summary: Import job status and item results
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Import job detail
+  /imports/{id}/validate:
+    post:
+      tags: [Imports]
+      operationId: adminImportsValidate
+      summary: Validate import package items
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Validation results
+  /imports/{id}/stage:
+    post:
+      tags: [Imports]
+      operationId: adminImportsStage
+      summary: Stage valid items as drafts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Staging results
+  /auth/mfa/challenge:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaChallenge
+      summary: Return MFA enrollment status for the authenticated human actor
+      description: |
+        Requires a bearer human access token (full session or MFA challenge token).
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: MFA challenge status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MfaChallengeResponse'
+        '401':
+          description: Missing or non-human bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/mfa/enroll/begin:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaEnrollBegin
+      summary: Begin TOTP enrollment for the authenticated human
+      description: |
+        Requires a full human session (not an MFA challenge token). Returns a
+        base32 secret and otpauth URI once; confirm with /auth/mfa/enroll/confirm.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                label:
+                  type: string
+      responses:
+        '200':
+          description: Enrollment secret issued
+        '401':
+          description: Missing or non-human bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '409':
+          description: MFA already enrolled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/mfa/enroll/confirm:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaEnrollConfirm
+      summary: Confirm TOTP enrollment with an authenticator code
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+      responses:
+        '200':
+          description: MFA enrolled
+        '422':
+          description: Invalid code or enrollment not started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /auth/mfa/verify:
+    post:
+      tags: [Auth]
+      operationId: adminAuthMfaVerify
+      summary: Verify TOTP code (and complete MFA login when using mfa_token)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+                  minLength: 1
+      responses:
+        '200':
+          description: MFA verified (may include full token bundle after login challenge)
+        '422':
+          description: Validation failed or no enrolled method
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '401':
+          description: Missing or non-human bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /audit:
+    get:
+      tags: [Audit]
+      operationId: adminAuditIndex
+      summary: List audit events with cursor pagination
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: object_type
+          in: query
+          schema:
+            type: string
+        - name: object_id
+          in: query
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Audit event collection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditCollectionResponse'
+  /audit/{id}:
+    get:
+      tags: [Audit]
+      operationId: adminAuditShow
+      summary: Read one audit event
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Audit event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /search-gaps:
+    get:
+      tags: [Analytics]
+      operationId: adminSearchGapsIndex
+      summary: Ranked zero-result search gaps for RIC research workbench
+      description: |
+        Dual-source Option B: unions zero-result rows from `provider_searches`
+        with open `knowledge_gaps` (when that table and KnowledgeGapService are
+        available). Collection `meta.source` is `dual` with
+        `sources: [provider_searches, knowledge_gaps]`, plus
+        `provider_searches_count` / `knowledge_gaps_count`. Each item may carry
+        `meta.source` of `provider_searches` or `knowledge_gaps`. Locked SearchGap
+        required fields are unchanged. Cursor/`has_more` remain provider-primary
+        for v1. Returns a sparse dual collection when neither source contributes
+        rows for the brand/date filters.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/QueryQ'
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Search gap collection (may be sparse/empty)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchGapCollectionResponse'
+  /claims:
+    get:
+      tags: [Claims]
+      operationId: adminClaimsIndex
+      summary: List park claims and provider invite tokens
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Claim collection
+  /corrections:
+    get:
+      tags: [Corrections]
+      operationId: adminCorrectionsIndex
+      summary: List listing correction submissions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Correction collection
+  /duplicates:
+    get:
+      tags: [Duplicates]
+      operationId: adminDuplicatesIndex
+      summary: List duplicate review decisions and heuristic suspects
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Duplicate collection
+  /duplicates/check:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesCheck
+      summary: Score a provider pair and persist an open decision
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Duplicate decision created
+  /duplicates/{id}/merge:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesMerge
+      summary: Merge duplicate providers (supports dry_run)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Merge result or dry-run preview
+  /datasets:
+    get:
+      tags: [Datasets]
+      operationId: adminDatasetsIndex
+      summary: List government datasets
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dataset collection
+  /facilities:
+    get:
+      tags: [Facilities]
+      operationId: adminFacilitiesIndex
+      summary: List traveller facilities (ADR 0019)
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Facility collection
+  /ai/usage/summary:
+    get:
+      tags: [AI]
+      operationId: adminAiUsageSummary
+      summary: AI usage summary for the current brand
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usage summary (empty-safe)
+  /searches:
+    get:
+      tags: [Analytics]
+      operationId: adminSearchesIndex
+      summary: Raw provider search events
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Search event collection
+  /sync-conflicts:
+    get:
+      tags: [Sync]
+      operationId: adminSyncConflictsIndex
+      summary: List RIC live sync conflicts
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Sync conflict collection
+
+components:
+
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 25
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        maxLength: 128
+    QueryQ:
+      name: q
+      in: query
+      schema:
+        type: string
+    Status:
+      name: status
+      in: query
+      description: DB status or lifecycle alias (published, unpublished, pending_review, inactive)
+      schema:
+        type: string
+    Town:
+      name: town
+      in: query
+      schema:
+        type: string
+    State:
+      name: state
+      in: query
+      description: State id, abbreviation, or name
+      schema:
+        type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque access token from /auth/login, /auth/refresh or /auth/token. Only hashes are stored.
+  schemas:
+    HealthResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [status, service, api_version]
+          properties:
+            status:
+              type: string
+              enum: [ok]
+            service:
+              type: string
+            api_version:
+              type: string
+              enum: [v1]
+    VersionResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [api_version, product]
+          properties:
+            api_version:
+              type: string
+            product:
+              type: string
+            release:
+              type: string
+              nullable: true
+            php:
+              type: string
+    CapabilitiesResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [api_version, enabled, resources]
+          properties:
+            api_version:
+              type: string
+            enabled:
+              type: boolean
+            restricted:
+              type: boolean
+            mfa_required:
+              type: boolean
+            mfa_enforced:
+              type: boolean
+            authentication:
+              type: object
+              additionalProperties:
+                type: string
+            resources:
+              type: object
+              additionalProperties:
+                type: string
+            limits:
+              type: object
+              additionalProperties: true
+            scopes:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  human:
+                    type: boolean
+                  service:
+                    type: boolean
+                  description:
+                    type: string
+            notes:
+              type: array
+              items:
+                type: string
+    TokenResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [access_token, refresh_token, token_type, expires_in, scopes, user]
+          properties:
+            access_token:
+              type: string
+            refresh_token:
+              type: string
+            token_type:
+              type: string
+              enum: [Bearer]
+            expires_in:
+              type: integer
+            scopes:
+              type: array
+              items:
+                type: string
+            user:
+              $ref: '#/components/schemas/AdminUser'
+    MeResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [scopes, actor_type]
+          properties:
+            user:
+              $ref: '#/components/schemas/AdminUser'
+              nullable: true
+            client:
+              $ref: '#/components/schemas/ServiceAccount'
+              nullable: true
+            scopes:
+              type: array
+              items:
+                type: string
+            actor_type:
+              type: string
+              enum: [user, service]
+    ServiceTokenResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [access_token, token_type, expires_in, scopes, actor_type, client]
+          properties:
+            access_token:
+              type: string
+            token_type:
+              type: string
+              enum: [Bearer]
+            expires_in:
+              type: integer
+            scopes:
+              type: array
+              items:
+                type: string
+            actor_type:
+              type: string
+              enum: [service]
+            client:
+              $ref: '#/components/schemas/ServiceAccount'
+    ServiceAccount:
+      type: object
+      required: [id, name, client_key, status, scopes]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        client_key:
+          type: string
+        status:
+          type: string
+          enum: [active, disabled, revoked]
+        scopes:
+          type: array
+          items:
+            type: string
+        token_ttl_seconds:
+          type: integer
+        expires_at:
+          type: string
+          nullable: true
+        last_used_at:
+          type: string
+          nullable: true
+        created_by:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+          nullable: true
+    ServiceAccountCreate:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        token_ttl_seconds:
+          type: integer
+        expires_at:
+          type: string
+          nullable: true
+    ServiceAccountUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, disabled]
+        token_ttl_seconds:
+          type: integer
+        expires_at:
+          type: string
+          nullable: true
+    ServiceAccountResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/ServiceAccount'
+    ServiceAccountSecretResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ServiceAccount'
+            - type: object
+              required: [client_secret]
+              properties:
+                client_secret:
+                  type: string
+    ServiceAccountsResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ServiceAccount'
+    LogoutResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [logged_out]
+          properties:
+            logged_out:
+              type: boolean
+    SessionsResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required: [id, active]
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+                nullable: true
+              ip_address:
+                type: string
+                nullable: true
+              user_agent:
+                type: string
+                nullable: true
+              created_at:
+                type: string
+              expires_at:
+                type: string
+              active:
+                type: boolean
+    RevokeSessionResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [revoked, id]
+          properties:
+            revoked:
+              type: boolean
+            id:
+              type: string
+    AdminUser:
+      type: object
+      required: [id, name, email, roles, mfa_enabled]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+        mfa_enabled:
+          type: boolean
+
+    ProviderCollection:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderSummary'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    ProviderDetailResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/ProviderDetail'
+    ProviderSummary:
+      type: object
+      required: [id, business_name, lifecycle]
+      properties:
+        id:
+          type: string
+        business_name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+        lifecycle:
+          type: string
+        town:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+    ProviderDetail:
+      allOf:
+        - $ref: '#/components/schemas/ProviderSummary'
+        - type: object
+          additionalProperties: true
+    StayCollection:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StaySummary'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    StayDetailResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/StayDetail'
+    StaySummary:
+      type: object
+      required: [id, name, lifecycle]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+        lifecycle:
+          type: string
+        town:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+    StayDetail:
+      allOf:
+        - $ref: '#/components/schemas/StaySummary'
+        - type: object
+          additionalProperties: true
+    ProviderCreateRequest:
+      type: object
+      required: [business_name]
+      properties:
+        business_name:
+          type: string
+        display_name:
+          type: string
+        status:
+          type: string
+          enum: [draft, pending]
+        contact_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        public_email:
+          type: string
+        public_phone:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        service_model:
+          type: string
+          enum: [mobile, workshop, both]
+        street_address:
+          type: string
+        base_town_id:
+          type: integer
+        region_id:
+          type: integer
+    ProviderPatchRequest:
+      type: object
+      properties:
+        business_name:
+          type: string
+        contact_name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        public_email:
+          type: string
+        public_phone:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        service_model:
+          type: string
+          enum: [mobile, workshop, both]
+        street_address:
+          type: string
+        base_town_id:
+          type: integer
+        region_id:
+          type: integer
+        display_name:
+          type: string
+        search_visible:
+          type: boolean
+        listing_status:
+          type: string
+          enum: [draft, pending, active, suspended, rejected]
+    StayCreateRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+          enum: [draft, pending]
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        town_id:
+          type: integer
+        state_id:
+          type: integer
+        region_id:
+          type: integer
+        stay_type:
+          type: string
+        price_type:
+          type: string
+        number_of_sites:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    StayPatchRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+        description:
+          type: string
+        town_id:
+          type: integer
+        state_id:
+          type: integer
+        region_id:
+          type: integer
+        stay_type:
+          type: string
+        price_type:
+          type: string
+        number_of_sites:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    LifecycleDeleteRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason:
+          type: string
+          minLength: 3
+    DeleteResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [id, deleted, reason]
+          properties:
+            id:
+              type: string
+            deleted:
+              type: boolean
+            reason:
+              type: string
+    RecycleBinCollection:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecycleBinItem'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    RecycleBinItemResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/RecycleBinItem'
+    RecycleBinItem:
+      type: object
+      required: [entity_type, id, name, deleted_at, lifecycle]
+      properties:
+        entity_type:
+          type: string
+          enum: [provider, stay]
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        deleted_at:
+          type: string
+        lifecycle:
+          type: string
+          enum: [deleted]
+    RecycleBinBulkRequest:
+      type: object
+      required: [confirm, items]
+      properties:
+        confirm:
+          type: boolean
+        items:
+          type: array
+          items:
+            type: object
+            required: [entity_type, id]
+            properties:
+              entity_type:
+                type: string
+                enum: [provider, stay]
+              id:
+                type: integer
+    MfaChallengeResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [mfa_required, enrolled, methods, verify_status]
+          properties:
+            mfa_required:
+              type: boolean
+            enrolled:
+              type: boolean
+            methods:
+              type: array
+              items:
+                type: object
+                required: [method, enabled]
+                properties:
+                  method:
+                    type: string
+                    enum: [totp]
+                  label:
+                    type: string
+                    nullable: true
+                  enabled:
+                    type: boolean
+            verify_status:
+              type: string
+              enum: [active, ok]
+            message:
+              type: string
+    AuditEvent:
+      type: object
+      required: [id, action]
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        object_type:
+          type: string
+          nullable: true
+        object_id:
+          type: string
+          nullable: true
+        user_id:
+          type: integer
+          nullable: true
+        previous_value:
+          type: string
+          nullable: true
+        new_value:
+          type: string
+          nullable: true
+        ip_address:
+          type: string
+          nullable: true
+        user_agent:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          nullable: true
+    AuditResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/AuditEvent'
+    AuditCollectionResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    SearchGap:
+      type: object
+      required: [query_text, result_count, search_count, first_seen, last_seen]
+      properties:
+        query_text:
+          type: string
+        location_text:
+          type: string
+          nullable: true
+        result_count:
+          type: integer
+        search_count:
+          type: integer
+        first_seen:
+          type: string
+        last_seen:
+          type: string
+        intent:
+          type: string
+          nullable: true
+        urgency_score:
+          type: number
+          nullable: true
+        town_id:
+          type: integer
+          nullable: true
+        category_id:
+          type: integer
+          nullable: true
+    SearchGapCollectionResponse:
+      type: object
+      required: [data, meta]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchGap'
+        meta:
+          type: object
+          additionalProperties: true
+        links:
+          type: object
+          additionalProperties: true
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, request_id]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            request_id:
+              type: string
+            fields:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+        meta:
+          type: object
+          additionalProperties: true

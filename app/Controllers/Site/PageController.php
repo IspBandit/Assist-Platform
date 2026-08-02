@@ -10,6 +10,8 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Models\Provider;
+use App\Models\Town;
+use App\Services\ClaimFirstOnboardingService;
 use App\Services\EmailQueue;
 use App\Services\Settings;
 use Throwable;
@@ -83,13 +85,109 @@ final class PageController extends Controller
         if (current_brand()->id() !== 'vanassist') {
             return $this->view('brands.provider-interest', ['title' => 'Register your business with ' . current_brand()->name(), 'errors' => Session::errors()]);
         }
+
         $listingSlug = trim((string) $request->input('listing'));
         $listingProvider = $listingSlug !== '' ? Provider::findPublicBySlug($listingSlug) : null;
+
+        if ($listingProvider !== null || !ClaimFirstOnboardingService::enabled()) {
+            return $this->view('public.provider-interest', [
+                'title'  => $listingProvider !== null
+                    ? 'Request to claim or correct this listing'
+                    : 'Register your interest — VanAssist for providers',
+                'errors' => Session::errors(),
+                'listingProvider' => $listingProvider,
+                'step' => 'form',
+                'matches' => [],
+                'search' => [],
+            ]);
+        }
+
+        $step = trim((string) $request->input('step', 'search'));
+        if ($step === 'form' && Session::get('claim_first_confirmed_none')) {
+            return $this->view('public.provider-interest', [
+                'title' => 'Register your interest — VanAssist for providers',
+                'errors' => Session::errors(),
+                'listingProvider' => null,
+                'step' => 'form',
+                'matches' => [],
+                'search' => Session::get('claim_first_search', []),
+            ]);
+        }
+
+        if ($step === 'matches' && Session::has('claim_first_search')) {
+            $search = Session::get('claim_first_search', []);
+            $service = new ClaimFirstOnboardingService();
+            $matches = $service->searchMatches(
+                (string) ($search['business_name'] ?? ''),
+                isset($search['base_town_id']) ? (int) $search['base_town_id'] : null,
+                (string) ($search['town'] ?? ''),
+            );
+
+            return $this->view('public.provider-interest', [
+                'title' => 'Is this your business?',
+                'errors' => Session::errors(),
+                'listingProvider' => null,
+                'step' => 'matches',
+                'matches' => $matches,
+                'search' => $search,
+            ]);
+        }
+
         return $this->view('public.provider-interest', [
-            'title'  => 'Register your interest — VanAssist for providers',
+            'title' => 'Find your business listing',
             'errors' => Session::errors(),
-            'listingProvider' => $listingProvider,
+            'listingProvider' => null,
+            'step' => 'search',
+            'matches' => [],
+            'search' => Session::get('claim_first_search', []),
         ]);
+    }
+
+    public function searchProviderMatches(Request $request): Response
+    {
+        if (!ClaimFirstOnboardingService::enabled() || current_brand()->id() !== 'vanassist') {
+            return $this->redirect('/for-providers/register');
+        }
+
+        $business = trim((string) $request->input('business_name'));
+        $town = trim((string) $request->input('town'));
+        $townId = (int) $request->input('region_id') ?: null;
+        if ($townId === null && $town !== '') {
+            $townMatches = Town::searchActive($town);
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+        }
+
+        if ($business === '') {
+            Session::flashErrors(['business_name' => 'Please enter your business name to search.']);
+            Session::flashInput($request->only(['business_name', 'town', 'region_id', 'region']));
+            return $this->redirect('/for-providers/register');
+        }
+
+        Session::set('claim_first_search', [
+            'business_name' => $business,
+            'town' => $town,
+            'region' => trim((string) $request->input('region')),
+            'base_town_id' => $townId,
+        ]);
+        Session::forget('claim_first_confirmed_none');
+
+        return $this->redirect('/for-providers/register?step=matches');
+    }
+
+    public function confirmNewProviderListing(Request $request): Response
+    {
+        if (!ClaimFirstOnboardingService::enabled() || current_brand()->id() !== 'vanassist') {
+            return $this->redirect('/for-providers/register');
+        }
+
+        if (!$request->input('confirm_none')) {
+            Session::flash('error', 'Please confirm that none of the suggested listings match your business.');
+            return $this->redirect('/for-providers/register?step=matches');
+        }
+
+        Session::set('claim_first_confirmed_none', true);
+
+        return $this->redirect('/for-providers/register?step=form');
     }
 
     /**
@@ -139,7 +237,51 @@ final class PageController extends Controller
         if ($errors !== []) {
             Session::flashErrors($errors);
             Session::flashInput($request->only(['business_name', 'contact_name', 'email', 'phone', 'town', 'region', 'region_id', 'services', 'message', 'offers_mobile', 'has_workshop', 'listing_slug', 'marketing_opt_in']));
-            return $this->redirect('/for-providers/register' . ($listingProvider !== null ? '?listing=' . rawurlencode((string) $listingProvider['slug']) : ''));
+            return $this->redirect('/for-providers/register' . ($listingProvider !== null ? '?listing=' . rawurlencode((string) $listingProvider['slug']) : '?step=form'));
+        }
+
+        $submission = [
+            'business_name' => $business,
+            'contact_name' => $contact,
+            'email' => $email,
+            'phone' => $phone,
+            'town' => $town,
+            'region' => $region,
+            'region_id' => (int) $request->input('region_id') ?: null,
+            'base_town_id' => (int) $request->input('region_id') ?: null,
+            'services' => $services,
+            'message' => $message,
+            'service_model' => $model,
+            'marketing_opt_in' => $marketingOptIn,
+        ];
+
+        $confirmedNone = $listingProvider === null
+            && ClaimFirstOnboardingService::enabled()
+            && (bool) Session::get('claim_first_confirmed_none');
+
+        if ($listingProvider === null && ClaimFirstOnboardingService::enabled() && !$confirmedNone) {
+            Session::flash('error', 'Please search for an existing listing and confirm whether it matches your business before registering a new one.');
+            return $this->redirect('/for-providers/register');
+        }
+
+        $onboarding = new ClaimFirstOnboardingService();
+        $evaluation = $onboarding->evaluateSubmission($submission, $confirmedNone);
+        if ($evaluation['outcome'] === 'duplicate_hold' && $evaluation['duplicate'] !== null) {
+            try {
+                $hold = $onboarding->createDuplicateHold($submission, $evaluation['duplicate']);
+            } catch (Throwable) {
+                return $this->redirectWith('/for-providers/register?step=form', 'error', 'Sorry, something went wrong saving your details. Please email us instead.');
+            }
+
+            Session::forget('claim_first_search');
+            Session::forget('claim_first_confirmed_none');
+            $this->notifyInterest($business, $contact, $email, $phone, $town, $region, $services, $message . ' [duplicate hold #' . ($hold['provider_id'] ?? 0) . ']', $model);
+
+            return $this->redirectWith(
+                '/for-providers/register',
+                'success',
+                'Thanks — your request is recorded for review. We found a similar existing listing and will verify before publishing anything new.'
+            );
         }
 
         // Combine the base town and its region for the CRM "towns serviced" field.
@@ -187,6 +329,9 @@ final class PageController extends Controller
         }
 
         $this->notifyInterest($business, $contact, $email, $phone, $town, $region, $services, $message, $model);
+
+        Session::forget('claim_first_search');
+        Session::forget('claim_first_confirmed_none');
 
         return $this->redirectWith('/for-providers/register', 'success', 'Thanks ' . ($contact !== '' ? $contact : $business) . '! Your request is recorded. We will check your authority before any listing access is granted.');
     }

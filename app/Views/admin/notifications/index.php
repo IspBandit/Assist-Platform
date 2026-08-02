@@ -17,7 +17,7 @@ $nextAction = static function (array $campaign): string {
     if ($status === 'cancelled') { return 'View cancelled campaign'; }
     return match ($stage) {
         'draft' => 'Send preview to yourself',
-        'test' => 'Start 25-recipient pilot',
+        'test' => 'Start sending (max 25)',
         'pilot' => 'Review pilot and start 50/day',
         'daily_50' => 'Continue or approve 100/day',
         'daily_100' => 'Continue approved batches',
@@ -89,7 +89,25 @@ $nextAction = static function (array $campaign): string {
                         <?php else: ?><span class="muted">Not a provider campaign</span><?php endif; ?>
                     </td>
                     <td><?= $this->e((string) ($n['scheduled_at'] ?? $n['sent_at'] ?? $n['created_at'] ?? '')) ?></td>
-                    <td><a class="btn <?= in_array((string) $n['status'], ['sent', 'cancelled'], true) ? 'btn-ghost' : 'btn-primary' ?>" href="<?= e(url('admin/notifications/show?id=' . (int) $n['id'])) ?>"><?= in_array((string) $n['status'], ['sent', 'cancelled'], true) ? 'View results' : 'Open & send' ?></a></td>
+                    <td>
+                        <?php $rowStatus = (string) $n['status']; $rowStage = (string) ($n['delivery_stage'] ?? 'draft'); ?>
+                        <?php if (in_array($rowStatus, ['sent', 'cancelled'], true)): ?>
+                            <a class="btn btn-ghost" href="<?= e(url('admin/notifications/show?id=' . (int) $n['id'])) ?>">View results</a>
+                        <?php elseif ($rowStage === 'draft' && !empty(current_user()['email'])): ?>
+                            <form method="post" action="<?= e(url('admin/notifications/test')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $n['id'] ?>"><input type="hidden" name="test_email" value="<?= e_attr((string) current_user()['email']) ?>"><button class="btn btn-primary" type="submit">Send preview to me</button></form>
+                        <?php elseif ($rowStage === 'test'): ?>
+                            <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $n['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary" type="submit">Start sending (max 25)</button></form>
+                        <?php elseif ($rowStage === 'pilot'): ?>
+                            <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $n['id'] ?>"><input type="hidden" name="stage" value="daily_50"><button class="btn btn-primary" type="submit">Send next batch (max 50/day)</button></form>
+                        <?php elseif ($rowStage === 'daily_50'): ?>
+                            <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $n['id'] ?>"><input type="hidden" name="stage" value="daily_50"><button class="btn btn-primary" type="submit">Send next batch (50/day)</button></form>
+                        <?php elseif ($rowStage === 'daily_100'): ?>
+                            <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $n['id'] ?>"><input type="hidden" name="stage" value="daily_100"><button class="btn btn-primary" type="submit">Send next batch (100/day)</button></form>
+                        <?php else: ?>
+                            <a class="btn btn-primary" href="<?= e(url('admin/notifications/show?id=' . (int) $n['id'])) ?>">Open campaign</a>
+                        <?php endif; ?>
+                        <?php if (!in_array($rowStatus, ['sent', 'cancelled'], true)): ?><a class="btn btn-ghost" href="<?= e(url('admin/notifications/show?id=' . (int) $n['id'])) ?>">Review details</a><?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             <?php if ($notifications === []): ?><tr><td colspan="7" class="muted">No broadcasts yet.</td></tr><?php endif; ?>

@@ -136,6 +136,8 @@ return static function (Router $router): void {
         $router->get('/polaris/settings', 'Admin\PolarisAdminController@settings', 'admin.polaris.settings');
         $router->get('/polaris/{section}', 'Admin\PolarisAdminController@placeholder', 'admin.polaris.section');
         $router->get('/providers/duplicates', 'Admin\ProvidersController@duplicates', 'admin.providers.duplicates');
+        $router->get('/recycle-bin', 'Admin\RecycleBinController@index', 'admin.recycle-bin');
+        $router->post('/recycle-bin/restore', 'Admin\RecycleBinController@restore', 'admin.recycle-bin.restore');
 
         // Provider prospect CRM (Phase 3): outreach, notes, CSV import/export, invitations.
         $router->get('/prospects', 'Admin\ProspectsController@index', 'admin.prospects');
@@ -324,5 +326,11 @@ return static function (Router $router): void {
         $router->get('/customers/export', 'Admin\CustomersController@export', 'admin.customers.export');
         $router->get('/customers/show', 'Admin\CustomersController@show', 'admin.customers.show');
         $router->post('/customers/save', 'Admin\CustomersController@save');
+
+        // Admin API service accounts (super/platform administrators).
+        $router->get('/api-service-accounts', 'Admin\ApiServiceAccountsController@index', 'admin.api-service-accounts');
+        $router->post('/api-service-accounts', 'Admin\ApiServiceAccountsController@store');
+        $router->post('/api-service-accounts/rotate', 'Admin\ApiServiceAccountsController@rotate');
+        $router->post('/api-service-accounts/disable', 'Admin\ApiServiceAccountsController@disable');
     });
 };

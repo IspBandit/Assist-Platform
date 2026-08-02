@@ -61,9 +61,13 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 **How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile; VanAssist reviews authority before granting control.
 
+**How do I list my business?** Start at **For providers** / register. VanAssist asks you to search for an existing listing first (“Is this your business?”) so you can claim it instead of creating a duplicate. A new listing is only offered after you confirm none of the matches apply; likely duplicates are held for review and are not published automatically.
+
 **A club or organisation shared the VanAssist link. Do I need to join or pay?** No. Public search remains free and does not require membership of the organisation that shared it. Check each listing's claimed and verified status and confirm important details with the business.
 
 **Did the tablet administration update change public search?** No. Its shared stylesheet changes are restricted to `admin-*` controls inside the authenticated administration shell; customer search, map, tracking and provider-ranking behaviour are unchanged.
+
+**Is the national coverage heat map the customer results map?** No. The Australia/state heat map is an authenticated administrator planning view. Customer searches continue to use the interactive nearby-results map and its matching provider list.
 
 ## Version introduced
 
@@ -71,7 +75,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-07-30 (location inheritance extended across all public discovery journeys).
+2026-07-30 (clarified the separate administrator coverage map; location inheritance remains available across all public discovery journeys).
 
 ## Owner
 

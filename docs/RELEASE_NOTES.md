@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CORE-011 + CORE-012 unification
+
+- Merged Admin API Phase 1 / Option B A–L with Assist AI / Polaris onto one tree.
+- AI/Polaris migrations renumbered to `101`–`116`; AI ADRs to `0021`–`0032`.
+- Wired dual-source Option B into inventoried `GET /api/v1/admin/search-gaps`
+  (`meta.source=dual`). No second API path. Production flags remain off.
+
 ### Government datasets and traveller facilities (DATA-012 / AI-6)
 
 - Added the government dataset catalogue under **Admin → Data sources → Government datasets**, with CKAN / ArcGIS / CSV / GeoJSON connectors, demo fixtures, and curated National Public Toilet Map rows (disabled until an administrator enables Fetch).
@@ -15,6 +22,98 @@ may remain as dated files and are linked here rather than copied.
 - Knowledge gaps export SearchGap-shaped JSON for RIC (`/admin/ai-search/gaps/export?format=json`).
 - Dual-source SearchGap merge helper (`SearchGapDualSource`) and merge plan (`docs/SEARCH_GAP_DUAL_SOURCE.md`) for CORE-011 `GET /api/v1/admin/search-gaps` — no second API; production Ask remains off.
 - Quality Gate evidence: **CONDITIONAL PASS** only — `docs/AI_QUALITY_GATE_EVIDENCE.md`. Production Ask remains off until a full Platform Quality Gate pass.
+### Option B programme Increments A–L (functional management coverage)
+
+- Programme tracker: `docs/OPTION_B_MANAGEMENT_PROGRAMME.md`.
+- Conditional Quality Gate:
+  `docs/evidence/option-b-programme-2026-08-02/PLATFORM_QUALITY_GATE.md`.
+- Assist RIC Option B sync console shipped on sibling branch
+  `feature/option-b-ric-management` (pull providers/stays, conflicts, gap→research,
+  dataset catalogue, budget guardrails).
+- Production `ADMIN_API_ENABLED` remains off until staging rehearsal is recorded.
+
+### Option B Increment H — claim-first onboarding + PHP admin polish (VAN-010 / OPS-010)
+
+- Added claim-first provider onboarding on `/for-providers/register`: search-before-create,
+  “Is this your business?” match step, explicit none-of-these confirmation, second
+  duplicate check on submit with pending hold (no publication) and internal note /
+  `listing_corrections` row when tables exist. Controlled by `CLAIM_FIRST_ONBOARDING`
+  (default true).
+- Added PHP admin pages: **Administration → API service accounts** (list/create/rotate/disable
+  via `AdminApiServiceAccountService`) and **Directory → Recycle bin** (list/restore via
+  `AdminApiRecycleBinService`).
+- PHPUnit coverage for duplicate scoring/hold decision logic (`ClaimFirstOnboardingTest`).
+
+### Admin API Option B Increments B–G (CORE-011 / VAN-002 / DATA-002 / DATA-012 / DATA-013)
+
+- Added Admin API resources for claims, listing corrections, duplicate review/merge
+  (with `dry_run`), government datasets, AI usage summaries, search analytics,
+  sync conflicts, traveller facilities (`/facilities`, ADR 0019) and import
+  publish/cancel/retry lifecycle actions.
+- Extended scopes: `claims:*`, `corrections:*`, `duplicates:read`, `datasets:*`,
+  `facilities:*`, `ai:read`; `duplicates:merge` and `drafts:approve` remain
+  human-only (`NEVER_SERVICE`). RIC least-privilege adds `claims:read`,
+  `datasets:read`, `facilities:read`.
+- Forward migrations `088`–`092` create listing corrections, duplicate decisions,
+  dataset/facility tables, AI usage reporting tables and sync conflict queue.
+- Contract tests and OpenAPI paths updated; apply migrations before enabling new
+  routes in staging.
+
+### Admin API Option B closeout (CORE-011 / OPS-010 / DATA-011 / OPS-011)
+
+- Recorded conditional Platform Quality Gate evidence for Admin API + Assist RIC
+  client foundation (`docs/evidence/admin-api-2026-08-02/`). Production
+  `ADMIN_API_ENABLED` / MFA flags remain off until staging rehearsal is appended.
+- Synced Phase 1 design, LIVE_API, OPERATIONS_RUNBOOK and backlog statuses:
+  CORE-011 / OPS-011 / DATA-011 client work done; OPS-010 production enablement
+  still gated.
+
+### Admin API staging enablement checklist
+
+- Documented the staging-only sequence to migrate Admin API tables, enroll TOTP,
+  create a least-privilege RIC service account, and rehearse import submit before
+  any production `ADMIN_API_ENABLED` change (`docs/LIVE_API.md`).
+- Added CLI helpers `scripts/admin-api-create-ric-service-account.php` and
+  `scripts/admin-api-probe.php` for safe staging bootstrap and health checks.
+
+### Admin API TOTP MFA (OPS-010)
+
+- Replaced the MFA verify scaffold with RFC 6238 TOTP validation (pure PHP).
+- Added enrollment endpoints `POST /auth/mfa/enroll/begin` and
+  `POST /auth/mfa/enroll/confirm` for authenticated humans.
+- When `ADMIN_API_MFA_REQUIRED=true`, password login returns a short-lived
+  `mfa_token` (`mfa:verify` scope); `POST /auth/mfa/verify` exchanges a valid
+  authenticator code for a full session. Enroll MFA before enabling the flag.
+- `ADMIN_API_MFA_REQUIRED` remains **false** by default.
+
+### Admin API Phase 1 foundation (CORE-011)
+
+- Added the versioned `/api/v1/admin` surface for Assist RIC and other management
+  clients: health/capabilities, human and service-account auth, providers/stays
+  read and write, recycle bin, drafts/imports, audit and search-gaps.
+- Locked the boundary so external tools must not open production MariaDB
+  (ADRs 0018–0020). Stays remain `caravan_parks`; traveller facilities stay out
+  of Phase 1. Assist RIC is the initial local management client.
+- Migrations `085`–`087` create Admin API credentials, MFA tables and
+  draft/import job storage. The API remains disabled by default
+  (`ADMIN_API_ENABLED=false`) until staging rehearsal and an updated Quality
+  Gate allow production flags.
+- TOTP MFA enrollment/verify shipped in a follow-up (OPS-010); enforcement flag
+  stays false by default.
+
+### National coverage map
+
+- Replaced the floating heat points with a recognisable Australia map including mainland and Tasmania outlines, state/territory boundaries and labels, an opportunity-score legend, and keyboard-focusable town/category points.
+
+### Free Growth Hub
+
+- Added direct, prominently labelled email campaign actions for caravan/RV clubs, club federations, 4WD/touring groups, publications, tourism organisations, industry bodies, manufacturers, dealers, rental fleets and caravan park networks. Each action shows the reviewed eligible count and opens a correctly targeted, prefilled campaign instead of making administrators reconstruct the audience and message manually.
+- Added the real next sending action directly to every existing campaign row, including a pre-addressed internal preview and one-click staged batch controls, while retaining the enforced recipient caps and evidence checks.
+- Consolidated provider factual notices, reviewed organisation outreach, Social Studio, Facebook/community sharing, partner referrals, search indexing and Website Insights into one dashboard workflow.
+- Added ready-to-copy community, Messenger, club-newsletter and provider/park share messages with distinct tracked links and mobile native sharing.
+- Added first-party UTM source capture without collecting visitor IP addresses; Website Insights renders tracked sources in plain English.
+- Added live channel status for prepared factual campaigns, reviewed organisation contacts, Facebook connection, indexing and approved social assets.
+- Kept Facebook-group posting manual so administrators can follow each group’s rules, and retained consent, suppression, sender-identification and unsubscribe boundaries for electronic messages.
 
 ### Location-first behaviour across every discovery journey
 
