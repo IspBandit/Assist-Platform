@@ -53,7 +53,7 @@
 - Paid AI / facilities require owner approval
 
 ## Current Task
-None active — POL-002 model year selector ready to commit.
+None active — POL-002 model year selector committed (`6a83a0a`).
 
 ## Next Highest Priority Unblocked Task
 Polaris non-AI residuals (a11y evidence expansion) or owner staging. Avoid `polaris_ai_import` / alert mailer / FULLTEXT migration without clear need.
@@ -61,4 +61,4 @@ Polaris non-AI residuals (a11y evidence expansion) or owner staging. Avoid `pola
 ## Overall Completion %
 88%
 
-*Committed this session: POL-005 saved searches `cf095a3`. POL-002 year selector pending commit.*
+*This session: `cf095a3` saved searches; `6a83a0a` model year selector (`118`).*
