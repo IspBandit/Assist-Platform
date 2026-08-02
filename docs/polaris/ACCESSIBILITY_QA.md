@@ -11,17 +11,20 @@
 
 | Surface | Checks noted |
 | --- | --- |
-| Find My RV stages | Form labels present; stage list conveys progress; Continue / Back controls are text buttons/links |
-| Model detail | Spec provenance table uses `<th scope="row">` / column headers; demo badge visible |
+| Find My RV stages | Form labels present; stage list conveys progress; Continue / Back controls are text buttons/links; empty score list uses `role="status"` |
+| Browse / Saved / account searches & comparisons | Filter labels; empty results use `role="status"` |
+| Model detail | Spec provenance table uses `<caption>`, `<th scope="row">` / column headers; year selector `aria-labelledby` + focus-visible hit target; demo badge visible |
+| Compare | Table caption; differing rows include visible **Differs** text (not colour alone); empty picker state announced |
 | Manufacturer portal forms | Labels associated with inputs; CSRF on POSTs |
-| Compare / Tow Match | Primary actions are buttons or links with visible text (no icon-only) |
+| Tow Match | Primary actions are buttons or links with visible text (no icon-only) |
 | Reduced motion | Homepage hero respects `prefers-reduced-motion` (existing) |
+| Skip link | Inherited from `layouts.public` (`#main`) |
 
 ---
 
 ## Known gaps (honest)
 
-- No third-party axe/Lighthouse report attached in CI yet
+- No third-party axe/Lighthouse report attached in CI yet (required for POL-009 PASS)
 - Colour contrast not instrumented per brand theme token
 - Keyboard-only and screen-reader walkthroughs not recorded for every portal section
 - Floorplan images still need complete accessible descriptions on non-demo content
@@ -33,9 +36,10 @@
 
 1. Browse Polaris Find stages 1–10 with keyboard only (Tab / Enter / Space).
 2. Confirm every interactive control has a visible name.
-3. On a model page, confirm provenance table is readable without colour alone.
-4. Toggle OS reduced-motion and reload the homepage hero.
-5. Attach axe DevTools / Lighthouse summaries to the release PR when seeking POL-009 PASS.
+3. On a model page, confirm provenance table is readable without colour alone; Tab through year selector links.
+4. On Compare, confirm **Differs** markers appear on differing rows with colour off / greyscale if possible.
+5. Toggle OS reduced-motion and reload the homepage hero.
+6. Attach axe DevTools / Lighthouse summaries to the release PR when seeking POL-009 PASS.
 
 ---
 

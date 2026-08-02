@@ -6,7 +6,7 @@
     <p class="muted">Filters you saved from Browse. Email and price alerts are not delivered yet — reopen a search anytime from here or Saved.</p>
 
     <?php if ($searches === []): ?>
-        <p>No saved searches yet.</p>
+        <p class="empty-state" role="status">No saved searches yet.</p>
         <div class="btn-row">
             <a class="btn btn-primary" href="<?= e(url('rvs')) ?>">Browse RVs</a>
             <a class="btn btn-ghost" href="<?= e(url('saved')) ?>">Saved shortlist</a>

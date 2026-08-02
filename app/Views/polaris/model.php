@@ -21,8 +21,8 @@
         <h1><?= $this->e($model['name']) ?></h1>
         <p><?= $this->e((string) ($model['description'] ?? '')) ?></p>
         <?php if (!empty($modelYears) && count($modelYears) > 1): ?>
-            <nav class="polaris-year-selector" aria-label="Model year">
-                <span class="polaris-year-selector__label">Model year</span>
+            <nav class="polaris-year-selector" aria-labelledby="polaris-year-selector-label">
+                <span class="polaris-year-selector__label" id="polaris-year-selector-label">Model year</span>
                 <ul>
                     <?php foreach ($modelYears as $yearRow): ?>
                         <?php
@@ -33,7 +33,7 @@
                         ?>
                         <li>
                             <?php if ($isActive): ?>
-                                <span class="polaris-year-selector__current" aria-current="page"><?= $y ?><?php if ($status !== 'current'): ?> <span class="muted"><?= $this->e($status) ?></span><?php endif; ?></span>
+                                <span class="polaris-year-selector__current" aria-current="true"><?= $y ?><?php if ($status !== 'current'): ?> <span class="muted"><?= $this->e($status) ?></span><?php endif; ?></span>
                             <?php else: ?>
                                 <a href="<?= e($href) ?>"><?= $y ?><?php if ($status !== 'current'): ?> <span class="muted"><?= $this->e($status) ?></span><?php endif; ?></a>
                             <?php endif; ?>
@@ -95,7 +95,7 @@
                 </div>
             </dl>
         <?php elseif (!empty($modelYears)): ?>
-            <p class="muted">No published variants for this model year yet.</p>
+            <p class="muted" role="status">No published variants for this model year yet.</p>
         <?php endif; ?>
 
         <h2>Source transparency</h2>
@@ -124,6 +124,7 @@
             <h3>Specification provenance</h3>
             <div class="table-wrap">
                 <table class="table polaris-spec-table">
+                    <caption class="sr-only">Specification values with source authority for this model year</caption>
                     <thead>
                         <tr><th scope="col">Specification</th><th scope="col">Value</th><th scope="col">Source</th></tr>
                     </thead>

@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-002 accessibility markup polish
+
+- Compare/model table captions; compare **Differs** text markers (not colour alone);
+  empty-state `role="status"` on browse/saved/find/account surfaces; year selector
+  focus-visible + labelledby. Evidence remains **CONDITIONAL** — no WCAG PASS /
+  no CI axe gate yet.
+
 ### POL-002 model year selector
 
 - Model detail resolves published years and filters variants by `?year=YYYY`

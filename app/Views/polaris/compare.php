@@ -21,7 +21,7 @@
         </form>
 
         <?php if ($comparison['models'] === []): ?>
-            <p class="empty-state">Choose models above to start a comparison.</p>
+            <p class="empty-state" role="status">Choose models above to start a comparison.</p>
         <?php else: ?>
             <?php if (!empty($shareUrl)): ?>
                 <p class="notice notice-info">Shareable link: <a href="<?= e($shareUrl) ?>"><?= $this->e($shareUrl) ?></a></p>
@@ -45,6 +45,7 @@
 
             <div class="polaris-compare-table-wrap" role="region" aria-label="Comparison table" tabindex="0">
                 <table class="polaris-compare-table">
+                    <caption class="sr-only">Side-by-side specification comparison of selected RV models. Rows marked Differs have different values across models.</caption>
                     <thead>
                         <tr>
                             <th scope="col">Specification</th>
@@ -57,7 +58,12 @@
                         <?php foreach ($comparison['rows'] as $row): ?>
                             <?php if (!empty($differencesOnly) && !$row['differs']) { continue; } ?>
                             <tr class="<?= $row['differs'] ? 'is-diff' : '' ?>">
-                                <th scope="row"><?= $this->e($row['label']) ?></th>
+                                <th scope="row">
+                                    <?= $this->e($row['label']) ?>
+                                    <?php if (!empty($row['differs'])): ?>
+                                        <span class="polaris-diff-marker">Differs</span>
+                                    <?php endif; ?>
+                                </th>
                                 <?php foreach ($row['values'] as $value): ?>
                                     <td><?= $value === null ? '—' : $this->e($value) ?></td>
                                 <?php endforeach; ?>

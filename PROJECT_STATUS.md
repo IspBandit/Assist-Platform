@@ -12,7 +12,8 @@
 - VAN-010 Claim-first onboarding (flag); VAN-011 Ask VanAssist (flag off)
 - OPS-011 Recycle Bin (Admin API); INF-001/003; OPS-001; COM-006/007
 - POL-005 comparison history (`cbc3f3d`) + saved browse searches (`cf095a3`)
-- POL-002 model year selector on model detail (this session; migration `118`)
+- POL-002 model year selector on model detail (`6a83a0a`; migration `118`)
+- POL-002 accessibility markup polish (captions / Differs / status / year focus; CONDITIONAL a11y)
 
 ## In Progress
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
@@ -53,12 +54,12 @@
 - Paid AI / facilities require owner approval
 
 ## Current Task
-None active — POL-002 model year selector committed (`6a83a0a`).
+None active — POL-002 a11y markup polish uncommitted (ask to commit).
 
 ## Next Highest Priority Unblocked Task
-Polaris non-AI residuals (a11y evidence expansion) or owner staging. Avoid `polaris_ai_import` / alert mailer / FULLTEXT migration without clear need.
+Owner staging (OPS-010/DATA-011) when environment available; otherwise remaining Polaris non-AI gaps (catalogue volume). Avoid `polaris_ai_import` / alert mailer / FULLTEXT / CI axe without clear POL-009 readiness.
 
 ## Overall Completion %
 88%
 
-*This session: `cf095a3` saved searches; `6a83a0a` model year selector (`118`).*
+*A11y markup polish done; evidence still CONDITIONAL. Say commit to land it.*

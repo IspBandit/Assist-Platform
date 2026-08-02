@@ -4,7 +4,7 @@
     <h1>Saved</h1>
     <h2>Shortlist</h2>
     <?php if ($models === []): ?>
-        <p class="empty-state">No saved models yet. Save from a model page while signed in.</p>
+        <p class="empty-state" role="status">No saved models yet. Save from a model page while signed in.</p>
     <?php else: ?>
         <ul class="polaris-account-list">
             <?php foreach ($models as $model): ?>
@@ -24,7 +24,7 @@
     <h2>Saved searches</h2>
     <p class="muted">Reopen browse filters you saved. Email alerts are not sent yet.</p>
     <?php if ($searches === []): ?>
-        <p class="empty-state">No saved searches yet. Apply filters on Browse, then save the search while signed in.</p>
+        <p class="empty-state" role="status">No saved searches yet. Apply filters on Browse, then save the search while signed in.</p>
         <p><a class="btn btn-primary" href="<?= e(url('rvs')) ?>">Browse RVs</a></p>
     <?php else: ?>
         <ul class="polaris-account-list">

@@ -188,7 +188,7 @@
                     </p>
                 <?php endif; ?>
                 <?php if ($matches === []): ?>
-                    <p class="empty-state">No published models available to score.</p>
+                    <p class="empty-state" role="status">No published models available to score.</p>
                 <?php else: ?>
                     <ol class="polaris-match-list">
                         <?php foreach (array_slice($matches, 0, 12) as $match): ?>

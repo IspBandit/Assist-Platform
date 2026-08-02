@@ -6,7 +6,7 @@
     <p class="muted">Shareable links you created from Compare while signed in. Guest shares are not listed here.</p>
 
     <?php if ($comparisons === []): ?>
-        <p>No saved comparisons yet. Open Compare, select models, then create a shareable link while signed in.</p>
+        <p class="empty-state" role="status">No saved comparisons yet. Open Compare, select models, then create a shareable link while signed in.</p>
         <div class="btn-row">
             <a class="btn btn-primary" href="<?= e(url('compare')) ?>">Compare models</a>
             <a class="btn btn-ghost" href="<?= e(url('account/preferences')) ?>">Preferences</a>

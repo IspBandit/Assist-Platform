@@ -3,6 +3,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-002 accessibility markup polish** — table captions, compare Differs
+  text markers, empty-state `role="status"`, year-selector focus/labelledby;
+  ACCESSIBILITY_QA remains CONDITIONAL (no WCAG PASS / no CI axe).
 - **POL-002 model year selector** — model detail `?year=` resolves published
   `polaris_rv_model_years`, filters variants, keeps year-free canonicals; demo
   migration `118` adds Southern Cross 2025 variant.

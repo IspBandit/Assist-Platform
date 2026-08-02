@@ -1609,8 +1609,10 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .polaris-year-selector{display:flex;flex-wrap:wrap;align-items:center;gap:.65rem 1rem;margin:1rem 0 1.25rem}
 .polaris-year-selector__label{font-weight:650}
 .polaris-year-selector ul{display:flex;flex-wrap:wrap;gap:.5rem;list-style:none;margin:0;padding:0}
-.polaris-year-selector a,.polaris-year-selector__current{display:inline-block;padding:.35rem .7rem;border:1px solid var(--color-border,var(--line));border-radius:8px;text-decoration:none}
+.polaris-year-selector a,.polaris-year-selector__current{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;padding:.35rem .85rem;border:1px solid var(--color-border,var(--line));border-radius:8px;text-decoration:none}
+.polaris-year-selector a:focus-visible{outline:2px solid #1a3a4a;outline-offset:2px}
 .polaris-year-selector__current{background:#1a3a4a;color:#f7f5f2;border-color:#1a3a4a}
+.polaris-diff-marker{display:inline-block;margin-left:.4rem;padding:.1rem .4rem;border-radius:4px;border:1px solid #8a4b16;color:#8a4b16;font-size:.72rem;font-weight:650;letter-spacing:.02em;text-transform:uppercase}
 .polaris-account-list .inline-form{display:inline-flex;margin-top:.35rem}
 .polaris-pref-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin:1rem 0}
 .polaris-pref-grid label,.polaris-priority-set label{display:grid;gap:.35rem;font-weight:650}

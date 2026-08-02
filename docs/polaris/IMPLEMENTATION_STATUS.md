@@ -24,7 +24,7 @@
 - Cost transparency UI on admin imports; paid AI import flag `polaris_ai_import` remains OFF
 - Model↔source provenance links + specification provenance table on model pages
 - Portal write paths: profile, media, dealers, team; dealer claim scaffold; manufacturer merge
-- Accessibility checklist evidence: `docs/polaris/ACCESSIBILITY_QA.md` (**CONDITIONAL**, not WCAG PASS)
+- Accessibility checklist evidence: `docs/polaris/ACCESSIBILITY_QA.md` (**CONDITIONAL**, not WCAG PASS) — markup polish for captions, empty-state status, year focus, compare Differs text
 - Unit tests under `tests/Unit/Polaris`
 - Brand stays `private` / `noindex` — no production deploy
 
@@ -52,5 +52,5 @@ Apply migrations `096` and `099` in non-production before portal media/dealer an
 1. Real manufacturer catalogue volume + complete field-level provenance  
 2. Wire `polaris_ai_import` to Assist AI orchestrator behind budget (still no auto-publish)  
 3. Alert delivery for saved searches (mailer/cron)  
-4. Expand accessibility evidence to CI artefacts for POL-009  
+4. CI axe/Lighthouse artefacts for POL-009 (markup polish done; automated gate still open)  
 5. POL-009 Quality Gate when domain + catalogue ready  

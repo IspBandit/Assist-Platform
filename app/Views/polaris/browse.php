@@ -64,7 +64,7 @@
         <?php endif; ?>
         <p class="muted"><?= count($models) ?> model<?= count($models) === 1 ? '' : 's' ?></p>
         <?php if (empty($models)): ?>
-            <p class="empty-state">No models matched those filters.</p>
+            <p class="empty-state" role="status">No models matched those filters.</p>
         <?php else: ?>
             <div class="polaris-model-grid">
                 <?php foreach ($models as $model): ?>
