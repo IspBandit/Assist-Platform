@@ -50,8 +50,8 @@ Same claim-first pattern as manufacturers:
 | Dashboard | Planned |
 | Profile & regions | Planned |
 | Linked manufacturers | Planned |
-| Enquiry settings (email routing) | Planned (Phase 8) |
-| Analytics (enquiry clicks) | Planned (Phase 9) |
+| Enquiry settings (email routing) | Planned (Phase 8) — model page uses mailto/website handoff only |
+| Analytics (enquiry clicks) | Partially implemented (`dealer_enquiry_click` on handoff) |
 
 ---
 

@@ -12,6 +12,7 @@ use App\Services\Polaris\BuyerStateService;
 use App\Services\Polaris\CatalogueRepository;
 use App\Services\Polaris\CatalogueService;
 use App\Services\Polaris\ComparisonService;
+use App\Services\Polaris\DealerEnquiryService;
 use App\Services\Polaris\MatchScorer;
 use App\Services\Polaris\NaturalLanguagePreferenceMapper;
 use App\Services\Polaris\PreferenceProfile;
@@ -29,6 +30,7 @@ final class PolarisController extends Controller
     private VanAssistSurfacingService $vanAssist;
     private SavedCatalogueService $saved;
     private BuyerStateService $buyerState;
+    private DealerEnquiryService $dealers;
 
     public function __construct()
     {
@@ -39,6 +41,7 @@ final class PolarisController extends Controller
         $this->vanAssist = new VanAssistSurfacingService();
         $this->saved = new SavedCatalogueService();
         $this->buyerState = new BuyerStateService();
+        $this->dealers = new DealerEnquiryService();
     }
 
     public function home(Request $request): Response
@@ -275,6 +278,10 @@ final class PolarisController extends Controller
         );
         $specProvenance = $this->catalogue->variantProvenanceRows($primary, $modelSources);
         $relatedServices = $this->vanAssist->relatedServices(null, 6);
+        $dealers = $this->dealers->listForManufacturer(
+            current_brand()->databaseId(),
+            (int) $model['manufacturer_id']
+        );
         AnalyticsService::track(
             'rv_viewed',
             current_user() !== null ? (int) current_user()['id'] : null,
@@ -305,8 +312,47 @@ final class PolarisController extends Controller
             'provenance' => $provenance,
             'specProvenance' => $specProvenance,
             'relatedServices' => $relatedServices,
+            'dealers' => $dealers,
             'isSaved' => current_user() !== null && $this->isModelSaved((int) current_user()['id'], (int) $model['id']),
         ]);
+    }
+
+    public function dealerEnquire(Request $request): Response
+    {
+        $this->requireCatalogue();
+        $dealerId = (int) $request->route('id');
+        $channel = strtolower(trim((string) $request->query('channel', 'website')));
+        if (!in_array($channel, ['email', 'website'], true)) {
+            $channel = 'website';
+        }
+        $modelId = (int) $request->query('model_id', 0);
+        $dealer = $this->dealers->findPublishedDealer(current_brand()->databaseId(), $dealerId);
+        if ($dealer === null) {
+            $this->abort(404);
+        }
+
+        AnalyticsService::track(
+            'dealer_enquiry_click',
+            current_user() !== null ? (int) current_user()['id'] : null,
+            'dealer',
+            $dealerId,
+            [
+                'model_id' => $modelId > 0 ? $modelId : null,
+                'channel' => $channel,
+            ],
+            current_user() !== null ? 'authenticated' : 'anonymous'
+        );
+
+        if ($channel === 'email' && !empty($dealer['email'])) {
+            return $this->redirect('mailto:' . $dealer['email']);
+        }
+        if (!empty($dealer['website_url'])) {
+            return $this->redirect((string) $dealer['website_url']);
+        }
+        if (!empty($dealer['email'])) {
+            return $this->redirect('mailto:' . $dealer['email']);
+        }
+        $this->abort(404);
     }
 
     public function manufacturers(Request $request): Response

@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-008 dealer enquiry handoff
+
+- Model pages show linked published dealers with email/website CTAs via
+  `/dealers/{id}/enquire` (tracks `dealer_enquiry_click`, then redirects).
+  No platform-sent enquiry email. Demo contacts use `example.invalid` (`120`).
+
 ### POL-002 demo catalogue volume
 
 - Migration `119` adds Demo Alpine Family plus six more demo models/variants

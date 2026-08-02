@@ -36,7 +36,7 @@ failures never break product flows.
 | `polaris.tow_match_run` | Tow check | variant_id, tow_vehicle_id?, status |
 | `polaris.search_nl` | `/ask` submit | intent_hash, adapter_routes |
 | `polaris.provider_click` | VanAssist card | provider_id, variant_id |
-| `polaris.dealer_enquiry_click` | Contact dealer | dealer_id, variant_id |
+| `dealer_enquiry_click` | Contact dealer handoff | dealer_id, model_id?, channel |
 
 ---
 

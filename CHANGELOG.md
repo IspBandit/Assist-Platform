@@ -3,6 +3,10 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-008 dealer enquiry handoff** — model-page mailto/website CTAs for
+  linked published dealers; `/dealers/{id}/enquire` tracks
+  `dealer_enquiry_click` then redirects. Demo contacts/links in `120`
+  (`example.invalid` only). No outbound enquiry mailer.
 - **POL-002 demo catalogue volume** — migration `119` expands Polaris
   demonstration fixtures (new manufacturer + six models/variants, `is_demo`
   only). Not production national catalogue data.

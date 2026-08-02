@@ -162,7 +162,7 @@ Deliverables:
 
 - [x] Related VanAssist services on model pages
 - [x] Links to VanAssist URLs; no provider record duplication
-- [ ] Dealer enquiry handoff
+- [x] Dealer enquiry handoff (mailto/website + click analytics; no outbound mailer)
 
 ---
 

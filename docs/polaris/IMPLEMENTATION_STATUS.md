@@ -21,6 +21,7 @@
 - Compare up to 4 + shareable `/compare/{token}` + **account comparison history** (`/account/comparisons`)
 - Saved browse searches (capture from `/rvs`, list on `/saved` and `/account/alerts`; no email delivery)
 - Tow Match via TowSmart boundary; VanAssist related services (no duplication)
+- Dealer enquiry handoff on model pages (mailto/website + `dealer_enquiry_click`; no outbound mailer)
 - CSV / JSON / XLSX draft-first import + brochure/text extract (`polaris_brochure_extract`, off)
 - Cost transparency UI on admin imports; paid AI import flag `polaris_ai_import` remains OFF
 - Model↔source provenance links + specification provenance table on model pages

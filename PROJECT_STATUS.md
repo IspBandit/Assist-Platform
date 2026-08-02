@@ -12,9 +12,10 @@
 - VAN-010 Claim-first onboarding (flag); VAN-011 Ask VanAssist (flag off)
 - OPS-011 Recycle Bin (Admin API); INF-001/003; OPS-001; COM-006/007
 - POL-005 comparison history + saved browse searches
-- POL-002 year selector + a11y + demo catalogue volume (`119`, this commit)
-- POL-003 Find hydration from saved preferences (`9a7a5a2`)
-- POL-007 manufacturer portal analytics (`9c962cd`) + data-quality (`8565f26`)
+- POL-002 year selector + a11y + demo catalogue volume (`119`)
+- POL-003 Find hydration from saved preferences
+- POL-007 manufacturer portal analytics + data-quality
+- POL-008 VanAssist surfacing + dealer enquiry handoff (`120`, this commit)
 
 ## In Progress
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
@@ -40,15 +41,14 @@
 - Saved-search email/alert delivery (mailer/cron)
 - FULLTEXT catalogue name search
 - CI axe/Lighthouse for POL-009
-- Find-impression / dealer-enquiry portal metrics
+- Find-impression portal metrics; dealer enquiry email routing
 - OPS-005 / COM-005 sale-readiness packs
 
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Polaris non-AI residuals (dealer enquiry handoff)
-4. Full Platform Quality Gate
-5. Production release package
+3. Full Platform Quality Gate
+4. Production release package
 
 ## Dependencies
 - Task order: CORE-011 → DATA-011 → **DATA-011A** → Dataset Engine residuals → …
@@ -60,9 +60,9 @@
 None active.
 
 ## Next Highest Priority Unblocked Task
-Owner staging when available; otherwise POL-008 dealer enquiry handoff (small) or pause for owner decisions. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
+Owner staging (OPS-010 / DATA-011) or VAN-002 acceptance — remaining Polaris public-launch work is blocked on domain/QG. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
 
 ## Overall Completion %
-90%
+91%
 
-*Demo catalogue volume is still fixtures (`is_demo`); not national production data.*
+*Polaris private vertical slice residuals largely closed; launch remains blocked.*

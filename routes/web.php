@@ -36,6 +36,7 @@ return static function (Router $router): void {
         // Note: /find is shared with VanAssist provider search — SearchController delegates for Polaris.
         $router->get('/rvs', 'Site\PolarisController@browse', 'polaris.browse');
         $router->get('/rvs/{manufacturer}/{model}', 'Site\PolarisController@showModel', 'polaris.model');
+        $router->get('/dealers/{id}/enquire', 'Site\PolarisController@dealerEnquire', 'polaris.dealer.enquire');
         $router->get('/compare', 'Site\PolarisController@compare', 'polaris.compare');
         $router->get('/compare/{token}', 'Site\PolarisController@compare', 'polaris.compare.shared');
         $router->post('/compare/share', 'Site\PolarisController@shareCompare', 'polaris.compare.share');

@@ -78,7 +78,7 @@ drafts until publish workflow exists.
 | DLR-01 | Claim dealer organisation | Existing (pattern) |
 | DLR-02 | Dealer portal: profile, territories, contact routing | Planned (Phase 7) |
 | DLR-03 | Link to manufacturer models (no independent spec authority) | Planned (Phase 7) |
-| DLR-04 | Optional “contact dealer” CTA on model pages | Planned (Phase 8) |
+| DLR-04 | Optional “contact dealer” CTA on model pages | Partially implemented (mailto/website handoff) |
 | DLR-05 | No dealer inventory, pricing or used listings | Planned (boundary enforced) |
 
 **Acceptance:** Dealers cannot create parallel model records; they reference

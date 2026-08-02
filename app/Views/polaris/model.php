@@ -174,6 +174,34 @@
             </ul>
         <?php endif; ?>
 
+        <?php if (!empty($dealers)): ?>
+            <h2>Contact a dealer</h2>
+            <p class="muted">Dealer response times vary. Polaris does not send enquiries on your behalf — you contact the dealer directly.</p>
+            <ul class="polaris-account-list">
+                <?php foreach ($dealers as $dealer): ?>
+                    <li>
+                        <strong><?= $this->e($dealer['trading_name']) ?></strong>
+                        <?php if ($dealer['locality'] !== '' || $dealer['state_abbr'] !== ''): ?>
+                            <span class="muted">
+                                — <?= $this->e(trim($dealer['locality'] . ($dealer['state_abbr'] !== '' ? ', ' . $dealer['state_abbr'] : ''))) ?>
+                            </span>
+                        <?php endif; ?>
+                        <div class="btn-row" style="margin-top:.35rem">
+                            <?php if (!empty($dealer['mailto_url'])): ?>
+                                <a class="btn btn-secondary btn-sm"
+                                   href="<?= e(url('dealers/' . (int) $dealer['id'] . '/enquire?channel=email&model_id=' . (int) $model['id'])) ?>">Email dealer</a>
+                            <?php endif; ?>
+                            <?php if (!empty($dealer['website_handoff'])): ?>
+                                <a class="btn btn-ghost btn-sm"
+                                   href="<?= e(url('dealers/' . (int) $dealer['id'] . '/enquire?channel=website&model_id=' . (int) $model['id'])) ?>"
+                                   rel="noopener noreferrer">Dealer website</a>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+
         <h2>Related VanAssist services</h2>
         <p class="muted"><?= $this->e($relatedServices['disclaimer'] ?? '') ?></p>
         <?php if (empty($relatedServices['providers'])): ?>
