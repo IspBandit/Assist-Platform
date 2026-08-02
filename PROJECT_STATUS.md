@@ -50,10 +50,10 @@
 - Paid AI / facilities require owner approval
 
 ## Current Task
-DATA-011A National Dataset Catalogue — verify tests/analysis and commit.
+None active — DATA-011A committed (`f9455e7`).
 
 ## Next Highest Priority Unblocked Task
-Traveller Facilities / Dataset Engine residuals only if still open; otherwise VAN-002/staging (owner) or Polaris non-AI gaps.
+Traveller Facilities coverage residuals (DATA-012) only if open; otherwise owner staging (OPS-010/DATA-011) or Polaris non-AI gaps. No new dataset-specific importers until catalogue rows drive them.
 
 ## Overall Completion %
 85%
