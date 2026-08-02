@@ -6,7 +6,7 @@
     <?php if ($models === []): ?>
         <p class="empty-state">No saved models yet. Save from a model page while signed in.</p>
     <?php else: ?>
-        <ul>
+        <ul class="polaris-account-list">
             <?php foreach ($models as $model): ?>
                 <li>
                     <a href="<?= e(url('rvs/' . $model['manufacturer_slug'] . '/' . $model['slug'])) ?>"><?= $this->e($model['manufacturer_name'] . ' ' . $model['name']) ?></a>
@@ -20,12 +20,40 @@
             <?php endforeach; ?>
         </ul>
     <?php endif; ?>
+
     <h2>Saved searches</h2>
+    <p class="muted">Reopen browse filters you saved. Email alerts are not sent yet.</p>
     <?php if ($searches === []): ?>
-        <p class="muted">Saved search alerts are ready in the schema; UI capture expands next.</p>
+        <p class="empty-state">No saved searches yet. Apply filters on Browse, then save the search while signed in.</p>
+        <p><a class="btn btn-primary" href="<?= e(url('rvs')) ?>">Browse RVs</a></p>
     <?php else: ?>
-        <ul><?php foreach ($searches as $search): ?><li><?= $this->e($search['name']) ?></li><?php endforeach; ?></ul>
+        <ul class="polaris-account-list">
+            <?php foreach ($searches as $search): ?>
+                <?php
+                $path = (string) ($search['browse_path'] ?? '/rvs');
+                $created = (string) ($search['created_at'] ?? '');
+                $createdLabel = $created !== '' ? date('j M Y', strtotime($created)) : '';
+                ?>
+                <li>
+                    <a href="<?= e(url(ltrim($path, '/'))) ?>"><?= $this->e((string) $search['name']) ?></a>
+                    <span class="muted">
+                        Browse filters
+                        <?php if ($createdLabel !== ''): ?> · <?= $this->e($createdLabel) ?><?php endif; ?>
+                    </span>
+                    <form method="post" action="<?= e(url('saved/searches/remove')) ?>" class="inline-form">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="search_id" value="<?= (int) $search['id'] ?>">
+                        <input type="hidden" name="return" value="/saved">
+                        <button class="btn btn-ghost btn-sm" type="submit">Remove</button>
+                    </form>
+                </li>
+            <?php endforeach; ?>
+        </ul>
     <?php endif; ?>
-    <p><a class="btn btn-secondary" href="<?= e(url('portal/manufacturer')) ?>">Manufacturer portal</a></p>
+
+    <div class="btn-row">
+        <a class="btn btn-ghost" href="<?= e(url('account/comparisons')) ?>">Comparisons</a>
+        <a class="btn btn-ghost" href="<?= e(url('portal/manufacturer')) ?>">Manufacturer portal</a>
+    </div>
 </div></section>
 <?php $this->endSection(); ?>

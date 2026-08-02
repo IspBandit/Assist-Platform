@@ -40,6 +40,28 @@
             </select>
             <button class="btn btn-primary" type="submit">Apply filters</button>
         </form>
+        <?php if (!empty($canSaveSearch)): ?>
+            <div class="polaris-save-search">
+                <?php if (!empty($isSignedIn)): ?>
+                    <form method="post" action="<?= e(url('saved/searches')) ?>" class="polaris-save-search-form">
+                        <?= csrf_field() ?>
+                        <?php
+                        $returnQuery = http_build_query(array_filter($filters, static fn ($v) => $v !== null && $v !== ''));
+                        $returnPath = '/rvs' . ($returnQuery !== '' ? '?' . $returnQuery : '');
+                        ?>
+                        <input type="hidden" name="return" value="<?= e($returnPath) ?>">
+                        <?php foreach ($filters as $key => $value): ?>
+                            <input type="hidden" name="<?= e((string) $key) ?>" value="<?= e((string) $value) ?>">
+                        <?php endforeach; ?>
+                        <label class="sr-only" for="polaris-save-search-name">Search name</label>
+                        <input id="polaris-save-search-name" type="text" name="name" maxlength="120" value="<?= e($suggestedSearchName ?? '') ?>" placeholder="Name this search">
+                        <button class="btn btn-secondary" type="submit">Save this search</button>
+                    </form>
+                <?php else: ?>
+                    <p class="muted"><a href="<?= e(url('login?return=' . rawurlencode('/rvs?' . http_build_query(array_filter($filters, static fn ($v) => $v !== null && $v !== ''))))) ?>">Sign in</a> to save these filters.</p>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
         <p class="muted"><?= count($models) ?> model<?= count($models) === 1 ? '' : 's' ?></p>
         <?php if (empty($models)): ?>
             <p class="empty-state">No models matched those filters.</p>

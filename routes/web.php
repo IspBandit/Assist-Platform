@@ -48,6 +48,8 @@ return static function (Router $router): void {
         $router->get('/saved', 'Site\PolarisController@saved', 'polaris.saved');
         $router->post('/saved/models', 'Site\PolarisController@saveModel', 'polaris.saved.save');
         $router->post('/saved/models/remove', 'Site\PolarisController@unsaveModel', 'polaris.saved.remove');
+        $router->post('/saved/searches', 'Site\PolarisController@saveSearch', 'polaris.saved.search');
+        $router->post('/saved/searches/remove', 'Site\PolarisController@unsaveSearch', 'polaris.saved.search.remove');
         $router->get('/account/preferences', 'Site\PolarisController@accountPreferences', 'polaris.account.preferences');
         $router->post('/account/preferences', 'Site\PolarisController@saveAccountPreferences', 'polaris.account.preferences.save');
         $router->get('/account/comparisons', 'Site\PolarisController@accountComparisons', 'polaris.account.comparisons');

@@ -114,6 +114,7 @@ Deliverables:
 
 - [x] Compare up to four models with diffs and winners
 - [x] Account comparison history (`/account/comparisons` lists signed-in share links)
+- [x] Saved browse searches (capture + reopen; no email alerts)
 - [ ] FULLTEXT / advanced search
 - [ ] Alert delivery for saved searches
 

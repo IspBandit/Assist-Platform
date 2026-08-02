@@ -11,6 +11,7 @@
 - DATA-002 Duplicate management (Admin API check/dry_run/merge/defer; soft-delete+audit)
 - VAN-010 Claim-first onboarding (flag); VAN-011 Ask VanAssist (flag off)
 - OPS-011 Recycle Bin (Admin API); INF-001/003; OPS-001; COM-006/007
+- POL-005 comparison history (`cbc3f3d`) + saved browse search capture (this session)
 
 ## In Progress
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
@@ -33,12 +34,13 @@
 - LPG/fuel facility coverage; FK-repoint duplicate merges
 - Dataset-specific importers **after** DATA-011A (catalogue-first rule)
 - Polaris AI import (`polaris_ai_import`) — paid AI; needs owner approval
+- Saved-search email/alert delivery (mailer/cron)
 - OPS-005 / COM-005 sale-readiness packs
 
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Polaris non-AI roadmap residuals
+3. Polaris non-AI residuals (FULLTEXT, a11y CI evidence, catalogue volume)
 4. Full Platform Quality Gate
 5. Production release package
 
@@ -49,12 +51,12 @@
 - Paid AI / facilities require owner approval
 
 ## Current Task
-None active — POL-005 account comparison history wired (`/account/comparisons`).
+None active — POL-005 saved browse search capture wired.
 
 ## Next Highest Priority Unblocked Task
-Polaris non-AI residuals (saved-search capture, accessibility CI evidence) or owner staging (OPS-010/DATA-011). Avoid `polaris_ai_import` / alert mailer without owner approval.
+Polaris non-AI residuals (model-year selector / FULLTEXT / a11y evidence) or owner staging. Avoid `polaris_ai_import` and alert mailer without owner approval.
 
 ## Overall Completion %
 87%
 
-*RIC DATA-011A catalogue acquisition committed (`4011d9c` on assist-ric). Platform POL-005 comparison history implemented next.*
+*POL-005 saved searches: capture from Browse, reopen from Saved/account alerts; no email delivery.*

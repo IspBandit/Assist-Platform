@@ -1603,6 +1603,10 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 /* Polaris Phase 2–5 surfaces */
 .polaris-filter-bar--rich{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.75rem;align-items:end}
 .polaris-filter-bar--rich .btn{width:100%}
+.polaris-save-search{margin:1rem 0 0}
+.polaris-save-search-form{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.polaris-save-search-form input[type="text"]{min-width:min(100%,16rem);flex:1 1 12rem}
+.polaris-account-list .inline-form{display:inline-flex;margin-top:.35rem}
 .polaris-pref-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin:1rem 0}
 .polaris-pref-grid label,.polaris-priority-set label{display:grid;gap:.35rem;font-weight:650}
 .polaris-check{display:flex!important;align-items:center;gap:.5rem;grid-template-columns:none!important}

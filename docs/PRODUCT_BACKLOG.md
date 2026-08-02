@@ -53,7 +53,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | POL-002 | Polaris catalogue browse completeness (filters, provenance UI, SEO) | in progress | Filters/sort + model provenance table/`099`; a11y CONDITIONAL |
 | POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages 1–10 + NL hints + MatchScorer + preference save |
 | POL-004 | TowSmart compatibility service boundary for Polaris | in progress | `TowCompatibilityService` + `/tow-match` UX |
-| POL-005 | Multi-model comparison experience | in progress | Up to four models, diffs/winners, shareable `/compare/{token}`, account comparison history |
+| POL-005 | Multi-model comparison experience | in progress | Compare/share + account history + saved browse searches (alerts not delivered) |
 | POL-006 | Draft-first data acquisition and extraction review | in progress | CSV/JSON/XLSX + brochure text extract flags; AI import still off |
 | POL-007 | Manufacturer portal (claim-first) | in progress | Claim + model edit + profile/media/dealer/team write paths (`096`) |
 | POL-008 | VanAssist provider surfacing on Polaris pages | in progress | Related services block; no provider duplication |

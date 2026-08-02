@@ -178,6 +178,9 @@ final class PolarisController extends Controller
             'filters' => $filters,
             'categories' => CatalogueService::categoryLabels(),
             'sortOptions' => CatalogueService::sortOptions(),
+            'canSaveSearch' => SavedCatalogueService::normaliseBrowseQuery($filters) !== [],
+            'suggestedSearchName' => SavedCatalogueService::suggestSearchName($filters),
+            'isSignedIn' => current_user() !== null,
         ]);
     }
 
@@ -393,8 +396,17 @@ final class PolarisController extends Controller
 
     public function accountAlerts(Request $request): Response
     {
-        return $this->accountShell($request, 'alerts', 'Price & update alerts',
-            'Alert subscriptions are scaffolded. Prefer checking Saved models and manufacturer pages until notification delivery is enabled.');
+        unset($request);
+        $this->requireCatalogue();
+        if (current_user() === null) {
+            return $this->redirect('/login?return=' . rawurlencode('/account/alerts'));
+        }
+        $searches = $this->saved->listSearches((int) current_user()['id']);
+        return $this->view('polaris.account-alerts', [
+            'title' => 'Saved searches',
+            'searches' => $searches,
+            'metaRobots' => 'noindex,nofollow',
+        ]);
     }
 
     public function accountTowVehicles(Request $request): Response
@@ -520,6 +532,52 @@ final class PolarisController extends Controller
         $modelId = (int) $request->input('model_id');
         $this->saved->removeModel((int) current_user()['id'], $modelId);
         return $this->redirectWith((string) $request->input('return', '/saved'), 'success', 'Removed from shortlist.');
+    }
+
+    public function saveSearch(Request $request): Response
+    {
+        $this->requireCatalogue();
+        $return = (string) $request->input('return', '/rvs');
+        if ($return === '' || !str_starts_with($return, '/')) {
+            $return = '/rvs';
+        }
+        if (current_user() === null) {
+            return $this->redirect('/login?return=' . rawurlencode($return));
+        }
+        $query = [
+            'q' => $request->input('q', ''),
+            'category' => $request->input('category', ''),
+            'production_status' => $request->input('production_status', ''),
+            'min_sleeps' => $request->input('min_sleeps', ''),
+            'max_atm_kg' => $request->input('max_atm_kg', ''),
+            'max_length_m' => $request->input('max_length_m', ''),
+            'max_budget_aud' => $request->input('max_budget_aud', ''),
+            'sort' => $request->input('sort', 'name'),
+        ];
+        try {
+            $this->saved->saveSearch(
+                (int) current_user()['id'],
+                (string) $request->input('name', ''),
+                $query,
+                false
+            );
+            AnalyticsService::track('search_saved', (int) current_user()['id'], 'search', null, [
+                'source' => 'browse',
+            ], 'authenticated');
+            return $this->redirectWith($return, 'success', 'Search saved. Open it anytime from Saved.');
+        } catch (RuntimeException $e) {
+            return $this->redirectWith($return, 'error', $e->getMessage());
+        }
+    }
+
+    public function unsaveSearch(Request $request): Response
+    {
+        $this->requireCatalogue();
+        if (current_user() === null) {
+            return $this->redirect('/login');
+        }
+        $this->saved->removeSearch((int) current_user()['id'], (int) $request->input('search_id'));
+        return $this->redirectWith((string) $request->input('return', '/saved'), 'success', 'Saved search removed.');
     }
 
     private function isModelSaved(int $userId, int $modelId): bool

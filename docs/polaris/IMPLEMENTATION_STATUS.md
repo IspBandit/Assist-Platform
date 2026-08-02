@@ -17,6 +17,7 @@
 - Deterministic NL keyword → preference hints on Find — not AI ranking
 - Preference persistence + account preference/shell routes
 - Compare up to 4 + shareable `/compare/{token}` + **account comparison history** (`/account/comparisons`)
+- Saved browse searches (capture from `/rvs`, list on `/saved` and `/account/alerts`; no email delivery)
 - Tow Match via TowSmart boundary; VanAssist related services (no duplication)
 - CSV / JSON / XLSX draft-first import + brochure/text extract (`polaris_brochure_extract`, off)
 - Cost transparency UI on admin imports; paid AI import flag `polaris_ai_import` remains OFF
@@ -30,7 +31,7 @@
 
 - Full conversational AI interpretation of hero prompts (keyword mapper only)
 - Paid AI brochure extraction via Assist AI orchestrator (flag present, not wired to provider)
-- Alert delivery for saved searches (`/account/alerts` still a shell)
+- Alert delivery for saved searches (mailer/cron; capture UI exists)
 - Full WCAG 2.2 AA evidence pack / Lighthouse CI gate
 - SEO indexation, production domain, real national catalogue volume
 - Platform Quality Gate **PASS** for public launch (POL-009 blocked)

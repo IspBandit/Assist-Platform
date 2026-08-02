@@ -9,6 +9,8 @@ may remain as dated files and are linked here rather than copied.
 
 - Signed-in users see shareable comparisons they created on `/account/comparisons`
   (brand-scoped; guest shares remain unlisted). Alert delivery still scaffolded.
+- Saved browse searches: capture current `/rvs` filters via `POST /saved/searches`,
+  reopen from `/saved` and `/account/alerts`. Email notifications remain off.
 
 ### CORE-011 + CORE-012 unification
 
