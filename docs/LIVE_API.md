@@ -1,8 +1,8 @@
 # Live Admin API (v1)
 
-**Status:** design accepted; implementation in progress under CORE-011.  
-**Not yet a supported production partner API until MFA gate and Quality Gate
-evidence are recorded.**
+**Status:** Phase 1 and Option B implementation complete; production enablement
+awaits the staging rehearsal and full Quality Gate evidence.
+**Not yet a supported production partner API.**
 
 ## Boundary
 

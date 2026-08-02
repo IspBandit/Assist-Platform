@@ -57,10 +57,13 @@
 - Paid AI / facilities require owner approval
 
 ## Current Task
-None active.
+Production-readiness audit complete locally on 2026-08-03. Staging rehearsal
+and owner acceptance remain the critical path.
 
 ## Next Highest Priority Unblocked Task
-Owner staging (OPS-010 / DATA-011) or VAN-002 acceptance — remaining Polaris public-launch work is blocked on domain/QG. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
+OPS-010 / DATA-011 staging rehearsal, followed by VAN-002 claims acceptance.
+These require staging credentials and a human operator. Avoid paid AI, public
+feature flags, alert mailer, FULLTEXT and CI axe until their separate gates are approved.
 
 ## Overall Completion %
 91%
