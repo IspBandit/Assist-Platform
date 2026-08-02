@@ -25,10 +25,13 @@
         <?php else: ?>
             <p>One clear step at a time. Scores explain constraints, preferences and missing data — AI does not rank models.</p>
         <?php endif; ?>
+        <?php if (!empty($preferencesHydrated)): ?>
+            <p class="notice notice-info" role="status">Using your saved travel preferences. Change any stage answer to override them for this run.</p>
+        <?php endif; ?>
 
         <ol class="polaris-stage-list">
             <?php foreach ($stages as $number => $info): ?>
-                <li class="<?= $number === $stage ? 'is-current' : ($number < $stage ? 'is-done' : '') ?>">
+                <li class="<?= $number === $stage ? 'is-current' : ($number < $stage ? 'is-done' : '') ?>"<?= $number === $stage ? ' aria-current="step"' : '' ?>>
                     <span>
                         <strong>Stage <?= (int) $number ?>: <?= $this->e($info['title']) ?></strong>
                         <span><?= $this->e($info['summary']) ?></span>

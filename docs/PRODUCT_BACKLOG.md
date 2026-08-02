@@ -51,7 +51,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | LOC-004 | LocalTorque complete motorsport rule, venue and calendar discovery | in progress | Explicit national discipline taxonomy, official rule layers, verified venue websites/calendars, source freshness and mobile journey acceptance |
 | POL-001 | Polaris foundation: brand, docs, homepage, catalogue schema, browse/detail/find shell, admin nav | in progress | Private vertical slice; master prompt not complete — `docs/polaris/IMPLEMENTATION_STATUS.md` |
 | POL-002 | Polaris catalogue browse completeness (filters, provenance UI, SEO) | in progress | Filters/sort + provenance + year selector + a11y markup polish (CONDITIONAL); FULLTEXT open |
-| POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages 1–10 + NL hints + MatchScorer + preference save |
+| POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages + MatchScorer + prefs UI + Find hydration from saved prefs |
 | POL-004 | TowSmart compatibility service boundary for Polaris | in progress | `TowCompatibilityService` + `/tow-match` UX |
 | POL-005 | Multi-model comparison experience | in progress | Compare/share + account history + saved browse searches (alerts not delivered) |
 | POL-006 | Draft-first data acquisition and extraction review | in progress | CSV/JSON/XLSX + brochure text extract flags; AI import still off |

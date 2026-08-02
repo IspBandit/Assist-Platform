@@ -15,6 +15,7 @@
 - Catalogue browse/detail/manufacturer pages
 - Model year selector on model detail (`?year=`; canonical stays without year)
 - Progressive Find stages 1–10 with real inputs on stages 2/3/6 (tow hint, travel surface, layout)
+- Find hydrates from saved account preferences when query fields are absent
 - Deterministic NL keyword → preference hints on Find — not AI ranking
 - Preference persistence + account preference/shell routes
 - Compare up to 4 + shareable `/compare/{token}` + **account comparison history** (`/account/comparisons`)

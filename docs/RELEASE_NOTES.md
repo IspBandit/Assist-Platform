@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-003 Find preference hydration
+
+- Signed-in users opening Find without preference query fields use saved
+  travel preferences; explicit query/POST values still win. Stage list marks
+  `aria-current="step"`.
+
 ### POL-002 accessibility markup polish
 
 - Compare/model table captions; compare **Differs** text markers (not colour alone);

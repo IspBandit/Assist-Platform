@@ -88,7 +88,7 @@ Deliverables:
 
 - [x] Deterministic `MatchScorer` with explanations
 - [x] Preference profile from guided form
-- [ ] Persisted preference profiles UI
+- [x] Persisted preference profiles UI + Find hydration from saved prefs
 - [ ] Optional NL interpretation via Assist AI (gated)
 
 ---

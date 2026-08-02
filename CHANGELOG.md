@@ -3,6 +3,8 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-003 Find preference hydration** — load saved travel preferences into
+  Find when query fields are absent; explicit params still override.
 - **POL-002 accessibility markup polish** — table captions, compare Differs
   text markers, empty-state `role="status"`, year-selector focus/labelledby;
   ACCESSIBILITY_QA remains CONDITIONAL (no WCAG PASS / no CI axe).

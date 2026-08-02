@@ -69,27 +69,69 @@ final class PolarisController extends Controller
         $prompt = trim((string) $request->query('q', ''));
         $stage = max(1, min(10, (int) $request->query('stage', $request->method() === 'POST' ? 10 : 1)));
 
-        $hasExplicitAdults = $request->query('adults') !== null || $request->input('adults') !== null;
-        $categories = $request->input('categories', $request->query('categories', []));
+        $savedProfile = null;
+        if (current_user() !== null) {
+            $savedProfile = $this->buyerState->loadPreferenceForUser((int) current_user()['id']);
+        }
+        $defaults = $savedProfile !== null
+            ? $savedProfile->toFormDefaults()
+            : [
+                'adults' => 2,
+                'children' => 0,
+                'max_budget_aud' => null,
+                'max_atm_kg' => null,
+                'max_length_m' => null,
+                'min_sleeps' => null,
+                'categories' => [],
+                'require_bathroom' => '',
+                'off_grid_nights' => 0,
+                'priority_towability' => 'strong',
+                'priority_price' => 'strong',
+                'priority_off_grid' => 'nice',
+                'priority_comfort' => 'nice',
+                'priority_payload' => 'strong',
+            ];
+
+        $hasExplicitAdults = $this->requestHas($request, 'adults');
+        $preferenceKeys = [
+            'adults', 'children', 'max_budget_aud', 'max_atm_kg', 'max_length_m', 'min_sleeps',
+            'categories', 'require_bathroom', 'off_grid_nights',
+            'priority_towability', 'priority_price', 'priority_off_grid', 'priority_comfort', 'priority_payload',
+        ];
+        $hasExplicitPreference = false;
+        foreach ($preferenceKeys as $key) {
+            if ($this->requestHas($request, $key)) {
+                $hasExplicitPreference = true;
+                break;
+            }
+        }
+
+        $categories = $this->requestHas($request, 'categories')
+            ? $request->input('categories', $request->query('categories', []))
+            : ($defaults['categories'] ?? []);
         if (!is_array($categories)) {
             $categories = $categories !== '' && $categories !== null ? [(string) $categories] : [];
         }
 
         $profile = PreferenceProfile::fromArray([
-            'adults' => $request->input('adults', $request->query('adults', 2)),
-            'children' => $request->input('children', $request->query('children', 0)),
-            'max_budget_aud' => $request->input('max_budget_aud', $request->query('max_budget_aud')),
-            'max_atm_kg' => $request->input('max_atm_kg', $request->query('max_atm_kg')),
-            'max_length_m' => $request->input('max_length_m', $request->query('max_length_m')),
-            'min_sleeps' => $request->input('min_sleeps', $request->query('min_sleeps')),
+            'adults' => $this->requestValue($request, 'adults', $defaults['adults'] ?? 2),
+            'children' => $this->requestValue($request, 'children', $defaults['children'] ?? 0),
+            'max_budget_aud' => $this->requestValue($request, 'max_budget_aud', $defaults['max_budget_aud'] ?? null),
+            'max_atm_kg' => $this->requestValue($request, 'max_atm_kg', $defaults['max_atm_kg'] ?? null),
+            'max_length_m' => $this->requestValue($request, 'max_length_m', $defaults['max_length_m'] ?? null),
+            'min_sleeps' => $this->requestValue($request, 'min_sleeps', $defaults['min_sleeps'] ?? null),
             'categories' => $categories,
-            'require_bathroom' => (bool) $request->input('require_bathroom', $request->query('require_bathroom', false)),
-            'off_grid_nights' => $request->input('off_grid_nights', $request->query('off_grid_nights', 0)),
-            'priority_towability' => $request->input('priority_towability', $request->query('priority_towability', 'strong')),
-            'priority_price' => $request->input('priority_price', $request->query('priority_price', 'strong')),
-            'priority_off_grid' => $request->input('priority_off_grid', $request->query('priority_off_grid', 'nice')),
-            'priority_comfort' => $request->input('priority_comfort', $request->query('priority_comfort', 'nice')),
-            'priority_payload' => $request->input('priority_payload', $request->query('priority_payload', 'strong')),
+            'require_bathroom' => (bool) $this->requestValue(
+                $request,
+                'require_bathroom',
+                $defaults['require_bathroom'] ?? ''
+            ),
+            'off_grid_nights' => $this->requestValue($request, 'off_grid_nights', $defaults['off_grid_nights'] ?? 0),
+            'priority_towability' => $this->requestValue($request, 'priority_towability', $defaults['priority_towability'] ?? 'strong'),
+            'priority_price' => $this->requestValue($request, 'priority_price', $defaults['priority_price'] ?? 'strong'),
+            'priority_off_grid' => $this->requestValue($request, 'priority_off_grid', $defaults['priority_off_grid'] ?? 'nice'),
+            'priority_comfort' => $this->requestValue($request, 'priority_comfort', $defaults['priority_comfort'] ?? 'nice'),
+            'priority_payload' => $this->requestValue($request, 'priority_payload', $defaults['priority_payload'] ?? 'strong'),
         ]);
 
         $nlHints = [];
@@ -151,6 +193,7 @@ final class PolarisController extends Controller
             'vehicleQ' => trim((string) $request->query('vehicle_q', $towHint ?? '')),
             'travelSurface' => trim((string) $request->query('travel_surface', '')),
             'layoutPref' => trim((string) $request->query('layout_pref', '')),
+            'preferencesHydrated' => $savedProfile !== null && !$hasExplicitPreference && $prompt === '',
         ]);
     }
 
@@ -656,6 +699,20 @@ final class PolarisController extends Controller
             'guideTitle' => $guides[$slug],
             'slug' => $slug,
         ]);
+    }
+
+    private function requestHas(Request $request, string $key): bool
+    {
+        return array_key_exists($key, $request->all());
+    }
+
+    private function requestValue(Request $request, string $key, mixed $default): mixed
+    {
+        if (!$this->requestHas($request, $key)) {
+            return $default;
+        }
+
+        return $request->input($key);
     }
 
     private function requireCatalogue(): void

@@ -114,6 +114,33 @@ final class PreferenceProfile
         ];
     }
 
+    /**
+     * Defaults suitable for Find / account forms (budget in whole AUD).
+     *
+     * @return array<string,mixed>
+     */
+    public function toFormDefaults(): array
+    {
+        return [
+            'adults' => $this->adults,
+            'children' => $this->children,
+            'max_budget_aud' => $this->maxBudgetAudCents !== null
+                ? (int) round($this->maxBudgetAudCents / 100)
+                : null,
+            'min_sleeps' => $this->minSleeps,
+            'max_atm_kg' => $this->maxAtmKg,
+            'max_length_m' => $this->maxLengthM,
+            'categories' => $this->categories,
+            'require_bathroom' => $this->requireBathroom ? '1' : '',
+            'off_grid_nights' => $this->offGridNights,
+            'priority_towability' => $this->priorities['towability'] ?? 'strong',
+            'priority_price' => $this->priorities['price'] ?? 'strong',
+            'priority_off_grid' => $this->priorities['off_grid'] ?? 'nice',
+            'priority_comfort' => $this->priorities['comfort'] ?? 'nice',
+            'priority_payload' => $this->priorities['payload'] ?? 'strong',
+        ];
+    }
+
     private static function optionalPositiveInt(mixed $value): ?int
     {
         if ($value === null || $value === '') {

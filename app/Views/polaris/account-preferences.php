@@ -27,7 +27,7 @@
             <?php endforeach; ?>
         </fieldset>
         <button class="btn btn-primary" type="submit">Save preferences</button>
-        <a class="btn btn-ghost" href="<?= e(url('find?stage=10')) ?>">Run matching</a>
+        <a class="btn btn-ghost" href="<?= e(url('find?stage=10')) ?>">Run matching with saved preferences</a>
     </form>
 </div></section>
 <?php $this->endSection(); ?>

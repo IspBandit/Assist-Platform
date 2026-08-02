@@ -11,9 +11,9 @@
 - DATA-002 Duplicate management (Admin API check/dry_run/merge/defer; soft-delete+audit)
 - VAN-010 Claim-first onboarding (flag); VAN-011 Ask VanAssist (flag off)
 - OPS-011 Recycle Bin (Admin API); INF-001/003; OPS-001; COM-006/007
-- POL-005 comparison history (`cbc3f3d`) + saved browse searches (`cf095a3`)
-- POL-002 model year selector on model detail (`6a83a0a`; migration `118`)
-- POL-002 accessibility markup polish (captions / Differs / status / year focus; CONDITIONAL a11y)
+- POL-005 comparison history + saved browse searches
+- POL-002 year selector + a11y markup polish (`8581386`; CONDITIONAL a11y)
+- POL-003 Find hydration from saved preferences (this commit)
 
 ## In Progress
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
@@ -38,12 +38,13 @@
 - Polaris AI import (`polaris_ai_import`) — paid AI; needs owner approval
 - Saved-search email/alert delivery (mailer/cron)
 - FULLTEXT catalogue name search
+- CI axe/Lighthouse for POL-009
 - OPS-005 / COM-005 sale-readiness packs
 
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Polaris non-AI residuals (FULLTEXT, a11y CI evidence, catalogue volume)
+3. Polaris non-AI residuals (catalogue volume, portal analytics)
 4. Full Platform Quality Gate
 5. Production release package
 
@@ -54,12 +55,12 @@
 - Paid AI / facilities require owner approval
 
 ## Current Task
-None active — POL-002 a11y markup polish uncommitted (ask to commit).
+None active.
 
 ## Next Highest Priority Unblocked Task
-Owner staging (OPS-010/DATA-011) when environment available; otherwise remaining Polaris non-AI gaps (catalogue volume). Avoid `polaris_ai_import` / alert mailer / FULLTEXT / CI axe without clear POL-009 readiness.
+Owner staging when available; otherwise Polaris portal analytics or catalogue demo volume. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
 
 ## Overall Completion %
-88%
+89%
 
-*A11y markup polish done; evidence still CONDITIONAL. Say commit to land it.*
+*Tip commits: a11y `8581386`; Find hydration follows.*

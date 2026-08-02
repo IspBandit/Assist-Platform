@@ -26,6 +26,12 @@ final class BuyerStateAndFindWiringTest extends TestCase
         self::assertTrue($again->requireBathroom);
         self::assertSame('essential', $again->priorities['towability']);
         self::assertSame(9000000, $again->maxBudgetAudCents);
+
+        $form = $profile->toFormDefaults();
+        self::assertSame(2, $form['adults']);
+        self::assertSame(90000, $form['max_budget_aud']);
+        self::assertSame('1', $form['require_bathroom']);
+        self::assertSame('essential', $form['priority_towability']);
     }
 
     public function testComparisonServiceCapsAtFourModels(): void
@@ -108,6 +114,13 @@ final class BuyerStateAndFindWiringTest extends TestCase
 
         $controller = (string) file_get_contents($root . '/app/Controllers/Site/PolarisController.php');
         self::assertStringContainsString('NaturalLanguagePreferenceMapper', $controller);
+        self::assertStringContainsString('loadPreferenceForUser', $controller);
+        self::assertStringContainsString('toFormDefaults', $controller);
+        self::assertStringContainsString('preferencesHydrated', $controller);
+
+        $find = (string) file_get_contents($root . '/app/Views/polaris/find.php');
+        self::assertStringContainsString('preferencesHydrated', $find);
+        self::assertStringContainsString('aria-current="step"', $find);
 
         $sql099 = (string) file_get_contents($root . '/database/migrations/115_polaris_provenance_extract_flags.sql');
         self::assertStringContainsString('polaris_model_sources', $sql099);
