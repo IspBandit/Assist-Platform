@@ -113,8 +113,9 @@ Deliverables:
 Deliverables:
 
 - [x] Compare up to four models with diffs and winners
+- [x] Account comparison history (`/account/comparisons` lists signed-in share links)
 - [ ] FULLTEXT / advanced search
-- [ ] Saved comparison sets (shortlist models exist)
+- [ ] Alert delivery for saved searches
 
 ---
 

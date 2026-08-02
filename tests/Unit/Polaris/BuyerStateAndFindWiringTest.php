@@ -57,6 +57,22 @@ final class BuyerStateAndFindWiringTest extends TestCase
         $ref = new \ReflectionClass(BuyerStateService::class);
         self::assertTrue($ref->hasMethod('saveComparison'));
         self::assertTrue($ref->hasMethod('loadComparisonModelIds'));
+        self::assertTrue($ref->hasMethod('listComparisonsForUser'));
+    }
+
+    public function testAccountComparisonsUsesDedicatedViewNotShell(): void
+    {
+        $root = dirname(__DIR__, 3);
+        $controller = (string) file_get_contents($root . '/app/Controllers/Site/PolarisController.php');
+        self::assertStringContainsString('listComparisonsForUser', $controller);
+        self::assertStringContainsString("polaris.account-comparisons", $controller);
+        self::assertStringNotContainsString(
+            'once account history is wired',
+            $controller
+        );
+        $view = (string) file_get_contents($root . '/app/Views/polaris/account-comparisons.php');
+        self::assertStringContainsString('Saved comparisons', $view);
+        self::assertStringContainsString('No saved comparisons yet', $view);
     }
 
     public function testRoutesAndMigrationWiring(): void

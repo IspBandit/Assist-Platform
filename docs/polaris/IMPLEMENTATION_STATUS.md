@@ -16,7 +16,7 @@
 - Progressive Find stages 1–10 with real inputs on stages 2/3/6 (tow hint, travel surface, layout)
 - Deterministic NL keyword → preference hints on Find — not AI ranking
 - Preference persistence + account preference/shell routes
-- Compare up to 4 + shareable `/compare/{token}`
+- Compare up to 4 + shareable `/compare/{token}` + **account comparison history** (`/account/comparisons`)
 - Tow Match via TowSmart boundary; VanAssist related services (no duplication)
 - CSV / JSON / XLSX draft-first import + brochure/text extract (`polaris_brochure_extract`, off)
 - Cost transparency UI on admin imports; paid AI import flag `polaris_ai_import` remains OFF
@@ -30,7 +30,7 @@
 
 - Full conversational AI interpretation of hero prompts (keyword mapper only)
 - Paid AI brochure extraction via Assist AI orchestrator (flag present, not wired to provider)
-- Account comparison history + alert delivery (shells only)
+- Alert delivery for saved searches (`/account/alerts` still a shell)
 - Full WCAG 2.2 AA evidence pack / Lighthouse CI gate
 - SEO indexation, production domain, real national catalogue volume
 - Platform Quality Gate **PASS** for public launch (POL-009 blocked)
@@ -49,5 +49,6 @@ Apply migrations `096` and `099` in non-production before portal media/dealer an
 
 1. Real manufacturer catalogue volume + complete field-level provenance  
 2. Wire `polaris_ai_import` to Assist AI orchestrator behind budget (still no auto-publish)  
-3. Expand accessibility evidence to CI artefacts for POL-009  
-4. POL-009 Quality Gate when domain + catalogue ready  
+3. Alert delivery for saved searches (mailer/cron)  
+4. Expand accessibility evidence to CI artefacts for POL-009  
+5. POL-009 Quality Gate when domain + catalogue ready  

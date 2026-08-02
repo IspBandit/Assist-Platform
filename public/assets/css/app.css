@@ -1608,6 +1608,10 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .polaris-check{display:flex!important;align-items:center;gap:.5rem;grid-template-columns:none!important}
 .polaris-priority-set{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin:1rem 0;padding:1rem;border:1px solid var(--color-border,var(--line));border-radius:12px}
 .polaris-match-list{display:grid;gap:1rem;margin:1.25rem 0;padding:0;list-style:none}
+.polaris-account-list{display:grid;gap:.85rem;margin:1.25rem 0;padding:0;list-style:none}
+.polaris-account-list li{display:grid;gap:.25rem;padding:.85rem 0;border-bottom:1px solid var(--color-border,var(--line))}
+.polaris-account-list a{font-weight:650;text-decoration:none}
+.polaris-account-list a:hover,.polaris-account-list a:focus-visible{text-decoration:underline}
 .polaris-match-card{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:1rem;border:1px solid var(--color-border,var(--line));border-radius:14px;background:#fff}
 .polaris-match-score{display:grid;place-content:center;text-align:center;border-radius:12px;background:#1a3a4a;color:#f7f5f2;padding:.75rem}
 .polaris-match-score span{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}

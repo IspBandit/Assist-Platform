@@ -3,6 +3,12 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-005 account comparison history** — `/account/comparisons` lists
+  brand-scoped shareable comparisons for the signed-in user (from
+  `polaris_comparisons`); guest shares remain unlisted. Alert delivery still
+  scaffolded.
+
+### Added
 - **DATA-011A National Dataset Catalogue** — extended `government_datasets`
   (`117`) with jurisdiction, source/API URLs, format, update frequency,
   download/import timestamps, record count, auto-update, catalogue status,

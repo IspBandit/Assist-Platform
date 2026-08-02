@@ -5,6 +5,11 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-005 account comparison history
+
+- Signed-in users see shareable comparisons they created on `/account/comparisons`
+  (brand-scoped; guest shares remain unlisted). Alert delivery still scaffolded.
+
 ### CORE-011 + CORE-012 unification
 
 - Merged Admin API Phase 1 / Option B A–L with Assist AI / Polaris onto one tree.

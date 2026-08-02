@@ -99,4 +99,48 @@ final class BuyerStateService
         }
         return array_values(array_map('intval', $ids));
     }
+
+    /**
+     * Shareable comparisons created while signed in (brand-scoped).
+     *
+     * @return list<array{token: string, title: string, model_ids: list<int>, model_count: int, created_at: string}>
+     */
+    public function listComparisonsForUser(int $brandId, int $userId, int $limit = 50): array
+    {
+        if ($userId <= 0) {
+            return [];
+        }
+        $limit = max(1, min(100, $limit));
+        $rows = Database::select(
+            'SELECT public_token, title, model_ids_json, created_at
+             FROM polaris_comparisons
+             WHERE brand_id = ? AND user_id = ?
+             ORDER BY created_at DESC, id DESC
+             LIMIT ' . $limit,
+            [$brandId, $userId]
+        );
+        $out = [];
+        foreach ($rows as $row) {
+            $ids = json_decode((string) ($row['model_ids_json'] ?? '[]'), true);
+            if (!is_array($ids)) {
+                $ids = [];
+            }
+            $modelIds = array_values(array_map('intval', $ids));
+            $title = trim((string) ($row['title'] ?? ''));
+            $count = count($modelIds);
+            if ($title === '') {
+                $title = $count === 1
+                    ? 'Comparison (1 model)'
+                    : sprintf('Comparison (%d models)', $count);
+            }
+            $out[] = [
+                'token' => (string) $row['public_token'],
+                'title' => $title,
+                'model_ids' => $modelIds,
+                'model_count' => $count,
+                'created_at' => (string) ($row['created_at'] ?? ''),
+            ];
+        }
+        return $out;
+    }
 }

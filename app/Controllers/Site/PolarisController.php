@@ -375,8 +375,20 @@ final class PolarisController extends Controller
 
     public function accountComparisons(Request $request): Response
     {
-        return $this->accountShell($request, 'comparisons', 'Saved comparisons',
-            'Shared comparison links you create from Compare appear here once account history is wired. Create a shareable link from /compare for now.');
+        unset($request);
+        $this->requireCatalogue();
+        if (current_user() === null) {
+            return $this->redirect('/login?return=' . rawurlencode('/account/comparisons'));
+        }
+        $comparisons = $this->buyerState->listComparisonsForUser(
+            current_brand()->databaseId(),
+            (int) current_user()['id']
+        );
+        return $this->view('polaris.account-comparisons', [
+            'title' => 'Saved comparisons',
+            'comparisons' => $comparisons,
+            'metaRobots' => 'noindex,nofollow',
+        ]);
     }
 
     public function accountAlerts(Request $request): Response

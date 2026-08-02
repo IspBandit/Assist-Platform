@@ -5,7 +5,7 @@
 - CORE-011 Admin API Phase 1 + Option B A–L on unified tree + dual-source `/search-gaps`
 - CORE-012 Assist AI Orchestrator (AI-0–AI-7); flags off; QG CONDITIONAL PASS
 - DATA-006 Connectors; DATA-008/009 Regulatory; DATA-011 RIC live sync (code)
-- **DATA-011A National Dataset Catalogue** (`117`, ADR 0033) — portals/themes seeded; no auto-publish
+- **DATA-011A National Dataset Catalogue** (Platform `117`/ADR 0033 + RIC snapshot/delta `4011d9c`)
 - DATA-012 Dataset Engine including Admin API sync wire
 - DATA-013 Knowledge gaps + dual-source `/search-gaps`
 - DATA-002 Duplicate management (Admin API check/dry_run/merge/defer; soft-delete+audit)
@@ -38,24 +38,23 @@
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Traveller Facilities residuals (DATA-012 coverage) only if gaps remain
-4. Polaris non-AI roadmap residuals
-5. Full Platform Quality Gate
-6. Production release package
+3. Polaris non-AI roadmap residuals
+4. Full Platform Quality Gate
+5. Production release package
 
 ## Dependencies
 - Task order: CORE-011 → DATA-011 → **DATA-011A** → Dataset Engine residuals → …
-- Additional dataset importers blocked until DATA-011A catalogue is used
+- Additional dataset importers blocked until catalogue rows drive acquisition in RIC
 - Production Admin API enablement depends on OPS-010 staging evidence (owner)
 - Paid AI / facilities require owner approval
 
 ## Current Task
-None active — DATA-011A committed (`f9455e7`).
+None active — POL-005 account comparison history wired (`/account/comparisons`).
 
 ## Next Highest Priority Unblocked Task
-Traveller Facilities coverage residuals (DATA-012) only if open; otherwise owner staging (OPS-010/DATA-011) or Polaris non-AI gaps. No new dataset-specific importers until catalogue rows drive them.
+Polaris non-AI residuals (saved-search capture, accessibility CI evidence) or owner staging (OPS-010/DATA-011). Avoid `polaris_ai_import` / alert mailer without owner approval.
 
 ## Overall Completion %
-85%
+87%
 
-*Reason for order change vs prior pause: owner programme addendum inserted DATA-011A immediately after RIC synchronisation; catalogue before importers.*
+*RIC DATA-011A catalogue acquisition committed (`4011d9c` on assist-ric). Platform POL-005 comparison history implemented next.*
