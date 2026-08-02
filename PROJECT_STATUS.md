@@ -14,7 +14,7 @@
 - POL-005 comparison history + saved browse searches
 - POL-002 year selector + a11y markup polish (`8581386`)
 - POL-003 Find hydration from saved preferences (`9a7a5a2`)
-- POL-007 manufacturer portal analytics views/saves (this commit)
+- POL-007 manufacturer portal analytics (`9c962cd`) + data-quality checklist (this commit)
 
 ## In Progress
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
@@ -46,7 +46,7 @@
 ## Remaining
 1. Owner: staging Admin API rehearsal (OPS-010 / DATA-011)
 2. Owner: VAN-002 E2E acceptance
-3. Polaris non-AI residuals (data-quality shell, catalogue volume)
+3. Polaris non-AI residuals (demo catalogue volume, dealer enquiry)
 4. Full Platform Quality Gate
 5. Production release package
 
@@ -60,9 +60,9 @@
 None active.
 
 ## Next Highest Priority Unblocked Task
-Owner staging when available; otherwise Polaris data-quality shell or demo catalogue volume. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
+Owner staging when available; otherwise demo catalogue volume expansion. Avoid paid AI / alert mailer / FULLTEXT / CI axe without POL-009 readiness.
 
 ## Overall Completion %
-89%
+90%
 
-*Tip: a11y `8581386`, Find hydration `9a7a5a2`, portal analytics follows.*
+*Tip: portal analytics `9c962cd`; data-quality checklist follows.*

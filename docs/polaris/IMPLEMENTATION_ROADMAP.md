@@ -148,6 +148,7 @@ Deliverables:
 - [x] Admin claim approval
 - [x] Claimed manufacturer model edit (pending verification)
 - [x] Portal analytics for model views/saves (find impressions still planned)
+- [x] Portal data-quality completeness checklist (ATM/length/berths/price gaps)
 - [ ] Dealer portal / stock inventory (out of scope for launch)
 
 ---

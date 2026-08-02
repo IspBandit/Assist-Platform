@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-007 manufacturer portal data quality
+
+- Claimed manufacturers see a completeness checklist on
+  `/portal/manufacturer/data-quality` (missing ATM, length, berths, price
+  guidance, descriptions). Guidance only — not a Quality Gate pass.
+
 ### POL-007 manufacturer portal analytics
 
 - Claimed manufacturers see 7/30/90-day detail views and saves for their models

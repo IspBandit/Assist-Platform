@@ -3,6 +3,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-007 manufacturer portal data quality** — completeness checklist on
+  `/portal/manufacturer/data-quality` for claimed makers (ATM/length/berths/price
+  gaps). Guidance only, not a Quality Gate verdict.
 - **POL-007 manufacturer portal analytics** — manufacturer-scoped `rv_viewed` /
   `rv_saved` rollups on `/portal/manufacturer/analytics` (7/30/90 day); find
   impressions still planned.

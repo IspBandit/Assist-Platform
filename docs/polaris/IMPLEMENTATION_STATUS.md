@@ -26,6 +26,7 @@
 - Model↔source provenance links + specification provenance table on model pages
 - Portal write paths: profile, media, dealers, team; dealer claim scaffold; manufacturer merge
 - Manufacturer portal analytics: views/saves rollups (find impressions still planned)
+- Manufacturer portal data-quality checklist (completeness gaps; not a QG verdict)
 - Accessibility checklist evidence: `docs/polaris/ACCESSIBILITY_QA.md` (**CONDITIONAL**, not WCAG PASS) — markup polish for captions, empty-state status, year focus, compare Differs text
 - Unit tests under `tests/Unit/Polaris`
 - Brand stays `private` / `noindex` — no production deploy

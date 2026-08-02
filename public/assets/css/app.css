@@ -1614,6 +1614,8 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .polaris-year-selector__current{background:#1a3a4a;color:#f7f5f2;border-color:#1a3a4a}
 .polaris-diff-marker{display:inline-block;margin-left:.4rem;padding:.1rem .4rem;border-radius:4px;border:1px solid #8a4b16;color:#8a4b16;font-size:.72rem;font-weight:650;letter-spacing:.02em;text-transform:uppercase}
 .polaris-account-list .inline-form{display:inline-flex;margin-top:.35rem}
+.polaris-dq-variants{margin:.4rem 0 0;padding-left:1.1rem;list-style:disc}
+.polaris-dq-variants li{margin:.25rem 0}
 .polaris-pref-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.85rem;margin:1rem 0}
 .polaris-pref-grid label,.polaris-priority-set label{display:grid;gap:.35rem;font-weight:650}
 .polaris-check{display:flex!important;align-items:center;gap:.5rem;grid-template-columns:none!important}

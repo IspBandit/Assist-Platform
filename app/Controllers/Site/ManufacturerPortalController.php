@@ -13,6 +13,7 @@ use App\Services\Polaris\AnalyticsService;
 use App\Services\Polaris\CatalogueRepository;
 use App\Services\Polaris\DuplicateDetection;
 use App\Services\Polaris\ManufacturerClaimService;
+use App\Services\Polaris\ManufacturerDataQualityService;
 use App\Services\Polaris\ManufacturerPortalService;
 use RuntimeException;
 
@@ -24,12 +25,14 @@ final class ManufacturerPortalController extends Controller
     private ManufacturerClaimService $claims;
     private CatalogueRepository $catalogue;
     private ManufacturerPortalService $portal;
+    private ManufacturerDataQualityService $dataQuality;
 
     public function __construct()
     {
         $this->claims = new ManufacturerClaimService();
         $this->catalogue = new CatalogueRepository();
         $this->portal = new ManufacturerPortalService();
+        $this->dataQuality = new ManufacturerDataQualityService();
     }
 
     public function index(Request $request): Response
@@ -375,20 +378,19 @@ final class ManufacturerPortalController extends Controller
 
     public function dataQuality(Request $request): Response
     {
-        return $this->portalSection($request, 'data-quality', 'Data quality');
-    }
-
-    private function portalSection(Request $request, string $section, string $title): Response
-    {
         unset($request);
         $gate = $this->claimedOrRedirect();
         if ($gate instanceof Response) {
             return $gate;
         }
-        return $this->view('polaris.portal.section', [
-            'title' => $title,
-            'section' => $section,
+        $report = $this->dataQuality->reportForManufacturer(
+            current_brand()->databaseId(),
+            (int) $gate['id']
+        );
+        return $this->view('polaris.portal.data-quality', [
+            'title' => 'Data quality',
             'manufacturer' => $gate,
+            'report' => $report,
             'metaRobots' => 'noindex,nofollow',
         ]);
     }

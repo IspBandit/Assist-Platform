@@ -38,6 +38,7 @@ Object-level checks: claimed manufacturer must match the authenticated user.
 | Media library | Upload within `config/uploads.php` limits | Planned |
 | Team | Invite org users (platform team UI) | Planned |
 | Analytics | Views and saves (7/30/90 day); find impressions planned | Partially implemented |
+| Data quality | Completeness gaps for models/variants (ATM, length, berths, price) | Partially implemented |
 
 ---
 
