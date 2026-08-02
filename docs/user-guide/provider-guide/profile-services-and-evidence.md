@@ -14,6 +14,8 @@ The provider route group requires authentication plus a provider or administrato
 
 An unclaimed public profile offers **Request to claim or correct this listing**. The form identifies the exact listing and records the claimant's details for review; submitting it does not prove ownership or grant access. Onboarding contact permission is limited to the request. Promotional provider email uses a separate, optional checkbox that is unticked by default.
 
+New businesses registering via **For providers** must search existing listings first (“Is this your business?”) and claim a match when appropriate. Creating a new listing requires an explicit confirmation that none of the matches apply; likely duplicates are held for administrator review and are not auto-published.
+
 ## Fields
 
 The profile form supplies the supported business and contact fields. Services reference existing service categories; areas reference existing locations. Documents and licences use the type, expiry and evidence fields shown by their forms.
