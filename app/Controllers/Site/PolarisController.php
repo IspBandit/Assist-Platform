@@ -198,7 +198,20 @@ final class PolarisController extends Controller
             $this->abort(404);
         }
 
-        $variants = $this->catalogue->variantsForModel((int) $model['id']);
+        $years = $this->catalogue->publishedYearsForModel((int) $model['id']);
+        $requestedYearRaw = trim((string) $request->query('year', ''));
+        $requestedYear = $requestedYearRaw !== '' && ctype_digit($requestedYearRaw)
+            ? (int) $requestedYearRaw
+            : null;
+        $resolved = CatalogueService::resolveModelYear($years, $requestedYear);
+        $selectedYear = $resolved['year'];
+        $yearId = $selectedYear !== null ? (int) $selectedYear['id'] : null;
+
+        $variants = $years === []
+            ? $this->catalogue->variantsForModel((int) $model['id'])
+            : ($yearId !== null
+                ? $this->catalogue->variantsForModel((int) $model['id'], $yearId)
+                : []);
         $enriched = [];
         foreach ($variants as $variant) {
             $extra = CatalogueService::enrichVariant($variant, (bool) $model['is_demo']);
@@ -224,18 +237,26 @@ final class PolarisController extends Controller
             current_user() !== null ? (int) current_user()['id'] : null,
             'model',
             (int) $model['id'],
-            ['category' => (string) $model['category']],
+            [
+                'category' => (string) $model['category'],
+                'model_year' => $selectedYear !== null ? (int) $selectedYear['model_year'] : null,
+            ],
             current_user() !== null ? 'authenticated' : 'anonymous'
         );
 
+        $basePath = '/rvs/' . $manufacturerSlug . '/' . $modelSlug;
         return $this->view('polaris.model', [
             'title' => $model['manufacturer_name'] . ' ' . $model['name'],
             'metaDescription' => mb_substr(strip_tags((string) ($model['description'] ?? '')), 0, 300),
-            'canonical' => current_brand()->url() . '/rvs/' . $manufacturerSlug . '/' . $modelSlug,
+            'canonical' => current_brand()->url() . $basePath,
             'metaRobots' => $this->robotsMeta(),
             'model' => $model,
             'variants' => $enriched,
             'primary' => $primary,
+            'modelYears' => $years,
+            'selectedYear' => $selectedYear,
+            'yearRequestedInvalid' => $resolved['requested_invalid'],
+            'modelPath' => $basePath,
             'floorplans' => $this->catalogue->floorplansForModel((int) $model['id']),
             'categoryLabel' => CatalogueService::categoryLabel((string) $model['category']),
             'provenance' => $provenance,

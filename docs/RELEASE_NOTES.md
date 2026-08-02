@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### POL-002 model year selector
+
+- Model detail resolves published years and filters variants by `?year=YYYY`
+  (default = current, else newest). Invalid years fall back with a notice.
+  Canonical URL stays without year. Demo migration `118` adds a 2025 Southern
+  Cross variant for the selector.
+
 ### POL-005 account comparison history
 
 - Signed-in users see shareable comparisons they created on `/account/comparisons`

@@ -94,7 +94,8 @@ Each chip deep-links to `/rvs?category={key}`.
 
 ### Header
 
-- Manufacturer name (link), model name, category, model year selector
+- Manufacturer name (link), model name, category, **model year selector** (`?year=YYYY`; shown when ≥2 published years; non-current years labelled)
+- Canonical URL remains `/rvs/{manufacturer}/{model}` without the year query
 - Hero image or placeholder
 - Price guidance block with source + date
 - CTAs: Compare, Save, Tow match (Phase 4)

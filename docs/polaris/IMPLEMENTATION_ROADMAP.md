@@ -70,7 +70,8 @@ Deliverables:
 
 - [x] Working filters and sort on `/rvs`
 - [x] Provenance chips (source-level)
-- [ ] Field-level provenance + model year selector (later)
+- [x] Field-level provenance on model pages
+- [x] Model year selector (`?year=` on model detail)
 - [x] Price display with staleness warnings
 - [x] Canonical URLs + noindex while private
 - [ ] FULLTEXT name search

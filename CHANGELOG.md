@@ -3,13 +3,12 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-002 model year selector** — model detail `?year=` resolves published
+  `polaris_rv_model_years`, filters variants, keeps year-free canonicals; demo
+  migration `118` adds Southern Cross 2025 variant.
 - **POL-005 saved browse searches** — capture `/rvs` filters to
   `polaris_saved_searches`, list/reopen from `/saved` and `/account/alerts`.
   Email alert delivery remains deferred.
-- **POL-005 account comparison history** — `/account/comparisons` lists
-  brand-scoped shareable comparisons for the signed-in user (from
-  `polaris_comparisons`); guest shares remain unlisted. Alert delivery still
-  scaffolded.
 
 ### Added
 - **DATA-011A National Dataset Catalogue** — extended `government_datasets`

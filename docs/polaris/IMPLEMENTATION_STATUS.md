@@ -13,6 +13,7 @@
 - Homepage hero (loading state, example rotation, reduced-motion aware)
 - Nav: Find, Browse, Compare, Manufacturers, Tow Match, Buying Guides, Saved
 - Catalogue browse/detail/manufacturer pages
+- Model year selector on model detail (`?year=`; canonical stays without year)
 - Progressive Find stages 1–10 with real inputs on stages 2/3/6 (tow hint, travel surface, layout)
 - Deterministic NL keyword → preference hints on Find — not AI ranking
 - Preference persistence + account preference/shell routes

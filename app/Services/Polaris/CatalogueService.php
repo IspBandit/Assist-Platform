@@ -141,6 +141,58 @@ final class CatalogueService
     }
 
     /**
+     * Choose published model year: requested year if valid, else current, else newest.
+     *
+     * @param list<array<string,mixed>> $years
+     * @return array{year: ?array<string,mixed>, requested_invalid: bool}
+     */
+    public static function resolveModelYear(array $years, ?int $requestedYear): array
+    {
+        if ($years === []) {
+            return ['year' => null, 'requested_invalid' => $requestedYear !== null && $requestedYear > 0];
+        }
+
+        $byYear = [];
+        foreach ($years as $row) {
+            $y = (int) ($row['model_year'] ?? 0);
+            if ($y > 0) {
+                $byYear[$y] = $row;
+            }
+        }
+
+        if ($requestedYear !== null && $requestedYear > 0) {
+            if (isset($byYear[$requestedYear])) {
+                return ['year' => $byYear[$requestedYear], 'requested_invalid' => false];
+            }
+            // Fall back to default — do not invent unpublished years.
+            return ['year' => self::defaultModelYear($years), 'requested_invalid' => true];
+        }
+
+        return ['year' => self::defaultModelYear($years), 'requested_invalid' => false];
+    }
+
+    /**
+     * @param list<array<string,mixed>> $years
+     * @return array<string,mixed>|null
+     */
+    public static function defaultModelYear(array $years): ?array
+    {
+        if ($years === []) {
+            return null;
+        }
+        foreach ($years as $row) {
+            if ((string) ($row['production_status'] ?? '') === 'current') {
+                return $row;
+            }
+        }
+        usort(
+            $years,
+            static fn (array $a, array $b): int => ((int) ($b['model_year'] ?? 0)) <=> ((int) ($a['model_year'] ?? 0))
+        );
+        return $years[0] ?? null;
+    }
+
+    /**
      * @param array<string,mixed> $source
      * @return array{label:string,authority:string,retrieved:?string}
      */

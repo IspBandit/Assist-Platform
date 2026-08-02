@@ -8,11 +8,43 @@
         <p class="polaris-model-meta">
             <a href="<?= e(url('manufacturers/' . $model['manufacturer_slug'])) ?>"><?= $this->e($model['manufacturer_name']) ?></a>
             · <?= $this->e($categoryLabel) ?>
-            · <?= $this->e(ucfirst((string) $model['production_status'])) ?>
+            <?php if (!empty($selectedYear)): ?>
+                · <?= (int) $selectedYear['model_year'] ?>
+                <?php if ((string) ($selectedYear['production_status'] ?? '') !== 'current'): ?>
+                    <span class="muted">(<?= $this->e(str_replace('_', ' ', (string) $selectedYear['production_status'])) ?>)</span>
+                <?php endif; ?>
+            <?php else: ?>
+                · <?= $this->e(ucfirst((string) $model['production_status'])) ?>
+            <?php endif; ?>
             · <?= $this->e(ucfirst((string) $model['verification_status'])) ?>
         </p>
         <h1><?= $this->e($model['name']) ?></h1>
         <p><?= $this->e((string) ($model['description'] ?? '')) ?></p>
+        <?php if (!empty($modelYears) && count($modelYears) > 1): ?>
+            <nav class="polaris-year-selector" aria-label="Model year">
+                <span class="polaris-year-selector__label">Model year</span>
+                <ul>
+                    <?php foreach ($modelYears as $yearRow): ?>
+                        <?php
+                        $y = (int) $yearRow['model_year'];
+                        $isActive = $selectedYear !== null && (int) $selectedYear['model_year'] === $y;
+                        $href = url(ltrim((string) $modelPath, '/') . '?year=' . $y);
+                        $status = (string) ($yearRow['production_status'] ?? '');
+                        ?>
+                        <li>
+                            <?php if ($isActive): ?>
+                                <span class="polaris-year-selector__current" aria-current="page"><?= $y ?><?php if ($status !== 'current'): ?> <span class="muted"><?= $this->e($status) ?></span><?php endif; ?></span>
+                            <?php else: ?>
+                                <a href="<?= e($href) ?>"><?= $y ?><?php if ($status !== 'current'): ?> <span class="muted"><?= $this->e($status) ?></span><?php endif; ?></a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
+        <?php endif; ?>
+        <?php if (!empty($yearRequestedInvalid)): ?>
+            <p class="polaris-warn" role="status">That model year is not published for this RV. Showing the current published year instead.</p>
+        <?php endif; ?>
         <div class="polaris-card-actions">
             <a class="btn btn-primary" href="<?= e(url('find')) ?>">Start matching</a>
             <a class="btn btn-secondary" href="<?= e(url('compare?ids=' . (int) $model['id'])) ?>">Compare</a>
@@ -62,6 +94,8 @@
                     </dd>
                 </div>
             </dl>
+        <?php elseif (!empty($modelYears)): ?>
+            <p class="muted">No published variants for this model year yet.</p>
         <?php endif; ?>
 
         <h2>Source transparency</h2>

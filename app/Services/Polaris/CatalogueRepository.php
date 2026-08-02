@@ -215,14 +215,36 @@ final class CatalogueRepository
     }
 
     /** @return array<int,array<string,mixed>> */
-    public function variantsForModel(int $modelId): array
+    public function publishedYearsForModel(int $modelId): array
     {
         return Database::select(
-            'SELECT * FROM polaris_rv_variants'
+            'SELECT id, model_id, model_year, production_status, brochure_label, publication_status, lifecycle_status'
+            . ' FROM polaris_rv_model_years'
             . " WHERE model_id = ? AND publication_status = 'published' AND lifecycle_status = 'active' AND deleted_at IS NULL"
-            . ' ORDER BY name ASC',
+            . ' ORDER BY model_year DESC',
             [$modelId]
         );
+    }
+
+    /**
+     * @param int|null $modelYearId When set, only variants for that year. When null and $requireYearLink is false, all published variants.
+     * @return array<int,array<string,mixed>>
+     */
+    public function variantsForModel(int $modelId, ?int $modelYearId = null, bool $requireYearLink = false): array
+    {
+        $sql = 'SELECT v.*, y.model_year, y.production_status AS year_production_status'
+            . ' FROM polaris_rv_variants v'
+            . ' LEFT JOIN polaris_rv_model_years y ON y.id = v.model_year_id'
+            . " WHERE v.model_id = ? AND v.publication_status = 'published' AND v.lifecycle_status = 'active' AND v.deleted_at IS NULL";
+        $params = [$modelId];
+        if ($modelYearId !== null) {
+            $sql .= ' AND v.model_year_id = ?';
+            $params[] = $modelYearId;
+        } elseif ($requireYearLink) {
+            $sql .= ' AND v.model_year_id IS NULL';
+        }
+        $sql .= ' ORDER BY v.name ASC';
+        return Database::select($sql, $params);
     }
 
     /** @return array<int,array<string,mixed>> */
