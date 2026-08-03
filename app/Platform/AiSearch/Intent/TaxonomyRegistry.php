@@ -9,11 +9,12 @@ namespace App\Platform\AiSearch\Intent;
  */
 final class TaxonomyRegistry
 {
-    public const VERSION = 'taxonomy_v1';
+    public const VERSION = 'taxonomy_v2';
 
     /** @var list<string> */
     public const STAY_TYPES = [
-        'caravan_park', 'campground', 'free_camp', 'showground', 'rest_area', 'farm_stay', 'other',
+        'caravan_park', 'campground', 'free_camp', 'national_park', 'showground', 'rest_area',
+        'council_camp', 'farm_stay', 'station_stay', 'other',
     ];
 
     /** @var list<string> */
