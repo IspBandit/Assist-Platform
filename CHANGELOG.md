@@ -3,6 +3,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Provider map references** — concise provider rows now show the same coloured
+  numbered pin shape used on the results map instead of a `Map pin N` text label;
+  unhelpful business-name initial tiles were removed from provider lists.
 - **Compact provider lists** — provider collections across directory, search,
   town, region, service and saved-provider pages now use concise single-row
   entries, with tighter mobile actions and full detail retained on profiles.

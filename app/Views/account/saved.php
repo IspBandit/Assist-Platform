@@ -16,7 +16,6 @@ $this->extend('layouts.public');
                 <?php foreach ($providers as $p): ?>
                     <div class="provider-card provider-card--compact saved-provider-row">
                         <a class="provider-card-main" href="<?= e(url('providers/' . $p['slug'])) ?>">
-                            <span class="provider-avatar" aria-hidden="true"><?= $this->e(mb_strtoupper(mb_substr(trim((string) $p['business_name']), 0, 1))) ?></span>
                             <span class="provider-card-content"><span class="provider-card-title"><?= $this->e((string) $p['business_name']) ?></span><span class="provider-location"><?= $this->e(ucfirst((string) $p['service_model'])) ?><?= $p['is_verified'] ? ' · Verified' : '' ?></span></span>
                         </a>
                         <form method="post" action="<?= e(url('account/providers/save')) ?>">

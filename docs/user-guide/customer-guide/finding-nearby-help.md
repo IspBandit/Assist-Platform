@@ -75,7 +75,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-03 (matched numbered map pins to explicit **Map pin N** labels, corrected marker-number visibility, and made provider collections concise on phones and larger screens).
+2026-08-03 (matched map markers to compact numbered pin icons in provider rows, removed business-name letter tiles, corrected marker-number visibility, and made provider collections concise on phones and larger screens).
 
 ## Owner
 
