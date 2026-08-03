@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
  */
 final class IntentRuleEngine
 {
-    public const VERSION = 'intent_rules_v2';
+    public const VERSION = 'intent_rules_v3';
 
     /**
      * @var list<array{
@@ -40,7 +40,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R03',
-            'patterns' => ['drinking water', 'potable water', 'water refill', 'tank water'],
+            'patterns' => ['drinking water', 'potable water', 'water refill', 'tank water', 'fill my water tanks', 'fill water tank', 'fresh water tap'],
             'intent_type' => Intent::TYPE_FACILITY,
             'provider_category_keys' => ['potable-water-refill'],
             'facility_type_keys' => ['drinking_water'],
@@ -50,7 +50,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R01',
-            'patterns' => ['public toilet', 'public toilets', 'toilet', 'toilets', 'loo', 'restroom'],
+            'patterns' => ['public toilet', 'public toilets', 'toilet', 'toilets', 'loo', 'restroom', 'bathroom', 'dunny'],
             'intent_type' => Intent::TYPE_FACILITY,
             'provider_category_keys' => [],
             'facility_type_keys' => ['public_toilet'],
@@ -70,7 +70,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R05',
-            'patterns' => ['caravan park', 'caravan parks', 'holiday park'],
+            'patterns' => ['caravan park', 'caravan parks', 'holiday park', 'powered site'],
             'intent_type' => Intent::TYPE_STAY,
             'provider_category_keys' => ['caravan-parks-and-campgrounds'],
             'facility_type_keys' => [],
@@ -79,8 +79,18 @@ final class IntentRuleEngine
             'confidence' => 0.9,
         ],
         [
+            'id' => 'R05A',
+            'patterns' => ['somewhere to stay', 'place to stay', 'places to stay', 'where can i stay', 'need a stay', 'overnight stay', 'stay tonight', 'sleep overnight'],
+            'intent_type' => Intent::TYPE_STAY,
+            'provider_category_keys' => [],
+            'facility_type_keys' => [],
+            'stay_type_keys' => [],
+            'adapter_keys' => ['stays'],
+            'confidence' => 0.9,
+        ],
+        [
             'id' => 'R06',
-            'patterns' => ['free camp', 'free camping', 'low cost camp', 'low-cost camp'],
+            'patterns' => ['free camp', 'free camping', 'low cost camp', 'low-cost camp', 'stay free', 'free place to stay', 'cheap camp', 'budget camp'],
             'intent_type' => Intent::TYPE_STAY,
             'provider_category_keys' => ['free-and-low-cost-camps'],
             'facility_type_keys' => [],
@@ -90,7 +100,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R07',
-            'patterns' => ['campground', 'camping ground'],
+            'patterns' => ['campground', 'camping ground', 'camp site', 'campsite'],
             'intent_type' => Intent::TYPE_STAY,
             'provider_category_keys' => [],
             'facility_type_keys' => [],
@@ -120,7 +130,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R10',
-            'patterns' => ['auto electrician', 'auto electrical', 'solar panel', 'solar panels', 'solar not working', '12 volt', '12v electrical'],
+            'patterns' => ['auto electrician', 'auto electrical', 'caravan electrician', 'sparky', 'solar panel', 'solar panels', 'solar not working', '12 volt', '12v electrical', 'no power in caravan'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['auto-electrical-and-batteries'],
             'facility_type_keys' => [],
@@ -130,7 +140,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R11',
-            'patterns' => ['tyre', 'tyres', 'tire', 'tires', 'puncture'],
+            'patterns' => ['tyre', 'tyres', 'tire', 'tires', 'puncture', 'flat tyre', 'blowout', 'blown tyre'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['tyres-and-wheels'],
             'facility_type_keys' => [],
@@ -150,7 +160,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R13',
-            'patterns' => ['caravan brake', 'caravan brakes', 'brakes and bearings', 'wheel bearing', 'wheel bearings'],
+            'patterns' => ['caravan brake', 'caravan brakes', 'brakes and bearings', 'wheel bearing', 'wheel bearings', 'brakes squealing', 'brakes not working', 'hot wheel hub'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['brakes-and-bearings'],
             'facility_type_keys' => [],
@@ -200,7 +210,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R18',
-            'patterns' => ['weighbridge', 'weigh bridge'],
+            'patterns' => ['weighbridge', 'weigh bridge', 'weigh my caravan', 'caravan weighing'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['weighbridges-and-mobile-weighing'],
             'facility_type_keys' => ['weighbridge'],
@@ -220,27 +230,27 @@ final class IntentRuleEngine
         ],
         ['id'=>'R20','patterns'=>['12 volt','12v','low voltage','lights not working'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['12-volt-electrical'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
         ['id'=>'R21','patterns'=>['240 volt','240v','mains power','power point'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['240-volt-electrical'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
-        ['id'=>'R22','patterns'=>['solar','battery','batteries','dc dc','dc-dc','inverter'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['solar-and-batteries','12-volt-electrical'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
-        ['id'=>'R23','patterns'=>['fridge','refrigerator','freezer','not cooling'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['refrigeration','appliance-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R24','patterns'=>['air conditioner','air conditioning','aircon','a/c'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['air-conditioning'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R25','patterns'=>['gas appliance','gas stove','gas oven','gas heater'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['gas-appliance-servicing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R26','patterns'=>['water leak','water pump','plumbing','leaking pipe','water tank'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['plumbing-and-water-leaks'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R27','patterns'=>['hot water','water heater'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['hot-water-systems'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R28','patterns'=>['cassette toilet','caravan toilet','toilet repair'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['toilets'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R22','patterns'=>['solar','battery','batteries','flat battery','battery not charging','battery will not charge','dc dc','dc-dc','inverter'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['solar-and-batteries','12-volt-electrical'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
+        ['id'=>'R23','patterns'=>['fridge','refrigerator','freezer','not cooling','fridge is warm','fridge stopped working'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['refrigeration','appliance-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R24','patterns'=>['air conditioner','air conditioning','aircon','a/c','air con','not blowing cold'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['air-conditioning'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R25','patterns'=>['gas appliance','gas stove','gas oven','gas heater','gas leak','smell gas'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['gas-appliance-servicing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R26','patterns'=>['water leak','water leaking','water pump','plumbing','leaking pipe','leaking under the sink','water tank'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['plumbing-and-water-leaks'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R27','patterns'=>['hot water','water heater','no hot water'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['hot-water-systems'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R28','patterns'=>['cassette toilet','caravan toilet','toilet repair','blocked caravan toilet','toilet will not flush'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['toilets'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R29','patterns'=>['suspension','leaf spring','broken spring','axle','grinding underneath','noise underneath'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['suspension','trailer-and-engineering','general-caravan-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
-        ['id'=>'R30','patterns'=>['chassis','structural damage','frame damage'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['structural-repairs','trailer-and-engineering'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
+        ['id'=>'R30','patterns'=>['chassis','cracked chassis','structural damage','frame damage'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['structural-repairs','trailer-and-engineering'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
         ['id'=>'R31','patterns'=>['fibreglass','fiberglass','body panel'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['fibreglass-repairs','structural-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
-        ['id'=>'R32','patterns'=>['awning','annexe'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['awning-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R33','patterns'=>['roof leak','leaking roof','water ingress'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['roof-leaks'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
-        ['id'=>'R34','patterns'=>['starlink','satellite','uhf','communications'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['starlink-and-communications'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
-        ['id'=>'R35','patterns'=>['insurance repair','insurance repairs','insurance claim'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['insurance-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R32','patterns'=>['awning','annexe','torn awning','awning will not close'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['awning-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R33','patterns'=>['roof leak','leaking roof','water ingress','rain coming through caravan roof','water coming through roof'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['roof-leaks'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R34','patterns'=>['starlink','starlink not working','satellite','uhf','communications'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['starlink-and-communications'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
+        ['id'=>'R35','patterns'=>['insurance repair','insurance repairs','insurance repairer','insurance claim'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['insurance-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R36','patterns'=>['pre trip inspection','pre-trip inspection','before my trip'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['pre-trip-inspection','general-servicing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
         ['id'=>'R37','patterns'=>['general service','caravan service','routine service'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['general-servicing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
         ['id'=>'R38','patterns'=>['roadworthy','safety certificate'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['roadworthy-inspection'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R39','patterns'=>['groceries','supermarket','travel supplies'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['groceries-and-travel-supplies'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
         ['id'=>'R40','patterns'=>['emergency accommodation','motel tonight','hotel tonight'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['emergency-accommodation'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
         ['id'=>'R41','patterns'=>['vet','veterinary','pet friendly'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['pet-friendly-travel-and-veterinary'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
-        ['id'=>'R42','patterns'=>['4wd recovery','4x4 recovery','bogged','remote recovery'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['4wd-and-remote-area-recovery'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R42','patterns'=>['4wd recovery','4x4 recovery','bogged','stuck in sand','stuck in mud','remote recovery'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['4wd-and-remote-area-recovery'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R43','patterns'=>['locksmith','locked out','lost keys','broken lock'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['locksmith-and-security'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R44','patterns'=>['windscreen','windshield','auto glass','broken window'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['windscreen-and-auto-glass'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R45','patterns'=>['caravan parts','rv parts','spare parts'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['caravan-and-rv-parts','vehicle-parts-and-accessories'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
@@ -248,6 +258,20 @@ final class IntentRuleEngine
         ['id'=>'R47','patterns'=>['caravan wash','vehicle wash','car wash'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['vehicle-and-caravan-washing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
         ['id'=>'R48','patterns'=>['caravan storage','store my caravan','rv storage'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['caravan-storage'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R49','patterns'=>['mobile welder','welding','fabrication'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['mobile-welding-and-fabrication'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
+        ['id'=>'R50','patterns'=>['showground','show grounds'],'intent_type'=>Intent::TYPE_STAY,'provider_category_keys'=>[],'facility_type_keys'=>[],'stay_type_keys'=>['showground'],'adapter_keys'=>['stays'],'confidence'=>0.9],
+        ['id'=>'R51','patterns'=>['farm stay'],'intent_type'=>Intent::TYPE_STAY,'provider_category_keys'=>[],'facility_type_keys'=>[],'stay_type_keys'=>['farm_stay'],'adapter_keys'=>['stays'],'confidence'=>0.88],
+        ['id'=>'R51A','patterns'=>['station stay'],'intent_type'=>Intent::TYPE_STAY,'provider_category_keys'=>[],'facility_type_keys'=>[],'stay_type_keys'=>['station_stay'],'adapter_keys'=>['stays'],'confidence'=>0.88],
+        ['id'=>'R52','patterns'=>['national park camping','national park camp'],'intent_type'=>Intent::TYPE_STAY,'provider_category_keys'=>[],'facility_type_keys'=>[],'stay_type_keys'=>['national_park'],'adapter_keys'=>['stays'],'confidence'=>0.9],
+        ['id'=>'R53','patterns'=>['council camp','council camping'],'intent_type'=>Intent::TYPE_STAY,'provider_category_keys'=>[],'facility_type_keys'=>[],'stay_type_keys'=>['council_camp'],'adapter_keys'=>['stays'],'confidence'=>0.88],
+        ['id'=>'R54','patterns'=>['public shower','public showers','where can i shower'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['public_shower'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.88],
+        ['id'=>'R55','patterns'=>['laundromat','laundry','wash my clothes'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['laundry'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.88],
+        ['id'=>'R56','patterns'=>['visitor information','visitor centre','tourist information'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['visitor_information'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.88],
+        ['id'=>'R57','patterns'=>['hospital','emergency department'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['hospital'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.92],
+        ['id'=>'R58','patterns'=>['medical centre','doctor','gp clinic'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['medical_centre'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.88],
+        ['id'=>'R59','patterns'=>['pharmacy','chemist'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['pharmacy'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.9],
+        ['id'=>'R60','patterns'=>['boat ramp','launch my boat'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['boat_ramp'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.88],
+        ['id'=>'R61','patterns'=>['picnic area','public bbq','barbecue area'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['picnic_area','barbecue'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.84],
+        ['id'=>'R62','patterns'=>['rubbish disposal','waste disposal','public bins'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['waste_disposal'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.86],
     ];
 
     public function interpret(string $rawQuery): Intent
@@ -277,6 +301,12 @@ final class IntentRuleEngine
                 'facility_type_keys' => [], 'stay_type_keys' => [], 'adapter_keys' => ['providers'],
                 'confidence' => 0.62,
             ];
+        }
+
+        // A caravan toilet fault is a repair job, not a request for a public
+        // amenity. Prefer the specific repair rule over the generic word.
+        if (isset($hits['R28'])) {
+            unset($hits['R01']);
         }
 
         if ($hits === []) {

@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+- Ask VanAssist recognises plain-language accommodation requests such as
+  “somewhere to stay free near Emerald” and searches both free-camp records
+  and stays explicitly marked free.
+- Added a regression matrix of realistic traveller questions and expanded
+  everyday synonyms across provider faults, stay types and traveller facilities.
+
 ### Numbered maps across search results
 
 - Added the existing accessible map/list experience to Ask VanAssist, filtered
