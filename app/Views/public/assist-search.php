@@ -11,9 +11,11 @@ $this->extend('layouts.public');
 <?php $this->section('content'); ?>
 <section class="section">
     <div class="container">
+        <header class="interior-visual-heading interior-visual-heading--ask">
         <span class="directory-eyebrow">Ask VanAssist</span>
         <h1>What do you need help finding?</h1>
         <p class="lead" style="max-width:40rem">Describe what you need in plain language. Category and town search remain available if you prefer them.</p>
+        </header>
 
         <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" style="margin:1.25rem 0 1.5rem">
             <div class="form-group mb-0 location-field">

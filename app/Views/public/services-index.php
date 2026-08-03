@@ -7,12 +7,14 @@ $this->extend('layouts.public');
 <?php $this->section('content'); ?>
 <section class="section">
     <div class="container">
+        <header class="interior-visual-heading interior-visual-heading--services">
         <nav aria-label="Breadcrumb" class="muted" style="font-size:.9rem;margin-bottom:1rem">
             <a href="<?= e(url('/')) ?>">Home</a> / Services
         </nav>
         <span class="directory-eyebrow">VanAssist directory</span>
         <h1>Help for the vehicle, caravan and journey.</h1>
         <p class="muted service-directory-intro">Browse repairs, roadside help, travel essentials, fuel, charging, inspections and places for travellers to stop. Choose a category, then add a town or use your current location.</p>
+        </header>
 
         <nav class="service-intent-grid" aria-label="Popular service searches">
             <a data-location-link href="<?= e(url('find')) ?>"><strong>Find any service</strong><span>Search the whole provider directory</span><b aria-hidden="true">&rarr;</b></a>

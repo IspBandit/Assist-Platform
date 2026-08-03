@@ -21,13 +21,16 @@
         var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
         var appleMobile = /iPhone|iPad|iPod/i.test(navigator.userAgent)
             || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        var androidMobile = /Android/i.test(navigator.userAgent);
         var hideInstallButtons = function () { installButtons.forEach(function (button) { button.hidden = true; }); };
         var showInstallInstructions = function () {
             if (!installDialog) { return; }
             var ios = installDialog.querySelector('[data-install-ios]');
             var android = installDialog.querySelector('[data-install-android]');
+            var desktop = installDialog.querySelector('[data-install-desktop]');
             if (ios) { ios.hidden = !appleMobile; }
-            if (android) { android.hidden = appleMobile; }
+            if (android) { android.hidden = !androidMobile; }
+            if (desktop) { desktop.hidden = appleMobile || androidMobile; }
             if (typeof installDialog.showModal === 'function') { installDialog.showModal(); }
             else { installDialog.setAttribute('open', ''); }
         };

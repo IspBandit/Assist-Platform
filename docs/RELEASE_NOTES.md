@@ -5,6 +5,19 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Cleaner, more visual VanAssist journeys
+
+- Made the four homepage capability items direct links and removed the duplicate
+  shortcut and statistics sections beneath the hero.
+- Added distinct, relevant photo treatments to the main services, search, Ask,
+  stays, provider-directory, provider-profile and how-it-works page headings.
+- Put the Ask VanAssist plain-language field directly on the homepage when Ask
+  is enabled, while retaining the structured category and location search.
+- Filtered obvious automated traffic from website insights and rejected common
+  abusive scraping tools without blocking recognised search crawlers.
+- Phone-save guidance now distinguishes iPhone/iPad, Android and desktop and
+  shows only the relevant brief instructions.
+
 ### Traveller-facility staging reliability
 
 - Moved immutable acceptance fixtures outside runtime-mounted storage so

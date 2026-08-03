@@ -3,6 +3,15 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Cleaner VanAssist journeys** — homepage capability items are now direct
+  links, duplicate/statistics sections were removed, and key inner journeys use
+  distinct relevant photo headings rather than plain repeated layouts.
+- **Phone-aware save guidance** — the home-screen prompt now distinguishes
+  iPhone/iPad, Android and desktop instructions.
+- **Cleaner traffic reporting** — obvious bot traffic is excluded from website
+  insights and common abusive automation is stopped before public-page routing.
+- **Homepage Ask VanAssist** — the scoped plain-language search field now
+  appears directly in the homepage hero when enabled.
 - **Provider map references** — concise provider rows now show the same coloured
   numbered pin shape used on the results map instead of a `Map pin N` text label;
   unhelpful business-name initial tiles were removed from provider lists.

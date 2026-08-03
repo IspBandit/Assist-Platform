@@ -17,6 +17,7 @@ use App\Platform\Support\RequestContext;
 use App\Services\Api\AdminApiEnvelope;
 use App\Services\Settings;
 use App\Services\AdminBrandAccess;
+use App\Services\BotTraffic;
 use Throwable;
 
 /**
@@ -99,6 +100,20 @@ final class Kernel
         }
         if ($path === '/readyz') {
             return $this->readinessResponse();
+        }
+
+        // Reject obvious scraping and attack tools before they reach routing,
+        // sessions or the database. Health checks and versioned APIs remain
+        // available; recognised search crawlers are never caught here.
+        if (
+            PHP_SAPI !== 'cli'
+            &&
+            !str_starts_with($path, '/api/')
+            && BotTraffic::isAbusiveAutomation((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''))
+        ) {
+            return Response::text('Automated access is not permitted.', 403)
+                ->withHeader('Cache-Control', 'no-store')
+                ->withHeader('X-Robots-Tag', 'noindex, nofollow');
         }
 
         $brand = $this->brandResolver->resolve($request);

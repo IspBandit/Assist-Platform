@@ -69,6 +69,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
 <?php $this->section('content'); ?>
 <section class="section search-results-page">
     <div class="container">
+        <header class="interior-visual-heading interior-visual-heading--search">
         <span class="directory-eyebrow">VanAssist search</span>
         <h1 class="results-heading"><?= $this->e($heading) ?></h1>
         <?php if (!empty($usedLocation) && $town !== null): ?>
@@ -80,6 +81,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
                 <p class="muted" style="margin:0 0 .5rem">Sorted by approximate distance from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (within ' . (int) $maxDistance . ' km)' : '' ?>.</p>
             <?php endif; ?>
         <?php endif; ?>
+        </header>
 
         <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location style="margin:1rem 0 1.5rem">
             <div class="grid grid-2 home-search-primary">
