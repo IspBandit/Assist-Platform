@@ -39,6 +39,9 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('data-results-map-summary-drag', $view);
         self::assertStringContainsString('Places to stay', $view);
         self::assertStringContainsString('provider-result-', $view);
+        self::assertStringContainsString('$mapResultNumbers', $view);
+        self::assertStringContainsString("'mapResultNumber' =>", $view);
+        self::assertStringContainsString('Map pin', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
         self::assertStringContainsString("tile.openstreetmap.org/", $script);
         self::assertStringContainsString("card.addEventListener('focusin'", $script);
         self::assertStringContainsString("setResultsView('list')", $script);
@@ -47,6 +50,7 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("mapCanvas.addEventListener('wheel'", $script);
         self::assertStringContainsString("event.key === 'ArrowLeft'", $script);
         self::assertStringContainsString('.provider-card--compact', $css);
+        self::assertStringContainsString('.provider-map-reference', $css);
         self::assertStringContainsString('.provider-card--compact{min-height:0', $css);
         self::assertStringContainsString('.provider-card--compact .provider-card-badges .badge:nth-child(n+3){display:none}', $css);
         self::assertStringContainsString('touch-action:none', $css);

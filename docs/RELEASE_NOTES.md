@@ -5,6 +5,11 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist map/list matching
+
+- Located provider cards now show `Map pin N`, matching the numbered pin on the
+  results map so travellers can identify the corresponding business quickly.
+
 ### Isolated staging deployment path
 
 - Added a manually approved GitHub workflow for immutable releases to the
