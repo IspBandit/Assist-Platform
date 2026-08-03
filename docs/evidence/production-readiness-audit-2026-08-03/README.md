@@ -13,8 +13,8 @@ Assist RIC branch `feature/data-011a-catalogue-acquisition`.
 | RIC static checks | PASS after repair | Ruff clean; MyPy clean across 150 source files |
 | RIC dependencies | PASS | `pip-audit` reports no known vulnerabilities; local package is not on PyPI |
 | Migration rehearsal | BLOCKED locally | Local database contains Polaris schema/brand without matching migration 103 history. Do not use it as clean migration evidence; rehearse on a disposable production-shaped staging restore |
-| Admin API rehearsal | BLOCKED on staging | Requires staging URL, credentials, migrations, restricted enablement and RIC validate-only submission |
-| VAN-002 claims E2E | BLOCKED on staging/owner | Requires a human claim, evidence review and approve/reject cycle |
+| Admin API rehearsal | PASS on isolated staging | RIC authenticated through a least-privilege service account; providers, stays, datasets and search gaps returned; validate-only import `733bf326-8890-48d1-affc-3f0f093eb228` reached `validated` and published nothing |
+| VAN-002 claim-first/approval | PASS on isolated staging | Existing provider `14100` was claimed without duplication, linked to a test account, approved in PHP admin and recorded as `provider.status_approve` |
 | Production flags | CORRECTLY OFF | Ask, traveller facilities, datasets, paid AI and Admin API remain gated |
 | Polaris launch | BLOCKED by owner/business | Domain, real non-demo catalogue and public-launch Quality Gate |
 | LocalTorque / billing | BLOCKED by owner/business | Domain/legal and gateway/tax decisions respectively |
@@ -28,6 +28,20 @@ Assist RIC branch `feature/data-011a-catalogue-acquisition`.
 - Existing PHP admin and PySide6 RIC responsibilities; no separate Tauri stack.
 
 ## Staging rehearsal — OPS-010 / DATA-011
+
+Completed on the isolated, password-protected VanAssist staging environment:
+
+- production-shaped database restored into a separate MariaDB container;
+- staging release deployed with production feature flags unchanged;
+- Admin API enabled only in staging and protected by its own service-account authentication;
+- RIC authenticated and read providers, stays, datasets and search gaps;
+- a one-record **Validate only** package was submitted and validated without staging or publishing a canonical record;
+- the real connection exposed two RIC contract mismatches (detailed capability scopes and `/auth/me`), which were repaired with regression coverage;
+- production remained available and was not migrated or written through the rehearsal.
+
+Remaining before any production API enablement: deploy the reviewed RIC fix,
+verify credential revocation/API-disable rollback, and obtain owner Quality Gate
+approval for the exact production release SHA.
 
 1. Restore a recent production-shaped backup into isolated staging.
 2. Deploy the exact release-candidate SHA and verify checksums.
@@ -45,6 +59,18 @@ Assist RIC branch `feature/data-011a-catalogue-acquisition`.
 10. Append results to the Option B Quality Gate evidence pack.
 
 ## VAN-002 staging acceptance
+
+Completed claim-first happy path:
+
+- onboarding search found existing provider `14100` (`BP DOG SWAMP`);
+- claim request linked to that canonical record and provider count remained one;
+- claim token acceptance linked the provider account and moved the listing to pending;
+- an authenticated staging administrator approved the pending provider;
+- provider status returned to active and an immutable `provider.status_approve`
+  audit row recorded `pending` → `active`.
+
+The test account/provider mutation must be removed after the remaining rejection
+and rollback checks. No production record was changed.
 
 1. Search for an existing provider during onboarding and select **Claim this listing**.
 2. Verify a likely duplicate cannot silently create a second public listing.
