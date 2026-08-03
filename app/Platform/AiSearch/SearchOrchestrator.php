@@ -234,7 +234,8 @@ final class SearchOrchestrator
                 0,
                 $fallback,
                 null,
-                'none'
+                'none',
+                ['messages' => array_values(array_unique($messages)), 'results' => []]
             );
             $this->recordResolveUsage($request, $intent, $fromCache, $budgetEval['state'], $fallback, $id, $started);
             $gapId = $this->gaps->observe(
@@ -348,7 +349,8 @@ final class SearchOrchestrator
             $externalCount,
             $fallback !== '' ? $fallback : null,
             $town,
-            $precision
+            $precision,
+            $this->responseSummary($aggregated, $messages)
         );
         $this->recordResolveUsage(
             $request,
@@ -386,6 +388,31 @@ final class SearchOrchestrator
             facilities: $aggregated['facilities'],
             knowledgeGapId: $gapId,
         );
+    }
+
+    /**
+     * Keep only the user-visible learning signal: result identity/type and
+     * messages. Contact details and precise coordinates are never retained.
+     *
+     * @param array<string,list<array<string,mixed>>> $aggregated
+     * @param list<string> $messages
+     * @return array{messages:list<string>,results:list<array<string,mixed>>}
+     */
+    private function responseSummary(array $aggregated, array $messages): array
+    {
+        $results = [];
+        foreach (['providers', 'stays', 'facilities', 'externals'] as $type) {
+            foreach (array_slice($aggregated[$type] ?? [], 0, 10) as $row) {
+                $results[] = array_filter([
+                    'type' => rtrim($type, 's'),
+                    'id' => isset($row['id']) ? (string) $row['id'] : null,
+                    'name' => mb_substr((string) ($row['name'] ?? $row['title'] ?? ''), 0, 160),
+                    'source' => isset($row['source']) ? mb_substr((string) $row['source'], 0, 80) : null,
+                ], static fn (mixed $value): bool => $value !== null && $value !== '');
+            }
+        }
+
+        return ['messages' => array_values(array_unique($messages)), 'results' => $results];
     }
 
     private function recordResolveUsage(

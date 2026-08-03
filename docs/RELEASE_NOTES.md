@@ -334,6 +334,10 @@ Quality Gate and verified deployment record.
   body repairs, roadside help, inspections, parts and travel essentials.
 - Added a bounded general-repair fallback for unclear but clearly caravan/RV
   fault requests; unrelated general-AI questions remain rejected.
+- Linked privacy-safe Ask questions, interpretations, result counts and returned
+  answer summaries through the existing Admin API AI-usage feed for RIC review.
+  Raw GPS and provider contact details are not retained, and review never
+  changes live routing automatically.
 
 ## Historical records
 
