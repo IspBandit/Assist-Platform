@@ -64,7 +64,9 @@ $report = [
     'query' => $query,
     'radius_km' => $radius,
     'origin' => ['lat' => $batehavenLat, 'lng' => $batehavenLng],
-    'git_sha' => trim((string) @shell_exec('git rev-parse --short HEAD 2>NUL')) ?: null,
+    'git_sha' => trim((string) @shell_exec(
+        'git rev-parse --short HEAD ' . (PHP_OS_FAMILY === 'Windows' ? '2>NUL' : '2>/dev/null')
+    )) ?: null,
     'steps' => [],
     'result' => 'FAIL',
 ];
@@ -86,12 +88,12 @@ $report['steps'][] = [
 ];
 
 $fixtures = [
-    'demo-public-toilets.csv' => is_file(BASE_PATH . '/storage/datasets/demo-public-toilets.csv')
-        && str_contains((string) file_get_contents(BASE_PATH . '/storage/datasets/demo-public-toilets.csv'), 'Batehaven'),
-    'demo-dump-points.geojson' => is_file(BASE_PATH . '/storage/datasets/demo-dump-points.geojson')
-        && str_contains((string) file_get_contents(BASE_PATH . '/storage/datasets/demo-dump-points.geojson'), 'Batemans Bay'),
-    'demo-drinking-water.csv' => is_file(BASE_PATH . '/storage/datasets/demo-drinking-water.csv')
-        && str_contains((string) file_get_contents(BASE_PATH . '/storage/datasets/demo-drinking-water.csv'), 'Batehaven'),
+    'demo-public-toilets.csv' => is_file(BASE_PATH . '/resources/datasets/demo-public-toilets.csv')
+        && str_contains((string) file_get_contents(BASE_PATH . '/resources/datasets/demo-public-toilets.csv'), 'Batehaven'),
+    'demo-dump-points.geojson' => is_file(BASE_PATH . '/resources/datasets/demo-dump-points.geojson')
+        && str_contains((string) file_get_contents(BASE_PATH . '/resources/datasets/demo-dump-points.geojson'), 'Batemans Bay'),
+    'demo-drinking-water.csv' => is_file(BASE_PATH . '/resources/datasets/demo-drinking-water.csv')
+        && str_contains((string) file_get_contents(BASE_PATH . '/resources/datasets/demo-drinking-water.csv'), 'Batehaven'),
 ];
 $report['steps'][] = ['fixtures' => $fixtures];
 
@@ -292,7 +294,10 @@ try {
 $out = json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
 echo $out;
 $evidenceDir = BASE_PATH . '/docs/evidence/vanassist-readiness-2026-08-02';
-if (is_dir($evidenceDir) || @mkdir($evidenceDir, 0775, true)) {
+if (!is_writable($evidenceDir)) {
+    $evidenceDir = BASE_PATH . '/storage/evidence/vanassist-readiness-2026-08-02';
+}
+if ((is_dir($evidenceDir) || @mkdir($evidenceDir, 0775, true)) && is_writable($evidenceDir)) {
     file_put_contents($evidenceDir . '/VA_ACCEPT_BATEHAVEN_001.json', $out);
 }
 

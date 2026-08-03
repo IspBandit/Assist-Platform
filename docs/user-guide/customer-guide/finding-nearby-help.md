@@ -1,5 +1,12 @@
 # Finding nearby help
 
+## Ask VanAssist traveller facilities
+
+When Ask VanAssist traveller facilities are enabled, requests for toilets,
+dump points and similar amenities appear as compact rows showing the facility
+name, type, locality, address, distance and reviewed source status. These
+facilities remain separate from business providers and places to stay.
+
 ## Purpose
 
 Find VanAssist service listings near a town, postcode or the device's current location and compare the returned providers in a map and accessible list.

@@ -113,7 +113,7 @@ final class TravellerFacilitiesOrchestrationTest extends TestCase
         $view = (string) file_get_contents(dirname(__DIR__, 3) . '/app/Views/public/assist-search.php');
         self::assertStringContainsString('Traveller facilities', $view);
         self::assertStringContainsString('$result->facilities', $view);
-        self::assertStringContainsString('caravan parks', $view);
+        self::assertStringContainsString('facility-result-row', $view);
     }
 
     public function testAdapterClassExistsAndIsInjectable(): void

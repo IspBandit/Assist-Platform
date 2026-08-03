@@ -384,7 +384,7 @@ Do not invent a second gap API. Do not enable production AI flags for this.
 
 | File / area | Action |
 | --- | --- |
-| `storage/datasets/demo-*.csv` / geojson | Toilets, dump, water, rest, visitor |
+| `resources/datasets/demo-*.csv` / geojson | Toilets, dump, water, rest, visitor |
 | Migrations `098`, `100` | Catalogue rows (disabled) |
 | `scripts/import-demo-traveller-facilities.php` | Import + approve demos |
 | `scripts/stage-ckan-toilet-map.php` | Capped CKAN Fetch; restores `is_enabled=0` |
