@@ -102,7 +102,9 @@ final class IntentCache
         if ($intent->intentType === Intent::TYPE_UNKNOWN) {
             return;
         }
-        if ($intent->clarificationRequired && $intent->confidence < 0.4) {
+        // Clarification responses are deliberately not cached. A better prompt, model or
+        // taxonomy mapping should be able to resolve the same request on the next attempt.
+        if ($intent->clarificationRequired) {
             return;
         }
 

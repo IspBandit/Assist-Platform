@@ -249,6 +249,65 @@ final class IntentInterpreterTest extends TestCase
         self::assertStringContainsString('ignore previous instructions', $seenUser);
     }
 
+    public function testPromptDirectsSymptomsToUsefulProviderCategories(): void
+    {
+        $seenSystem = null;
+        $provider = new class($seenSystem) implements AiProviderInterface {
+            public function __construct(private ?string &$seenSystem)
+            {
+            }
+
+            public function name(): string
+            {
+                return 'openai';
+            }
+
+            public function completeStructured(AiCompletionRequest $request): AiCompletionResult
+            {
+                $this->seenSystem = $request->messages[0]['content'] ?? '';
+
+                return new AiCompletionResult(
+                    ok: true,
+                    parsed: [
+                        'intent_type' => 'find_provider',
+                        'provider_category_keys' => ['brakes-and-bearings', 'mechanical-repairs'],
+                        'stay_type_keys' => [],
+                        'facility_type_keys' => [],
+                        'location_text' => 'Emerald',
+                        'use_current_location' => false,
+                        'radius_km' => 100,
+                        'urgency' => 'normal',
+                        'adapter_keys' => ['providers'],
+                        'confidence' => 0.8,
+                        'clarification_required' => false,
+                        'clarification_reason' => null,
+                    ],
+                    provider: 'openai',
+                    model: 'test-model',
+                    inputTokens: 80,
+                    outputTokens: 30,
+                    estimatedCostAud: 0.0001,
+                    actualCostAud: null,
+                    durationMs: 8,
+                    providerRequestId: null,
+                    failureReason: null,
+                );
+            }
+        };
+
+        $this->seedAiSettings(['test-model']);
+        $out = (new IntentInterpreter($provider))->interpret(
+            'My caravan is making a grinding noise underneath near Emerald',
+            'vanassist',
+            'corr-symptom'
+        );
+
+        self::assertTrue($out['ok']);
+        self::assertContains('brakes-and-bearings', $out['intent']->providerCategoryKeys);
+        self::assertIsString($seenSystem);
+        self::assertStringContainsString('The user does not need to know the trade name.', $seenSystem);
+    }
+
     public function testJsonSchemaIsStrict(): void
     {
         $schema = IntentJsonSchema::schema();

@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
  */
 final class IntentRuleEngine
 {
-    public const VERSION = 'intent_rules_v1';
+    public const VERSION = 'intent_rules_v2';
 
     /**
      * @var list<array{
