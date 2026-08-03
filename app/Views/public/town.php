@@ -39,29 +39,15 @@ $this->extend('layouts.public');
         }
         $townLabel = (string) $town['name'];
         $regionLabel = (string) ($town['region_name'] ?? '');
-        $providerCard = function (array $p) use ($townLabel): void {
-            ?>
-            <a class="card stack" href="<?= e(url('providers/' . $p['slug'])) ?>" style="text-decoration:none;color:inherit">
-                <h3 style="margin:0"><?= $this->e((string) $p['business_name']) ?></h3>
-                <div>
-                    <?= $p['is_verified'] ? '<span class="badge badge-verified">Verified</span> ' : '' ?>
-                    <?= $p['is_founding_provider'] ? '<span class="badge badge-confirmed">Founding</span> ' : '' ?>
-                    <?= !empty($p['is_unclaimed']) ? '<span class="badge badge-neutral">Unclaimed</span> ' : '' ?>
-                    <span class="badge badge-neutral"><?= $this->e(ucfirst((string) $p['service_model'])) ?></span>
-                </div>
-                <?php if (!empty($p['town_name']) && (string) $p['town_name'] !== $townLabel): ?>
-                    <p class="muted" style="margin:0;font-size:.85rem">Based in <?= $this->e((string) $p['town_name']) ?></p>
-                <?php endif; ?>
-                <?php if (!empty($p['description'])): ?><p style="margin:0"><?= $this->e(mb_substr((string) $p['description'], 0, 110)) ?><?= mb_strlen((string) $p['description']) > 110 ? '…' : '' ?></p><?php endif; ?>
-            </a>
-            <?php
+        $providerCard = function (array $p): void {
+            $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]);
         };
         ?>
 
         <?php if ($groups[0] !== []): ?>
             <h2 style="margin-top:2rem">Service businesses in <?= $this->e($townLabel) ?></h2>
             <p class="muted">Businesses based in or directly serving <?= $this->e($townLabel) ?>. Unclaimed listings were compiled from public sources — confirm details before booking.</p>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($groups[0] as $p) {
                     $providerCard($p);
                 } ?>
@@ -71,7 +57,7 @@ $this->extend('layouts.public');
         <?php if ($groups[1] !== []): ?>
             <h2 style="margin-top:2rem">Mobile operators serving the <?= $this->e($regionLabel !== '' ? $regionLabel : $townLabel) ?> area</h2>
             <p class="muted">Mobile businesses based elsewhere in the region that travel to jobs — confirm they cover <?= $this->e($townLabel) ?> before booking.</p>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($groups[1] as $p) {
                     $providerCard($p);
                 } ?>
@@ -81,7 +67,7 @@ $this->extend('layouts.public');
         <?php if ($groups[2] !== []): ?>
             <h2 style="margin-top:2rem">Workshops elsewhere in <?= $this->e($regionLabel !== '' ? $regionLabel : 'the region') ?></h2>
             <p class="muted">Nearby workshop options if you can travel to them.</p>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($groups[2] as $p) {
                     $providerCard($p);
                 } ?>

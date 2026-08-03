@@ -43,18 +43,9 @@ $townTotal = $townTotal ?? count($towns);
         <?php if ($providers !== []): ?>
             <h2 style="margin-top:2rem">Service businesses in <?= $this->e((string) $region['name']) ?></h2>
             <p class="muted">Unclaimed listings were compiled from public sources — confirm details before booking.</p>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($providers as $p): ?>
-                    <a class="card stack" href="<?= e(url('providers/' . $p['slug'])) ?>" style="text-decoration:none;color:inherit">
-                        <h3 style="margin:0"><?= $this->e((string) $p['business_name']) ?></h3>
-                        <div>
-                            <?= $p['is_verified'] ? '<span class="badge badge-verified">Verified</span> ' : '' ?>
-                            <?= $p['is_founding_provider'] ? '<span class="badge badge-confirmed">Founding</span> ' : '' ?>
-                            <?= !empty($p['is_unclaimed']) ? '<span class="badge badge-neutral">Unclaimed</span> ' : '' ?>
-                            <span class="badge badge-neutral"><?= $this->e(ucfirst((string) $p['service_model'])) ?></span>
-                        </div>
-                        <?php if (!empty($p['town_name'])): ?><p class="muted" style="margin:0"><?= $this->e((string) $p['town_name']) ?></p><?php endif; ?>
-                    </a>
+                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>

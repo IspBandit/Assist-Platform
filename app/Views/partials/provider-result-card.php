@@ -14,7 +14,7 @@ $mapDestination = $isWorkshop && is_navigable_street_address($p['street_address'
     ? map_destination(null, null, [$p['street_address'] ?? '', $p['town_name'] ?? '', $p['state_abbr'] ?? ''])
     : '';
 $resultCardId = trim((string) ($resultCardId ?? ''));
-$compact = !empty($compact);
+$compact = !isset($compact) || $compact !== false;
 $searchId = isset($searchId) ? (int) $searchId : 0;
 $gapId = isset($gapId) ? (int) $gapId : 0;
 $mapResultNumber = isset($mapResultNumber) ? max(0, (int) $mapResultNumber) : 0;
@@ -49,6 +49,6 @@ $canCall = $hasListedPhone && !empty($p['show_public_phone']);
         <?php if ($isPossible && !$compact): ?><span class="badge badge-neutral">Related service</span><?php endif; ?>
         <?php if ($isMobile): ?><span class="badge badge-confirmed"><?= $model === 'both' ? 'Mobile and workshop' : 'Mobile service' ?></span><?php elseif ($model !== ''): ?><span class="badge badge-neutral">Workshop</span><?php endif; ?>
     </div>
-    <?php if ($description !== ''): ?><p class="provider-card-description"><?= e(mb_substr($description, 0, 150)) ?><?= mb_strlen($description) > 150 ? '…' : '' ?></p><?php endif; ?>
+    <?php if (!$compact && $description !== ''): ?><p class="provider-card-description"><?= e(mb_substr($description, 0, 150)) ?><?= mb_strlen($description) > 150 ? '…' : '' ?></p><?php endif; ?>
     <div class="btn-row provider-card-actions"><a class="provider-card-link" href="<?= e($profileUrl) ?>"><?= $compact ? 'Details' : 'View services and contact details' ?></a><?php if ($canCall): ?><a class="provider-card-link" href="<?= e(url('go/phone/' . $p['slug']) . $contactQuery) ?>">Call</a><?php endif; ?><?php if ($mapDestination !== ''): ?><a class="provider-card-link" href="<?= e(url('go/directions/' . $p['slug']) . $contactQuery) ?>" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>" target="_blank" rel="noopener noreferrer">Directions</a><?php endif; ?></div>
 </article>

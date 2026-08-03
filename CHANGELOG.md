@@ -3,6 +3,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Compact provider lists** — provider collections across directory, search,
+  town, region, service and saved-provider pages now use concise single-row
+  entries, with tighter mobile actions and full detail retained on profiles.
 - **VanAssist map/list matching** — each located provider card now displays the
   same numbered map-pin reference used on the search-results map, and the
   marker number remains visibly rendered inside every map pin.

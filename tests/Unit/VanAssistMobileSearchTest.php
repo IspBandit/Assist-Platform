@@ -66,6 +66,23 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringNotContainsString('img-src *', $security['csp']);
     }
 
+    public function testProviderCollectionsUseConciseRowsAcrossPublicViews(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $card = (string) file_get_contents($root . '/app/Views/partials/provider-result-card.php');
+        $css = (string) file_get_contents($root . '/public/assets/css/app.css');
+
+        self::assertStringContainsString('$compact = !isset($compact) || $compact !== false;', $card);
+        self::assertStringContainsString('if (!$compact && $description', $card);
+        self::assertStringContainsString('.provider-card-grid,.provider-results{grid-template-columns:1fr}', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-badges{display:none}', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-actions .provider-card-link:first-child{display:none}', $css);
+
+        foreach (['providers-index.php', 'service-category.php', 'region.php', 'town.php', 'assist-search.php'] as $view) {
+            self::assertStringContainsString('provider-card-grid', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
+        }
+    }
+
     public function testEveryPublicDiscoveryJourneyCanInheritDeviceLocation(): void
     {
         $root = dirname(__DIR__, 2);
