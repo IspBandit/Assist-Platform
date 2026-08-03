@@ -5,6 +5,13 @@
 $this->extend('layouts.public');
 $pages = (int) ceil(max(1, $total) / $perPage);
 $hasFilters = $search !== '' || $location !== '' || $townId !== null || $categoryId !== null;
+$mappedProviders = [];
+if ($hasFilters) foreach ($providers as $p) {
+    $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null;
+    if (!is_numeric($pLat)||!is_numeric($pLng)) continue;
+    $id='directory-provider-'.(int)$p['id'];
+    $mappedProviders[]=['id'=>$id,'listId'=>$id,'number'=>count($mappedProviders)+1,'name'=>(string)$p['business_name'],'location'=>trim((string)($p['town_name']??'').(!empty($p['state_abbr'])?', '.$p['state_abbr']:'')),'lat'=>(float)$pLat,'lng'=>(float)$pLng,'profile'=>url('providers/'.$p['slug']),'directions'=>'','destination'=>'','featured'=>!empty($p['is_featured']),'possible'=>false];
+}
 $qs = static function (array $extra) use ($search, $location, $townId, $categoryId): string {
     $params = array_filter(['q' => $search, 'location' => $location, 'town' => $location === '' ? $townId : null, 'category' => $categoryId] + $extra, static fn ($v) => $v !== null && $v !== '');
     return $params === [] ? '' : ('?' . http_build_query($params));
@@ -76,9 +83,10 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
                 </div>
             </div>
         <?php else: ?>
+            <?php $this->include('partials/results-map', ['mapItems'=>$mappedProviders,'mapTitle'=>count($mappedProviders).' located directory results']); ?>
             <div class="provider-card-grid">
-                <?php foreach ($providers as $p): ?>
-                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]); ?>
+                <?php foreach ($providers as $p): $mapIndex=array_search('directory-provider-'.(int)$p['id'],array_column($mappedProviders,'id'),true); ?>
+                    <?php $this->include('partials.provider-result-card', ['p'=>$p,'isPossible'=>false,'resultCardId'=>'directory-provider-'.(int)$p['id'],'mapResultNumber'=>$mapIndex===false?0:$mapIndex+1]); ?>
                 <?php endforeach; ?>
             </div>
 

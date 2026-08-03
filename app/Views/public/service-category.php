@@ -15,6 +15,8 @@
 /** @var bool $hasOrigin */
 $this->extend('layouts.public');
 $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '';
+$mappedProviders=[];
+foreach (array_merge($matches,$possible) as $p) { $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null; if(!is_numeric($pLat)||!is_numeric($pLng))continue; $id='service-provider-'.(int)$p['id']; $mappedProviders[]=['id'=>$id,'listId'=>$id,'number'=>count($mappedProviders)+1,'name'=>(string)$p['business_name'],'location'=>trim((string)($p['town_name']??'').(!empty($p['state_abbr'])?', '.$p['state_abbr']:'')),'lat'=>(float)$pLat,'lng'=>(float)$pLng,'profile'=>url('providers/'.$p['slug']),'directions'=>'','destination'=>'','featured'=>!empty($p['is_featured']),'possible'=>in_array($p,$possible,true)]; }
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -83,12 +85,13 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
         <?php if ($selectedTown !== null && ($matches !== [] || $possible !== [])): ?>
             <p class="muted" style="font-size:.9rem;margin:.25rem 0 0">Sorted by approximate distance from <?= $this->e((string) $selectedTown['name']) ?><?= !empty($maxDistance) ? ' (within ' . (int) $maxDistance . ' km)' : '' ?>. Distances are to each provider's base town. <span class="badge badge-confirmed">&#128666; Mobile service</span> providers travel to you.</p>
         <?php endif; ?>
+        <?php $serviceOrigin=is_numeric($lat??null)&&is_numeric($lng??null)?['lat'=>(float)$lat,'lng'=>(float)$lng]:null; $this->include('partials/results-map',['mapItems'=>$mappedProviders,'mapOrigin'=>$serviceOrigin,'mapTitle'=>count($mappedProviders).' located '.$category['name'].' results']); ?>
 
         <?php if ($matches !== []): ?>
             <h3 style="margin-top:1rem">Offering this service<?= $this->e($inArea) ?></h3>
             <div class="provider-card-grid">
-                <?php foreach ($matches as $p): ?>
-                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]); ?>
+                <?php foreach ($matches as $p): $mapIndex=array_search('service-provider-'.(int)$p['id'],array_column($mappedProviders,'id'),true); ?>
+                    <?php $this->include('partials.provider-result-card',['p'=>$p,'isPossible'=>false,'resultCardId'=>'service-provider-'.(int)$p['id'],'mapResultNumber'=>$mapIndex===false?0:$mapIndex+1]); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
@@ -97,8 +100,8 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
             <h3 style="margin-top:1.5rem">May also offer this service<?= $this->e($inArea) ?></h3>
             <p class="muted">These businesses work in a related trade and may be able to help. Confirm they cover this specific job before booking.</p>
             <div class="provider-card-grid">
-                <?php foreach ($possible as $p): ?>
-                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true]); ?>
+                <?php foreach ($possible as $p): $mapIndex=array_search('service-provider-'.(int)$p['id'],array_column($mappedProviders,'id'),true); ?>
+                    <?php $this->include('partials.provider-result-card',['p'=>$p,'isPossible'=>true,'resultCardId'=>'service-provider-'.(int)$p['id'],'mapResultNumber'=>$mapIndex===false?0:$mapIndex+1]); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>

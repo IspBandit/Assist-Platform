@@ -5,6 +5,8 @@
 /** @var array<int,array<string,mixed>> $categories */
 /** @var array<int,array<string,mixed>> $providers */
 $this->extend('layouts.public');
+$mappedProviders=[];
+foreach ($providers as $p) { $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null; if(!is_numeric($pLat)||!is_numeric($pLng))continue; $id='town-provider-'.(int)$p['id']; $mappedProviders[]=['id'=>$id,'listId'=>$id,'number'=>count($mappedProviders)+1,'name'=>(string)$p['business_name'],'location'=>trim((string)($p['town_name']??'').(!empty($p['state_abbr'])?', '.$p['state_abbr']:'')),'lat'=>(float)$pLat,'lng'=>(float)$pLng,'profile'=>url('providers/'.$p['slug']),'directions'=>'','destination'=>'','featured'=>!empty($p['is_featured']),'possible'=>false]; }
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -39,10 +41,12 @@ $this->extend('layouts.public');
         }
         $townLabel = (string) $town['name'];
         $regionLabel = (string) ($town['region_name'] ?? '');
-        $providerCard = function (array $p): void {
-            $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]);
+        $providerCard = function (array $p) use ($mappedProviders): void {
+            $mapIndex=array_search('town-provider-'.(int)$p['id'],array_column($mappedProviders,'id'),true);
+            $this->include('partials.provider-result-card', ['p'=>$p,'isPossible'=>false,'resultCardId'=>'town-provider-'.(int)$p['id'],'mapResultNumber'=>$mapIndex===false?0:$mapIndex+1]);
         };
         ?>
+        <?php $townOrigin=is_numeric($town['latitude']??null)&&is_numeric($town['longitude']??null)?['lat'=>(float)$town['latitude'],'lng'=>(float)$town['longitude']]:null; $this->include('partials/results-map',['mapItems'=>$mappedProviders,'mapOrigin'=>$townOrigin,'mapTitle'=>count($mappedProviders).' located services near '.$townLabel]); ?>
 
         <?php if ($groups[0] !== []): ?>
             <h2 style="margin-top:2rem">Service businesses in <?= $this->e($townLabel) ?></h2>

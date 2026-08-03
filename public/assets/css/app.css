@@ -545,7 +545,7 @@ ol.steps-list li::before {
 @media(max-width:520px){.town-suggest button{grid-template-columns:1fr;gap:.1rem;min-height:50px}.town-suggest .muted{white-space:normal}}
 label { display: block; font-weight: 600; margin-bottom: .35rem; }
 .required { color: var(--red); }
-input:not([type]), input[type=text], input[type=email], input[type=password], input[type=tel],
+input:not([type]), input[type=text], input[type=search], input[type=email], input[type=password], input[type=tel],
 input[type=number], input[type=url], input[type=date], select, textarea {
     width: 100%; padding: .8rem .9rem; font-size: 1rem; border: 1px solid #c9c5ba;
     border-radius: 10px; background: #fff; color: var(--charcoal); min-height: 48px;
@@ -1000,9 +1000,10 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .directory-eyebrow { color: var(--brand-primary-emphasis); font-size: .78rem; font-weight: 850; letter-spacing: .11em; text-transform: uppercase; }
 .directory-hero h1 { max-width: 720px; margin: .55rem 0 .8rem; font-size: clamp(2.4rem, 5vw, 4.4rem); line-height: 1.02; letter-spacing: -.045em; }
 .directory-hero p { max-width: 720px; margin: 0; color: color-mix(in srgb, var(--brand-text) 72%, #fff); font-size: clamp(1rem, 1.6vw, 1.2rem); }
-.directory-trust { display: grid; gap: .65rem; color: var(--brand-primary-emphasis); font-size: .9rem; font-weight: 720; }
+.directory-trust { display: grid; gap: .65rem; color: #fff; font-size: .9rem; font-weight: 720; text-shadow: 0 1px 3px rgba(0,0,0,.65); }
 .directory-trust span { display: flex; gap: .65rem; align-items: center; }
-.directory-trust span::before { content: "?"; display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: var(--brand-primary); color: #fff; font-size: .72rem; }
+.directory-trust span::before { content: "✓"; display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: var(--brand-primary); color: #fff; font-size: .72rem; }
+.stay-card h3{display:flex;align-items:center;gap:.55rem;margin:.2rem 0}.stay-card .badge-row{margin-left:auto}.stay-card .actions{margin-top:.4rem}
 .directory-section { padding-top: 0; }
 .directory-search { position: relative; z-index: 4; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end; margin: -2.4rem 0 2rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: 0 22px 55px rgba(15,23,42,.14); }
 .directory-search-actions { display: grid; min-width: 170px; }

@@ -776,7 +776,8 @@
                 summaryPosition.textContent = 'Result ' + (index + 1);
                 summaryName.textContent = provider.name;
                 summaryLocation.textContent = provider.location || 'Location supplied on provider profile';
-                summaryProfile.href = provider.profile;
+                summaryProfile.hidden = !provider.profile;
+                if (provider.profile) { summaryProfile.href = provider.profile; }
                 summaryDirections.hidden = !provider.directions;
                 if (provider.directions) {
                     summaryDirections.href = provider.directions;
@@ -858,7 +859,8 @@
             }
             if (summaryList) {
                 summaryList.addEventListener('click', function () {
-                    var card = activeProviderId ? document.getElementById('provider-result-' + activeProviderId) : null;
+                    var activeProvider = providers.find(function (provider) { return String(provider.id) === activeProviderId; });
+                    var card = activeProvider ? document.getElementById(activeProvider.listId || ('provider-result-' + activeProvider.id)) : null;
                     setResultsView('list');
                     if (!card) { return; }
                     window.setTimeout(function () {
@@ -950,7 +952,7 @@
                     pin.title = provider.name;
                     if (String(provider.id) === activeProviderId) { pin.classList.add('is-active'); }
                     pin.addEventListener('click', function (event) {
-                        var card = document.getElementById('provider-result-' + provider.id);
+                        var card = document.getElementById(provider.listId || ('provider-result-' + provider.id));
                         openSummary(provider, index, true);
                         if (card) {
                             card.classList.add('provider-card--map-focus');
@@ -972,7 +974,7 @@
                 }
 
                 mapCanvas.replaceChildren(fragment);
-                if (mapStatus) { mapStatus.textContent = providers.length + ' returned ' + (providers.length === 1 ? 'provider is' : 'providers are') + ' shown on the map and in the list below.'; }
+                if (mapStatus) { mapStatus.textContent = providers.length + ' returned ' + (providers.length === 1 ? 'result is' : 'results are') + ' shown on the map and in the list below.'; }
             };
 
             var setMapZoom = function (zoom) {

@@ -3,6 +3,15 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Consistent numbered result maps** — Find, Ask VanAssist, filtered provider
+  directories, stays, services, towns and regions now use the same responsive
+  map/list pattern. Unmappable records stay in the list without a fake pin.
+- **Cleaner directory and stay results** — stay listings are denser on mobile,
+  and the provider directory search and trust strip render correctly.
+- **Maps on Ask results** — Ask VanAssist now gives every reliably located
+  provider, stay and traveller facility a numbered map pin matched to the same
+  number in its concise result row; records without coordinates remain in the
+  list without a misleading pin.
 - **Safer Ask location handling** — conversational wording after a town is no
   longer treated as part of its name, unresolved named places can never fall
   through to Australia-wide providers, and proxy-aware rate limiting now keeps
