@@ -15,7 +15,6 @@ $model = (string) ($provider['service_model'] ?? '');
 $isWorkshop = in_array($model, ['workshop', 'both'], true);
 $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) $provider['business_name'];
-$initial = mb_strtoupper(mb_substr(trim($name), 0, 1));
 $slug = (string) $provider['slug'];
 $searchId = isset($searchId) ? (int) $searchId : 0;
 $contactQuery = $searchId > 0 ? '?s=' . $searchId : '';
@@ -27,9 +26,8 @@ $mapDestination = map_destination(null, null, [$address, $townName, (string) ($p
 <?php $this->section('content'); ?>
 <section class="profile-hero">
     <div class="container">
-        <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="<?= e(url('/')) ?>">Home</a><span aria-hidden="true">/</span><a href="<?= e(url('providers')) ?>">Directory</a><span aria-hidden="true">/</span><span><?= $this->e($name) ?></span></nav>
+        <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="<?= e(url('/')) ?>">Home</a><span aria-hidden="true">/</span><a href="<?= e(url('providers')) ?>">Directory</a></nav>
         <div class="profile-heading">
-            <span class="profile-avatar" aria-hidden="true"><?= e($initial) ?></span>
             <div class="profile-heading-copy">
                 <div class="profile-badges">
                     <?php if (!empty($provider['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
