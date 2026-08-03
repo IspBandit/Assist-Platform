@@ -58,6 +58,10 @@ foreach ($allResults as $provider) {
         'destination' => $providerDestination !== '' ? $providerDestination : null,
     ];
 }
+$mapResultNumbers = [];
+foreach ($mappedResults as $index => $mappedProvider) {
+    $mapResultNumbers[(int) $mappedProvider['id']] = $index + 1;
+}
 ?>
 <?php $this->section('head'); ?>
 <?php if ($mappedResults !== []): ?><link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin><?php endif; ?>
@@ -180,7 +184,7 @@ foreach ($allResults as $provider) {
                 <div class="featured-results-heading"><div><span>Featured</span><h2 id="featured-results-heading">Featured providers</h2></div><p>Featured placement is shown separately and does not change the service or location match.</p></div>
                 <div class="provider-card-grid provider-result-list">
                     <?php foreach ($featuredMatches as $p): ?>
-                        <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id']]); ?>
+                        <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id'], 'mapResultNumber' => $mapResultNumbers[(int) $p['id']] ?? 0]); ?>
                     <?php endforeach; ?>
                 </div>
             </section>
@@ -191,7 +195,7 @@ foreach ($allResults as $provider) {
             <h2 style="margin-top:1.5rem">Direct providers<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
             <div class="provider-card-grid provider-result-list">
                 <?php foreach ($organicMatches as $p): ?>
-                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id']]); ?>
+                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id'], 'mapResultNumber' => $mapResultNumbers[(int) $p['id']] ?? 0]); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
@@ -201,7 +205,7 @@ foreach ($allResults as $provider) {
             <p class="muted result-section-note">Related trades may help, but are not confirmed for this exact service.</p>
             <div class="provider-card-grid provider-result-list">
                 <?php foreach ($possible as $p): ?>
-                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id']]); ?>
+                    <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id'], 'mapResultNumber' => $mapResultNumbers[(int) $p['id']] ?? 0]); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>

@@ -1074,6 +1074,7 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .provider-card-main { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; gap: .85rem; align-items: center; color: inherit; text-decoration: none; }
 .provider-avatar { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: color-mix(in srgb, var(--brand-primary) 12%, #fff); color: var(--brand-primary-emphasis); font-size: 1.25rem; font-weight: 900; }
 .provider-card-content { min-width: 0; }
+.provider-map-reference { display: block; margin-bottom: .15rem; color: #0d62dc; font-size: .66rem; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
 .provider-card-title { display: block; padding-right: .5rem; color: var(--charcoal); font-size: 1.05rem; font-weight: 820; line-height: 1.25; }
 .provider-location { display: block; margin-top: .25rem; overflow: hidden; color: var(--muted); font-size: .82rem; text-overflow: ellipsis; white-space: nowrap; }
 .provider-card-arrow { color: var(--brand-primary); font-size: 1.35rem; }

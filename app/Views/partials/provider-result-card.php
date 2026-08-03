@@ -17,6 +17,7 @@ $resultCardId = trim((string) ($resultCardId ?? ''));
 $compact = !empty($compact);
 $searchId = isset($searchId) ? (int) $searchId : 0;
 $gapId = isset($gapId) ? (int) $gapId : 0;
+$mapResultNumber = isset($mapResultNumber) ? max(0, (int) $mapResultNumber) : 0;
 $contactParts = [];
 if ($searchId > 0) {
     $contactParts[] = 's=' . $searchId;
@@ -34,6 +35,7 @@ $canCall = $hasListedPhone && !empty($p['show_public_phone']);
     <a class="provider-card-main" href="<?= e($profileUrl) ?>">
         <span class="provider-avatar" aria-hidden="true"><?= e($initial) ?></span>
         <span class="provider-card-content">
+            <?php if ($mapResultNumber > 0): ?><span class="provider-map-reference">Map pin <?= $mapResultNumber ?></span><?php endif; ?>
             <span class="provider-card-title"><?= e($name) ?></span>
             <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · <?= max(1, (int) $p['distance_km']) ?> km straight-line<?php endif; ?></span><?php endif; ?>
         </span>

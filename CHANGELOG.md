@@ -2,6 +2,10 @@
 
 All notable changes to VanAssist are documented here.
 
+### Changed
+- **VanAssist map/list matching** — each located provider card now displays the
+  same numbered map-pin reference used on the search-results map.
+
 ### Added
 - **POL-008 dealer enquiry handoff** — model-page mailto/website CTAs for
   linked published dealers; `/dealers/{id}/enquire` tracks
