@@ -71,6 +71,17 @@ final class IntentRuleEngineTest extends TestCase
         self::assertTrue($intent->clarificationRequired);
     }
 
+    public function testPlainLanguageFreeStayRequestResolvesWithoutPaidAi(): void
+    {
+        $intent = $this->engine->interpret('need somewhere to stay free near Emerald');
+
+        self::assertSame(Intent::TYPE_STAY, $intent->intentType);
+        self::assertContains('free_camp', $intent->stayTypeKeys);
+        self::assertContains('stays', $intent->adapterKeys);
+        self::assertSame('Emerald', $intent->locationText);
+        self::assertFalse($intent->clarificationRequired);
+    }
+
     /** @return array<string,array{0:string,1:string}> */
     public static function serviceLanguageQueries(): array
     {

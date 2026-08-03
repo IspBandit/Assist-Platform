@@ -3,6 +3,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Natural stay requests** — Ask VanAssist now recognises ordinary wording
+  such as “somewhere to stay free near Emerald” without requiring paid AI,
+  and free-camp searches include stays explicitly priced as free.
 - **Consistent numbered result maps** — Find, Ask VanAssist, filtered provider
   directories, stays, services, towns and regions now use the same responsive
   map/list pattern. Unmappable records stay in the list without a fake pin.

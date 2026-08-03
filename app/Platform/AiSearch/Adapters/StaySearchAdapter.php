@@ -31,6 +31,11 @@ final class StaySearchAdapter
 
         foreach ($types as $stayType) {
             $rows = CaravanPark::searchStays($townId, $lat, $lng, $stayType, null, $radius);
+            // Natural requests for a free camp should include records classified
+            // by either their stay type or their explicit free price.
+            if ($stayType === 'free_camp') {
+                $rows = array_merge($rows, CaravanPark::searchStays($townId, $lat, $lng, null, 'free', $radius));
+            }
             foreach ($rows as $row) {
                 $id = (int) ($row['id'] ?? 0);
                 if ($id <= 0) {

@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
  */
 final class IntentRuleEngine
 {
-    public const VERSION = 'intent_rules_v2';
+    public const VERSION = 'intent_rules_v3';
 
     /**
      * @var list<array{
@@ -79,8 +79,18 @@ final class IntentRuleEngine
             'confidence' => 0.9,
         ],
         [
+            'id' => 'R05A',
+            'patterns' => ['somewhere to stay', 'place to stay', 'places to stay', 'where can i stay', 'need a stay', 'overnight stay'],
+            'intent_type' => Intent::TYPE_STAY,
+            'provider_category_keys' => [],
+            'facility_type_keys' => [],
+            'stay_type_keys' => [],
+            'adapter_keys' => ['stays'],
+            'confidence' => 0.9,
+        ],
+        [
             'id' => 'R06',
-            'patterns' => ['free camp', 'free camping', 'low cost camp', 'low-cost camp'],
+            'patterns' => ['free camp', 'free camping', 'low cost camp', 'low-cost camp', 'stay free', 'free place to stay'],
             'intent_type' => Intent::TYPE_STAY,
             'provider_category_keys' => ['free-and-low-cost-camps'],
             'facility_type_keys' => [],
