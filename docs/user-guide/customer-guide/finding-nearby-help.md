@@ -9,7 +9,7 @@ facilities remain separate from business providers and places to stay.
 
 ## Purpose
 
-Find VanAssist service listings near a town, postcode or the device's current location and compare the returned providers in a map and accessible list.
+Find VanAssist service listings near a town, postcode or the device's current location and compare returned providers, stays and facilities in a map and accessible list. The same numbered map/list pattern is used on Find, Ask VanAssist, filtered directories, stays, services, town and region results when reliable coordinates exist. Unmappable listings remain in the list without an invented pin.
 
 ## Intended users
 

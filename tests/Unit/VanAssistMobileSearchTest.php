@@ -104,6 +104,26 @@ final class VanAssistMobileSearchTest extends TestCase
         }
     }
 
+    public function testAllBoundedPublicResultJourneysUseReusableNumberedMaps(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $partial = (string) file_get_contents($root . '/app/Views/partials/results-map.php');
+
+        self::assertStringContainsString('data-results-map-data', $partial);
+        self::assertStringContainsString('data-results-map-summary-list', $partial);
+        self::assertStringContainsString("'providers'=>$mapItems", $partial);
+
+        foreach (['providers-index.php', 'stays.php', 'service-category.php', 'town.php', 'region.php'] as $view) {
+            $source = (string) file_get_contents($root . '/app/Views/public/' . $view);
+            self::assertStringContainsString("partials/results-map", $source, $view);
+            self::assertTrue(str_contains($source, 'mapResultNumber') || str_contains($source, 'provider-map-reference'), $view);
+        }
+
+        $stays = (string) file_get_contents($root . '/app/Views/public/stays.php');
+        self::assertStringContainsString('provider-card-grid stay-grid', $stays);
+        self::assertStringContainsString('provider-card--compact stay-card', $stays);
+    }
+
     public function testEveryPublicDiscoveryJourneyCanInheritDeviceLocation(): void
     {
         $root = dirname(__DIR__, 2);
