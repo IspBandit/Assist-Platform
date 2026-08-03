@@ -1442,11 +1442,11 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
   .hero-search-panel .home-search-primary{gap:.85rem}
   .hero-search-panel .search-options{margin-top:.75rem;padding-top:.55rem}
   .hero-search-panel .home-search-actions{gap:.5rem;margin-top:.65rem}
-  .hero-capabilities{display:flex;gap:.55rem;margin:.8rem -.25rem 0;padding:.7rem;overflow-x:auto;scroll-snap-type:x proximity;border-radius:12px}
-  .hero-capabilities a{flex:0 0 10.5rem;grid-template-columns:2rem 1fr;padding:.2rem .6rem;border-right:1px solid rgba(255,255,255,.18);scroll-snap-align:start}
+  .hero-capabilities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem;margin:.8rem 0 0;padding:.6rem;overflow:visible;border-radius:12px}
+  .hero-capabilities a{min-width:0;grid-template-columns:1.8rem minmax(0,1fr);padding:.35rem .4rem;border:1px solid rgba(255,255,255,.14);border-radius:9px}
   .hero-capabilities a>span{width:2rem;height:2rem;font-size:.9rem}
-  .hero-capabilities strong{font-size:.66rem}
-  .hero-capabilities small{font-size:.65rem}
+  .hero-capabilities strong{font-size:.61rem;line-height:1.15}
+  .hero-capabilities small{font-size:.6rem;line-height:1.2}
 }
 @media(max-width:400px){
   .vanassist-road-wordmark{width:9.6rem}
