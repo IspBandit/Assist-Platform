@@ -63,6 +63,9 @@ faults, including electrical, solar, refrigeration, plumbing, suspension,
 body, appliance and roadside problems. If a request is clearly about a caravan
 or RV fault but the precise trade cannot be established, it shows general
 caravan repair and unsure-service options instead of returning an empty answer.
+When the requested specialist category has no nearby listing, Ask may show a
+wider set of related repair, mechanical or roadside providers. These are
+clearly labelled as related help and users are told to confirm suitability.
 
 ## Related pages
 

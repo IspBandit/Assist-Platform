@@ -338,6 +338,8 @@ Quality Gate and verified deployment record.
   answer summaries through the existing Admin API AI-usage feed for RIC review.
   Raw GPS and provider contact details are not retained, and review never
   changes live routing automatically.
+- Added a clearly labelled related-provider fallback over a modestly wider area
+  when an understood specialist request has no exact local listing.
 
 ## Historical records
 
