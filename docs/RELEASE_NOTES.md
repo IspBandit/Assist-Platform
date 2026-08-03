@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Compact provider lists
+
+- Provider collections now use concise rows across public search, directory,
+  town, region, service and saved-provider pages.
+- Mobile rows prioritise the provider name and location, retain 44-pixel action
+  targets, and move full descriptions and details to the provider profile.
+
 ### VanAssist map/list matching
 
 - Located provider cards now show `Map pin N`, matching the numbered pin on the

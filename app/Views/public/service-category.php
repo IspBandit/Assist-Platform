@@ -86,7 +86,7 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
 
         <?php if ($matches !== []): ?>
             <h3 style="margin-top:1rem">Offering this service<?= $this->e($inArea) ?></h3>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($matches as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]); ?>
                 <?php endforeach; ?>
@@ -96,7 +96,7 @@ $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '
         <?php if ($possible !== []): ?>
             <h3 style="margin-top:1.5rem">May also offer this service<?= $this->e($inArea) ?></h3>
             <p class="muted">These businesses work in a related trade and may be able to help. Confirm they cover this specific job before booking.</p>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($possible as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true]); ?>
                 <?php endforeach; ?>

@@ -1646,6 +1646,18 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 /* Keep the marker number visible after the pin button hides stray text nodes. */
 .results-map-pin::after{font-size:.78rem}
 
+/* Provider collections are concise lists; full information belongs on profiles. */
+.provider-card-grid,.provider-results{grid-template-columns:1fr}
+.saved-provider-row{grid-template-columns:minmax(0,1fr) auto}
+.saved-provider-row form{margin:0}
+
 @media(max-width:719px){
   .polaris-pref-grid,.polaris-priority-set,.polaris-compare-options,.polaris-match-card{grid-template-columns:1fr}
+  .provider-card--compact{grid-template-columns:minmax(0,1fr) auto;min-height:58px;padding:.45rem .55rem;gap:.3rem .45rem}
+  .provider-card--compact .provider-card-main{grid-column:1;grid-template-columns:30px minmax(0,1fr)}
+  .provider-card--compact .provider-card-badges{display:none}
+  .provider-card--compact .provider-card-actions{grid-column:2;display:flex;gap:.25rem}
+  .provider-card--compact .provider-card-actions .provider-card-link:first-child{display:none}
+  .provider-card--compact .provider-card-link{min-width:48px;min-height:44px;padding:.3rem .4rem;font-size:.66rem}
+  .saved-provider-row form{grid-column:2}
 }

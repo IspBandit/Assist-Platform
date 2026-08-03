@@ -34,7 +34,7 @@ $this->extend('layouts.public');
             <?php if ($providers === []): ?>
                 <div class="card"><h2>Coverage is growing</h2><p class="muted">No matching published businesses are available yet. Business owners can list or claim a profile for review.</p><a class="btn btn-primary" href="<?= e(url('for-providers')) ?>">List or claim a business</a></div>
             <?php else: ?>
-                <div class="grid grid-3">
+                <div class="provider-card-grid">
                     <?php foreach ($providers as $p): ?><?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => false]); ?><?php endforeach; ?>
                 </div>
             <?php endif; ?>

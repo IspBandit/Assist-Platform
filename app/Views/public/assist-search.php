@@ -54,7 +54,7 @@ $this->extend('layouts.public');
 
             <?php if ($result->providers !== []): ?>
                 <h2 class="h3" style="margin-top:1.5rem">Providers</h2>
-                <div class="provider-results">
+                <div class="provider-card-grid provider-results">
                     <?php foreach ($result->providers as $p): ?>
                         <?php
                         $isPossible = (int) ($p['is_inferred'] ?? 0) === 1;
