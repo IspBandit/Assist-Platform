@@ -54,6 +54,10 @@ facilities such as public toilets or dump points. Ask never invents caravan-park
 rows for toilets. Guidance remains non-authoritative; confirm details before you
 travel.
 
+The Ask field is also shown directly on the VanAssist homepage when enabled.
+It is limited to providers, places to stay, roadside/caravan help and traveller
+facilities; it is not a general-purpose AI assistant.
+
 ## Related pages
 
 Use **Places to stay** for caravan-friendly stops, the service directory to browse all categories, **Ask** when natural-language search is offered, or **Request assistance** when the right listing is not available.

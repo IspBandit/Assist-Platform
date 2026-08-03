@@ -24,7 +24,7 @@ if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .
 $mapDestination = map_destination(null, null, [$address, $townName, (string) ($provider['state_abbr'] ?? '')]);
 ?>
 <?php $this->section('content'); ?>
-<section class="profile-hero">
+<section class="profile-hero interior-photo-hero interior-photo-hero--profile">
     <div class="container">
         <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="<?= e(url('/')) ?>">Home</a><span aria-hidden="true">/</span><a href="<?= e(url('providers')) ?>">Directory</a></nav>
         <div class="profile-heading">

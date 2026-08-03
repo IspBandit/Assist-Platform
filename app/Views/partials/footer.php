@@ -37,8 +37,9 @@ $bizEmail = $footerBrand->id() === 'vanassist' ? (string) Settings::get('contact
         <button class="install-app-dialog__close" type="button" data-install-close aria-label="Close">&times;</button>
         <span class="eyebrow">Keep VanAssist handy</span>
         <h2 id="install-app-title">Save VanAssist to your phone</h2>
-        <div data-install-ios hidden><p>On iPhone or iPad in Safari:</p><ol><li>Tap the <strong>Share</strong> button.</li><li>Choose <strong>Add to Home Screen</strong>.</li><li>Tap <strong>Add</strong>.</li></ol></div>
-        <div data-install-android hidden><p>Open your browser menu and choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p></div>
+        <div data-install-ios hidden><p>On this iPhone or iPad:</p><ol><li>Tap <strong>Share</strong>.</li><li>Tap <strong>Add to Home Screen</strong>, then <strong>Add</strong>.</li></ol></div>
+        <div data-install-android hidden><p>On this Android phone:</p><ol><li>Open the browser menu <strong>⋮</strong>.</li><li>Tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li></ol></div>
+        <div data-install-desktop hidden><p>Open VanAssist on your phone, then use your phone browser’s <strong>Add to Home Screen</strong> or <strong>Install app</strong> option.</p></div>
         <p class="muted">VanAssist will open from your home screen with nearby help, travel services and stays one tap away.</p>
     </div>
 </dialog>

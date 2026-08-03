@@ -23,6 +23,25 @@ final class WebsiteInsightsWiringTest extends TestCase
         );
     }
 
+    public function testBotsAreNotRecordedOrIncludedInWebsiteFigures(): void
+    {
+        $writer = (string) file_get_contents(base_path('app/Services/Analytics.php'));
+        $report = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
+
+        self::assertStringContainsString('TrackingSession::isBot()', $writer);
+        self::assertGreaterThanOrEqual(7, substr_count($report, "device_type NOT IN ('bot','unknown')"));
+    }
+
+    public function testHomepageContainsThePlainLanguageAskForm(): void
+    {
+        $partial = (string) file_get_contents(base_path('app/Views/partials/ask-vanassist.php'));
+
+        self::assertStringContainsString('name="q"', $partial);
+        self::assertStringContainsString("action=\"<?= e(url('ask')) ?>\"", $partial);
+        self::assertStringContainsString('Providers, stays and traveller facilities only', $partial);
+        self::assertStringNotContainsString('ask-vanassist-teaser', $partial);
+    }
+
     public function testMobileHomeHeroDoesNotReserveAnEmptyImageScreen(): void
     {
         $css = (string) file_get_contents(base_path('public/assets/css/app.css'));

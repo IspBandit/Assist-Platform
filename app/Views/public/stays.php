@@ -10,7 +10,7 @@ $facilityLabels = [
 ];
 ?>
 <?php $this->section('content'); ?>
-<section class="hero hero-compact stay-hero">
+<section class="hero hero-compact stay-hero interior-photo-hero interior-photo-hero--stays">
     <div class="container">
         <div class="eyebrow">VanAssist stays</div>
         <h1>Getting tired? Find a place to stay.</h1>

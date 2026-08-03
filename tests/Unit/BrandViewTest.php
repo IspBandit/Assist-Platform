@@ -118,7 +118,7 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('--teal: var(--brand-primary);', $html);
     }
 
-    public function testVanAssistHomePresentsTaskPathsAndDataBackedEvidence(): void
+    public function testVanAssistHomePresentsTaskPathsWithoutStatisticsRibbon(): void
     {
         BrandContext::set($this->vanAssistBrand());
 
@@ -143,11 +143,12 @@ final class BrandViewTest extends TestCase
         ]);
 
         self::assertStringContainsString('class="hero hero--visual"', $html);
-        self::assertStringContainsString('Start with what you need right now.', $html);
-        self::assertStringContainsString('From “who can help?” to a useful next step.', $html);
-        self::assertStringContainsString('1,248', $html);
-        self::assertStringContainsString('active service listings', $html);
-        self::assertStringNotContainsString('>0</strong><span>verified providers', $html);
+        self::assertStringContainsString('aria-label="Find VanAssist help"', $html);
+        self::assertStringNotContainsString('journey-launcher', $html);
+        self::assertStringNotContainsString('evidence-ribbon', $html);
+        self::assertStringNotContainsString('active service listings', $html);
+        self::assertStringNotContainsString('Upcoming confirmed service runs', $html);
+        self::assertStringNotContainsString('Know what each listing label means.', $html);
         self::assertStringContainsString('vanassist-coastal-hero-mobile-v1.webp', $html);
         self::assertStringContainsString('Your travel', $html);
         self::assertStringContainsString('companion.', $html);

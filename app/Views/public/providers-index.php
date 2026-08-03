@@ -11,7 +11,7 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
 };
 ?>
 <?php $this->section('content'); ?>
-<section class="directory-hero">
+<section class="directory-hero interior-photo-hero interior-photo-hero--providers">
     <div class="container directory-hero-inner">
         <div>
             <span class="directory-eyebrow"><?= $this->e($directoryCopy['eyebrow']) ?></span>

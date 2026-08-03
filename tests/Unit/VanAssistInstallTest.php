@@ -22,7 +22,9 @@ final class VanAssistInstallTest extends TestCase
         $script = $this->source('public/assets/js/app.js');
         self::assertStringContainsString('Save VanAssist to your phone', $footer);
         self::assertStringContainsString('Add to Home Screen', $footer);
+        self::assertStringContainsString('data-install-desktop', $footer);
         self::assertStringContainsString('beforeinstallprompt', $script);
+        self::assertStringContainsString("var androidMobile = /Android/i", $script);
         self::assertStringContainsString("serviceWorker.register('/service-worker.js')", $script);
         self::assertStringContainsString('display-mode: standalone', $script);
     }

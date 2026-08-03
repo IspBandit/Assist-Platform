@@ -28,6 +28,9 @@ final class Analytics
             if ((string) Settings::get('analytics_enabled', '0') !== '1') {
                 return;
             }
+            if (TrackingSession::isBot()) {
+                return;
+            }
             if (auth()->check() && auth()->hasAnyRole('super-administrator', 'administrator', 'platform-administrator', 'brand-administrator', 'moderator', 'marketing', 'support')) {
                 return;
             }

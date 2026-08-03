@@ -6,6 +6,7 @@ namespace App\Services\Demand;
 
 use App\Auth\Auth;
 use App\Core\Database;
+use App\Services\BotTraffic;
 use Throwable;
 
 /**
@@ -122,16 +123,7 @@ final class TrackingSession
 
     public static function isBot(): bool
     {
-        $ua = strtolower(self::userAgent());
-        if ($ua === '') {
-            return false;
-        }
-        foreach (['bot', 'crawl', 'spider', 'slurp', 'bingpreview', 'facebookexternalhit', 'headless', 'python-requests', 'curl/', 'wget'] as $needle) {
-            if (str_contains($ua, $needle)) {
-                return true;
-            }
-        }
-        return false;
+        return BotTraffic::isBot(self::userAgent());
     }
 
     public static function referralSource(): ?string
