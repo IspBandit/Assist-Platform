@@ -9,6 +9,7 @@ may remain as dated files and are linked here rather than copied.
 
 - Located provider cards now show `Map pin N`, matching the numbered pin on the
   results map so travellers can identify the corresponding business quickly.
+- Corrected the map-marker styling so those numbers are visible inside the pins.
 
 ### Isolated staging deployment path
 

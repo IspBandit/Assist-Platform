@@ -1642,6 +1642,10 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .polaris-tow-result.status-compatible{border-color:#2f6b4f}
 .polaris-tow-result.status-incompatible{border-color:#8a3030}
 .polaris-tow-result.status-insufficient_data,.polaris-tow-result.status-potentially_compatible{border-color:#c4a574}
+
+/* Keep the marker number visible after the pin button hides stray text nodes. */
+.results-map-pin::after{font-size:.78rem}
+
 @media(max-width:719px){
   .polaris-pref-grid,.polaris-priority-set,.polaris-compare-options,.polaris-match-card{grid-template-columns:1fr}
 }

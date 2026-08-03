@@ -51,6 +51,7 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("event.key === 'ArrowLeft'", $script);
         self::assertStringContainsString('.provider-card--compact', $css);
         self::assertStringContainsString('.provider-map-reference', $css);
+        self::assertStringContainsString('.results-map-pin::after{font-size:.78rem}', $css);
         self::assertStringContainsString('.provider-card--compact{min-height:0', $css);
         self::assertStringContainsString('.provider-card--compact .provider-card-badges .badge:nth-child(n+3){display:none}', $css);
         self::assertStringContainsString('touch-action:none', $css);
