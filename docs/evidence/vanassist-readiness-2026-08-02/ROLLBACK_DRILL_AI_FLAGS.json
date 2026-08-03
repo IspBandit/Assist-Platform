@@ -1,0 +1,25 @@
+{
+    "drill": "AI_FLAG_ROLLBACK",
+    "started_at": "2026-08-02T01:55:45+00:00",
+    "elapsed_ms": 30,
+    "before": {
+        "assist_ai_search": false,
+        "assist_ai_traveller_facilities": false,
+        "assist_ai_datasets": false,
+        "ai_enabled": false,
+        "openai_enabled": false
+    },
+    "after": {
+        "assist_ai_search": false,
+        "assist_ai_traveller_facilities": false,
+        "assist_ai_datasets": false,
+        "ai_enabled": false,
+        "openai_enabled": false
+    },
+    "result": "PASS",
+    "notes": [
+        "Confirm GET /ask \u2192 404 on VanAssist when Ask flag off (manual/browser).",
+        "Confirm GET /find still healthy (manual/browser).",
+        "Facility rows were not deleted; soft-unpublish separately if needed."
+    ]
+}

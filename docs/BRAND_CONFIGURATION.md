@@ -119,6 +119,19 @@ domain API exposed to application code.
 - Production domain: `trailerwise.com.au`; `www.trailerwise.com.au` resolves to
   the same brand; local domain: `trailerwise.test`.
 
+### LocalTorque
+
+- Status: private until an owner-controlled production domain is supplied.
+- Automotive directory foundation with brand-scoped categories.
+
+### Polaris
+
+- Status: private until an owner-controlled production domain is supplied.
+- New RV decision platform (catalogue, guided matching, TowSmart compatibility).
+- Local domain: `polaris.test`. Module: `rv_catalogue`.
+- Documentation: `docs/polaris/`. Backlog: POL-001+.
+- Must not duplicate TowSmart tow-vehicle data or VanAssist provider records.
+
 ## Feature flags
 
 Feature evaluation receives platform, brand, environment, actor, and optional

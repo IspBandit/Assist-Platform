@@ -1429,9 +1429,15 @@ paths:
       operationId: adminSearchGapsIndex
       summary: Ranked zero-result search gaps for RIC research workbench
       description: |
-        Aggregates zero-result rows from `provider_searches` when demand analytics
-        tables exist. Returns an empty collection when analytics is disabled or no
-        rows match the brand/date filters.
+        Dual-source Option B: unions zero-result rows from `provider_searches`
+        with open `knowledge_gaps` (when that table and KnowledgeGapService are
+        available). Collection `meta.source` is `dual` with
+        `sources: [provider_searches, knowledge_gaps]`, plus
+        `provider_searches_count` / `knowledge_gaps_count`. Each item may carry
+        `meta.source` of `provider_searches` or `knowledge_gaps`. Locked SearchGap
+        required fields are unchanged. Cursor/`has_more` remain provider-primary
+        for v1. Returns a sparse dual collection when neither source contributes
+        rows for the brand/date filters.
       security:
         - bearerAuth: []
       parameters:
@@ -1495,12 +1501,103 @@ paths:
       responses:
         '201':
           description: Duplicate decision created
+  /duplicates/merge-history:
+    get:
+      tags: [Duplicates]
+      operationId: adminDuplicatesMergeHistory
+      summary: List completed merge history rows
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Merge history collection
+  /duplicates/{id}:
+    get:
+      tags: [Duplicates]
+      operationId: adminDuplicatesShow
+      summary: Show a duplicate decision
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Duplicate decision
   /duplicates/{id}/merge:
     post:
       tags: [Duplicates]
       operationId: adminDuplicatesMerge
       summary: Merge duplicate providers (supports dry_run)
+      description: |
+        Human-only (`duplicates:merge`). Soft-deletes the absorbed provider,
+        closes the decision, and writes `api_merge_history`. When `dry_run` is
+        true, returns the planned actions without mutating the database.
+        `field_choices` are stored for audit; they are not applied as field
+        overlays in this increment.
       security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                surviving_id:
+                  type: integer
+                absorbed_id:
+                  type: integer
+                dry_run:
+                  type: boolean
+                field_choices:
+                  type: object
+                  additionalProperties: true
+      responses:
+        '200':
+          description: Merge preview or completed merge
+  /duplicates/{id}/not-duplicate:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesNotDuplicate
+      summary: Close decision as not a duplicate
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated decision
+  /duplicates/{id}/defer:
+    post:
+      tags: [Duplicates]
+      operationId: adminDuplicatesDefer
+      summary: Defer an open duplicate decision
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated decision
+  /datasets:
         - bearerAuth: []
       parameters:
         - name: id
@@ -1521,6 +1618,80 @@ paths:
       responses:
         '200':
           description: Dataset collection
+  /datasets/{id}:
+    get:
+      tags: [Datasets]
+      operationId: adminDatasetsShow
+      summary: Government dataset detail
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dataset detail
+    patch:
+      tags: [Datasets]
+      operationId: adminDatasetsPatch
+      summary: Update government dataset catalogue fields
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Updated dataset
+  /datasets/{id}/sync:
+    post:
+      tags: [Datasets]
+      operationId: adminDatasetsSync
+      summary: Fetch dataset into facility import review queue
+      description: |
+        Creates a `government_dataset_sync_runs` row and immediately runs
+        `GovernmentDatasetService::fetchDataset` (or `importFixture` when
+        `fixture=true`). Stages traveller facility candidates for human review;
+        never auto-publishes. Failed fetches mark the sync run `failed`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: fixture
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: When true, import the registered local demo fixture for the dataset.
+      responses:
+        '200':
+          description: Sync run result (completed or error envelope on failure)
+  /datasets/{id}/sync-history:
+    get:
+      tags: [Datasets]
+      operationId: adminDatasetsSyncHistory
+      summary: List dataset sync runs
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sync run collection
   /facilities:
     get:
       tags: [Facilities]

@@ -149,7 +149,8 @@ approve/publish/merge/purge unless a later owner decision expands scopes.
 
 ### 2.10 Explicitly deferred past Phase 1 implementation
 
-Duplicates merge UI/API completion (DATA-002 — design hooks only), claims
+Duplicates merge UI/API completion (DATA-002 — Admin API review/merge + dry_run
+shipped; HTML admin remains list-only), claims
 approve/reject API (VAN-010 after auth), corrections, dataset catalogue CRUD
 (DATA-012), AI usage (VAN-011), traveller-facilities CRUD, unrestricted
 publish/merge scopes for service accounts.

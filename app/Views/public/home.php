@@ -111,6 +111,7 @@ $categoryCount = (int) ($evidence['service_categories'] ?? 0);
                         <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
                 </form>
+                <?php $this->include('partials.ask-vanassist'); ?>
                 <nav class="mobile-travel-shortcuts" aria-label="Traveller shortcuts">
                     <a data-location-link href="<?= e(url('find')) ?>"><strong>Services</strong><span>Repairs &amp; help</span></a>
                     <a data-location-link href="<?= e(url('stays')) ?>"><strong>Stays</strong><span>Caravan stops</span></a>

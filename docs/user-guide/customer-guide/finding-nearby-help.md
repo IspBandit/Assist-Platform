@@ -38,9 +38,18 @@ Select **12 volt electrical**, enter **Boyne Island**, and choose a distance. Th
 - Assuming a club, publication or tourism organisation that shares VanAssist has endorsed every listing. An endorsement or partnership is never implied unless stated explicitly.
 - Operating the search or map while driving.
 
+## Ask VanAssist
+
+When available on the brand, **Ask** accepts a plain-language question (for
+example “dump point near Emerald”) alongside structured Find a service. Results
+may include providers, places to stay and — when enabled — separate traveller
+facilities such as public toilets or dump points. Ask never invents caravan-park
+rows for toilets. Guidance remains non-authoritative; confirm details before you
+travel.
+
 ## Related pages
 
-Use **Places to stay** for caravan-friendly stops, the service directory to browse all categories, or **Request assistance** when the right listing is not available.
+Use **Places to stay** for caravan-friendly stops, the service directory to browse all categories, **Ask** when natural-language search is offered, or **Request assistance** when the right listing is not available.
 
 ## FAQ
 

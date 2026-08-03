@@ -1,0 +1,93 @@
+{
+    "scenario": "VA-ACCEPT-BATEHAVEN-001",
+    "mode": "full",
+    "env": "local",
+    "query": "public toilets and dump points near Batehaven, NSW",
+    "radius_km": 50,
+    "origin": {
+        "lat": -35.7325,
+        "lng": 150.1985
+    },
+    "git_sha": "680de78",
+    "steps": [
+        {
+            "intent": {
+                "type": "find_traveller_facility",
+                "facilities": [
+                    "dump_point",
+                    "public_toilet"
+                ],
+                "location": "Batehaven",
+                "adapters": [
+                    "providers",
+                    "traveller_facilities"
+                ],
+                "source": "rules",
+                "ok": true
+            }
+        },
+        {
+            "fixtures": {
+                "demo-public-toilets.csv": true,
+                "demo-dump-points.geojson": true,
+                "demo-drinking-water.csv": true
+            }
+        },
+        {
+            "import": "demo_geojson_dump_points",
+            "result": {
+                "job_id": 1,
+                "found": 2,
+                "new": 2
+            }
+        },
+        {
+            "import": "demo_csv_public_toilets",
+            "result": {
+                "job_id": 2,
+                "found": 3,
+                "new": 3
+            }
+        },
+        {
+            "import": "demo_csv_drinking_water",
+            "result": {
+                "job_id": 3,
+                "found": 2,
+                "new": 2
+            }
+        },
+        {
+            "approve_pending": 7
+        },
+        {
+            "facility_coverage_near_batehaven": {
+                "public_toilet": 1,
+                "dump_point": 1
+            }
+        },
+        {
+            "ask": {
+                "facility_count": 2,
+                "facility_types": [
+                    "public_toilet",
+                    "dump_point"
+                ],
+                "provider_count": 0,
+                "stay_count": 0,
+                "external_count": 0,
+                "fallback": "",
+                "intent_source": "rules",
+                "paid_ai_used": false
+            }
+        },
+        {
+            "flags_restored": {
+                "assist_ai_search": false,
+                "assist_ai_traveller_facilities": false
+            }
+        }
+    ],
+    "result": "PASS",
+    "reason": "Ask returned toilet and dump facilities near Batehaven."
+}

@@ -33,6 +33,20 @@ formats include Instagram post, story and profile graphics plus Facebook post,
 cover and profile graphics. Campaign purposes include launch, provider
 recruitment, service discovery, education/safety and community engagement.
 
+## Government datasets and traveller facilities
+
+Open **Data sources → Government datasets** for the **DATA-011A National Dataset
+Catalogue** (extends DATA-012). Catalogue rows include jurisdiction, source/API
+URLs, licence, attribution, format, update frequency, trust, auto-update (RIC
+schedule only), duplicate rules, entity types and notes. National portals and
+themes are seeded disabled. Enable a concrete importable row and **Fetch**
+(row-capped) or **Import fixture**, then approve candidates under **Facility
+review**. Approval writes `traveller_facilities` only — never `caravan_parks`.
+Caravan parks/campgrounds remain stays. No dataset publishes directly to
+production; RIC stages and Admin API is the write path. See `docs/DATA_011A.md`.
+Use Assist AI Search to confirm the release gate before turning on
+`assist_ai_traveller_facilities`.
+
 ## Provider discovery and verification
 
 `php scripts/classify-brand-providers.php --dry-run` reports the canonical

@@ -3,6 +3,208 @@
 All notable changes to VanAssist are documented here.
 
 ### Added
+- **POL-008 dealer enquiry handoff** — model-page mailto/website CTAs for
+  linked published dealers; `/dealers/{id}/enquire` tracks
+  `dealer_enquiry_click` then redirects. Demo contacts/links in `120`
+  (`example.invalid` only). No outbound enquiry mailer.
+- **POL-002 demo catalogue volume** — migration `119` expands Polaris
+  demonstration fixtures (new manufacturer + six models/variants, `is_demo`
+  only). Not production national catalogue data.
+- **POL-007 manufacturer portal data quality** — completeness checklist on
+  `/portal/manufacturer/data-quality` for claimed makers (ATM/length/berths/price
+  gaps). Guidance only, not a Quality Gate verdict.
+- **POL-007 manufacturer portal analytics** — manufacturer-scoped `rv_viewed` /
+  `rv_saved` rollups on `/portal/manufacturer/analytics` (7/30/90 day); find
+  impressions still planned.
+- **POL-003 Find preference hydration** — load saved travel preferences into
+  Find when query fields are absent; explicit params still override.
+- **POL-002 accessibility markup polish** — table captions, compare Differs
+  text markers, empty-state `role="status"`, year-selector focus/labelledby;
+  ACCESSIBILITY_QA remains CONDITIONAL (no WCAG PASS / no CI axe).
+- **POL-002 model year selector** — model detail `?year=` resolves published
+  `polaris_rv_model_years`, filters variants, keeps year-free canonicals; demo
+  migration `118` adds Southern Cross 2025 variant.
+- **POL-005 saved browse searches** — capture `/rvs` filters to
+  `polaris_saved_searches`, list/reopen from `/saved` and `/account/alerts`.
+  Email alert delivery remains deferred.
+
+### Added
+- **DATA-011A National Dataset Catalogue** — extended `government_datasets`
+  (`117`) with jurisdiction, source/API URLs, format, update frequency,
+  download/import timestamps, record count, auto-update, catalogue status,
+  duplicate rules and notes; seeded national portals/themes; ADR 0033 (RIC
+  acquisition engine). No auto-publish; no new dataset-specific importers.
+
+### Added
+- **DATA-002 duplicate workflow closeout** — OpenAPI coverage for show / merge-history /
+  not-duplicate / defer; dry-run-before-transaction and human-only merge scope tests;
+  Phase 1 design wording updated. Merge remains soft-delete + audit (no FK repoint).
+
+### Added
+- **Admin API dataset sync wire (DATA-012)** — `POST /api/v1/admin/datasets/{id}/sync`
+  executes `GovernmentDatasetService::fetchDataset` (optional `fixture=true`),
+  updates `government_dataset_sync_runs` to completed/failed, and stages facility
+  candidates for review. No auto-publish. OpenAPI documents show/patch/sync/history.
+
+### Added
+- **Unify CORE-011 + CORE-012 tree** — merged `origin/main` Admin API Phase 1 /
+  Option B A–L into the Assist AI / Polaris line; renumbered AI/Polaris
+  migrations to `101`–`116` and AI ADRs to `0021`–`0032` to clear Admin API
+  `085`–`092` / ADR `0018`–`0020`. Wired dual-source Option B into
+  `GET /api/v1/admin/search-gaps` via `SearchGapDualSource`. Production Admin
+  API / Ask / facilities / paid AI flags remain off.
+
+### Added
+- **VanAssist S1/S2 closeout (local)** — full Batehaven Ask acceptance PASS,
+  demo rest/visitor catalogues (`100`), capped CKAN Toilet Map stage script,
+  AI-flag rollback drill, LPG/fuel deferral note, SearchGap dual-source glue.
+  Production Ask / facilities / paid AI remain off; Platform QG CONDITIONAL PASS.
+
+### Added
+- **SearchGap dual-source glue (DATA-013 / CORE-011)** —
+  `SearchGapDualSource` merger + `docs/SEARCH_GAP_DUAL_SOURCE.md` for Option B
+  union of `provider_searches` + `knowledge_gaps` into inventoried
+  `GET /api/v1/admin/search-gaps` (`meta.source`). Admin API wiring waits for
+  CORE-011 merge; production AI flags remain off.
+
+### Added
+- **VanAssist readiness S1/S2** — Batehaven dry-run acceptance script, unit
+  Ask harness (`FacilitySearchPort`), demo drinking-water fixture (`098`),
+  orchestrator adapter/location fault tolerance. Full DB acceptance pending
+  configured MariaDB; production flags remain off.
+
+### Added
+- **VanAssist production-readiness package** — Platform QG execution plan,
+  DATA-012 coverage priority, Batehaven acceptance spec, flag matrix, release
+  metrics, rollback plan (`docs/VANASSIST_PRODUCTION_READINESS_PACKAGE.md`).
+  Production Ask / facilities / paid AI remain off.
+
+### Added
+- **Polaris provenance + extract slice** — model↔source links (`099`), specification
+  provenance table, flag-gated brochure/PDF text extract + XLSX import, import cost
+  UI, Find stages 2/3/6 inputs, `ACCESSIBILITY_QA.md` (CONDITIONAL). Launch still blocked.
+
+### Added
+- **Polaris master-prompt continuation** — deterministic NL preference hints on
+  Find, portal profile/media/dealer/team write paths, dealer claim scaffold,
+  CSV+JSON draft import, manufacturer merge admin, account shells, migration
+  `096` (dealers/media/team/merges). Master prompt still incomplete; launch blocked.
+
+### Added
+- **CORE-012 original-prompt gap closeout** — knowledge-gap click/contact
+  writers (`?g=` / `/ask/click`), Ask Turnstile unlock + honeypot,
+  offline OSM seed connector (`097` + `stage-osm-offline-seed.php`, no Ask
+  Overpass), DraftCandidate/OSM/budget/interpreter/matrix tests, required AI
+  topic docs brought to implementation-adequate status.
+
+### Added
+- **Polaris continuation** — progressive Find My RV stages, preference
+  persistence + `/account/preferences`, shareable comparisons
+  (`/compare/{token}`, migration `095`), manufacturer portal section shells,
+  admin inventory views, honest `IMPLEMENTATION_STATUS.md` / release criteria.
+  Master Polaris prompt remains incomplete; public launch still blocked.
+
+### Fixed
+- **DATA-012 provenance collision** — facility `source_key` is now
+  `gov:{dataset_key}` so Toilet Map toilet and dump-point catalogue rows do not
+  overwrite each other on the same FacilityID.
+- **CKAN Fetch redirects** — `SimpleHttpClient` follows safe same-policy
+  redirects (data.gov.au CDN) with re-validated hosts.
+- **Ask toilet copy** — clarification no longer exposes admin/AI-6 jargon when
+  the facilities flag is off.
+
+### Added
+- **DATA-012 finish-up** — town/state resolution on facility publish, job
+  completion after review, bulk facility approve/reject, demo CLI production
+  guard, AiReleaseGate migrations 108–110, Assist AI admin link to government
+  datasets, RELEASE_NOTES + admin/customer guide updates.
+
+### Added
+- **CORE-012 closeout** — ADR 0032 (stays vs facilities), demo facility CLI
+  bootstrap, SearchGap-shaped knowledge-gap JSON export
+  (`/admin/ai-search/gaps/export?format=json`), Quality Gate CONDITIONAL PASS
+  evidence (`docs/AI_QUALITY_GATE_EVIDENCE.md`). Production Ask still gated.
+
+### Added
+- **DATA-012 follow-on — curated AU Toilet Map catalogue** — migration `094`
+  National Public Toilet Map rows (CKAN `resource_id`, toilets + dump-point
+  filter; disabled), admin add/edit catalogue form, CSV `filter_field` /
+  `filter_value` for subset imports.
+
+### Added
+- **DATA-012 — government dataset catalogue** — migration `093`
+  (`government_datasets`, facility import jobs/candidates), CKAN/ArcGIS/CSV/
+  GeoJSON connectors on the DATA-006 contract, admin catalogue + facility
+  review UI, demo fixtures (disabled). Approve publishes to
+  `traveller_facilities` only; no auto-publish; no `caravan_parks` overload.
+
+### Changed
+- **AI-6 router** — `traveller_facilities` is executable when
+  `assist_ai_traveller_facilities` is on (was non-executable stub).
+
+### Added
+- **Phase AI-7 — Assist AI hardening (CORE-012)** — Ask rate limit 20/hour,
+  retention cron `ai_retention` (migration `091`), location-privacy helpers,
+  admin cost simulator + release-gate checklist, `docs/AI_RELEASE_CRITERIA.md`.
+  Production still requires Platform Quality Gate.
+
+### Added
+- **Phase AI-5 — dataset routing (CORE-012)** — `DatasetSearchAdapter` surfaces
+  staged `data_source_import_candidates` with ADR 0028 provenance labels;
+  `DraftCandidateService` stages trusted-review hits into DATA-006 (never
+  auto-publishes); Ask VanAssist never calls Google Places; flag
+  `assist_ai_datasets` off by default (migration `090`). Weak local results
+  may auto-augment with datasets when the flag is on.
+
+### Added
+- **Phase AI-4 — knowledge gaps (DATA-013 / CORE-012)** — grouped
+  `knowledge_gaps` + events (migration `089`), priority scoring, orchestrator
+  weak/zero/unknown observation, admin `/admin/ai-search/gaps` and RIC CSV
+  export. Admin API `/search-gaps` inventory unchanged (Phase 1 locked).
+
+### Added
+- **Phase AI-3 — OpenAI intent interpreter (CORE-012)** — provider-neutral
+  `AiProviderInterface`, `OpenAiProvider` (strict Structured Outputs),
+  `IntentInterpreter`, budget-gated orchestrator path, env `OPENAI_API_KEY`,
+  admin allowlist (no hard-coded model selection). Paid AI remains off until
+  configured; rules/cache/local search continue on failure. See
+  `docs/OPENAI_INTEGRATION.md`.
+
+### Added
+- **Phase AI-2 — cache and budget foundation (CORE-012)** — `ai_settings`,
+  `ai_intent_cache`, `ai_usage_events`, `ai_usage_daily` (migration `086`);
+  IntentCache, AIBudgetService, AIUsageService; admin `/admin/ai-search`
+  visibility and hard-stop controls. Paid AI remains off by default; no API
+  keys in DB; structured `/find` unchanged. AI-3 OpenAI interpreter not started.
+
+### Added
+- **Project Polaris Phases 6–9 slice (POL-006…POL-009)** — draft-first CSV
+  import + review queue (migration `088`), manufacturer claim portal
+  (`/portal/manufacturer`), VanAssist related-services surfacing without
+  provider duplication, saved shortlist, floorplans index, and fail-closed
+  first-party analytics events. Production domain and public launch remain
+  blocked; brand stays `private`.
+
+### Added
+- **Project Polaris Phases 2–5 slice (POL-002…POL-005)** — browse filters/sort,
+  price freshness warnings, provenance chips, deterministic MatchScorer with
+  explained Find My RV results, TowSmart-backed `TowCompatibilityService` +
+  `/tow-match`, and up to four-model comparison with difference highlighting.
+
+### Added
+- **Project Polaris foundation (POL-001)** — private fifth brand `polaris`,
+  migration `087` new-RV catalogue schema with demo fixtures, public homepage /
+  browse / model / manufacturer / Find My RV shell, shared admin Polaris nav,
+  documentation suite under `docs/polaris/`, ADR 0031. TowSmart and VanAssist
+  data boundaries preserved. Production domain not enabled.
+
+### Added
+- **Phase AI-1 — deterministic Assist AI Orchestrator (CORE-012 / VAN-011)** —
+  shared `App\Platform\AiSearch` with keyword intent engine, provider/stay
+  adapters, `/ask` Ask VanAssist UI (feature flag `assist_ai_search` **off** by
+  default), migration `101_assist_ai_search.sql`, and unit tests. No paid AI,
+  no external datasets, structured `/find` unchanged. AI-0 design package and
+  ADRs 0021–030 accepted.
 - **Admin API Increment 9 (CORE-011)** — RIC mock-client contract tests:
   `tests/Contract/AdminApiRicContractTest.php`, Contract phpunit suite, Phase 1 path
   inventory vs routes and OpenAPI parity checks.

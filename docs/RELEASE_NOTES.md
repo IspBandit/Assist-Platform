@@ -5,6 +5,83 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Isolated staging deployment path
+
+- Added a manually approved GitHub workflow for immutable releases to the
+  separate staging runtime and database on the existing server.
+- Production deployment, data and feature flags are unchanged.
+
+### POL-008 dealer enquiry handoff
+
+- Model pages show linked published dealers with email/website CTAs via
+  `/dealers/{id}/enquire` (tracks `dealer_enquiry_click`, then redirects).
+  No platform-sent enquiry email. Demo contacts use `example.invalid` (`120`).
+
+### POL-002 demo catalogue volume
+
+- Migration `119` adds Demo Alpine Family plus six more demo models/variants
+  (`is_demo` only). Not national production catalogue data.
+
+### POL-007 manufacturer portal data quality
+
+- Claimed manufacturers see a completeness checklist on
+  `/portal/manufacturer/data-quality` (missing ATM, length, berths, price
+  guidance, descriptions). Guidance only — not a Quality Gate pass.
+
+### POL-007 manufacturer portal analytics
+
+- Claimed manufacturers see 7/30/90-day detail views and saves for their models
+  on `/portal/manufacturer/analytics` (first-party events only). Find impressions
+  and dealer enquiry clicks remain planned.
+
+### POL-003 Find preference hydration
+
+- Signed-in users opening Find without preference query fields use saved
+  travel preferences; explicit query/POST values still win. Stage list marks
+  `aria-current="step"`.
+
+### POL-002 accessibility markup polish
+
+- Compare/model table captions; compare **Differs** text markers (not colour alone);
+  empty-state `role="status"` on browse/saved/find/account surfaces; year selector
+  focus-visible + labelledby. Evidence remains **CONDITIONAL** — no WCAG PASS /
+  no CI axe gate yet.
+
+### POL-002 model year selector
+
+- Model detail resolves published years and filters variants by `?year=YYYY`
+  (default = current, else newest). Invalid years fall back with a notice.
+  Canonical URL stays without year. Demo migration `118` adds a 2025 Southern
+  Cross variant for the selector.
+
+### POL-005 account comparison history
+
+- Signed-in users see shareable comparisons they created on `/account/comparisons`
+  (brand-scoped; guest shares remain unlisted). Alert delivery still scaffolded.
+- Saved browse searches: capture current `/rvs` filters via `POST /saved/searches`,
+  reopen from `/saved` and `/account/alerts`. Email notifications remain off.
+
+### CORE-011 + CORE-012 unification
+
+- Merged Admin API Phase 1 / Option B A–L with Assist AI / Polaris onto one tree.
+- AI/Polaris migrations renumbered to `101`–`116`; AI ADRs to `0021`–`0032`.
+- Wired dual-source Option B into inventoried `GET /api/v1/admin/search-gaps`
+  (`meta.source=dual`). No second API path. Production flags remain off.
+- Wired `POST /api/v1/admin/datasets/{id}/sync` to real government dataset fetch
+  (review-first facility candidates; optional fixture mode).
+- **DATA-011A** National Dataset Catalogue on `government_datasets` (`117` +
+  ADR 0033): RIC acquires; Platform catalogue SoR; no direct production publish.
+
+### Government datasets and traveller facilities (DATA-012 / AI-6)
+
+- Added the government dataset catalogue under **Admin → Data sources → Government datasets**, with CKAN / ArcGIS / CSV / GeoJSON connectors, demo fixtures, and curated National Public Toilet Map rows (disabled until an administrator enables Fetch).
+- Facility import is review-first: candidates are approved into `traveller_facilities` only — never into caravan parks.
+- Ask VanAssist can show a separate **Traveller facilities** section when the `assist_ai_traveller_facilities` flag is on; the flag stays off by default until facilities are populated and Quality Gate evidence is recorded.
+- Administrators manage catalogue rows (add/edit), import fixtures or Fetch enabled sources, and bulk-approve or reject facility candidates.
+- CLI bootstrap: `php scripts/import-demo-traveller-facilities.php --approve`.
+- Knowledge gaps export SearchGap-shaped JSON for RIC (`/admin/ai-search/gaps/export?format=json`).
+- Dual-source SearchGap merge helper (`SearchGapDualSource`) and merge plan (`docs/SEARCH_GAP_DUAL_SOURCE.md`) for CORE-011 `GET /api/v1/admin/search-gaps` — no second API; production Ask remains off.
+- Quality Gate evidence: **CONDITIONAL PASS** only — `docs/AI_QUALITY_GATE_EVIDENCE.md`. Production Ask remains off until a full Platform Quality Gate pass.
 ### Option B programme Increments A–L (functional management coverage)
 
 - Programme tracker: `docs/OPTION_B_MANAGEMENT_PROGRAMME.md`.

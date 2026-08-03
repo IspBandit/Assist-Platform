@@ -4,10 +4,18 @@
 
 The application is server-rendered. Existing JSON location/search endpoints are
 first-party web endpoints, not a stable public API. A versioned Admin API under
-`/api/v1/admin` is specified for Assist RIC and trusted management clients
-(CORE-011). Until that surface is implemented, MFA-gated and Quality Gate
-approved, it must not be represented as a supported partner API. See
-`docs/LIVE_API.md` and `docs/PHASE1_ADMIN_API_DESIGN.md`.
+`/api/v1/admin` is implemented for Assist RIC and trusted management clients
+(CORE-011). Phase 1 + Option B code is present; production enablement still
+requires MFA gate, staging rehearsal and Quality Gate evidence. See
+`docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md` and
+`docs/OPTION_B_MANAGEMENT_PROGRAMME.md`.
+
+Ask VanAssist natural-language search is a parallel **web** entry at `GET /ask`
+(VanAssist only), gated by feature flag `assist_ai_search` (default off). It
+calls the internal Assist AI Orchestrator (`App\Platform\AiSearch`). A future
+`POST /api/v1/search/assist` is not finalised. Vendor AI HTTP APIs are never
+exposed to browsers. See `docs/PHASE_AI0_DESIGN.md` and
+`docs/NATURAL_LANGUAGE_SEARCH.md`.
 
 ## Future contract
 

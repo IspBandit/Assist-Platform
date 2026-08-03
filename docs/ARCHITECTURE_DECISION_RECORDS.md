@@ -13,6 +13,7 @@ See [ADR 0017](DECISIONS/0017-review-first-organisation-pr-outreach.md) for evid
 See [ADR 0018](DECISIONS/0018-admin-api-no-direct-db.md) for Admin API as the only external write path to production.
 See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus narrowly scoped traveller facilities.
 See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
+See [ADR 0033](DECISIONS/0033-ric-national-dataset-acquisition.md) for RIC as the national dataset acquisition engine.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -61,12 +62,33 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0011: Separate motorsport rule, discipline, venue and calendar catalogue.
 - 0012: Authoritative provider pack with canonical identity and taxonomy-controlled brand routing.
 - 0013: Staged, consent-gated marketing email with reviewed daily limits.
-- 0014: Separate directory-accuracy notices from marketing communication.
+- 0014: Separate directory accuracy from marketing outreach.
 - 0015: Controlled bulk provider review and strong duplicate linking.
 - 0016: Server-owned provider import processing and canonical provider-campaign taxonomy.
 - 0017: Review-first organisation PR outreach with source, role and relevance evidence.
 - 0018: Admin API is the only external write path to production (no direct DB).
 - 0019: Stays vs narrowly scoped traveller facilities.
 - 0020: Assist RIC is the initial local management client (Option B).
+- 0021: Shared Assist AI Orchestrator (accepted; AI-1 foundation).
+- 0022: AI is interpretation, not factual authority (accepted).
+- 0023: Provider-neutral AI abstraction (accepted).
+- 0024: Deterministic and cache-first routing (accepted).
+- 0025: Hard AI budget enforcement (accepted).
+- 0026: Natural-language search alongside structured search (accepted).
+- 0027: Knowledge-gap-driven database growth (accepted).
+- 0028: External results are staged with provenance (accepted).
+- 0029: No direct AI publishing (accepted).
+- 0030: Traveller facilities remain separate from stays — AI workstream (accepted).
+- 0031: Polaris is a fifth Assist Platform brand (private until domain confirmed);
+  detail ADRs under `docs/polaris/DECISIONS/`.
+- 0032: Stays vs narrowly scoped traveller facilities (AI elaboration; aligns with 0019).
+- 0033: RIC is the national dataset acquisition engine; Platform `government_datasets`
+  is the catalogue SoR (DATA-011A).
+
+Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
+`docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;
+production Ask requires Platform Quality Gate. CORE-011 Admin API Phase 1 +
+Option B A–L are on this tree; production `ADMIN_API_ENABLED` remains off until
+staging rehearsal.
 
 The index must be updated whenever an ADR is accepted.

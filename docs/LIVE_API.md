@@ -1,8 +1,8 @@
 # Live Admin API (v1)
 
-**Status:** design accepted; implementation in progress under CORE-011.  
-**Not yet a supported production partner API until MFA gate and Quality Gate
-evidence are recorded.**
+**Status:** Phase 1 and Option B implementation complete; production enablement
+awaits the staging rehearsal and full Quality Gate evidence.
+**Not yet a supported production partner API.**
 
 ## Boundary
 
@@ -90,7 +90,7 @@ Increment 8 (audit + search gaps) adds:
 
 - `GET /api/v1/admin/audit` — cursor list (`audit:read`); filters `action`, `object_type`, `object_id`, `user_id`, `from`, `to`, `q`
 - `GET /api/v1/admin/audit/{id}` — single audit event
-- `GET /api/v1/admin/search-gaps` — ranked zero-result gaps from `provider_searches` (`analytics:read`); sparse/empty when analytics off
+- `GET /api/v1/admin/search-gaps` — dual-source ranked gaps from `provider_searches` zeros + open `knowledge_gaps` (`analytics:read`); collection `meta.source=dual`; sparse/empty when both sources contribute nothing
 
 Increment 8b / OPS-010 (MFA TOTP) adds:
 
@@ -110,7 +110,11 @@ Option B Increments B–G add:
 - `POST /claims/{id}/approve|reject|request-evidence` — human park-claim review (`claims:write`)
 - `GET /api/v1/admin/corrections`, `GET /corrections/{id}`, `POST .../approve|reject` — listing corrections
 - `GET /api/v1/admin/duplicates`, `POST /duplicates/check`, merge/defer/not-duplicate, merge-history
-- `GET/PATCH /api/v1/admin/datasets`, `POST /datasets/{id}/sync`, sync-history
+- `GET/PATCH /api/v1/admin/datasets`, `POST /datasets/{id}/sync` (runs
+  `GovernmentDatasetService::fetchDataset` / optional fixture; review-first),
+  `GET .../sync-history`. DATA-011A expands catalogue fields (jurisdiction,
+  source/API URLs, auto-update, duplicate rules, status, notes) — see
+  `docs/DATA_011A.md`.
 - `GET /api/v1/admin/ai/usage/*`, `GET /ai/cache-performance` — empty-safe AI reporting (`ai:read`)
 - `GET /searches`, `/search-intents`, `/search-results-performance` — demand analytics (`analytics:read`)
 - `GET /sync-conflicts`, `POST /sync-conflicts/{id}/resolve` — RIC conflict queue (`sync:read`)
@@ -131,7 +135,9 @@ on super-administrator-only when empty). Enroll MFA before setting
 
 Do this on a disposable or staging deployment before production:
 
-1. Apply migrations through `092_admin_api_sync_conflicts.sql` (includes Option B tables `088`–`092`).
+1. Apply Admin API migrations through `092_admin_api_sync_conflicts.sql`
+   (Option B tables `088`–`092`). On the unified tree also apply Assist AI /
+   Polaris migrations `101`–`116` when those features are in scope.
 2. Set `ADMIN_API_ENABLED=true`, keep `ADMIN_API_RESTRICTED=true`.
 3. Set `ADMIN_API_ALLOWED_USER_IDS` to known admin IDs (or leave empty for
    super-administrator only).

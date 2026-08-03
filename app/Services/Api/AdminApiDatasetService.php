@@ -7,9 +7,15 @@ namespace App\Services\Api;
 use App\Core\Database;
 use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
+use App\Services\GovernmentDatasetService;
+use Throwable;
 
 /**
- * Government dataset catalogue read/update and sync run stubs (Option B Increment D).
+ * Government dataset catalogue read/update and sync runs (Option B Increment D).
+ *
+ * `POST .../sync` creates a sync_run row and immediately executes
+ * GovernmentDatasetService::fetchDataset (review-first staging). Does not
+ * auto-publish facilities.
  */
 final class AdminApiDatasetService
 {
@@ -17,12 +23,21 @@ final class AdminApiDatasetService
     private const PATCH_FIELDS = [
         'title',
         'coverage',
+        'jurisdiction',
         'licence',
         'attribution',
         'endpoint_url',
+        'source_url',
+        'source_format',
+        'update_frequency',
         'settings',
         'default_facility_type',
         'is_enabled',
+        'auto_update_enabled',
+        'catalogue_status',
+        'notes',
+        'duplicate_rules',
+        'record_count',
     ];
 
     /**
@@ -106,9 +121,36 @@ final class AdminApiDatasetService
                 continue;
             }
 
-            if ($field === 'is_enabled') {
-                $updates[] = 'is_enabled = ?';
-                $params[] = self::boolish($input['is_enabled']) ? 1 : 0;
+            if ($field === 'duplicate_rules') {
+                $updates[] = 'duplicate_rules_json = ?';
+                $params[] = json_encode(is_array($input['duplicate_rules']) ? $input['duplicate_rules'] : [], JSON_THROW_ON_ERROR);
+                continue;
+            }
+
+            if ($field === 'is_enabled' || $field === 'auto_update_enabled') {
+                $updates[] = $field . ' = ?';
+                $params[] = self::boolish($input[$field]) ? 1 : 0;
+                continue;
+            }
+
+            if ($field === 'catalogue_status') {
+                $status = trim((string) $input['catalogue_status']);
+                if (!in_array($status, ['planned', 'indexed', 'active', 'paused', 'retired'], true)) {
+                    throw new AdminApiException(
+                        422,
+                        'validation_failed',
+                        'Validation failed.',
+                        ['catalogue_status' => ['Must be planned, indexed, active, paused or retired.']]
+                    );
+                }
+                $updates[] = 'catalogue_status = ?';
+                $params[] = $status;
+                continue;
+            }
+
+            if ($field === 'record_count') {
+                $updates[] = 'record_count = ?';
+                $params[] = max(0, (int) $input['record_count']);
                 continue;
             }
 
@@ -154,20 +196,96 @@ final class AdminApiDatasetService
             throw new AdminApiException(503, 'unavailable', 'Dataset sync runs are not available.');
         }
 
+        if (!Database::tableExists('traveller_facility_import_jobs')) {
+            throw new AdminApiException(
+                503,
+                'unavailable',
+                'Facility import jobs are not available. Apply Assist AI/DATA-012 migrations.'
+            );
+        }
+
         $now = date('Y-m-d H:i:s');
         $runId = Database::insert(
             'INSERT INTO government_dataset_sync_runs (dataset_id, status, started_at, created_at) VALUES (?, ?, ?, ?)',
-            [$id, 'queued', null, $now]
+            [$id, 'running', $now, $now]
         );
 
         AdminApiAudit::record(
-            'dataset.sync_queued',
+            'dataset.sync_started',
             'government_dataset',
             $id,
             null,
             ['sync_run_id' => $runId],
             $request
         );
+
+        $brandId = AdminApiBrandScope::brandId();
+        $userId = AdminApiContext::userId();
+        $useFixture = self::boolish($request->input('fixture', $request->query('fixture', false)));
+
+        try {
+            $gov = new GovernmentDatasetService();
+            $result = $useFixture
+                ? $gov->importFixture($id, $brandId, $userId)
+                : $gov->fetchDataset($id, $brandId, $userId);
+
+            $found = (int) ($result['found'] ?? 0);
+            Database::query(
+                'UPDATE government_dataset_sync_runs
+                 SET status = ?, finished_at = ?, records_fetched = ?, error_message = NULL
+                 WHERE id = ?',
+                ['completed', date('Y-m-d H:i:s'), $found, $runId]
+            );
+            try {
+                Database::query(
+                    'UPDATE government_datasets
+                     SET last_downloaded_at = NOW(), last_checked_at = NOW(), record_count = ?, updated_at = NOW()
+                     WHERE id = ?',
+                    [$found, $id]
+                );
+            } catch (Throwable) {
+                // Pre-117 deployments may lack DATA-011A columns; sync_run still completed.
+            }
+
+            AdminApiAudit::record(
+                'dataset.sync_completed',
+                'government_dataset',
+                $id,
+                null,
+                [
+                    'sync_run_id' => $runId,
+                    'job_id' => (int) ($result['job_id'] ?? 0),
+                    'found' => $found,
+                    'new' => (int) ($result['new'] ?? 0),
+                    'fixture' => $useFixture,
+                ],
+                $request
+            );
+        } catch (Throwable $e) {
+            $message = mb_substr($e->getMessage(), 0, 1000);
+            Database::query(
+                'UPDATE government_dataset_sync_runs
+                 SET status = ?, finished_at = ?, error_message = ?
+                 WHERE id = ?',
+                ['failed', date('Y-m-d H:i:s'), $message, $runId]
+            );
+
+            AdminApiAudit::record(
+                'dataset.sync_failed',
+                'government_dataset',
+                $id,
+                null,
+                ['sync_run_id' => $runId, 'error' => $message],
+                $request
+            );
+
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Dataset sync failed.',
+                ['sync' => [$message]]
+            );
+        }
 
         return [
             'dataset_id' => (string) $id,
@@ -255,13 +373,21 @@ final class AdminApiDatasetService
         return [
             'id' => (string) $row['id'],
             'dataset_key' => (string) $row['dataset_key'],
+            'name' => (string) ($row['title'] ?? ''),
             'title' => (string) ($row['title'] ?? ''),
             'publisher' => (string) ($row['publisher'] ?? ''),
+            'jurisdiction' => isset($row['jurisdiction']) && $row['jurisdiction'] !== null ? (string) $row['jurisdiction'] : null,
             'fetch_method' => (string) ($row['fetch_method'] ?? ''),
+            'source_format' => isset($row['source_format']) && $row['source_format'] !== null ? (string) $row['source_format'] : null,
             'connector_key' => (string) ($row['connector_key'] ?? ''),
             'is_enabled' => (bool) ((int) ($row['is_enabled'] ?? 0)),
+            'auto_update_enabled' => (bool) ((int) ($row['auto_update_enabled'] ?? 0)),
+            'catalogue_status' => (string) ($row['catalogue_status'] ?? 'planned'),
+            'trust_level' => (string) ($row['trust_policy'] ?? ''),
             'last_checked_at' => $row['last_checked_at'] ?? null,
+            'last_downloaded_at' => $row['last_downloaded_at'] ?? null,
             'last_imported_at' => $row['last_imported_at'] ?? null,
+            'record_count' => isset($row['record_count']) && $row['record_count'] !== null ? (int) $row['record_count'] : null,
         ];
     }
 
@@ -270,13 +396,20 @@ final class AdminApiDatasetService
     {
         return array_merge($this->summary($row), [
             'coverage' => $row['coverage'] !== null ? (string) $row['coverage'] : null,
+            'entity_types' => $this->decodeJson($row['record_types_json'] ?? null),
             'record_types' => $this->decodeJson($row['record_types_json'] ?? null),
+            'duplicate_rules' => $this->decodeJson($row['duplicate_rules_json'] ?? null),
             'licence' => $row['licence'] !== null ? (string) $row['licence'] : null,
             'attribution' => $row['attribution'] !== null ? (string) $row['attribution'] : null,
             'trust_policy' => (string) ($row['trust_policy'] ?? ''),
+            'update_frequency' => isset($row['update_frequency']) && $row['update_frequency'] !== null ? (string) $row['update_frequency'] : null,
             'endpoint_url' => $row['endpoint_url'] !== null ? (string) $row['endpoint_url'] : null,
+            'api_url' => $row['endpoint_url'] !== null ? (string) $row['endpoint_url'] : null,
+            'source_url' => isset($row['source_url']) && $row['source_url'] !== null ? (string) $row['source_url'] : null,
             'settings' => $this->decodeJson($row['settings_json'] ?? null),
+            'import_mapping' => $this->decodeJson($row['settings_json'] ?? null),
             'default_facility_type' => (string) ($row['default_facility_type'] ?? ''),
+            'notes' => isset($row['notes']) && $row['notes'] !== null ? (string) $row['notes'] : null,
             'last_error' => $row['last_error'] !== null ? (string) $row['last_error'] : null,
             'created_at' => (string) ($row['created_at'] ?? ''),
             'updated_at' => $row['updated_at'] ?? null,

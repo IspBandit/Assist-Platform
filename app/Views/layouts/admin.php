@@ -29,8 +29,10 @@ if ($permitted('locations.manage')) {
 }
 if ($platformAdmin && $permitted('data_sources.review')) {
     $directory[] = ['Import review', '/admin/data-sources/review'];
+    $directory[] = ['Facility import review', '/admin/data-sources/facilities/review'];
 }
 if ($platformAdmin && $permitted('data_sources.view')) {
+    $directory[] = ['Government datasets', '/admin/data-sources/datasets'];
     $directory[] = ['Queensland coverage', '/admin/qld-coverage'];
 }
 if ($adminBrand->moduleEnabled('trailer_marketplace') && $permitted('providers.manage')) {
@@ -38,6 +40,20 @@ if ($adminBrand->moduleEnabled('trailer_marketplace') && $permitted('providers.m
 }
 if ($directory !== []) {
     $nav['Directory'] = $directory;
+}
+
+$polarisNav = [];
+if ($adminBrand->moduleEnabled('rv_catalogue') && $permitted('polaris.manage')) {
+    $polarisNav[] = ['Overview', '/admin/polaris'];
+    $polarisNav[] = ['Manufacturers', '/admin/polaris/manufacturers'];
+    $polarisNav[] = ['Models', '/admin/polaris/models'];
+    $polarisNav[] = ['Imports', '/admin/polaris/imports'];
+    $polarisNav[] = ['Review queue', '/admin/polaris/review-queue'];
+    $polarisNav[] = ['Recycle bin', '/admin/polaris/recycle-bin'];
+    $polarisNav[] = ['Settings', '/admin/polaris/settings'];
+}
+if ($polarisNav !== []) {
+    $nav['Polaris'] = $polarisNav;
 }
 
 $customerOperations = [];
@@ -87,6 +103,7 @@ if ($permitted('data_intelligence.view')) {
 }
 if ($permitted('demand.view')) {
     $insights[] = ['Website insights', '/admin/demand'];
+    $insights[] = ['Knowledge gaps', '/admin/ai-search/gaps'];
 }
 if ($insights !== []) {
     $nav['Insights'] = $insights;
@@ -119,6 +136,7 @@ if ($permitted('audit.view')) {
 }
 if ($permitted('settings.manage')) {
     $administration[] = ['Settings', '/admin/settings'];
+    $administration[] = ['Assist AI Search', '/admin/ai-search'];
 }
 if (auth()->isSuperAdmin()) {
     $administration[] = ['Backups', '/admin/backups'];

@@ -25,7 +25,7 @@ not a new Tauri/React/FastAPI stack.
 | A | Programme charter | **done** (this doc) | CORE-011 follow-on |
 | B | Claims + corrections Admin API | **done** | VAN-002 |
 | C | Duplicates review/merge Admin API | **done** | DATA-002 |
-| D | Datasets catalogue Admin API | **done** | DATA-012 |
+| D | Datasets catalogue Admin API | **done** | DATA-012 + **DATA-011A** |
 | E | AI usage + search analytics Admin API | **done** | CORE-012, DATA-013, OPS-010 |
 | F | Sync conflicts + import lifecycle | **done** | DATA-011 |
 | G | Traveller facilities Admin API | **done** | ADR 0019, DATA-012 |

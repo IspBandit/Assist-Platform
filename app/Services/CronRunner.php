@@ -39,6 +39,7 @@ final class CronRunner
             'aggregate_daily_metrics'  => fn () => $this->aggregateDailyMetrics(),
             'customer_followups'       => fn () => $this->customerFollowups(),
             'analytics_retention'      => fn () => $this->analyticsRetention(),
+            'ai_retention'             => static fn () => (new \App\Platform\AiSearch\Retention\AiRetentionService())->purge(),
             // Automated request -> provider matching (no-op unless auto_matching flag is on).
             'update_match_suggestions' => static fn () => (new AutoMatchService())->runBatch(),
             // Provider directory imports (resume from seed fingerprint; no-op when up to date).
