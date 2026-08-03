@@ -59,12 +59,13 @@ final class ProviderTrustPrivacyTest extends TestCase
         self::assertStringContainsString("url('disclaimer')", $notice);
         self::assertStringContainsString("url('contact')", $notice);
 
-        foreach (['home.php', 'search-results.php', 'stays.php'] as $view) {
+        foreach (['search-results.php', 'stays.php'] as $view) {
             self::assertStringContainsString(
                 "include('partials.listing-accuracy-notice')",
                 $this->source('app/Views/public/' . $view),
             );
         }
+        self::assertStringNotContainsString("include('partials.listing-accuracy-notice')", $this->source('app/Views/public/home.php'));
 
         $profile = $this->source('app/Views/public/provider-profile.php');
         self::assertStringContainsString('Request to claim or correct this listing', $profile);

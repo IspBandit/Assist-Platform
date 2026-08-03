@@ -13,10 +13,10 @@ final class VanAssistPublicUxTest extends TestCase
         $view = $this->source('app/Views/public/home.php');
 
         self::assertStringContainsString('fuel-and-travel-stops', $view);
-        self::assertStringContainsString('ev-charging', $view);
         self::assertStringContainsString("url('stays')", $view);
+        self::assertStringContainsString("url('services')", $view);
         self::assertStringContainsString('Claimed and verified status shown clearly', $view);
-        self::assertStringContainsString("include('partials.listing-accuracy-notice')", $view);
+        self::assertStringNotContainsString("include('partials.listing-accuracy-notice')", $view);
         self::assertStringContainsString('unclaimed listings', $this->source('app/Views/partials/listing-accuracy-notice.php'));
         self::assertStringNotContainsString('Verified local providers', $view);
         self::assertStringNotContainsString('Coverage in remote towns', $view);
@@ -36,9 +36,9 @@ final class VanAssistPublicUxTest extends TestCase
     {
         $css = $this->source('public/assets/css/app.css');
 
-        self::assertStringContainsString('.journey-launcher-grid, .service-intent-grid, .service-directory-grid { grid-template-columns: 1fr; }', $css);
+        self::assertStringContainsString('.service-intent-grid, .service-directory-grid { grid-template-columns: 1fr; }', $css);
         self::assertStringContainsString('@media (prefers-reduced-motion: reduce)', $css);
-        self::assertStringContainsString('.journey-launcher-card:focus-visible', $css);
+        self::assertStringContainsString('.hero-capabilities a:hover,.hero-capabilities a:focus-visible', $css);
         self::assertStringContainsString('.service-directory-card:focus-visible', $css);
     }
 

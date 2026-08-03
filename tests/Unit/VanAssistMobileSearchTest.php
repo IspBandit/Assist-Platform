@@ -97,7 +97,7 @@ final class VanAssistMobileSearchTest extends TestCase
         foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php'] as $view) {
             self::assertStringContainsString('data-auto-location', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
         }
-        self::assertGreaterThanOrEqual(8, substr_count($home, 'data-location-link'));
+        self::assertGreaterThanOrEqual(4, substr_count($home, 'data-location-link'));
         self::assertGreaterThanOrEqual(5, substr_count($services, 'data-location-link'));
         self::assertStringContainsString("sessionStorage.setItem('va-current-location'", $script);
         self::assertStringContainsString("document.querySelectorAll('a[data-location-link]')", $script);
