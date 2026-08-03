@@ -26,15 +26,16 @@ final class AssistSearchLogger
         ?string $fallbackReason,
         ?array $town,
         string $locationPrecision,
+        ?array $responseSummary = null,
     ): ?int {
         try {
             return Database::insert(
                 'INSERT INTO assist_searches (
                     brand_id, session_id, request_id, channel, raw_query, normalised_query,
                     intent_json, intent_source, confidence, adapter_keys,
-                    local_result_count, external_result_count, fallback_reason,
+                    local_result_count, external_result_count, fallback_reason, response_summary,
                     town_id, radius_km, location_precision, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
                 [
                     $request->brandDatabaseId,
                     $request->sessionId,
@@ -49,6 +50,7 @@ final class AssistSearchLogger
                     max(0, min(65535, $localCount)),
                     max(0, min(65535, $externalCount)),
                     $fallbackReason !== null && $fallbackReason !== '' ? mb_substr($fallbackReason, 0, 120) : null,
+                    $responseSummary !== null ? json_encode($responseSummary, JSON_THROW_ON_ERROR) : null,
                     $town['id'] ?? null,
                     $intent->radiusKm,
                     $locationPrecision,

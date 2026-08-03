@@ -3,6 +3,12 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Solar fault searches** — plain-language requests about failed caravan solar
+  panels now route directly to nearby auto-electrical and battery providers.
+- **Unified homepage search** — structured and plain-language VanAssist search
+  now share one clear panel instead of appearing as separate cards.
+- **Mobile homepage shortcuts** — all four main VanAssist capability buttons
+  now appear together in a compact two-by-two grid without horizontal scrolling.
 - **Cleaner VanAssist journeys** — homepage capability items are now direct
   links, duplicate/statistics sections were removed, and key inner journeys use
   distinct relevant photo headings rather than plain repeated layouts.

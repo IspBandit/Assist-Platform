@@ -27,15 +27,30 @@ final class TaxonomyRegistry
     /** @var list<string> */
     public const ADAPTERS = ['providers', 'stays', 'traveller_facilities', 'datasets'];
 
-    /** Known VanAssist service_categories.slug values used by intent rules. */
+    /** Complete seeded VanAssist service_categories.slug catalogue. */
     /** @var list<string> */
     public const PROVIDER_CATEGORY_KEYS = [
-        'dump-points', 'potable-water-refill', 'lpg-refills-and-bottle-exchange',
+        'general-caravan-repairs', '12-volt-electrical', '240-volt-electrical',
+        'solar-and-batteries', 'dc-dc-charging', 'inverters', 'refrigeration',
+        'air-conditioning', 'gas-appliance-servicing', 'plumbing-and-water-leaks',
+        'hot-water-systems', 'toilets', 'brakes-and-bearings', 'suspension',
+        'tyres-and-wheels', 'structural-repairs', 'fibreglass-repairs',
+        'awning-repairs', 'roof-leaks', 'appliance-repairs',
+        'starlink-and-communications', 'insurance-repairs', 'pre-trip-inspection',
+        'general-servicing', 'mechanical-repairs', 'trailer-and-engineering',
+        'roadside-assistance', 'roadworthy-inspection', 'fuel-and-travel-stops',
+        'ev-charging', 'lpg-refills-and-bottle-exchange', 'potable-water-refill',
+        'dump-points', 'rest-areas-and-rv-friendly-parking',
         'caravan-parks-and-campgrounds', 'free-and-low-cost-camps',
-        'rest-areas-and-rv-friendly-parking', 'general-caravan-repairs', 'mobile-mechanics',
-        'auto-electrical-and-batteries', 'tyres-and-wheels', 'towing-and-vehicle-recovery',
-        'brakes-and-bearings', 'mechanical-repairs', 'diesel-mechanics', 'ev-charging',
-        'fuel-and-travel-stops', 'weighbridges-and-mobile-weighing', 'roadside-assistance',
+        'groceries-and-travel-supplies', 'emergency-accommodation',
+        'pet-friendly-travel-and-veterinary', 'towing-and-vehicle-recovery',
+        '4wd-and-remote-area-recovery', 'mobile-mechanics', 'diesel-mechanics',
+        'auto-electrical-and-batteries', 'locksmith-and-security',
+        'windscreen-and-auto-glass', 'caravan-and-rv-parts',
+        'vehicle-parts-and-accessories', 'towing-equipment-and-accessories',
+        'weighbridges-and-mobile-weighing', 'vehicle-and-caravan-washing',
+        'caravan-storage', 'mobile-welding-and-fabrication',
+        'unsure-which-service-is-needed',
     ];
 
     public static function isProviderCategoryKey(string $key): bool

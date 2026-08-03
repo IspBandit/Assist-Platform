@@ -58,6 +58,12 @@ The Ask field is also shown directly on the VanAssist homepage when enabled.
 It is limited to providers, places to stay, roadside/caravan help and traveller
 facilities; it is not a general-purpose AI assistant.
 
+Ask recognises the full VanAssist service catalogue and common descriptions of
+faults, including electrical, solar, refrigeration, plumbing, suspension,
+body, appliance and roadside problems. If a request is clearly about a caravan
+or RV fault but the precise trade cannot be established, it shows general
+caravan repair and unsure-service options instead of returning an empty answer.
+
 ## Related pages
 
 Use **Places to stay** for caravan-friendly stops, the service directory to browse all categories, **Ask** when natural-language search is offered, or **Request assistance** when the right listing is not available.

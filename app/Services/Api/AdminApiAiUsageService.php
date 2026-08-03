@@ -114,18 +114,23 @@ final class AdminApiAiUsageService
         }
 
         $afterId = AdminApiCursor::decode($request->query('cursor'));
-        $where = ['created_at BETWEEN ? AND ?', '(brand_key = ? OR brand_key = \'\')'];
+        $where = ['e.created_at BETWEEN ? AND ?', '(e.brand_key = ? OR e.brand_key = \'\')'];
         $params = [$from . ' 00:00:00', $to . ' 23:59:59', $brandKey];
 
         if ($afterId !== null) {
-            $where[] = 'id < ?';
+            $where[] = 'e.id < ?';
             $params[] = $afterId;
         }
 
         $fetchLimit = $limit + 1;
         $rows = Database::select(
-            'SELECT id, request_id, brand_key, operation_type, provider, model, input_tokens, output_tokens, cached, estimated_cost_aud, success, created_at '
-            . 'FROM ai_usage_events WHERE ' . implode(' AND ', $where) . ' ORDER BY id DESC LIMIT ' . $fetchLimit,
+            'SELECT e.id, e.request_id, e.brand_key, e.operation_type, e.provider, e.model, '
+            . 'e.input_tokens, e.output_tokens, e.cached, e.estimated_cost_aud, e.success, e.created_at, '
+            . 's.raw_query, s.normalised_query, s.intent_json, s.intent_source, s.confidence, '
+            . 's.local_result_count, s.external_result_count, s.fallback_reason, s.response_summary '
+            . 'FROM ai_usage_events e LEFT JOIN assist_searches s ON s.request_id = e.request_id '
+            . 'WHERE ' . implode(' AND ', $where)
+            . ' ORDER BY e.id DESC LIMIT ' . $fetchLimit,
             $params
         );
 
@@ -144,6 +149,15 @@ final class AdminApiAiUsageService
                 'estimated_cost_aud' => (float) ($row['estimated_cost_aud'] ?? 0),
                 'success' => (bool) ((int) ($row['success'] ?? 1)),
                 'created_at' => (string) ($row['created_at'] ?? ''),
+                'question' => $row['raw_query'] !== null ? (string) $row['raw_query'] : null,
+                'normalised_question' => $row['normalised_query'] !== null ? (string) $row['normalised_query'] : null,
+                'interpretation' => self::decodeJson($row['intent_json'] ?? null),
+                'intent_source' => $row['intent_source'] !== null ? (string) $row['intent_source'] : null,
+                'confidence' => $row['confidence'] !== null ? (float) $row['confidence'] : null,
+                'local_result_count' => (int) ($row['local_result_count'] ?? 0),
+                'external_result_count' => (int) ($row['external_result_count'] ?? 0),
+                'fallback_reason' => $row['fallback_reason'] !== null ? (string) $row['fallback_reason'] : null,
+                'answer_summary' => self::decodeJson($row['response_summary'] ?? null),
             ], $page['items']),
             'meta' => [
                 'count' => $page['count'],
@@ -295,5 +309,15 @@ final class AdminApiAiUsageService
         }
 
         return $value;
+    }
+
+    /** @return array<string,mixed>|list<mixed>|null */
+    private static function decodeJson(mixed $value): ?array
+    {
+        if (!is_string($value) || $value === '') {
+            return null;
+        }
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : null;
     }
 }
