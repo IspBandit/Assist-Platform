@@ -22,7 +22,7 @@ The main search attempts to resolve the current location without submitting the 
 
 ## Workflows
 
-Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Open directions only when safely stopped.
+Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Provider profiles use a simple heading without a decorative business-name initial or repeated business name in the breadcrumb. Workspace help is shown only inside signed-in account/provider areas, not on public provider pages. Open directions only when safely stopped.
 
 A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
 
@@ -75,7 +75,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-03 (matched map markers to compact numbered pin icons in provider rows, removed business-name letter tiles, corrected marker-number visibility, and made provider collections concise on phones and larger screens).
+2026-08-03 (matched map markers to compact numbered pin icons in provider rows, removed business-name letter tiles and profile initials, corrected marker-number visibility, kept workspace help off public provider pages, and made provider collections concise on phones and larger screens).
 
 ## Owner
 

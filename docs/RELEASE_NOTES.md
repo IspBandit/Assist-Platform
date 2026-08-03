@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Cleaner public provider pages
+
+- Removed decorative business-name initials and the repeated provider name from
+  provider-profile breadcrumbs.
+- Corrected workspace-help routing so public `/providers/...` pages no longer
+  show the private account/provider “Open page guide” strip.
+
 ### Provider map-reference icons
 
 - Replaced `Map pin N` text in provider rows with a compact coloured numbered
