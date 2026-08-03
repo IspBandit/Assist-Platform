@@ -30,6 +30,7 @@ final class IntentRuleEngineTest extends TestCase
             'park' => ['Caravan park nearby', Intent::TYPE_STAY, null],
             'mobile' => ['Mobile caravan repairer near Emerald', Intent::TYPE_PROVIDER, 'general-caravan-repairs'],
             'electrician' => ['Auto electrician within 50 km', Intent::TYPE_PROVIDER, 'auto-electrical-and-batteries'],
+            'solar' => ['my solar panels do not work and I am in Gladstone', Intent::TYPE_PROVIDER, 'auto-electrical-and-batteries'],
             'tyres' => ['tyres near me', Intent::TYPE_PROVIDER, 'tyres-and-wheels'],
             'towing' => ['towing near Gladstone', Intent::TYPE_PROVIDER, 'towing-and-vehicle-recovery'],
             'brakes' => ['Someone who can repair caravan brakes', Intent::TYPE_PROVIDER, 'brakes-and-bearings'],

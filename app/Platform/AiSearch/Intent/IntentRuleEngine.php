@@ -120,7 +120,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R10',
-            'patterns' => ['auto electrician', 'auto electrical'],
+            'patterns' => ['auto electrician', 'auto electrical', 'solar panel', 'solar panels', 'solar not working', '12 volt', '12v electrical'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['auto-electrical-and-batteries'],
             'facility_type_keys' => [],
