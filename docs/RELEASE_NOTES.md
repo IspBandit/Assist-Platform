@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Numbered maps across search results
+
+- Added the existing accessible map/list experience to Ask VanAssist results.
+- Providers, stays and traveller facilities with reliable coordinates receive
+  matching numbered pins and list references. Unmappable records remain usable
+  in the list and are never assigned invented coordinates.
+
 ### Cleaner, more visual VanAssist journeys
 
 - Made the four homepage capability items direct links and removed the duplicate

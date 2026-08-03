@@ -69,6 +69,23 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringNotContainsString('img-src *', $security['csp']);
     }
 
+    public function testAskResultsReuseNumberedMapAndListExperience(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $view = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $script = (string) file_get_contents($root . '/public/assets/js/app.js');
+
+        self::assertStringContainsString('data-results-map', $view);
+        self::assertStringContainsString('data-results-map-data', $view);
+        self::assertStringContainsString('data-results-list', $view);
+        self::assertStringContainsString("'provider'", $view);
+        self::assertStringContainsString("'stay'", $view);
+        self::assertStringContainsString("'facility'", $view);
+        self::assertStringContainsString('provider-map-reference', $view);
+        self::assertStringContainsString("provider.listId || ('provider-result-'", $script);
+        self::assertStringContainsString("provider.profile", $script);
+    }
+
     public function testProviderCollectionsUseConciseRowsAcrossPublicViews(): void
     {
         $root = dirname(__DIR__, 2);

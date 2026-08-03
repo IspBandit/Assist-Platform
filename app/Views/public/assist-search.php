@@ -7,7 +7,72 @@
 /** @var string $structuredFindUrl */
 /** @var string $staysUrl */
 $this->extend('layouts.public');
+$mappedResults = [];
+$mapNumbers = [];
+if ($result !== null) {
+    $appendMappedResult = static function (array $item, string $type, string $name, string $location, ?string $profile = null) use (&$mappedResults, &$mapNumbers): void {
+        $itemLat = $item['latitude'] ?? $item['town_lat'] ?? null;
+        $itemLng = $item['longitude'] ?? $item['town_lng'] ?? null;
+        if (!is_numeric($itemLat) || !is_numeric($itemLng)) {
+            return;
+        }
+        $itemLat = (float) $itemLat;
+        $itemLng = (float) $itemLng;
+        if ($itemLat < -90 || $itemLat > 90 || $itemLng < -180 || $itemLng > 180) {
+            return;
+        }
+        $sourceId = (int) ($item['id'] ?? 0);
+        if ($sourceId <= 0) {
+            return;
+        }
+        $key = $type . '-' . $sourceId;
+        $number = count($mappedResults) + 1;
+        $mapNumbers[$key] = $number;
+        $mappedResults[] = [
+            'id' => $key,
+            'name' => $name,
+            'lat' => $itemLat,
+            'lng' => $itemLng,
+            'location' => $location,
+            'possible' => (int) ($item['is_inferred'] ?? 0) === 1,
+            'featured' => !empty($item['is_featured']),
+            'profile' => $profile,
+            'directions' => null,
+            'destination' => null,
+            'listId' => 'assist-result-' . $key,
+        ];
+    };
+    foreach ($result->providers as $item) {
+        $appendMappedResult(
+            $item,
+            'provider',
+            (string) ($item['business_name'] ?? 'Provider'),
+            trim((string) ($item['town_name'] ?? '') . (!empty($item['state_abbr']) ? ', ' . $item['state_abbr'] : '')),
+            url('providers/' . (string) ($item['slug'] ?? '')) . ($result->assistSearchId ? '?s=' . (int) $result->assistSearchId : '')
+        );
+    }
+    foreach ($result->stays as $item) {
+        $appendMappedResult(
+            $item,
+            'stay',
+            (string) ($item['name'] ?? 'Place to stay'),
+            (string) ($item['town_name'] ?? ''),
+            url('caravan-parks/' . (string) ($item['slug'] ?? ''))
+        );
+    }
+    foreach ($result->facilities as $item) {
+        $appendMappedResult(
+            $item,
+            'facility',
+            (string) ($item['name'] ?? $item['business_name'] ?? 'Traveller facility'),
+            (string) ($item['formatted_address'] ?? $item['town_name'] ?? '')
+        );
+    }
+}
 ?>
+<?php $this->section('head'); ?>
+<?php if ($mappedResults !== []): ?><link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin><?php endif; ?>
+<?php $this->endSection(); ?>
 <?php $this->section('content'); ?>
 <section class="section">
     <div class="container">
@@ -54,6 +119,32 @@ $this->extend('layouts.public');
                     · confidence <?= number_format($result->intent->confidence * 100, 0) ?>%</p>
             <?php endif; ?>
 
+            <?php if ($mappedResults !== []): ?>
+                <section class="results-map-shell" data-results-view-shell data-active-view="list" aria-labelledby="results-map-heading">
+                    <div class="results-view-switch" role="group" aria-label="Choose results view"><button type="button" data-results-view="list" aria-pressed="true">List</button><button type="button" data-results-view="map" aria-pressed="false">Map</button></div>
+                    <div class="results-map-heading">
+                        <div><span class="directory-eyebrow">Map and list</span><h2 id="results-map-heading"><?= count($mappedResults) ?> located <?= count($mappedResults) === 1 ? 'result' : 'results' ?></h2></div>
+                        <p>Tap a numbered pin to match it with the same number in the results list.</p>
+                    </div>
+                    <div class="results-map" data-results-map hidden aria-label="Map of results returned by Ask VanAssist">
+                        <div class="results-map-canvas" data-results-map-canvas tabindex="0" aria-label="Interactive results map. Drag to move, pinch or use the controls to zoom."></div>
+                        <div class="results-map-controls" role="group" aria-label="Map controls"><button type="button" data-results-map-zoom-in aria-label="Zoom in">+</button><button type="button" data-results-map-zoom-out aria-label="Zoom out">&minus;</button><button type="button" data-results-map-fit>Fit results</button></div>
+                        <aside class="results-map-summary" data-results-map-summary hidden aria-live="polite">
+                            <button type="button" data-results-map-summary-close aria-label="Close result summary">&times;</button>
+                            <div class="results-map-summary-tools"><button type="button" data-results-map-summary-drag aria-label="Move result summary">Move</button><button type="button" data-results-map-summary-toggle aria-expanded="true">Collapse</button></div>
+                            <span data-results-map-summary-position></span><strong data-results-map-summary-name></strong>
+                            <div class="results-map-summary-body" data-results-map-summary-body><small data-results-map-summary-location></small><div><a class="btn btn-primary btn-sm" data-results-map-summary-profile href="#">Details</a><button class="btn btn-secondary btn-sm" type="button" data-results-map-summary-list>Show in list</button><a class="btn btn-secondary btn-sm" data-results-map-summary-directions href="#" target="_blank" rel="noopener noreferrer">Directions</a></div></div>
+                        </aside>
+                        <div class="results-map-key"><span><i class="results-map-key__origin"></i>Your search</span><span><i class="is-featured"></i>Featured</span><span><i></i>Direct match</span><span><i class="is-possible"></i>Related service</span></div>
+                        <p class="results-map-attribution"><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">Map © OpenStreetMap contributors</a></p>
+                    </div>
+                    <p class="results-map-status muted" data-results-map-status role="status" aria-live="polite">The results list remains available if the map cannot load.</p>
+                    <script type="application/json" data-results-map-data><?= json_encode(['origin' => $result->originLat !== null && $result->originLng !== null ? ['lat' => $result->originLat, 'lng' => $result->originLng] : null, 'providers' => $mappedResults], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_SLASHES) ?></script>
+                </section>
+            <?php endif; ?>
+
+            <div data-results-list>
+
             <?php if ($result->providers !== []): ?>
                 <h2 class="h3" style="margin-top:1.5rem">Providers</h2>
                 <div class="provider-card-grid provider-results">
@@ -62,7 +153,11 @@ $this->extend('layouts.public');
                         $isPossible = (int) ($p['is_inferred'] ?? 0) === 1;
                         $searchId = $result->assistSearchId;
                         $gapId = $result->knowledgeGapId;
-                        $this->include('partials.provider-result-card', compact('p', 'isPossible', 'searchId', 'gapId'));
+                        $providerKey = 'provider-' . (int) ($p['id'] ?? 0);
+                        $resultCardId = 'assist-result-' . $providerKey;
+                        $mapResultNumber = $mapNumbers[$providerKey] ?? 0;
+                        $compact = true;
+                        $this->include('partials.provider-result-card', compact('p', 'isPossible', 'searchId', 'gapId', 'resultCardId', 'mapResultNumber', 'compact'));
                         ?>
                         <?php if (!empty($p['assist_provenance_label'])): ?>
                             <p class="muted" style="margin:-0.5rem 0 1rem 0;font-size:0.85rem"><?= $this->e((string) $p['assist_provenance_label']) ?></p>
@@ -81,8 +176,10 @@ $this->extend('layouts.public');
                             $stayHref = url('ask/click/' . (int) $result->knowledgeGapId) . '?to=' . rawurlencode('caravan-parks/' . ($stay['slug'] ?? ''));
                         }
                         ?>
-                        <article class="card" style="margin-bottom:0.75rem">
+                        <?php $stayKey = 'stay-' . (int) ($stay['id'] ?? 0); $stayMapNumber = $mapNumbers[$stayKey] ?? 0; ?>
+                        <article id="assist-result-<?= e_attr($stayKey) ?>" class="card" style="margin-bottom:0.75rem" tabindex="-1">
                             <h3 class="h4" style="margin:0 0 0.35rem">
+                                <?php if ($stayMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $stayMapNumber ?>" aria-label="Map pin <?= $stayMapNumber ?>"></span><?php endif; ?>
                                 <a href="<?= e($stayHref) ?>"><?= $this->e((string) ($stay['name'] ?? 'Stay')) ?></a>
                             </h3>
                             <p class="muted" style="margin:0">
@@ -101,9 +198,10 @@ $this->extend('layouts.public');
                 <h2 class="h3" style="margin-top:1.5rem">Traveller facilities</h2>
                 <div class="facility-results">
                     <?php foreach ($result->facilities as $facility): ?>
-                        <article class="facility-result-row">
+                        <?php $facilityKey = 'facility-' . (int) ($facility['id'] ?? 0); $facilityMapNumber = $mapNumbers[$facilityKey] ?? 0; ?>
+                        <article id="assist-result-<?= e_attr($facilityKey) ?>" class="facility-result-row" tabindex="-1">
                             <div class="facility-result-main">
-                                <h3><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></h3>
+                                <h3><?php if ($facilityMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $facilityMapNumber ?>" aria-label="Map pin <?= $facilityMapNumber ?>"></span><?php endif; ?><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></h3>
                                 <p class="muted">
                                 <?= $this->e(str_replace('_', ' ', (string) ($facility['facility_type'] ?? ''))) ?>
                                 <?php if (!empty($facility['town_name'])): ?> · <?= $this->e((string) $facility['town_name']) ?><?php endif; ?>
@@ -146,6 +244,7 @@ $this->extend('layouts.public');
                     <p style="margin:0">No listings matched this Ask VanAssist search yet. <a href="<?= e($structuredFindUrl) ?>">Try category search</a> or <a href="<?= e(url('request-assistance')) ?>">request assistance</a>.</p>
                 </div>
             <?php endif; ?>
+            </div>
         <?php endif; ?>
     </div>
 </section>
