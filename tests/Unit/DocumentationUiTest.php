@@ -73,6 +73,8 @@ final class DocumentationUiTest extends TestCase
         self::assertStringContainsString('admin-context-help', $adminLayout);
         self::assertStringContainsString("DocumentationLinkResolver::forRoute", $adminLayout);
         self::assertStringContainsString('context-help-bar', $publicLayout);
+        self::assertStringContainsString('$layoutPath === \'/provider\'', $publicLayout);
+        self::assertStringContainsString("str_starts_with(\$layoutPath, '/provider/')", $publicLayout);
     }
 
     private function source(string $relative): string

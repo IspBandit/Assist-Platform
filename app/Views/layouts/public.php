@@ -4,7 +4,10 @@ $layoutBrand = current_brand();
 $layoutBrandAssets = $layoutBrand->assets();
 $layoutBrandTheme = $layoutBrand->theme();
 $layoutPath = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/') ?: '/';
-$dashboardAudience = str_starts_with($layoutPath, '/account') ? 'customer' : ((str_starts_with($layoutPath, '/provider') || str_starts_with($layoutPath, '/park')) ? 'provider' : null);
+$isCustomerWorkspace = $layoutPath === '/account' || str_starts_with($layoutPath, '/account/');
+$isProviderWorkspace = $layoutPath === '/provider' || str_starts_with($layoutPath, '/provider/');
+$isParkWorkspace = $layoutPath === '/park' || str_starts_with($layoutPath, '/park/');
+$dashboardAudience = $isCustomerWorkspace ? 'customer' : (($isProviderWorkspace || $isParkWorkspace) ? 'provider' : null);
 $dashboardHelp = $dashboardAudience !== null ? \App\Services\Documentation\DocumentationLinkResolver::forRoute($layoutPath, $dashboardAudience) : null;
 ?>
 <!doctype html>
