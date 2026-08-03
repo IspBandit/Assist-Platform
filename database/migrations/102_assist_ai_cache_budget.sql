@@ -23,6 +23,18 @@ CREATE TABLE IF NOT EXISTS ai_settings (
     CONSTRAINT chk_ai_settings_singleton CHECK (id = 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Migration 091 introduced the Admin API's minimal AI tables. Extend that
+-- existing schema before seeding the fuller orchestrator settings.
+ALTER TABLE ai_settings
+    ADD COLUMN model_allowlist_json JSON NULL AFTER openai_enabled,
+    ADD COLUMN soft_warn_pct TINYINT UNSIGNED NOT NULL DEFAULT 80 AFTER monthly_budget_aud,
+    ADD COLUMN max_prompt_chars INT UNSIGNED NOT NULL DEFAULT 2000 AFTER soft_warn_pct,
+    ADD COLUMN max_output_tokens INT UNSIGNED NOT NULL DEFAULT 500 AFTER max_prompt_chars,
+    ADD COLUMN max_retries TINYINT UNSIGNED NOT NULL DEFAULT 1 AFTER max_output_tokens,
+    ADD COLUMN timeout_seconds SMALLINT UNSIGNED NOT NULL DEFAULT 15 AFTER max_retries,
+    ADD COLUMN intent_cache_ttl_hours INT UNSIGNED NOT NULL DEFAULT 168 AFTER timeout_seconds,
+    ADD COLUMN updated_by INT UNSIGNED NULL AFTER updated_at;
+
 INSERT INTO ai_settings (
     id, ai_enabled, openai_enabled, model_allowlist_json,
     daily_request_cap, monthly_request_cap, daily_budget_aud, monthly_budget_aud,
@@ -83,6 +95,15 @@ CREATE TABLE IF NOT EXISTS ai_usage_events (
     KEY idx_ai_usage_request (request_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ALTER TABLE ai_usage_events
+    ADD COLUMN actual_cost_aud DECIMAL(10,6) NULL AFTER estimated_cost_aud,
+    ADD COLUMN duration_ms INT UNSIGNED NULL AFTER actual_cost_aud,
+    ADD COLUMN fallback_reason VARCHAR(120) NULL AFTER success,
+    ADD COLUMN assist_search_id BIGINT UNSIGNED NULL AFTER fallback_reason,
+    ADD COLUMN intent_confidence DECIMAL(4,3) NULL AFTER assist_search_id,
+    ADD COLUMN budget_state VARCHAR(40) NULL AFTER intent_confidence,
+    ADD KEY idx_ai_usage_request (request_id);
+
 CREATE TABLE IF NOT EXISTS ai_usage_daily (
     usage_date          DATE NOT NULL,
     brand_key           VARCHAR(40) NOT NULL DEFAULT '',
@@ -97,3 +118,12 @@ CREATE TABLE IF NOT EXISTS ai_usage_daily (
     updated_at          DATETIME NULL,
     PRIMARY KEY (usage_date, brand_key, operation_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE ai_usage_daily
+    ADD COLUMN operation_type VARCHAR(40) NOT NULL DEFAULT '' AFTER brand_key,
+    ADD COLUMN ai_requests INT UNSIGNED NOT NULL DEFAULT 0 AFTER cache_hits,
+    ADD COLUMN rules_only INT UNSIGNED NOT NULL DEFAULT 0 AFTER ai_requests,
+    ADD COLUMN failed_requests INT UNSIGNED NOT NULL DEFAULT 0 AFTER rules_only,
+    ADD COLUMN budget_blocked INT UNSIGNED NOT NULL DEFAULT 0 AFTER failed_requests,
+    DROP PRIMARY KEY,
+    ADD PRIMARY KEY (usage_date, brand_key, operation_type);

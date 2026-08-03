@@ -224,6 +224,10 @@ final class AIBudgetAndCacheTest extends TestCase
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS ai_intent_cache', $sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS ai_usage_events', $sql);
         self::assertStringContainsString('CREATE TABLE IF NOT EXISTS ai_usage_daily', $sql);
+        self::assertStringContainsString('ALTER TABLE ai_settings', $sql);
+        self::assertStringContainsString('ADD COLUMN model_allowlist_json', $sql);
+        self::assertStringContainsString('ALTER TABLE ai_usage_events', $sql);
+        self::assertStringContainsString('ALTER TABLE ai_usage_daily', $sql);
         self::assertStringContainsString('ai_enabled', $sql);
         self::assertStringNotContainsString('api_key', $sql);
         self::assertStringNotContainsString('OPENAI', $sql);
