@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Traveller-facility staging reliability
+
+- Moved immutable acceptance fixtures outside runtime-mounted storage so
+  staging releases retain their toilet, dump-point and water test data.
+- Acceptance evidence now falls back to writable storage on read-only releases,
+  and Linux no longer receives the Windows `NUL` redirect warning.
+- Ask VanAssist traveller facilities now use compact mobile-friendly rows.
+
 ### Cleaner public provider pages
 
 - Removed decorative business-name initials and the repeated provider name from
