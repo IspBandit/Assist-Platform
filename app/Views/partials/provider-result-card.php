@@ -4,7 +4,6 @@ $isPossible = !empty($isPossible);
 $model = (string) ($p['service_model'] ?? '');
 $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) ($p['business_name'] ?? 'Business');
-$initial = mb_strtoupper(mb_substr(trim($name), 0, 1));
 $profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'providers/';
 $location = trim((string) ($p['town_name'] ?? ''));
 if ($location !== '' && !empty($p['state_abbr'])) { $location .= ', ' . $p['state_abbr']; }
@@ -30,13 +29,14 @@ $profileUrl = url($profilePath . $p['slug']) . $contactQuery;
 $hasListedPhone = trim((string) ($p['public_phone'] ?? '')) !== '';
 $canCall = $hasListedPhone && !empty($p['show_public_phone']);
 ?>
-<article<?= $resultCardId !== '' ? ' id="' . e_attr($resultCardId) . '"' : '' ?> class="provider-card<?= !empty($p['is_featured']) ? ' provider-card--featured' : '' ?><?= $compact ? ' provider-card--compact' : '' ?>"<?= $resultCardId !== '' ? ' tabindex="-1"' : '' ?>>
+<article<?= $resultCardId !== '' ? ' id="' . e_attr($resultCardId) . '"' : '' ?> class="provider-card<?= !empty($p['is_featured']) ? ' provider-card--featured' : '' ?><?= $isPossible ? ' provider-card--possible' : '' ?><?= $compact ? ' provider-card--compact' : '' ?>"<?= $resultCardId !== '' ? ' tabindex="-1"' : '' ?>>
     <?php if (!empty($p['is_featured'])): ?><span class="provider-featured-label">Featured</span><?php endif; ?>
     <a class="provider-card-main" href="<?= e($profileUrl) ?>">
-        <span class="provider-avatar" aria-hidden="true"><?= e($initial) ?></span>
         <span class="provider-card-content">
-            <?php if ($mapResultNumber > 0): ?><span class="provider-map-reference">Map pin <?= $mapResultNumber ?></span><?php endif; ?>
-            <span class="provider-card-title"><?= e($name) ?></span>
+            <span class="provider-card-title-row">
+                <?php if ($mapResultNumber > 0): ?><span class="provider-map-reference" data-number="<?= $mapResultNumber ?>" aria-label="Map pin <?= $mapResultNumber ?>"></span><?php endif; ?>
+                <span class="provider-card-title"><?= e($name) ?></span>
+            </span>
             <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · <?= max(1, (int) $p['distance_km']) ?> km straight-line<?php endif; ?></span><?php endif; ?>
         </span>
         <span class="provider-card-arrow" aria-hidden="true">→</span>

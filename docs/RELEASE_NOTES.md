@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Provider map-reference icons
+
+- Replaced `Map pin N` text in provider rows with a compact coloured numbered
+  pin matching the corresponding marker on the results map.
+- Removed the unexplained business-name letter tiles from provider rows.
+
 ### Compact provider lists
 
 - Provider collections now use concise rows across public search, directory,

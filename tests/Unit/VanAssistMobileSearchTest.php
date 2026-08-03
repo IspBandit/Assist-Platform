@@ -42,6 +42,8 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('$mapResultNumbers', $view);
         self::assertStringContainsString("'mapResultNumber' =>", $view);
         self::assertStringContainsString('Map pin', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
+        self::assertStringContainsString('class="provider-map-reference" data-number=', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
+        self::assertStringNotContainsString('provider-avatar', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
         self::assertStringContainsString("tile.openstreetmap.org/", $script);
         self::assertStringContainsString("card.addEventListener('focusin'", $script);
         self::assertStringContainsString("setResultsView('list')", $script);
@@ -51,6 +53,7 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("event.key === 'ArrowLeft'", $script);
         self::assertStringContainsString('.provider-card--compact', $css);
         self::assertStringContainsString('.provider-map-reference', $css);
+        self::assertStringContainsString('.provider-map-reference::after{content:attr(data-number)', $css);
         self::assertStringContainsString('.results-map-pin::after{font-size:.78rem}', $css);
         self::assertStringContainsString('.provider-card--compact{min-height:0', $css);
         self::assertStringContainsString('.provider-card--compact .provider-card-badges .badge:nth-child(n+3){display:none}', $css);
@@ -76,6 +79,7 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('if (!$compact && $description', $card);
         self::assertStringContainsString('.provider-card-grid,.provider-results{grid-template-columns:1fr}', $css);
         self::assertStringContainsString('.provider-card--compact .provider-card-badges{display:none}', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-main{grid-template-columns:minmax(0,1fr)}', $css);
         self::assertStringContainsString('.provider-card--compact .provider-card-actions .provider-card-link:first-child{display:none}', $css);
 
         foreach (['providers-index.php', 'service-category.php', 'region.php', 'town.php', 'assist-search.php'] as $view) {
