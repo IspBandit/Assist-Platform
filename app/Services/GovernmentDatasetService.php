@@ -327,11 +327,11 @@ final class GovernmentDatasetService
         }
         $key = (string) $dataset['dataset_key'];
         $path = match ($key) {
-            'demo_geojson_dump_points' => base_path('storage/datasets/demo-dump-points.geojson'),
-            'demo_csv_public_toilets' => base_path('storage/datasets/demo-public-toilets.csv'),
-            'demo_csv_drinking_water' => base_path('storage/datasets/demo-drinking-water.csv'),
-            'demo_csv_rest_areas' => base_path('storage/datasets/demo-rest-areas.csv'),
-            'demo_csv_visitor_information' => base_path('storage/datasets/demo-visitor-information.csv'),
+            'demo_geojson_dump_points' => base_path('resources/datasets/demo-dump-points.geojson'),
+            'demo_csv_public_toilets' => base_path('resources/datasets/demo-public-toilets.csv'),
+            'demo_csv_drinking_water' => base_path('resources/datasets/demo-drinking-water.csv'),
+            'demo_csv_rest_areas' => base_path('resources/datasets/demo-rest-areas.csv'),
+            'demo_csv_visitor_information' => base_path('resources/datasets/demo-visitor-information.csv'),
             default => null,
         };
         if ($path === null || !is_file($path)) {

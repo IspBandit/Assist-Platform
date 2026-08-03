@@ -25,7 +25,7 @@ final class GovernmentDatasetConnectorsTest extends TestCase
 
     public function testGeoJsonFixtureParsesDemoDumpPoints(): void
     {
-        $path = dirname(__DIR__, 3) . '/storage/datasets/demo-dump-points.geojson';
+        $path = dirname(__DIR__, 3) . '/resources/datasets/demo-dump-points.geojson';
         self::assertFileExists($path);
         $rows = (new GeoJsonDatasetConnector())->search(
             ['path' => $path, 'limit' => 50],
@@ -41,7 +41,7 @@ final class GovernmentDatasetConnectorsTest extends TestCase
 
     public function testCsvFixtureParsesDemoToilets(): void
     {
-        $path = dirname(__DIR__, 3) . '/storage/datasets/demo-public-toilets.csv';
+        $path = dirname(__DIR__, 3) . '/resources/datasets/demo-public-toilets.csv';
         self::assertFileExists($path);
         $rows = (new CsvDatasetConnector())->search(
             ['path' => $path, 'limit' => 50],

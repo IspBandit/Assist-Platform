@@ -1654,6 +1654,8 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .saved-provider-row form{margin:0}
 .provider-card-main{grid-template-columns:minmax(0,1fr) auto}
 .provider-card--compact .provider-card-main{grid-template-columns:minmax(0,1fr)}
+.facility-results{display:grid;gap:.45rem}.facility-result-row{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.58rem .75rem;border:1px solid var(--color-border,var(--line));border-radius:11px;background:#fff;box-shadow:0 3px 12px rgba(15,23,42,.045)}.facility-result-main{min-width:0}.facility-result-main h3{margin:0;font-size:.95rem;line-height:1.2}.facility-result-main p{margin:.18rem 0 0;font-size:.73rem;line-height:1.35}.facility-result-action{flex:0 0 auto;padding:.42rem .58rem;border:1px solid var(--color-border,var(--line));border-radius:8px;font-size:.72rem;font-weight:750;text-decoration:none}
+@media(max-width:719px){.facility-result-row{padding:.45rem .5rem;border-radius:9px;box-shadow:none}.facility-result-main h3{font-size:.84rem}.facility-result-main p{font-size:.64rem}.facility-result-action{min-height:40px;display:grid;place-items:center;padding:.25rem .42rem;font-size:.66rem}}
 
 @media(max-width:719px){
   .polaris-pref-grid,.polaris-priority-set,.polaris-compare-options,.polaris-match-card{grid-template-columns:1fr}

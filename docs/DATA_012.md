@@ -30,11 +30,11 @@ Mandatory acceptance:
 | Service | `app/Services/GovernmentDatasetService.php` |
 | Admin API sync | `POST /api/v1/admin/datasets/{id}/sync` → fetch/fixture + sync_runs (`AdminApiDatasetService`) |
 | Admin UI | `/admin/data-sources/datasets`, `/admin/data-sources/facilities/review` |
-| Demo fixtures | `storage/datasets/demo-dump-points.geojson`, `demo-public-toilets.csv`, `demo-drinking-water.csv`, `demo-rest-areas.csv`, `demo-visitor-information.csv` |
+| Demo fixtures | `resources/datasets/demo-dump-points.geojson`, `demo-public-toilets.csv`, `demo-drinking-water.csv`, `demo-rest-areas.csv`, `demo-visitor-information.csv` |
 | CLI bootstrap | `scripts/import-demo-traveller-facilities.php` (toilets, dumps, water, rest, visitor) |
 | Acceptance | `scripts/acceptance-batehaven-facilities.php` (`--dry-run` or `--import-approve`) |
 | Curated AU | Migration `110` National Toilet Map catalogue rows (off by default) |
-| Demo water | Migration `114` + `storage/datasets/demo-drinking-water.csv` |
+| Demo water | Migration `114` + `resources/datasets/demo-drinking-water.csv` |
 | Demo rest/visitor | Migration `116` |
 | Capped CKAN stage | `scripts/stage-ckan-toilet-map.php` (non-prod; restores `is_enabled=0`) |
 | LPG/fuel | Deferred — [`DATA_012_LPG_FUEL_DEFERRAL.md`](DATA_012_LPG_FUEL_DEFERRAL.md) |

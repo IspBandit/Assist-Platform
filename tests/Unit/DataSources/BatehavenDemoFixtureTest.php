@@ -13,7 +13,7 @@ final class BatehavenDemoFixtureTest extends TestCase
 {
     public function testDemoToiletsIncludeBatehaven(): void
     {
-        $path = dirname(__DIR__, 3) . '/storage/datasets/demo-public-toilets.csv';
+        $path = dirname(__DIR__, 3) . '/resources/datasets/demo-public-toilets.csv';
         self::assertFileExists($path);
         $csv = (string) file_get_contents($path);
         self::assertStringContainsString('Batehaven', $csv);
@@ -24,7 +24,7 @@ final class BatehavenDemoFixtureTest extends TestCase
 
     public function testDemoDumpPointsIncludeBatemansBayNearBatehaven(): void
     {
-        $path = dirname(__DIR__, 3) . '/storage/datasets/demo-dump-points.geojson';
+        $path = dirname(__DIR__, 3) . '/resources/datasets/demo-dump-points.geojson';
         self::assertFileExists($path);
         $json = json_decode((string) file_get_contents($path), true);
         self::assertIsArray($json);
@@ -46,7 +46,7 @@ final class BatehavenDemoFixtureTest extends TestCase
 
     public function testDemoDrinkingWaterIncludesBatehaven(): void
     {
-        $path = dirname(__DIR__, 3) . '/storage/datasets/demo-drinking-water.csv';
+        $path = dirname(__DIR__, 3) . '/resources/datasets/demo-drinking-water.csv';
         self::assertFileExists($path);
         $csv = (string) file_get_contents($path);
         self::assertStringContainsString('Batehaven', $csv);
@@ -55,8 +55,8 @@ final class BatehavenDemoFixtureTest extends TestCase
 
     public function testDemoRestAndVisitorFixturesExist(): void
     {
-        $rest = dirname(__DIR__, 3) . '/storage/datasets/demo-rest-areas.csv';
-        $visitor = dirname(__DIR__, 3) . '/storage/datasets/demo-visitor-information.csv';
+        $rest = dirname(__DIR__, 3) . '/resources/datasets/demo-rest-areas.csv';
+        $visitor = dirname(__DIR__, 3) . '/resources/datasets/demo-visitor-information.csv';
         self::assertFileExists($rest);
         self::assertFileExists($visitor);
         self::assertStringContainsString('rest_area', (string) file_get_contents($rest));

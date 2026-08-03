@@ -97,20 +97,21 @@ $this->extend('layouts.public');
 
             <?php if ($result->facilities !== []): ?>
                 <h2 class="h3" style="margin-top:1.5rem">Traveller facilities</h2>
-                <p class="muted">Point amenities (toilets, dump points, water, etc.) — separate from caravan parks and businesses.</p>
                 <div class="facility-results">
                     <?php foreach ($result->facilities as $facility): ?>
-                        <article class="card" style="margin-bottom:0.75rem">
-                            <h3 class="h4" style="margin:0 0 0.35rem"><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></h3>
-                            <p class="muted" style="margin:0">
+                        <article class="facility-result-row">
+                            <div class="facility-result-main">
+                                <h3><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></h3>
+                                <p class="muted">
                                 <?= $this->e(str_replace('_', ' ', (string) ($facility['facility_type'] ?? ''))) ?>
                                 <?php if (!empty($facility['town_name'])): ?> · <?= $this->e((string) $facility['town_name']) ?><?php endif; ?>
                                 <?php if (!empty($facility['formatted_address'])): ?> · <?= $this->e((string) $facility['formatted_address']) ?><?php endif; ?>
                                 <?php if (isset($facility['distance_km']) && $facility['distance_km'] !== null): ?> · <?= max(1, (int) $facility['distance_km']) ?> km straight-line<?php endif; ?>
                                 <?php if (!empty($facility['assist_provenance_label'])): ?> · <?= $this->e((string) $facility['assist_provenance_label']) ?><?php endif; ?>
-                            </p>
+                                </p>
+                            </div>
                             <?php if (!empty($facility['source_url'])): ?>
-                                <p style="margin:0.35rem 0 0"><a href="<?= e((string) $facility['source_url']) ?>" rel="noopener noreferrer">Source</a></p>
+                                <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" rel="noopener noreferrer">Source</a>
                             <?php endif; ?>
                         </article>
                     <?php endforeach; ?>
