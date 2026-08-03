@@ -36,4 +36,26 @@ final class RequestTest extends TestCase
 
         self::assertSame('203.0.113.8', $request->ip());
     }
+
+    public function testAcceptsForwardedIpFromTrustedProxyCidr(): void
+    {
+        Config::set('security.trusted_proxies', ['172.20.0.0/16']);
+        $request = new Request([], [], [
+            'REMOTE_ADDR' => '172.20.0.4',
+            'HTTP_X_FORWARDED_FOR' => '203.0.113.9, 172.18.0.2',
+        ], []);
+
+        self::assertSame('203.0.113.9', $request->ip());
+    }
+
+    public function testRejectsForwardedIpOutsideTrustedProxyCidr(): void
+    {
+        Config::set('security.trusted_proxies', ['172.20.0.0/16']);
+        $request = new Request([], [], [
+            'REMOTE_ADDR' => '172.21.0.4',
+            'HTTP_X_FORWARDED_FOR' => '203.0.113.9',
+        ], []);
+
+        self::assertSame('172.21.0.4', $request->ip());
+    }
 }

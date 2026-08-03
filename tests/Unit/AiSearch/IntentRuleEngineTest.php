@@ -159,6 +159,14 @@ final class IntentRuleEngineTest extends TestCase
         self::assertNotContains('caravan_park', $intent->stayTypeKeys);
     }
 
+    public function testLocationStopsBeforeTrailingCaravanContext(): void
+    {
+        $intent = $this->engine->interpret('I have a bad wheel bearing near Gympie on my caravan');
+
+        self::assertSame('Gympie', $intent->locationText);
+        self::assertContains('brakes-and-bearings', $intent->providerCategoryKeys);
+    }
+
     public function testSchemaValidatorStripsUnknownCategories(): void
     {
         $intent = Intent::fromArray([
