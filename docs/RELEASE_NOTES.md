@@ -326,6 +326,15 @@ may remain as dated files and are linked here rather than copied.
 Production status: not released. A dated release entry requires a passed Platform
 Quality Gate and verified deployment record.
 
+### Ask VanAssist reliability candidate (2026-08-03)
+
+- Expanded natural-language validation and routing from a partial allowlist to
+  the complete seeded VanAssist service catalogue.
+- Added common fault-language coverage across caravan systems, appliances,
+  body repairs, roadside help, inspections, parts and travel essentials.
+- Added a bounded general-repair fallback for unclear but clearly caravan/RV
+  fault requests; unrelated general-AI questions remain rejected.
+
 ## Historical records
 
 - `PRODUCTION_RELEASE_2026-07-22.md`
