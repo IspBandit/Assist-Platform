@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Isolated staging deployment path
+
+- Added a manually approved GitHub workflow for immutable releases to the
+  separate staging runtime and database on the existing server.
+- Production deployment, data and feature flags are unchanged.
+
 ### POL-008 dealer enquiry handoff
 
 - Model pages show linked published dealers with email/website CTAs via

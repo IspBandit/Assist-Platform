@@ -26,6 +26,16 @@
    sitemap, robots and authentication checks.
 10. Monitor; retain the preceding release for rollback.
 
+### Isolated staging release
+
+The manually dispatched `Staging release` workflow builds and validates a
+selected ref, then calls the root-owned
+`/usr/local/sbin/assist-platform-staging-release` command. Staging uses separate
+storage and MariaDB data under `/opt/assist-platform-staging`; it does not share
+the production database. The temporary endpoint is password-protected and
+blocked from search indexing. Email, billing, paid AI, Admin API and public Ask
+remain disabled until a controlled staging rehearsal needs them.
+
 The `Production release` GitHub workflow implements this sequence for a reviewed
 commit on `main`. Protect the `production` environment with a required owner
 reviewer. Configure `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` and pinned
