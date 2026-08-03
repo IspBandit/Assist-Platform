@@ -280,6 +280,15 @@ final class SearchOrchestrator
         if (in_array('providers', $adapters, true)) {
             try {
                 $providerRows = $this->providers->search($intent, $town, $originLat, $originLng);
+                if ($providerRows === [] && $intent->providerCategoryKeys !== []) {
+                    $relatedIntent = $this->relatedProviderFallbackIntent($intent);
+                    if ($relatedIntent !== null) {
+                        $providerRows = $this->providers->search($relatedIntent, $town, $originLat, $originLng);
+                        if ($providerRows !== []) {
+                            $messages[] = 'No exact specialist matched nearby. Showing related providers—confirm they handle your issue before travelling.';
+                        }
+                    }
+                }
             } catch (\Throwable) {
                 $providerRows = [];
             }
@@ -413,6 +422,46 @@ final class SearchOrchestrator
         }
 
         return ['messages' => array_values(array_unique($messages)), 'results' => $results];
+    }
+
+    private function relatedProviderFallbackIntent(Intent $intent): ?Intent
+    {
+        if (array_intersect(
+            $intent->providerCategoryKeys,
+            ['general-caravan-repairs', 'mobile-mechanics', 'mechanical-repairs']
+        ) !== []) {
+            return null;
+        }
+
+        $electrical = ['12-volt-electrical', '240-volt-electrical', 'solar-and-batteries',
+            'dc-dc-charging', 'inverters', 'refrigeration', 'air-conditioning',
+            'starlink-and-communications', 'auto-electrical-and-batteries'];
+        $vehicle = ['brakes-and-bearings', 'suspension', 'tyres-and-wheels',
+            'diesel-mechanics', 'towing-and-vehicle-recovery', '4wd-and-remote-area-recovery'];
+
+        if (array_intersect($intent->providerCategoryKeys, $electrical) !== []) {
+            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries'];
+        } elseif (array_intersect($intent->providerCategoryKeys, $vehicle) !== []) {
+            $categories = ['mobile-mechanics', 'mechanical-repairs', 'roadside-assistance'];
+        } else {
+            $categories = ['general-caravan-repairs', 'mobile-mechanics'];
+        }
+
+        return new Intent(
+            intentType: Intent::TYPE_PROVIDER,
+            providerCategoryKeys: $categories,
+            stayTypeKeys: [],
+            facilityTypeKeys: [],
+            locationText: $intent->locationText,
+            useCurrentLocation: $intent->useCurrentLocation,
+            radiusKm: max(50, (int) ($intent->radiusKm ?? 25)),
+            urgency: $intent->urgency,
+            adapterKeys: ['providers'],
+            confidence: min(0.6, $intent->confidence),
+            clarificationRequired: false,
+            clarificationReason: null,
+            source: 'related_provider_fallback',
+        );
     }
 
     private function recordResolveUsage(
