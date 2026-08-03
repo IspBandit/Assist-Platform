@@ -37,19 +37,20 @@ final class AskVanAssistRateLimit
         $subjects = [$brand . '|ip:' . $request->ip()];
 
         if (RateLimiter::blocked($this->action, $subjects)) {
-            if (Turnstile::enabled() && $request->method() === 'GET') {
+            if ($request->method() === 'GET') {
                 $html = View::render('public.ask-unlock', [
                     'title' => 'Confirm you are human',
                     'metaDescription' => 'Complete a short security check to continue Ask VanAssist.',
                     'canonical' => url('ask/unlock'),
                     'retryAfter' => $this->blockSeconds,
+                    'turnstileEnabled' => Turnstile::enabled(),
                 ]);
                 return Response::html($html, 429)
                     ->withHeader('Retry-After', (string) $this->blockSeconds)
                     ->withHeader('Cache-Control', 'no-store');
             }
 
-            return Response::text('Too many requests. Please try again later.', 429)
+            return Response::text('Ask VanAssist is temporarily paused for this connection. Please try again later.', 429)
                 ->withHeader('Retry-After', (string) $this->blockSeconds)
                 ->withHeader('Cache-Control', 'no-store');
         }

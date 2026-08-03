@@ -376,6 +376,13 @@ final class IntentRuleEngine
         if (preg_match_all('/\b(?:near|in|around|at)\s+/ui', $remainder, $markers, PREG_OFFSET_CAPTURE) > 0) {
             $last = $markers[0][count($markers[0]) - 1];
             $place = mb_substr($remainder, (int) $last[1] + mb_strlen((string) $last[0]));
+            // Stop conversational wording after the place from becoming part
+            // of the town (for example: "near Gympie on my caravan").
+            $place = (string) preg_replace(
+                '/\s+(?:on|for|with|because|where|who|that|which)\s+(?:my|our|the|a|an|i|we)\b.*$/ui',
+                '',
+                $place
+            );
             $place = (string) preg_replace('/\s*,?\s*(?:nsw|vic|qld|sa|wa|tas|nt|act)\s*$/ui', '', $place);
             $place = trim((string) preg_replace('/\s+/u', ' ', $place));
             $place = trim($place, " \t\n\r\0\x0B,.-");

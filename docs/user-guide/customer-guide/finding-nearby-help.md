@@ -66,6 +66,11 @@ caravan repair and unsure-service options instead of returning an empty answer.
 When the requested specialist category has no nearby listing, Ask may show a
 wider set of related repair, mechanical or roadside providers. These are
 clearly labelled as related help and users are told to confirm suitability.
+Ask keeps conversational wording after a town out of the location name (for
+example, “near Gympie on my caravan”). If a named place cannot be resolved,
+Ask returns no providers rather than silently falling back to national results.
+Heavy repeated use may show a branded pause/security page; the normal category
+search remains available while Ask is paused.
 
 ## Related pages
 
@@ -95,7 +100,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-03 (matched map markers to compact numbered pin icons in provider rows, removed business-name letter tiles and profile initials, corrected marker-number visibility, kept workspace help off public provider pages, and made provider collections concise on phones and larger screens).
+2026-08-03 (added fail-closed Ask location handling and safer per-visitor rate limiting).
 
 ## Owner
 

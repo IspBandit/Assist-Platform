@@ -340,6 +340,9 @@ Quality Gate and verified deployment record.
   changes live routing automatically.
 - Added a clearly labelled related-provider fallback over a modestly wider area
   when an understood specialist request has no exact local listing.
+- Prevented unresolved or conversationally suffixed town names from degrading
+  into Australia-wide results. Proxy-aware rate limits now separate visitors,
+  and blocked Ask requests receive a branded recovery page instead of raw text.
 
 ## Historical records
 

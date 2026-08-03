@@ -3,6 +3,10 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Safer Ask location handling** — conversational wording after a town is no
+  longer treated as part of its name, unresolved named places can never fall
+  through to Australia-wide providers, and proxy-aware rate limiting now keeps
+  visitors separate while showing a proper VanAssist retry page.
 - **Solar fault searches** — plain-language requests about failed caravan solar
   panels now route directly to nearby auto-electrical and battery providers.
 - **Unified homepage search** — structured and plain-language VanAssist search

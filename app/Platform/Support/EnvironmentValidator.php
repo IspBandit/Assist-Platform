@@ -68,8 +68,8 @@ final class EnvironmentValidator
         }
 
         foreach ((array) Config::get('security.trusted_proxies', []) as $proxy) {
-            if (!is_string($proxy) || filter_var($proxy, FILTER_VALIDATE_IP) === false) {
-                $errors[] = 'TRUSTED_PROXIES must contain exact valid IP addresses';
+            if (!is_string($proxy) || !self::validIpOrCidr($proxy)) {
+                $errors[] = 'TRUSTED_PROXIES must contain valid IP addresses or CIDR ranges';
                 break;
             }
         }
@@ -141,5 +141,23 @@ final class EnvironmentValidator
                 "Invalid Assist Platform environment:\n- " . implode("\n- ", $errors)
             );
         }
+    }
+
+    private static function validIpOrCidr(string $value): bool
+    {
+        if (filter_var($value, FILTER_VALIDATE_IP) !== false) {
+            return true;
+        }
+        if (!str_contains($value, '/')) {
+            return false;
+        }
+        [$network, $prefixRaw] = array_pad(explode('/', $value, 2), 2, '');
+        $packed = @inet_pton($network);
+        $prefix = filter_var($prefixRaw, FILTER_VALIDATE_INT);
+
+        return $packed !== false
+            && $prefix !== false
+            && $prefix >= 0
+            && $prefix <= strlen($packed) * 8;
     }
 }

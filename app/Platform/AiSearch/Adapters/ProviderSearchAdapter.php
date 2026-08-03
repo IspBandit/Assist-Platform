@@ -27,6 +27,12 @@ final class ProviderSearchAdapter
 
         $radius = $intent->radiusKm ?? (int) config('ai_search.default_radius_km', 25);
         $hasOrigin = $lat !== null && $lng !== null;
+        // A named place that could not be resolved must never degrade into an
+        // Australia-wide provider search. It is safer to return no result and
+        // ask for a clearer location than show businesses hundreds of km away.
+        if (!$hasOrigin && $town === null && $intent->locationText !== null && $intent->locationText !== '') {
+            return [];
+        }
         $merged = [];
 
         foreach ($keys as $slug) {

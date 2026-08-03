@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\AiSearch;
 
 use App\Platform\AiSearch\Dto\Intent;
+use App\Platform\AiSearch\Adapters\ProviderSearchAdapter;
 use App\Platform\AiSearch\SearchOrchestrator;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
@@ -31,5 +32,13 @@ final class RelatedProviderFallbackTest extends TestCase
             'normal', ['providers'], 0.8, false, null);
         $method = new ReflectionMethod(SearchOrchestrator::class, 'relatedProviderFallbackIntent');
         self::assertNull($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testUnresolvedNamedLocationNeverFallsBackToNationalResults(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['mobile-mechanics'], [], [], 'Not A Real Town', false, 50,
+            'normal', ['providers'], 0.8, false, null);
+
+        self::assertSame([], (new ProviderSearchAdapter())->search($intent, null, null, null));
     }
 }
