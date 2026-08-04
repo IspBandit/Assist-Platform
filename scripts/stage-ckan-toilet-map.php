@@ -106,13 +106,17 @@ foreach ($keys as $datasetKey) {
         }
     }
     $settings['limit'] = $limit;
+    $filters = isset($settings['filters']) && is_array($settings['filters'])
+        ? $settings['filters']
+        : [];
     if ($state !== '') {
-        $filters = isset($settings['filters']) && is_array($settings['filters'])
-            ? $settings['filters']
-            : [];
         $filters['state'] = $state;
-        $settings['filters'] = $filters;
+    } else {
+        // A prior state rehearsal must not silently constrain a later
+        // Australia-wide import.
+        unset($filters['state']);
     }
+    $settings['filters'] = $filters;
     Database::affecting(
         'UPDATE government_datasets SET is_enabled = 1, settings_json = ?, updated_at = NOW() WHERE id = ?',
         [json_encode($settings, JSON_THROW_ON_ERROR), $datasetId]
