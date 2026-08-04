@@ -69,6 +69,8 @@ final class SystemController extends Controller
                 'sync_conflicts' => 'read_write',
                 'drafts' => 'read_write',
                 'imports' => 'read_write',
+                'facility_import_candidates' => 'read',
+                'provider_import_candidates' => 'read',
                 'recycle_bin' => 'read_write',
                 'audit' => 'read',
                 'search_gaps' => 'read',
@@ -97,6 +99,7 @@ final class SystemController extends Controller
                 'Duplicate merge requires duplicates:merge scope and a human session.',
                 'GET /overview rolls up health, website KPIs, review queues and AI cost for RIC.',
                 'Website visitors exclude bot/unknown page views; filtered bot views are labelled separately.',
+                'Import-candidate queues (/facility-import-candidates, /provider-import-candidates) are separate from GET /imports RIC package jobs.',
             ],
         ]);
     }

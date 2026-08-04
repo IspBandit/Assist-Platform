@@ -49,13 +49,16 @@ When enabled, Assist RIC may authenticate as a service account, submit checksumm
 import packages, manage drafts, browse Directory Management resources
 (`GET /providers`, `/stays`, `/facilities`, `/claims`, `/corrections` with cursor
 pagination), browse Data Review queues (`GET /drafts`, `/duplicates`,
-`/recycle-bin` with cursor pagination), read datasets, audit, search analytics,
+`/recycle-bin` with cursor pagination), browse import-candidate queues
+(`GET /facility-import-candidates`, `/provider-import-candidates` with
+`import_candidates:read`; distinct from `GET /imports` package jobs), read
+datasets, audit, search analytics,
 search-gaps, operational overview (`GET /overview`) and website insights
 (`GET /website-insights`) through `/api/v1/admin` only — never by opening
 production MariaDB. Claim/correction approve/reject, draft approve, duplicate
 merge and recycle purge remain human-session Admin API actions and are also
 available in the website admin. Categories, locations and import-candidate
-queues stay on PHP admin routes. Ask Insights may also read
+approve/reject stay on PHP admin routes. Ask Insights may also read
 `GET /ai/usage/requests` (and related AI usage rollups) plus dual-source
 `GET /search-gaps` for knowledge-gap engagement meta. Operations may read
 `GET /health`, `/version`, `/capabilities`, dataset `/sync-history`,
@@ -118,7 +121,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-04 (RIC Operations Increment G).
+2026-08-04 (Option B Increment H import-candidate queues).
 
 ## Owner
 
@@ -134,3 +137,4 @@ Assist Platform product and engineering.
 | 2026-08-02 | Documented Option B Admin API Increments B–G: claims, corrections, duplicates, datasets, AI usage, search analytics, sync conflicts and `/facilities`. |
 | 2026-08-02 | Recorded Option B programme A–L conditional Quality Gate; production Admin API flags remain gated. |
 | 2026-08-04 | Documented RIC Operations Increment G: `GET /imports`, summary `budget`, `GET /feature-flags` (`flags:read`; no writes). |
+| 2026-08-04 | Documented Option B Increment H: read-only `/facility-import-candidates` and `/provider-import-candidates` (`import_candidates:read`; separate from `GET /imports`). |

@@ -56,6 +56,17 @@ may remain as dated files and are linked here rather than copied.
 - OpenAPI, LIVE_API, contract and unit coverage updated. No production flags
   changed.
 
+### Import-candidate review queues (Increment H)
+
+- Added read-only Admin API queues for facility and provider import candidates:
+  `GET /facility-import-candidates`, `GET /facility-import-candidates/{id}`,
+  `GET /provider-import-candidates`, `GET /provider-import-candidates/{id}`
+  (`import_candidates:read` in `ALL` and `RIC_SERVICE`).
+- These are separate from `GET /imports` (RIC package jobs / `api_import_jobs`).
+- Cursor pagination; default `status=pending`; provider supports `q`/`state`.
+- List payloads omit `raw_json`; detail may include a sanitised `raw` summary.
+- No approve/reject endpoints this increment (PHP admin retains review writes).
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.

@@ -25,6 +25,11 @@
 - **RIC Operations Admin API gaps (Increment G)** — `GET /imports` list index;
   nested `budget` on `/ai/usage/summary`; read-only `GET /feature-flags`
   (`flags:read` in `RIC_SERVICE`). No flag write paths.
+- **Import-candidate review queues (Increment H)** — read-only
+  `GET /facility-import-candidates` and `GET /provider-import-candidates`
+  (+ `/{id}`) with `import_candidates:read`. Separate from `GET /imports`
+  (RIC package jobs). Cursor pagination; default pending; list omits `raw_json`;
+  no approve/reject this increment.
 
 - Fixed CKAN government imports silently truncating complete state or national
   CSV extracts at 500 records. Review-first imports now honour the existing
