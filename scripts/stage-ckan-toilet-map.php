@@ -10,7 +10,7 @@ declare(strict_types=1);
  * Does NOT flip Ask / facilities / paid AI flags.
  *
  *   php scripts/stage-ckan-toilet-map.php
- *   php scripts/stage-ckan-toilet-map.php --limit=25
+ *   php scripts/stage-ckan-toilet-map.php --state=QLD --limit=25000
  *   php scripts/stage-ckan-toilet-map.php --approve-nsw-near-batehaven
  *
  * Refuses production APP_ENV without --force.
@@ -37,9 +37,18 @@ $args = isset($_SERVER['argv']) && is_array($_SERVER['argv'])
 $force = in_array('--force', $args, true);
 $approveNsw = in_array('--approve-nsw-near-batehaven', $args, true);
 $limit = 50;
+$state = '';
 foreach ($args as $arg) {
     if (str_starts_with($arg, '--limit=')) {
-        $limit = max(1, min(100, (int) substr($arg, 8)));
+        $limit = max(1, min(25000, (int) substr($arg, 8)));
+    }
+    if (str_starts_with($arg, '--state=')) {
+        $candidate = strtoupper(trim(substr($arg, 8)));
+        if (!in_array($candidate, ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'], true)) {
+            fwrite(STDERR, "Invalid Australian state/territory abbreviation: {$candidate}\n");
+            exit(1);
+        }
+        $state = $candidate;
     }
 }
 
@@ -56,11 +65,17 @@ if ($brandId < 1) {
 }
 
 $service = new GovernmentDatasetService();
-$keys = ['au_national_public_toilet_map', 'au_national_toilet_map_dump_points'];
+$keys = [
+    'au_national_public_toilet_map',
+    'au_national_toilet_map_dump_points',
+    'au_national_toilet_map_drinking_water',
+    'au_national_toilet_map_showers',
+];
 $report = [
     'script' => 'stage-ckan-toilet-map',
     'env' => $appEnv,
     'limit' => $limit,
+    'state' => $state !== '' ? $state : 'AU',
     'approve_nsw_near_batehaven' => $approveNsw,
     'fetches' => [],
     'approved' => 0,
@@ -91,6 +106,13 @@ foreach ($keys as $datasetKey) {
         }
     }
     $settings['limit'] = $limit;
+    if ($state !== '') {
+        $filters = isset($settings['filters']) && is_array($settings['filters'])
+            ? $settings['filters']
+            : [];
+        $filters['state'] = $state;
+        $settings['filters'] = $filters;
+    }
     Database::affecting(
         'UPDATE government_datasets SET is_enabled = 1, settings_json = ?, updated_at = NOW() WHERE id = ?',
         [json_encode($settings, JSON_THROW_ON_ERROR), $datasetId]

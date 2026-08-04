@@ -29,7 +29,10 @@ final class CsvDatasetConnector implements ConnectorInterface
         if (trim($payload) === '') {
             throw new RuntimeException('CSV connector requires payload or path.');
         }
-        $limit = max(1, min(1000, (int) ($request['limit'] ?? 500)));
+        // Government extracts can legitimately contain a whole state or nation.
+        // Keep a hard ceiling, but do not silently truncate useful national data
+        // at the former 1,000-row development limit.
+        $limit = max(1, min(25000, (int) ($request['limit'] ?? 500)));
         $defaultType = FacilityTypeMapper::normalise((string) ($settings['default_facility_type'] ?? 'other_essential'));
         $nameCol = strtolower((string) ($settings['name_field'] ?? 'name'));
         $typeCol = strtolower((string) ($settings['type_field'] ?? 'facility_type'));
@@ -39,6 +42,15 @@ final class CsvDatasetConnector implements ConnectorInterface
         $addrCol = strtolower((string) ($settings['address_field'] ?? 'address'));
         $filterField = strtolower(trim((string) ($settings['filter_field'] ?? '')));
         $filterValue = strtolower(trim((string) ($settings['filter_value'] ?? '')));
+        $filters = [];
+        if (isset($settings['filters']) && is_array($settings['filters'])) {
+            foreach ($settings['filters'] as $field => $value) {
+                $field = strtolower(trim((string) $field));
+                if ($field !== '') {
+                    $filters[$field] = strtolower(trim((string) $value));
+                }
+            }
+        }
 
         $payload = preg_replace('/^\xEF\xBB\xBF/', '', $payload) ?? $payload;
         $fh = fopen('php://temp', 'r+');
@@ -70,6 +82,12 @@ final class CsvDatasetConnector implements ConnectorInterface
                 $actual = strtolower(trim((string) ($row[$filterField] ?? '')));
                 if ($actual !== $filterValue) {
                     continue;
+                }
+            }
+            foreach ($filters as $field => $expected) {
+                $actual = strtolower(trim((string) ($row[$field] ?? '')));
+                if ($actual !== $expected) {
+                    continue 2;
                 }
             }
             $name = $row[$nameCol] ?? $row['title'] ?? $row['facility'] ?? '';
