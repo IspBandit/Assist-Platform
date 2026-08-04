@@ -3,6 +3,9 @@
 ## Unreleased
 
 ### Added
+- **Admin API brand identity** — `/capabilities` now reports the verified host
+  brand, status and enabled modules so RIC can switch safely across every Assist
+  brand and hide resources that the selected brand does not use.
 - **RIC overview Admin API** — `GET /api/v1/admin/overview` and
   `GET /api/v1/admin/website-insights` for Assist RIC dashboards; bot/unknown
   page views labelled separately; RIC scopes add corrections/duplicates/ai read.

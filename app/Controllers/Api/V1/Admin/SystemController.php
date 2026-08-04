@@ -9,6 +9,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Api\AdminApiEnvelope;
+use App\Services\Api\AdminApiBrandScope;
 use App\Services\Api\AdminApiScopes;
 
 /**
@@ -40,9 +41,19 @@ final class SystemController extends Controller
     public function capabilities(Request $request): Response
     {
         $mfaRequired = (bool) Config::get('admin_api.mfa_required', false);
+        $brand = AdminApiBrandScope::brand();
+        $providersEnabled = $brand->moduleEnabled('providers');
+        $staysEnabled = $brand->moduleEnabled('parks');
 
         return AdminApiEnvelope::data([
             'api_version' => 'v1',
+            'brand' => [
+                'key' => $brand->id(),
+                'name' => $brand->name(),
+                'status' => $brand->status(),
+                'url' => $brand->url(),
+                'modules' => $brand->modules(),
+            ],
             'enabled' => (bool) Config::get('admin_api.enabled', false),
             'restricted' => (bool) Config::get('admin_api.restricted', true),
             'mfa_required' => $mfaRequired,
@@ -58,8 +69,8 @@ final class SystemController extends Controller
             ],
             'scopes' => AdminApiScopes::catalog(),
             'resources' => [
-                'providers' => 'read_write',
-                'stays' => 'read_write',
+                'providers' => $providersEnabled ? 'read_write' : 'unavailable',
+                'stays' => $staysEnabled ? 'read_write' : 'unavailable',
                 'facilities' => 'read_write',
                 'claims' => 'read_write',
                 'corrections' => 'read_write',

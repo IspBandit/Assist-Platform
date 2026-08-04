@@ -12,6 +12,8 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
 use App\Platform\Support\RequestContext;
+use App\Platform\Brand\BrandContext;
+use App\Platform\Brand\BrandRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class AdminApiRoutingTest extends TestCase
@@ -22,6 +24,8 @@ final class AdminApiRoutingTest extends TestCase
     {
         parent::setUp();
         RequestContext::clear();
+        $brands = require base_path('config/brands.php');
+        BrandContext::set(BrandRegistry::fromArray($brands['registry'])->get('vanassist'));
         Config::set('admin_api.enabled', true);
         Config::set('admin_api.restricted', true);
         Config::set('admin_api.mfa_required', false);
@@ -46,6 +50,7 @@ final class AdminApiRoutingTest extends TestCase
     protected function tearDown(): void
     {
         RequestContext::clear();
+        BrandContext::clear();
         parent::tearDown();
     }
 
@@ -72,6 +77,11 @@ final class AdminApiRoutingTest extends TestCase
         self::assertSame('active', $capabilities['data']['authentication']['refresh_tokens']);
         self::assertSame('active', $capabilities['data']['authentication']['service_accounts']);
         self::assertArrayHasKey('scopes', $capabilities['data']);
+        self::assertSame('vanassist', $capabilities['data']['brand']['key']);
+        self::assertSame('VanAssist', $capabilities['data']['brand']['name']);
+        self::assertSame('active', $capabilities['data']['brand']['status']);
+        self::assertTrue($capabilities['data']['brand']['modules']['providers']);
+        self::assertTrue($capabilities['data']['brand']['modules']['parks']);
         self::assertTrue($capabilities['data']['scopes']['providers:read']['service']);
         self::assertSame('read_write', $capabilities['data']['resources']['providers']);
         self::assertSame('read_write', $capabilities['data']['resources']['stays']);
@@ -84,6 +94,32 @@ final class AdminApiRoutingTest extends TestCase
         self::assertSame('read_write', $capabilities['data']['resources']['claims']);
         self::assertSame('read', $capabilities['data']['resources']['ai_usage']);
         self::assertArrayNotHasKey('traveller_facilities', $capabilities['data']['resources']);
+    }
+
+    public function testCapabilitiesIdentifyEveryAssistBrandAndItsModules(): void
+    {
+        $config = require base_path('config/brands.php');
+        $registry = BrandRegistry::fromArray($config['registry']);
+
+        foreach (['vanassist', 'towsmart', 'trailerwise', 'localtorque', 'polaris'] as $key) {
+            $brand = $registry->get($key);
+            BrandContext::set($brand);
+            $data = $this->json(
+                $this->dispatch('GET', '/api/v1/admin/capabilities')
+            )['data'];
+
+            self::assertSame($key, $data['brand']['key']);
+            self::assertSame($brand->name(), $data['brand']['name']);
+            self::assertSame($brand->status(), $data['brand']['status']);
+            self::assertSame(
+                $brand->moduleEnabled('providers') ? 'read_write' : 'unavailable',
+                $data['resources']['providers']
+            );
+            self::assertSame(
+                $brand->moduleEnabled('parks') ? 'read_write' : 'unavailable',
+                $data['resources']['stays']
+            );
+        }
     }
 
     public function testDisabledApiReturnsJsonUnavailable(): void

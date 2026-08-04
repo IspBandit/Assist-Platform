@@ -67,6 +67,9 @@ Increment 3 (service accounts) adds:
 - `GET/PATCH/DELETE /api/v1/admin/service-accounts/{id}` — read, update, revoke
 - `POST /api/v1/admin/service-accounts/{id}/rotate` — rotate secret
 - `/capabilities` includes scope catalog and `service_accounts: active`
+- `/capabilities` includes the verified host-scoped brand key, name, status and
+  modules. Clients must reject a response whose brand differs from the selected
+  workspace; they must not send a `brand_id` to change scope.
 
 Increment 4 (read-only directory) adds:
 

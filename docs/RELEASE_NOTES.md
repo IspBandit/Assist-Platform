@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### All-brand RIC workspace identity
+
+- Extended `GET /api/v1/admin/capabilities` with the resolved host brand key,
+  name, status, URL and enabled modules.
+- Capability resource modes now mark providers and stays unavailable for brands
+  that do not support those modules, allowing RIC to hide unsupported sections.
+- Added contract coverage for VanAssist, TowSmart, TrailerWise, LocalTorque and
+  Polaris. No production flags or data were changed.
+
 ### RIC everyday management — overview Admin API
 
 - Added `GET /api/v1/admin/overview` and `GET /api/v1/admin/website-insights`

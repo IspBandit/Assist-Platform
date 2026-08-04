@@ -77,6 +77,14 @@ rollups (summary includes nested `budget`), `GET /feature-flags`
 cap mutation, or import/publish controls from the Operations page. Dangerous
 production toggles stay in website admin with owner workflows.
 
+`GET /api/v1/admin/capabilities` is host scoped. Its `brand` object identifies
+the resolved Assist brand (`key`, `name`, `status`, `url` and enabled
+`modules`). Resource modes also reflect that brand: provider or stay resources
+are reported as `unavailable` when the selected brand does not support them.
+Management clients must verify this identity before displaying live data so a
+misconfigured endpoint cannot mix records between VanAssist, TowSmart,
+TrailerWise, LocalTorque or Polaris.
+
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.
