@@ -114,10 +114,15 @@ facilities/claims/corrections reads:
     this scope (`NEVER_SERVICE`). Website admin review remains available.
   - `GET /provider-import-candidates`, `GET /provider-import-candidates/{id}`
     (`import_candidates:read`) — brand-scoped `data_source_import_candidates`;
-    optional `q` / `state`; same envelope and raw rules
+    optional `q` / `state`; same envelope and raw rules; detail may include
+    `evidence_url` / `review_notes`
+  - `POST /provider-import-candidates/{id}/approve|reject`
+    (`import_candidates:review` + human session) — approve requires
+    `retention_confirmed` + independent `evidence_url` (optional `category_id`
+    / notes); reject accepts pending or held. Merge/hold/confirm stay website
+    admin.
   - These are **not** `GET /imports` (RIC package jobs / `api_import_jobs`).
-  - Provider-candidate approve/reject/merge stays PHP admin. Stale/missing
-    quality lists still have no Admin API.
+  - Stale/missing quality lists still have no Admin API.
   - Overview `facility_candidates_pending` counts live facility lifecycle
     statuses, not import candidates.
 
@@ -230,7 +235,14 @@ Option B Increment H.1 adds:
 - `POST /facility-import-candidates/{id}/approve|reject` — human-only facility
   candidate review (`import_candidates:review` in `NEVER_SERVICE`; not in
   `RIC_SERVICE`). Delegates to `GovernmentDatasetService::reviewCandidate`.
-  Provider-candidate mutations remain out of scope.
+
+Option B Increment H.2 adds:
+
+- `POST /provider-import-candidates/{id}/approve|reject` — human-only provider
+  candidate review (same `import_candidates:review` + `admin_api_human`).
+  Delegates to `DataSourceService::review`. Approve requires retention
+  confirmation and independent evidence URL; auto-confirms evidence when
+  needed. Merge/hold remain website admin.
 
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.

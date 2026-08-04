@@ -198,7 +198,7 @@ final class AdminApiScopes
             'imports:read' => 'List and read import job status',
             'imports:write' => 'Submit, stage, publish and manage import packages',
             'import_candidates:read' => 'List and read facility/provider import-candidate review queues',
-            'import_candidates:review' => 'Approve or reject facility import candidates (human-only)',
+            'import_candidates:review' => 'Approve or reject facility/provider import candidates (human-only)',
             'sync:read' => 'Read sync conflicts and health metadata',
             'analytics:read' => 'Read overview, website insights, search analytics and zero-result gaps',
             'ai:read' => 'Read AI usage, cost, budget caps and cache performance summaries',

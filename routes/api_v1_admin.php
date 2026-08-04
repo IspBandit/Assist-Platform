@@ -16,6 +16,7 @@ declare(strict_types=1);
  * Option B Increments B–G: claims, corrections, duplicates, datasets, AI usage,
  * search analytics, sync conflicts, facilities and import lifecycle extensions.
  * Option B Increment H: read-only facility/provider import-candidate queues.
+ * Option B Increment H.1/H.2: human-only facility/provider candidate approve/reject.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -187,6 +188,8 @@ return static function (\App\Core\Router $router): void {
             ], static function (\App\Core\Router $router): void {
                 $router->post('/facility-import-candidates/{id}/approve', 'Api\\V1\\Admin\\FacilityImportCandidateController@approve', 'api.v1.admin.facility_import_candidates.approve');
                 $router->post('/facility-import-candidates/{id}/reject', 'Api\\V1\\Admin\\FacilityImportCandidateController@reject', 'api.v1.admin.facility_import_candidates.reject');
+                $router->post('/provider-import-candidates/{id}/approve', 'Api\\V1\\Admin\\ProviderImportCandidateController@approve', 'api.v1.admin.provider_import_candidates.approve');
+                $router->post('/provider-import-candidates/{id}/reject', 'Api\\V1\\Admin\\ProviderImportCandidateController@reject', 'api.v1.admin.provider_import_candidates.reject');
             });
 
             $router->group([

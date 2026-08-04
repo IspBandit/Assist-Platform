@@ -12,11 +12,11 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Admin API queues for facility/provider import candidates (Option B Increment H / H.1).
+ * Admin API queues for facility/provider import candidates (Option B Increment H / H.1 / H.2).
  *
  * Separate from GET /imports (api_import_jobs / RIC packages). Query patterns follow
  * GovernmentDatasetService::pendingCandidates and DataSourceService::reviewQueue.
- * Facility approve/reject are human-only and delegate to GovernmentDatasetService.
+ * Facility/provider approve/reject are human-only; merge stays website admin.
  */
 class AdminApiImportCandidateService
 {
@@ -46,9 +46,14 @@ class AdminApiImportCandidateService
 
     private FacilityImportCandidateReviewGateway $datasets;
 
-    public function __construct(?FacilityImportCandidateReviewGateway $datasets = null)
-    {
+    private ProviderImportCandidateReviewGateway $providers;
+
+    public function __construct(
+        ?FacilityImportCandidateReviewGateway $datasets = null,
+        ?ProviderImportCandidateReviewGateway $providers = null
+    ) {
         $this->datasets = $datasets ?? new GovernmentDatasetService();
+        $this->providers = $providers ?? new \App\Services\DataSourceService();
     }
     /**
      * @return array{
@@ -165,6 +170,67 @@ class AdminApiImportCandidateService
     public function rejectFacilityCandidate(int $id, array $input, Request $request): array
     {
         return $this->reviewFacilityCandidate($id, 'reject', $request, $this->optionalReason($input));
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function approveProviderCandidate(int $id, array $input, Request $request): array
+    {
+        $retentionConfirmed = $this->truthy($input['retention_confirmed'] ?? false);
+        $evidenceUrl = trim((string) ($input['evidence_url'] ?? ''));
+        $categoryId = isset($input['category_id']) && $input['category_id'] !== '' && $input['category_id'] !== null
+            ? (int) $input['category_id']
+            : null;
+        if ($categoryId !== null && $categoryId < 1) {
+            $categoryId = null;
+        }
+        $notes = $this->optionalReason($input) ?? '';
+
+        $errors = [];
+        if (!$retentionConfirmed) {
+            $errors['retention_confirmed'] = [
+                'Confirm an independent right to retain and publish this business data before approval.',
+            ];
+        }
+        if ($evidenceUrl === '') {
+            $errors['evidence_url'] = [
+                'Provide an independent http/https evidence URL (not a Google search or Maps URL).',
+            ];
+        }
+        if ($errors !== []) {
+            throw new AdminApiException(422, 'validation_failed', 'Validation failed.', $errors);
+        }
+
+        return $this->reviewProviderCandidate(
+            $id,
+            'approve',
+            $request,
+            null,
+            $retentionConfirmed,
+            $categoryId,
+            $evidenceUrl,
+            $notes
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function rejectProviderCandidate(int $id, array $input, Request $request): array
+    {
+        return $this->reviewProviderCandidate(
+            $id,
+            'reject',
+            $request,
+            null,
+            false,
+            null,
+            '',
+            $this->optionalReason($input) ?? ''
+        );
     }
 
     /**
@@ -349,13 +415,139 @@ class AdminApiImportCandidateService
     }
 
     /**
+     * @return array<string,mixed>
+     */
+    private function reviewProviderCandidate(
+        int $id,
+        string $decision,
+        Request $request,
+        ?int $providerId,
+        bool $retentionConfirmed,
+        ?int $categoryId,
+        string $evidenceUrl,
+        string $reviewNotes
+    ): array {
+        $before = $this->showProviderCandidate($id);
+        $status = (string) ($before['review_status'] ?? '');
+        if ($decision === 'approve' && $status !== 'pending') {
+            throw new AdminApiException(
+                409,
+                'conflict',
+                'Only pending provider import candidates can be approved.'
+            );
+        }
+        if ($decision === 'reject' && !in_array($status, ['pending', 'held'], true)) {
+            throw new AdminApiException(
+                409,
+                'conflict',
+                'Only pending or held provider import candidates can be rejected.'
+            );
+        }
+
+        $userId = AdminApiContext::userId();
+        if ($userId === null || $userId < 1) {
+            throw new AdminApiException(401, 'unauthenticated', 'Human Admin API session required.');
+        }
+
+        try {
+            // Website admin often confirms evidence as a separate step. When the API
+            // supplies retention + evidence URL on approve, confirm first so
+            // BulkReviewPolicy::approvalProblems can pass for non-national-route rows.
+            if (
+                $decision === 'approve'
+                && !in_array((string) ($before['evidence_status'] ?? ''), ['confirmed', 'claimed'], true)
+            ) {
+                $this->providers->review(
+                    $id,
+                    AdminApiBrandScope::brandId(),
+                    'confirm',
+                    $providerId,
+                    $userId,
+                    $retentionConfirmed,
+                    $categoryId,
+                    $evidenceUrl,
+                    $reviewNotes
+                );
+            }
+
+            $this->providers->review(
+                $id,
+                AdminApiBrandScope::brandId(),
+                $decision,
+                $providerId,
+                $userId,
+                $retentionConfirmed,
+                $categoryId,
+                $evidenceUrl,
+                $reviewNotes
+            );
+        } catch (RuntimeException $e) {
+            $message = $e->getMessage();
+            if (
+                str_contains($message, 'no longer awaiting review')
+                || str_contains($message, 'no longer eligible')
+            ) {
+                throw new AdminApiException(
+                    409,
+                    'conflict',
+                    $decision === 'approve'
+                        ? 'Only pending provider import candidates can be approved.'
+                        : 'Only pending or held provider import candidates can be rejected.'
+                );
+            }
+            throw new AdminApiException(422, 'validation_failed', $message);
+        } catch (Throwable $e) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Provider import candidate could not be reviewed: ' . $e->getMessage()
+            );
+        }
+
+        $after = $this->showProviderCandidate($id);
+        AdminApiAudit::record(
+            'provider_import_candidate.' . ($decision === 'approve' ? 'approved' : 'rejected'),
+            'data_source_import_candidate',
+            $id,
+            [
+                'review_status' => $status,
+                'provider_id' => $before['provider_id'] ?? null,
+            ],
+            [
+                'review_status' => (string) ($after['review_status'] ?? ''),
+                'provider_id' => $after['provider_id'] ?? null,
+                'reason' => $reviewNotes !== '' ? $reviewNotes : null,
+                'evidence_url' => $evidenceUrl !== '' ? $evidenceUrl : null,
+                'retention_confirmed' => $retentionConfirmed,
+            ],
+            $request
+        );
+
+        return $after;
+    }
+
+    /**
      * @param array<string,mixed> $input
      */
     private function optionalReason(array $input): ?string
     {
-        $reason = trim((string) ($input['reason'] ?? $input['notes'] ?? ''));
+        $reason = trim((string) ($input['reason'] ?? $input['notes'] ?? $input['review_notes'] ?? ''));
 
         return $reason !== '' ? $reason : null;
+    }
+
+    private function truthy(mixed $value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+        if (is_int($value) || is_float($value)) {
+            return (int) $value === 1;
+        }
+
+        $normalised = strtolower(trim((string) $value));
+
+        return in_array($normalised, ['1', 'true', 'yes', 'on'], true);
     }
 
     /**
@@ -473,6 +665,15 @@ class AdminApiImportCandidateService
 
         return array_merge($this->providerSummary($row), [
             'brand_id' => (int) ($row['brand_id'] ?? 0),
+            'evidence_url' => isset($row['evidence_url']) && $row['evidence_url'] !== null
+                ? (string) $row['evidence_url']
+                : null,
+            'review_notes' => isset($row['review_notes']) && $row['review_notes'] !== null
+                ? (string) $row['review_notes']
+                : null,
+            'hold_reason' => isset($row['hold_reason']) && $row['hold_reason'] !== null
+                ? (string) $row['hold_reason']
+                : null,
             'reviewed_by' => isset($row['reviewed_by']) && $row['reviewed_by'] !== null ? (int) $row['reviewed_by'] : null,
             'reviewed_at' => $row['reviewed_at'] ?? null,
             'updated_at' => $row['updated_at'] ?? null,
