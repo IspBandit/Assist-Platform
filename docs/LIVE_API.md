@@ -46,6 +46,11 @@ RIC everyday management (analytics rollup) adds:
   failures.
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   (`analytics:read`), reusing `WebsiteInsightsService`. Bot/unknown page views
+  remain labelled separately via `filtered_bot_page_views`. Additive daily series
+  `daily_searches`, `daily_contacts` and `daily_profile_views` support Assist RIC
+  Trends charts. Optional `location` (exact town/postcode) and `device`
+  (`mobile|tablet|desktop`) query params refine the report and are echoed under
+  `filters`.
   returned separately as `filtered_bot_page_views`.
 - RIC default service scopes add `corrections:read`, `duplicates:read`, `ai:read`,
   `recycle_bin:restore` (never `recycle_bin:purge`).

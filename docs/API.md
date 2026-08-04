@@ -19,7 +19,8 @@ is granted:
   AI cost when `ai:read`, dataset sync timestamps when `datasets:read`).
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   reusing `WebsiteInsightsService`; `filtered_bot_page_views` is never mixed
-  into visitor totals.
+  into visitor totals. Additive `daily_searches` / `daily_contacts` /
+  `daily_profile_views` series; optional `location` and `device` filters.
 
 Ask VanAssist natural-language search is a parallel **web** entry at `GET /ask`
 (VanAssist only), gated by feature flag `assist_ai_search` (default off). It

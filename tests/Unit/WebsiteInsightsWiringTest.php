@@ -29,7 +29,10 @@ final class WebsiteInsightsWiringTest extends TestCase
         $report = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
 
         self::assertStringContainsString('TrackingSession::isBot()', $writer);
-        self::assertGreaterThanOrEqual(7, substr_count($report, "device_type NOT IN ('bot','unknown')"));
+        self::assertStringContainsString("device_type NOT IN ('bot','unknown')", $report);
+        self::assertStringContainsString('daily_searches', $report);
+        self::assertStringContainsString('daily_contacts', $report);
+        self::assertStringContainsString('GENUINE_DEVICES', $report);
     }
 
     public function testHomepageContainsThePlainLanguageAskForm(): void

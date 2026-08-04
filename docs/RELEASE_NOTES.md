@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Website Insights Admin API series and filters (DATA-004)
+
+- Extended `GET /api/v1/admin/website-insights` with additive daily series
+  `daily_searches`, `daily_contacts` and `daily_profile_views` for Assist RIC
+  Trends charts.
+- Added optional `location` (exact town name or postcode) and `device`
+  (`mobile|tablet|desktop`) query filters, echoed under `filters`.
+- Genuine visitor totals still exclude bot/unknown; `filtered_bot_page_views`
+  remains separate (zero while a device filter is active).
+- OpenAPI / LIVE_API / API docs and unit wiring tests updated. No schema
+  migration; uses existing `brand_id` + `created_at` indexes.
+
 ### DATA-011A VanAssist dataset acquisition pack
 
 - Published a portable `data_catalogue/` acquisition index and download scripts

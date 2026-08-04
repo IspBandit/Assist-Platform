@@ -118,11 +118,43 @@ final class AdminApiOverviewTest extends TestCase
         self::assertArrayHasKey('filtered_bot_page_views', $payload);
         self::assertArrayHasKey('labels', $payload);
         self::assertArrayHasKey('available', $payload);
+        self::assertArrayHasKey('daily_searches', $payload);
+        self::assertArrayHasKey('daily_contacts', $payload);
+        self::assertArrayHasKey('daily_profile_views', $payload);
+        self::assertArrayHasKey('filters', $payload);
+        self::assertNull($payload['filters']['location']);
+        self::assertNull($payload['filters']['device']);
+    }
+
+    public function testWebsiteInsightsEchoesOptionalFilters(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setService(
+            ['id' => 'svc-test', 'name' => 'overview-test'],
+            ['analytics:read'],
+            'token-test'
+        );
+
+        $payload = (new AdminApiOverviewService())->websiteInsights(
+            $this->request(
+                'GET',
+                '/api/v1/admin/website-insights?range=30d&location=Roma&device=mobile'
+            )
+        );
+
+        self::assertSame('Roma', $payload['filters']['location']);
+        self::assertSame('mobile', $payload['filters']['device']);
     }
 
     private function request(string $method = 'GET', string $uri = '/api/v1/admin/overview'): Request
     {
-        $request = new Request([], [], [
+        $query = [];
+        $queryString = parse_url($uri, PHP_URL_QUERY);
+        if (is_string($queryString) && $queryString !== '') {
+            parse_str($queryString, $query);
+        }
+
+        $request = new Request($query, [], [
             'REQUEST_METHOD' => $method,
             'REQUEST_URI' => $uri,
             'HTTP_HOST' => 'localhost',

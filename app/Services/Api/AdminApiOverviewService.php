@@ -68,10 +68,14 @@ final class AdminApiOverviewService
     {
         [$from, $to, $label] = $this->dateRange($request);
         $brandId = AdminApiBrandScope::brandId();
+        $filters = $this->insightsFilters($request);
         $labels = [
             'visitors' => 'Distinct sessions excluding bot/unknown page views.',
             'filtered_bot_page_views' => 'Page views classified as bot or unknown — shown separately, not in visitor totals.',
             'figures' => 'Aggregate first-party analytics; incomplete when tracking tables are empty.',
+            'daily_searches' => 'Daily filtered searches (is_excluded=0). secondary = no-result count.',
+            'daily_contacts' => 'Daily provider contact actions (interest signals, not completed jobs).',
+            'filters' => 'Optional location (exact town name or postcode) and device (mobile|tablet|desktop) refine the report. Location applies to search demand; device applies to session-linked traffic and demand.',
         ];
 
         $empty = [
@@ -83,6 +87,9 @@ final class AdminApiOverviewService
             'summary' => [],
             'filtered_bot_page_views' => 0,
             'daily' => [],
+            'daily_searches' => [],
+            'daily_contacts' => [],
+            'daily_profile_views' => [],
             'pages' => [],
             'devices' => [],
             'services' => [],
@@ -90,6 +97,7 @@ final class AdminApiOverviewService
             'coverage_gaps' => [],
             'actions' => [],
             'providers' => [],
+            'filters' => $filters,
             'labels' => $labels,
         ];
 
@@ -98,8 +106,8 @@ final class AdminApiOverviewService
         }
 
         try {
-            $report = WebsiteInsightsService::report($brandId, $from, $to);
-            $botViews = $this->botPageViews($brandId, $from, $to);
+            $report = WebsiteInsightsService::report($brandId, $from, $to, $filters);
+            $botViews = $this->botPageViews($brandId, $from, $to, $filters['device'] ?? null);
 
             return [
                 'from' => $from,
@@ -110,6 +118,9 @@ final class AdminApiOverviewService
                 'summary' => $report['summary'] ?? [],
                 'filtered_bot_page_views' => $botViews,
                 'daily' => $report['daily'] ?? [],
+                'daily_searches' => $report['daily_searches'] ?? [],
+                'daily_contacts' => $report['daily_contacts'] ?? [],
+                'daily_profile_views' => $report['daily_profile_views'] ?? [],
                 'pages' => $report['pages'] ?? [],
                 'devices' => $report['devices'] ?? [],
                 'services' => $report['services'] ?? [],
@@ -117,11 +128,32 @@ final class AdminApiOverviewService
                 'coverage_gaps' => $report['coverage_gaps'] ?? [],
                 'actions' => $report['actions'] ?? [],
                 'providers' => $report['providers'] ?? [],
+                'filters' => $report['filters'] ?? $filters,
                 'labels' => $labels,
             ];
         } catch (Throwable) {
             return array_merge($empty, ['available' => false]);
         }
+    }
+
+    /**
+     * @return array{location:?string,device:?string}
+     */
+    private function insightsFilters(Request $request): array
+    {
+        $location = trim((string) $request->query('location', ''));
+        $device = strtolower(trim((string) $request->query('device', '')));
+        if ($location === '' || mb_strlen($location) > 120) {
+            $location = '';
+        }
+        if (!in_array($device, ['mobile', 'tablet', 'desktop'], true)) {
+            $device = '';
+        }
+
+        return [
+            'location' => $location !== '' ? $location : null,
+            'device' => $device !== '' ? $device : null,
+        ];
     }
 
     /**
@@ -192,10 +224,16 @@ final class AdminApiOverviewService
         }
     }
 
-    private function botPageViews(int $brandId, string $from, string $to): int
+    private function botPageViews(int $brandId, string $from, string $to, ?string $device = null): int
     {
         try {
             if (!$this->databaseConfigured() || !Database::tableExists('page_views')) {
+                return 0;
+            }
+
+            // Device filters are for genuine traffic only; bot/unknown remains
+            // an unfiltered companion total unless no device filter is set.
+            if ($device !== null && $device !== '') {
                 return 0;
             }
 

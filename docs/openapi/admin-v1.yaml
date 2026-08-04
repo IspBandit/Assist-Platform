@@ -193,6 +193,24 @@ paths:
           schema:
             type: string
             format: date
+        - name: location
+          in: query
+          description: >
+            Optional exact town name or postcode match applied to search-demand
+            metrics (searches, locations, services, coverage gaps, and
+            search-driven provider interest).
+          schema:
+            type: string
+            maxLength: 120
+        - name: device
+          in: query
+          description: >
+            Optional genuine device filter (mobile|tablet|desktop). Never mixes
+            bot/unknown into genuine totals; filtered_bot_page_views is zero when
+            a device filter is active.
+          schema:
+            type: string
+            enum: [mobile, tablet, desktop]
       responses:
         '200':
           description: Website insights document
@@ -205,6 +223,31 @@ paths:
                   data:
                     type: object
                     required: [summary, filtered_bot_page_views, labels]
+                    properties:
+                      daily_searches:
+                        type: array
+                        description: Daily filtered searches; secondary is no-result count
+                        items:
+                          type: object
+                      daily_contacts:
+                        type: array
+                        description: Daily contact actions
+                        items:
+                          type: object
+                      daily_profile_views:
+                        type: array
+                        items:
+                          type: object
+                      filters:
+                        type: object
+                        properties:
+                          location:
+                            type: string
+                            nullable: true
+                          device:
+                            type: string
+                            nullable: true
+                            enum: [mobile, tablet, desktop, null]
         '401':
           description: Missing or invalid bearer token
           content:
