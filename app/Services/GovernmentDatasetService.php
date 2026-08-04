@@ -14,13 +14,14 @@ use App\Platform\DataSources\Connectors\CsvDatasetConnector;
 use App\Platform\DataSources\Connectors\GeoJsonDatasetConnector;
 use App\Platform\DataSources\FacilityTypeMapper;
 use App\Services\AuditLog;
+use App\Services\Api\FacilityImportCandidateReviewGateway;
 use RuntimeException;
 use Throwable;
 
 /**
  * DATA-012 government dataset catalogue and review-first facility ingest.
  */
-final class GovernmentDatasetService
+final class GovernmentDatasetService implements FacilityImportCandidateReviewGateway
 {
     private ConnectorRegistry $registry;
 

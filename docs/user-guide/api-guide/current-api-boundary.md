@@ -56,9 +56,11 @@ datasets, audit, search analytics,
 search-gaps, operational overview (`GET /overview`) and website insights
 (`GET /website-insights`) through `/api/v1/admin` only — never by opening
 production MariaDB. Claim/correction approve/reject, draft approve, duplicate
-merge and recycle purge remain human-session Admin API actions and are also
-available in the website admin. Categories, locations and import-candidate
-approve/reject stay on PHP admin routes. Ask Insights may also read
+merge, recycle purge and facility import-candidate approve/reject remain
+human-session Admin API actions (`import_candidates:review` is never granted
+to service accounts) and are also available in the website admin. Categories,
+locations and provider-candidate approve/reject stay on PHP admin routes. Ask
+Insights may also read
 `GET /ai/usage/requests` (and related AI usage rollups) plus dual-source
 `GET /search-gaps` for knowledge-gap engagement meta. Operations may read
 `GET /health`, `/version`, `/capabilities`, dataset `/sync-history`,
@@ -121,7 +123,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-04 (Option B Increment H import-candidate queues).
+2026-08-04 (Option B Increment H.1 facility import-candidate review).
 
 ## Owner
 
@@ -138,3 +140,4 @@ Assist Platform product and engineering.
 | 2026-08-02 | Recorded Option B programme A–L conditional Quality Gate; production Admin API flags remain gated. |
 | 2026-08-04 | Documented RIC Operations Increment G: `GET /imports`, summary `budget`, `GET /feature-flags` (`flags:read`; no writes). |
 | 2026-08-04 | Documented Option B Increment H: read-only `/facility-import-candidates` and `/provider-import-candidates` (`import_candidates:read`; separate from `GET /imports`). |
+| 2026-08-04 | Documented Option B Increment H.1: human-only facility import-candidate approve/reject (`import_candidates:review`); RIC service accounts remain read-only; website admin retained. |

@@ -1423,12 +1423,12 @@ paths:
       operationId: adminFacilityImportCandidatesIndex
       summary: List traveller-facility import candidates
       description: |
-        Read-only review queue for `traveller_facility_import_candidates`
+        Review queue for `traveller_facility_import_candidates`
         (`import_candidates:read`). Not the same resource as `GET /imports`
         (RIC package jobs / `api_import_jobs`). Default `status=pending`
         (non-expired). Cursor pagination. List items omit `raw_json`.
-        Sparse when the candidates table is missing. No approve/reject in
-        this increment.
+        Sparse when the candidates table is missing. Approve/reject requires
+        `import_candidates:review` and a human Admin API session (H.1).
       security:
         - bearerAuth: []
       parameters:
@@ -1465,6 +1465,83 @@ paths:
           description: Facility import-candidate detail
         '404':
           description: Not found in brand scope
+  /facility-import-candidates/{id}/approve:
+    post:
+      tags: [ImportCandidates]
+      operationId: adminFacilityImportCandidatesApprove
+      summary: Approve a pending facility import candidate
+      description: |
+        Human-only. Requires `import_candidates:review` and a human bearer
+        session (`admin_api_human`). Service accounts cannot hold this scope.
+        Delegates to `GovernmentDatasetService::reviewCandidate` (publish +
+        mark approved). Optional JSON body `{ "reason": "..." }` is stored as
+        review notes. Website admin review remains available. Provider-candidate
+        approve/reject is out of scope.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Optional review note
+      responses:
+        '200':
+          description: Updated facility import-candidate detail
+        '404':
+          description: Not found in brand scope
+        '409':
+          description: Candidate is not pending
+        '422':
+          description: Review could not be applied
+  /facility-import-candidates/{id}/reject:
+    post:
+      tags: [ImportCandidates]
+      operationId: adminFacilityImportCandidatesReject
+      summary: Reject a pending facility import candidate
+      description: |
+        Human-only. Requires `import_candidates:review` and a human bearer
+        session. Optional `{ "reason": "..." }` maps to review notes. Service
+        accounts cannot approve or reject.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  description: Optional rejection note
+      responses:
+        '200':
+          description: Updated facility import-candidate detail
+        '404':
+          description: Not found in brand scope
+        '409':
+          description: Candidate is not pending
+        '422':
+          description: Review could not be applied
   /provider-import-candidates:
     get:
       tags: [ImportCandidates]
@@ -1476,7 +1553,8 @@ paths:
         (RIC package jobs). Default `status=pending` (non-expired). Optional
         `q` and `state` filters mirror the PHP admin review queue. List items
         omit `raw_json`. Sparse when the candidates table is missing. No
-        approve/reject in this increment.
+        approve/reject for provider candidates in this increment (facility
+        approve/reject is H.1).
       security:
         - bearerAuth: []
       parameters:

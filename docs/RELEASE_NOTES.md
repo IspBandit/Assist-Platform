@@ -56,6 +56,19 @@ may remain as dated files and are linked here rather than copied.
 - OpenAPI, LIVE_API, contract and unit coverage updated. No production flags
   changed.
 
+### Facility import-candidate review (Increment H.1)
+
+- Added human-only Admin API mutations for facility import candidates:
+  `POST /facility-import-candidates/{id}/approve` and
+  `POST /facility-import-candidates/{id}/reject`
+  (`import_candidates:review` in `ALL` and `NEVER_SERVICE`; not in
+  `RIC_SERVICE`; requires `admin_api_human`).
+- Optional JSON `{ "reason": "..." }` maps to
+  `GovernmentDatasetService::reviewCandidate` notes.
+- RIC Ops/Data Review service accounts remain read-only on import candidates;
+  website admin review remains available. Provider-candidate mutations stay
+  out of scope.
+
 ### Import-candidate review queues (Increment H)
 
 - Added read-only Admin API queues for facility and provider import candidates:

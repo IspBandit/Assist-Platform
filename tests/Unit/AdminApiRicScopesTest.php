@@ -24,6 +24,8 @@ final class AdminApiRicScopesTest extends TestCase
         self::assertContains('import_candidates:read', $scopes);
         self::assertContains('flags:read', AdminApiScopes::ALL);
         self::assertContains('import_candidates:read', AdminApiScopes::ALL);
+        self::assertNotContains('import_candidates:review', $scopes);
+        self::assertContains('import_candidates:review', AdminApiScopes::NEVER_SERVICE);
         self::assertNotContains('recycle_bin:purge', $scopes);
         self::assertNotContains('mfa:verify', $scopes);
         self::assertNotContains('flags:read', AdminApiScopes::NEVER_SERVICE);

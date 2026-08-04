@@ -7,14 +7,18 @@ namespace App\Services\Api;
 use App\Core\Database;
 use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
+use App\Services\GovernmentDatasetService;
+use RuntimeException;
+use Throwable;
 
 /**
- * Read-only Admin API queues for facility/provider import candidates (Option B Increment H).
+ * Admin API queues for facility/provider import candidates (Option B Increment H / H.1).
  *
  * Separate from GET /imports (api_import_jobs / RIC packages). Query patterns follow
  * GovernmentDatasetService::pendingCandidates and DataSourceService::reviewQueue.
+ * Facility approve/reject are human-only and delegate to GovernmentDatasetService.
  */
-final class AdminApiImportCandidateService
+class AdminApiImportCandidateService
 {
     /** @var list<string> */
     private const FACILITY_STATUSES = ['pending', 'approved', 'rejected', 'ignored'];
@@ -40,6 +44,12 @@ final class AdminApiImportCandidateService
         'client_secret',
     ];
 
+    private FacilityImportCandidateReviewGateway $datasets;
+
+    public function __construct(?FacilityImportCandidateReviewGateway $datasets = null)
+    {
+        $this->datasets = $datasets ?? new GovernmentDatasetService();
+    }
     /**
      * @return array{
      *   items:list<array<string,mixed>>,
@@ -137,6 +147,24 @@ final class AdminApiImportCandidateService
         }
 
         return $this->facilityDetail($row);
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function approveFacilityCandidate(int $id, array $input, Request $request): array
+    {
+        return $this->reviewFacilityCandidate($id, 'approve', $request, $this->optionalReason($input));
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function rejectFacilityCandidate(int $id, array $input, Request $request): array
+    {
+        return $this->reviewFacilityCandidate($id, 'reject', $request, $this->optionalReason($input));
     }
 
     /**
@@ -261,6 +289,73 @@ final class AdminApiImportCandidateService
         }
 
         return $this->providerDetail($row);
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    private function reviewFacilityCandidate(int $id, string $action, Request $request, ?string $notes): array
+    {
+        $before = $this->showFacilityCandidate($id);
+        if ((string) ($before['review_status'] ?? '') !== 'pending') {
+            throw new AdminApiException(
+                409,
+                'conflict',
+                'Only pending facility import candidates can be reviewed.'
+            );
+        }
+
+        try {
+            $this->datasets->reviewCandidate($id, $action, AdminApiContext::userId(), $notes);
+        } catch (RuntimeException $e) {
+            $message = $e->getMessage();
+            if (str_contains($message, 'not found') || str_contains($message, 'already reviewed')) {
+                throw new AdminApiException(
+                    409,
+                    'conflict',
+                    'Only pending facility import candidates can be reviewed.'
+                );
+            }
+            if (str_contains($message, 'Invalid review action')) {
+                throw new AdminApiException(422, 'validation_failed', 'Unknown review action.');
+            }
+            throw new AdminApiException(422, 'validation_failed', $message);
+        } catch (Throwable $e) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Facility import candidate could not be reviewed: ' . $e->getMessage()
+            );
+        }
+
+        $after = $this->showFacilityCandidate($id);
+        AdminApiAudit::record(
+            'facility_import_candidate.' . ($action === 'approve' ? 'approved' : 'rejected'),
+            'traveller_facility_import_candidate',
+            $id,
+            [
+                'review_status' => 'pending',
+                'facility_id' => $before['facility_id'] ?? null,
+            ],
+            [
+                'review_status' => (string) ($after['review_status'] ?? ''),
+                'facility_id' => $after['facility_id'] ?? null,
+                'reason' => $notes,
+            ],
+            $request
+        );
+
+        return $after;
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     */
+    private function optionalReason(array $input): ?string
+    {
+        $reason = trim((string) ($input['reason'] ?? $input['notes'] ?? ''));
+
+        return $reason !== '' ? $reason : null;
     }
 
     /**
