@@ -112,6 +112,9 @@ facilities/claims/corrections reads:
     (`import_candidates:review` + human Admin API session) — optional JSON
     `{ "reason": "..." }` maps to review notes; service accounts cannot hold
     this scope (`NEVER_SERVICE`). Website admin review remains available.
+  - `POST /facility-import-candidates/bulk-approve|bulk-reject` — same human
+    scope; body `{ "ids": [...], "reason": "..." }`; per-id results; capped by
+    `admin_api.max_batch_size`
   - `GET /provider-import-candidates`, `GET /provider-import-candidates/{id}`
     (`import_candidates:read`) — brand-scoped `data_source_import_candidates`;
     optional `q` / `state`; same envelope and raw rules; detail may include
@@ -243,6 +246,12 @@ Option B Increment H.2 adds:
   Delegates to `DataSourceService::review`. Approve requires retention
   confirmation and independent evidence URL; auto-confirms evidence when
   needed. Merge/hold remain website admin.
+
+Option B Increment H.3 adds:
+
+- `POST /facility-import-candidates/bulk-approve|bulk-reject` — human-only
+  batch facility candidate review (same scope). Per-id results; batch capped
+  by `admin_api.max_batch_size`. Provider bulk remains out of scope.
 
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.

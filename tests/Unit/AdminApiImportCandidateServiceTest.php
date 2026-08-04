@@ -67,6 +67,8 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertStringContainsString('reviewCandidate', $source);
         self::assertStringContainsString('approveFacilityCandidate', $source);
         self::assertStringContainsString('rejectFacilityCandidate', $source);
+        self::assertStringContainsString('bulkApproveFacilityCandidates', $source);
+        self::assertStringContainsString('bulkRejectFacilityCandidates', $source);
         self::assertStringContainsString('approveProviderCandidate', $source);
         self::assertStringContainsString('rejectProviderCandidate', $source);
 
@@ -192,6 +194,73 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         } catch (AdminApiException $e) {
             self::assertSame(409, $e->getStatusCode());
             self::assertSame('conflict', $e->errorCode());
+        }
+    }
+
+    public function testBulkApproveFacilityCandidatesReturnsPerIdResults(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 42, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-bulk');
+
+        $service = new class extends AdminApiImportCandidateService {
+            /** @var list<int> */
+            public array $approved = [];
+
+            public function approveFacilityCandidate(int $id, array $input, Request $request): array
+            {
+                if ($id === 2) {
+                    throw new AdminApiException(409, 'conflict', 'Only pending facility import candidates can be reviewed.');
+                }
+                $this->approved[] = $id;
+
+                return [
+                    'id' => (string) $id,
+                    'review_status' => 'approved',
+                    'facility_id' => (string) (100 + $id),
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/facility-import-candidates/bulk-approve',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        $result = $service->bulkApproveFacilityCandidates([
+            'ids' => [1, 2, 1, 3],
+            'reason' => 'Batch verified',
+        ], $request);
+
+        self::assertSame('bulk_approve', $result['action']);
+        self::assertSame(3, $result['count']);
+        self::assertSame(2, $result['processed']);
+        self::assertSame(1, $result['failed']);
+        self::assertSame([1, 3], $service->approved);
+        self::assertSame('approved', $result['results'][0]['status']);
+        self::assertSame('failed', $result['results'][1]['status']);
+        self::assertSame('conflict', $result['results'][1]['error']['code']);
+        self::assertSame('3', $result['results'][2]['id']);
+    }
+
+    public function testBulkRejectFacilityCandidatesRequiresIds(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 7, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-bulk-2');
+
+        $service = new AdminApiImportCandidateService();
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/facility-import-candidates/bulk-reject',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        try {
+            $service->bulkRejectFacilityCandidates([], $request);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(422, $e->getStatusCode());
+            self::assertArrayHasKey('ids', $e->fields());
         }
     }
 
