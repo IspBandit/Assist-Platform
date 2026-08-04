@@ -90,7 +90,9 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'GET /searches',
             'GET /sync-conflicts',
             'GET /facilities',
+            'GET /imports',
             'POST /imports/{id}/publish',
+            'GET /feature-flags',
             'GET /overview',
             'GET /website-insights',
         ] as $required) {

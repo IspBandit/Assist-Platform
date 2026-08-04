@@ -7,6 +7,7 @@ namespace App\Services\Api;
 use App\Core\Database;
 use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
+use App\Platform\AiSearch\Budget\AIBudgetService;
 use App\Services\Demand\ReportingService;
 
 /**
@@ -33,6 +34,7 @@ final class AdminApiAiUsageService
         ) ?? [];
 
         $settings = $this->settings();
+        $budget = $this->budgetSnapshot();
 
         return [
             'from' => $from,
@@ -45,6 +47,7 @@ final class AdminApiAiUsageService
             'cache_hits' => (int) ($row['cache_hits'] ?? 0),
             'ai_enabled' => (bool) ($settings['ai_enabled'] ?? false),
             'openai_enabled' => (bool) ($settings['openai_enabled'] ?? false),
+            'budget' => $budget,
             'sparse' => ((int) ($row['requests'] ?? 0)) === 0,
         ];
     }
@@ -261,8 +264,49 @@ final class AdminApiAiUsageService
             'cache_hits' => 0,
             'ai_enabled' => false,
             'openai_enabled' => false,
+            'budget' => $this->budgetSnapshot(),
             'sparse' => true,
             'source' => 'ai_usage_missing',
+        ];
+    }
+
+    /**
+     * Read-only spend-vs-cap snapshot (no secrets / allowlists).
+     *
+     * @return array<string,mixed>
+     */
+    private function budgetSnapshot(): array
+    {
+        try {
+            $eval = (new AIBudgetService())->evaluatePaidAiAttempt(0.0);
+        } catch (\Throwable) {
+            return [
+                'daily_budget_aud' => 0.0,
+                'monthly_budget_aud' => 0.0,
+                'cost_today_aud' => 0.0,
+                'cost_month_aud' => 0.0,
+                'daily_request_cap' => 0,
+                'monthly_request_cap' => 0,
+                'requests_today' => 0,
+                'requests_month' => 0,
+                'state' => 'ai_disabled',
+                'reason' => 'Budget evaluation unavailable.',
+                'allowed' => false,
+            ];
+        }
+
+        return [
+            'daily_budget_aud' => (float) ($eval['daily_budget_aud'] ?? 0),
+            'monthly_budget_aud' => (float) ($eval['monthly_budget_aud'] ?? 0),
+            'cost_today_aud' => (float) ($eval['cost_today'] ?? 0),
+            'cost_month_aud' => (float) ($eval['cost_month'] ?? 0),
+            'daily_request_cap' => (int) ($eval['daily_request_cap'] ?? 0),
+            'monthly_request_cap' => (int) ($eval['monthly_request_cap'] ?? 0),
+            'requests_today' => (int) ($eval['requests_today'] ?? 0),
+            'requests_month' => (int) ($eval['requests_month'] ?? 0),
+            'state' => (string) ($eval['state'] ?? 'ai_disabled'),
+            'reason' => $eval['reason'] ?? null,
+            'allowed' => (bool) ($eval['allowed'] ?? false),
         ];
     }
 

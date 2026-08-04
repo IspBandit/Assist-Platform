@@ -11,9 +11,12 @@
 - Queensland essential facility coverage (merged to main)
 - **RIC everyday management A–E** — Overview, Directory, Data Review, Ask Insights,
   Website Insights (merged)
+- **RIC everyday management Operations (Increment F)** — docs + RIC Operations page
+  contract (merged)
 
 ## In Progress
-- **RIC everyday management Operations (Increment F)** — docs + RIC Operations page
+- **RIC Operations Admin API gaps (Increment G)** — import list, AI summary
+  `budget`, read-only feature-flags (`flags:read`)
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -22,8 +25,8 @@
 - Production `ADMIN_API_ENABLED` / Ask / facilities / paid AI
 - POL-009 / LOC-003 / COM-004 launches
 - Full Platform Quality Gate / production release
-- Ops completeness: feature-flag Admin API, import list index, failed-job queue,
-  AI budget-cap fields
+- Ops completeness: failed-job queue Admin API; feature-flag **writes** remain
+  website admin only
 
 ## Current task — RIC everyday management (dependency order)
 
@@ -32,8 +35,9 @@
 3. ~~Data Review~~ — merged
 4. ~~Ask Insights~~ — merged
 5. ~~Website Insights~~ — merged (RIC #10)
-6. **Operations** — in PR
-7. No production flags; no deploy without owner
+6. ~~Operations (Increment F docs)~~ — merged
+7. **Operations gaps (Increment G)** — Platform Admin API ops reads on this branch
+8. No production flags; no deploy without owner
 
 ## Overall Completion %
-94% programme; RIC everyday management A–E merged; F in flight
+94% programme; RIC everyday management A–F merged; G in flight

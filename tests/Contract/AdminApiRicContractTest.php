@@ -72,6 +72,7 @@ final class AdminApiRicContractTest extends TestCase
         'POST /drafts/{id}/approve',
         'POST /drafts/{id}/reject',
         'POST /imports',
+        'GET /imports',
         'GET /imports/{id}',
         'POST /imports/{id}/validate',
         'POST /imports/{id}/stage',
@@ -118,6 +119,7 @@ final class AdminApiRicContractTest extends TestCase
         'POST /facilities/{id}/archive',
         'POST /facilities/{id}/restore',
         'DELETE /facilities/{id}',
+        'GET /feature-flags',
         'GET /audit',
         'GET /audit/{id}',
         'GET /search-gaps',
@@ -164,7 +166,7 @@ final class AdminApiRicContractTest extends TestCase
         }
         self::assertNotEmpty($paths);
 
-        foreach (['/health', '/audit', '/search-gaps', '/overview', '/website-insights', '/auth/mfa/challenge', '/auth/mfa/enroll/begin', '/auth/mfa/verify'] as $required) {
+        foreach (['/health', '/audit', '/search-gaps', '/overview', '/website-insights', '/feature-flags', '/auth/mfa/challenge', '/auth/mfa/enroll/begin', '/auth/mfa/verify'] as $required) {
             self::assertContains($required, $paths, 'OpenAPI missing path ' . $required);
         }
     }

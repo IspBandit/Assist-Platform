@@ -46,6 +46,16 @@ may remain as dated files and are linked here rather than copied.
 - Explicitly deferred feature-flag reads, import list index, failed-job queues
   and AI budget caps (remain website admin). No production toggles from RIC.
 
+### RIC Operations Admin API gaps (Increment G)
+
+- Added `GET /api/v1/admin/imports` import-job index (`imports:read`, cursor +
+  optional status; sparse when jobs table missing).
+- Nested read-only `budget` snapshot on `GET /ai/usage/summary` (`ai:read`).
+- Added `GET /api/v1/admin/feature-flags` (`flags:read`) catalogue; no Admin API
+  write/toggle paths. Scope included in `RIC_SERVICE`.
+- OpenAPI, LIVE_API, contract and unit coverage updated. No production flags
+  changed.
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.

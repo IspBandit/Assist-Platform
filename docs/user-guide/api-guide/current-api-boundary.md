@@ -59,8 +59,9 @@ queues stay on PHP admin routes. Ask Insights may also read
 `GET /ai/usage/requests` (and related AI usage rollups) plus dual-source
 `GET /search-gaps` for knowledge-gap engagement meta. Operations may read
 `GET /health`, `/version`, `/capabilities`, dataset `/sync-history`,
-`/sync-conflicts`, `/imports/{id}`, AI usage rollups and `/audit` — never
-feature-flag writes or production toggles from RIC.
+`/sync-conflicts`, `GET /imports` and `/imports/{id}`, AI usage rollups
+(including summary `budget`), `GET /feature-flags` (`flags:read`) and
+`/audit` — never feature-flag writes or production toggles from RIC.
 
 ## Workflows
 
@@ -117,7 +118,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-02 (Option B programme).
+2026-08-04 (RIC Operations Increment G).
 
 ## Owner
 
@@ -132,3 +133,4 @@ Assist Platform product and engineering.
 | 2026-08-01 | Documented OPS-010 TOTP enrollment and MFA login challenge for Admin API humans. |
 | 2026-08-02 | Documented Option B Admin API Increments B–G: claims, corrections, duplicates, datasets, AI usage, search analytics, sync conflicts and `/facilities`. |
 | 2026-08-02 | Recorded Option B programme A–L conditional Quality Gate; production Admin API flags remain gated. |
+| 2026-08-04 | Documented RIC Operations Increment G: `GET /imports`, summary `budget`, `GET /feature-flags` (`flags:read`; no writes). |

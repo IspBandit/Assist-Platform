@@ -22,6 +22,9 @@
   against health/version/capabilities, dataset sync-history, sync-conflicts,
   import show, AI usage rollups and audit. Feature flags, import list index,
   failed-job queues and AI budget caps remain website admin.
+- **RIC Operations Admin API gaps (Increment G)** — `GET /imports` list index;
+  nested `budget` on `/ai/usage/summary`; read-only `GET /feature-flags`
+  (`flags:read` in `RIC_SERVICE`). No flag write paths.
 
 - Fixed CKAN government imports silently truncating complete state or national
   CSV extracts at 500 records. Review-first imports now honour the existing

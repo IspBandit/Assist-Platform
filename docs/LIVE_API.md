@@ -131,15 +131,21 @@ facilities/claims/corrections reads:
   sync run history
 - `GET /sync-conflicts` (`sync:read`) — open conflict list (resolve stays
   human/website admin; not on the Operations page)
-- `GET /imports/{id}` (`imports:read`) — single import job detail (no list index
-  yet; RIC prefills the last local import id when known)
+- `GET /imports` (`imports:read`) — brand-scoped import job index (cursor +
+  optional `status`; sparse when the jobs table is absent). Item payloads are
+  omitted; use `GET /imports/{id}` for line detail
+- `GET /imports/{id}` (`imports:read`) — single import job detail
 - `GET /ai/usage/summary`, `/ai/usage/costs`, `/ai/cache-performance` (`ai:read`)
-  — usage and enable flags; **budget caps are not on the Admin API** (PHP AI
-  admin only)
+  — usage and enable flags. Summary includes a nested read-only `budget`
+  snapshot (spend vs caps / allow state). Setting or changing budget caps stays
+  PHP AI admin only
+- `GET /feature-flags` (`flags:read`) — platform feature-flag catalogue
+  (enabled, description, updated_at). **No write/toggle paths** on the Admin
+  API; toggles remain website admin with owner workflows
 - `GET /audit`, `GET /audit/{id}` (`audit:read`) — audited mutation history
-- Feature-flag catalogue, global failed-job queues and AI budget-cap fields
-  remain website admin until Admin API coverage is added. Operations must never
-  toggle production AI, traveller facilities, releases or dangerous flags.
+- Global failed-job queues remain website admin until Admin API coverage is
+  added. Operations must never toggle production AI, traveller facilities,
+  releases or dangerous flags.
 
 Increment 5 (audited writes + lifecycle) adds:
 

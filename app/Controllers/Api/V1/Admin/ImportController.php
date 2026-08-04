@@ -13,6 +13,17 @@ use App\Services\Api\AdminApiImportService;
 
 final class ImportController extends Controller
 {
+    public function index(Request $request): Response
+    {
+        $result = (new AdminApiImportService())->list($request);
+
+        return AdminApiEnvelope::collection(
+            $result['items'],
+            $result['meta'],
+            $result['links']
+        );
+    }
+
     public function store(Request $request): Response
     {
         return AdminApiEnvelope::data(
