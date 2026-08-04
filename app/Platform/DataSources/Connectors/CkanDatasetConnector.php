@@ -27,7 +27,10 @@ final class CkanDatasetConnector implements ConnectorInterface
     public function search(array $request, array $credentials, array $settings = []): array
     {
         unset($credentials);
-        $limit = max(1, min(500, (int) ($request['limit'] ?? 100)));
+        // CKAN may point to complete state or national CSV extracts. Preserve a
+        // hard ceiling, but do not silently truncate the downstream CSV parser
+        // at the former 500-row development cap.
+        $limit = max(1, min(25000, (int) ($request['limit'] ?? 100)));
         $defaultType = FacilityTypeMapper::normalise((string) ($settings['default_facility_type'] ?? 'other_essential'));
         $http = $this->http ?? new SimpleHttpClient();
 

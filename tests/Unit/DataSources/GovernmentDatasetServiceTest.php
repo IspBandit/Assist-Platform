@@ -80,6 +80,36 @@ final class GovernmentDatasetServiceTest extends TestCase
         self::assertStringContainsString('resource_show', $http->urls[0]);
     }
 
+    public function testCkanConnectorDoesNotTruncateCompleteCsvAtFiveHundredRows(): void
+    {
+        $http = new class extends SimpleHttpClient {
+            public function get(string $url, array $headers = [], int $timeoutSeconds = 25, int $maxRedirects = 3): array
+            {
+                $lines = ['FacilityID,Name,State,Latitude,Longitude'];
+                for ($i = 1; $i <= 505; $i++) {
+                    $lines[] = "{$i},Queensland Facility {$i},QLD,-26.5,148.7";
+                }
+
+                return ['status' => 200, 'body' => implode("\n", $lines)];
+            }
+        };
+
+        $rows = (new CkanDatasetConnector($http))->search(
+            ['limit' => 25000],
+            [],
+            [
+                'resource_url' => 'https://example.com/toilets.csv',
+                'format' => 'csv',
+                'id_field' => 'facilityid',
+                'name_field' => 'name',
+                'filters' => ['state' => 'QLD'],
+                'default_facility_type' => 'public_toilet',
+            ]
+        );
+
+        self::assertCount(505, $rows);
+    }
+
     public function testRedirectResolverKeepsRelativePathsOnSameHost(): void
     {
         $client = new SimpleHttpClient();
