@@ -70,6 +70,8 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertContains('corrections:read', AdminApiScopes::RIC_SERVICE);
         self::assertContains('duplicates:read', AdminApiScopes::RIC_SERVICE);
         self::assertContains('recycle_bin:restore', AdminApiScopes::RIC_SERVICE);
+        self::assertContains('import_candidates:read', AdminApiScopes::ALL);
+        self::assertContains('import_candidates:read', AdminApiScopes::RIC_SERVICE);
     }
 
     public function testOptionBRouteSignaturesExist(): void
@@ -92,6 +94,10 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'GET /facilities',
             'GET /imports',
             'POST /imports/{id}/publish',
+            'GET /facility-import-candidates',
+            'GET /facility-import-candidates/{id}',
+            'GET /provider-import-candidates',
+            'GET /provider-import-candidates/{id}',
             'GET /feature-flags',
             'GET /overview',
             'GET /website-insights',
@@ -108,7 +114,10 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertSame('read_write', $payload['data']['resources']['claims']);
         self::assertSame('read_write', $payload['data']['resources']['duplicates']);
         self::assertSame('read', $payload['data']['resources']['ai_usage']);
+        self::assertSame('read', $payload['data']['resources']['facility_import_candidates']);
+        self::assertSame('read', $payload['data']['resources']['provider_import_candidates']);
         self::assertTrue($payload['data']['scopes']['claims:read']['service']);
+        self::assertTrue($payload['data']['scopes']['import_candidates:read']['service']);
         self::assertFalse($payload['data']['scopes']['duplicates:merge']['service']);
     }
 

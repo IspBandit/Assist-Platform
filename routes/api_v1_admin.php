@@ -15,6 +15,7 @@ declare(strict_types=1);
  * Increment 8: audit read + search-gap analytics + MFA scaffold.
  * Option B Increments B–G: claims, corrections, duplicates, datasets, AI usage,
  * search analytics, sync conflicts, facilities and import lifecycle extensions.
+ * Option B Increment H: read-only facility/provider import-candidate queues.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -170,6 +171,15 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/imports/{id}/publish', 'Api\\V1\\Admin\\ImportController@publish', 'api.v1.admin.imports.publish');
                 $router->post('/imports/{id}/cancel', 'Api\\V1\\Admin\\ImportController@cancel', 'api.v1.admin.imports.cancel');
                 $router->post('/imports/{id}/retry', 'Api\\V1\\Admin\\ImportController@retry', 'api.v1.admin.imports.retry');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:import_candidates:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/facility-import-candidates', 'Api\\V1\\Admin\\FacilityImportCandidateController@index', 'api.v1.admin.facility_import_candidates.index');
+                $router->get('/facility-import-candidates/{id}', 'Api\\V1\\Admin\\FacilityImportCandidateController@show', 'api.v1.admin.facility_import_candidates.show');
+                $router->get('/provider-import-candidates', 'Api\\V1\\Admin\\ProviderImportCandidateController@index', 'api.v1.admin.provider_import_candidates.index');
+                $router->get('/provider-import-candidates/{id}', 'Api\\V1\\Admin\\ProviderImportCandidateController@show', 'api.v1.admin.provider_import_candidates.show');
             });
 
             $router->group([

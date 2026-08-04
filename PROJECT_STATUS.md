@@ -15,8 +15,8 @@
   contract (merged)
 
 ## In Progress
-- **RIC Operations Admin API gaps (Increment G)** — import list, AI summary
-  `budget`, read-only feature-flags (`flags:read`)
+- **Import-candidate review queues (Increment H)** — read-only Admin API for
+  facility/provider import candidates (`import_candidates:read`)
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -25,8 +25,8 @@
 - Production `ADMIN_API_ENABLED` / Ask / facilities / paid AI
 - POL-009 / LOC-003 / COM-004 launches
 - Full Platform Quality Gate / production release
-- Ops completeness: failed-job queue Admin API; feature-flag **writes** remain
-  website admin only
+- Ops completeness: failed-job queue Admin API; feature-flag **writes** and
+  import-candidate approve/reject remain website admin only
 
 ## Current task — RIC everyday management (dependency order)
 
@@ -36,8 +36,9 @@
 4. ~~Ask Insights~~ — merged
 5. ~~Website Insights~~ — merged (RIC #10)
 6. ~~Operations (Increment F docs)~~ — merged
-7. **Operations gaps (Increment G)** — Platform Admin API ops reads on this branch
-8. No production flags; no deploy without owner
+7. ~~Operations gaps (Increment G)~~ — merged
+8. **Import-candidate queues (Increment H)** — read-only Admin API on this branch
+9. No production flags; no deploy without owner
 
 ## Overall Completion %
-94% programme; RIC everyday management A–F merged; G in flight
+94% programme; RIC everyday management A–G merged; H in flight

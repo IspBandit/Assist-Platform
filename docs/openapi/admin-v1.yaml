@@ -27,11 +27,17 @@ tags:
   - name: RecycleBin
   - name: Drafts
   - name: Imports
+  - name: ImportCandidates
   - name: Audit
   - name: Analytics
   - name: AI
   - name: FeatureFlags
   - name: Sync
+  - name: Claims
+  - name: Corrections
+  - name: Duplicates
+  - name: Datasets
+  - name: Facilities
 paths:
   /health:
     get:
@@ -1411,6 +1417,113 @@ paths:
       responses:
         '200':
           description: Staging results
+  /facility-import-candidates:
+    get:
+      tags: [ImportCandidates]
+      operationId: adminFacilityImportCandidatesIndex
+      summary: List traveller-facility import candidates
+      description: |
+        Read-only review queue for `traveller_facility_import_candidates`
+        (`import_candidates:read`). Not the same resource as `GET /imports`
+        (RIC package jobs / `api_import_jobs`). Default `status=pending`
+        (non-expired). Cursor pagination. List items omit `raw_json`.
+        Sparse when the candidates table is missing. No approve/reject in
+        this increment.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          description: Review status (default pending)
+          schema:
+            type: string
+            enum: [pending, approved, rejected, ignored]
+      responses:
+        '200':
+          description: Facility import-candidate collection
+  /facility-import-candidates/{id}:
+    get:
+      tags: [ImportCandidates]
+      operationId: adminFacilityImportCandidatesShow
+      summary: Show a facility import candidate
+      description: |
+        Detail may include a sanitised `raw` summary (secrets redacted).
+        Distinct from `GET /imports/{id}`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Facility import-candidate detail
+        '404':
+          description: Not found in brand scope
+  /provider-import-candidates:
+    get:
+      tags: [ImportCandidates]
+      operationId: adminProviderImportCandidatesIndex
+      summary: List provider data-source import candidates
+      description: |
+        Read-only brand-scoped review queue for `data_source_import_candidates`
+        (`import_candidates:read`). Not the same resource as `GET /imports`
+        (RIC package jobs). Default `status=pending` (non-expired). Optional
+        `q` and `state` filters mirror the PHP admin review queue. List items
+        omit `raw_json`. Sparse when the candidates table is missing. No
+        approve/reject in this increment.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          description: Review status (default pending)
+          schema:
+            type: string
+            enum: [pending, held, approved, merged, rejected, ignored]
+        - name: q
+          in: query
+          description: Search business name, address, phone or website
+          schema:
+            type: string
+        - name: state
+          in: query
+          description: Australian jurisdiction code (e.g. QLD)
+          schema:
+            type: string
+            pattern: '^[A-Za-z]{2,3}$'
+      responses:
+        '200':
+          description: Provider import-candidate collection
+  /provider-import-candidates/{id}:
+    get:
+      tags: [ImportCandidates]
+      operationId: adminProviderImportCandidatesShow
+      summary: Show a provider import candidate
+      description: |
+        Brand-scoped detail; sanitised `raw` summary may be present.
+        Distinct from `GET /imports/{id}`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Provider import-candidate detail
+        '404':
+          description: Not found in brand scope
   /auth/mfa/challenge:
     post:
       tags: [Auth]

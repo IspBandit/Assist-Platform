@@ -103,11 +103,19 @@ facilities/claims/corrections reads:
   human-session website admin actions. Recycle restore is allowed for service
   accounts with `recycle_bin:restore` (now in default `RIC_SERVICE`) but RIC UI
   still keeps restore out of the first Data Review increment.
-- Facility/provider **import-candidate** queues (`traveller_facility_import_*`,
-  `data_source_import_candidates`) and stale/missing quality lists have **no**
-  Admin API yet — continue PHP admin review. Overview
-  `facility_candidates_pending` counts live facility lifecycle statuses, not
-  import candidates.
+- Facility/provider **import-candidate** queues are available read-only:
+  - `GET /facility-import-candidates`, `GET /facility-import-candidates/{id}`
+    (`import_candidates:read`) — `traveller_facility_import_candidates`;
+    default `status=pending` (non-expired); cursor pagination; list omits
+    `raw_json`; detail may include sanitised `raw`
+  - `GET /provider-import-candidates`, `GET /provider-import-candidates/{id}`
+    (`import_candidates:read`) — brand-scoped `data_source_import_candidates`;
+    optional `q` / `state`; same envelope and raw rules
+  - These are **not** `GET /imports` (RIC package jobs / `api_import_jobs`).
+  - Approve/reject remains PHP admin this increment. Stale/missing quality
+    lists still have no Admin API.
+  - Overview `facility_candidates_pending` counts live facility lifecycle
+    statuses, not import candidates.
 
 **RIC Ask Insights** uses existing AI usage and dual-source search-gap reads:
 
@@ -205,6 +213,14 @@ Option B Increments B–G add:
 - `GET /sync-conflicts`, `POST /sync-conflicts/{id}/resolve` — RIC conflict queue (`sync:read`)
 - `GET/POST/PATCH /api/v1/admin/facilities` + lifecycle — traveller facilities (`facilities:*`, ADR 0019)
 - `POST /imports/{id}/publish|cancel|retry` — import job lifecycle extensions
+
+Option B Increment H adds:
+
+- `GET /api/v1/admin/facility-import-candidates` + `/{id}` — facility import
+  review queue (`import_candidates:read`); separate from `GET /imports`
+- `GET /api/v1/admin/provider-import-candidates` + `/{id}` — provider import
+  review queue (`import_candidates:read`); brand-scoped; optional `q`/`state`
+- No approve/reject endpoints this increment
 
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.
