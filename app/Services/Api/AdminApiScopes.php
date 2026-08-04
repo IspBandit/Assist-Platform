@@ -36,6 +36,7 @@ final class AdminApiScopes
         'analytics:read',
         'ai:read',
         'audit:read',
+        'flags:read',
         'lifecycle:write',
         'recycle_bin:restore',
         'recycle_bin:purge',
@@ -83,6 +84,7 @@ final class AdminApiScopes
         'ai:read',
         'audit:read',
         'recycle_bin:restore',
+        'flags:read',
     ];
 
     /** @var list<string> */
@@ -189,12 +191,13 @@ final class AdminApiScopes
             'drafts:read' => 'List and read draft submissions',
             'drafts:write' => 'Create and update drafts',
             'drafts:approve' => 'Approve or reject drafts',
-            'imports:read' => 'Read import job status',
+            'imports:read' => 'List and read import job status',
             'imports:write' => 'Submit, stage, publish and manage import packages',
             'sync:read' => 'Read sync conflicts and health metadata',
             'analytics:read' => 'Read overview, website insights, search analytics and zero-result gaps',
-            'ai:read' => 'Read AI usage, cost and cache performance summaries',
+            'ai:read' => 'Read AI usage, cost, budget caps and cache performance summaries',
             'audit:read' => 'Read audit events',
+            'flags:read' => 'Read platform feature-flag catalogue (read-only)',
             'lifecycle:write' => 'Publish, unpublish, archive and restore lifecycle',
             'recycle_bin:restore' => 'Restore soft-deleted records',
             'recycle_bin:purge' => 'Permanently purge recycle-bin records',

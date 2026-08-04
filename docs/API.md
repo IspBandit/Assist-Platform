@@ -62,10 +62,11 @@ those JSON collections without exposing private user identifiers.
 
 Assist RIC Operations provides read-only operational visibility through
 `GET /api/v1/admin/health`, `/version`, `/capabilities`, dataset
-`/sync-history`, `/sync-conflicts`, `/imports/{id}`, AI usage rollups and
-`/audit`. It does not expose feature-flag writes, AI budget caps, or
-import/publish controls. Dangerous production toggles stay in website admin
-with owner workflows.
+`/sync-history`, `/sync-conflicts`, `GET /imports` + `/imports/{id}`, AI usage
+rollups (summary includes nested `budget`), `GET /feature-flags`
+(`flags:read`) and `/audit`. It does not expose feature-flag writes, AI budget
+cap mutation, or import/publish controls from the Operations page. Dangerous
+production toggles stay in website admin with owner workflows.
 
 ## Authentication and authorization
 

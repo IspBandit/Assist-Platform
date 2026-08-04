@@ -157,6 +157,7 @@ return static function (\App\Core\Router $router): void {
             $router->group([
                 'middleware' => ['admin_api_scope:imports:read'],
             ], static function (\App\Core\Router $router): void {
+                $router->get('/imports', 'Api\\V1\\Admin\\ImportController@index', 'api.v1.admin.imports.index');
                 $router->get('/imports/{id}', 'Api\\V1\\Admin\\ImportController@show', 'api.v1.admin.imports.show');
             });
 
@@ -239,6 +240,12 @@ return static function (\App\Core\Router $router): void {
                 $router->get('/ai/usage/costs', 'Api\\V1\\Admin\\AiUsageController@costs', 'api.v1.admin.ai.usage.costs');
                 $router->get('/ai/usage/requests', 'Api\\V1\\Admin\\AiUsageController@requests', 'api.v1.admin.ai.usage.requests');
                 $router->get('/ai/cache-performance', 'Api\\V1\\Admin\\AiUsageController@cachePerformance', 'api.v1.admin.ai.cache_performance');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:flags:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/feature-flags', 'Api\\V1\\Admin\\FeatureFlagController@index', 'api.v1.admin.feature_flags.index');
             });
 
             $router->group([

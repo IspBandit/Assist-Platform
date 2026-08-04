@@ -20,8 +20,11 @@ final class AdminApiRicScopesTest extends TestCase
         self::assertContains('facilities:read', $scopes);
         self::assertContains('sync:read', $scopes);
         self::assertContains('recycle_bin:restore', $scopes);
+        self::assertContains('flags:read', $scopes);
+        self::assertContains('flags:read', AdminApiScopes::ALL);
         self::assertNotContains('recycle_bin:purge', $scopes);
         self::assertNotContains('mfa:verify', $scopes);
+        self::assertNotContains('flags:read', AdminApiScopes::NEVER_SERVICE);
 
         AdminApiScopes::rejectForbiddenForService($scopes);
         self::assertSame($scopes, AdminApiScopes::normalize($scopes));

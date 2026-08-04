@@ -25,6 +25,103 @@ final class AdminApiImportService
     }
 
     /**
+     * Brand-scoped import job index (no items payloads).
+     *
+     * @return array{
+     *   items:list<array<string,mixed>>,
+     *   meta:array<string,mixed>,
+     *   links:array<string,mixed>
+     * }
+     */
+    public function list(Request $request): array
+    {
+        $brandId = AdminApiBrandScope::brandId();
+        $limit = AdminApiCursor::limit($request->query('limit'));
+        $cursor = $this->decodeImportCursor($request->query('cursor'));
+        $status = strtolower(trim((string) $request->query('status', '')));
+
+        try {
+            $tableReady = Database::tableExists('api_import_jobs');
+        } catch (\Throwable) {
+            $tableReady = false;
+        }
+
+        if (!$tableReady) {
+            return [
+                'items' => [],
+                'meta' => [
+                    'count' => 0,
+                    'limit' => $limit,
+                    'has_more' => false,
+                    'next_cursor' => null,
+                    'status' => $status !== '' ? $status : null,
+                    'sparse' => true,
+                ],
+                'links' => ['next' => null],
+            ];
+        }
+
+        $where = ['brand_id = ?'];
+        $params = [$brandId];
+
+        if ($cursor !== null) {
+            $where[] = '(created_at < ? OR (created_at = ? AND id < ?))';
+            array_push($params, $cursor['created_at'], $cursor['created_at'], $cursor['id']);
+        }
+
+        if ($status !== '') {
+            $where[] = 'status = ?';
+            $params[] = $status;
+        }
+
+        $fetchLimit = $limit + 1;
+        $rows = Database::select(
+            'SELECT id, status, package_checksum, item_count, error_json, created_at, updated_at '
+            . 'FROM api_import_jobs WHERE ' . implode(' AND ', $where)
+            . ' ORDER BY created_at DESC, id DESC LIMIT ' . $fetchLimit,
+            $params
+        );
+
+        $hasMore = count($rows) > $limit;
+        if ($hasMore) {
+            array_pop($rows);
+        }
+
+        $nextCursor = null;
+        if ($hasMore && $rows !== []) {
+            $last = $rows[array_key_last($rows)];
+            $nextCursor = $this->encodeImportCursor((string) $last['created_at'], (string) $last['id']);
+        }
+
+        $items = array_map(function (array $row): array {
+            $error = $this->decodeJsonField($row['error_json'] ?? null);
+
+            return [
+                'id' => (string) $row['id'],
+                'status' => (string) $row['status'],
+                'package_checksum' => (string) $row['package_checksum'],
+                'item_count' => (int) ($row['item_count'] ?? 0),
+                'error' => $error === [] ? null : $error,
+                'created_at' => (string) ($row['created_at'] ?? ''),
+                'updated_at' => $row['updated_at'] ?? null,
+            ];
+        }, $rows);
+
+        return [
+            'items' => $items,
+            'meta' => [
+                'count' => count($items),
+                'limit' => $limit,
+                'has_more' => $hasMore,
+                'next_cursor' => $nextCursor,
+                'status' => $status !== '' ? $status : null,
+                'sparse' => $items === [],
+            ],
+            'links' => ['next' => $nextCursor],
+        ];
+    }
+
+    /**
      * @param array<string,mixed> $input
      * @return array<string,mixed>
      */
@@ -441,5 +538,46 @@ final class AdminApiImportService
         }
 
         return in_array(strtolower(trim((string) $value)), ['1', 'true', 'yes', 'on'], true);
+    }
+
+    private function encodeImportCursor(string $createdAt, string $id): string
+    {
+        $json = json_encode(['created_at' => $createdAt, 'id' => $id], JSON_THROW_ON_ERROR);
+
+        return rtrim(strtr(base64_encode($json), '+/', '-_'), '=');
+    }
+
+    /** @return array{created_at:string,id:string}|null */
+    private function decodeImportCursor(mixed $cursor): ?array
+    {
+        $cursor = trim((string) $cursor);
+        if ($cursor === '') {
+            return null;
+        }
+
+        $decoded = base64_decode(strtr($cursor, '-_', '+/'), true);
+        if ($decoded === false) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['cursor' => ['Cursor is invalid or malformed.']]
+            );
+        }
+
+        $payload = json_decode($decoded, true);
+        if (!is_array($payload) || !isset($payload['created_at'], $payload['id'])) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['cursor' => ['Cursor is invalid or malformed.']]
+            );
+        }
+
+        return [
+            'created_at' => (string) $payload['created_at'],
+            'id' => (string) $payload['id'],
+        ];
     }
 }
