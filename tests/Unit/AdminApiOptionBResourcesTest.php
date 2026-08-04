@@ -66,6 +66,9 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertContains('claims:read', AdminApiScopes::RIC_SERVICE);
         self::assertContains('datasets:read', AdminApiScopes::RIC_SERVICE);
         self::assertContains('facilities:read', AdminApiScopes::RIC_SERVICE);
+        self::assertContains('ai:read', AdminApiScopes::RIC_SERVICE);
+        self::assertContains('corrections:read', AdminApiScopes::RIC_SERVICE);
+        self::assertContains('duplicates:read', AdminApiScopes::RIC_SERVICE);
     }
 
     public function testOptionBRouteSignaturesExist(): void
@@ -87,6 +90,8 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'GET /sync-conflicts',
             'GET /facilities',
             'POST /imports/{id}/publish',
+            'GET /overview',
+            'GET /website-insights',
         ] as $required) {
             self::assertContains($required, $registered, 'Missing route ' . $required);
         }

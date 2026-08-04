@@ -70,6 +70,8 @@ final class AdminApiScopes
         'providers:read',
         'stays:read',
         'claims:read',
+        'corrections:read',
+        'duplicates:read',
         'datasets:read',
         'facilities:read',
         'drafts:read',
@@ -78,6 +80,7 @@ final class AdminApiScopes
         'imports:write',
         'sync:read',
         'analytics:read',
+        'ai:read',
         'audit:read',
     ];
 
@@ -188,7 +191,7 @@ final class AdminApiScopes
             'imports:read' => 'Read import job status',
             'imports:write' => 'Submit, stage, publish and manage import packages',
             'sync:read' => 'Read sync conflicts and health metadata',
-            'analytics:read' => 'Read search analytics and zero-result gaps',
+            'analytics:read' => 'Read overview, website insights, search analytics and zero-result gaps',
             'ai:read' => 'Read AI usage, cost and cache performance summaries',
             'audit:read' => 'Read audit events',
             'lifecycle:write' => 'Publish, unpublish, archive and restore lifecycle',

@@ -10,6 +10,17 @@ requires MFA gate, staging rehearsal and Quality Gate evidence. See
 `docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md` and
 `docs/OPTION_B_MANAGEMENT_PROGRAMME.md`.
 
+RIC everyday management adds read-only analytics rollups when `analytics:read`
+is granted:
+
+- `GET /api/v1/admin/overview` — operational dashboard (API health/release,
+  genuine website visitors with bot/unknown page views labelled separately,
+  searches, no-result searches, provider contacts, scope-gated review queues,
+  AI cost when `ai:read`, dataset sync timestamps when `datasets:read`).
+- `GET /api/v1/admin/website-insights` — full brand website insights document
+  reusing `WebsiteInsightsService`; `filtered_bot_page_views` is never mixed
+  into visitor totals.
+
 Ask VanAssist natural-language search is a parallel **web** entry at `GET /ask`
 (VanAssist only), gated by feature flag `assist_ai_search` (default off). It
 calls the internal Assist AI Orchestrator (`App\Platform\AiSearch`). A future

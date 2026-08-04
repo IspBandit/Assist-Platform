@@ -121,6 +121,8 @@ final class AdminApiRicContractTest extends TestCase
         'GET /audit',
         'GET /audit/{id}',
         'GET /search-gaps',
+        'GET /overview',
+        'GET /website-insights',
     ];
 
     private Router $router;
@@ -162,7 +164,7 @@ final class AdminApiRicContractTest extends TestCase
         }
         self::assertNotEmpty($paths);
 
-        foreach (['/health', '/audit', '/search-gaps', '/auth/mfa/challenge', '/auth/mfa/enroll/begin', '/auth/mfa/verify'] as $required) {
+        foreach (['/health', '/audit', '/search-gaps', '/overview', '/website-insights', '/auth/mfa/challenge', '/auth/mfa/enroll/begin', '/auth/mfa/verify'] as $required) {
             self::assertContains($required, $paths, 'OpenAPI missing path ' . $required);
         }
     }
@@ -186,6 +188,8 @@ final class AdminApiRicContractTest extends TestCase
 
         self::assertSame('read', $payload['data']['resources']['audit']);
         self::assertSame('read', $payload['data']['resources']['search_gaps']);
+        self::assertSame('read', $payload['data']['resources']['overview']);
+        self::assertSame('read', $payload['data']['resources']['website_insights']);
         self::assertFalse($payload['data']['mfa_required']);
     }
 

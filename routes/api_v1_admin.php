@@ -58,6 +58,13 @@ return static function (\App\Core\Router $router): void {
             });
 
             $router->group([
+                'middleware' => ['admin_api_scope:analytics:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/overview', 'Api\\V1\\Admin\\OverviewController@overview', 'api.v1.admin.overview');
+                $router->get('/website-insights', 'Api\\V1\\Admin\\OverviewController@websiteInsights', 'api.v1.admin.website_insights');
+            });
+
+            $router->group([
                 'middleware' => ['admin_api_scope:providers:read'],
             ], static function (\App\Core\Router $router): void {
                 $router->get('/providers', 'Api\\V1\\Admin\\ProviderController@index', 'api.v1.admin.providers.index');

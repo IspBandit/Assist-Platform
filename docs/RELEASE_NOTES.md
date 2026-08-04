@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### RIC everyday management — overview Admin API
+
+- Added `GET /api/v1/admin/overview` and `GET /api/v1/admin/website-insights`
+  for Assist RIC operational dashboards (analytics:read).
+- Overview reuses `WebsiteInsightsService` so genuine visitors exclude bot/unknown
+  page views; queue and AI sections are scope-gated.
+- Expanded Assist RIC service-account scopes with `corrections:read`,
+  `duplicates:read` and `ai:read` (still no production-danger scopes).
+- OpenAPI, LIVE_API and RIC contract tests updated. No production flags changed.
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.

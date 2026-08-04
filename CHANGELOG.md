@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+- **RIC overview Admin API** — `GET /api/v1/admin/overview` and
+  `GET /api/v1/admin/website-insights` for Assist RIC dashboards; bot/unknown
+  page views labelled separately; RIC scopes add corrections/duplicates/ai read.
+
 - Fixed CKAN government imports silently truncating complete state or national
   CSV extracts at 500 records. Review-first imports now honour the existing
   25,000-record safety ceiling, and staging evidence writes to writable storage.

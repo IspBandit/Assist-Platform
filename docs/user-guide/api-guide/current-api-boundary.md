@@ -47,8 +47,10 @@ must handle validation and error responses implemented by each controller.
 
 When enabled, Assist RIC may authenticate as a service account, submit checksummed
 import packages, manage drafts, read providers, stays, facilities, claims,
-datasets, audit, search analytics and search-gaps through `/api/v1/admin` only —
-never by opening production MariaDB.
+corrections, duplicates, datasets, audit, search analytics, search-gaps,
+operational overview (`GET /overview`) and website insights
+(`GET /website-insights`) through `/api/v1/admin` only — never by opening
+production MariaDB.
 
 ## Workflows
 
@@ -70,6 +72,11 @@ Neither route is a promise of long-term third-party compatibility.
 
 `GET /api/v1/admin/health` and `GET /api/v1/admin/capabilities` are the Admin API
 probe endpoints when the feature flag is on.
+
+`GET /api/v1/admin/overview` returns the RIC operational rollup (range query
+`7d`/`30d`/`90d`/`fy`/`pfy`/`custom`). `GET /api/v1/admin/website-insights`
+returns detailed traffic and demand figures; genuine visitors exclude
+bot/unknown page views and filtered bot views are labelled separately.
 
 ## Common mistakes
 
