@@ -14,6 +14,10 @@
   duplicates and recycle-bin via existing Admin API reads; OpenAPI draft/
   duplicate list filters clarified; RIC service scopes add `recycle_bin:restore`
   (not purge).
+- **RIC Ask Insights contract** — documented Ask activity via
+  `/ai/usage/requests` + dual-source `/search-gaps`; knowledge-gap `meta`
+  adds click/contact/ai_used counts and taxonomy keys (additive); OpenAPI AI
+  usage paths clarified.
 
 - Fixed CKAN government imports silently truncating complete state or national
   CSV extracts at 500 records. Review-first imports now honour the existing

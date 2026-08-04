@@ -159,6 +159,14 @@ final class KnowledgeGapServiceTest extends TestCase
                 'result_quality' => KnowledgeGapService::QUALITY_NONE,
                 'resolution_status' => KnowledgeGapService::STATUS_OPEN,
                 'safety_relevant' => 1,
+                'ai_used_count' => 2,
+                'click_through_count' => 3,
+                'contact_action_count' => 1,
+                'zero_result_count' => 4,
+                'weak_result_count' => 0,
+                'provider_category_keys' => '["repairs"]',
+                'stay_type_keys' => '[]',
+                'facility_type_keys' => '["toilet"]',
             ],
         ]);
         self::assertCount(1, $items);
@@ -170,5 +178,9 @@ final class KnowledgeGapServiceTest extends TestCase
         self::assertNull($items[0]['category_id']);
         self::assertSame('knowledge_gaps', $items[0]['meta']['source']);
         self::assertSame(42, $items[0]['meta']['gap_id']);
+        self::assertSame(3, $items[0]['meta']['click_through_count']);
+        self::assertSame(1, $items[0]['meta']['contact_action_count']);
+        self::assertSame(2, $items[0]['meta']['ai_used_count']);
+        self::assertSame(['toilet'], $items[0]['meta']['taxonomy']['facilities']);
     }
 }
