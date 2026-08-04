@@ -48,12 +48,14 @@ Categories and locations remain website-admin only (no Admin API taxonomy yet).
 
 Assist RIC Data Review browses existing Admin API review queues:
 `GET /api/v1/admin/drafts`, `/duplicates` and `/recycle-bin` (cursor
-pagination), plus read-only import-candidate queues
+pagination), plus import-candidate queues
 `GET /facility-import-candidates` and `GET /provider-import-candidates`
 (`import_candidates:read`; separate from `GET /imports` RIC package jobs).
-Draft approve, duplicate merge and recycle purge require human
-Admin API sessions in the website admin. Candidate approve/reject and
-stale/missing quality queues remain PHP-admin only this increment.
+Facility import-candidate approve/reject is available on human Admin API
+sessions (`import_candidates:review`); service accounts stay read-only and
+cannot hold that scope. Draft approve, duplicate merge, recycle purge and
+provider-candidate approve/reject remain human-session / website-admin
+actions. Stale/missing quality queues remain PHP-admin only.
 Default RIC service scopes include `recycle_bin:restore` (list/restore) but
 not `recycle_bin:purge`.
 

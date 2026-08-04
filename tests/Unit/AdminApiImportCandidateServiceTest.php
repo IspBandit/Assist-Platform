@@ -6,12 +6,15 @@ namespace Tests\Unit;
 
 use App\Core\Config;
 use App\Core\Database;
+use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
 use App\Platform\Brand\Brand;
 use App\Platform\Brand\BrandContext;
 use App\Platform\Brand\BrandRegistry;
+use App\Services\Api\AdminApiContext;
 use App\Services\Api\AdminApiImportCandidateService;
 use App\Services\Api\AdminApiScopes;
+use App\Services\Api\FacilityImportCandidateReviewGateway;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -22,6 +25,7 @@ final class AdminApiImportCandidateServiceTest extends TestCase
     protected function tearDown(): void
     {
         BrandContext::clear();
+        AdminApiContext::clear();
         parent::tearDown();
     }
 
@@ -37,6 +41,18 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertStringContainsString('import-candidate', $catalog['import_candidates:read']['description']);
     }
 
+    public function testImportCandidatesReviewScopeIsHumanOnly(): void
+    {
+        self::assertContains('import_candidates:review', AdminApiScopes::ALL);
+        self::assertContains('import_candidates:review', AdminApiScopes::NEVER_SERVICE);
+        self::assertNotContains('import_candidates:review', AdminApiScopes::RIC_SERVICE);
+
+        $catalog = AdminApiScopes::catalog();
+        self::assertArrayHasKey('import_candidates:review', $catalog);
+        self::assertFalse($catalog['import_candidates:review']['service']);
+        self::assertStringContainsString('facility', $catalog['import_candidates:review']['description']);
+    }
+
     public function testListMethodsReturnSparseCollectionsWhenTablesUnavailable(): void
     {
         $source = (string) file_get_contents(
@@ -46,8 +62,9 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertStringContainsString("tableExists('data_source_import_candidates')", $source);
         self::assertStringContainsString('catch (\Throwable)', $source);
         self::assertStringContainsString("'sparse' => true", $source);
-        self::assertStringNotContainsString('reviewCandidate', $source);
-        self::assertStringNotContainsString('/approve', $source);
+        self::assertStringContainsString('reviewCandidate', $source);
+        self::assertStringContainsString('approveFacilityCandidate', $source);
+        self::assertStringContainsString('rejectFacilityCandidate', $source);
 
         Config::set('database', [
             'host' => '',
@@ -82,6 +99,96 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertSame([], $provider['items']);
         self::assertTrue($provider['meta']['sparse']);
         self::assertSame('data_source_import_candidates_missing', $provider['meta']['source']);
+    }
+
+    public function testApproveFacilityCandidateWiresReviewerAndNotesToGovernmentDatasetService(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 42, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-1');
+
+        $gateway = new class implements FacilityImportCandidateReviewGateway {
+            /** @var list<array{id:int,action:string,reviewer:?int,notes:?string}> */
+            public array $calls = [];
+
+            public function reviewCandidate(int $candidateId, string $action, ?int $reviewerId = null, ?string $notes = null): void
+            {
+                $this->calls[] = [
+                    'id' => $candidateId,
+                    'action' => $action,
+                    'reviewer' => $reviewerId,
+                    'notes' => $notes,
+                ];
+            }
+        };
+
+        $service = new class ($gateway) extends AdminApiImportCandidateService {
+            private int $phase = 0;
+
+            public function __construct(FacilityImportCandidateReviewGateway $gateway)
+            {
+                parent::__construct($gateway);
+            }
+
+            public function showFacilityCandidate(int $id): array
+            {
+                $this->phase++;
+
+                return [
+                    'id' => (string) $id,
+                    'review_status' => $this->phase === 1 ? 'pending' : 'approved',
+                    'facility_id' => $this->phase === 1 ? null : '99',
+                    'name' => 'Rest stop',
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/facility-import-candidates/7/approve',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        $result = $service->approveFacilityCandidate(7, ['reason' => 'Verified against Toilet Map'], $request);
+
+        self::assertSame('approved', $result['review_status']);
+        self::assertSame('99', $result['facility_id']);
+        self::assertCount(1, $gateway->calls);
+        self::assertSame(7, $gateway->calls[0]['id']);
+        self::assertSame('approve', $gateway->calls[0]['action']);
+        self::assertSame(42, $gateway->calls[0]['reviewer']);
+        self::assertSame('Verified against Toilet Map', $gateway->calls[0]['notes']);
+    }
+
+    public function testRejectFacilityCandidateRequiresPendingStatus(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 7, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-2');
+
+        $service = new class extends AdminApiImportCandidateService {
+            public function showFacilityCandidate(int $id): array
+            {
+                return [
+                    'id' => (string) $id,
+                    'review_status' => 'approved',
+                    'facility_id' => '12',
+                    'name' => 'Rest stop',
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/facility-import-candidates/3/reject',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        try {
+            $service->rejectFacilityCandidate(3, [], $request);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(409, $e->getStatusCode());
+            self::assertSame('conflict', $e->errorCode());
+        }
     }
 
     public function testMappersOmitRawJsonFromSummariesAndSanitiseDetailRaw(): void

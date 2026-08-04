@@ -72,6 +72,9 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertContains('recycle_bin:restore', AdminApiScopes::RIC_SERVICE);
         self::assertContains('import_candidates:read', AdminApiScopes::ALL);
         self::assertContains('import_candidates:read', AdminApiScopes::RIC_SERVICE);
+        self::assertContains('import_candidates:review', AdminApiScopes::ALL);
+        self::assertContains('import_candidates:review', AdminApiScopes::NEVER_SERVICE);
+        self::assertNotContains('import_candidates:review', AdminApiScopes::RIC_SERVICE);
     }
 
     public function testOptionBRouteSignaturesExist(): void
@@ -96,6 +99,8 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'POST /imports/{id}/publish',
             'GET /facility-import-candidates',
             'GET /facility-import-candidates/{id}',
+            'POST /facility-import-candidates/{id}/approve',
+            'POST /facility-import-candidates/{id}/reject',
             'GET /provider-import-candidates',
             'GET /provider-import-candidates/{id}',
             'GET /feature-flags',
@@ -114,10 +119,11 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertSame('read_write', $payload['data']['resources']['claims']);
         self::assertSame('read_write', $payload['data']['resources']['duplicates']);
         self::assertSame('read', $payload['data']['resources']['ai_usage']);
-        self::assertSame('read', $payload['data']['resources']['facility_import_candidates']);
+        self::assertSame('read_write', $payload['data']['resources']['facility_import_candidates']);
         self::assertSame('read', $payload['data']['resources']['provider_import_candidates']);
         self::assertTrue($payload['data']['scopes']['claims:read']['service']);
         self::assertTrue($payload['data']['scopes']['import_candidates:read']['service']);
+        self::assertFalse($payload['data']['scopes']['import_candidates:review']['service']);
         self::assertFalse($payload['data']['scopes']['duplicates:merge']['service']);
     }
 

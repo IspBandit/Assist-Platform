@@ -121,6 +121,8 @@ final class AdminApiRicContractTest extends TestCase
         'DELETE /facilities/{id}',
         'GET /facility-import-candidates',
         'GET /facility-import-candidates/{id}',
+        'POST /facility-import-candidates/{id}/approve',
+        'POST /facility-import-candidates/{id}/reject',
         'GET /provider-import-candidates',
         'GET /provider-import-candidates/{id}',
         'GET /feature-flags',

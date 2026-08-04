@@ -40,6 +40,8 @@ final class AdminApiAuthService
         'drafts:approve',
         'imports:read',
         'imports:write',
+        'import_candidates:read',
+        'import_candidates:review',
         'sync:read',
         'analytics:read',
         'audit:read',

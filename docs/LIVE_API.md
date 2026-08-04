@@ -103,17 +103,21 @@ facilities/claims/corrections reads:
   human-session website admin actions. Recycle restore is allowed for service
   accounts with `recycle_bin:restore` (now in default `RIC_SERVICE`) but RIC UI
   still keeps restore out of the first Data Review increment.
-- Facility/provider **import-candidate** queues are available read-only:
+- Facility/provider **import-candidate** queues are available:
   - `GET /facility-import-candidates`, `GET /facility-import-candidates/{id}`
     (`import_candidates:read`) — `traveller_facility_import_candidates`;
     default `status=pending` (non-expired); cursor pagination; list omits
     `raw_json`; detail may include sanitised `raw`
+  - `POST /facility-import-candidates/{id}/approve|reject`
+    (`import_candidates:review` + human Admin API session) — optional JSON
+    `{ "reason": "..." }` maps to review notes; service accounts cannot hold
+    this scope (`NEVER_SERVICE`). Website admin review remains available.
   - `GET /provider-import-candidates`, `GET /provider-import-candidates/{id}`
     (`import_candidates:read`) — brand-scoped `data_source_import_candidates`;
     optional `q` / `state`; same envelope and raw rules
   - These are **not** `GET /imports` (RIC package jobs / `api_import_jobs`).
-  - Approve/reject remains PHP admin this increment. Stale/missing quality
-    lists still have no Admin API.
+  - Provider-candidate approve/reject/merge stays PHP admin. Stale/missing
+    quality lists still have no Admin API.
   - Overview `facility_candidates_pending` counts live facility lifecycle
     statuses, not import candidates.
 
@@ -220,7 +224,13 @@ Option B Increment H adds:
   review queue (`import_candidates:read`); separate from `GET /imports`
 - `GET /api/v1/admin/provider-import-candidates` + `/{id}` — provider import
   review queue (`import_candidates:read`); brand-scoped; optional `q`/`state`
-- No approve/reject endpoints this increment
+
+Option B Increment H.1 adds:
+
+- `POST /facility-import-candidates/{id}/approve|reject` — human-only facility
+  candidate review (`import_candidates:review` in `NEVER_SERVICE`; not in
+  `RIC_SERVICE`). Delegates to `GovernmentDatasetService::reviewCandidate`.
+  Provider-candidate mutations remain out of scope.
 
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.

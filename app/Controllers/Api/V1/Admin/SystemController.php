@@ -69,7 +69,7 @@ final class SystemController extends Controller
                 'sync_conflicts' => 'read_write',
                 'drafts' => 'read_write',
                 'imports' => 'read_write',
-                'facility_import_candidates' => 'read',
+                'facility_import_candidates' => 'read_write',
                 'provider_import_candidates' => 'read',
                 'recycle_bin' => 'read_write',
                 'audit' => 'read',
@@ -100,6 +100,7 @@ final class SystemController extends Controller
                 'GET /overview rolls up health, website KPIs, review queues and AI cost for RIC.',
                 'Website visitors exclude bot/unknown page views; filtered bot views are labelled separately.',
                 'Import-candidate queues (/facility-import-candidates, /provider-import-candidates) are separate from GET /imports RIC package jobs.',
+                'Facility import-candidate approve/reject requires import_candidates:review and a human Admin API session; service accounts remain read-only. Provider candidate review stays website admin.',
             ],
         ]);
     }

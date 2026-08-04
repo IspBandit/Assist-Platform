@@ -15,8 +15,9 @@
   contract (merged)
 
 ## In Progress
-- **Import-candidate review queues (Increment H)** — read-only Admin API for
-  facility/provider import candidates (`import_candidates:read`)
+- **Facility import-candidate review (Increment H.1)** — human-only Admin API
+  approve/reject (`import_candidates:review`); RIC service accounts stay
+  read-only (`import_candidates:read`)
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -26,7 +27,7 @@
 - POL-009 / LOC-003 / COM-004 launches
 - Full Platform Quality Gate / production release
 - Ops completeness: failed-job queue Admin API; feature-flag **writes** and
-  import-candidate approve/reject remain website admin only
+  provider import-candidate approve/reject remain website admin only
 
 ## Current task — RIC everyday management (dependency order)
 
@@ -37,8 +38,9 @@
 5. ~~Website Insights~~ — merged (RIC #10)
 6. ~~Operations (Increment F docs)~~ — merged
 7. ~~Operations gaps (Increment G)~~ — merged
-8. **Import-candidate queues (Increment H)** — read-only Admin API on this branch
-9. No production flags; no deploy without owner
+8. ~~Import-candidate queues (Increment H)~~ — merged read-only queues
+9. **Facility candidate review (Increment H.1)** — human Admin API approve/reject
+10. No production flags; no deploy without owner
 
 ## Overall Completion %
-94% programme; RIC everyday management A–G merged; H in flight
+94% programme; RIC everyday management A–H merged; H.1 in flight

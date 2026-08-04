@@ -183,6 +183,13 @@ return static function (\App\Core\Router $router): void {
             });
 
             $router->group([
+                'middleware' => ['admin_api_scope:import_candidates:review', 'admin_api_human'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/facility-import-candidates/{id}/approve', 'Api\\V1\\Admin\\FacilityImportCandidateController@approve', 'api.v1.admin.facility_import_candidates.approve');
+                $router->post('/facility-import-candidates/{id}/reject', 'Api\\V1\\Admin\\FacilityImportCandidateController@reject', 'api.v1.admin.facility_import_candidates.reject');
+            });
+
+            $router->group([
                 'middleware' => ['admin_api_scope:claims:read'],
             ], static function (\App\Core\Router $router): void {
                 $router->get('/claims', 'Api\\V1\\Admin\\ClaimController@index', 'api.v1.admin.claims.index');
