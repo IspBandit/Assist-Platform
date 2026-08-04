@@ -23,6 +23,14 @@ may remain as dated files and are linked here rather than copied.
   taxonomy remains website admin only. Claim/correction mutations stay human-
   session scoped.
 
+### RIC Data Review Admin API contract
+
+- Documented Assist RIC Data Review against existing `/drafts`, `/duplicates`
+  and `/recycle-bin` Admin API reads (cursor pagination; OpenAPI list filters
+  clarified). No new endpoints for import-candidate or stale/missing queues.
+- Added `recycle_bin:restore` to default Assist RIC service scopes so recycle
+  bin listing works; purge remains human-only and never in `RIC_SERVICE`.
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.

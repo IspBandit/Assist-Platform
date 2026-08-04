@@ -11,7 +11,7 @@
 - Queensland essential facility coverage (merged to main)
 
 ## In Progress
-- **RIC everyday management programme** (this track) — Admin API overview + website insights first
+- **RIC everyday management programme** — Increment C Data Review in flight after A/B merged
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -23,22 +23,18 @@
 
 ## Current task — RIC everyday management (dependency order)
 
-1. **Platform Admin API** `feature/ric-management-admin-api`
-   - `GET /api/v1/admin/overview` — operational rollup (health/version + website KPIs + queue counts + AI cost + last dataset sync)
-   - `GET /api/v1/admin/website-insights` — reuse `WebsiteInsightsService` (bots labelled separately)
-   - Expand RIC default scopes where needed (`corrections:read`, `duplicates:read`, `ai:read`)
-   - OpenAPI + LIVE_API + PHPUnit
-2. **RIC UI** `feature/ric-everyday-management` (from `origin/main`)
-   - Overview page replaces local-only Dashboard KPIs when live API enabled
-   - Then Directory / Data review / AI / Insights / Operations increments
-3. Stop for owner PR approval before merge; no production flags; no deploy
+1. ~~Overview~~ — merged (Platform #161, RIC #4)
+2. ~~Directory~~ — merged (Platform #163, RIC #5)
+3. **Data Review (Increment C)** — Platform docs + `recycle_bin:restore` scope; RIC Data Review page (drafts/duplicates/recycle); claims/corrections remain on Directory
+4. Next without pause: AI and knowledge gaps → Website insights → Operations
+5. No production flags; no deploy without owner
 
 ## Audit snapshot (do not rebuild)
-- Admin API already has providers/stays/facilities CRUD, claims, corrections, duplicates, drafts, datasets, AI usage, searches, gaps, recycle, audit, sync-conflicts
-- Missing for Overview: website visitors/contacts API, single overview rollup
-- RIC: research shell + Sync/Sources/Exports/Settings live; Dashboard local-only; no Ask learning UI
+- Admin API already has providers/stays/facilities CRUD, claims, corrections, duplicates, drafts, datasets, AI usage, searches, gaps, recycle, audit, sync-conflicts, overview/website-insights
+- Genuine remaining API gaps: facility/provider import-candidate queues; stale/missing quality lists
+- RIC: Overview + Directory live; Research Queue remains local; Data Review next
 
 ## Overall Completion %
-91% programme; RIC everyday management **started** (API increment 1)
+92% programme; RIC everyday management Increments A–B merged; C in progress
 
-*Branch: `feature/ric-management-admin-api` from `origin/main`. Queensland branch left alone.*
+*Increment C branches from `origin/main` (`edb025a` / RIC `eac8612`).*

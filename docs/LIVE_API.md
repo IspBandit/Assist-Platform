@@ -47,7 +47,8 @@ RIC everyday management (analytics rollup) adds:
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   (`analytics:read`), reusing `WebsiteInsightsService`. Bot/unknown page views
   returned separately as `filtered_bot_page_views`.
-- RIC default service scopes add `corrections:read`, `duplicates:read`, `ai:read`.
+- RIC default service scopes add `corrections:read`, `duplicates:read`, `ai:read`,
+  `recycle_bin:restore` (never `recycle_bin:purge`).
 
 Increment 2 (human auth) adds:
 
@@ -87,6 +88,26 @@ facilities/claims/corrections reads:
   in the website admin as backup.
 - Categories and locations have **no** Admin API surface; continue to use PHP
   `/admin/categories` and `/admin/locations`.
+
+**RIC Data Review** uses existing draft, duplicate and recycle Admin API reads
+(no new endpoints). Claims and corrections awaiting action stay on Directory:
+
+- `GET /drafts`, `GET /drafts/{id}` (`drafts:read`; filters `status`, `entity_type`)
+- `GET /duplicates`, `GET /duplicates/{id}` (`duplicates:read`; filters `status`,
+  `include_suspects`; default open decisions plus heuristic suspects)
+- `GET /recycle-bin`, `GET /recycle-bin/{entity_type}/{id}` (`recycle_bin:restore`
+  or `recycle_bin:purge`; filters `entity_type`, `q`)
+- Cursor pagination via `limit` + `cursor` / `meta.next_cursor`.
+- Read-only by default in Assist RIC. Draft approve/reject (`drafts:approve`),
+  duplicate merge / not-duplicate (`duplicates:merge`), and recycle purge remain
+  human-session website admin actions. Recycle restore is allowed for service
+  accounts with `recycle_bin:restore` (now in default `RIC_SERVICE`) but RIC UI
+  still keeps restore out of the first Data Review increment.
+- Facility/provider **import-candidate** queues (`traveller_facility_import_*`,
+  `data_source_import_candidates`) and stale/missing quality lists have **no**
+  Admin API yet — continue PHP admin review. Overview
+  `facility_candidates_pending` counts live facility lifecycle statuses, not
+  import candidates.
 
 Increment 5 (audited writes + lifecycle) adds:
 

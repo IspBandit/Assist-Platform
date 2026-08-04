@@ -46,6 +46,14 @@ least-privilege scopes. Controlled writes use the existing audited mutation
 routes; claim and correction approval requires a human Admin API session.
 Categories and locations remain website-admin only (no Admin API taxonomy yet).
 
+Assist RIC Data Review browses existing Admin API review queues:
+`GET /api/v1/admin/drafts`, `/duplicates` and `/recycle-bin` (cursor
+pagination). Draft approve, duplicate merge and recycle purge require human
+Admin API sessions in the website admin. Import-candidate and stale/missing
+quality queues remain PHP-admin only until Admin API coverage is added.
+Default RIC service scopes include `recycle_bin:restore` (list/restore) but
+not `recycle_bin:purge`.
+
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.
