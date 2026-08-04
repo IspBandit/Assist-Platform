@@ -1879,6 +1879,11 @@ paths:
           required: true
           schema:
             type: integer
+        - $ref: '#/components/parameters/Limit'
+        - name: cursor
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Sync run collection

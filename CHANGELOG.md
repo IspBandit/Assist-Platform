@@ -18,6 +18,10 @@
   `/ai/usage/requests` + dual-source `/search-gaps`; knowledge-gap `meta`
   adds click/contact/ai_used counts and taxonomy keys (additive); OpenAPI AI
   usage paths clarified.
+- **RIC Operations contract** — documented read-only Assist RIC Operations
+  against health/version/capabilities, dataset sync-history, sync-conflicts,
+  import show, AI usage rollups and audit. Feature flags, import list index,
+  failed-job queues and AI budget caps remain website admin.
 
 - Fixed CKAN government imports silently truncating complete state or national
   CSV extracts at 500 records. Review-first imports now honour the existing

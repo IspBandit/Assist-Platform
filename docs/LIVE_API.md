@@ -123,6 +123,24 @@ facilities/claims/corrections reads:
 - There is **no** separate `/knowledge-gaps` Admin API path (ADR/Option B dual
   source). Client-side CSV export is permitted from these payloads.
 
+**RIC Operations** (read-only) uses:
+
+- `GET /health`, `/version`, `/capabilities` — API availability and release
+  metadata (unauthenticated probes)
+- `GET /datasets`, `GET /datasets/{id}/sync-history` (`datasets:read`) — dataset
+  sync run history
+- `GET /sync-conflicts` (`sync:read`) — open conflict list (resolve stays
+  human/website admin; not on the Operations page)
+- `GET /imports/{id}` (`imports:read`) — single import job detail (no list index
+  yet; RIC prefills the last local import id when known)
+- `GET /ai/usage/summary`, `/ai/usage/costs`, `/ai/cache-performance` (`ai:read`)
+  — usage and enable flags; **budget caps are not on the Admin API** (PHP AI
+  admin only)
+- `GET /audit`, `GET /audit/{id}` (`audit:read`) — audited mutation history
+- Feature-flag catalogue, global failed-job queues and AI budget-cap fields
+  remain website admin until Admin API coverage is added. Operations must never
+  toggle production AI, traveller facilities, releases or dangerous flags.
+
 Increment 5 (audited writes + lifecycle) adds:
 
 - `POST /api/v1/admin/providers` — create (`providers:write`)

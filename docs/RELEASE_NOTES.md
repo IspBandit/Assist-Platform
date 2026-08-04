@@ -38,6 +38,14 @@ may remain as dated files and are linked here rather than copied.
 - Knowledge-gap SearchGap `meta` now includes click/contact/`ai_used` counts and
   taxonomy keys (additive). OpenAPI documents the AI usage request feed.
 
+### RIC Operations Admin API contract
+
+- Documented Assist RIC Operations as read-only Admin API visibility:
+  `/health`, `/version`, `/capabilities`, dataset `/sync-history`,
+  `/sync-conflicts`, `/imports/{id}`, AI usage rollups and `/audit`.
+- Explicitly deferred feature-flag reads, import list index, failed-job queues
+  and AI budget caps (remain website admin). No production toggles from RIC.
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.
