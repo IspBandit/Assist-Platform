@@ -37,6 +37,18 @@ Mandatory acceptance:
 | Demo water | Migration `114` + `resources/datasets/demo-drinking-water.csv` |
 | Demo rest/visitor | Migration `116` |
 | Capped CKAN stage | `scripts/stage-ckan-toilet-map.php` (non-prod; restores `is_enabled=0`) |
+
+The National Public Toilet Map import can be run Queensland-first without
+truncating the source file:
+
+```bash
+php scripts/stage-ckan-toilet-map.php --state=QLD --limit=25000
+```
+
+This stages review candidates for public toilets and, where the authoritative
+record explicitly flags them, dump points, drinking water and public showers.
+It does not publish or enable public facility search by itself. After Queensland
+review, omit `--state` to stage the Australia-wide dataset.
 | LPG/fuel | Deferred — [`DATA_012_LPG_FUEL_DEFERRAL.md`](DATA_012_LPG_FUEL_DEFERRAL.md) |
 
 ## Operator path (non-production)

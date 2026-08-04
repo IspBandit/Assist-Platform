@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Removed the former 1,000-row CSV ingestion ceiling for bounded government
+  datasets, added multi-field jurisdiction filtering, and extended the National
+  Public Toilet Map catalogue to stage Queensland-first drinking-water and
+  shower records alongside toilets and dump points. All records remain
+  provenance-backed and review-first.
+
 All notable changes to VanAssist are documented here.
 
 ### Changed

@@ -122,6 +122,11 @@ final class GovernmentDatasetConnectorsTest extends TestCase
         self::assertStringContainsString('34076296-6692-4e30-b627-67b7c4eb1027', $curated);
         self::assertStringContainsString('filter_field', $curated);
 
+        $extended = (string) file_get_contents($root . '/database/migrations/122_national_toilet_map_water_showers.sql');
+        self::assertStringContainsString('au_national_toilet_map_drinking_water', $extended);
+        self::assertStringContainsString('au_national_toilet_map_showers', $extended);
+        self::assertStringContainsString("'$.limit', 25000", $extended);
+
         $routes = (string) file_get_contents($root . '/routes/admin.php');
         self::assertStringContainsString('GovernmentDatasetsController@index', $routes);
         self::assertStringContainsString('GovernmentDatasetsController@edit', $routes);
@@ -153,5 +158,44 @@ final class GovernmentDatasetConnectorsTest extends TestCase
         self::assertCount(1, $rows);
         self::assertSame('1', $rows[0]['external_id']);
         self::assertSame('dump_point', $rows[0]['facility_type']);
+    }
+
+    public function testCsvConnectorSupportsMultipleJurisdictionFilters(): void
+    {
+        $csv = "FacilityID,Name,State,DumpPoint,Latitude,Longitude\n"
+            . "1,Queensland Dump,QLD,True,-26.5,148.7\n"
+            . "2,Queensland Toilet,QLD,False,-26.6,148.8\n"
+            . "3,NSW Dump,NSW,True,-35.7,150.2\n";
+        $rows = (new CsvDatasetConnector())->search(
+            ['payload' => $csv, 'limit' => 25000],
+            [],
+            [
+                'default_facility_type' => 'dump_point',
+                'filter_field' => 'dumppoint',
+                'filter_value' => 'true',
+                'filters' => ['state' => 'QLD'],
+                'name_field' => 'name',
+                'id_field' => 'facilityid',
+            ]
+        );
+
+        self::assertCount(1, $rows);
+        self::assertSame('1', $rows[0]['external_id']);
+        self::assertSame('Queensland Dump', $rows[0]['name']);
+    }
+
+    public function testCsvConnectorAllowsMoreThanFormerThousandRowCap(): void
+    {
+        $lines = ['id,name,latitude,longitude'];
+        for ($i = 1; $i <= 1005; $i++) {
+            $lines[] = "{$i},Facility {$i},-26.5,148.7";
+        }
+        $rows = (new CsvDatasetConnector())->search(
+            ['payload' => implode("\n", $lines), 'limit' => 25000],
+            [],
+            ['default_facility_type' => 'public_toilet']
+        );
+
+        self::assertCount(1005, $rows);
     }
 }
