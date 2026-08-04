@@ -164,9 +164,9 @@ if ($approveNsw) {
 
 $out = json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
 echo $out;
-$evidenceDir = BASE_PATH . '/docs/evidence/vanassist-readiness-2026-08-02';
+$evidenceDir = BASE_PATH . '/storage/logs';
 if (is_dir($evidenceDir) || @mkdir($evidenceDir, 0775, true)) {
-    file_put_contents($evidenceDir . '/CKAN_TOILET_MAP_STAGE.json', $out);
+    @file_put_contents($evidenceDir . '/CKAN_TOILET_MAP_STAGE.json', $out);
 }
 
 $ok = !array_filter($report['fetches'], static fn (array $f): bool => isset($f['error']));

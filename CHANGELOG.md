@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Fixed CKAN government imports silently truncating complete state or national
+  CSV extracts at 500 records. Review-first imports now honour the existing
+  25,000-record safety ceiling, and staging evidence writes to writable storage.
+
 - Removed the former 1,000-row CSV ingestion ceiling for bounded government
   datasets, added multi-field jurisdiction filtering, and extended the National
   Public Toilet Map catalogue to stage Queensland-first drinking-water and

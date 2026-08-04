@@ -120,7 +120,7 @@ final class GovernmentDatasetService
             }
         }
         if (isset($input['limit']) && is_numeric($input['limit'])) {
-            $settings['limit'] = max(1, min(500, (int) $input['limit']));
+            $settings['limit'] = max(1, min(25000, (int) $input['limit']));
         }
         $settings['default_facility_type'] = $facilityType;
 
