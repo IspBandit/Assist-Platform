@@ -44,7 +44,9 @@ versioned Admin API reads only: `GET /api/v1/admin/providers`, `/stays`,
 `/facilities`, `/claims` and `/corrections`, with cursor pagination and
 least-privilege scopes. Controlled writes use the existing audited mutation
 routes; claim and correction approval requires a human Admin API session.
-Categories and locations remain website-admin only (no Admin API taxonomy yet).
+Taxonomy pickers use `GET /categories` (`categories:read`, brand provider
+categories) and `GET /locations/states|regions|towns` (`locations:read`).
+Category/location writes remain website admin.
 
 Assist RIC Data Review browses existing Admin API review queues:
 `GET /api/v1/admin/drafts`, `/duplicates` and `/recycle-bin` (cursor

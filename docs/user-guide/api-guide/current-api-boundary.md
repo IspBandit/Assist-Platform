@@ -68,6 +68,10 @@ admin routes. Ask Insights may also read
 `/sync-conflicts`, `GET /imports` and `/imports/{id}`, AI usage rollups
 (including summary `budget`), `GET /feature-flags` (`flags:read`) and
 `/audit` — never feature-flag writes or production toggles from RIC.
+Directory taxonomy pickers may use `GET /categories` and
+`GET /locations/*` (`categories:read` / `locations:read`). Ops may also read
+`GET /ops/failed-emails` and `/ops/failed-scheduled-tasks` (`ops:read`).
+Stale/missing quality queues remain website admin until criteria are defined.
 
 ## Workflows
 
@@ -124,7 +128,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-04 (Option B Increment H.4 provider import-candidate merge).
+2026-08-04 (Increment I ops failed queues + categories/locations taxonomy).
 
 ## Owner
 
@@ -145,3 +149,4 @@ Assist Platform product and engineering.
 | 2026-08-04 | Documented Option B Increment H.2: human-only provider import-candidate approve/reject (`import_candidates:review`); merge/hold remain website admin. |
 | 2026-08-04 | Documented Option B Increment H.3: human-only facility import-candidate bulk-approve/bulk-reject (`import_candidates:review`). |
 | 2026-08-04 | Documented Option B Increment H.4: human-only provider import-candidate merge (`import_candidates:review`); hold/confirm/auto-link remain website admin. |
+| 2026-08-04 | Documented Increment I: `ops:read` failed email/scheduled-task lists; `categories:read` / `locations:read` taxonomy; stale/missing quality deferred. |

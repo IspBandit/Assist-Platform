@@ -2500,6 +2500,142 @@ paths:
       responses:
         '200':
           description: Feature-flag collection (writable=false)
+  /ops/failed-emails:
+    get:
+      tags: [Ops]
+      operationId: adminOpsFailedEmailsIndex
+      summary: List failed email-queue rows
+      description: |
+        Read-only Increment I (`ops:read`). Cursor pagination. Omits html/text
+        bodies. Sparse when `email_queue` is missing.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Failed email collection
+  /ops/failed-scheduled-tasks:
+    get:
+      tags: [Ops]
+      operationId: adminOpsFailedScheduledTasksIndex
+      summary: List scheduled tasks with last_status=failed
+      description: |
+        Read-only Increment I (`ops:read`). Cursor pagination. Sparse when
+        `scheduled_tasks` is missing.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: Failed scheduled-task collection
+  /categories:
+    get:
+      tags: [Directory]
+      operationId: adminCategoriesIndex
+      summary: List brand provider categories
+      description: |
+        Read-only Increment I (`categories:read`). Brand-scoped
+        `brand_provider_categories` (not legacy `service_categories`). Default
+        active-only; optional `active` and `q`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: active
+          in: query
+          schema:
+            type: string
+            enum: ['0', '1', 'true', 'false', 'all']
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Brand provider category collection
+  /locations/states:
+    get:
+      tags: [Directory]
+      operationId: adminLocationsStatesIndex
+      summary: List states
+      description: Read-only Increment I (`locations:read`). Global taxonomy.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: active
+          in: query
+          schema:
+            type: string
+            enum: ['0', '1', 'true', 'false', 'all']
+      responses:
+        '200':
+          description: State collection
+  /locations/regions:
+    get:
+      tags: [Directory]
+      operationId: adminLocationsRegionsIndex
+      summary: List regions
+      description: Read-only Increment I (`locations:read`). Optional `state_id`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: state_id
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: active
+          in: query
+          schema:
+            type: string
+            enum: ['0', '1', 'true', 'false', 'all']
+      responses:
+        '200':
+          description: Region collection
+  /locations/towns:
+    get:
+      tags: [Directory]
+      operationId: adminLocationsTownsIndex
+      summary: List towns
+      description: |
+        Read-only Increment I (`locations:read`). Cursor required for national
+        volume. Optional `state_id`, `region_id`, `q`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: state_id
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: region_id
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: active
+          in: query
+          schema:
+            type: string
+            enum: ['0', '1', 'true', 'false', 'all']
+      responses:
+        '200':
+          description: Town collection
 
 components:
 

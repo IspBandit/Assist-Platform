@@ -73,6 +73,10 @@ final class SystemController extends Controller
                 'provider_import_candidates' => 'read_write',
                 'recycle_bin' => 'read_write',
                 'audit' => 'read',
+                'ops_failed_emails' => 'read',
+                'ops_failed_scheduled_tasks' => 'read',
+                'categories' => 'read',
+                'locations' => 'read',
                 'search_gaps' => 'read',
                 'search_analytics' => 'read',
                 'overview' => 'read',
@@ -101,6 +105,8 @@ final class SystemController extends Controller
                 'Website visitors exclude bot/unknown page views; filtered bot views are labelled separately.',
                 'Import-candidate queues (/facility-import-candidates, /provider-import-candidates) are separate from GET /imports RIC package jobs.',
                 'Facility/provider import-candidate approve/reject (including facility bulk) and provider merge require import_candidates:review and a human Admin API session; service accounts remain read-only. Provider hold/confirm stay website admin.',
+                'Ops failed-email and failed scheduled-task lists are read-only (ops:read). Stale/missing quality queues remain website admin until list criteria are product-defined.',
+                'GET /categories exposes brand_provider_categories only (not legacy service_categories). Locations are global picker reads.',
             ],
         ]);
     }

@@ -109,6 +109,12 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'POST /provider-import-candidates/{id}/reject',
             'POST /provider-import-candidates/{id}/merge',
             'GET /feature-flags',
+            'GET /ops/failed-emails',
+            'GET /ops/failed-scheduled-tasks',
+            'GET /categories',
+            'GET /locations/states',
+            'GET /locations/regions',
+            'GET /locations/towns',
             'GET /overview',
             'GET /website-insights',
         ] as $required) {

@@ -43,6 +43,11 @@
   `POST /provider-import-candidates/{id}/merge` with the same review scope.
   Requires `retention_confirmed` + independent `evidence_url`; optional
   `provider_id`. Exact-identity gates via `DataSourceService::review`.
+- **RIC ops + taxonomy reads (Increment I)** — `GET /ops/failed-emails` and
+  `GET /ops/failed-scheduled-tasks` (`ops:read`); `GET /categories`
+  (`categories:read`); `GET /locations/states|regions|towns`
+  (`locations:read`). All in `RIC_SERVICE`. Stale/missing quality queues remain
+  deferred pending product criteria.
 - **Import-candidate review queues (Increment H)** — read-only
   `GET /facility-import-candidates` and `GET /provider-import-candidates`
   (+ `/{id}`) with `import_candidates:read`. Separate from `GET /imports`

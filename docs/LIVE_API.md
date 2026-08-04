@@ -86,8 +86,12 @@ facilities/claims/corrections reads:
 - Read-only by default in Assist RIC; approve/reject mutations require human
   Admin API sessions (`claims:write` / `corrections:write`) and remain available
   in the website admin as backup.
-- Categories and locations have **no** Admin API surface; continue to use PHP
-  `/admin/categories` and `/admin/locations`.
+- Categories: `GET /categories` (`categories:read`) — brand-scoped
+  `brand_provider_categories` (not legacy `service_categories`); default active
+  only; optional `active=all|0|1` and `q`
+- Locations: `GET /locations/states`, `/locations/regions`, `/locations/towns`
+  (`locations:read`) — global pickers with cursor pagination; towns support
+  `state_id`, `region_id`, `q`. Writes remain website admin.
 
 **RIC Data Review** uses existing draft, duplicate and recycle Admin API reads
 (no new endpoints). Claims and corrections awaiting action stay on Directory:
@@ -129,7 +133,8 @@ facilities/claims/corrections reads:
     optional `provider_id` (defaults to `duplicate_provider_id`). Exact-identity
     gates apply. Not the status-only auto-link path.
   - These are **not** `GET /imports` (RIC package jobs / `api_import_jobs`).
-  - Stale/missing quality lists still have no Admin API.
+  - Stale/missing quality lists still have no Admin API (product criteria
+    deferred; not a missing read wrapper over an existing queue).
   - Overview `facility_candidates_pending` counts live facility lifecycle
     statuses, not import candidates.
 
@@ -166,10 +171,14 @@ facilities/claims/corrections reads:
 - `GET /feature-flags` (`flags:read`) — platform feature-flag catalogue
   (enabled, description, updated_at). **No write/toggle paths** on the Admin
   API; toggles remain website admin with owner workflows
+- `GET /ops/failed-emails`, `GET /ops/failed-scheduled-tasks` (`ops:read`) —
+  failed `email_queue` rows (no bodies) and `scheduled_tasks` with
+  `last_status=failed`. Not a Laravel `failed_jobs` table. Connector/Polaris
+  import job indexes remain website admin where not covered by `GET /imports`
 - `GET /audit`, `GET /audit/{id}` (`audit:read`) — audited mutation history
-- Global failed-job queues remain website admin until Admin API coverage is
-  added. Operations must never toggle production AI, traveller facilities,
-  releases or dangerous flags.
+- Stale/missing quality list queues remain website admin until product criteria
+  for those lists are defined. Operations must never toggle production AI,
+  traveller facilities, releases or dangerous flags.
 
 Increment 5 (audited writes + lifecycle) adds:
 
@@ -264,6 +273,14 @@ Option B Increment H.4 adds:
   evidence URL; optional `provider_id`. Hold/confirm/auto-link remain website
   admin.
 
+Increment I adds:
+
+- `GET /ops/failed-emails`, `GET /ops/failed-scheduled-tasks` (`ops:read` in
+  `RIC_SERVICE`) — read-only failed email and cron task lists
+- `GET /categories` (`categories:read`) — brand `brand_provider_categories`
+- `GET /locations/states|regions|towns` (`locations:read`) — taxonomy pickers
+- Staging checklist updated for new RIC scopes; no production flags
+
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.
 
@@ -290,18 +307,31 @@ Do this on a disposable or staging deployment before production:
 6. Create a least-privilege Assist RIC service account and print credentials
    once (store only in the RIC OS vault):
    `php scripts/admin-api-create-ric-service-account.php --email=admin@example.test`
+   Confirm the printed scopes include Increment I additions: `ops:read`,
+   `categories:read`, `locations:read` (plus earlier `flags:read` and
+   `import_candidates:read`). Recreate the account or expand scopes if an
+   older RIC service account predates these grants.
    Probe with:
    `php scripts/admin-api-probe.php --base-url=https://staging…/api/v1/admin --client-key=… --client-secret=…`
 7. Optionally set `ADMIN_API_MFA_REQUIRED=true` and confirm human login returns
    `mfa_token` then completes via `/auth/mfa/verify`.
 8. From Assist RIC: enable live API, set base URL, Test connection, submit a
    small JSON export package with **Validate only** checked first.
-9. Record Architecture, UX, Engineering and Business Quality Gate evidence
+9. Smoke-check read surfaces used by everyday RIC management: `/overview`,
+   `/website-insights`, Directory reads, Data Review queues, `/ops/failed-*`,
+   `/categories`, `/locations/towns`, Ask Insights AI usage, Operations
+   imports/flags. Do not enable production Ask, traveller facilities, or paid
+   AI from this rehearsal.
+10. Record Architecture, UX, Engineering and Business Quality Gate evidence
    before any production enablement (`docs/PLATFORM_QUALITY_GATE.md`).
    Code-complete conditional-pass packs:
    `docs/evidence/admin-api-2026-08-02/PLATFORM_QUALITY_GATE.md` and
    `docs/evidence/option-b-programme-2026-08-02/PLATFORM_QUALITY_GATE.md`
    (append staging probe + RIC validate-only results before flipping production).
+
+**Owner-only gates (not authorised by this checklist alone):** production
+`ADMIN_API_ENABLED`, Ask VanAssist / facilities / paid AI flags, DNS changes,
+and live production migrations.
 
 Production still requires the four Quality Gate pillars. Application code alone
 does not authorise DNS, live migrations or turning `ADMIN_API_ENABLED` on in
