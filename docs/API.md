@@ -60,6 +60,13 @@ Assist RIC Ask Insights reads Ask activity and gaps through
 item `meta`. No separate knowledge-gaps path. Export stays client-side from
 those JSON collections without exposing private user identifiers.
 
+Assist RIC Operations provides read-only operational visibility through
+`GET /api/v1/admin/health`, `/version`, `/capabilities`, dataset
+`/sync-history`, `/sync-conflicts`, `/imports/{id}`, AI usage rollups and
+`/audit`. It does not expose feature-flag writes, AI budget caps, or
+import/publish controls. Dangerous production toggles stay in website admin
+with owner workflows.
+
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.

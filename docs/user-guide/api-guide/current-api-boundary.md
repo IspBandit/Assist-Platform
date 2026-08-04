@@ -57,7 +57,10 @@ merge and recycle purge remain human-session Admin API actions and are also
 available in the website admin. Categories, locations and import-candidate
 queues stay on PHP admin routes. Ask Insights may also read
 `GET /ai/usage/requests` (and related AI usage rollups) plus dual-source
-`GET /search-gaps` for knowledge-gap engagement meta.
+`GET /search-gaps` for knowledge-gap engagement meta. Operations may read
+`GET /health`, `/version`, `/capabilities`, dataset `/sync-history`,
+`/sync-conflicts`, `/imports/{id}`, AI usage rollups and `/audit` — never
+feature-flag writes or production toggles from RIC.
 
 ## Workflows
 
