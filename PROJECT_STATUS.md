@@ -13,11 +13,13 @@
   Website Insights (merged)
 - **RIC everyday management Operations (Increment F)** — docs + RIC Operations page
   contract (merged)
+- **RIC Operations gaps (Increment G)** — merged
+- **Import-candidate queues (Increment H)** — merged read-only
+- **Facility candidate review (Increment H.1)** — merged human Admin API approve/reject
 
 ## In Progress
-- **Facility import-candidate review (Increment H.1)** — human-only Admin API
-  approve/reject (`import_candidates:review`); RIC service accounts stay
-  read-only (`import_candidates:read`)
+- **Provider candidate review (Increment H.2)** — human-only Admin API
+  approve/reject (`import_candidates:review`); merge stays website admin
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -26,8 +28,8 @@
 - Production `ADMIN_API_ENABLED` / Ask / facilities / paid AI
 - POL-009 / LOC-003 / COM-004 launches
 - Full Platform Quality Gate / production release
-- Ops completeness: failed-job queue Admin API; feature-flag **writes** and
-  provider import-candidate approve/reject remain website admin only
+- Ops completeness: failed-job queue Admin API; feature-flag **writes**;
+  provider-candidate **merge** remains website admin only
 
 ## Current task — RIC everyday management (dependency order)
 
@@ -39,8 +41,9 @@
 6. ~~Operations (Increment F docs)~~ — merged
 7. ~~Operations gaps (Increment G)~~ — merged
 8. ~~Import-candidate queues (Increment H)~~ — merged read-only queues
-9. **Facility candidate review (Increment H.1)** — human Admin API approve/reject
-10. No production flags; no deploy without owner
+9. ~~Facility candidate review (Increment H.1)~~ — merged
+10. **Provider candidate review (Increment H.2)** — human Admin API approve/reject
+11. No production flags; no deploy without owner
 
 ## Overall Completion %
-94% programme; RIC everyday management A–H merged; H.1 in flight
+94% programme; RIC everyday management A–H.1 merged; H.2 in flight

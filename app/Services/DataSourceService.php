@@ -8,10 +8,11 @@ use App\Models\Town;
 use App\Platform\DataSources\ConnectorRegistry;
 use App\Platform\DataSources\BulkReviewPolicy;
 use App\Platform\DataSources\DuplicateMatcher;
+use App\Services\Api\ProviderImportCandidateReviewGateway;
 use RuntimeException;
 use Throwable;
 
-final class DataSourceService
+final class DataSourceService implements ProviderImportCandidateReviewGateway
 {
     private ConnectorRegistry $registry;
     public function __construct(?ConnectorRegistry $registry = null)

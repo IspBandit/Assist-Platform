@@ -103,6 +103,8 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'POST /facility-import-candidates/{id}/reject',
             'GET /provider-import-candidates',
             'GET /provider-import-candidates/{id}',
+            'POST /provider-import-candidates/{id}/approve',
+            'POST /provider-import-candidates/{id}/reject',
             'GET /feature-flags',
             'GET /overview',
             'GET /website-insights',
@@ -120,7 +122,7 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertSame('read_write', $payload['data']['resources']['duplicates']);
         self::assertSame('read', $payload['data']['resources']['ai_usage']);
         self::assertSame('read_write', $payload['data']['resources']['facility_import_candidates']);
-        self::assertSame('read', $payload['data']['resources']['provider_import_candidates']);
+        self::assertSame('read_write', $payload['data']['resources']['provider_import_candidates']);
         self::assertTrue($payload['data']['scopes']['claims:read']['service']);
         self::assertTrue($payload['data']['scopes']['import_candidates:read']['service']);
         self::assertFalse($payload['data']['scopes']['import_candidates:review']['service']);

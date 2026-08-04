@@ -66,8 +66,21 @@ may remain as dated files and are linked here rather than copied.
 - Optional JSON `{ "reason": "..." }` maps to
   `GovernmentDatasetService::reviewCandidate` notes.
 - RIC Ops/Data Review service accounts remain read-only on import candidates;
-  website admin review remains available. Provider-candidate mutations stay
-  out of scope.
+  website admin review remains available.
+
+### Provider import-candidate review (Increment H.2)
+
+- Added human-only Admin API mutations for provider import candidates:
+  `POST /provider-import-candidates/{id}/approve` and
+  `POST /provider-import-candidates/{id}/reject`
+  (same `import_candidates:review` + `admin_api_human`).
+- Approve requires `retention_confirmed` and independent `evidence_url`
+  (optional `category_id` / notes); delegates to `DataSourceService::review`
+  and confirms evidence first when needed. Creates an unclaimed provider on
+  success. Reject accepts pending or held candidates.
+- Merge/hold/confirm workflow aids remain website admin only.
+- Capabilities mark `provider_import_candidates` as `read_write`. Detail
+  payloads may include `evidence_url` and `review_notes`.
 
 ### Import-candidate review queues (Increment H)
 

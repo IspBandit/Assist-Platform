@@ -29,7 +29,12 @@
   `POST /facility-import-candidates/{id}/approve|reject` with
   `import_candidates:review` (`NEVER_SERVICE`, not in `RIC_SERVICE`).
   Delegates to `GovernmentDatasetService::reviewCandidate`; optional `reason`
-  notes. Provider-candidate mutations remain website admin.
+  notes. Website admin review remains available.
+- **Provider import-candidate review (Increment H.2)** — human-only
+  `POST /provider-import-candidates/{id}/approve|reject` with the same
+  `import_candidates:review` human scope. Delegates to
+  `DataSourceService::review`; approve requires `retention_confirmed` and
+  independent `evidence_url`. Merge/hold remain website admin.
 - **Import-candidate review queues (Increment H)** — read-only
   `GET /facility-import-candidates` and `GET /provider-import-candidates`
   (+ `/{id}`) with `import_candidates:read`. Separate from `GET /imports`

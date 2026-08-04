@@ -15,6 +15,7 @@ use App\Services\Api\AdminApiContext;
 use App\Services\Api\AdminApiImportCandidateService;
 use App\Services\Api\AdminApiScopes;
 use App\Services\Api\FacilityImportCandidateReviewGateway;
+use App\Services\Api\ProviderImportCandidateReviewGateway;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -50,6 +51,7 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         $catalog = AdminApiScopes::catalog();
         self::assertArrayHasKey('import_candidates:review', $catalog);
         self::assertFalse($catalog['import_candidates:review']['service']);
+        self::assertStringContainsString('provider', $catalog['import_candidates:review']['description']);
         self::assertStringContainsString('facility', $catalog['import_candidates:review']['description']);
     }
 
@@ -65,6 +67,8 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertStringContainsString('reviewCandidate', $source);
         self::assertStringContainsString('approveFacilityCandidate', $source);
         self::assertStringContainsString('rejectFacilityCandidate', $source);
+        self::assertStringContainsString('approveProviderCandidate', $source);
+        self::assertStringContainsString('rejectProviderCandidate', $source);
 
         Config::set('database', [
             'host' => '',
@@ -184,6 +188,141 @@ final class AdminApiImportCandidateServiceTest extends TestCase
 
         try {
             $service->rejectFacilityCandidate(3, [], $request);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(409, $e->getStatusCode());
+            self::assertSame('conflict', $e->errorCode());
+        }
+    }
+
+    public function testApproveProviderCandidateRequiresRetentionAndEvidenceThenDelegates(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 42, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-3');
+
+        $gateway = new class implements ProviderImportCandidateReviewGateway {
+            /** @var list<array{decision:string,retention:bool,evidence:string,category:?int,notes:string}> */
+            public array $calls = [];
+
+            public function review(
+                int $candidateId,
+                int $brandId,
+                string $decision,
+                ?int $providerId,
+                int $userId,
+                bool $retentionConfirmed = false,
+                ?int $categoryId = null,
+                string $evidenceUrl = '',
+                string $reviewNotes = ''
+            ): int {
+                $this->calls[] = [
+                    'decision' => $decision,
+                    'retention' => $retentionConfirmed,
+                    'evidence' => $evidenceUrl,
+                    'category' => $categoryId,
+                    'notes' => $reviewNotes,
+                    'user' => $userId,
+                    'candidate' => $candidateId,
+                    'brand' => $brandId,
+                ];
+
+                return 55;
+            }
+        };
+
+        $service = new class (null, $gateway) extends AdminApiImportCandidateService {
+            private int $phase = 0;
+
+            public function __construct(?FacilityImportCandidateReviewGateway $datasets, ProviderImportCandidateReviewGateway $providers)
+            {
+                parent::__construct($datasets, $providers);
+            }
+
+            public function showProviderCandidate(int $id): array
+            {
+                $this->phase++;
+
+                return [
+                    'id' => (string) $id,
+                    'review_status' => $this->phase === 1 ? 'pending' : 'approved',
+                    'evidence_status' => $this->phase === 1 ? 'required' : 'confirmed',
+                    'provider_id' => $this->phase === 1 ? null : '55',
+                    'business_name' => 'Van Care',
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/provider-import-candidates/9/approve',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        $result = $service->approveProviderCandidate(9, [
+            'retention_confirmed' => true,
+            'evidence_url' => 'https://example.test/business',
+            'category_id' => 7,
+            'reason' => 'Website matches listing',
+        ], $request);
+
+        self::assertSame('approved', $result['review_status']);
+        self::assertSame('55', $result['provider_id']);
+        self::assertCount(2, $gateway->calls);
+        self::assertSame('confirm', $gateway->calls[0]['decision']);
+        self::assertSame('approve', $gateway->calls[1]['decision']);
+        self::assertSame(42, $gateway->calls[1]['user']);
+        self::assertSame('https://example.test/business', $gateway->calls[1]['evidence']);
+        self::assertSame(7, $gateway->calls[1]['category']);
+        self::assertTrue($gateway->calls[1]['retention']);
+    }
+
+    public function testApproveProviderCandidateValidatesRetentionAndEvidence(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 7, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-4');
+
+        $service = new AdminApiImportCandidateService();
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/provider-import-candidates/3/approve',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        try {
+            $service->approveProviderCandidate(3, [], $request);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(422, $e->getStatusCode());
+            self::assertArrayHasKey('retention_confirmed', $e->fields());
+            self::assertArrayHasKey('evidence_url', $e->fields());
+        }
+    }
+
+    public function testRejectProviderCandidateRequiresPendingOrHeld(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 7, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-5');
+
+        $service = new class extends AdminApiImportCandidateService {
+            public function showProviderCandidate(int $id): array
+            {
+                return [
+                    'id' => (string) $id,
+                    'review_status' => 'approved',
+                    'provider_id' => '12',
+                    'business_name' => 'Van Care',
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/provider-import-candidates/3/reject',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        try {
+            $service->rejectProviderCandidate(3, [], $request);
             self::fail('Expected AdminApiException');
         } catch (AdminApiException $e) {
             self::assertSame(409, $e->getStatusCode());
