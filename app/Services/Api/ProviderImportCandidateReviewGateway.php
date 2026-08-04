@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Services\Api;
 
 /**
- * Narrow gateway for provider import-candidate review (Option B Increment H.2).
+ * Narrow gateway for provider import-candidate review (Option B Increment H.2 / H.4).
  *
- * Wraps DataSourceService::review. Merge/hold/confirm remain out of Admin API.
+ * Wraps DataSourceService::review. Hold/confirm/bulk remain out of Admin API.
  */
 interface ProviderImportCandidateReviewGateway
 {

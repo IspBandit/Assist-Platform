@@ -53,10 +53,11 @@ pagination), plus import-candidate queues
 (`import_candidates:read`; separate from `GET /imports` RIC package jobs).
 Facility import-candidate approve/reject (including bulk-approve/bulk-reject)
 is available on human Admin API sessions (`import_candidates:review`); provider
-import-candidate approve/reject is also human-only Admin API (same scope; merge
-stays website admin). Service accounts stay read-only and cannot hold that
-scope. Draft approve, duplicate merge and recycle purge remain human-session /
-website-admin actions. Stale/missing quality queues remain PHP-admin only.
+import-candidate approve/reject/merge is also human-only Admin API (same
+scope; hold/confirm stay website admin). Service accounts stay read-only and
+cannot hold that scope. Draft approve, duplicate merge and recycle purge remain
+human-session / website-admin actions. Stale/missing quality queues remain
+PHP-admin only.
 Default RIC service scopes include `recycle_bin:restore` (list/restore) but
 not `recycle_bin:purge`.
 

@@ -57,10 +57,10 @@ search-gaps, operational overview (`GET /overview`) and website insights
 (`GET /website-insights`) through `/api/v1/admin` only — never by opening
 production MariaDB. Claim/correction approve/reject, draft approve, duplicate
 merge, recycle purge and facility/provider import-candidate approve/reject
-(including facility bulk-approve/bulk-reject) remain human-session Admin API
-actions (`import_candidates:review` is never granted to service accounts) and
-are also available in the website admin.
-Provider merge/hold remain PHP admin. Categories and locations stay on PHP
+(including facility bulk-approve/bulk-reject) and provider merge remain
+human-session Admin API actions (`import_candidates:review` is never granted
+to service accounts) and are also available in the website admin.
+Provider hold/confirm remain PHP admin. Categories and locations stay on PHP
 admin routes. Ask Insights may also read
 `GET /ai/usage/requests` (and related AI usage rollups) plus dual-source
 `GET /search-gaps` for knowledge-gap engagement meta. Operations may read
@@ -124,7 +124,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-04 (Option B Increment H.3 facility import-candidate bulk review).
+2026-08-04 (Option B Increment H.4 provider import-candidate merge).
 
 ## Owner
 
@@ -144,3 +144,4 @@ Assist Platform product and engineering.
 | 2026-08-04 | Documented Option B Increment H.1: human-only facility import-candidate approve/reject (`import_candidates:review`); RIC service accounts remain read-only; website admin retained. |
 | 2026-08-04 | Documented Option B Increment H.2: human-only provider import-candidate approve/reject (`import_candidates:review`); merge/hold remain website admin. |
 | 2026-08-04 | Documented Option B Increment H.3: human-only facility import-candidate bulk-approve/bulk-reject (`import_candidates:review`). |
+| 2026-08-04 | Documented Option B Increment H.4: human-only provider import-candidate merge (`import_candidates:review`); hold/confirm/auto-link remain website admin. |

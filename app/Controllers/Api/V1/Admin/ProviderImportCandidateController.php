@@ -12,10 +12,10 @@ use App\Services\Api\AdminApiEnvelope;
 use App\Services\Api\AdminApiImportCandidateService;
 
 /**
- * Provider import-candidate review queue (Option B Increment H / H.2).
+ * Provider import-candidate review queue (Option B Increment H / H.2 / H.4).
  *
- * Distinct from GET /imports (RIC package jobs). Approve/reject are human-only.
- * Merge/hold/confirm remain website admin.
+ * Distinct from GET /imports (RIC package jobs). Approve/reject/merge are
+ * human-only. Hold/confirm/bulk remain website admin.
  */
 final class ProviderImportCandidateController extends Controller
 {
@@ -57,6 +57,18 @@ final class ProviderImportCandidateController extends Controller
 
         return AdminApiEnvelope::data(
             (new AdminApiImportCandidateService())->rejectProviderCandidate($id, $request->all(), $request)
+        );
+    }
+
+    public function merge(Request $request): Response
+    {
+        $id = (int) $request->route('id', 0);
+        if ($id < 1) {
+            throw new AdminApiException(404, 'not_found', 'Provider import candidate not found.');
+        }
+
+        return AdminApiEnvelope::data(
+            (new AdminApiImportCandidateService())->mergeProviderCandidate($id, $request->all(), $request)
         );
     }
 }

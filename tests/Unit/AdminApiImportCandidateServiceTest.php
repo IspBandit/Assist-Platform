@@ -53,6 +53,7 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertFalse($catalog['import_candidates:review']['service']);
         self::assertStringContainsString('provider', $catalog['import_candidates:review']['description']);
         self::assertStringContainsString('facility', $catalog['import_candidates:review']['description']);
+        self::assertStringContainsString('merge', $catalog['import_candidates:review']['description']);
     }
 
     public function testListMethodsReturnSparseCollectionsWhenTablesUnavailable(): void
@@ -71,6 +72,7 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         self::assertStringContainsString('bulkRejectFacilityCandidates', $source);
         self::assertStringContainsString('approveProviderCandidate', $source);
         self::assertStringContainsString('rejectProviderCandidate', $source);
+        self::assertStringContainsString('mergeProviderCandidate', $source);
 
         Config::set('database', [
             'host' => '',
@@ -396,6 +398,115 @@ final class AdminApiImportCandidateServiceTest extends TestCase
         } catch (AdminApiException $e) {
             self::assertSame(409, $e->getStatusCode());
             self::assertSame('conflict', $e->errorCode());
+        }
+    }
+
+    public function testMergeProviderCandidateDelegatesWithTargetAndGates(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 42, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-merge');
+
+        $gateway = new class implements ProviderImportCandidateReviewGateway {
+            /** @var list<array{decision:string,provider:?int}> */
+            public array $calls = [];
+
+            public function review(
+                int $candidateId,
+                int $brandId,
+                string $decision,
+                ?int $providerId,
+                int $userId,
+                bool $retentionConfirmed = false,
+                ?int $categoryId = null,
+                string $evidenceUrl = '',
+                string $reviewNotes = ''
+            ): int {
+                $this->calls[] = [
+                    'decision' => $decision,
+                    'provider' => $providerId,
+                    'retention' => $retentionConfirmed,
+                    'evidence' => $evidenceUrl,
+                ];
+
+                return (int) ($providerId ?? 88);
+            }
+        };
+
+        $service = new class (null, $gateway) extends AdminApiImportCandidateService {
+            private int $phase = 0;
+
+            public function __construct(?FacilityImportCandidateReviewGateway $datasets, ProviderImportCandidateReviewGateway $providers)
+            {
+                parent::__construct($datasets, $providers);
+            }
+
+            public function showProviderCandidate(int $id): array
+            {
+                $this->phase++;
+
+                return [
+                    'id' => (string) $id,
+                    'review_status' => $this->phase === 1 ? 'pending' : 'merged',
+                    'duplicate_provider_id' => '88',
+                    'provider_id' => $this->phase === 1 ? null : '88',
+                    'business_name' => 'Van Care',
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/provider-import-candidates/9/merge',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        $result = $service->mergeProviderCandidate(9, [
+            'retention_confirmed' => true,
+            'evidence_url' => 'https://example.test/business',
+            'provider_id' => 88,
+            'reason' => 'Exact duplicate',
+        ], $request);
+
+        self::assertSame('merged', $result['review_status']);
+        self::assertSame('88', $result['provider_id']);
+        self::assertCount(1, $gateway->calls);
+        self::assertSame('merge', $gateway->calls[0]['decision']);
+        self::assertSame(88, $gateway->calls[0]['provider']);
+        self::assertTrue($gateway->calls[0]['retention']);
+    }
+
+    public function testMergeProviderCandidateRequiresTargetWhenNoDuplicate(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+        AdminApiContext::setUser(['id' => 7, 'email' => 'admin@example.test'], ['import_candidates:review'], 'token-merge-2');
+
+        $service = new class extends AdminApiImportCandidateService {
+            public function showProviderCandidate(int $id): array
+            {
+                return [
+                    'id' => (string) $id,
+                    'review_status' => 'pending',
+                    'duplicate_provider_id' => null,
+                    'business_name' => 'Van Care',
+                ];
+            }
+        };
+
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'POST',
+            'REQUEST_URI' => '/api/v1/admin/provider-import-candidates/3/merge',
+            'REMOTE_ADDR' => '127.0.0.1',
+        ], []);
+
+        try {
+            $service->mergeProviderCandidate(3, [
+                'retention_confirmed' => true,
+                'evidence_url' => 'https://example.test/business',
+            ], $request);
+            self::fail('Expected AdminApiException');
+        } catch (AdminApiException $e) {
+            self::assertSame(422, $e->getStatusCode());
+            self::assertArrayHasKey('provider_id', $e->fields());
         }
     }
 
