@@ -59,6 +59,23 @@ only through `/api/v1/admin`.
 | `theme_caravan_parks` | Caravan Parks (stays) |
 | `theme_campgrounds` | Campgrounds (stays) |
 
+Additional keys from migration `123_dataset_acquisition_pack.sql` (all disabled):
+
+| Key | Title |
+| --- | --- |
+| `portal_transport_nsw` | Transport for NSW Open Data |
+| `nsw_rest_areas` | NSW Rest Areas |
+| `nsw_boat_ramps` | Maritime NSW Boat Ramps |
+| `nsw_ev_charging_locations` | EV Charging Locations (NSW) |
+| `gold_coast_caravan_parks` | City of Gold Coast Caravan Parks |
+| `sa_rest_areas_state_maintained` | SA Rest Areas — State Maintained |
+| `wa_major_rest_areas` | WA Major Rest Areas |
+| `theme_public_showers` … `theme_caravan_parts` | Remaining VanAssist facility/provider themes |
+| `paid_*` | Paid research API stubs (disabled) |
+
+Portable offline index: `data_catalogue/catalogue.json` (see
+`docs/DATASET_DOWNLOADS.md`, `docs/RIC_DATASET_AVAILABILITY.md`).
+
 All seeded rows ship **disabled** (`is_enabled=0`, `auto_update_enabled=0`) except
 where an existing DATA-012 demo/indexed Toilet Map row already exists — still
 review-first and never auto-publish.
@@ -80,7 +97,8 @@ review-first and never auto-publish.
 
 ## Migration
 
-`database/migrations/117_national_dataset_catalogue.sql`
+- `database/migrations/117_national_dataset_catalogue.sql`
+- `database/migrations/123_dataset_acquisition_pack.sql`
 
 ## Non-goals
 

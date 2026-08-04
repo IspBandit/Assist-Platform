@@ -35,7 +35,10 @@ This is the authoritative orientation page for developers and AI agents.
     (`docs/architecture/adr/0003-sibling-repository.md`).
     National Dataset Catalogue (DATA-011A): `docs/DATA_011A.md`, ADR 0033 —
     catalogue before additional importers; RIC acquires, Platform publishes via
-    Admin API only.
+    Admin API only. Acquisition pack: `docs/DATASET_SOURCE_AUDIT.md`,
+    `docs/DATASET_CATALOGUE.md`, `docs/DATASET_DOWNLOADS.md`,
+    `docs/DATASET_LICENSING_AND_ATTRIBUTION.md`, `docs/PAID_DATA_SOURCES.md`,
+    `docs/RIC_DATASET_AVAILABILITY.md`, and `data_catalogue/`.
 14. For Assist AI Search and Knowledge Orchestration (CORE-012 / VAN-011 /
     DATA-013 / DATA-012): `docs/AI_WORKSTREAM_STATUS.md`,
     `docs/DATA_012.md`, `docs/TRAVELLER_FACILITIES.md`,

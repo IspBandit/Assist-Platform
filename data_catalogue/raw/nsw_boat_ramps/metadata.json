@@ -1,0 +1,16 @@
+{
+  "dataset_id": "nsw_boat_ramps",
+  "name": "Maritime NSW Boat Ramps",
+  "source_url": "https://data.gov.au/data/dataset/nsw-2-maritime-nsw-boat-ramps",
+  "download_url": "https://opendata.transport.nsw.gov.au/data/dataset/912cd680-15ed-4be5-9d09-1a9d0f15e6ee/resource/e7537c27-d2d1-4666-b058-b586e8732236/download/boating_ramps.csv",
+  "api_url": "https://opendata.transport.nsw.gov.au/",
+  "licence": "CC BY 3.0 AU",
+  "attribution": "\u00a9 Transport for NSW \u2014 Maritime NSW Boat Ramps",
+  "publisher": "Transport for NSW",
+  "format": "csv",
+  "downloaded_at_utc": "2026-08-04T11:46:26+00:00",
+  "bytes": 128398,
+  "sha256": "aea82cb46737c112174149c26120616f377cce56e78f0831f439be6057e9407e",
+  "last_updated_declared": "",
+  "current_status": "download_ready"
+}

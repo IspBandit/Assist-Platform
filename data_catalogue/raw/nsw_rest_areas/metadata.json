@@ -1,0 +1,16 @@
+{
+  "dataset_id": "nsw_rest_areas",
+  "name": "NSW Rest Areas",
+  "source_url": "https://data.gov.au/data/dataset/nsw-2-nsw-rest-areas",
+  "download_url": "https://opendata.transport.nsw.gov.au/data/dataset/37a56f96-feb7-49c4-9a7d-06957ccf7368/resource/6f2bcede-9d55-4315-b609-dffa30510894/download/rest-areas-csv-format.csv",
+  "api_url": "https://opendata.transport.nsw.gov.au/",
+  "licence": "CC BY 3.0 AU",
+  "attribution": "\u00a9 Transport for NSW \u2014 NSW Rest Areas",
+  "publisher": "Transport for NSW",
+  "format": "csv",
+  "downloaded_at_utc": "2026-08-04T11:46:26+00:00",
+  "bytes": 275773,
+  "sha256": "4ba831a4cfaf87baa00b4909496991cb7751a3d536234eb447d3a18c3fd329b1",
+  "last_updated_declared": "",
+  "current_status": "download_ready"
+}

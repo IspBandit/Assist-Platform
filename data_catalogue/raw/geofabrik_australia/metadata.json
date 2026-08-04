@@ -1,0 +1,9 @@
+{
+  "dataset_id": "portal_osm_australia",
+  "source_url": "https://download.geofabrik.de/australia-oceania/australia.html",
+  "download_url": "https://download.geofabrik.de/australia-oceania/australia-latest.osm.pbf",
+  "content_length": "956210741",
+  "last_modified": "Mon, 03 Aug 2026 22:42:37 GMT",
+  "checked_at_utc": "2026-08-04T11:46:29+00:00",
+  "note": "PBF not committed. Use --include geofabrik_australia to download locally."
+}

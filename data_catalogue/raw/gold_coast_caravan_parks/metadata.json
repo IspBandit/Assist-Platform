@@ -1,0 +1,16 @@
+{
+  "dataset_id": "gold_coast_caravan_parks",
+  "name": "City of Gold Coast Caravan Parks",
+  "source_url": "https://data.gov.au/data/dataset/caravan-parks",
+  "download_url": "https://data.gov.au/geoserver/caravan-parks/wfs?request=GetFeature&typeName=ckan_191d8a90_f617_481c_84fa_8c2f4b92a172&outputFormat=json",
+  "api_url": "https://data.gov.au/geoserver/caravan-parks/wfs?request=GetFeature&typeName=ckan_191d8a90_f617_481c_84fa_8c2f4b92a172&outputFormat=json",
+  "licence": "CC BY 3.0 AU",
+  "attribution": "\u00a9 City of Gold Coast \u2014 Caravan Parks",
+  "publisher": "City of Gold Coast",
+  "format": "geojson",
+  "downloaded_at_utc": "2026-08-04T11:46:26+00:00",
+  "bytes": 26935,
+  "sha256": "f2f343da520a5ae51d871f500f72388a52ea742a0575fc18b963c42fe3bafaf0",
+  "last_updated_declared": "",
+  "current_status": "download_ready"
+}

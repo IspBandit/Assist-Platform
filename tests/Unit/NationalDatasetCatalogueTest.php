@@ -75,10 +75,13 @@ final class NationalDatasetCatalogueTest extends TestCase
     {
         self::assertFileExists(dirname(__DIR__, 2) . '/docs/DECISIONS/0033-ric-national-dataset-acquisition.md');
         self::assertFileExists(dirname(__DIR__, 2) . '/docs/DATA_011A.md');
+        self::assertFileExists(dirname(__DIR__, 2) . '/docs/DATASET_DOWNLOADS.md');
+        self::assertFileExists(dirname(__DIR__, 2) . '/docs/RIC_DATASET_AVAILABILITY.md');
         $doc = (string) file_get_contents(dirname(__DIR__, 2) . '/docs/DATA_011A.md');
         self::assertStringContainsString('before writing additional dataset-specific importers', $doc);
         self::assertStringContainsString('RIC is the single acquisition engine', $doc);
         self::assertStringContainsString('never', strtolower($doc));
         self::assertStringContainsString('/api/v1/admin', $doc);
+        self::assertStringContainsString('123_dataset_acquisition_pack.sql', $doc);
     }
 }

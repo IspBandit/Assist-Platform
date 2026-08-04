@@ -1,0 +1,16 @@
+{
+  "dataset_id": "au_national_public_toilet_map",
+  "name": "National Public Toilet Map",
+  "source_url": "https://data.gov.au/data/dataset/national-public-toilet-map",
+  "download_url": "https://data.gov.au/data/dataset/553b3049-2b8b-46a2-95e6-640d7986a8c1/resource/34076296-6692-4e30-b627-67b7c4eb1027/download/",
+  "api_url": "https://data.gov.au/data/api/3/action",
+  "licence": "CC BY 3.0 AU",
+  "attribution": "\u00a9 Commonwealth of Australia \u2014 National Public Toilet Map (data.gov.au)",
+  "publisher": "Department of Health, Disability and Ageing (via data.gov.au)",
+  "format": "csv",
+  "downloaded_at_utc": "2026-08-04T11:46:26+00:00",
+  "bytes": 11995188,
+  "sha256": "8aaef33e53f0e8ed918d2782f9a4bedb9fc963b90e36139a8892ea55c4056fea",
+  "last_updated_declared": "2026-08-02T01:02:14.556347",
+  "current_status": "download_ready"
+}

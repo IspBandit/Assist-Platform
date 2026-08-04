@@ -2,7 +2,23 @@
 
 ## Unreleased
 
-### Added
+### DATA-011A VanAssist dataset acquisition pack
+
+- Added portable `data_catalogue/` index (`catalogue.json` / `catalogue.csv`) with
+  verified Australian open-data sources for VanAssist facility themes.
+- Seeded migration `123_dataset_acquisition_pack.sql` with Transport for NSW /
+  council child datasets, remaining facility/provider themes, and disabled paid
+  API stubs (no auto-publish).
+- Added reproducible download / update-check / checksum scripts under
+  `scripts/data_catalogue/` (wrappers at `scripts/download_datasets.py` etc.).
+- Documented source audit, downloads, licensing, paid sources, and RIC
+  availability. Batehaven toilet + dump-point coverage evidenced from National
+  Public Toilet Map (CC BY 3.0 AU).
+- Large raw CSVs/PBF remain local-only via download script; metadata and
+  checksums are committed.
+
+### Admin API brand identity
+
 - **Admin API brand identity** — `/capabilities` now reports the verified host
   brand, status and enabled modules so RIC can switch safely across every Assist
   brand and hide resources that the selected brand does not use.

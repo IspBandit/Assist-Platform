@@ -47,3 +47,11 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+# Dataset acquisition pack bulk files
+data_catalogue/raw/**/*.csv
+data_catalogue/raw/**/*.geojson
+data_catalogue/raw/**/*.pbf
+data_catalogue/raw/**/*.zip
+data_catalogue/update_check.json
+

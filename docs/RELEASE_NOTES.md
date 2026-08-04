@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### DATA-011A VanAssist dataset acquisition pack
+
+- Published a portable `data_catalogue/` acquisition index and download scripts
+  for National Public Toilet Map, NSW rest areas / boat ramps / EV charging,
+  Gold Coast caravan parks, and Geofabrik Australia metadata.
+- Extended `government_datasets` seeds (migration 123) with verified children,
+  remaining VanAssist themes, and disabled paid research stubs.
+- RIC remains the acquisition engine; Platform remains SoR via Admin API.
+  No production publish and no AI workstream expansion.
+
 ### All-brand RIC workspace identity
 
 - Extended `GET /api/v1/admin/capabilities` with the resolved host brand key,

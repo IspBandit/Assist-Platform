@@ -1,0 +1,16 @@
+{
+  "dataset_id": "nsw_ev_charging_locations",
+  "name": "EV Charging Locations (NSW)",
+  "source_url": "https://data.gov.au/data/dataset/nsw-2-ev-charging-locations",
+  "download_url": "https://opendata.transport.nsw.gov.au/data/dataset/be1c4de4-4517-4bd0-8a09-2965ddfc7179/resource/7bbb6461-e52d-4fe7-ace4-a15c30198de0/download/ev_20251216.csv",
+  "api_url": "https://opendata.transport.nsw.gov.au/",
+  "licence": "CC BY 3.0 AU",
+  "attribution": "\u00a9 Transport for NSW \u2014 EV Charging Locations",
+  "publisher": "Transport for NSW",
+  "format": "csv",
+  "downloaded_at_utc": "2026-08-04T11:46:26+00:00",
+  "bytes": 283033,
+  "sha256": "43970e7751b951ab459a1be7bfd6141756c60ff8aa797debf11c5a597109865a",
+  "last_updated_declared": "",
+  "current_status": "download_ready"
+}
