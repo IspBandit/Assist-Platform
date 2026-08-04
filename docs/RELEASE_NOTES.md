@@ -103,6 +103,17 @@ may remain as dated files and are linked here rather than copied.
   unclaimed target). Exact-identity gates apply. Hold/confirm/auto-link stay
   website admin.
 
+### RIC ops + taxonomy reads (Increment I)
+
+- Added read-only `GET /ops/failed-emails` and
+  `GET /ops/failed-scheduled-tasks` (`ops:read` in `RIC_SERVICE`). Email
+  bodies are never returned.
+- Added `GET /categories` (`categories:read`) for brand
+  `brand_provider_categories`, and
+  `GET /locations/states|regions|towns` (`locations:read`) for picker taxonomy.
+- Staging enablement checklist documents new RIC scopes. No production flags.
+  Stale/missing quality queues remain deferred (product criteria).
+
 ### Import-candidate review queues (Increment H)
 
 - Added read-only Admin API queues for facility and provider import candidates:

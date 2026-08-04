@@ -18,6 +18,7 @@ declare(strict_types=1);
  * Option B Increment H: read-only facility/provider import-candidate queues.
  * Option B Increment H.1/H.2/H.3: human-only facility/provider review mutations.
  * Option B Increment H.4: human-only provider candidate merge.
+ * Increment I: ops failed queues + categories/locations taxonomy reads.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -270,6 +271,27 @@ return static function (\App\Core\Router $router): void {
                 'middleware' => ['admin_api_scope:flags:read'],
             ], static function (\App\Core\Router $router): void {
                 $router->get('/feature-flags', 'Api\\V1\\Admin\\FeatureFlagController@index', 'api.v1.admin.feature_flags.index');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:ops:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/ops/failed-emails', 'Api\\V1\\Admin\\OpsController@failedEmails', 'api.v1.admin.ops.failed_emails');
+                $router->get('/ops/failed-scheduled-tasks', 'Api\\V1\\Admin\\OpsController@failedScheduledTasks', 'api.v1.admin.ops.failed_scheduled_tasks');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:categories:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/categories', 'Api\\V1\\Admin\\CategoryController@index', 'api.v1.admin.categories.index');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:locations:read'],
+            ], static function (\App\Core\Router $router): void {
+                $router->get('/locations/states', 'Api\\V1\\Admin\\LocationController@states', 'api.v1.admin.locations.states');
+                $router->get('/locations/regions', 'Api\\V1\\Admin\\LocationController@regions', 'api.v1.admin.locations.regions');
+                $router->get('/locations/towns', 'Api\\V1\\Admin\\LocationController@towns', 'api.v1.admin.locations.towns');
             });
 
             $router->group([

@@ -22,6 +22,9 @@ final class AdminApiRicScopesTest extends TestCase
         self::assertContains('recycle_bin:restore', $scopes);
         self::assertContains('flags:read', $scopes);
         self::assertContains('import_candidates:read', $scopes);
+        self::assertContains('ops:read', $scopes);
+        self::assertContains('categories:read', $scopes);
+        self::assertContains('locations:read', $scopes);
         self::assertContains('flags:read', AdminApiScopes::ALL);
         self::assertContains('import_candidates:read', AdminApiScopes::ALL);
         self::assertNotContains('import_candidates:review', $scopes);
