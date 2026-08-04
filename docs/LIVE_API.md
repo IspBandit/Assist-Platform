@@ -36,6 +36,19 @@ Increment 1 (routing foundation) exposes:
 - `GET /api/v1/admin/version`
 - `GET /api/v1/admin/capabilities`
 
+RIC everyday management (analytics rollup) adds:
+
+- `GET /api/v1/admin/overview` — operational dashboard rollup (`analytics:read`);
+  website visitors exclude bot/unknown page views; queue counts gated by related
+  read scopes (`claims:read`, `corrections:read`, `duplicates:read`, `drafts:read`,
+  `facilities:read`); AI cost summary when `ai:read`; dataset sync timestamps when
+  `datasets:read`. Attention items for backlog; warnings only for genuine load
+  failures.
+- `GET /api/v1/admin/website-insights` — full brand website insights document
+  (`analytics:read`), reusing `WebsiteInsightsService`. Bot/unknown page views
+  returned separately as `filtered_bot_page_views`.
+- RIC default service scopes add `corrections:read`, `duplicates:read`, `ai:read`.
+
 Increment 2 (human auth) adds:
 
 - `POST /api/v1/admin/auth/login`

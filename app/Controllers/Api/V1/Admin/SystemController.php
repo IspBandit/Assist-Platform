@@ -73,6 +73,8 @@ final class SystemController extends Controller
                 'audit' => 'read',
                 'search_gaps' => 'read',
                 'search_analytics' => 'read',
+                'overview' => 'read',
+                'website_insights' => 'read',
             ],
             'limits' => [
                 'max_batch_size' => (int) Config::get('admin_api.max_batch_size', 100),
@@ -93,6 +95,8 @@ final class SystemController extends Controller
                 'Standalone traveller facilities are exposed as /facilities (ADR 0019).',
                 'Claims review covers caravan park claims and provider invite tokens.',
                 'Duplicate merge requires duplicates:merge scope and a human session.',
+                'GET /overview rolls up health, website KPIs, review queues and AI cost for RIC.',
+                'Website visitors exclude bot/unknown page views; filtered bot views are labelled separately.',
             ],
         ]);
     }

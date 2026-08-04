@@ -75,6 +75,139 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CapabilitiesResponse'
+  /overview:
+    get:
+      tags: [Analytics]
+      operationId: adminOverview
+      summary: Operational overview rollup for Assist RIC
+      description: |
+        Returns website KPIs (bot/unknown page views excluded from visitor totals),
+        review-queue counts, AI usage summary (when ai:read), dataset sync timestamps,
+        attention items and warnings. Requires analytics:read. Optional sections are
+        omitted or marked available=false when the token lacks related scopes.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, fy, pfy, custom]
+            default: 30d
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Overview document
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [system, website, queues, attention, warnings, labels]
+                    properties:
+                      generated_at:
+                        type: string
+                        format: date-time
+                      range:
+                        type: object
+                      brand:
+                        type: object
+                      system:
+                        type: object
+                      website:
+                        type: object
+                      queues:
+                        type: object
+                      ai:
+                        type: object
+                      datasets:
+                        type: object
+                      attention:
+                        type: array
+                        items:
+                          type: object
+                      warnings:
+                        type: array
+                        items:
+                          type: object
+                      labels:
+                        type: object
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing analytics:read scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /website-insights:
+    get:
+      tags: [Analytics]
+      operationId: adminWebsiteInsights
+      summary: Brand website insights with bot traffic labelled separately
+      description: |
+        Reuses WebsiteInsightsService. Genuine visitors exclude bot/unknown device
+        page views. filtered_bot_page_views is labelled separately and never mixed
+        into visitor totals. Requires analytics:read.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: range
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, fy, pfy, custom]
+            default: 30d
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Website insights document
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: object
+                    required: [summary, filtered_bot_page_views, labels]
+        '401':
+          description: Missing or invalid bearer token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '403':
+          description: Missing analytics:read scope
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
   /auth/login:
     post:
       tags: [Auth]
