@@ -12,9 +12,10 @@ use App\Services\Api\AdminApiEnvelope;
 use App\Services\Api\AdminApiImportCandidateService;
 
 /**
- * Facility import-candidate review queue (Option B Increment H / H.1).
+ * Facility import-candidate review queue (Option B Increment H / H.1 / H.3).
  *
- * Distinct from GET /imports (RIC package jobs). Approve/reject are human-only.
+ * Distinct from GET /imports (RIC package jobs). Approve/reject (including bulk)
+ * are human-only.
  */
 final class FacilityImportCandidateController extends Controller
 {
@@ -56,6 +57,20 @@ final class FacilityImportCandidateController extends Controller
 
         return AdminApiEnvelope::data(
             (new AdminApiImportCandidateService())->rejectFacilityCandidate($id, $request->all(), $request)
+        );
+    }
+
+    public function bulkApprove(Request $request): Response
+    {
+        return AdminApiEnvelope::data(
+            (new AdminApiImportCandidateService())->bulkApproveFacilityCandidates($request->all(), $request)
+        );
+    }
+
+    public function bulkReject(Request $request): Response
+    {
+        return AdminApiEnvelope::data(
+            (new AdminApiImportCandidateService())->bulkRejectFacilityCandidates($request->all(), $request)
         );
     }
 }

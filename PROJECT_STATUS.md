@@ -15,11 +15,12 @@
   contract (merged)
 - **RIC Operations gaps (Increment G)** — merged
 - **Import-candidate queues (Increment H)** — merged read-only
-- **Facility candidate review (Increment H.1)** — merged human Admin API approve/reject
+- **Facility candidate review (Increment H.1)** — merged
+- **Provider candidate review (Increment H.2)** — merged human Admin API approve/reject
 
 ## In Progress
-- **Provider candidate review (Increment H.2)** — human-only Admin API
-  approve/reject (`import_candidates:review`); merge stays website admin
+- **Facility candidate bulk review (Increment H.3)** — human-only Admin API
+  bulk-approve/bulk-reject
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -40,10 +41,11 @@
 5. ~~Website Insights~~ — merged (RIC #10)
 6. ~~Operations (Increment F docs)~~ — merged
 7. ~~Operations gaps (Increment G)~~ — merged
-8. ~~Import-candidate queues (Increment H)~~ — merged read-only queues
+8. ~~Import-candidate queues (Increment H)~~ — merged
 9. ~~Facility candidate review (Increment H.1)~~ — merged
-10. **Provider candidate review (Increment H.2)** — human Admin API approve/reject
-11. No production flags; no deploy without owner
+10. ~~Provider candidate review (Increment H.2)~~ — merged
+11. **Facility candidate bulk review (Increment H.3)** — in flight
+12. No production flags; no deploy without owner
 
 ## Overall Completion %
-94% programme; RIC everyday management A–H.1 merged; H.2 in flight
+95% programme; RIC everyday management A–H.2 merged; H.3 in flight

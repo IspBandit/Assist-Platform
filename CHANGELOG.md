@@ -35,6 +35,10 @@
   `import_candidates:review` human scope. Delegates to
   `DataSourceService::review`; approve requires `retention_confirmed` and
   independent `evidence_url`. Merge/hold remain website admin.
+- **Facility import-candidate bulk review (Increment H.3)** — human-only
+  `POST /facility-import-candidates/bulk-approve|bulk-reject` with the same
+  review scope. Body `{ "ids": [...], "reason": "..." }`; per-id results;
+  capped by `admin_api.max_batch_size`.
 - **Import-candidate review queues (Increment H)** — read-only
   `GET /facility-import-candidates` and `GET /provider-import-candidates`
   (+ `/{id}`) with `import_candidates:read`. Separate from `GET /imports`

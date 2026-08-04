@@ -17,6 +17,7 @@ declare(strict_types=1);
  * search analytics, sync conflicts, facilities and import lifecycle extensions.
  * Option B Increment H: read-only facility/provider import-candidate queues.
  * Option B Increment H.1/H.2: human-only facility/provider candidate approve/reject.
+ * Option B Increment H.3: human-only facility candidate bulk approve/reject.
  */
 return static function (\App\Core\Router $router): void {
     $router->group([
@@ -186,6 +187,8 @@ return static function (\App\Core\Router $router): void {
             $router->group([
                 'middleware' => ['admin_api_scope:import_candidates:review', 'admin_api_human'],
             ], static function (\App\Core\Router $router): void {
+                $router->post('/facility-import-candidates/bulk-approve', 'Api\\V1\\Admin\\FacilityImportCandidateController@bulkApprove', 'api.v1.admin.facility_import_candidates.bulk_approve');
+                $router->post('/facility-import-candidates/bulk-reject', 'Api\\V1\\Admin\\FacilityImportCandidateController@bulkReject', 'api.v1.admin.facility_import_candidates.bulk_reject');
                 $router->post('/facility-import-candidates/{id}/approve', 'Api\\V1\\Admin\\FacilityImportCandidateController@approve', 'api.v1.admin.facility_import_candidates.approve');
                 $router->post('/facility-import-candidates/{id}/reject', 'Api\\V1\\Admin\\FacilityImportCandidateController@reject', 'api.v1.admin.facility_import_candidates.reject');
                 $router->post('/provider-import-candidates/{id}/approve', 'Api\\V1\\Admin\\ProviderImportCandidateController@approve', 'api.v1.admin.provider_import_candidates.approve');

@@ -82,6 +82,16 @@ may remain as dated files and are linked here rather than copied.
 - Capabilities mark `provider_import_candidates` as `read_write`. Detail
   payloads may include `evidence_url` and `review_notes`.
 
+### Facility import-candidate bulk review (Increment H.3)
+
+- Added human-only Admin API batch mutations:
+  `POST /facility-import-candidates/bulk-approve` and
+  `POST /facility-import-candidates/bulk-reject`
+  (same `import_candidates:review` + `admin_api_human`).
+- Body `{ "ids": [1,2], "reason": "..." }` — optional shared notes; batch size
+  capped by `admin_api.max_batch_size`. Returns per-id success/failure results
+  without aborting the whole batch on a single conflict.
+
 ### Import-candidate review queues (Increment H)
 
 - Added read-only Admin API queues for facility and provider import candidates:

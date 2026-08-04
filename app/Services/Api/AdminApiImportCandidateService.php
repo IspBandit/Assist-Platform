@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Api;
 
+use App\Core\Config;
 use App\Core\Database;
 use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
@@ -12,11 +13,12 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Admin API queues for facility/provider import candidates (Option B Increment H / H.1 / H.2).
+ * Admin API queues for facility/provider import candidates (Option B Increment H / H.1 / H.2 / H.3).
  *
  * Separate from GET /imports (api_import_jobs / RIC packages). Query patterns follow
  * GovernmentDatasetService::pendingCandidates and DataSourceService::reviewQueue.
  * Facility/provider approve/reject are human-only; merge stays website admin.
+ * Facility bulk approve/reject use the same human scope and per-id brand gates.
  */
 class AdminApiImportCandidateService
 {
@@ -170,6 +172,24 @@ class AdminApiImportCandidateService
     public function rejectFacilityCandidate(int $id, array $input, Request $request): array
     {
         return $this->reviewFacilityCandidate($id, 'reject', $request, $this->optionalReason($input));
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function bulkApproveFacilityCandidates(array $input, Request $request): array
+    {
+        return $this->bulkReviewFacilityCandidates('approve', $input, $request);
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function bulkRejectFacilityCandidates(array $input, Request $request): array
+    {
+        return $this->bulkReviewFacilityCandidates('reject', $input, $request);
     }
 
     /**
@@ -412,6 +432,107 @@ class AdminApiImportCandidateService
         );
 
         return $after;
+    }
+
+    /**
+     * @param array<string,mixed> $input
+     * @return array{
+     *   action:string,
+     *   count:int,
+     *   processed:int,
+     *   failed:int,
+     *   results:list<array<string,mixed>>
+     * }
+     */
+    private function bulkReviewFacilityCandidates(string $action, array $input, Request $request): array
+    {
+        $ids = $this->normaliseBulkIds($input['ids'] ?? null);
+        $reasonPayload = [];
+        $reason = $this->optionalReason($input);
+        if ($reason !== null) {
+            $reasonPayload['reason'] = $reason;
+        }
+
+        $results = [];
+        $processed = 0;
+        $failed = 0;
+        foreach ($ids as $id) {
+            try {
+                $candidate = $action === 'approve'
+                    ? $this->approveFacilityCandidate($id, $reasonPayload, $request)
+                    : $this->rejectFacilityCandidate($id, $reasonPayload, $request);
+                $results[] = [
+                    'id' => (string) $id,
+                    'status' => $action === 'approve' ? 'approved' : 'rejected',
+                    'candidate' => $candidate,
+                ];
+                $processed++;
+            } catch (AdminApiException $e) {
+                $results[] = [
+                    'id' => (string) $id,
+                    'status' => 'failed',
+                    'error' => [
+                        'code' => $e->errorCode(),
+                        'message' => $e->getMessage(),
+                    ],
+                ];
+                $failed++;
+            }
+        }
+
+        return [
+            'action' => $action === 'approve' ? 'bulk_approve' : 'bulk_reject',
+            'count' => count($results),
+            'processed' => $processed,
+            'failed' => $failed,
+            'results' => $results,
+        ];
+    }
+
+    /**
+     * @return list<int>
+     */
+    private function normaliseBulkIds(mixed $ids): array
+    {
+        if (!is_array($ids) || $ids === []) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['ids' => ['Provide at least one facility import-candidate id.']]
+            );
+        }
+
+        $max = (int) Config::get('admin_api.max_batch_size', 100);
+        if (count($ids) > $max) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['ids' => ['Batch size exceeds max_batch_size (' . $max . ').']]
+            );
+        }
+
+        $normalised = [];
+        $seen = [];
+        foreach ($ids as $index => $raw) {
+            $id = (int) $raw;
+            if ($id < 1) {
+                throw new AdminApiException(
+                    422,
+                    'validation_failed',
+                    'Validation failed.',
+                    ['ids.' . $index => ['Each id must be a positive integer.']]
+                );
+            }
+            if (isset($seen[$id])) {
+                continue;
+            }
+            $seen[$id] = true;
+            $normalised[] = $id;
+        }
+
+        return $normalised;
     }
 
     /**
