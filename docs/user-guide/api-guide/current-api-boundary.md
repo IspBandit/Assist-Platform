@@ -46,11 +46,13 @@ providers, and load TowSmart catalogue data on the TowSmart brand. Consumers
 must handle validation and error responses implemented by each controller.
 
 When enabled, Assist RIC may authenticate as a service account, submit checksummed
-import packages, manage drafts, read providers, stays, facilities, claims,
-corrections, duplicates, datasets, audit, search analytics, search-gaps,
-operational overview (`GET /overview`) and website insights
-(`GET /website-insights`) through `/api/v1/admin` only — never by opening
-production MariaDB.
+import packages, manage drafts, browse Directory Management resources
+(`GET /providers`, `/stays`, `/facilities`, `/claims`, `/corrections` with cursor
+pagination), read datasets, audit, search analytics, search-gaps, operational
+overview (`GET /overview`) and website insights (`GET /website-insights`) through
+`/api/v1/admin` only — never by opening production MariaDB. Claim and correction
+approve/reject remain human-session Admin API actions and are also available in
+the website admin. Categories and locations stay on PHP admin routes.
 
 ## Workflows
 

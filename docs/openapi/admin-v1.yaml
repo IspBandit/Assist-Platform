@@ -1601,6 +1601,18 @@ paths:
       summary: List park claims and provider invite tokens
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [park_claim, provider_invite]
+        - name: status
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Claim collection
@@ -1611,6 +1623,18 @@ paths:
       summary: List listing correction submissions
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+        - name: entity_type
+          in: query
+          schema:
+            type: string
       responses:
         '200':
           description: Correction collection

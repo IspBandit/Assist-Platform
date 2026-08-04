@@ -15,6 +15,14 @@ may remain as dated files and are linked here rather than copied.
   `duplicates:read` and `ai:read` (still no production-danger scopes).
 - OpenAPI, LIVE_API and RIC contract tests updated. No production flags changed.
 
+### RIC Directory Management Admin API contract
+
+- Clarified Assist RIC Directory Management uses existing Admin API directory
+  and review-queue reads (`/providers`, `/stays`, `/facilities`, `/claims`,
+  `/corrections`) with cursor pagination. No new endpoints. Category/location
+  taxonomy remains website admin only. Claim/correction mutations stay human-
+  session scoped.
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.

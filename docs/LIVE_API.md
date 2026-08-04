@@ -75,6 +75,19 @@ Increment 4 (read-only directory) adds:
 - `GET /api/v1/admin/stays/{id}` — detail
 - Filters: `q`, `status`/`lifecycle`, `town`, `state`; brand from host context
 
+**RIC Directory Management** uses these Increment 4 routes plus Option B
+facilities/claims/corrections reads:
+
+- `GET /facilities`, `GET /facilities/{id}` (`facilities:read`; filters `q`, `status`)
+- `GET /claims`, `GET /claims/{id}` (`claims:read`; filters `type`, `status`)
+- `GET /corrections`, `GET /corrections/{id}` (`corrections:read`; filters `status`, `entity_type`)
+- Cursor pagination via `limit` + `cursor` / `meta.next_cursor` (not offset).
+- Read-only by default in Assist RIC; approve/reject mutations require human
+  Admin API sessions (`claims:write` / `corrections:write`) and remain available
+  in the website admin as backup.
+- Categories and locations have **no** Admin API surface; continue to use PHP
+  `/admin/categories` and `/admin/locations`.
+
 Increment 5 (audited writes + lifecycle) adds:
 
 - `POST /api/v1/admin/providers` — create (`providers:write`)
