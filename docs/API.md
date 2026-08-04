@@ -39,6 +39,13 @@ cannot select a private data scope by sending `brand_id` in a body or query.
 Every repository query also applies brand and provider/organisation ownership
 where relevant.
 
+Assist RIC Directory Management browses Platform directory resources through
+versioned Admin API reads only: `GET /api/v1/admin/providers`, `/stays`,
+`/facilities`, `/claims` and `/corrections`, with cursor pagination and
+least-privilege scopes. Controlled writes use the existing audited mutation
+routes; claim and correction approval requires a human Admin API session.
+Categories and locations remain website-admin only (no Admin API taxonomy yet).
+
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.
