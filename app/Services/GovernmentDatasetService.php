@@ -446,6 +446,20 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
             (string) ($dataset['default_facility_type'] ?? 'other_essential')
         );
         $sourceKey = self::catalogueSourceKey((string) $dataset['dataset_key'], (string) $dataset['connector_key']);
+        // A dataset sync creates a new job each time, so the database's
+        // job-scoped unique key cannot prevent the same source record being
+        // queued repeatedly. Keep one live review candidate per catalogue
+        // record and let a later sync stage it again only after review.
+        $pending = Database::selectOne(
+            'SELECT id FROM traveller_facility_import_candidates
+             WHERE dataset_id = ? AND brand_id <=> ? AND external_id = ?
+               AND review_status = \'pending\' AND expires_at > NOW()
+             LIMIT 1',
+            [(int) $dataset['id'], $brandId, $externalId]
+        );
+        if ($pending !== null) {
+            return false;
+        }
         $dup = Database::selectOne(
             'SELECT id FROM traveller_facilities WHERE source_key = ? AND source_record_id = ? AND deleted_at IS NULL LIMIT 1',
             [$sourceKey, $externalId]

@@ -29,6 +29,15 @@ final class GovernmentDatasetServiceTest extends TestCase
         );
     }
 
+    public function testRepeatedDatasetSyncsSuppressPendingSourceRecordDuplicates(): void
+    {
+        $source = file_get_contents(dirname(__DIR__, 3) . '/app/Services/GovernmentDatasetService.php');
+        self::assertIsString($source);
+        self::assertStringContainsString('brand_id <=> ?', $source);
+        self::assertStringContainsString('expires_at > NOW()', $source);
+        self::assertStringContainsString('if ($pending !== null)', $source);
+    }
+
     public function testCkanConnectorUsesResourceMetadataThenCsv(): void
     {
         $http = new class extends SimpleHttpClient {
