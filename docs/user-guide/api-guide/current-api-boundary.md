@@ -48,11 +48,14 @@ must handle validation and error responses implemented by each controller.
 When enabled, Assist RIC may authenticate as a service account, submit checksummed
 import packages, manage drafts, browse Directory Management resources
 (`GET /providers`, `/stays`, `/facilities`, `/claims`, `/corrections` with cursor
-pagination), read datasets, audit, search analytics, search-gaps, operational
-overview (`GET /overview`) and website insights (`GET /website-insights`) through
-`/api/v1/admin` only — never by opening production MariaDB. Claim and correction
-approve/reject remain human-session Admin API actions and are also available in
-the website admin. Categories and locations stay on PHP admin routes.
+pagination), browse Data Review queues (`GET /drafts`, `/duplicates`,
+`/recycle-bin` with cursor pagination), read datasets, audit, search analytics,
+search-gaps, operational overview (`GET /overview`) and website insights
+(`GET /website-insights`) through `/api/v1/admin` only — never by opening
+production MariaDB. Claim/correction approve/reject, draft approve, duplicate
+merge and recycle purge remain human-session Admin API actions and are also
+available in the website admin. Categories, locations and import-candidate
+queues stay on PHP admin routes.
 
 ## Workflows
 

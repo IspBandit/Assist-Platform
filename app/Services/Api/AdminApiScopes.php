@@ -82,6 +82,7 @@ final class AdminApiScopes
         'analytics:read',
         'ai:read',
         'audit:read',
+        'recycle_bin:restore',
     ];
 
     /** @var list<string> */

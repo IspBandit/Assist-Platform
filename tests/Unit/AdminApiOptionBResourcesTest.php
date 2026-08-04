@@ -69,6 +69,7 @@ final class AdminApiOptionBResourcesTest extends TestCase
         self::assertContains('ai:read', AdminApiScopes::RIC_SERVICE);
         self::assertContains('corrections:read', AdminApiScopes::RIC_SERVICE);
         self::assertContains('duplicates:read', AdminApiScopes::RIC_SERVICE);
+        self::assertContains('recycle_bin:restore', AdminApiScopes::RIC_SERVICE);
     }
 
     public function testOptionBRouteSignaturesExist(): void

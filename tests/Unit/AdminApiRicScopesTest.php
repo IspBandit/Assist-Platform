@@ -19,6 +19,7 @@ final class AdminApiRicScopesTest extends TestCase
         self::assertContains('datasets:read', $scopes);
         self::assertContains('facilities:read', $scopes);
         self::assertContains('sync:read', $scopes);
+        self::assertContains('recycle_bin:restore', $scopes);
         self::assertNotContains('recycle_bin:purge', $scopes);
         self::assertNotContains('mfa:verify', $scopes);
 

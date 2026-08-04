@@ -10,6 +10,10 @@
   providers, stays, facilities, claims and corrections via existing Admin API
   reads (cursor pagination; categories/locations remain website admin). OpenAPI
   claim/correction list query parameters clarified.
+- **RIC Data Review contract** — documented Assist RIC browse of drafts,
+  duplicates and recycle-bin via existing Admin API reads; OpenAPI draft/
+  duplicate list filters clarified; RIC service scopes add `recycle_bin:restore`
+  (not purge).
 
 - Fixed CKAN government imports silently truncating complete state or national
   CSV extracts at 500 records. Review-first imports now honour the existing

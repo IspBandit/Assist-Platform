@@ -1225,6 +1225,22 @@ paths:
       summary: List draft submissions
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Draft status filter (for example draft, pending_review, approved, rejected)
+          schema:
+            type: string
+        - name: entity_type
+          in: query
+          schema:
+            type: string
+            enum: [provider, stay]
       responses:
         '200':
           description: Draft collection
@@ -1645,6 +1661,23 @@ paths:
       summary: List duplicate review decisions and heuristic suspects
       security:
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: Decision status (default open)
+          schema:
+            type: string
+        - name: include_suspects
+          in: query
+          description: Include heuristic suspect pairs when status is open (default true)
+          schema:
+            type: boolean
+            default: true
       responses:
         '200':
           description: Duplicate collection
