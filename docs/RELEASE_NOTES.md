@@ -92,6 +92,17 @@ may remain as dated files and are linked here rather than copied.
   capped by `admin_api.max_batch_size`. Returns per-id success/failure results
   without aborting the whole batch on a single conflict.
 
+### Provider import-candidate merge (Increment H.4)
+
+- Added human-only Admin API merge for provider import candidates:
+  `POST /provider-import-candidates/{id}/merge`
+  (same `import_candidates:review` + `admin_api_human`).
+- Requires `retention_confirmed` and independent `evidence_url`; optional
+  `provider_id` (defaults to candidate `duplicate_provider_id`), `category_id`,
+  and notes. Delegates to `DataSourceService::review` manual merge (attach to
+  unclaimed target). Exact-identity gates apply. Hold/confirm/auto-link stay
+  website admin.
+
 ### Import-candidate review queues (Increment H)
 
 - Added read-only Admin API queues for facility and provider import candidates:

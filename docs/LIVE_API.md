@@ -122,8 +122,12 @@ facilities/claims/corrections reads:
   - `POST /provider-import-candidates/{id}/approve|reject`
     (`import_candidates:review` + human session) — approve requires
     `retention_confirmed` + independent `evidence_url` (optional `category_id`
-    / notes); reject accepts pending or held. Merge/hold/confirm stay website
+    / notes); reject accepts pending or held. Hold/confirm stay website
     admin.
+  - `POST /provider-import-candidates/{id}/merge` — human-only manual merge into
+    an unclaimed provider (same scope); requires retention + evidence URL;
+    optional `provider_id` (defaults to `duplicate_provider_id`). Exact-identity
+    gates apply. Not the status-only auto-link path.
   - These are **not** `GET /imports` (RIC package jobs / `api_import_jobs`).
   - Stale/missing quality lists still have no Admin API.
   - Overview `facility_candidates_pending` counts live facility lifecycle
@@ -252,6 +256,13 @@ Option B Increment H.3 adds:
 - `POST /facility-import-candidates/bulk-approve|bulk-reject` — human-only
   batch facility candidate review (same scope). Per-id results; batch capped
   by `admin_api.max_batch_size`. Provider bulk remains out of scope.
+
+Option B Increment H.4 adds:
+
+- `POST /provider-import-candidates/{id}/merge` — human-only manual merge into
+  an unclaimed provider via `DataSourceService::review`. Requires retention +
+  evidence URL; optional `provider_id`. Hold/confirm/auto-link remain website
+  admin.
 
 Phase 1 live API foundation is complete. Keep `ADMIN_API_MFA_REQUIRED=false`
 until operators have enrolled TOTP and Platform Quality Gate evidence is recorded.

@@ -11,16 +11,13 @@
 - Queensland essential facility coverage (merged to main)
 - **RIC everyday management A–E** — Overview, Directory, Data Review, Ask Insights,
   Website Insights (merged)
-- **RIC everyday management Operations (Increment F)** — docs + RIC Operations page
-  contract (merged)
-- **RIC Operations gaps (Increment G)** — merged
+- **RIC everyday management Operations (Increment F–G)** — merged
 - **Import-candidate queues (Increment H)** — merged read-only
-- **Facility candidate review (Increment H.1)** — merged
-- **Provider candidate review (Increment H.2)** — merged human Admin API approve/reject
+- **Facility/provider candidate review (Increment H.1–H.3)** — merged
+  (single + facility bulk)
 
 ## In Progress
-- **Facility candidate bulk review (Increment H.3)** — human-only Admin API
-  bulk-approve/bulk-reject
+- **Provider candidate merge (Increment H.4)** — human-only Admin API merge
 - OPS-010 / DATA-011 staging enablement rehearsal — **owner/ops**
 - VAN-002 Claims end-to-end acceptance — **owner/staging**
 - OPS-012 production Ask/facilities remain off
@@ -30,22 +27,13 @@
 - POL-009 / LOC-003 / COM-004 launches
 - Full Platform Quality Gate / production release
 - Ops completeness: failed-job queue Admin API; feature-flag **writes**;
-  provider-candidate **merge** remains website admin only
+  provider hold/confirm/auto-link remain website admin only
 
 ## Current task — RIC everyday management (dependency order)
 
-1. ~~Overview~~ — merged
-2. ~~Directory~~ — merged
-3. ~~Data Review~~ — merged
-4. ~~Ask Insights~~ — merged
-5. ~~Website Insights~~ — merged (RIC #10)
-6. ~~Operations (Increment F docs)~~ — merged
-7. ~~Operations gaps (Increment G)~~ — merged
-8. ~~Import-candidate queues (Increment H)~~ — merged
-9. ~~Facility candidate review (Increment H.1)~~ — merged
-10. ~~Provider candidate review (Increment H.2)~~ — merged
-11. **Facility candidate bulk review (Increment H.3)** — in flight
-12. No production flags; no deploy without owner
+1. ~~Overview through H.3~~ — merged
+2. **Provider candidate merge (Increment H.4)** — in flight
+3. No production flags; no deploy without owner
 
 ## Overall Completion %
-95% programme; RIC everyday management A–H.2 merged; H.3 in flight
+95% programme; RIC everyday management A–H.3 merged; H.4 in flight

@@ -1619,8 +1619,8 @@ paths:
         (RIC package jobs). Default `status=pending` (non-expired). Optional
         `q` and `state` filters mirror the PHP admin review queue. List items
         omit `raw_json`. Sparse when the candidates table is missing. Human-only
-        approve/reject are Increment H.2 (`import_candidates:review`); merge
-        stays website admin.
+        approve/reject/merge are Increments H.2/H.4 (`import_candidates:review`);
+        hold/confirm stay website admin.
       security:
         - bearerAuth: []
       parameters:
@@ -1730,7 +1730,6 @@ paths:
       description: |
         Human-only. Requires `import_candidates:review` and a human bearer
         session. Optional JSON `{ "reason": "..." }` is stored as review notes.
-        Merge remains website admin.
       security:
         - bearerAuth: []
       parameters:
@@ -1759,6 +1758,60 @@ paths:
           description: Candidate is not pending or held
         '422':
           description: Review could not be applied
+  /provider-import-candidates/{id}/merge:
+    post:
+      tags: [ImportCandidates]
+      operationId: adminProviderImportCandidatesMerge
+      summary: Merge a pending provider import candidate into an unclaimed provider
+      description: |
+        Human-only Increment H.4. Requires `import_candidates:review` and
+        `admin_api_human`. Delegates to `DataSourceService::review` (`merge`),
+        which attaches fields onto an unclaimed target and marks the candidate
+        merged. Required: `retention_confirmed` and independent `evidence_url`.
+        Optional `provider_id` (defaults to candidate `duplicate_provider_id`),
+        `category_id`, and notes. Exact-identity merge gates still apply
+        (score, name, phone/website, unclaimed target). Hold/confirm/bulk
+        remain website admin. Not the auto status-only exact-duplicate linker.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [retention_confirmed, evidence_url]
+              properties:
+                retention_confirmed:
+                  type: boolean
+                evidence_url:
+                  type: string
+                  format: uri
+                provider_id:
+                  type: integer
+                  minimum: 1
+                  description: Merge target (defaults to duplicate_provider_id)
+                category_id:
+                  type: integer
+                  minimum: 1
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Updated provider import-candidate detail
+        '404':
+          description: Not found in brand scope
+        '409':
+          description: Candidate is not pending
+        '422':
+          description: Validation failed or merge gates not met
   /auth/mfa/challenge:
     post:
       tags: [Auth]

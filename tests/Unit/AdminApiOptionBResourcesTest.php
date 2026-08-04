@@ -107,6 +107,7 @@ final class AdminApiOptionBResourcesTest extends TestCase
             'GET /provider-import-candidates/{id}',
             'POST /provider-import-candidates/{id}/approve',
             'POST /provider-import-candidates/{id}/reject',
+            'POST /provider-import-candidates/{id}/merge',
             'GET /feature-flags',
             'GET /overview',
             'GET /website-insights',

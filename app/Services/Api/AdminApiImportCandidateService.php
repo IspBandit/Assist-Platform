@@ -254,6 +254,55 @@ class AdminApiImportCandidateService
     }
 
     /**
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function mergeProviderCandidate(int $id, array $input, Request $request): array
+    {
+        $retentionConfirmed = $this->truthy($input['retention_confirmed'] ?? false);
+        $evidenceUrl = trim((string) ($input['evidence_url'] ?? ''));
+        $categoryId = isset($input['category_id']) && $input['category_id'] !== '' && $input['category_id'] !== null
+            ? (int) $input['category_id']
+            : null;
+        if ($categoryId !== null && $categoryId < 1) {
+            $categoryId = null;
+        }
+        $providerId = isset($input['provider_id']) && $input['provider_id'] !== '' && $input['provider_id'] !== null
+            ? (int) $input['provider_id']
+            : null;
+        if ($providerId !== null && $providerId < 1) {
+            $providerId = null;
+        }
+        $notes = $this->optionalReason($input) ?? '';
+
+        $errors = [];
+        if (!$retentionConfirmed) {
+            $errors['retention_confirmed'] = [
+                'Confirm an independent right to retain and publish this business data before merging.',
+            ];
+        }
+        if ($evidenceUrl === '') {
+            $errors['evidence_url'] = [
+                'Provide an independent http/https evidence URL (not a Google search or Maps URL).',
+            ];
+        }
+        if ($errors !== []) {
+            throw new AdminApiException(422, 'validation_failed', 'Validation failed.', $errors);
+        }
+
+        return $this->reviewProviderCandidate(
+            $id,
+            'merge',
+            $request,
+            $providerId,
+            $retentionConfirmed,
+            $categoryId,
+            $evidenceUrl,
+            $notes
+        );
+    }
+
+    /**
      * @return array{
      *   items:list<array<string,mixed>>,
      *   meta:array<string,mixed>,
@@ -557,11 +606,30 @@ class AdminApiImportCandidateService
                 'Only pending provider import candidates can be approved.'
             );
         }
+        if ($decision === 'merge' && $status !== 'pending') {
+            throw new AdminApiException(
+                409,
+                'conflict',
+                'Only pending provider import candidates can be merged.'
+            );
+        }
         if ($decision === 'reject' && !in_array($status, ['pending', 'held'], true)) {
             throw new AdminApiException(
                 409,
                 'conflict',
                 'Only pending or held provider import candidates can be rejected.'
+            );
+        }
+        if (
+            $decision === 'merge'
+            && $providerId === null
+            && empty($before['duplicate_provider_id'])
+        ) {
+            throw new AdminApiException(
+                422,
+                'validation_failed',
+                'Validation failed.',
+                ['provider_id' => ['Provide provider_id or merge a candidate that already has a duplicate_provider_id.']]
             );
         }
 
@@ -574,6 +642,7 @@ class AdminApiImportCandidateService
             // Website admin often confirms evidence as a separate step. When the API
             // supplies retention + evidence URL on approve, confirm first so
             // BulkReviewPolicy::approvalProblems can pass for non-national-route rows.
+            // Merge sets evidence_status in-memory inside DataSourceService::review.
             if (
                 $decision === 'approve'
                 && !in_array((string) ($before['evidence_status'] ?? ''), ['confirmed', 'claimed'], true)
@@ -611,9 +680,11 @@ class AdminApiImportCandidateService
                 throw new AdminApiException(
                     409,
                     'conflict',
-                    $decision === 'approve'
-                        ? 'Only pending provider import candidates can be approved.'
-                        : 'Only pending or held provider import candidates can be rejected.'
+                    match ($decision) {
+                        'approve' => 'Only pending provider import candidates can be approved.',
+                        'merge' => 'Only pending provider import candidates can be merged.',
+                        default => 'Only pending or held provider import candidates can be rejected.',
+                    }
                 );
             }
             throw new AdminApiException(422, 'validation_failed', $message);
@@ -626,8 +697,13 @@ class AdminApiImportCandidateService
         }
 
         $after = $this->showProviderCandidate($id);
+        $auditAction = match ($decision) {
+            'approve' => 'provider_import_candidate.approved',
+            'merge' => 'provider_import_candidate.merged',
+            default => 'provider_import_candidate.rejected',
+        };
         AdminApiAudit::record(
-            'provider_import_candidate.' . ($decision === 'approve' ? 'approved' : 'rejected'),
+            $auditAction,
             'data_source_import_candidate',
             $id,
             [
@@ -640,6 +716,7 @@ class AdminApiImportCandidateService
                 'reason' => $reviewNotes !== '' ? $reviewNotes : null,
                 'evidence_url' => $evidenceUrl !== '' ? $evidenceUrl : null,
                 'retention_confirmed' => $retentionConfirmed,
+                'merge_target_id' => $decision === 'merge' ? ($providerId ?? $before['duplicate_provider_id'] ?? null) : null,
             ],
             $request
         );

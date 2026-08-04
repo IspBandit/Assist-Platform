@@ -39,6 +39,10 @@
   `POST /facility-import-candidates/bulk-approve|bulk-reject` with the same
   review scope. Body `{ "ids": [...], "reason": "..." }`; per-id results;
   capped by `admin_api.max_batch_size`.
+- **Provider import-candidate merge (Increment H.4)** — human-only
+  `POST /provider-import-candidates/{id}/merge` with the same review scope.
+  Requires `retention_confirmed` + independent `evidence_url`; optional
+  `provider_id`. Exact-identity gates via `DataSourceService::review`.
 - **Import-candidate review queues (Increment H)** — read-only
   `GET /facility-import-candidates` and `GET /provider-import-candidates`
   (+ `/{id}`) with `import_candidates:read`. Separate from `GET /imports`
