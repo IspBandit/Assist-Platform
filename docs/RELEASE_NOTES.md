@@ -31,6 +31,13 @@ may remain as dated files and are linked here rather than copied.
 - Added `recycle_bin:restore` to default Assist RIC service scopes so recycle
   bin listing works; purge remains human-only and never in `RIC_SERVICE`.
 
+### RIC Ask Insights Admin API contract
+
+- Documented Assist RIC Ask Insights against `GET /ai/usage/requests`, usage
+  summary/costs/cache and dual-source `GET /search-gaps`.
+- Knowledge-gap SearchGap `meta` now includes click/contact/`ai_used` counts and
+  taxonomy keys (additive). OpenAPI documents the AI usage request feed.
+
 - Ask VanAssist recognises plain-language accommodation requests such as
   “somewhere to stay free near Emerald” and searches both free-camp records
   and stays explicitly marked free.
