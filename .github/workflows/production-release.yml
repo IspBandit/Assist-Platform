@@ -60,6 +60,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Public bot controls deliberately reject curl's default identity. These
+          # requests are an authorised release check, so present a browser-compatible
+          # identity while retaining an explicit smoke-test marker for server logs.
+          smoke_user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 AssistPlatform-Production-Smoke/1.0"
+          smoke_curl() {
+            curl --user-agent "$smoke_user_agent" "$@"
+          }
           urls=(
             "https://vanassist.com.au/"
             "https://vanassist.com.au/providers"
@@ -76,7 +83,7 @@ jobs:
             "https://trailerwise.com.au/rules"
           )
           for url in "${urls[@]}"; do
-            curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+            smoke_curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
               --output /dev/null "$url"
           done
           if getent hosts localtorque.com.au >/dev/null 2>&1; then
@@ -84,13 +91,13 @@ jobs:
               "https://localtorque.com.au/" \
               "https://localtorque.com.au/rules" \
               "https://localtorque.com.au/motorsport"; do
-              curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+              smoke_curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
                 --output /dev/null "$url"
             done
           else
             echo "LocalTorque production DNS is not active yet; brand journey checks remain gated until it resolves."
           fi
-          homepage="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
+          homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
           grep -q '/runtime-assets/css/app.css' <<<"$homepage"
           grep -q '/runtime-assets/js/app.js' <<<"$homepage"
           grep -q 'class="brand brand--wordmark' <<<"$homepage"
@@ -104,13 +111,13 @@ jobs:
             exit 1
           fi
 
-          manifest="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/manifest.webmanifest)"
+          manifest="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/manifest.webmanifest)"
           grep -q '"short_name": "VanAssist"' <<<"$manifest"
-          worker="$(curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/service-worker.js)"
+          worker="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/service-worker.js)"
           grep -q "self.addEventListener('fetch'" <<<"$worker"
 
           for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
-            brand_homepage="$(curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
+            brand_homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
             grep -q 'class="brand brand--wordmark' <<<"$brand_homepage"
             grep -q '/runtime-assets/brands/' <<<"$brand_homepage"
             grep -q '/favicon.svg' <<<"$brand_homepage"
@@ -119,12 +126,12 @@ jobs:
               exit 1
             fi
           done
-          app_js="$(curl --fail --silent --show-error --location --max-time 20 \
+          app_js="$(smoke_curl --fail --silent --show-error --location --max-time 20 \
             https://vanassist.com.au/runtime-assets/js/app.js)"
           grep -q 'A manually entered town or postcode' <<<"$app_js"
-          curl --fail --silent --show-error --location --max-time 20 \
+          smoke_curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
-          curl --fail --silent --show-error --location --max-time 20 \
+          smoke_curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
       - name: Record safeguarded provider processing
         run: |
