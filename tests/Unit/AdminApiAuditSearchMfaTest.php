@@ -11,6 +11,8 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Router;
 use App\Platform\Support\RequestContext;
+use App\Platform\Brand\BrandContext;
+use App\Platform\Brand\BrandRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class AdminApiAuditSearchMfaTest extends TestCase
@@ -21,6 +23,8 @@ final class AdminApiAuditSearchMfaTest extends TestCase
     {
         parent::setUp();
         RequestContext::clear();
+        $brands = require base_path('config/brands.php');
+        BrandContext::set(BrandRegistry::fromArray($brands['registry'])->get('vanassist'));
         Config::set('admin_api.enabled', true);
         Config::set('admin_api.restricted', true);
         Config::set('admin_api.mfa_required', false);
@@ -39,6 +43,7 @@ final class AdminApiAuditSearchMfaTest extends TestCase
     protected function tearDown(): void
     {
         RequestContext::clear();
+        BrandContext::clear();
         parent::tearDown();
     }
 

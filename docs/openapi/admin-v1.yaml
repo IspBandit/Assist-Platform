@@ -2727,10 +2727,28 @@ components:
       properties:
         data:
           type: object
-          required: [api_version, enabled, resources]
+          required: [api_version, brand, enabled, resources]
           properties:
             api_version:
               type: string
+            brand:
+              type: object
+              required: [key, name, status, url, modules]
+              properties:
+                key:
+                  type: string
+                name:
+                  type: string
+                status:
+                  type: string
+                  enum: [active, private, coming_soon, disabled]
+                url:
+                  type: string
+                  format: uri
+                modules:
+                  type: object
+                  additionalProperties:
+                    type: boolean
             enabled:
               type: boolean
             restricted:
