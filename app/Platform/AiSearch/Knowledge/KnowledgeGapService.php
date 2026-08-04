@@ -451,10 +451,42 @@ final class KnowledgeGapService
                     'resolution_status' => (string) ($row['resolution_status'] ?? ''),
                     'safety_relevant' => (int) ($row['safety_relevant'] ?? 0) === 1,
                     'brand_key' => (string) ($row['brand_key'] ?? ''),
+                    'ai_used_count' => (int) ($row['ai_used_count'] ?? 0),
+                    'click_through_count' => (int) ($row['click_through_count'] ?? 0),
+                    'contact_action_count' => (int) ($row['contact_action_count'] ?? 0),
+                    'zero_result_count' => (int) ($row['zero_result_count'] ?? 0),
+                    'weak_result_count' => (int) ($row['weak_result_count'] ?? 0),
+                    'taxonomy' => [
+                        'providers' => self::decodeStringList($row['provider_category_keys'] ?? null),
+                        'stays' => self::decodeStringList($row['stay_type_keys'] ?? null),
+                        'facilities' => self::decodeStringList($row['facility_type_keys'] ?? null),
+                    ],
                 ],
             ];
         }
         return $items;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function decodeStringList(mixed $raw): array
+    {
+        if (is_array($raw)) {
+            return array_values(array_filter($raw, static fn ($v): bool => is_string($v) && $v !== ''));
+        }
+        if (!is_string($raw) || $raw === '') {
+            return [];
+        }
+        try {
+            $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            return [];
+        }
+        if (!is_array($decoded)) {
+            return [];
+        }
+        return array_values(array_filter($decoded, static fn ($v): bool => is_string($v) && $v !== ''));
     }
 
     /**

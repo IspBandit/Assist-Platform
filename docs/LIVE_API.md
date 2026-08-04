@@ -109,6 +109,20 @@ facilities/claims/corrections reads:
   `facility_candidates_pending` counts live facility lifecycle statuses, not
   import candidates.
 
+**RIC Ask Insights** uses existing AI usage and dual-source search-gap reads:
+
+- `GET /ai/usage/requests` (`ai:read`) — Ask VanAssist activity feed (question,
+  interpretation/`intent_source`, model/provider, estimated AUD cost, success,
+  `fallback_reason`, `answer_summary`). Cursor + `from`/`to`. No session/PII.
+- `GET /ai/usage/summary`, `/ai/usage/costs`, `/ai/cache-performance` — cost and
+  cache rollups (`ai:read`).
+- `GET /search-gaps` (`analytics:read`) — dual-source gaps; knowledge-gap items
+  carry `meta.source=knowledge_gaps` plus engagement counts
+  (`click_through_count`, `contact_action_count`, `ai_used_count`) and taxonomy
+  keys. Provider zero-results use `meta.source=provider_searches`.
+- There is **no** separate `/knowledge-gaps` Admin API path (ADR/Option B dual
+  source). Client-side CSV export is permitted from these payloads.
+
 Increment 5 (audited writes + lifecycle) adds:
 
 - `POST /api/v1/admin/providers` — create (`providers:write`)

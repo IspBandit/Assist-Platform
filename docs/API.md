@@ -54,6 +54,12 @@ quality queues remain PHP-admin only until Admin API coverage is added.
 Default RIC service scopes include `recycle_bin:restore` (list/restore) but
 not `recycle_bin:purge`.
 
+Assist RIC Ask Insights reads Ask activity and gaps through
+`GET /api/v1/admin/ai/usage/requests` (and summary/costs) plus dual-source
+`GET /api/v1/admin/search-gaps`. Knowledge-gap engagement counters appear under
+item `meta`. No separate knowledge-gaps path. Export stays client-side from
+those JSON collections without exposing private user identifiers.
+
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.

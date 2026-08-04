@@ -1899,9 +1899,82 @@ paths:
       summary: AI usage summary for the current brand
       security:
         - bearerAuth: []
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
       responses:
         '200':
           description: Usage summary (empty-safe)
+  /ai/usage/costs:
+    get:
+      tags: [AI]
+      operationId: adminAiUsageCosts
+      summary: Daily AI cost series for the current brand
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Cost series (empty-safe)
+  /ai/usage/requests:
+    get:
+      tags: [AI]
+      operationId: adminAiUsageRequests
+      summary: Cursor list of AI usage events joined to Ask VanAssist searches
+      description: |
+        Assist RIC Ask Insights primary feed (`ai:read`). Includes question text,
+        interpretation/`intent_source`, model/provider, approximate AUD cost,
+        success and assist_searches fallback_reason. Does not return session or
+        other private user identifiers.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Ask / AI request collection
+  /ai/cache-performance:
+    get:
+      tags: [AI]
+      operationId: adminAiCachePerformance
+      summary: AI cache hit-rate summary
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Cache performance (empty-safe)
   /searches:
     get:
       tags: [Analytics]
