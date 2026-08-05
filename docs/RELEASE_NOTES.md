@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Assist RIC third-wave / gap-fill dataset keys
+
+- Migrations `125` and `126` insert `government_datasets` rows for third-wave and
+  gap-fill Assist RIC Ready packs so production `/facility-imports` accepts those
+  keys (auto-publish still applies via ADR 0034).
+
 ### Assist RIC facility auto-publish (ADR 0034)
 
 - Owner decision: Assist RIC government facility packs

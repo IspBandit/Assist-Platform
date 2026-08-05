@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### Added
+- **Assist RIC third-wave + gap-fill dataset keys** — migrations
+  `125_ric_third_wave_facility_import_datasets.sql` and
+  `126_ric_gap_fill_facility_import_datasets.sql` register remaining Ready-pack
+  `dataset_key`s (HealthDirect, VIC/QLD/TAS/ACT packs, NMI weighbridges,
+  OpenChargeMap, NPWS, etc.) so `/facility-imports` no longer returns
+  "Unknown government dataset_key".
 - **Assist RIC facility auto-publish (ADR 0034)** — `POST /facility-imports`
   stages then publishes Assist RIC government packs into `traveller_facilities`.
   `POST /facility-imports/publish-pending` drains the existing Assist RIC pending
