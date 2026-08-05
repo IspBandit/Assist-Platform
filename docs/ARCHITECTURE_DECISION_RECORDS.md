@@ -14,6 +14,7 @@ See [ADR 0018](DECISIONS/0018-admin-api-no-direct-db.md) for Admin API as the on
 See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus narrowly scoped traveller facilities.
 See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
 See [ADR 0033](DECISIONS/0033-ric-national-dataset-acquisition.md) for RIC as the national dataset acquisition engine.
+See [ADR 0034](DECISIONS/0034-assist-ric-facility-auto-publish.md) for Assist RIC government facility pack auto-publish.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.

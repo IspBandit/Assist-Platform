@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Assist RIC facility auto-publish (ADR 0034)
+
+- Owner decision: Assist RIC government facility packs
+  (`connector_key=assist_ric_package`) auto-publish to `traveller_facilities`
+  after `POST /api/v1/admin/facility-imports`.
+- Added `POST /api/v1/admin/facility-imports/publish-pending` so Assist RIC can
+  drain the pre-existing pending queue without human Approve clicks.
+- Other government connectors, drafts, provider imports and AI paths stay
+  review-first.
+
 ### Assist RIC missing ready-pack dataset keys
 
 - Migration `127_ric_missing_ready_facility_import_datasets.sql` **inserts**
@@ -17,8 +27,7 @@ may remain as dated files and are linked here rather than copied.
 ### Assist RIC facility package upload
 
 - Added `POST /api/v1/admin/facility-imports` (`imports:write`, `Idempotency-Key`)
-  so Assist RIC can stage facility packages into the traveller facility review
-  queue. Service accounts cannot auto-publish; human Approve remains required.
+  so Assist RIC can push facility packages (auto-publish per ADR 0034).
 - Migration `124_ric_ready_facility_import_datasets.sql` registers missing RIC
   ready dataset keys and enables known pack rows for staging.
 
