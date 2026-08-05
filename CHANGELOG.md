@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### Added
+- **Assist RIC missing ready-pack keys** — migration
+  `127_ric_missing_ready_facility_import_datasets.sql` inserts
+  `nsw_rest_areas`, `nsw_ev_charging_locations`, `sa_rest_areas_state_maintained`,
+  `wa_major_rest_areas`, `nsw_boat_ramps`, and `gold_coast_caravan_parks`
+  (migration 124 only tried to enable rows that did not exist). Required before
+  Assist RIC can upload those packs via `/facility-imports`.
 - **Assist RIC facility package upload** — `POST /api/v1/admin/facility-imports`
   (`imports:write`) stages Assist RIC facility packages into
   `traveller_facility_import_candidates` (review-first; service accounts cannot

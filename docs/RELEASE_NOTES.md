@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Assist RIC missing ready-pack dataset keys
+
+- Migration `127_ric_missing_ready_facility_import_datasets.sql` **inserts**
+  `nsw_rest_areas`, `nsw_ev_charging_locations`, `sa_rest_areas_state_maintained`,
+  `wa_major_rest_areas`, `nsw_boat_ramps`, and `gold_coast_caravan_parks`.
+  Migration 124 only tried to enable those keys if they already existed, so live
+  `POST /facility-imports` returned "Unknown government dataset_key". Apply
+  before retrying those packs from Assist RIC.
+
 ### Assist RIC facility package upload
 
 - Added `POST /api/v1/admin/facility-imports` (`imports:write`, `Idempotency-Key`)
