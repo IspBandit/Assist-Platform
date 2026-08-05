@@ -46,6 +46,138 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
         return Database::selectOne('SELECT * FROM government_datasets WHERE id = ? LIMIT 1', [$id]);
     }
 
+    /** @return array<string,mixed>|null */
+    public function findDatasetByKey(string $datasetKey): ?array
+    {
+        $datasetKey = strtolower(trim($datasetKey));
+        if ($datasetKey === '') {
+            return null;
+        }
+
+        return Database::selectOne(
+            'SELECT * FROM government_datasets WHERE dataset_key = ? LIMIT 1',
+            [$datasetKey]
+        );
+    }
+
+    /**
+     * Stage Assist RIC facility package rows into the review-first candidate queue.
+     *
+     * @param list<array<string,mixed>> $rows
+     * @param array<string,mixed> $meta
+     * @return array{job_id:int,found:int,new:int}
+     */
+    public function ingestAssistRicRows(
+        int $datasetId,
+        array $rows,
+        ?int $brandId,
+        ?int $userId,
+        array $meta = []
+    ): array {
+        $dataset = $this->findDataset($datasetId);
+        if ($dataset === null) {
+            throw new RuntimeException('Dataset not found.');
+        }
+
+        $jobId = Database::insert(
+            'INSERT INTO traveller_facility_import_jobs
+                (dataset_id, connector_key, brand_id, status, scope_json, requested_by, started_at, created_at)
+             VALUES (?, ?, ?, \'running\', ?, ?, NOW(), NOW())',
+            [
+                $datasetId,
+                'assist_ric_package',
+                $brandId,
+                json_encode(
+                    [
+                        'dataset_key' => $dataset['dataset_key'],
+                        'source_system' => 'assist-ric',
+                        'meta' => $meta,
+                    ],
+                    JSON_THROW_ON_ERROR
+                ),
+                $userId,
+            ]
+        );
+
+        try {
+            $created = 0;
+            foreach ($rows as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $mapped = $this->mapAssistRicRow($dataset, $row);
+                if ($this->stageCandidate($jobId, $dataset, $brandId, $mapped)) {
+                    $created++;
+                }
+            }
+            Database::affecting(
+                'UPDATE traveller_facility_import_jobs SET status = \'review\', candidates_found = ?, candidates_new = ?, completed_at = NOW() WHERE id = ?',
+                [count($rows), $created, $jobId]
+            );
+            Database::affecting(
+                'UPDATE government_datasets SET last_checked_at = NOW(), last_imported_at = NOW(), last_error = NULL, updated_at = NOW() WHERE id = ?',
+                [$datasetId]
+            );
+            AuditLog::record(
+                'gov_dataset.ric_package',
+                'traveller_facility_import_job',
+                (string) $jobId,
+                null,
+                json_encode(['found' => count($rows), 'new' => $created], JSON_THROW_ON_ERROR)
+            );
+
+            return ['job_id' => $jobId, 'found' => count($rows), 'new' => $created];
+        } catch (Throwable $e) {
+            Database::affecting(
+                'UPDATE traveller_facility_import_jobs SET status = \'failed\', error_message = ?, completed_at = NOW() WHERE id = ?',
+                [mb_substr($e->getMessage(), 0, 1000), $jobId]
+            );
+            throw $e;
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $dataset
+     * @param array<string,mixed> $row
+     * @return array<string,mixed>
+     */
+    private function mapAssistRicRow(array $dataset, array $row): array
+    {
+        $externalId = trim((string) (
+            $row['external_id']
+            ?? $row['source_record_id']
+            ?? $row['idempotency_key']
+            ?? ''
+        ));
+        $name = trim((string) ($row['name'] ?? $row['business_name'] ?? $row['canonical_name'] ?? ''));
+        $address = trim((string) (
+            $row['formatted_address']
+            ?? $row['address']
+            ?? $row['street_address']
+            ?? ''
+        ));
+
+        return [
+            'external_id' => $externalId,
+            'name' => $name,
+            'facility_type' => (string) (
+                $row['facility_type']
+                ?? $row['entity_type']
+                ?? $dataset['default_facility_type']
+                ?? 'other_essential'
+            ),
+            'formatted_address' => $address !== '' ? $address : null,
+            'locality' => isset($row['locality']) ? (string) $row['locality'] : null,
+            'latitude' => $row['latitude'] ?? null,
+            'longitude' => $row['longitude'] ?? null,
+            'source_url' => $row['source_url'] ?? null,
+            'licence' => $row['licence'] ?? null,
+            'attribution' => $row['attribution'] ?? null,
+            'confidence' => $row['confidence'] ?? 70,
+            'raw' => $row['raw'] ?? $row['normalised'] ?? $row,
+        ];
+    }
+
     public function saveDataset(int $id, bool $enabled, ?int $userId = null): void
     {
         $dataset = $this->findDataset($id);

@@ -174,6 +174,8 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/imports/{id}/publish', 'Api\\V1\\Admin\\ImportController@publish', 'api.v1.admin.imports.publish');
                 $router->post('/imports/{id}/cancel', 'Api\\V1\\Admin\\ImportController@cancel', 'api.v1.admin.imports.cancel');
                 $router->post('/imports/{id}/retry', 'Api\\V1\\Admin\\ImportController@retry', 'api.v1.admin.imports.retry');
+                // Assist RIC facility packages → review queue (not auto-published).
+                $router->post('/facility-imports', 'Api\\V1\\Admin\\FacilityImportController@store', 'api.v1.admin.facility_imports.store');
             });
 
             $router->group([
