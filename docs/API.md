@@ -53,13 +53,16 @@ Assist RIC Data Review browses existing Admin API review queues:
 pagination), plus import-candidate queues
 `GET /facility-import-candidates` and `GET /provider-import-candidates`
 (`import_candidates:read`; separate from `GET /imports` RIC package jobs).
-Facility import-candidate approve/reject (including bulk-approve/bulk-reject)
+Assist RIC can stage facility packs into that review queue with
+`POST /api/v1/admin/facility-imports` (`imports:write`, `Idempotency-Key`);
+this does not auto-publish facilities to the public map. Facility
+import-candidate approve/reject (including bulk-approve/bulk-reject)
 is available on human Admin API sessions (`import_candidates:review`); provider
 import-candidate approve/reject/merge is also human-only Admin API (same
-scope; hold/confirm stay website admin). Service accounts stay read-only and
-cannot hold that scope. Draft approve, duplicate merge and recycle purge remain
-human-session / website-admin actions. Stale/missing quality queues remain
-PHP-admin only.
+scope; hold/confirm stay website admin). Service accounts stay read-only on
+review and cannot hold that scope. Draft approve, duplicate merge and recycle
+purge remain human-session / website-admin actions. Stale/missing quality
+queues remain PHP-admin only.
 Default RIC service scopes include `recycle_bin:restore` (list/restore) but
 not `recycle_bin:purge`.
 
