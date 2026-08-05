@@ -1329,6 +1329,36 @@ paths:
       responses:
         '200':
           description: Draft rejected
+  /facility-imports:
+    post:
+      tags: [Imports]
+      operationId: adminFacilityImportsStore
+      summary: Submit Assist RIC facility package (auto-publish)
+      description: |
+        Stages Assist RIC facility package items then publishes pending
+        `assist_ric_package` candidates into `traveller_facilities` (ADR 0034).
+        Requires `imports:write` and `Idempotency-Key`.
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '201':
+          description: Facility import job received and published where possible
+  /facility-imports/publish-pending:
+    post:
+      tags: [Imports]
+      operationId: adminFacilityImportsPublishPending
+      summary: Publish pending Assist RIC facility candidates
+      description: |
+        Drains pending traveller facility candidates created by Assist RIC
+        (`assist_ric_package`) in a bounded batch. Used by Assist RIC to flush
+        backlog without human Approve (ADR 0034). Requires `imports:write`.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Batch publish result with remaining count
   /imports:
     get:
       tags: [Imports]

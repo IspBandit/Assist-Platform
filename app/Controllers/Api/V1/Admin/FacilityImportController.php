@@ -19,4 +19,12 @@ final class FacilityImportController extends Controller
             201
         );
     }
+
+    public function publishPending(Request $request): Response
+    {
+        return AdminApiEnvelope::data(
+            (new AdminApiFacilityImportService())->publishPending($request->all(), $request),
+            200
+        );
+    }
 }

@@ -11,10 +11,10 @@ use App\Core\Request;
 use App\Services\GovernmentDatasetService;
 
 /**
- * Assist RIC facility package ingest into the review-first candidate queue.
+ * Assist RIC facility package ingest with trusted-automatic publish (ADR 0034).
  *
- * Service accounts may stage candidates (imports:write). Publishing to
- * traveller_facilities remains human-only via import_candidates:review.
+ * Service accounts with imports:write may stage and publish Assist RIC government
+ * facility packs into traveller_facilities. Other import paths stay review-first.
  */
 final class AdminApiFacilityImportService
 {
@@ -138,6 +138,15 @@ final class AdminApiFacilityImportService
                     ]
                 );
 
+                $publishLimit = max(count($rows), 200);
+                $published = $this->government->publishPendingAssistRicCandidates(
+                    (int) $dataset['id'],
+                    null,
+                    $userId,
+                    'Auto-published Assist RIC trusted government pack (ADR 0034).',
+                    $publishLimit
+                );
+
                 AdminApiAudit::record(
                     'facility_import.received',
                     'traveller_facility_import_job',
@@ -149,24 +158,96 @@ final class AdminApiFacilityImportService
                         'item_count' => count($rows),
                         'new' => (int) ($result['new'] ?? 0),
                         'found' => (int) ($result['found'] ?? 0),
+                        'published' => (int) ($published['processed'] ?? 0),
+                        'publish_remaining' => (int) ($published['remaining'] ?? 0),
                     ],
                     $request
                 );
 
                 return [
                     'id' => (string) ($result['job_id'] ?? ''),
-                    'status' => 'review',
+                    'status' => 'published',
                     'dataset_key' => $datasetKey,
                     'dataset_id' => (string) $dataset['id'],
                     'package_checksum' => $checksum,
                     'item_count' => count($rows),
                     'candidates_found' => (int) ($result['found'] ?? 0),
                     'candidates_new' => (int) ($result['new'] ?? 0),
-                    'notes' => 'Staged into facility import review. Human approve required before public map.',
+                    'published' => (int) ($published['processed'] ?? 0),
+                    'publish_remaining' => (int) ($published['remaining'] ?? 0),
+                    'publish_errors' => $published['errors'] ?? [],
+                    'notes' => 'Staged and auto-published Assist RIC government facilities (ADR 0034).',
                 ];
             }
         );
 
         return $replay['result'];
+    }
+
+    /**
+     * Drain pending Assist RIC facility candidates without a new package upload.
+     *
+     * @param array<string,mixed> $input
+     * @return array<string,mixed>
+     */
+    public function publishPending(array $input, Request $request): array
+    {
+        if (!Database::tableExists('traveller_facility_import_jobs')
+            || !Database::tableExists('traveller_facility_import_candidates')
+        ) {
+            throw new AdminApiException(
+                503,
+                'unavailable',
+                'Facility import tables are not available. Apply DATA-012 migrations.'
+            );
+        }
+
+        $datasetId = null;
+        $datasetKey = strtolower(trim((string) ($input['dataset_key'] ?? $input['dataset_id'] ?? '')));
+        if ($datasetKey !== '') {
+            $dataset = $this->government->findDatasetByKey($datasetKey);
+            if ($dataset === null) {
+                throw new AdminApiException(
+                    404,
+                    'not_found',
+                    'Unknown government dataset_key for facility publish.',
+                    ['dataset_key' => ['No government_datasets row matches ' . $datasetKey . '.']]
+                );
+            }
+            $datasetId = (int) $dataset['id'];
+        }
+
+        $limit = (int) ($input['limit'] ?? 200);
+        $userId = AdminApiContext::userId();
+        $published = $this->government->publishPendingAssistRicCandidates(
+            $datasetId,
+            null,
+            $userId,
+            'Auto-published Assist RIC pending queue flush (ADR 0034).',
+            $limit
+        );
+
+        AdminApiAudit::record(
+            'facility_import.publish_pending',
+            'traveller_facility_import_candidate',
+            $datasetKey !== '' ? $datasetKey : 'all',
+            null,
+            [
+                'dataset_key' => $datasetKey !== '' ? $datasetKey : null,
+                'processed' => (int) ($published['processed'] ?? 0),
+                'remaining' => (int) ($published['remaining'] ?? 0),
+                'limit' => max(1, min(500, $limit)),
+            ],
+            $request
+        );
+
+        return [
+            'status' => 'published',
+            'dataset_key' => $datasetKey !== '' ? $datasetKey : null,
+            'processed' => (int) ($published['processed'] ?? 0),
+            'remaining' => (int) ($published['remaining'] ?? 0),
+            'errors' => $published['errors'] ?? [],
+            'notes' => 'Published pending Assist RIC government facilities (ADR 0034).',
+        ];
     }
 }

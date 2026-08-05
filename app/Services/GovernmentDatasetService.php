@@ -137,6 +137,67 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
     }
 
     /**
+     * Publish pending Assist RIC facility candidates (ADR 0034).
+     *
+     * Only candidates created via connector_key assist_ric_package are eligible.
+     *
+     * @return array{processed:int,errors:list<string>,remaining:int}
+     */
+    public function publishPendingAssistRicCandidates(
+        ?int $datasetId = null,
+        ?int $jobId = null,
+        ?int $reviewerId = null,
+        ?string $notes = null,
+        int $limit = 200
+    ): array {
+        $limit = max(1, min(500, $limit));
+        $notes = $notes ?? 'Auto-published Assist RIC trusted government pack (ADR 0034).';
+
+        $sql = 'SELECT c.id
+                  FROM traveller_facility_import_candidates c
+                  INNER JOIN traveller_facility_import_jobs j ON j.id = c.job_id
+                 WHERE c.review_status = \'pending\'
+                   AND c.expires_at > NOW()
+                   AND j.connector_key = \'assist_ric_package\'';
+        $params = [];
+        if ($jobId !== null && $jobId > 0) {
+            $sql .= ' AND c.job_id = ?';
+            $params[] = $jobId;
+        }
+        if ($datasetId !== null && $datasetId > 0) {
+            $sql .= ' AND c.dataset_id = ?';
+            $params[] = $datasetId;
+        }
+        $sql .= ' ORDER BY c.id ASC LIMIT ' . $limit;
+
+        $rows = Database::select($sql, $params);
+        $ids = [];
+        foreach ($rows as $row) {
+            $ids[] = (int) ($row['id'] ?? 0);
+        }
+        $result = $this->reviewCandidates($ids, 'approve', $reviewerId, $notes);
+
+        $remainingSql = 'SELECT COUNT(*)
+                           FROM traveller_facility_import_candidates c
+                           INNER JOIN traveller_facility_import_jobs j ON j.id = c.job_id
+                          WHERE c.review_status = \'pending\'
+                            AND c.expires_at > NOW()
+                            AND j.connector_key = \'assist_ric_package\'';
+        $remainingParams = [];
+        if ($datasetId !== null && $datasetId > 0) {
+            $remainingSql .= ' AND c.dataset_id = ?';
+            $remainingParams[] = $datasetId;
+        }
+        $remaining = (int) Database::scalar($remainingSql, $remainingParams);
+
+        return [
+            'processed' => (int) ($result['processed'] ?? 0),
+            'errors' => is_array($result['errors'] ?? null) ? $result['errors'] : [],
+            'remaining' => $remaining,
+        ];
+    }
+
+    /**
      * @param array<string,mixed> $dataset
      * @param array<string,mixed> $row
      * @return array<string,mixed>

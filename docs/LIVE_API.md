@@ -205,9 +205,11 @@ Increment 7 (drafts + imports) adds:
 - `GET/POST /api/v1/admin/drafts`, `GET/PATCH /drafts/{id}` — RIC draft queue (`drafts:read` / `drafts:write`)
 - `POST /api/v1/admin/drafts/{id}/approve|reject` — human-elevated (`drafts:approve`)
 - `POST /api/v1/admin/imports` — checksummed package ingest (`imports:write`, `Idempotency-Key`)
-- `POST /api/v1/admin/facility-imports` — Assist RIC facility package ingest into
-  the traveller facility review queue (`imports:write`, `Idempotency-Key`);
-  does **not** auto-publish — human approve via facility-import-candidates
+- `POST /api/v1/admin/facility-imports` — Assist RIC facility package ingest
+  (`imports:write`, `Idempotency-Key`); stages then **auto-publishes** Assist
+  RIC government packs into `traveller_facilities` (ADR 0034)
+- `POST /api/v1/admin/facility-imports/publish-pending` — drain pending Assist
+  RIC facility candidates in bounded batches (`imports:write`; ADR 0034)
 - `GET /api/v1/admin/imports/{id}`, `POST .../validate`, `POST .../stage` — validation and draft staging
 
 Increment 8 (audit + search gaps) adds:
