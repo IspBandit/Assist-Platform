@@ -240,6 +240,7 @@ final class AdminApiRoutingTest extends TestCase
             ['POST', '/api/v1/admin/drafts', ['entity_type' => 'provider', 'payload' => ['business_name' => 'Test']]],
             ['POST', '/api/v1/admin/drafts/abc/approve', []],
             ['POST', '/api/v1/admin/imports', ['checksum' => str_repeat('a', 64), 'items' => []]],
+            ['POST', '/api/v1/admin/facility-imports', ['checksum' => str_repeat('a', 64), 'dataset_key' => 'nsw_boat_ramps', 'items' => []]],
             ['GET', '/api/v1/admin/audit', []],
             ['GET', '/api/v1/admin/search-gaps', []],
             ['POST', '/api/v1/admin/auth/mfa/challenge', []],

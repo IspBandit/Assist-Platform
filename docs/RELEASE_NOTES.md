@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Assist RIC facility package upload
+
+- Added `POST /api/v1/admin/facility-imports` (`imports:write`, `Idempotency-Key`)
+  so Assist RIC can stage facility packages into the traveller facility review
+  queue. Service accounts cannot auto-publish; human Approve remains required.
+- Migration `124_ric_ready_facility_import_datasets.sql` registers missing RIC
+  ready dataset keys and enables known pack rows for staging.
+
 ### All-brand RIC workspace identity
 
 - Extended `GET /api/v1/admin/capabilities` with the resolved host brand key,

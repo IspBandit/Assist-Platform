@@ -3,6 +3,11 @@
 ## Unreleased
 
 ### Added
+- **Assist RIC facility package upload** — `POST /api/v1/admin/facility-imports`
+  (`imports:write`) stages Assist RIC facility packages into
+  `traveller_facility_import_candidates` (review-first; service accounts cannot
+  auto-publish). Migration `124_ric_ready_facility_import_datasets.sql`
+  registers missing RIC ready dataset keys. Documented in `docs/LIVE_API.md`.
 - **Admin API brand identity** — `/capabilities` now reports the verified host
   brand, status and enabled modules so RIC can switch safely across every Assist
   brand and hide resources that the selected brand does not use.
