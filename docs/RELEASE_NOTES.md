@@ -7,6 +7,27 @@ may remain as dated files and are linked here rather than copied.
 
 ### VanAssist facility accuracy, moderation and lean mobile stays (VAN-001 / DATA-014)
 
+- Enforced the selected straight-line radius at the query boundary and again
+  after Ask VanAssist aggregates every provider, stay, facility and staged
+  result. Boundary comparisons use unrounded kilometres, so an out-of-radius
+  result cannot be admitted by display rounding.
+- Provider results now distinguish a provider point from a town-centre
+  estimate. Places to stay continue to use their own coordinates and describe
+  the radius as straight-line rather than current road distance.
+- Added forward migration `130_merge_residual_duplicate_stays.sql` for exact-
+  name geospatial duplicates missed by incomplete coordinates or inconsistent
+  imported state assignments, plus repeated source identities. The trusted
+  survivor retains source aliases, linked records, facility evidence and any
+  missing location fields before the absorbed row is soft-deleted.
+- Corrected phone overflow on the VanAssist home search and facility-suggestion
+  journey, collapsed secondary phone copy, and kept search/form actions inside
+  the 390 px viewport. Desktop layout remains unchanged.
+- Replaced the conflicting generic provider-card grid on phone stay results
+  with a stay-specific compact row: name, distance/location and leading
+  facility facts stay lean beside fixed Details and Directions actions.
+- Facility-filtered stay search now resolves a wider in-radius candidate pool
+  before applying the public result limit, avoiding valid facility matches
+  being hidden behind unrelated stays.
 - Added structured stay-facility evidence with status, conditions, source authority, confidence and verification timestamps. Specific official facts take precedence over broad summaries without deleting conflicting evidence.
 - Added migration `128_stay_facility_enrichment_and_contributions.sql`, including the generic Griffiths Creek regression seed for dump point, untreated water and confirmed no-toilets facts when the canonical stay exists.
 - Travellers can suggest one or more facility changes from a stay page. Suggestions remain pending, are rate-limited and never alter public facts directly; matching pending suggestions retain independent confirmations.

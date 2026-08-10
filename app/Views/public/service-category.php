@@ -83,7 +83,7 @@ foreach (array_merge($matches,$possible) as $p) { $pLat=$p['latitude']??$p['town
         </form>
 
         <?php if ($selectedTown !== null && ($matches !== [] || $possible !== [])): ?>
-            <p class="muted" style="font-size:.9rem;margin:.25rem 0 0">Sorted by approximate distance from <?= $this->e((string) $selectedTown['name']) ?><?= !empty($maxDistance) ? ' (within ' . (int) $maxDistance . ' km)' : '' ?>. Distances are to each provider's base town. <span class="badge badge-confirmed">&#128666; Mobile service</span> providers travel to you.</p>
+            <p class="muted" style="font-size:.9rem;margin:.25rem 0 0">Sorted by straight-line distance from <?= $this->e((string) $selectedTown['name']) ?><?= !empty($maxDistance) ? ' (strictly within ' . (int) $maxDistance . ' km)' : '' ?>. Town-centre estimates are labelled. <span class="badge badge-confirmed">&#128666; Mobile service</span> providers travel to you.</p>
         <?php endif; ?>
         <?php $serviceOrigin=is_numeric($lat??null)&&is_numeric($lng??null)?['lat'=>(float)$lat,'lng'=>(float)$lng]:null; $this->include('partials/results-map',['mapItems'=>$mappedProviders,'mapOrigin'=>$serviceOrigin,'mapTitle'=>count($mappedProviders).' located '.$category['name'].' results']); ?>
 

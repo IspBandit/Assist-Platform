@@ -111,7 +111,7 @@ final class VanAssistMobileSearchTest extends TestCase
 
         self::assertStringContainsString('data-results-map-data', $partial);
         self::assertStringContainsString('data-results-map-summary-list', $partial);
-        self::assertStringContainsString("'providers'=>$mapItems", $partial);
+        self::assertStringContainsString("'providers'=>\$mapItems", $partial);
 
         foreach (['providers-index.php', 'stays.php', 'service-category.php', 'town.php', 'region.php'] as $view) {
             $source = (string) file_get_contents($root . '/app/Views/public/' . $view);
@@ -121,7 +121,7 @@ final class VanAssistMobileSearchTest extends TestCase
 
         $stays = (string) file_get_contents($root . '/app/Views/public/stays.php');
         self::assertStringContainsString('provider-card-grid stay-grid', $stays);
-        self::assertStringContainsString('provider-card--compact stay-card', $stays);
+        self::assertStringContainsString('class="provider-card stay-card"', $stays);
     }
 
     public function testEveryPublicDiscoveryJourneyCanInheritDeviceLocation(): void
@@ -160,9 +160,13 @@ final class VanAssistMobileSearchTest extends TestCase
         $view=(string)file_get_contents($root.'/app/Views/public/stays.php');
         $css=(string)file_get_contents($root.'/public/assets/css/app.css');
         self::assertStringContainsString('stay-card-facilities',$view);
+        self::assertStringContainsString('stay-card-content',$view);
         self::assertStringContainsString('stay-card-actions',$view);
-        self::assertStringContainsString('.stay-card-actions{display:grid!important;grid-template-columns:1fr 1fr',$css);
-        self::assertStringContainsString('-webkit-line-clamp:2',$css);
+        self::assertStringNotContainsString('provider-card--compact stay-card',$view);
+        self::assertStringContainsString('.stay-grid .stay-card{display:grid;grid-template-columns:minmax(0,1fr) 72px',$css);
+        self::assertStringContainsString('.stay-card-actions{display:flex!important;flex-direction:column',$css);
+        self::assertStringContainsString('width:72px;min-width:0;min-height:44px',$css);
+        self::assertStringContainsString('text-overflow:ellipsis;white-space:nowrap',$css);
         self::assertStringContainsString('.stay-search-fields{grid-template-columns:1fr}',$css);
         self::assertStringContainsString('data-mobile-stay-filter-toggle',$view);
         self::assertStringContainsString('.stay-search-fields .form-group:not(.location-field){display:none}',$css);

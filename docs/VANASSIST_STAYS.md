@@ -28,6 +28,19 @@ Never convert community data to authority/operator verified without preserving e
 
 The import is idempotent through `(source_type, external_id)`.
 
+When duplicate stays are merged, the higher-trust authority/operator record
+remains canonical and its ID and slug are preserved. Source identities become
+aliases so later imports cannot recreate the absorbed listing. Linked claims,
+facility evidence and operational records move to the survivor. If the trusted
+record has an address but no point coordinate, a usable coordinate and locality
+from the absorbed geospatial record are retained so the canonical stay remains
+available in radius search. The absorbed row is audit logged and soft-deleted,
+not erased.
+
+All location searches use the stay's point coordinate and an unrounded
+great-circle boundary comparison. Results describe the value as straight-line;
+current road distance is available only after opening Directions.
+
 ## Queensland caravan-route discovery
 
 `tools/qld-caravan-stays-gap-fill.js` discovers caravan-suitable overnight

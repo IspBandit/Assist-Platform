@@ -76,18 +76,20 @@ foreach ($stays as $stay) {
                 <?php foreach ($stays as $stay): ?>
                     <?php $stayId='stay-result-'.(int)$stay['id']; $mapIndex=array_search($stayId,array_column($mappedStays,'id'),true); ?>
                     <?php $mapDestination = map_destination($stay['latitude'] ?? null, $stay['longitude'] ?? null, [$stay['address'] ?? '', $stay['town_name'] ?? '', $stay['state_abbr'] ?? '']); ?>
-                    <article id="<?= e_attr($stayId) ?>" class="provider-card provider-card--compact stay-card" tabindex="-1">
-                        <div class="badge-row">
-                            <?php if (!empty($stay['is_featured'])): ?><span class="badge badge-sponsored">Sponsored</span><?php endif; ?>
-                            <span class="badge badge-neutral"><?= $this->e($stayTypes[$stay['stay_type']] ?? 'Place to stay') ?></span>
-                            <span class="badge <?= $stay['price_type'] === 'free' ? 'badge-verified' : 'badge-neutral' ?>"><?= $this->e($priceTypes[$stay['price_type']] ?? 'Check cost') ?></span>
+                    <article id="<?= e_attr($stayId) ?>" class="provider-card stay-card" tabindex="-1">
+                        <div class="stay-card-content">
+                            <div class="badge-row">
+                                <?php if (!empty($stay['is_featured'])): ?><span class="badge badge-sponsored">Sponsored</span><?php endif; ?>
+                                <span class="badge badge-neutral"><?= $this->e($stayTypes[$stay['stay_type']] ?? 'Place to stay') ?></span>
+                                <span class="badge <?= $stay['price_type'] === 'free' ? 'badge-verified' : 'badge-neutral' ?>"><?= $this->e($priceTypes[$stay['price_type']] ?? 'Check cost') ?></span>
+                            </div>
+                            <h3><?php if ($mapIndex!==false): ?><span class="provider-map-reference" data-number="<?= $mapIndex+1 ?>" aria-label="Map pin <?= $mapIndex+1 ?>"></span><?php endif; ?><a href="<?= e(url('caravan-parks/' . $stay['slug'])) ?>"><?= $this->e((string) $stay['name']) ?></a></h3>
+                            <p class="muted stay-card-location"><?php if ($stay['distance_km'] !== null): ?><?= number_format((float) $stay['distance_km'], 1) ?> km straight-line · <?php endif; ?><?= $this->e(trim((string) ($stay['town_name'] ?? '') . (!empty($stay['state_abbr']) ? ' / ' . $stay['state_abbr'] : ''))) ?></p>
+                            <?php $cardFacts=$facilityMap[(int)$stay['id']]??[]; $facilityText=[]; foreach(array_slice($cardFacts,0,4) as $fact){if(($fact['facility_status']??'unknown')!=='unknown')$facilityText[]=$fact['label'].': '.$fact['display'];} if($facilityText===[]){foreach($facilityLabels as $key=>$label){if((int)($stay[$key]??0)===1)$facilityText[]=$label;}} ?>
+                            <?php if ($facilityText !== []): ?><p class="stay-card-facilities"><?= $this->e(implode(' · ', array_slice($facilityText, 0, 4))) ?></p><?php endif; ?>
+                            <?php if (!empty($stay['max_stay'])): ?><p class="stay-card-limit"><strong>Stay limit:</strong> <?= $this->e((string) $stay['max_stay']) ?></p><?php endif; ?>
+                            <p class="muted small stay-card-verification"><?= !empty($stay['verified_at']) ? 'Operator verified' : 'Unverified directory listing—confirm details before arrival' ?></p>
                         </div>
-                        <h3><?php if ($mapIndex!==false): ?><span class="provider-map-reference" data-number="<?= $mapIndex+1 ?>" aria-label="Map pin <?= $mapIndex+1 ?>"></span><?php endif; ?><a href="<?= e(url('caravan-parks/' . $stay['slug'])) ?>"><?= $this->e((string) $stay['name']) ?></a></h3>
-                        <p class="muted"><?php if ($stay['distance_km'] !== null): ?><?= number_format((float) $stay['distance_km'], 1) ?> km straight-line · <?php endif; ?><?= $this->e(trim((string) ($stay['town_name'] ?? '') . (!empty($stay['state_abbr']) ? ' / ' . $stay['state_abbr'] : ''))) ?></p>
-                        <?php $cardFacts=$facilityMap[(int)$stay['id']]??[]; $facilityText=[]; foreach(array_slice($cardFacts,0,4) as $fact){if(($fact['facility_status']??'unknown')!=='unknown')$facilityText[]=$fact['label'].': '.$fact['display'];} if($facilityText===[]){foreach($facilityLabels as $key=>$label){if((int)($stay[$key]??0)===1)$facilityText[]=$label;}} ?>
-                        <?php if ($facilityText !== []): ?><p class="stay-card-facilities"><?= $this->e(implode(' · ', array_slice($facilityText, 0, 4))) ?></p><?php endif; ?>
-                        <?php if (!empty($stay['max_stay'])): ?><p><strong>Stay limit:</strong> <?= $this->e((string) $stay['max_stay']) ?></p><?php endif; ?>
-                        <p class="muted small"><?= !empty($stay['verified_at']) ? 'Operator verified' : 'Unverified directory listing—confirm details before arrival' ?></p>
                         <div class="actions stay-card-actions"><a class="btn btn-secondary" href="<?= e(url('caravan-parks/' . $stay['slug'])) ?>">Details</a><?php if ($mapDestination !== ''): ?><a class="btn btn-ghost" href="<?= e(map_directions_url($mapDestination)) ?>" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>" target="_blank" rel="noopener noreferrer">Directions</a><?php endif; ?><?php if (!empty($stay['booking_url']) || !empty($stay['website'])): ?><a class="btn btn-ghost" href="<?= e_attr((string) ($stay['booking_url'] ?: $stay['website'])) ?>" target="_blank" rel="noopener noreferrer">Website</a><?php endif; ?></div>
                     </article>
                 <?php endforeach; ?>
