@@ -49,7 +49,24 @@ final class Migrator
             return false;
         }
         if ((int)Database::scalar('SELECT IS_FREE_LOCK(?)', [self::LOCK_NAME]) !== 1) {
-            throw new RuntimeException('Migration 129 recovery refused while the migration lock is held.');
+            $holder = Database::scalar('SELECT IS_USED_LOCK(?)', [self::LOCK_NAME]);
+            $process = is_numeric($holder) ? Database::selectOne(
+                'SELECT ID,TIME FROM information_schema.PROCESSLIST WHERE ID=? AND USER=SUBSTRING_INDEX(CURRENT_USER(), ?, 1)',
+                [(int)$holder, '@']
+            ) : null;
+            if ($process === null || (int)$process['TIME'] < 300) {
+                throw new RuntimeException('Migration 129 recovery refused while a non-stale migration lock is held.');
+            }
+            Database::connection()->exec('KILL CONNECTION ' . (int)$process['ID']);
+            for ($attempt=0; $attempt<20; $attempt++) {
+                usleep(250000);
+                if ((int)Database::scalar('SELECT IS_FREE_LOCK(?)', [self::LOCK_NAME]) === 1) {
+                    break;
+                }
+            }
+            if ((int)Database::scalar('SELECT IS_FREE_LOCK(?)', [self::LOCK_NAME]) !== 1) {
+                throw new RuntimeException('Migration 129 recovery could not release the stale migration lock.');
+            }
         }
         Database::query('DELETE FROM migrations WHERE migration=? AND status IN (?,?) AND checksum=?',
             [$name,'running','failed',$oldChecksum]);

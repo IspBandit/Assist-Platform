@@ -10,7 +10,8 @@
   separate for human review.
   The production scan uses indexed temporary identity tables. The signed
   migration command contains a one-time, checksum-bound retry for the
-  interrupted original migration; every other dirty migration remains blocked.
+  interrupted original migration. It may terminate only that old checksum's
+  named-lock owner after five minutes; every other dirty migration remains blocked.
 - **Assist RIC third-wave + gap-fill dataset keys** — migrations
   `125_ric_third_wave_facility_import_datasets.sql` and
   `126_ric_gap_fill_facility_import_datasets.sql` register remaining Ready-pack
