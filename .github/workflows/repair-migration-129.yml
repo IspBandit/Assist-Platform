@@ -32,4 +32,4 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           scp scripts/repair-interrupted-migration-129.php "$VPS_USER@$VPS_HOST:/tmp/repair-interrupted-migration-129.php"
-          ssh "$VPS_USER@$VPS_HOST" "docker cp /tmp/repair-interrupted-migration-129.php assist-platform-app-1:/tmp/repair-interrupted-migration-129.php && cd /opt/assist-platform && docker compose exec -T -e ASSIST_APP_ROOT=/var/www/html app php /tmp/repair-interrupted-migration-129.php && rm -f /tmp/repair-interrupted-migration-129.php"
+          ssh "$VPS_USER@$VPS_HOST" "sudo docker cp /tmp/repair-interrupted-migration-129.php assist-platform-app-1:/tmp/repair-interrupted-migration-129.php && cd /opt/assist-platform && sudo docker compose exec -T -e ASSIST_APP_ROOT=/var/www/html app php /tmp/repair-interrupted-migration-129.php && rm -f /tmp/repair-interrupted-migration-129.php"
