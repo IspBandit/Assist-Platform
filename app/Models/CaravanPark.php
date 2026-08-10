@@ -56,26 +56,32 @@ final class CaravanPark extends Model
             $order = 'cp.is_featured DESC, distance_km ASC, cp.name ASC';
         }
 
-        $limit = max(1, min(100, $limit));
+        $requestedLimit = max(1, min(100, $limit));
+        // Facility resolution happens against provenance-ranked claims after
+        // the geospatial query. Pull a wider in-radius candidate set so a
+        // facility filter cannot hide valid matches merely because 60 other
+        // stays appeared first.
+        $queryLimit = $requiredFacilities === [] ? $requestedLimit : 500;
         $rows = Database::select(
             'SELECT cp.*, t.name AS town_name, s.abbreviation AS state_abbr, ' . $distanceSql . ' '
             . 'FROM caravan_parks cp '
             . 'LEFT JOIN towns t ON t.id = cp.town_id '
             . 'LEFT JOIN states s ON s.id = cp.state_id '
-            . 'WHERE ' . implode(' AND ', $where) . $having . ' ORDER BY ' . $order . ' LIMIT ' . $limit,
+            . 'WHERE ' . implode(' AND ', $where) . $having . ' ORDER BY ' . $order . ' LIMIT ' . $queryLimit,
             $params
         );
         if ($requiredFacilities === [] || !Database::tableExists('stay_facility_claims')) {
             return $rows;
         }
         $facilityMap = (new \App\Services\StayFacilityService())->forParks(array_map(static fn(array $row): int => (int)$row['id'], $rows));
-        return array_values(array_filter($rows, static function(array $row) use ($requiredFacilities, $facilityMap): bool {
+        $filtered = array_values(array_filter($rows, static function(array $row) use ($requiredFacilities, $facilityMap): bool {
             $facts = $facilityMap[(int)$row['id']] ?? [];
             foreach ($requiredFacilities as $type) {
                 if (!isset($facts[$type]) || !in_array($facts[$type]['facility_status'], ['yes','conditional'], true)) return false;
             }
             return true;
         }));
+        return array_slice($filtered, 0, $requestedLimit);
     }
 
     public static function uniqueSlug(string $source): string

@@ -111,7 +111,7 @@ final class VanAssistMobileSearchTest extends TestCase
 
         self::assertStringContainsString('data-results-map-data', $partial);
         self::assertStringContainsString('data-results-map-summary-list', $partial);
-        self::assertStringContainsString("'providers'=>$mapItems", $partial);
+        self::assertStringContainsString("'providers'=>\$mapItems", $partial);
 
         foreach (['providers-index.php', 'stays.php', 'service-category.php', 'town.php', 'region.php'] as $view) {
             $source = (string) file_get_contents($root . '/app/Views/public/' . $view);

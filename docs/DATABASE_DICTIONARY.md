@@ -12,6 +12,15 @@ are within 2 km. The higher-trust record survives; linked operational records
 and facility claims move to it, while the absorbed source row is soft-deleted
 and retained for provenance. Ambiguous matches are not automatically merged.
 
+Migration 130 performs the forward-only residual pass. It catches exact-name
+records within 2 km even when imported state assignment differs, repeated
+`(source_type, external_id)` identities, and an exact-name lower-trust record in
+the same state (or with one state absent) when the authority survivor lacks
+coordinates and its authority address repeats the full name. It preserves any
+missing survivor coordinates, locality and address before moving relationships,
+records an audit event and soft-deletes the absorbed row. It contains no
+place-specific slug or ID rule.
+
 - `stay_facility_claims`: current and historical facility-level evidence for a canonical `caravan_parks` row, including status/value, source, confidence, specificity and verification timestamps. `superseded_at` retires a claim without deleting it.
 - `facility_contributions`: public submission envelope and moderation lifecycle. Contact fields are optional and never public.
 - `facility_contribution_items`: before/suggested values and per-item moderation result, linked to any approved claim.

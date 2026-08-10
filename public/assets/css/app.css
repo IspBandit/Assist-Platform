@@ -1646,3 +1646,36 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .stay-search-fields .form-group:not(.location-field){display:none}
   .stay-search-fields.is-open .form-group{display:block}
 }
+
+/* VanAssist phone containment and density. Keep every interactive control
+   inside the viewport and remove secondary copy from task-focused screens. */
+@media(max-width:600px){
+  body[data-brand="vanassist"] main,
+  body[data-brand="vanassist"] main .container,
+  body[data-brand="vanassist"] main form,
+  body[data-brand="vanassist"] main .card,
+  body[data-brand="vanassist"] main .grid,
+  body[data-brand="vanassist"] main .form-group,
+  body[data-brand="vanassist"] main label{min-width:0;max-width:100%}
+  body[data-brand="vanassist"] main input,
+  body[data-brand="vanassist"] main select,
+  body[data-brand="vanassist"] main textarea,
+  body[data-brand="vanassist"] main button,
+  body[data-brand="vanassist"] main .btn{min-width:0;max-width:100%}
+  body[data-brand="vanassist"] main .container{padding-left:.75rem;padding-right:.75rem}
+  .hero-search-panel .home-search-actions{grid-template-columns:1fr}
+  .hero-search-panel .home-search-actions .btn{width:100%}
+  .hero-capabilities{grid-template-columns:repeat(2,minmax(0,1fr));padding:.45rem;gap:.35rem}
+  .hero-capabilities a{min-width:0;padding:.3rem .35rem}
+  .hero-capabilities small{display:none}
+  .stay-hero{padding:1.35rem 0}
+  .stay-hero h1{margin:.25rem 0 .45rem;font-size:2rem;line-height:1.02}
+  .stay-hero>div>p{margin:.35rem 0;font-size:.84rem;line-height:1.4}
+  .stay-hero .page-trust-list{display:none}
+  .stay-grid .stay-card .muted.small{display:none}
+  .facility-suggestion-form{padding:.8rem}
+  .facility-suggestion-item{padding:.7rem;gap:.55rem}
+  .facility-suggestion-form .actions{display:grid;grid-template-columns:1fr;gap:.4rem}
+  .facility-suggestion-form .actions .btn{width:100%}
+  .facility-suggestion-form .notice{font-size:.78rem;line-height:1.4}
+}

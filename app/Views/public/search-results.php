@@ -78,7 +78,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
             <?php if (($distanceScope ?? '') === 'town' && $town !== null): ?>
                 <p class="muted" style="margin:0 0 .5rem">Showing providers in and serving <strong><?= $this->e((string) $town['name']) ?><?= !empty($town['state_abbr']) ? ', ' . $this->e((string) $town['state_abbr']) : '' ?></strong>, sorted by distance from <strong><?= $this->e((string) $originLabel) ?></strong>.</p>
             <?php else: ?>
-                <p class="muted" style="margin:0 0 .5rem">Sorted by approximate distance from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (within ' . (int) $maxDistance . ' km)' : '' ?>.</p>
+                <p class="muted" style="margin:0 0 .5rem">Sorted by straight-line distance from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (strictly within ' . (int) $maxDistance . ' km)' : '' ?>. Town-centre estimates are labelled.</p>
             <?php endif; ?>
         <?php endif; ?>
         </header>
@@ -279,7 +279,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
         <section class="result-guidance" aria-labelledby="result-guidance-heading">
             <h2 id="result-guidance-heading">Understanding these results</h2>
             <?php if (!empty($hasOrigin) && ($matches !== [] || $possible !== [])): ?>
-                <p>Distances are approximate straight-line estimates to each provider's base town, not driving distance. Mobile-service providers travel to customers; a base-town pin is not necessarily a workshop destination.</p>
+                <p>Distances are straight-line estimates, not driving distance. A precise provider pin is used where available; otherwise the result is clearly labelled as a town-centre estimate. Mobile-service providers travel to customers.</p>
             <?php endif; ?>
             <p>Direct matches explicitly list the selected service. Related-service results work in an adjacent trade and require confirmation. Unclaimed listings come from public sources; confirm current services and contact details before relying on them.</p>
             <?php $this->include('partials.listing-accuracy-notice'); ?>

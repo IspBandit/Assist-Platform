@@ -337,7 +337,10 @@ final class SearchOrchestrator
             $providerRows,
             $stayRows,
             $datasetRows,
-            $facilityRows
+            $facilityRows,
+            $originLat,
+            $originLng,
+            $this->effectiveRadiusKm($intent, $adapters),
         );
         $localCount = count($aggregated['providers']) + count($aggregated['stays']) + count($aggregated['facilities']);
         $externalCount = count($aggregated['externals']);
@@ -462,6 +465,18 @@ final class SearchOrchestrator
             clarificationReason: null,
             source: 'related_provider_fallback',
         );
+    }
+
+    /** @param list<string> $adapters */
+    private function effectiveRadiusKm(Intent $intent, array $adapters): int
+    {
+        if ($intent->radiusKm !== null) {
+            return max(1, min(500, $intent->radiusKm));
+        }
+
+        return in_array('stays', $adapters, true)
+            ? \App\Helpers\Geo::DEFAULT_STAY_DISTANCE_KM
+            : max(1, min(500, (int) config('ai_search.default_radius_km', 25)));
     }
 
     private function recordResolveUsage(

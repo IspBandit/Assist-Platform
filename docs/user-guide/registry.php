@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $allBrands = ['all'];
-$updated = '2026-07-30';
+$updated = '2026-08-11';
 
 $guides = [
     ['slug' => 'customer-guide', 'title' => 'Customer Guide', 'summary' => 'Accounts, saved providers, assistance requests, Garage assets and compliance tools.', 'audiences' => ['customer'], 'brands' => $allBrands, 'module' => 'customer', 'order' => 10],

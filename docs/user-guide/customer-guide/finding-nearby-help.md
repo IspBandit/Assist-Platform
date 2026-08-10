@@ -25,7 +25,7 @@ No account is required. On the main VanAssist search, the browser may ask for op
 
 ## Fields
 
-**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or an available straight-line radius; it is not a road-distance claim.
+**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or an available straight-line radius; it is not a road-distance claim. A numeric radius is a strict boundary calculated before display rounding. Results without a measurable location cannot appear in a numeric-radius search.
 
 ## Actions
 
@@ -35,11 +35,11 @@ The main search attempts to resolve the current location without submitting the 
 
 Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Provider profiles use a simple heading without a decorative business-name initial or repeated business name in the breadcrumb. Workspace help is shown only inside signed-in account/provider areas, not on public provider pages. Open directions only when safely stopped.
 
-A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
+A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider distances use the provider's point when available; otherwise the card says **town-centre estimate**. Stay distances use the stay's own point. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
 
 ## Examples
 
-Select **12 volt electrical**, enter **Boyne Island**, and choose a distance. The map shows only located providers returned by that same search; listings without usable coordinates still appear in the list rather than being silently discarded.
+Select **12 volt electrical**, enter **Boyne Island**, and choose a numeric distance. The map and list show only measurable providers inside that same radius. Clear the numeric radius or use locality scope when you also want relevant listings that do not have a reliable point.
 
 ## Common mistakes
 
@@ -59,9 +59,10 @@ rows for toilets. Guidance remains non-authoritative; confirm details before you
 travel.
 
 Ask results reuse the same List and Map controls as category search. Providers,
-places to stay and traveller facilities with reliable coordinates receive a
-numbered map pin and the matching number in their list row. Results without
-reliable coordinates remain in the list and are not given an invented pin.
+places to stay and traveller facilities inside the resolved radius receive a
+numbered map pin and the matching number in their list row. Ask fails closed:
+an unmeasurable or out-of-radius result is not shown and is never given an
+invented pin.
 
 The Ask field is also shown directly on the VanAssist homepage when enabled.
 It is limited to providers, places to stay, roadside/caravan help and traveller
@@ -109,7 +110,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-03 (added numbered Ask maps, fail-closed location handling and safer per-visitor rate limiting).
+2026-08-11 (strict unrounded radius boundaries, honest distance basis labels and compact phone containment).
 
 ## Owner
 

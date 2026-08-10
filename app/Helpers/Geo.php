@@ -157,10 +157,14 @@ final class Geo
 
         $out = [];
         foreach ($rows as $row) {
-            $distance = self::distanceKm($originLat, $originLng, $row[$latKey] ?? null, $row[$lngKey] ?? null);
-            $row['distance_km'] = $distance;
+            $targetLat = $row[$latKey] ?? null;
+            $targetLng = $row[$lngKey] ?? null;
+            $exactDistance = is_numeric($targetLat) && is_numeric($targetLng)
+                ? self::haversineExactKm($originLat, $originLng, (float) $targetLat, (float) $targetLng)
+                : null;
+            $row['distance_km'] = $exactDistance !== null ? (float) round($exactDistance) : null;
             if ($maxKm !== null) {
-                if ($distance === null || $distance > $maxKm) {
+                if ($exactDistance === null || $exactDistance > $maxKm) {
                     continue;
                 }
             }

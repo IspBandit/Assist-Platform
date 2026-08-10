@@ -250,6 +250,7 @@ final class Provider extends Model
             . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
             . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
             . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, "
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, "
             . 's.abbreviation AS state_abbr '
             . 'FROM provider_services ps '
             . 'JOIN providers p ON p.id = ps.provider_id '
@@ -286,7 +287,8 @@ final class Provider extends Model
             'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
             . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
-            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, s.abbreviation AS state_abbr, "
+            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, "
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, s.abbreviation AS state_abbr, "
             . '(6371 * ACOS(LEAST(1, GREATEST(-1, COS(RADIANS(?)) '
             . "* COS(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))) "
             . "* COS(RADIANS(COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END)) - RADIANS(?)) "
@@ -336,7 +338,7 @@ final class Provider extends Model
         return Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.description, p.street_address, '
-            . 't.name AS town_name, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
+            . "t.name AS town_name, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, s.abbreviation AS state_abbr, "
             . 'CASE WHEN ' . $covers . ' THEN 0 '
             . "WHEN p.service_model IN ('mobile','both') THEN 1 ELSE 2 END AS relevance "
             . 'FROM providers p '

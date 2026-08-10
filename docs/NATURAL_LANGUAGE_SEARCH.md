@@ -40,6 +40,9 @@ existing result partial; stays and facilities use labelled sections on
    → aggregate → log → knowledge gaps.  
 4. Flags: `assist_ai_datasets`, `assist_ai_traveller_facilities` independently
    gate external candidates and facilities.
+5. When an origin and radius are resolved, the aggregator applies a final
+   fail-closed radius invariant to every adapter result. Cards without a
+   measurable location, or beyond the unrounded boundary, are not returned.
 
 ## Behaviour when AI is off / budget exhausted
 
