@@ -1636,3 +1636,13 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .provider-card--compact .provider-card-link{min-width:48px;min-height:44px;padding:.3rem .4rem;font-size:.66rem}
   .saved-provider-row form{grid-column:2}
 }
+
+/* Phone-only stay filters: keep location visible and collapse secondary controls. */
+.mobile-stay-filter-toggle{display:none}
+@media(max-width:600px){
+  .mobile-stay-filter-toggle{display:flex;width:100%;justify-content:space-between;margin-bottom:.55rem}
+  .mobile-stay-filter-toggle::after{content:'+'}
+  .mobile-stay-filter-toggle[aria-expanded="true"]::after{content:'−'}
+  .stay-search-fields .form-group:not(.location-field){display:none}
+  .stay-search-fields.is-open .form-group{display:block}
+}

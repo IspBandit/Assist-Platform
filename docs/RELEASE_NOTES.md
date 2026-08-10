@@ -14,6 +14,7 @@ may remain as dated files and are linked here rather than copied.
 - Added human-gated Admin API reads and moderation actions under `/facility-contributions` using existing facility scopes.
 - Stay search can filter by structured facility facts. Ask VanAssist recognises dump station, cassette disposal, black-water and portable-toilet disposal wording plus potable, untreated and treat-before-drinking water wording.
 - Phone stay results use compact cards, two-line facility summaries and two primary actions while desktop layout and rich detail pages remain intact.
+- Phone stay search keeps location visible and collapses stay type, cost, radius and facility controls behind one accessible **Filters** button.
 
 ### Assist RIC third-wave / gap-fill dataset keys
 

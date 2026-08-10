@@ -32,7 +32,8 @@ foreach ($stays as $stay) {
 <section class="section">
     <div class="container">
         <form class="search-card" method="get" action="<?= e(url('stays')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
-            <div class="stay-search-fields">
+            <button class="btn btn-secondary mobile-stay-filter-toggle" type="button" data-mobile-stay-filter-toggle aria-expanded="false" aria-controls="stay-search-fields">Filters<?= $selectedStayType||$selectedPriceType||$selectedFacility ? ' · Active' : '' ?></button>
+            <div id="stay-search-fields" class="stay-search-fields" data-mobile-stay-filters>
                 <div class="form-group mb-0 location-field">
                     <label for="town_search">Town, suburb or postcode</label>
                     <input id="town_search" name="location" value="<?= e_attr((string) $selectedLocation) ?>" placeholder="Start typing a town or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">

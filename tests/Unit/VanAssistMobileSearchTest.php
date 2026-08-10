@@ -164,5 +164,8 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('.stay-card-actions{display:grid!important;grid-template-columns:1fr 1fr',$css);
         self::assertStringContainsString('-webkit-line-clamp:2',$css);
         self::assertStringContainsString('.stay-search-fields{grid-template-columns:1fr}',$css);
+        self::assertStringContainsString('data-mobile-stay-filter-toggle',$view);
+        self::assertStringContainsString('.stay-search-fields .form-group:not(.location-field){display:none}',$css);
+        self::assertStringContainsString("toggle.setAttribute('aria-expanded'",(string)file_get_contents($root.'/public/assets/js/app.js'));
     }
 }
