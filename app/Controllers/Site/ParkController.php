@@ -17,6 +17,7 @@ use App\Helpers\Geo;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
 use App\Services\SeoSchema;
+use App\Services\StayFacilityService;
 use App\Validation\Validator;
 
 /**
@@ -79,16 +80,21 @@ final class ParkController extends Controller
         $priceType = (string) $request->input('price_type', '');
         $stayType = array_key_exists($stayType, self::STAY_TYPES) ? $stayType : null;
         $priceType = array_key_exists($priceType, self::PRICE_TYPES) ? $priceType : null;
+        $facilityType = (string) $request->input('facility', '');
+        $facilityType = isset(StayFacilityService::TYPES[$facilityType]) ? $facilityType : null;
         $distanceKm = Geo::stayDistance($request->input('distance'));
         $hasOrigin = $townId !== null || ($lat !== null && $lng !== null);
 
+        $stays = $hasOrigin ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm, 60, $facilityType ? [$facilityType] : []) : [];
+        $facilityMap = (new StayFacilityService())->forParks(array_map(static fn(array $stay): int => (int)$stay['id'], $stays));
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',
             'metaDescription' => 'Find caravan parks, campgrounds, national-park camping and free or low-cost caravan stays near your location across Australia.',
             'canonical' => url('stays'),
-            'stays' => $hasOrigin
-                ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm)
-                : [],
+            'stays' => $stays,
+            'facilityMap' => $facilityMap,
+            'facilityTypes' => StayFacilityService::TYPES,
+            'selectedFacility' => $facilityType,
             'stayTypes' => self::STAY_TYPES,
             'priceTypes' => self::PRICE_TYPES,
             'selectedTownId' => $townId,
@@ -288,6 +294,7 @@ final class ParkController extends Controller
             'park'            => $park,
             'runs'            => CaravanPark::nearbyRuns($park['town_id'] ? (int) $park['town_id'] : null, $park['region_id'] ? (int) $park['region_id'] : null),
             'isManaged'       => (int) Database::scalar('SELECT COUNT(*) FROM caravan_park_users WHERE park_id = ?', [$id]) > 0,
+            'facilities'      => Database::tableExists('stay_facility_claims') ? (new StayFacilityService())->forPark($id) : [],
         ]);
     }
 }

@@ -15,6 +15,7 @@ See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus
 See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
 See [ADR 0033](DECISIONS/0033-ric-national-dataset-acquisition.md) for RIC as the national dataset acquisition engine.
 See [ADR 0034](DECISIONS/0034-assist-ric-facility-auto-publish.md) for Assist RIC government facility pack auto-publish.
+See [ADR 0035](DECISIONS/0035-stay-facility-evidence-and-moderation.md) for source-resolved stay facilities and moderated community evidence.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -85,6 +86,7 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0032: Stays vs narrowly scoped traveller facilities (AI elaboration; aligns with 0019).
 - 0033: RIC is the national dataset acquisition engine; Platform `government_datasets`
   is the catalogue SoR (DATA-011A).
+- 0035: source-resolved stay facility evidence and human-moderated community contributions (proposed).
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;

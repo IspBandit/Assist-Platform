@@ -153,4 +153,16 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('if ($gpsLat !== null && $gpsLng !== null)', $category);
         self::assertStringContainsString('Device coordinates are the accurate origin', $parks);
     }
+
+    public function testStayResultsHavePhoneFirstCompactFacilitiesAndActions(): void
+    {
+        $root=dirname(__DIR__,2);
+        $view=(string)file_get_contents($root.'/app/Views/public/stays.php');
+        $css=(string)file_get_contents($root.'/public/assets/css/app.css');
+        self::assertStringContainsString('stay-card-facilities',$view);
+        self::assertStringContainsString('stay-card-actions',$view);
+        self::assertStringContainsString('.stay-card-actions{display:grid!important;grid-template-columns:1fr 1fr',$css);
+        self::assertStringContainsString('-webkit-line-clamp:2',$css);
+        self::assertStringContainsString('.stay-search-fields{grid-template-columns:1fr}',$css);
+    }
 }

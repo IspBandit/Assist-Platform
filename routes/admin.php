@@ -45,6 +45,9 @@ return static function (Router $router): void {
         $router->get('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@facilityReview', 'admin.data-sources.facilities.review');
         $router->post('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@reviewFacility', 'admin.data-sources.facilities.review.post');
         $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
+        $router->get('/facility-contributions', 'Admin\FacilityContributionsController@index', 'admin.facility-contributions');
+        $router->get('/facility-contributions/show', 'Admin\FacilityContributionsController@show', 'admin.facility-contributions.show');
+        $router->post('/facility-contributions/moderate', 'Admin\FacilityContributionsController@moderate', 'admin.facility-contributions.moderate');
 
         // Platform intelligence derived from canonical provider, demand and
         // optional population sources. Recommendations feed Data Sources.

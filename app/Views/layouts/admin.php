@@ -71,6 +71,7 @@ if ($adminBrand->moduleEnabled('service_runs') && $permitted('runs.manage')) {
 }
 if ($adminBrand->moduleEnabled('parks') && $permitted('parks.manage')) {
     $customerOperations[] = ['Places to stay', '/admin/parks'];
+    $customerOperations[] = ['Facility contributions', '/admin/facility-contributions'];
     if ($platformAdmin && $adminBrand->id() === 'vanassist') {
         $customerOperations[] = ['Stay discovery review', '/admin/parks/import'];
     }
