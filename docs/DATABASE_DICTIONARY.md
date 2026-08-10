@@ -3,6 +3,14 @@
 `database/migrations/` is the authoritative field-level schema. This document is
 a domain map, not a substitute for reading the relevant ordered migration.
 
+## Stay facility evidence and contributions (migration 128)
+
+- `stay_facility_claims`: current and historical facility-level evidence for a canonical `caravan_parks` row, including status/value, source, confidence, specificity and verification timestamps. `superseded_at` retires a claim without deleting it.
+- `facility_contributions`: public submission envelope and moderation lifecycle. Contact fields are optional and never public.
+- `facility_contribution_items`: before/suggested values and per-item moderation result, linked to any approved claim.
+- `facility_contribution_confirmations`: deduplicated independent confirmations of an existing pending report.
+- `facility_moderation_actions`: immutable human decision history with old/new values and notes.
+
 | Domain | Principal tables | Ownership/scope |
 |---|---|---|
 | Identity | `users`, `roles`, `permissions`, `user_roles`, sessions, reset/verification/consent/history tables | User/global with explicit role and brand participation extensions |

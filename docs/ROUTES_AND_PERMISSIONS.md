@@ -6,6 +6,7 @@ state-changing browser routes use CSRF protection.
 | Surface | Prefix/examples | Gate |
 |---|---|---|
 | Public | `/`, `/providers`, `/find`, `/ask` (Ask VanAssist; flag `assist_ai_search`), `/services`, `/regions`, `/request-assistance` | Brand/module checks plus rate limits on abuse-prone submissions |
+| Public stay facilities | `GET/POST /caravan-parks/{slug}/suggest-facility` | VanAssist active stay; CSRF, rate limit and Turnstile; creates pending evidence only |
 | LocalTorque motorsport | `/motorsport` | LocalTorque host only; official sanctioning-body, venue and calendar links are public/read-only |
 | TowSmart | `/calculator`, `/account/towing-combinations` | TowSmart host/module; saving requires authenticated owner |
 | TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
@@ -91,6 +92,9 @@ brand isolation tests and an update here when it creates a new surface.
 | `POST /admin/data-sources/datasets/save` | `data_sources.manage` | Platform Admin only |
 | `POST /admin/data-sources/datasets/fetch` | `data_sources.run` | Platform Admin only |
 | `GET/POST /admin/data-sources/facilities/review` | `data_sources.review` | Platform Admin only |
+| `GET /admin/facility-contributions*`, `POST /admin/facility-contributions/moderate` | `parks.manage` | Human moderation of VanAssist stay-facility suggestions |
+
+Admin API facility scopes also expose `GET /facility-contributions`, `GET /facility-contributions/{id}` and human-only `POST /facility-contributions/{id}/{action}`. Supported actions are `approve`, `approve-with-edit`, `partial-approve`, `reject` and `duplicate`.
 
 # Data Intelligence
 

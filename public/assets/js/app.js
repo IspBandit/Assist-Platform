@@ -1081,3 +1081,14 @@
         }
     }
 })();
+
+(function () {
+    var toggle = document.querySelector('[data-mobile-stay-filter-toggle]');
+    var filters = document.querySelector('[data-mobile-stay-filters]');
+    if (!toggle || !filters) return;
+    toggle.addEventListener('click', function () {
+        var open = !filters.classList.contains('is-open');
+        filters.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+})();

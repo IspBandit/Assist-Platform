@@ -139,6 +139,10 @@ return static function (Router $router): void {
         $router->group(['middleware' => ['rate:public.park-claim,5,3600,3600', 'turnstile']], static function (Router $router): void {
             $router->post('/caravan-parks/{slug}/claim', 'Site\ParkController@claimStore', 'caravan-parks.claim.store');
         });
+        $router->get('/caravan-parks/{slug}/suggest-facility', 'Site\FacilityContributionController@form', 'facility-contributions.form');
+        $router->group(['middleware' => ['rate:public.facility-contribution,8,3600,3600', 'turnstile']], static function (Router $router): void {
+            $router->post('/caravan-parks/{slug}/suggest-facility', 'Site\FacilityContributionController@store', 'facility-contributions.store');
+        });
         $router->get('/caravan-parks/{slug}', 'Site\ParkController@show', 'caravan-parks.show');
         $router->get('/stays', 'Site\ParkController@directory', 'stays');
 

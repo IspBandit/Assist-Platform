@@ -7,6 +7,10 @@ dump points and similar amenities appear as compact rows showing the facility
 name, type, locality, address, distance and reviewed source status. These
 facilities remain separate from business providers and places to stay.
 
+Stay pages show resolved facility conditions such as **Water: Available — treat before drinking**, not merely a yes/no icon. Open **Facility information** for source and verification date. Use **Suggest a facility or correction** to report missing or wrong details. The report stays pending until an administrator reviews it; an acknowledgement is not publication.
+
+On a phone, result rows intentionally keep only the name, location or distance, a short service or facility summary and primary actions. Open the detail page for the full service catalogue, conditions, provenance and secondary links.
+
 ## Purpose
 
 Find VanAssist service listings near a town, postcode or the device's current location and compare returned providers, stays and facilities in a map and accessible list. The same numbered map/list pattern is used on Find, Ask VanAssist, filtered directories, stays, services, town and region results when reliable coordinates exist. Unmappable listings remain in the list without an invented pin.

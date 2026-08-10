@@ -5,6 +5,17 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist facility accuracy, moderation and lean mobile stays (VAN-001 / DATA-014)
+
+- Added structured stay-facility evidence with status, conditions, source authority, confidence and verification timestamps. Specific official facts take precedence over broad summaries without deleting conflicting evidence.
+- Added migration `128_stay_facility_enrichment_and_contributions.sql`, including the generic Griffiths Creek regression seed for dump point, untreated water and confirmed no-toilets facts when the canonical stay exists.
+- Travellers can suggest one or more facility changes from a stay page. Suggestions remain pending, are rate-limited and never alter public facts directly; matching pending suggestions retain independent confirmations.
+- Added the **Facility contributions** admin queue with approve, approve-with-edit, partial approval, reject and duplicate decisions, plus immutable moderation and audit history.
+- Added human-gated Admin API reads and moderation actions under `/facility-contributions` using existing facility scopes.
+- Stay search can filter by structured facility facts. Ask VanAssist recognises dump station, cassette disposal, black-water and portable-toilet disposal wording plus potable, untreated and treat-before-drinking water wording.
+- Phone stay results use compact cards, two-line facility summaries and two primary actions while desktop layout and rich detail pages remain intact.
+- Phone stay search keeps location visible and collapses stay type, cost, radius and facility controls behind one accessible **Filters** button.
+
 ### Assist RIC third-wave / gap-fill dataset keys
 
 - Migrations `125` and `126` insert `government_datasets` rows for third-wave and

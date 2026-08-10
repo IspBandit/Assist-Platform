@@ -17,6 +17,8 @@ Public lookup endpoints use the current verified host and brand context plus any
 route-level rate limits or module checks. Browser mutations retain sessions and
 CSRF.
 
+Facility-scoped clients can read `GET /facility-contributions` and `GET /facility-contributions/{id}`. Human Admin API sessions with `facilities:write` can post an explicit moderation action to `/facility-contributions/{id}/{action}`. Service accounts cannot approve community evidence because the route also requires `admin_api_human`.
+
 The versioned Admin API (`/api/v1/admin`) is a separate, token-authenticated
 management surface for Assist RIC and service accounts. It is disabled by
 default (`ADMIN_API_ENABLED=false`), brand-scoped, audited, and least-privilege

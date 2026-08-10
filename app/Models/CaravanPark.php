@@ -17,7 +17,7 @@ final class CaravanPark extends Model
      *
      * @return array<int,array<string,mixed>>
      */
-    public static function searchStays(?int $townId, ?float $lat, ?float $lng, ?string $stayType, ?string $priceType, int $maxDistanceKm = 150, int $limit = 60): array
+    public static function searchStays(?int $townId, ?float $lat, ?float $lng, ?string $stayType, ?string $priceType, int $maxDistanceKm = 150, int $limit = 60, array $requiredFacilities = []): array
     {
         $where = ["cp.status = 'active'", 'cp.public_page_enabled = 1', 'cp.deleted_at IS NULL'];
         $params = [];
@@ -57,7 +57,7 @@ final class CaravanPark extends Model
         }
 
         $limit = max(1, min(100, $limit));
-        return Database::select(
+        $rows = Database::select(
             'SELECT cp.*, t.name AS town_name, s.abbreviation AS state_abbr, ' . $distanceSql . ' '
             . 'FROM caravan_parks cp '
             . 'LEFT JOIN towns t ON t.id = cp.town_id '
@@ -65,6 +65,17 @@ final class CaravanPark extends Model
             . 'WHERE ' . implode(' AND ', $where) . $having . ' ORDER BY ' . $order . ' LIMIT ' . $limit,
             $params
         );
+        if ($requiredFacilities === [] || !Database::tableExists('stay_facility_claims')) {
+            return $rows;
+        }
+        $facilityMap = (new \App\Services\StayFacilityService())->forParks(array_map(static fn(array $row): int => (int)$row['id'], $rows));
+        return array_values(array_filter($rows, static function(array $row) use ($requiredFacilities, $facilityMap): bool {
+            $facts = $facilityMap[(int)$row['id']] ?? [];
+            foreach ($requiredFacilities as $type) {
+                if (!isset($facts[$type]) || !in_array($facts[$type]['facility_status'], ['yes','conditional'], true)) return false;
+            }
+            return true;
+        }));
     }
 
     public static function uniqueSlug(string $source): string

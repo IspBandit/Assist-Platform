@@ -1004,6 +1004,9 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .directory-trust span { display: flex; gap: .65rem; align-items: center; }
 .directory-trust span::before { content: "✓"; display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: var(--brand-primary); color: #fff; font-size: .72rem; }
 .stay-card h3{display:flex;align-items:center;gap:.55rem;margin:.2rem 0}.stay-card .badge-row{margin-left:auto}.stay-card .actions{margin-top:.4rem}
+.stay-search-fields{display:grid;grid-template-columns:1.35fr repeat(4,minmax(0,1fr));gap:1rem}.stay-card-facilities{margin:.35rem 0;color:var(--color-text,#17212b);font-size:.78rem;line-height:1.4}.facility-suggestion-item,.facility-review-item{display:grid;gap:.75rem;padding:1rem;border:1px solid var(--color-border,#d9e0e5);border-radius:12px;margin-bottom:.8rem}.admin-facility-compare{align-items:start}.facility-review-list article{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem}
+@media(max-width:919px){.stay-search-fields{grid-template-columns:1fr 1fr}.stay-search-fields .location-field{grid-column:1/-1}}
+@media(max-width:600px){.stay-search-fields{grid-template-columns:1fr}.stay-search-fields .location-field{grid-column:auto}.stay-grid{gap:.65rem}.stay-card{padding:.8rem;border-radius:12px}.stay-card .badge-row{margin:0;display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.stay-card h3{font-size:1.05rem;line-height:1.25}.stay-card>p{margin:.28rem 0}.stay-card-facilities{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.stay-card-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:.4rem}.stay-card-actions .btn{min-width:0;min-height:44px;padding:.5rem .4rem}.stay-card-actions .btn:nth-child(n+3){display:none}.facility-review-list article{align-items:flex-start;flex-direction:column}.admin-facility-compare{grid-template-columns:1fr}}
 .directory-section { padding-top: 0; }
 .directory-search { position: relative; z-index: 4; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem; align-items: end; margin: -2.4rem 0 2rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: 0 22px 55px rgba(15,23,42,.14); }
 .directory-search-actions { display: grid; min-width: 170px; }
@@ -1632,4 +1635,14 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .provider-card--compact .provider-card-actions .provider-card-link:first-child{display:none}
   .provider-card--compact .provider-card-link{min-width:48px;min-height:44px;padding:.3rem .4rem;font-size:.66rem}
   .saved-provider-row form{grid-column:2}
+}
+
+/* Phone-only stay filters: keep location visible and collapse secondary controls. */
+.mobile-stay-filter-toggle{display:none}
+@media(max-width:600px){
+  .mobile-stay-filter-toggle{display:flex;width:100%;justify-content:space-between;margin-bottom:.55rem}
+  .mobile-stay-filter-toggle::after{content:'+'}
+  .mobile-stay-filter-toggle[aria-expanded="true"]::after{content:'−'}
+  .stay-search-fields .form-group:not(.location-field){display:none}
+  .stay-search-fields.is-open .form-group{display:block}
 }

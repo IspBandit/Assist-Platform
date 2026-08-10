@@ -32,7 +32,8 @@ foreach ($stays as $stay) {
 <section class="section">
     <div class="container">
         <form class="search-card" method="get" action="<?= e(url('stays')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
-            <div class="grid grid-4">
+            <button class="btn btn-secondary mobile-stay-filter-toggle" type="button" data-mobile-stay-filter-toggle aria-expanded="false" aria-controls="stay-search-fields">Filters<?= $selectedStayType||$selectedPriceType||$selectedFacility ? ' · Active' : '' ?></button>
+            <div id="stay-search-fields" class="stay-search-fields" data-mobile-stay-filters>
                 <div class="form-group mb-0 location-field">
                     <label for="town_search">Town, suburb or postcode</label>
                     <input id="town_search" name="location" value="<?= e_attr((string) $selectedLocation) ?>" placeholder="Start typing a town or postcode" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
@@ -55,6 +56,10 @@ foreach ($stays as $stay) {
                     <label for="distance">Maximum straight-line radius</label>
                     <select id="distance" name="distance"><?php foreach ($distanceOptions as $km): ?><option value="<?= (int) $km ?>" <?= $selectedDistance === $km ? 'selected' : '' ?>>Within <?= (int) $km ?> km radius</option><?php endforeach; ?></select>
                     <p class="muted small">Defaults to 150 km from your chosen location.</p>
+                </div>
+                <div class="form-group mb-0">
+                    <label for="facility">Facility</label>
+                    <select id="facility" name="facility"><option value="">Any facilities</option><?php foreach ($facilityTypes as $value=>$label): ?><option value="<?= e_attr($value) ?>" <?= $selectedFacility===$value?'selected':'' ?>><?= $this->e($label) ?></option><?php endforeach; ?></select>
                 </div>
             </div>
             <div class="actions" style="margin-top:1rem"><button class="btn btn-primary btn-lg" type="submit">Find places to stay</button><a class="btn btn-ghost" href="<?= e(url('stays')) ?>">Clear</a></div>
@@ -79,11 +84,11 @@ foreach ($stays as $stay) {
                         </div>
                         <h3><?php if ($mapIndex!==false): ?><span class="provider-map-reference" data-number="<?= $mapIndex+1 ?>" aria-label="Map pin <?= $mapIndex+1 ?>"></span><?php endif; ?><a href="<?= e(url('caravan-parks/' . $stay['slug'])) ?>"><?= $this->e((string) $stay['name']) ?></a></h3>
                         <p class="muted"><?php if ($stay['distance_km'] !== null): ?><?= number_format((float) $stay['distance_km'], 1) ?> km straight-line · <?php endif; ?><?= $this->e(trim((string) ($stay['town_name'] ?? '') . (!empty($stay['state_abbr']) ? ' / ' . $stay['state_abbr'] : ''))) ?></p>
-                        <?php $facilities = []; foreach ($facilityLabels as $key => $label) { if ((int) ($stay[$key] ?? 0) === 1) { $facilities[] = $label; } } ?>
-                        <?php if ($facilities !== []): ?><p class="muted small"><?= $this->e(implode(' · ', array_slice($facilities, 0, 3))) ?></p><?php endif; ?>
+                        <?php $cardFacts=$facilityMap[(int)$stay['id']]??[]; $facilityText=[]; foreach(array_slice($cardFacts,0,4) as $fact){if(($fact['facility_status']??'unknown')!=='unknown')$facilityText[]=$fact['label'].': '.$fact['display'];} if($facilityText===[]){foreach($facilityLabels as $key=>$label){if((int)($stay[$key]??0)===1)$facilityText[]=$label;}} ?>
+                        <?php if ($facilityText !== []): ?><p class="stay-card-facilities"><?= $this->e(implode(' · ', array_slice($facilityText, 0, 4))) ?></p><?php endif; ?>
                         <?php if (!empty($stay['max_stay'])): ?><p><strong>Stay limit:</strong> <?= $this->e((string) $stay['max_stay']) ?></p><?php endif; ?>
                         <p class="muted small"><?= !empty($stay['verified_at']) ? 'Operator verified' : 'Unverified directory listing—confirm details before arrival' ?></p>
-                        <div class="actions"><a class="btn btn-secondary" href="<?= e(url('caravan-parks/' . $stay['slug'])) ?>">View details</a><?php if ($mapDestination !== ''): ?><a class="btn btn-ghost" href="<?= e(map_directions_url($mapDestination)) ?>" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>" target="_blank" rel="noopener noreferrer">Directions</a><?php endif; ?><?php if (!empty($stay['booking_url']) || !empty($stay['website'])): ?><a class="btn btn-ghost" href="<?= e_attr((string) ($stay['booking_url'] ?: $stay['website'])) ?>" target="_blank" rel="noopener noreferrer">Website</a><?php endif; ?></div>
+                        <div class="actions stay-card-actions"><a class="btn btn-secondary" href="<?= e(url('caravan-parks/' . $stay['slug'])) ?>">Details</a><?php if ($mapDestination !== ''): ?><a class="btn btn-ghost" href="<?= e(map_directions_url($mapDestination)) ?>" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>" target="_blank" rel="noopener noreferrer">Directions</a><?php endif; ?><?php if (!empty($stay['booking_url']) || !empty($stay['website'])): ?><a class="btn btn-ghost" href="<?= e_attr((string) ($stay['booking_url'] ?: $stay['website'])) ?>" target="_blank" rel="noopener noreferrer">Website</a><?php endif; ?></div>
                     </article>
                 <?php endforeach; ?>
             </div>

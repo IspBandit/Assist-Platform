@@ -30,7 +30,7 @@ final class IntentRuleEngine
     private const RULES = [
         [
             'id' => 'R02',
-            'patterns' => ['dump point', 'dump points', 'sanitary dump', 'cassette dump', 'sullage'],
+            'patterns' => ['dump point', 'dump points', 'dump station', 'sanitary dump', 'cassette dump', 'cassette disposal', 'toilet dump', 'black water dump', 'portable toilet waste disposal', 'empty a portable toilet', 'sullage'],
             'intent_type' => Intent::TYPE_FACILITY,
             'provider_category_keys' => ['dump-points'],
             'facility_type_keys' => ['dump_point'],
@@ -40,7 +40,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R03',
-            'patterns' => ['drinking water', 'potable water', 'water refill', 'tank water', 'fill my water tanks', 'fill water tank', 'fresh water tap'],
+            'patterns' => ['drinking water', 'potable water', 'untreated water', 'non potable water', 'treat before drinking', 'water refill', 'tank fill', 'tank water', 'fill my water tanks', 'fill water tank', 'fresh water tap'],
             'intent_type' => Intent::TYPE_FACILITY,
             'provider_category_keys' => ['potable-water-refill'],
             'facility_type_keys' => ['drinking_water'],
