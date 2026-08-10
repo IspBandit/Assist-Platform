@@ -5,6 +5,13 @@ a domain map, not a substitute for reading the relevant ordered migration.
 
 ## Stay facility evidence and contributions (migration 128)
 
+Migration 129 adds `caravan_park_source_aliases`, which maps an imported source
+identity to its canonical stay after a duplicate merge. Automatic cleanup is
+restricted to records with the same normalised name and state whose coordinates
+are within 2 km. The higher-trust record survives; linked operational records
+and facility claims move to it, while the absorbed source row is soft-deleted
+and retained for provenance. Ambiguous matches are not automatically merged.
+
 - `stay_facility_claims`: current and historical facility-level evidence for a canonical `caravan_parks` row, including status/value, source, confidence, specificity and verification timestamps. `superseded_at` retires a claim without deleting it.
 - `facility_contributions`: public submission envelope and moderation lifecycle. Contact fields are optional and never public.
 - `facility_contribution_items`: before/suggested values and per-item moderation result, linked to any approved claim.
