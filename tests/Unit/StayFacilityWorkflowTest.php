@@ -61,4 +61,19 @@ final class StayFacilityWorkflowTest extends TestCase
         self::assertStringContainsString("'toilets', 'no'",$migration);
         self::assertStringNotContainsString('Griffiths Creek', (string)file_get_contents($root.'/app/Platform/AiSearch/Adapters/StaySearchAdapter.php'));
     }
+
+    public function testGriffithsCreekDuplicateMergeIsAuditableAndImportSafe(): void
+    {
+        $root=dirname(__DIR__,2);
+        $migration=(string)file_get_contents($root.'/database/migrations/129_merge_duplicate_stays.sql');
+        $seeder=(string)file_get_contents($root.'/scripts/seed-stays.php');
+
+        self::assertStringContainsString('caravan_park_source_aliases',$migration);
+        self::assertStringContainsString("'same_name_state_within_2km'",$migration);
+        self::assertStringContainsString("'stay.duplicate_merged'",$migration);
+        self::assertStringContainsString('p.deleted_at=NOW()',$migration);
+        self::assertStringContainsString('UPDATE stay_facility_claims x',$migration);
+        self::assertStringContainsString('caravan_park_source_aliases', $seeder);
+        self::assertStringNotContainsString('deleted_at=', $seeder, 'OSM refreshes must not reactivate a merged source row.');
+    }
 }

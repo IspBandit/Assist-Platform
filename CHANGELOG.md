@@ -3,6 +3,11 @@
 ## Unreleased
 
 ### Added
+- **Stay duplicate consolidation** — migration `129` merges all high-confidence
+  stay duplicates that share a normalised name and state within 2 km, preserving
+  relationships, facility provenance and an audit record. Source aliases stop
+  later OSM refreshes recreating merged public pages; uncertain matches remain
+  separate for human review.
 - **Assist RIC third-wave + gap-fill dataset keys** — migrations
   `125_ric_third_wave_facility_import_datasets.sql` and
   `126_ric_gap_fill_facility_import_datasets.sql` register remaining Ready-pack
