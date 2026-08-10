@@ -93,6 +93,7 @@ final class StayFacilityWorkflowTest extends TestCase
         self::assertStringContainsString("'same_name_within_2km'",$migration);
         self::assertStringContainsString("'same_source_identity'",$migration);
         self::assertStringContainsString("'authority_name_state_missing_coordinates'",$migration);
+        self::assertStringContainsString('ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci',$migration);
         self::assertStringContainsString("LOWER(COALESCE(authority_park.address,'')) LIKE CONCAT('%',loser.normalised_name,'%')",$migration);
         self::assertStringNotContainsString('griffiths-creek-camping-area',$migration,'Residual cleanup must be generic, not slug-specific.');
         self::assertStringContainsString('caravan_park_source_aliases',$migration);

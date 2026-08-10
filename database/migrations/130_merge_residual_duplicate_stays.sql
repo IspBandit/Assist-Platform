@@ -18,7 +18,7 @@ CREATE TEMPORARY TABLE residual_stay_candidates (
     trust_rank TINYINT UNSIGNED NOT NULL,
     KEY idx_residual_stay_name (normalised_name, trust_rank, id),
     KEY idx_residual_stay_source (source_type, external_id, trust_rank, id)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO residual_stay_candidates
     (id,state_id,normalised_name,latitude,longitude,source_type,external_id,trust_rank)
