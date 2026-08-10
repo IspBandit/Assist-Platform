@@ -22,6 +22,9 @@ may remain as dated files and are linked here rather than copied.
 - Corrected phone overflow on the VanAssist home search and facility-suggestion
   journey, collapsed secondary phone copy, and kept search/form actions inside
   the 390 px viewport. Desktop layout remains unchanged.
+- Replaced the conflicting generic provider-card grid on phone stay results
+  with a stay-specific compact row: name, distance/location and leading
+  facility facts stay lean beside fixed Details and Directions actions.
 - Facility-filtered stay search now resolves a wider in-radius candidate pool
   before applying the public result limit, avoiding valid facility matches
   being hidden behind unrelated stays.

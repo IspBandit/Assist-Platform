@@ -35,14 +35,19 @@
 - The 50 km stay render returned 19 measurable in-radius cards. Search actions
   remain touch-sized; secondary phone copy is collapsed rather than deleting
   full detail from desktop or listing pages.
+- A follow-up 390 × 844 render after the reported live mobile failure removed
+  the inherited provider-card grid from stay results. Representative short and
+  long-name stay rows measured 366 × 110 px, document `scrollWidth` remained
+  390 px, and visible Details/Directions controls measured 72 × 44 px. Facility
+  facts truncate within the content column instead of colliding with actions.
 - Copy distinguishes straight-line distance, town-centre estimates and road
   directions. Sponsored/featured labelling and organic grouping are unchanged.
 
 ## Engineering — PASS
 
 - PHPStan: no errors (`--memory-limit=512M`).
-- Focused VanAssist suite: 25 tests, 169 assertions, no warnings.
-- Full PHPUnit suite: 1,109 tests, 80,342 assertions; 32 environment-gated
+- Focused stay/radius/facility suite: 20 tests, 145 assertions, no warnings.
+- Full PHPUnit suite: 1,109 tests, 80,349 assertions; 32 environment-gated
   skips and 13 existing PHPUnit deprecations; no failures. The full run used
   512 MB because the default 128 MB limit is exhausted by the unrelated large
   LocalTorque fixture export.
