@@ -20,38 +20,50 @@ CREATE TEMPORARY TABLE stay_duplicate_merge_map (
     survivor_id INT UNSIGNED NOT NULL
 ) ENGINE=InnoDB;
 
+CREATE TEMPORARY TABLE stay_duplicate_candidates (
+    id INT UNSIGNED NOT NULL PRIMARY KEY,
+    state_id INT UNSIGNED NULL,
+    normalised_name VARCHAR(190) NOT NULL,
+    latitude DECIMAL(10,7) NOT NULL,
+    longitude DECIMAL(10,7) NOT NULL,
+    trust_rank TINYINT UNSIGNED NOT NULL,
+    KEY idx_stay_duplicate_identity (state_id, normalised_name, trust_rank, id)
+) ENGINE=InnoDB;
+
+INSERT INTO stay_duplicate_candidates (id,state_id,normalised_name,latitude,longitude,trust_rank)
+SELECT id,state_id,LOWER(TRIM(name)),latitude,longitude,
+       CASE verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END
+FROM caravan_parks
+WHERE deleted_at IS NULL AND latitude IS NOT NULL AND longitude IS NOT NULL;
+
+-- MySQL cannot reference one temporary table more than once in a statement.
+CREATE TEMPORARY TABLE stay_duplicate_winners LIKE stay_duplicate_candidates;
+INSERT INTO stay_duplicate_winners SELECT * FROM stay_duplicate_candidates;
+CREATE TEMPORARY TABLE stay_duplicate_betters LIKE stay_duplicate_candidates;
+INSERT INTO stay_duplicate_betters SELECT * FROM stay_duplicate_candidates;
+
 INSERT INTO stay_duplicate_merge_map (duplicate_id, survivor_id)
 SELECT loser.id, winner.id
-FROM caravan_parks loser
-JOIN caravan_parks winner
+FROM stay_duplicate_candidates loser
+JOIN stay_duplicate_winners winner
   ON winner.id <> loser.id
  AND winner.state_id <=> loser.state_id
- AND LOWER(TRIM(winner.name)) = LOWER(TRIM(loser.name))
- AND winner.deleted_at IS NULL AND loser.deleted_at IS NULL
- AND winner.latitude IS NOT NULL AND winner.longitude IS NOT NULL
- AND loser.latitude IS NOT NULL AND loser.longitude IS NOT NULL
+ AND winner.normalised_name = loser.normalised_name
  AND (111.045 * DEGREES(ACOS(LEAST(1.0,
        COS(RADIANS(loser.latitude)) * COS(RADIANS(winner.latitude))
        * COS(RADIANS(loser.longitude) - RADIANS(winner.longitude))
        + SIN(RADIANS(loser.latitude)) * SIN(RADIANS(winner.latitude)))))) <= 2
- AND ((CASE winner.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END)
-      > (CASE loser.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END)
-   OR ((CASE winner.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END)
-      = (CASE loser.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END) AND winner.id < loser.id))
+ AND (winner.trust_rank > loser.trust_rank OR (winner.trust_rank = loser.trust_rank AND winner.id < loser.id))
 WHERE NOT EXISTS (
-    SELECT 1 FROM caravan_parks better
-    WHERE better.id <> loser.id AND better.deleted_at IS NULL
+    SELECT 1 FROM stay_duplicate_betters better
+    WHERE better.id <> loser.id
       AND better.state_id <=> loser.state_id
-      AND LOWER(TRIM(better.name)) = LOWER(TRIM(loser.name))
-      AND better.latitude IS NOT NULL AND better.longitude IS NOT NULL
+      AND better.normalised_name = loser.normalised_name
       AND (111.045 * DEGREES(ACOS(LEAST(1.0,
           COS(RADIANS(loser.latitude)) * COS(RADIANS(better.latitude))
           * COS(RADIANS(loser.longitude) - RADIANS(better.longitude))
           + SIN(RADIANS(loser.latitude)) * SIN(RADIANS(better.latitude)))))) <= 2
-      AND ((CASE better.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END)
-          > (CASE winner.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END)
-       OR ((CASE better.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END)
-          = (CASE winner.verification_type WHEN 'authority' THEN 4 WHEN 'operator' THEN 3 WHEN 'community' THEN 2 ELSE 1 END) AND better.id < winner.id))
+      AND (better.trust_rank > winner.trust_rank OR (better.trust_rank = winner.trust_rank AND better.id < winner.id))
 );
 
 INSERT IGNORE INTO caravan_park_source_aliases (park_id, source_type, external_id, source_url, created_at, updated_at)
@@ -89,3 +101,6 @@ UPDATE caravan_parks p JOIN stay_duplicate_merge_map m ON m.duplicate_id=p.id
 SET p.public_page_enabled=0,p.status='rejected',p.deleted_at=NOW(),p.updated_at=NOW();
 
 DROP TEMPORARY TABLE stay_duplicate_merge_map;
+DROP TEMPORARY TABLE stay_duplicate_candidates;
+DROP TEMPORARY TABLE stay_duplicate_winners;
+DROP TEMPORARY TABLE stay_duplicate_betters;
