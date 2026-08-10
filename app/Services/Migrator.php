@@ -22,6 +22,40 @@ final class Migrator
 
     private string $path;
 
+    /**
+     * One-time fail-closed recovery for the production interruption of the
+     * original quadratic migration 129. Both the recorded old checksum and
+     * the replacement indexed checksum must match; all other dirty migrations
+     * remain blocked by the normal migration policy.
+     */
+    public function repairInterruptedDuplicateStayMigration(): bool
+    {
+        $this->ensureMigrationsTable();
+        $name = '129_merge_duplicate_stays.sql';
+        $oldChecksum = '0cb77da02fef070256fa587e101f01924d7357c53d0e18a05d861ad9a323b05a';
+        $replacementChecksum = '49ce0a65e93c60ae91440f33edf35d4f29531a1e8dd70d7b4b8c7f8eb64b002e';
+        $file = $this->path . '/' . $name;
+        if (!is_file($file)) {
+            return false;
+        }
+        $contents = file_get_contents($file);
+        if (!is_string($contents) || !in_array($replacementChecksum, self::checksumVariants($contents), true)) {
+            return false;
+        }
+        $row = Database::selectOne('SELECT status,checksum FROM migrations WHERE migration=? LIMIT 1', [$name]);
+        if ($row === null || !in_array((string)$row['status'], ['running','failed'], true)
+            || !hash_equals($oldChecksum, (string)$row['checksum'])
+            || !Database::tableExists('caravan_park_source_aliases')) {
+            return false;
+        }
+        if ((int)Database::scalar('SELECT IS_FREE_LOCK(?)', [self::LOCK_NAME]) !== 1) {
+            throw new RuntimeException('Migration 129 recovery refused while the migration lock is held.');
+        }
+        Database::query('DELETE FROM migrations WHERE migration=? AND status IN (?,?) AND checksum=?',
+            [$name,'running','failed',$oldChecksum]);
+        return true;
+    }
+
     public function __construct(?string $path = null)
     {
         $this->path = $path ?? base_path('database/migrations');

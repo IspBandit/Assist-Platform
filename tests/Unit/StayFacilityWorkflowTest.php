@@ -70,6 +70,10 @@ final class StayFacilityWorkflowTest extends TestCase
 
         self::assertStringContainsString('caravan_park_source_aliases',$migration);
         self::assertStringContainsString('idx_stay_duplicate_identity',$migration);
+        $migrator=(string)file_get_contents($root.'/app/Services/Migrator.php');
+        self::assertStringContainsString('repairInterruptedDuplicateStayMigration',$migrator);
+        self::assertStringContainsString('0cb77da02fef070256fa587e101f01924d7357c53d0e18a05d861ad9a323b05a',$migrator);
+        self::assertStringContainsString('49ce0a65e93c60ae91440f33edf35d4f29531a1e8dd70d7b4b8c7f8eb64b002e',$migrator);
         self::assertStringContainsString("'same_name_state_within_2km'",$migration);
         self::assertStringContainsString("'stay.duplicate_merged'",$migration);
         self::assertStringContainsString('p.deleted_at=NOW()',$migration);
