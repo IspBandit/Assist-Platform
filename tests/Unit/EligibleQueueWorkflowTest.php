@@ -55,6 +55,16 @@ final class EligibleQueueWorkflowTest extends TestCase
         self::assertStringContainsString('ProviderImportQueueWorker',$cron);
     }
 
+    public function testServerWorkerUsesTheCanonicalBrandRegistry(): void
+    {
+        $root = dirname(__DIR__,2);
+        $worker = (string)file_get_contents($root.'/app/Services/ProviderImportQueueWorker.php');
+
+        self::assertStringContainsString("find('vanassist')",$worker);
+        self::assertStringContainsString('databaseId()',$worker);
+        self::assertStringNotContainsString('brands WHERE slug=',$worker);
+    }
+
     public function testFinalMutationsRecheckPendingAndUnclaimedState(): void
     {
         $root = dirname(__DIR__,2);
