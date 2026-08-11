@@ -5,6 +5,24 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist Ask and road-distance integrity (VAN-011 / CORE-012, ADR 0036)
+
+- Ask category detection now excludes the explicit `near/in/around/at` location
+  clause, so a landmark containing “camping ground” does not turn a dump-point
+  request into a national mixed stay search.
+- Added conservative typo recovery for towns and public stay landmarks, including
+  the reported “Grffiths camping ground, Queensland” query. An unresolved or
+  missing location now fails closed before adapters run; typed locations always
+  override hidden device coordinates.
+- Google Routes now batches and deduplicates provider, fuel, stay and facility
+  destinations. Returned road kilometres and estimated drive times replace the
+  preliminary straight-line value, and the selected radius is enforced again
+  using road distance. Successful routed lists omit unroutable/overflow cards.
+- Added `GOOGLE_ROUTES_API_KEY` and `GOOGLE_ROUTES_MAX_DESTINATIONS` environment
+  settings. No migration is required and Google route results are not stored.
+- Rollback is the previous immutable release or removal of the Routes key; the
+  UI then returns to explicitly labelled straight-line estimates.
+
 ### VanAssist runtime logic integrity (VAN-001 / CORE-011)
 
 - Provider maps and radius searches now use provider coordinates only when both

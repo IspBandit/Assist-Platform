@@ -15,6 +15,7 @@ use App\Models\Town;
 use App\Services\Demand\ActivityTracker;
 use App\Services\Demand\DemandRecorder;
 use App\Services\SeoSchema;
+use App\Services\RoadDistance\RoadDistanceService;
 
 /**
  * Public service-category pages generated from the database.
@@ -62,12 +63,15 @@ final class CategoryController extends Controller
         $gpsLng = is_numeric($request->input('lng')) ? (float) $request->input('lng') : null;
         if ($gpsLat !== null && ($gpsLat < -90 || $gpsLat > 90)) { $gpsLat = null; }
         if ($gpsLng !== null && ($gpsLng < -180 || $gpsLng > 180)) { $gpsLng = null; }
-        if ($gpsLat !== null && $gpsLng !== null) {
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location, 1);
+            if ($townMatches === []) { $townMatches = Town::searchActiveFuzzy($location, 1); }
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+            $gpsLat = null;
+            $gpsLng = null;
+        } elseif ($gpsLat !== null && $gpsLng !== null) {
             $nearestTown = Town::nearestActive($gpsLat, $gpsLng);
             $townId = isset($nearestTown['id']) ? (int) $nearestTown['id'] : null;
-        } elseif ($location !== '') {
-            $townMatches = Town::searchActive($location, 1);
-            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
         $selectedTown = null;
         if ($townId !== null) {
@@ -93,7 +97,10 @@ final class CategoryController extends Controller
 
         $matches = [];
         $possible = [];
-        foreach (Provider::forCategory((int) $category['id'], $townId) as $row) {
+        $categoryProviders = $distanceFilter['scope'] === 'km' && $originLat !== null && $originLng !== null
+            ? Provider::forCategoryNear((int) $category['id'], $originLat, $originLng, (int) $distanceFilter['km'])
+            : Provider::forCategory((int) $category['id'], $townId);
+        foreach ($categoryProviders as $row) {
             if ((int) $row['is_inferred'] === 1) {
                 $possible[] = $row;
             } else {
@@ -103,6 +110,14 @@ final class CategoryController extends Controller
         if ($originLat !== null && $originLng !== null) {
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townId);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townId);
+            $routed = (new RoadDistanceService())->enrichGroups(
+                ['matches' => $matches, 'possible' => $possible],
+                $originLat,
+                $originLng,
+                $maxDistance,
+            );
+            $matches = $routed['matches'];
+            $possible = $routed['possible'];
         }
 
         ActivityTracker::record('category_viewed', ['category_id' => (int) $category['id'], 'town_id' => $townId]);

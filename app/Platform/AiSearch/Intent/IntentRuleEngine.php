@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
  */
 final class IntentRuleEngine
 {
-    public const VERSION = 'intent_rules_v3';
+    public const VERSION = 'intent_rules_v4';
 
     /**
      * @var list<array{
@@ -278,23 +278,28 @@ final class IntentRuleEngine
     {
         $meta = IntentNormaliser::analyse($rawQuery);
         $haystack = $meta['remainder'];
+        // The final explicit location clause describes the search origin, not
+        // another requested service. Without this split, a request such as
+        // "dump point near Griffiths camping ground" also matched the
+        // campground rule and produced an unrelated mixed intent.
+        $intentText = $this->intentSearchText($haystack);
         // Matching haystack also keeps US tire spelling variants.
-        $matchText = str_replace(['tyre', 'tyres'], ['tire', 'tires'], $haystack);
-        $matchText = $haystack . ' ' . $matchText;
+        $matchText = str_replace(['tyre', 'tyres'], ['tire', 'tires'], $intentText);
+        $matchText = $intentText . ' ' . $matchText;
 
         $hits = [];
         foreach (self::RULES as $rule) {
             foreach ($rule['patterns'] as $pattern) {
                 $patternNorm = mb_strtolower($pattern);
-                if ($this->containsPhrase($matchText, $patternNorm) || $this->containsPhrase($haystack, $patternNorm)) {
+                if ($this->containsPhrase($matchText, $patternNorm) || $this->containsPhrase($intentText, $patternNorm)) {
                     $hits[$rule['id']] = $rule;
                     break;
                 }
             }
         }
 
-        if ($hits === [] && preg_match('/\b(caravan|motorhome|rv|camper|trailer|tow vehicle)\b/u', $haystack) === 1
-            && preg_match('/\b(broken|break|failed|failure|fault|problem|issue|noise|grinding|leak|damaged|not work|not working|help|repair|fix)\b/u', $haystack) === 1) {
+        if ($hits === [] && preg_match('/\b(caravan|motorhome|rv|camper|trailer|tow vehicle)\b/u', $intentText) === 1
+            && preg_match('/\b(broken|break|failed|failure|fault|problem|issue|noise|grinding|leak|damaged|not work|not working|help|repair|fix)\b/u', $intentText) === 1) {
             $hits['RFALLBACK'] = [
                 'id' => 'RFALLBACK', 'patterns' => [], 'intent_type' => Intent::TYPE_PROVIDER,
                 'provider_category_keys' => ['general-caravan-repairs', 'unsure-which-service-is-needed'],
@@ -383,6 +388,20 @@ final class IntentRuleEngine
             clarificationReason: $clarificationReason,
             source: 'rules',
         );
+    }
+
+    private function intentSearchText(string $text): string
+    {
+        $markers = [];
+        if (preg_match_all('/\b(?:near|in|around|at)\s+/ui', $text, $markers, PREG_OFFSET_CAPTURE) === 0) {
+            return $text;
+        }
+
+        $last = $markers[0][count($markers[0]) - 1];
+        $before = trim(mb_substr($text, 0, (int) $last[1]));
+        $after = trim(mb_substr($text, (int) $last[1] + mb_strlen((string) $last[0])));
+
+        return $before !== '' && $after !== '' ? $before : $text;
     }
 
     private function containsPhrase(string $haystack, string $needle): bool

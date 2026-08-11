@@ -66,7 +66,16 @@ final class BatehavenAcceptanceHarnessTest extends TestCase
             }
         };
 
-        $orch = new SearchOrchestrator(facilities: $facilities);
+        $orch = new SearchOrchestrator(
+            facilities: $facilities,
+            locationResolver: static fn (SearchRequest $_request, Intent $_intent): array => [[
+                'id' => 1,
+                'name' => 'Batehaven',
+                'state_abbr' => 'NSW',
+                'latitude' => -35.7325,
+                'longitude' => 150.1985,
+            ], -35.7325, 150.1985, 'test'],
+        );
         $response = $orch->handle(new SearchRequest(
             rawQuery: 'public toilets and dump points near Batehaven, NSW',
             brandKey: 'vanassist',

@@ -69,6 +69,12 @@ if ($result !== null) {
         );
     }
 }
+$usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceService::groupsUseRoadDistance([
+    'providers' => $result->providers,
+    'stays' => $result->stays,
+    'facilities' => $result->facilities,
+    'externals' => $result->externals,
+]);
 ?>
 <?php $this->section('head'); ?>
 <?php if ($mappedResults !== []): ?><link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin><?php endif; ?>
@@ -118,6 +124,7 @@ if ($result !== null) {
                     <?php if ($result->intent->radiusKm !== null): ?> · within <?= (int) $result->intent->radiusKm ?> km<?php endif; ?>
                     · confidence <?= number_format($result->intent->confidence * 100, 0) ?>%</p>
             <?php endif; ?>
+            <?php if ($usesRoadDistance): ?><p class="muted">Filtered and sorted by driving distance. Road distances and estimated times supplied by Google Maps.</p><?php endif; ?>
 
             <?php if ($mappedResults !== []): ?>
                 <section class="results-map-shell" data-results-view-shell data-active-view="list" aria-labelledby="results-map-heading">
@@ -185,7 +192,7 @@ if ($result !== null) {
                             <p class="muted" style="margin:0">
                                 <?= $this->e((string) ($stay['stay_type'] ?? '')) ?>
                                 <?php if (!empty($stay['town_name'])): ?> · <?= $this->e((string) $stay['town_name']) ?><?php endif; ?>
-                                <?php if (isset($stay['distance_km']) && $stay['distance_km'] !== null): ?> · <?= max(1, (int) $stay['distance_km']) ?> km straight-line<?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($stay); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                                 <?php if (!empty($stay['assist_provenance_label'])): ?> · <?= $this->e((string) $stay['assist_provenance_label']) ?><?php endif; ?>
                             </p>
                         </article>
@@ -206,7 +213,7 @@ if ($result !== null) {
                                 <?= $this->e(str_replace('_', ' ', (string) ($facility['facility_type'] ?? ''))) ?>
                                 <?php if (!empty($facility['town_name'])): ?> · <?= $this->e((string) $facility['town_name']) ?><?php endif; ?>
                                 <?php if (!empty($facility['formatted_address'])): ?> · <?= $this->e((string) $facility['formatted_address']) ?><?php endif; ?>
-                                <?php if (isset($facility['distance_km']) && $facility['distance_km'] !== null): ?> · <?= max(1, (int) $facility['distance_km']) ?> km straight-line<?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($facility); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                                 <?php if (!empty($facility['assist_provenance_label'])): ?> · <?= $this->e((string) $facility['assist_provenance_label']) ?><?php endif; ?>
                                 </p>
                             </div>
@@ -229,7 +236,7 @@ if ($result !== null) {
                                 <?= $this->e((string) ($ext['assist_provenance_label'] ?? 'Pending review')) ?>
                                 <?php if (!empty($ext['connector_name'])): ?> · <?= $this->e((string) $ext['connector_name']) ?><?php endif; ?>
                                 <?php if (!empty($ext['formatted_address'])): ?> · <?= $this->e((string) $ext['formatted_address']) ?><?php endif; ?>
-                                <?php if (isset($ext['distance_km']) && $ext['distance_km'] !== null): ?> · <?= max(1, (int) $ext['distance_km']) ?> km straight-line<?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($ext); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                             </p>
                             <?php if (!empty($ext['website'])): ?>
                                 <p style="margin:0.35rem 0 0"><a href="<?= e((string) $ext['website']) ?>" rel="noopener noreferrer">Source website</a></p>

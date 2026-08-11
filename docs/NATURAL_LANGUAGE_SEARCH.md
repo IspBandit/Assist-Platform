@@ -43,6 +43,10 @@ existing result partial; stays and facilities use labelled sections on
 5. When an origin and radius are resolved, the aggregator applies a final
    fail-closed radius invariant to every adapter result. Cards without a
    measurable location, or beyond the unrounded boundary, are not returned.
+6. When Google Routes is configured, the geographically safe candidate set is
+   enriched in one deduplicated route matrix. Road kilometres become the final
+   boundary and sort value; drive time is displayed as an estimate. A named
+   location that cannot be resolved returns no national fallback results.
 
 ## Behaviour when AI is off / budget exhausted
 
