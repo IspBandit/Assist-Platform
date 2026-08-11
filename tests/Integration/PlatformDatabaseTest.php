@@ -6,6 +6,7 @@ namespace Tests\Integration;
 
 use App\Core\Database;
 use App\Core\Config;
+use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
 use App\Core\Response;
 use App\Middleware\RateLimit as RateLimitMiddleware;
@@ -25,6 +26,7 @@ use App\Services\DataSourceService;
 use App\Services\NationalRouteImportService;
 use App\Models\GarageAsset;
 use App\Models\Provider;
+use App\Services\Api\AdminApiFacilityService;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -91,6 +93,79 @@ final class PlatformDatabaseTest extends TestCase
         $nearGladstone = Provider::forCategoryNear($fuelCategoryId, -23.842, 151.255, 150);
         self::assertNotEmpty($nearGladstone);
         self::assertLessThanOrEqual(150.0, (float) $nearGladstone[0]['distance_km']);
+    }
+
+    public function testProviderRadiusSearchNeverBuildsAHybridCoordinate(): void
+    {
+        $row = Database::selectOne(
+            'SELECT p.id, ps.category_id, t.latitude, t.longitude '
+            . 'FROM providers p JOIN provider_services ps ON ps.provider_id=p.id '
+            . 'JOIN towns t ON t.id=p.base_town_id '
+            . "WHERE p.status='active' AND p.deleted_at IS NULL "
+            . "AND t.coordinate_confidence IN ('authoritative','statistical') "
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL LIMIT 1'
+        );
+        self::assertNotNull($row);
+
+        Database::beginTransaction();
+        try {
+            Database::query('UPDATE providers SET latitude=0,longitude=NULL WHERE id=?', [(int) $row['id']]);
+            $matches = Provider::forCategoryNear(
+                (int) $row['category_id'],
+                (float) $row['latitude'],
+                (float) $row['longitude'],
+                25,
+                500,
+            );
+            $match = null;
+            foreach ($matches as $candidate) {
+                if ((int) $candidate['id'] === (int) $row['id']) {
+                    $match = $candidate;
+                    break;
+                }
+            }
+
+            self::assertNotNull($match, 'A partial provider point must fall back to its trusted town centre.');
+            self::assertSame('town_centre', $match['distance_basis']);
+            self::assertEqualsWithDelta((float) $row['latitude'], (float) $match['town_lat'], 0.0000001);
+            self::assertEqualsWithDelta((float) $row['longitude'], (float) $match['town_lng'], 0.0000001);
+        } finally {
+            Database::rollBack();
+        }
+    }
+
+    public function testTravellerFacilityDetailHonoursSelectedBrandScope(): void
+    {
+        $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+        BrandContext::set($registry->get('vanassist'));
+        $otherBrandId = (int) Database::scalar("SELECT id FROM brands WHERE brand_key='towsmart'");
+
+        Database::beginTransaction();
+        try {
+            $slug = 'scope-test-' . bin2hex(random_bytes(6));
+            $otherId = Database::insert(
+                'INSERT INTO traveller_facilities (facility_type,name,slug,verification_status,status,confidence,brand_id,created_at,updated_at) '
+                . "VALUES ('dump_point','Other brand facility',?,'verified','active',100,?,NOW(),NOW())",
+                [$slug, $otherBrandId]
+            );
+
+            try {
+                (new AdminApiFacilityService())->show($otherId);
+                self::fail('A facility from another brand must not be readable by guessed ID.');
+            } catch (AdminApiException $e) {
+                self::assertSame(404, $e->getStatusCode());
+            }
+
+            $sharedId = Database::insert(
+                'INSERT INTO traveller_facilities (facility_type,name,slug,verification_status,status,confidence,brand_id,created_at,updated_at) '
+                . "VALUES ('dump_point','Shared facility',?,'verified','active',100,NULL,NOW(),NOW())",
+                [$slug . '-shared']
+            );
+            self::assertSame((string) $sharedId, (new AdminApiFacilityService())->show($sharedId)['id']);
+        } finally {
+            Database::rollBack();
+            BrandContext::clear();
+        }
     }
 
     public function testLaunchGateProducesAllFourEvidenceGroups(): void

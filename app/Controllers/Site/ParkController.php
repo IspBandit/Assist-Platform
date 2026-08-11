@@ -18,6 +18,7 @@ use App\Services\AuditLog;
 use App\Services\EmailQueue;
 use App\Services\SeoSchema;
 use App\Services\StayFacilityService;
+use App\Services\RoadDistance\RoadDistanceService;
 use App\Validation\Validator;
 
 /**
@@ -58,6 +59,7 @@ final class ParkController extends Controller
         $townId = filter_var($request->input('town_id'), FILTER_VALIDATE_INT) ?: null;
         if ($location !== '') {
             $townMatches = Town::searchActive($location, 1);
+            if ($townMatches === []) { $townMatches = Town::searchActiveFuzzy($location, 1); }
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
         $lat = is_numeric($request->input('lat')) ? (float) $request->input('lat') : null;
@@ -68,7 +70,11 @@ final class ParkController extends Controller
         if ($lng !== null && ($lng < -180 || $lng > 180)) {
             $lng = null;
         }
-        if ($lat !== null && $lng !== null) {
+        if ($location !== '') {
+            // An explicitly typed place wins over hidden device coordinates.
+            $lat = null;
+            $lng = null;
+        } elseif ($lat !== null && $lng !== null) {
             // Device coordinates are the accurate origin. The nearest-town
             // label remains useful, but must not replace the phone's position.
             $townId = null;
@@ -86,6 +92,24 @@ final class ParkController extends Controller
         $hasOrigin = $townId !== null || ($lat !== null && $lng !== null);
 
         $stays = $hasOrigin ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm, 60, $facilityType ? [$facilityType] : []) : [];
+        $routeLat = $lat;
+        $routeLng = $lng;
+        if (($routeLat === null || $routeLng === null) && $townId !== null) {
+            $townOrigin = Database::selectOne(
+                "SELECT latitude, longitude FROM towns WHERE id = ? AND is_active = 1 AND coordinate_confidence IN ('authoritative','statistical')",
+                [$townId]
+            );
+            $routeLat = is_numeric($townOrigin['latitude'] ?? null) ? (float) $townOrigin['latitude'] : null;
+            $routeLng = is_numeric($townOrigin['longitude'] ?? null) ? (float) $townOrigin['longitude'] : null;
+        }
+        if ($routeLat !== null && $routeLng !== null) {
+            $stays = (new RoadDistanceService())->enrichGroups(
+                ['stays' => $stays],
+                $routeLat,
+                $routeLng,
+                $distanceKm,
+            )['stays'];
+        }
         $facilityMap = (new StayFacilityService())->forParks(array_map(static fn(array $stay): int => (int)$stay['id'], $stays));
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',

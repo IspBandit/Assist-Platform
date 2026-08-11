@@ -38,8 +38,15 @@ available in radius search. The absorbed row is audit logged and soft-deleted,
 not erased.
 
 All location searches use the stay's point coordinate and an unrounded
-great-circle boundary comparison. Results describe the value as straight-line;
-current road distance is available only after opening Directions.
+great-circle boundary as a safe preliminary candidate filter. When Google Routes
+is configured, VanAssist then filters and sorts the bounded candidate set using
+actual driving distance and shows estimated drive time. If routing is temporarily
+unavailable, the fallback remains explicitly labelled straight-line.
+
+Provider results use a provider point only when both latitude and longitude are
+present. If either axis is missing, VanAssist uses the complete town-centre pair
+only when that town coordinate is marked authoritative or statistical; it never
+combines one provider axis with one town axis.
 
 ## Queensland caravan-route discovery
 

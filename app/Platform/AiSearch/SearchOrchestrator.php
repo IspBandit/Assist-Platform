@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\AiSearch;
 
+use App\Models\CaravanPark;
 use App\Models\Town;
 use App\Platform\AiSearch\Adapters\DatasetSearchAdapter;
 use App\Platform\AiSearch\Adapters\FacilitySearchPort;
@@ -28,6 +29,7 @@ use App\Platform\AiSearch\Logging\AssistSearchLogger;
 use App\Platform\AiSearch\Routing\SearchRouter;
 use App\Platform\AiSearch\Support\DatasetSearchFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
+use App\Services\RoadDistance\RoadDistanceService;
 
 /**
  * Shared Assist AI Orchestrator — Phase AI-6 (traveller facilities + dataset routing).
@@ -48,6 +50,9 @@ final class SearchOrchestrator
     private AIUsageService $usage;
     private IntentInterpreter $interpreter;
     private KnowledgeGapService $gaps;
+    private RoadDistanceService $roadDistances;
+    /** @var (\Closure(SearchRequest,Intent):array{0:?array<string,mixed>,1:?float,2:?float,3:string})|null */
+    private ?\Closure $locationResolver;
 
     public function __construct(
         ?IntentRuleEngine $rules = null,
@@ -63,6 +68,8 @@ final class SearchOrchestrator
         ?AIUsageService $usage = null,
         ?IntentInterpreter $interpreter = null,
         ?KnowledgeGapService $gaps = null,
+        ?RoadDistanceService $roadDistances = null,
+        ?\Closure $locationResolver = null,
     ) {
         $this->rules = $rules ?? new IntentRuleEngine();
         $this->router = $router ?? new SearchRouter();
@@ -77,6 +84,8 @@ final class SearchOrchestrator
         $this->usage = $usage ?? new AIUsageService();
         $this->interpreter = $interpreter ?? new IntentInterpreter();
         $this->gaps = $gaps ?? new KnowledgeGapService();
+        $this->roadDistances = $roadDistances ?? new RoadDistanceService();
+        $this->locationResolver = $locationResolver;
     }
 
     public function handle(SearchRequest $request): SearchResponse
@@ -267,10 +276,56 @@ final class SearchOrchestrator
             );
         }
 
-        [$town, $originLat, $originLng, $precision] = $this->resolveLocation($request, $intent);
+        [$town, $originLat, $originLng, $precision] = $this->locationResolver !== null
+            ? ($this->locationResolver)($request, $intent)
+            : $this->resolveLocation($request, $intent);
 
-        if ($intent->useCurrentLocation && ($originLat === null || $originLng === null) && $town === null) {
-            $messages[] = 'Location permission is needed for “near me” searches, or add a town name.';
+        if ($originLat === null || $originLng === null) {
+            $fallback = $intent->locationText !== null && $intent->locationText !== ''
+                ? 'location_unresolved'
+                : 'location_required';
+            $messages[] = $fallback === 'location_unresolved'
+                ? 'We could not identify “' . $intent->locationText . '”. Check the spelling, add a state, or use your current location.'
+                : 'Add a town, suburb or postcode, or use your current location.';
+            $id = $this->logger->log(
+                $request,
+                $meta['normalised'],
+                $intent,
+                0,
+                0,
+                $fallback,
+                null,
+                'none',
+                ['messages' => array_values(array_unique($messages)), 'results' => []]
+            );
+            $this->recordResolveUsage($request, $intent, $fromCache, $budgetEval['state'], $fallback, $id, $started);
+            $gapId = $this->gaps->observe(
+                $request,
+                $meta['normalised'],
+                $intent,
+                0,
+                0,
+                null,
+                'none',
+                $id,
+                $aiUsed
+            );
+
+            return new SearchResponse(
+                intent: $intent,
+                providers: [],
+                stays: [],
+                town: null,
+                originLat: null,
+                originLng: null,
+                fallbackReason: $fallback,
+                messages: array_values(array_unique($messages)),
+                assistSearchId: $id,
+                searched: true,
+                externals: [],
+                facilities: [],
+                knowledgeGapId: $gapId,
+            );
         }
 
         $adapters = $this->router->adaptersFor($intent);
@@ -333,6 +388,7 @@ final class SearchOrchestrator
             }
         }
 
+        $radiusKm = $this->effectiveRadiusKm($intent, $adapters);
         $aggregated = $this->aggregator->aggregate(
             $providerRows,
             $stayRows,
@@ -340,7 +396,13 @@ final class SearchOrchestrator
             $facilityRows,
             $originLat,
             $originLng,
-            $this->effectiveRadiusKm($intent, $adapters),
+            $radiusKm,
+        );
+        $aggregated = $this->roadDistances->enrichGroups(
+            $aggregated,
+            $originLat,
+            $originLng,
+            $radiusKm,
         );
         $localCount = count($aggregated['providers']) + count($aggregated['stays']) + count($aggregated['facilities']);
         $externalCount = count($aggregated['externals']);
@@ -529,13 +591,41 @@ final class SearchOrchestrator
 
             if ($intent->locationText !== null && $intent->locationText !== '') {
                 $matches = Town::searchActive($intent->locationText, 5);
+                if ($matches === []) {
+                    $matches = Town::searchActiveFuzzy($intent->locationText, 5);
+                }
                 $town = $matches[0] ?? null;
                 if ($town !== null) {
                     $tLat = isset($town['latitude']) ? (float) $town['latitude'] : null;
                     $tLng = isset($town['longitude']) ? (float) $town['longitude'] : null;
                     return [$town, $tLat, $tLng, 'town'];
                 }
-                return [null, $hasCoords ? $lat : null, $hasCoords ? $lng : null, 'none'];
+
+                $landmark = CaravanPark::resolvePublicLandmark($intent->locationText);
+                if ($landmark !== null) {
+                    $landmarkLat = is_numeric($landmark['latitude'] ?? null) ? (float) $landmark['latitude'] : null;
+                    $landmarkLng = is_numeric($landmark['longitude'] ?? null) ? (float) $landmark['longitude'] : null;
+                    if ($landmarkLat !== null && $landmarkLng !== null) {
+                        $origin = [
+                            'id' => (int) ($landmark['town_id'] ?? 0),
+                            'name' => (string) ($landmark['name'] ?? $intent->locationText),
+                            'slug' => (string) ($landmark['slug'] ?? ''),
+                            'region_id' => $landmark['region_id'] ?? null,
+                            'state_id' => $landmark['state_id'] ?? null,
+                            'state_name' => $landmark['state_name'] ?? null,
+                            'state_abbr' => $landmark['state_abbr'] ?? null,
+                            'latitude' => $landmarkLat,
+                            'longitude' => $landmarkLng,
+                            'location_reference_type' => 'stay',
+                        ];
+                        return [$origin, $landmarkLat, $landmarkLng, 'stay_landmark'];
+                    }
+                }
+
+                // Typed location always wins over device coordinates. If it
+                // cannot be resolved, fail closed rather than silently search
+                // around a stale phone location or across Australia.
+                return [null, null, null, 'none'];
             }
 
             if ($hasCoords) {
@@ -543,7 +633,11 @@ final class SearchOrchestrator
                 return [$town, $lat, $lng, 'gps_short'];
             }
         } catch (\Throwable) {
-            // Town lookup must not abort Ask — fall through to coords / none.
+            // An explicit typed location must never fall back to unrelated
+            // device coordinates when lookup infrastructure fails.
+            if ($intent->locationText !== null && $intent->locationText !== '') {
+                return [null, null, null, 'none'];
+            }
             if ($hasCoords) {
                 return [null, $lat, $lng, 'gps_short'];
             }

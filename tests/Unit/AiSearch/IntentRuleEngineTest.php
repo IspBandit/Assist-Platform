@@ -178,6 +178,16 @@ final class IntentRuleEngineTest extends TestCase
         self::assertContains('brakes-and-bearings', $intent->providerCategoryKeys);
     }
 
+    public function testLandmarkWordsAfterNearDoNotBecomeAnotherRequestedCategory(): void
+    {
+        $intent = $this->engine->interpret('dump points near Grffiths camping ground, Queensland');
+
+        self::assertSame(Intent::TYPE_FACILITY, $intent->intentType);
+        self::assertSame(['dump_point'], $intent->facilityTypeKeys);
+        self::assertSame([], $intent->stayTypeKeys);
+        self::assertSame('Grffiths Camping Ground, Queensland', $intent->locationText);
+    }
+
     public function testSchemaValidatorStripsUnknownCategories(): void
     {
         $intent = Intent::fromArray([

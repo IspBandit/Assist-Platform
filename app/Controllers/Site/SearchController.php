@@ -13,6 +13,7 @@ use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Services\Demand\DemandRecorder;
+use App\Services\RoadDistance\RoadDistanceService;
 
 /**
  * Handles the homepage "Find a service" search: a free-text town/postcode plus
@@ -44,16 +45,21 @@ final class SearchController extends Controller
 
         $usedLocation = false;
         $alternatives = [];
-        // When lat/lng are present (device GPS), they take precedence over a typed
-        // town string — the label we fill may be "Gladstone, QLD" which does not
-        // match the towns.name column verbatim.
-        if ($hasCoords) {
-            $town = Town::nearestActive($lat, $lng);
-            $usedLocation = $town !== null;
-        } elseif ($location !== '') {
+        // A location the user typed always wins over hidden/stale device
+        // coordinates. GPS is used only when the location field is empty.
+        if ($location !== '') {
             $townMatches = Town::searchActive($location);
+            if ($townMatches === []) {
+                $townMatches = Town::searchActiveFuzzy($location);
+            }
             $town = $townMatches[0] ?? null;
             $alternatives = array_slice($townMatches, 1, 5);
+            $hasCoords = false;
+            $lat = null;
+            $lng = null;
+        } elseif ($hasCoords) {
+            $town = Town::nearestActive($lat, $lng);
+            $usedLocation = $town !== null;
         } else {
             $town = null;
         }
@@ -108,6 +114,14 @@ final class SearchController extends Controller
             $townIdForFilter = $town !== null ? (int) $town['id'] : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townIdForFilter);
+            $routed = (new RoadDistanceService())->enrichGroups(
+                ['matches' => $matches, 'possible' => $possible],
+                $originLat,
+                $originLng,
+                $maxDistance,
+            );
+            $matches = $routed['matches'];
+            $possible = $routed['possible'];
         }
 
         // Paid visibility is kept in an explicitly labelled block. Organic

@@ -25,7 +25,7 @@ No account is required. On the main VanAssist search, the browser may ask for op
 
 ## Fields
 
-**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or an available straight-line radius; it is not a road-distance claim. A numeric radius is a strict boundary calculated before display rounding. Results without a measurable location cannot appear in a numeric-radius search.
+**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage. Results without a measurable location cannot appear in a numeric-radius search.
 
 ## Actions
 
@@ -35,7 +35,7 @@ The main search attempts to resolve the current location without submitting the 
 
 Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Provider profiles use a simple heading without a decorative business-name initial or repeated business name in the breadcrumb. Workspace help is shown only inside signed-in account/provider areas, not on public provider pages. Open directions only when safely stopped.
 
-A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider distances use the provider's point when available; otherwise the card says **town-centre estimate**. Stay distances use the stay's own point. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
+A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider road routes use the provider's point when available; otherwise the card says **town-centre destination**. Stay routes use the stay's own point. Google Maps is attributed when its road distance and estimated time are displayed. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
 
 ## Examples
 
@@ -43,7 +43,7 @@ Select **12 volt electrical**, enter **Boyne Island**, and choose a numeric dist
 
 ## Common mistakes
 
-- Treating a straight-line distance as current driving distance.
+- Treating an explicitly labelled outage fallback as driving distance.
 - Assuming a base-locality pin is an exact mobile-provider destination.
 - Assuming an unclaimed or related-service listing has confirmed the requested work.
 - Assuming a club, publication or tourism organisation that shares VanAssist has endorsed every listing. An endorsement or partnership is never implied unless stated explicitly.
@@ -113,7 +113,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-11 (strict unrounded radius boundaries, honest distance basis labels and compact phone containment).
+2026-08-11 (Google road-distance radius and drive-time results, typed-location precedence, Ask fail-closed location handling).
 
 ## Owner
 

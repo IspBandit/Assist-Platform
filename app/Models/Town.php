@@ -145,6 +145,78 @@ final class Town extends Model
     }
 
     /**
+     * Conservative spelling-tolerant fallback used only after the normal
+     * exact/prefix/contains lookup returns nothing.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function searchActiveFuzzy(string $query, int $limit = 5): array
+    {
+        $parsed = self::parseSearchQuery($query);
+        $term = trim($parsed['term']);
+        if (mb_strlen($term) < 4) {
+            return [];
+        }
+        $select = 'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.state_id, t.latitude, t.longitude, '
+            . 't.coordinate_source, t.coordinate_confidence, t.coordinate_reference, '
+            . 'r.name AS region_name, r.slug AS region_slug, s.name AS state_name, s.abbreviation AS state_abbr '
+            . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
+            . 'WHERE t.is_active = 1 ';
+        $stateSql = '';
+        $stateParams = [];
+        if ($parsed['state'] !== null) {
+            $stateSql = 'AND s.abbreviation = ? ';
+            $stateParams[] = $parsed['state'];
+        }
+        $rows = Database::select(
+            $select . $stateSql . 'AND SOUNDEX(t.name) = SOUNDEX(?) ORDER BY t.is_launch_town DESC, t.is_featured DESC, t.name LIMIT 100',
+            array_merge($stateParams, [$term])
+        );
+        if ($rows === [] && $parsed['state'] !== null) {
+            $rows = Database::select(
+                $select . $stateSql . 'ORDER BY t.is_launch_town DESC, t.is_featured DESC, t.name LIMIT 5000',
+                $stateParams
+            );
+        }
+
+        foreach ($rows as &$row) {
+            $row['locality_match_score'] = self::localityMatchScore($term, (string) ($row['name'] ?? ''));
+        }
+        unset($row);
+        $rows = array_values(array_filter(
+            $rows,
+            static fn (array $row): bool => (float) ($row['locality_match_score'] ?? 0) >= 0.82
+        ));
+        usort($rows, static fn (array $a, array $b): int => ((float) $b['locality_match_score']) <=> ((float) $a['locality_match_score']));
+        if (isset($rows[1])
+            && abs((float) $rows[0]['locality_match_score'] - (float) $rows[1]['locality_match_score']) < 0.04
+            && (int) ($rows[0]['state_id'] ?? 0) !== (int) ($rows[1]['state_id'] ?? 0)) {
+            return [];
+        }
+
+        return array_slice($rows, 0, max(1, min(10, $limit)));
+    }
+
+    public static function localityMatchScore(string $query, string $candidate): float
+    {
+        $normalise = static function (string $value): string {
+            $value = mb_strtolower(trim($value));
+            $value = (string) preg_replace('/[^a-z0-9]+/u', ' ', $value);
+            return trim((string) preg_replace('/\s+/u', ' ', $value));
+        };
+        $query = $normalise($query);
+        $candidate = $normalise($candidate);
+        if ($query === '' || $candidate === '') {
+            return 0.0;
+        }
+        if ($query === $candidate) {
+            return 1.0;
+        }
+        $length = max(strlen($query), strlen($candidate));
+        return $length > 0 ? max(0.0, 1.0 - (levenshtein($query, $candidate) / $length)) : 0.0;
+    }
+
+    /**
      * @return array{term:string,state:?string}
      */
     public static function parseSearchQuery(string $query): array
