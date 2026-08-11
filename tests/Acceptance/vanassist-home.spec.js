@@ -32,7 +32,7 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
 
   const isMobile = testInfo.project.name.startsWith('mobile');
   const headline = isMobile ? page.locator('.mobile-hero-intro h1') : page.locator('.hero-copy h1');
-  const search = page.locator('.hero-search-panel .search-card');
+  const search = page.locator('.hero-search-panel .structured-search-form');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
   await expect(search).toBeVisible();
   await expect(page.getByLabel('Service category')).toBeVisible();
@@ -66,7 +66,23 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
       primarySearchBox.y + primarySearchBox.height,
       'mobile primary submit is fully visible in the first viewport',
     ).toBeLessThanOrEqual(viewport.height);
-    await expect(page.getByRole('navigation', { name: 'Traveller shortcuts' }).getByRole('link', { name: /Stays/i })).toBeVisible();
+    const quickActions = page.getByRole('navigation', { name: 'Find VanAssist help' });
+    await expect(quickActions).toBeVisible();
+    await expect(quickActions.getByRole('link')).toHaveCount(4);
+    const quickActionsBox = await quickActions.boundingBox();
+    expect(quickActionsBox, 'mobile quick actions have a rendered box').not.toBeNull();
+    expect(
+      quickActionsBox.y + quickActionsBox.height,
+      'all mobile quick actions are fully visible in the first viewport',
+    ).toBeLessThanOrEqual(viewport.height);
+
+    const askVanAssist = page.locator('.ask-vanassist-home');
+    const askBox = await askVanAssist.boundingBox();
+    expect(askBox, 'Ask VanAssist has a rendered box').not.toBeNull();
+    expect(
+      askBox.y,
+      'optional Ask VanAssist follows the direct quick actions on phone',
+    ).toBeGreaterThanOrEqual(quickActionsBox.y + quickActionsBox.height - 1);
   }
 
   const installButton = isMobile
