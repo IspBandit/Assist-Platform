@@ -302,13 +302,16 @@ reference onto either desktop or mobile. **Decision:** the public header uses th
 transparent road wordmark and exact “FIND. CONNECT. GET ASSISTED.” descriptor.
 The homepage uses separate lightweight coastal-road crops, a navy/cobalt live
 headline, roadline, save-to-phone action, search console and four concise
-capability cues. Teal/green hero washes, cartoon vehicle artwork and baked-in
-interface mock-ups are rejected. **Accessibility and performance:** copy and
-controls remain live HTML, the image is decorative, focus states remain visible,
-the primary action meets contrast requirements, reduced motion is preserved and
-the page has no horizontal overflow at 1440 × 900 or 390 × 844. **Evidence:**
-Playwright image-selection, first-viewport, PWA-header and install-dialog checks,
-plus reviewed desktop and mobile screenshots.
+capability cues. On phones, the four direct journeys precede the optional Ask
+field and fit within the initial 390 x 844 screen; copy and form spacing compact
+without changing the desktop composition. Teal/green hero washes, cartoon
+vehicle artwork and baked-in interface mock-ups are rejected. **Accessibility
+and performance:** copy and controls remain live HTML, the image is decorative,
+focus states remain visible, the primary action meets contrast requirements,
+reduced motion is preserved and the page has no horizontal overflow at 1440 ×
+900 or 390 × 844. **Evidence:** Playwright image-selection, first-viewport,
+PWA-header and install-dialog checks, plus reviewed desktop and mobile
+screenshots.
 
 ## 2026-07-30 — Large provider queues automate only safe decisions
 

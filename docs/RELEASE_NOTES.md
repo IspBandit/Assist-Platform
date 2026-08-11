@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist compact phone homepage launcher (VAN-001)
+
+- Reduced phone-only hero copy, field spacing and action padding while keeping
+  the desktop homepage unchanged and the primary controls touch-friendly.
+- Moved the four direct traveller journeys ahead of the optional Ask VanAssist
+  field on phones, so services, stays, fuel and the full directory are available
+  in the first screen instead of after another search block.
+- Added 390 x 844 acceptance coverage for all four quick actions, source order,
+  horizontal containment and preservation of the main nearby-search action.
+
 ### VanAssist provider import worker reliability (DATA-006)
 
 - Corrected the server queue worker's VanAssist brand lookup to use the

@@ -39,6 +39,9 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('.service-intent-grid, .service-directory-grid { grid-template-columns: 1fr; }', $css);
         self::assertStringContainsString('@media (prefers-reduced-motion: reduce)', $css);
         self::assertStringContainsString('.hero-capabilities a:hover,.hero-capabilities a:focus-visible', $css);
+        self::assertStringContainsString('.hero--visual .hero-grid,.hero-search-panel,.hero-search-panel .search-card{display:contents}', $css);
+        self::assertStringContainsString('.hero-capabilities{order:3', $css);
+        self::assertStringContainsString('.ask-vanassist-home{order:4', $css);
         self::assertStringContainsString('.service-directory-card:focus-visible', $css);
     }
 

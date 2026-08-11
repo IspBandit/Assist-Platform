@@ -65,6 +65,9 @@ an unmeasurable or out-of-radius result is not shown and is never given an
 invented pin.
 
 The Ask field is also shown directly on the VanAssist homepage when enabled.
+On a phone, the four direct shortcuts for services, places to stay, fuel and the
+full help directory appear before Ask so the common journeys remain available
+without scrolling through the optional plain-language search first.
 It is limited to providers, places to stay, roadside/caravan help and traveller
 facilities; it is not a general-purpose AI assistant.
 
