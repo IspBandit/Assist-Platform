@@ -17,7 +17,7 @@ Public lookup endpoints use the current verified host and brand context plus any
 route-level rate limits or module checks. Browser mutations retain sessions and
 CSRF.
 
-Facility-scoped clients can read `GET /facility-contributions` and `GET /facility-contributions/{id}`. Human Admin API sessions with `facilities:write` can post an explicit moderation action to `/facility-contributions/{id}/{action}`. Service accounts cannot approve community evidence because the route also requires `admin_api_human`.
+Facility-scoped clients can read `GET /facility-contributions` and `GET /facility-contributions/{id}` only when the selected workspace enables stays. Human Admin API sessions with `facilities:write` can post an explicit moderation action to `/facility-contributions/{id}/{action}`. Service accounts cannot approve community evidence because the route also requires `admin_api_human`. Facility list, detail and mutation queries expose records assigned to the selected brand plus explicitly shared records; another brand's record returns a non-enumerating `404` even when its ID is known.
 
 The versioned Admin API (`/api/v1/admin`) is a separate, token-authenticated
 management surface for Assist RIC and service accounts. It is disabled by
@@ -130,7 +130,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-04 (Increment I ops failed queues + categories/locations taxonomy).
+2026-08-11 (facility detail/write brand scope and stays-workspace contribution guard).
 
 ## Owner
 
@@ -152,3 +152,4 @@ Assist Platform product and engineering.
 | 2026-08-04 | Documented Option B Increment H.3: human-only facility import-candidate bulk-approve/bulk-reject (`import_candidates:review`). |
 | 2026-08-04 | Documented Option B Increment H.4: human-only provider import-candidate merge (`import_candidates:review`); hold/confirm/auto-link remain website admin. |
 | 2026-08-04 | Documented Increment I: `ops:read` failed email/scheduled-task lists; `categories:read` / `locations:read` taxonomy; stale/missing quality deferred. |
+| 2026-08-11 | Clarified traveller-facility list/detail/write scope parity and limited facility-contribution review to stays-enabled workspaces. |

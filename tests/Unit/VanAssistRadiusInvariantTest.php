@@ -7,6 +7,7 @@ namespace Tests\Unit;
 use App\Helpers\Geo;
 use App\Platform\AiSearch\Aggregate\ResultAggregator;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class VanAssistRadiusInvariantTest extends TestCase
 {
@@ -50,6 +51,21 @@ final class VanAssistRadiusInvariantTest extends TestCase
         $provider=(string)file_get_contents(dirname(__DIR__,2).'/app/Models/Provider.php');
         self::assertStringContainsString("THEN 'provider_point' ELSE 'town_centre' END AS distance_basis",$provider);
         self::assertStringContainsString('HAVING distance_km <= ?',$provider);
+    }
+
+    public function testProviderCoordinateFallbackAlwaysUsesACompletePair(): void
+    {
+        $method = new ReflectionMethod(\App\Models\Provider::class, 'publicCoordinateSql');
+        $latitude = (string) $method->invoke(null, 'latitude');
+        $longitude = (string) $method->invoke(null, 'longitude');
+
+        foreach ([$latitude, $longitude] as $sql) {
+            self::assertStringContainsString('p.latitude IS NOT NULL AND p.longitude IS NOT NULL', $sql);
+            self::assertStringContainsString("t.coordinate_confidence IN ('authoritative','statistical')", $sql);
+            self::assertStringNotContainsString('COALESCE', $sql);
+        }
+        self::assertStringContainsString('THEN p.latitude', $latitude);
+        self::assertStringContainsString('THEN p.longitude', $longitude);
     }
 
     public function testPhoneLayoutsContainControlsAndCollapseSecondaryCopy(): void

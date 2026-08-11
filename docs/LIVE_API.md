@@ -89,6 +89,11 @@ facilities/claims/corrections reads:
 - Read-only by default in Assist RIC; approve/reject mutations require human
   Admin API sessions (`claims:write` / `corrections:write`) and remain available
   in the website admin as backup.
+- Facility list, detail and mutation paths apply the same selected-brand scope:
+  a client can access records assigned to its workspace plus explicitly shared
+  (`brand_id IS NULL`) facilities, but cannot retrieve or mutate another
+  brand's record by guessing its ID. Stay-facility contribution review is
+  available only for a workspace with the stays module enabled.
 - Categories: `GET /categories` (`categories:read`) — brand-scoped
   `brand_provider_categories` (not legacy `service_categories`); default active
   only; optional `active=all|0|1` and `q`

@@ -5,6 +5,19 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist runtime logic integrity (VAN-001 / CORE-011)
+
+- Provider maps and radius searches now use provider coordinates only when both
+  latitude and longitude are present. A partial provider point falls back to a
+  provenance-trusted town-centre pair instead of combining mismatched axes and
+  producing an inaccurate distance.
+- RIC traveller-facility detail and mutation queries now enforce the same
+  selected-brand-or-shared scope as the facility list. Facility-contribution
+  review endpoints are available only in a workspace whose stays module is
+  enabled.
+- No migration or environment change is required. Rollback is the prior
+  application release; no provider or facility data is rewritten.
+
 ### GitHub Actions Node.js 24 maintenance (OPS-006)
 
 - Updated the official checkout and dependency-cache actions used by CI,
