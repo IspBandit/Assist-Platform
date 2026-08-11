@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### GitHub Actions Node.js 24 maintenance (OPS-006)
+
+- Updated the official checkout and dependency-cache actions used by CI,
+  staging and production releases to their current Node.js 24-native versions.
+  This removes the runner's Node.js 20 deprecation fallback without changing
+  application code, deployment permissions or release approval gates.
+
 ### VanAssist compact phone homepage launcher (VAN-001)
 
 - Reduced phone-only hero copy, field spacing and action padding while keeping
