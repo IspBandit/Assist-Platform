@@ -27,7 +27,7 @@ Provider viewing and editing requires `providers.manage`; status approval requir
 - **Providers:** **Possible duplicates**, **New provider**, **Filter**, **Reset**, **Send claim invites (25 per batch)** / **Continue bulk invites**, **Manage**, pagination, **Save provider**, **Cancel**, **Edit details**, **View public profile**, **Send claim invite**, the visible status/flag controls, add/remove services and areas, download/review documents, save licence review, and **Add note**. Each duplicate pair currently exposes **Review A** only; there is no merge action on that page.
 - **Service categories:** **New category**, **Edit**, the rendered active-state toggle, **Save category** and **Cancel**.
 - **Locations:** **Regions**, **Towns**, **New state**, **Sync from seed**, **Edit**, **New region**, **New town**, **Filter**, pagination, each form's **Save** action, and **Cancel**.
-- **Import review:** **Data sources**, **Continue screening now**, **Stage for safe review**, status tabs, **Apply filters**, **Reset**, controlled continuation/process-all/auto-resolve actions, **Apply to selected**, and per-candidate **Confirm evidence for bulk approval**, **Approve new listing**, **Merge**, **Hold** / **Return to pending**, or **Reject**, plus pagination.
+- **Import review:** **Data sources**, **Continue screening now**, **Stage for safe review**, **Run server processor now**, status tabs, **Apply filters**, **Reset**, controlled continuation/process-all/auto-resolve actions, **Apply to selected**, and per-candidate **Confirm evidence for bulk approval**, **Approve new listing**, **Merge**, **Hold** / **Return to pending**, or **Reject**, plus pagination. The server processor resolves VanAssist through the canonical brand registry and continues independently of the browser; an error banner means the pass stopped safely and no remaining candidate was silently approved.
 - **Trailer listings:** **Filter** and **Update** the selected moderation status. This view's module-based sidebar visibility is not equivalent to controller brand enforcement.
 
 ## Workflows
@@ -67,7 +67,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-08-11.
 
 ## Owner
 

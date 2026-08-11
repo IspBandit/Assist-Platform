@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist provider import worker reliability (DATA-006)
+
+- Corrected the server queue worker's VanAssist brand lookup to use the
+  canonical typed brand registry. The manual and scheduled worker
+  no longer stop with an unknown `slug` column before screening candidates.
+- No migration, environment change or data rewrite is required. Rollback is
+  the prior application release; queued candidates remain review-first.
+
 ### VanAssist facility accuracy, moderation and lean mobile stays (VAN-001 / DATA-014)
 
 - Enforced the selected straight-line radius at the query boundary and again
