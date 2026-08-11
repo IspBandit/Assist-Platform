@@ -304,7 +304,7 @@ final class Provider extends Model
             . '(6371 * ACOS(LEAST(1, GREATEST(-1, COS(RADIANS(?)) '
             . '* COS(RADIANS(' . $latitudeSql . ')) '
             . '* COS(RADIANS(' . $longitudeSql . ') - RADIANS(?)) '
-            . '+ SIN(RADIANS(?)) * SIN(RADIANS(' . $latitudeSql . '))))))) AS distance_km '
+            . '+ SIN(RADIANS(?)) * SIN(RADIANS(' . $latitudeSql . ')))))) AS distance_km '
             . 'FROM provider_services ps JOIN providers p ON p.id=ps.provider_id '
             . 'LEFT JOIN towns t ON t.id=p.base_town_id LEFT JOIN states s ON s.id=t.state_id '
             . "WHERE ps.category_id=? AND p.status='active' AND p.deleted_at IS NULL "
