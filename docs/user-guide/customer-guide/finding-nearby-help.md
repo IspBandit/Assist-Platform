@@ -6,10 +6,15 @@ When Ask VanAssist traveller facilities are enabled, requests for toilets,
 dump points and similar amenities appear as compact rows showing the facility
 name, type, locality, address, distance and reviewed source status. These
 facilities remain separate from business providers and places to stay.
+Approved facility evidence attached to a place to stay can also appear in this
+facility section. Opening it takes you to the stay page, where its conditions,
+source and verification date remain visible.
 
 Stay pages show resolved facility conditions such as **Water: Available — treat before drinking**, not merely a yes/no icon. Open **Facility information** for source and verification date. Use **Suggest a facility or correction** to report missing or wrong details. The report stays pending until an administrator reviews it; an acknowledgement is not publication.
 
 On a phone, result rows intentionally keep only the name, location or distance, a short service or facility summary and primary actions. Open the detail page for the full service catalogue, conditions, provenance and secondary links.
+Searches show up to 20 results initially. Use **Show up to 40 results** only when
+you need a wider list; this keeps phone pages lean and limits route lookups.
 
 ## Purpose
 
@@ -113,7 +118,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-11 (Google road-distance radius and drive-time results, typed-location precedence, Ask fail-closed location handling).
+2026-08-12 (compact 20/40 result window and approved stay-facility results in Ask).
 
 ## Owner
 

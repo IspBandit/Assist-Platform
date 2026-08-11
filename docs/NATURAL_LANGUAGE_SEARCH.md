@@ -47,6 +47,18 @@ existing result partial; stays and facilities use labelled sections on
    enriched in one deduplicated route matrix. Road kilometres become the final
    boundary and sort value; drive time is displayed as an estimate. A named
    location that cannot be resolved returns no national fallback results.
+7. Public Ask results start with a compact 20-card window. **Show up to 40
+   results** is explicit; the same bound limits each route matrix and prevents a
+   routing outage from exposing an unbounded national list.
+8. Reviewed stay-facility evidence is searched alongside standalone traveller
+   facilities. It remains attached to the stay and retains its source and
+   precedence; it is not copied into the standalone facility table. Confirmed
+   absent, unknown or vague water claims are never presented as available.
+
+The Routes credential is resolved from the root environment first, then the
+encrypted `google_routes` connector, then the encrypted `google_places`
+connector. Health exposes only whether routing is configured and which safe
+credential source was selected; it never returns the key.
 
 ## Behaviour when AI is off / budget exhausted
 

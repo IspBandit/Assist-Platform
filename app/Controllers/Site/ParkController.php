@@ -19,6 +19,7 @@ use App\Services\EmailQueue;
 use App\Services\SeoSchema;
 use App\Services\StayFacilityService;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 use App\Validation\Validator;
 
 /**
@@ -90,8 +91,11 @@ final class ParkController extends Controller
         $facilityType = isset(StayFacilityService::TYPES[$facilityType]) ? $facilityType : null;
         $distanceKm = Geo::stayDistance($request->input('distance'));
         $hasOrigin = $townId !== null || ($lat !== null && $lng !== null);
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         $stays = $hasOrigin ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm, 60, $facilityType ? [$facilityType] : []) : [];
+        $resultWindow = (new PublicResultWindow())->apply(['stays' => $stays], $resultLimit);
+        $stays = $resultWindow['groups']['stays'];
         $routeLat = $lat;
         $routeLng = $lng;
         if (($routeLat === null || $routeLng === null) && $townId !== null) {
@@ -129,6 +133,18 @@ final class ParkController extends Controller
             'distanceOptions' => Geo::STAY_DISTANCE_OPTIONS,
             'hasOrigin' => $hasOrigin,
             'searched' => $hasOrigin,
+            'hasMore' => $resultWindow['has_more'],
+            'showMoreUrl' => $resultWindow['has_more'] ? url('stays?' . http_build_query(array_filter([
+                'location' => $location,
+                'town_id' => $townId,
+                'lat' => $lat,
+                'lng' => $lng,
+                'stay_type' => $stayType,
+                'price_type' => $priceType,
+                'facility' => $facilityType,
+                'distance' => $distanceKm,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 

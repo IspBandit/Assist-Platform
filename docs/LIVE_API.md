@@ -44,6 +44,12 @@ RIC everyday management (analytics rollup) adds:
   `facilities:read`); AI cost summary when `ai:read`; dataset sync timestamps when
   `datasets:read`. Attention items for backlog; warnings only for genuine load
   failures.
+- `/health` includes a non-secret `integrations.road_distance` block reporting
+  whether Google Routes is configured, which credential source was selected and
+  that persistent route-result caching is disabled.
+- `/overview` also returns `data_quality` counts for useful provider contact and
+  exact-coordinate coverage, plus stay coordinate, facility-evidence and stale-
+  evidence coverage. RIC uses these counts to make enrichment gaps actionable.
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   (`analytics:read`), reusing `WebsiteInsightsService`. Bot/unknown page views
   returned separately as `filtered_bot_page_views`.

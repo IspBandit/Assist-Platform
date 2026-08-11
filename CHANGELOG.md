@@ -98,6 +98,15 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **Compact, routed public results** — Ask, provider/category search and stays
+  now start at 20 results with an explicit expansion to 40, bounding Google
+  Routes usage and preventing oversized mobile lists during fallback.
+- **Stay facilities in Ask** — approved, source-ranked facility evidence remains
+  owned by its stay but is now searchable as a traveller facility. Confirmed
+  absent, unknown and vague water evidence remains excluded.
+- **Operational data quality** — Admin API/RIC overview now exposes provider
+  contact/exact-coordinate and stay facility/freshness coverage; health reports
+  non-secret Google Routes credential state.
 - **Natural stay requests** — Ask VanAssist now recognises ordinary wording
   such as “somewhere to stay free near Emerald” without requiring paid AI,
   and free-camp searches include stays explicitly priced as free.

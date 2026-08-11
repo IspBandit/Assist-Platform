@@ -14,6 +14,7 @@ use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Platform\Brand\BrandContext;
 use App\Services\Demand\TrackingSession;
 use App\Services\RateLimiter;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Ask VanAssist — parallel NL search entry (Phase AI-1).
@@ -53,6 +54,7 @@ final class AssistSearchController extends Controller
         }
 
         $result = null;
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
         if ($q !== '') {
             $brand = current_brand();
             $orchestrator = new SearchOrchestrator();
@@ -73,6 +75,7 @@ final class AssistSearchController extends Controller
                 requestId: bin2hex(random_bytes(8)),
                 channel: 'ask_vanassist',
                 sessionId: $sessionId,
+                resultLimit: $resultLimit,
             ));
         }
 
@@ -86,6 +89,7 @@ final class AssistSearchController extends Controller
             'result' => $result,
             'structuredFindUrl' => url('find'),
             'staysUrl' => url('stays'),
+            'resultLimit' => $resultLimit,
         ]);
     }
 

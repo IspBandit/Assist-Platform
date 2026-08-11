@@ -16,6 +16,8 @@ use Throwable;
  */
 final class TravellerFacilitySearchAdapter implements FacilitySearchPort
 {
+    public function __construct(private readonly ?StayFacilitySearchBridge $stayFacilities = null) {}
+
     /**
      * @param array<string,mixed>|null $town
      * @return list<array<string,mixed>>
@@ -51,6 +53,15 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
             if ($mapped !== null) {
                 $list[] = $mapped;
             }
+        }
+
+        if ($hasOrigin) {
+            $list = array_merge($list, ($this->stayFacilities ?? new StayFacilitySearchBridge())->search(
+                $types,
+                (float) $lat,
+                (float) $lng,
+                $radius,
+            ));
         }
 
         if ($hasOrigin) {

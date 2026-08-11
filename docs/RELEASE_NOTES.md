@@ -22,6 +22,19 @@ may remain as dated files and are linked here rather than copied.
   settings. No migration is required and Google route results are not stored.
 - Rollback is the previous immutable release or removal of the Routes key; the
   UI then returns to explicitly labelled straight-line estimates.
+- Approved, source-ranked facility evidence attached to a public stay now feeds
+  Ask facility results without duplicating or weakening the canonical evidence
+  model. This generically closes the Griffiths Creek dump-point/water gap.
+- Ask, structured provider/category search and stays now show 20 results first
+  and offer an explicit expansion to 40. The same window bounds route-matrix
+  destinations and prevents oversized mobile lists during routing outages.
+- Routes credentials resolve from root environment or encrypted connector
+  storage. Admin API/RIC health reports configuration and source without
+  exposing the secret. Production release validation probes the protected key
+  before upload and then checks Griffiths plus a real road-distance result.
+- RIC overview data now reports provider contact/exact-location completeness and
+  stay facility/freshness coverage instead of implying that record count equals
+  useful data. No migration or public record rewrite is required.
 
 ### VanAssist runtime logic integrity (VAN-001 / CORE-011)
 

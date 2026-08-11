@@ -23,6 +23,8 @@
 /** @var string|int|null $distanceSelection */
 /** @var bool $hasOrigin */
 /** @var string|null $originLabel */
+/** @var bool $hasMore */
+/** @var string|null $showMoreUrl */
 $this->extend('layouts.public');
 $featuredMatches = array_values(array_filter($matches, static fn (array $provider): bool => !empty($provider['is_featured'])));
 $organicMatches = array_values(array_filter($matches, static fn (array $provider): bool => empty($provider['is_featured'])));
@@ -213,6 +215,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
             </div>
         <?php endif; ?>
         </div>
+        <?php if ($hasMore && $showMoreUrl !== null): ?><p class="results-show-more"><a class="btn btn-secondary" href="<?= e($showMoreUrl) ?>">Show up to 40 providers</a></p><?php endif; ?>
 
         <?php if (!empty($nearbyRuns)): ?>
             <h2 style="margin-top:1.5rem">Service runs near you</h2>

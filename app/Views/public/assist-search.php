@@ -6,6 +6,7 @@
 /** @var \App\Platform\AiSearch\Dto\SearchResponse|null $result */
 /** @var string $structuredFindUrl */
 /** @var string $staysUrl */
+/** @var int $resultLimit */
 $this->extend('layouts.public');
 $mappedResults = [];
 $mapNumbers = [];
@@ -208,11 +209,12 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                         <?php $facilityKey = 'facility-' . (int) ($facility['id'] ?? 0); $facilityMapNumber = $mapNumbers[$facilityKey] ?? 0; ?>
                         <article id="assist-result-<?= e_attr($facilityKey) ?>" class="facility-result-row" tabindex="-1">
                             <div class="facility-result-main">
-                                <h3><?php if ($facilityMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $facilityMapNumber ?>" aria-label="Map pin <?= $facilityMapNumber ?>"></span><?php endif; ?><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></h3>
+                                <h3><?php if ($facilityMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $facilityMapNumber ?>" aria-label="Map pin <?= $facilityMapNumber ?>"></span><?php endif; ?><?php if (!empty($facility['profile_url'])): ?><a href="<?= e((string) $facility['profile_url']) ?>"><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></a><?php else: ?><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?><?php endif; ?></h3>
                                 <p class="muted">
                                 <?= $this->e(str_replace('_', ' ', (string) ($facility['facility_type'] ?? ''))) ?>
                                 <?php if (!empty($facility['town_name'])): ?> · <?= $this->e((string) $facility['town_name']) ?><?php endif; ?>
                                 <?php if (!empty($facility['formatted_address'])): ?> · <?= $this->e((string) $facility['formatted_address']) ?><?php endif; ?>
+                                <?php if (!empty($facility['facility_display'])): ?> · <?= $this->e((string) $facility['facility_display']) ?><?php endif; ?>
                                 <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($facility); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                                 <?php if (!empty($facility['assist_provenance_label'])): ?> · <?= $this->e((string) $facility['assist_provenance_label']) ?><?php endif; ?>
                                 </p>
@@ -252,6 +254,10 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                 </div>
             <?php endif; ?>
             </div>
+            <?php if ($result->hasMore): ?>
+                <?php $moreUrl = url('ask?' . http_build_query(array_filter(['q' => $query, 'lat' => $lat, 'lng' => $lng, 'limit' => 40], static fn ($value): bool => $value !== null && $value !== ''))); ?>
+                <p class="results-show-more"><a class="btn btn-secondary" href="<?= e($moreUrl) ?>">Show up to 40 results</a></p>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>

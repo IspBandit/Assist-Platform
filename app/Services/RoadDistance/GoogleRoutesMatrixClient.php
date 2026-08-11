@@ -11,11 +11,14 @@ use RuntimeException;
 final class GoogleRoutesMatrixClient implements RouteMatrixClient
 {
     private const ENDPOINT = 'https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix';
+    /** @var array{key:string,source:string}|null */
+    private ?array $credential = null;
 
     public function __construct(
         private readonly ?HttpClientInterface $http = null,
         private readonly ?string $apiKey = null,
         private readonly ?int $destinationLimit = null,
+        private readonly ?GoogleRoutesCredentialResolver $credentials = null,
     ) {}
 
     public function enabled(): bool
@@ -91,6 +94,11 @@ final class GoogleRoutesMatrixClient implements RouteMatrixClient
 
     private function key(): string
     {
-        return trim($this->apiKey ?? (string) env('GOOGLE_ROUTES_API_KEY', ''));
+        if ($this->apiKey !== null) {
+            return trim($this->apiKey);
+        }
+        $this->credential ??= ($this->credentials ?? new GoogleRoutesCredentialResolver())->resolve();
+
+        return $this->credential['key'];
     }
 }
