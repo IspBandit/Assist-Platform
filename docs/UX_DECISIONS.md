@@ -313,6 +313,15 @@ reduced motion is preserved and the page has no horizontal overflow at 1440 ×
 PWA-header and install-dialog checks, plus reviewed desktop and mobile
 screenshots.
 
+## 2026-08-13 — Ask VanAssist in primary navigation when enabled
+
+**Context:** Ask was live at `/ask` but discoverable only via the homepage search
+panel; header and footer omitted it. **Decision:** when `assist_ai_search` is on
+for VanAssist, show **Ask VanAssist** in the primary header (after Places to stay),
+footer Find links and a category-search cross-link. Homepage Ask field order on
+mobile is unchanged (four capability cues, then search console, then optional Ask).
+**Evidence:** live production verification Aug 2026; `VanAssistPublicUxTest`.
+
 ## 2026-07-30 — Large provider queues automate only safe decisions
 
 **Context:** CORE-003/005. A national queue cannot be operated record by record,

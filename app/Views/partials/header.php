@@ -1,5 +1,7 @@
 <?php
 /** @var \App\Core\View $this */
+use App\Platform\AiSearch\Support\AiSearchFeature;
+
 $headerBrand = current_brand();
 $headerBrandMeta = $headerBrand->metadata();
 $headerPlatformContext = array_key_exists('header_platform_context', $headerBrandMeta)
@@ -48,6 +50,9 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
                 <?php else: ?>
                 <li><a data-location-link href="<?= e(url('find')) ?>">Find help</a></li>
                 <li><a data-location-link href="<?= e(url('stays')) ?>">Places to stay</a></li>
+                <?php if (AiSearchFeature::enabled()): ?>
+                <li><a href="<?= e(url('ask')) ?>">Ask VanAssist</a></li>
+                <?php endif; ?>
                 <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
                 <li><a href="<?= e(url('rules')) ?>">Rules & safety</a></li>
                 <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>

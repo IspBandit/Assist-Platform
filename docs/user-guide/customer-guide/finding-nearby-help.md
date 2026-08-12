@@ -2,12 +2,13 @@
 
 ## Ask VanAssist traveller facilities
 
-When Ask VanAssist traveller facilities are enabled, requests for toilets,
-dump points and similar amenities appear as compact rows showing the facility
-name, type, locality, address, distance and reviewed source status. These
-facilities remain separate from business providers and places to stay.
-Approved facility evidence attached to a place to stay can also appear in this
-facility section. Opening it takes you to the stay page, where its conditions,
+On production VanAssist (Aug 2026), Ask and traveller facilities are enabled.
+When the flags are on, requests for toilets, dump points and similar amenities
+appear as compact rows showing the facility name, type, locality, address,
+distance and reviewed source status. These facilities remain separate from
+business providers and places to stay. Approved facility evidence attached to a
+place to stay can also appear in this facility section. Opening it takes you to
+the stay page, where its conditions,
 source and verification date remain visible.
 
 Stay pages show resolved facility conditions such as **Water: Available — treat before drinking**, not merely a yes/no icon. Open **Facility information** for source and verification date. Use **Suggest a facility or correction** to report missing or wrong details. The report stays pending until an administrator reviews it; an acknowledgement is not publication.
