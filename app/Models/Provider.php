@@ -172,6 +172,46 @@ final class Provider extends Model
         return ['rows' => $rows, 'total' => $total];
     }
 
+    /**
+     * Direct public business-name matches for Ask. Description and contact
+     * fields are deliberately excluded so free text cannot broaden the match.
+     *
+     * @return list<array<string,mixed>>
+     */
+    public static function byNameForBrand(int $brandId, string $name, int $limit = 40): array
+    {
+        $name = trim($name);
+        if ($brandId < 1 || $name === '') {
+            return [];
+        }
+        $limit = max(1, min(40, $limit));
+        $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $name);
+        $contains = '%' . $escaped . '%';
+        $prefix = $escaped . '%';
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
+
+        return Database::select(
+            'SELECT p.id, pbl.slug, COALESCE(NULLIF(pbl.display_name,\'\'), p.business_name) AS business_name, '
+            . 'p.service_model, pbl.is_verified, pbl.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
+            . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, '
+            . 't.name AS town_name, t.slug AS town_slug, ' . $latitudeSql . ' AS town_lat, '
+            . $longitudeSql . ' AS town_lng, '
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, "
+            . 's.abbreviation AS state_abbr, '
+            . 'CASE WHEN LOWER(TRIM(COALESCE(NULLIF(pbl.display_name,\'\'), p.business_name))) = LOWER(?) THEN 0 '
+            . 'WHEN LOWER(COALESCE(NULLIF(pbl.display_name,\'\'), p.business_name)) LIKE LOWER(?) ESCAPE \'\\\\\' THEN 1 ELSE 2 END AS name_match_rank '
+            . 'FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id '
+            . 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id '
+            . "WHERE pbl.brand_id = ? AND pbl.status = 'active' AND pbl.search_visible = 1 "
+            . "AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL "
+            . 'AND (pbl.display_name LIKE ? ESCAPE \'\\\\\' OR p.business_name LIKE ? ESCAPE \'\\\\\') '
+            . 'ORDER BY name_match_rank, pbl.is_verified DESC, pbl.is_featured DESC, business_name '
+            . 'LIMIT ' . $limit,
+            [$name, $prefix, $brandId, $contains, $contains]
+        );
+    }
+
     /** @return array<string,mixed>|null */
     public static function findPublicBrandBySlug(int $brandId, string $slug): ?array
     {

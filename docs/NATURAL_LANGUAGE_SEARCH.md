@@ -75,3 +75,7 @@ name a location. The browser may require the traveller to grant location
 permission. A town, suburb, postcode, campground or other supported landmark
 written in the question always overrides device coordinates; an unresolved
 typed location never falls back to stale GPS or an Australia-wide result set.
+Ask also accepts a provider's business name directly. Exact and partial name
+matches use only active, search-visible listings in the selected brand. When a
+location or radius applies, the named provider must still fall inside it;
+business-name lookup never falls back to an Australia-wide alphabetical list.

@@ -68,6 +68,9 @@ current GPS location and runs the search after permission is granted. A town,
 suburb, postcode, campground or supported landmark written in the question
 always overrides GPS. If location permission is denied, use **Use my current
 location** after changing the browser setting or add the place to the question.
+You can also enter a provider's business name directly, with an optional place
+such as “Marshall Batteries near Brisbane”. Name matches remain subject to the
+same selected location and radius as other Ask results.
 
 Ask results reuse the same List and Map controls as category search. Providers,
 places to stay and traveller facilities inside the resolved radius receive a

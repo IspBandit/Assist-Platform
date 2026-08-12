@@ -3,6 +3,8 @@
 ## Unreleased
 
 ### Fixed
+- Ask now supports direct provider business-name searches without weakening
+  brand, GPS, explicit-location or radius boundaries.
 - Ask now acquires device GPS automatically for requests with no location in
   the question, while an explicit typed location remains authoritative.
 - Protected production releases now install the validated Google Routes secret
