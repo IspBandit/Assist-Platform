@@ -23,12 +23,15 @@ use App\Helpers\Env;
 use App\Services\Migrator;
 use App\Services\OrganisationOutreachImporter;
 use App\Services\ProviderPackActivation;
+use App\Services\RoadDistance\GoogleRoutesCredentialProvisioner;
+use App\Services\RoadDistance\GoogleRoutesReleaseCredentialInput;
 use App\Services\TownCoordinateActivation;
 
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
 try {
+    $googleRoutesCredential = GoogleRoutesReleaseCredentialInput::read(STDIN);
     $migrator = new Migrator();
     if ($migrator->repairInterruptedDuplicateStayMigration()) {
         echo "Cleared the interrupted original migration 129 for its indexed retry.\n";
@@ -53,6 +56,10 @@ try {
     $organisations = OrganisationOutreachImporter::afterMigrations();
     echo 'Loaded PR outreach research: ' . (int) $organisations['imported'] . ' new, '
         . (int) $organisations['updated'] . ' refreshed, ' . (int) $organisations['held'] . " invalid held out.\n";
+    if ($googleRoutesCredential !== null) {
+        (new GoogleRoutesCredentialProvisioner())->provision($googleRoutesCredential);
+        echo "Google Routes credential encrypted and provisioned from protected release input.\n";
+    }
     exit(0);
 } catch (Throwable $e) {
     fwrite(STDERR, 'Migration failed: ' . $e->getMessage() . "\n");
