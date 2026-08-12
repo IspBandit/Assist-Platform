@@ -5,11 +5,19 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use App\Platform\DataSources\HttpClientInterface;
+use App\Services\RoadDistance\GoogleRoutesCredentialProvisioner;
 use App\Services\RoadDistance\GoogleRoutesMatrixClient;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 final class GoogleRoutesMatrixClientTest extends TestCase
 {
+    public function testProvisionerRejectsAnythingThatIsNotAGoogleApiKeyBeforeDatabaseAccess(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new GoogleRoutesCredentialProvisioner())->provision('not-a-google-key');
+    }
+
     public function testItRequestsDrivingMatrixAndParsesDistanceAndDuration(): void
     {
         $http = new class implements HttpClientInterface {

@@ -5,6 +5,10 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+- The protected release workflow now installs the already validated Google
+  Routes key into the application's encrypted connector credential store before
+  live Ask checks, without placing plaintext secrets in the release or logs.
+
 ### VanAssist Ask and road-distance integrity (VAN-011 / CORE-012, ADR 0036)
 
 - Ask category detection now excludes the explicit `near/in/around/at` location
