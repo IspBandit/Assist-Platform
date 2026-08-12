@@ -69,3 +69,9 @@ calls. User sees clarification or category-search CTA.
 ## Brand
 
 First surface: VanAssist. Orchestrator remains shared for future brands.
+
+Ask uses the device's current GPS coordinates whenever the question does not
+name a location. The browser may require the traveller to grant location
+permission. A town, suburb, postcode, campground or other supported landmark
+written in the question always overrides device coordinates; an unresolved
+typed location never falls back to stale GPS or an Australia-wide result set.

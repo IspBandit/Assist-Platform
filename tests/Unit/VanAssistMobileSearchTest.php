@@ -131,9 +131,14 @@ final class VanAssistMobileSearchTest extends TestCase
         $home = (string) file_get_contents($root . '/app/Views/public/home.php');
         $services = (string) file_get_contents($root . '/app/Views/public/services-index.php');
 
-        foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php'] as $view) {
+        foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php', 'assist-search.php'] as $view) {
             self::assertStringContainsString('data-auto-location', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
         }
+        $ask = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $askController = (string) file_get_contents($root . '/app/Controllers/Site/AssistSearchController.php');
+        self::assertStringContainsString('data-ask-location-priority="typed-over-gps"', $ask);
+        self::assertStringContainsString('needsDeviceLocation', $askController);
+        self::assertStringContainsString('result->intent->locationText', $askController);
         self::assertGreaterThanOrEqual(4, substr_count($home, 'data-location-link'));
         self::assertGreaterThanOrEqual(5, substr_count($services, 'data-location-link'));
         self::assertStringContainsString("sessionStorage.setItem('va-current-location'", $script);

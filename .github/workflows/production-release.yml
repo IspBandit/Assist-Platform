@@ -72,6 +72,17 @@ jobs:
         run: |
           scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
           ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+      - name: Provision encrypted Google Routes credential
+        env:
+          GOOGLE_ROUTES_API_KEY: ${{ secrets.GOOGLE_ROUTES_API_KEY }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          test -n "$GOOGLE_ROUTES_API_KEY"
+          printf '%s' "$GOOGLE_ROUTES_API_KEY" |
+            ssh "$VPS_USER@$VPS_HOST" \
+              "cd /opt/assist-platform && docker compose exec -T app php scripts/configure-google-routes.php --stdin"
       - name: Verify public user journeys
         shell: bash
         run: |
@@ -135,13 +146,13 @@ jobs:
           griffiths="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
             --data-urlencode 'q=dump points near Grffiths camping ground, Queensland' \
             https://vanassist.com.au/ask)"
-          grep -qi 'Griffiths Creek' <<<"$griffiths"
-          grep -qi 'dump point' <<<"$griffiths"
+          grep -qi 'Griffiths Creek' <<<"$griffiths" || { echo 'Griffiths Creek result missing.'; exit 1; }
+          grep -qi 'dump point' <<<"$griffiths" || { echo 'Griffiths dump-point evidence missing.'; exit 1; }
 
           routed="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
             --data-urlencode 'q=auto electrician near Brisbane, Queensland' \
             https://vanassist.com.au/ask)"
-          grep -q 'km by road' <<<"$routed"
+          grep -q 'km by road' <<<"$routed" || { echo 'Google road-distance output missing.'; exit 1; }
 
           for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
             brand_homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
