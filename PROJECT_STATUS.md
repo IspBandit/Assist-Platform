@@ -9,6 +9,7 @@
 - DATA-012 Dataset Engine; DATA-013 Knowledge gaps; DATA-002 duplicates
 - VAN-010/011 (flags); OPS-011; Polaris private slice POL-002–008 residuals
 - Queensland essential facility coverage (merged to main)
+- **RIC third-wave + gap-fill facility dataset keys** (Platform migration `125`, merged to main)
 - **RIC everyday management A–H.4** — Overview through Operations, import-candidate
   reads + human review (facility single/bulk, provider approve/reject/merge)
 - **RIC Increment I (Platform)** — ops failed email/scheduled-task + categories/locations
