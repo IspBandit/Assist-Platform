@@ -10,6 +10,21 @@ use PHPUnit\Framework\TestCase;
 
 final class ProviderNameSearchAdapterTest extends TestCase
 {
+    public function testBareProviderNameDoesNotBecomeItsOwnLocation(): void
+    {
+        $adapter = new ProviderNameSearchAdapter();
+
+        self::assertNull($adapter->explicitLocationText('Marshall Batteries', 'Marshall Batteries'));
+        self::assertNull($adapter->explicitLocationText('Marshall Batteries near me', 'me'));
+        self::assertSame(
+            'Brisbane, Queensland',
+            $adapter->explicitLocationText(
+                'Marshall Batteries near Brisbane, Queensland',
+                'Brisbane, Queensland'
+            )
+        );
+    }
+
     #[DataProvider('candidateCases')]
     public function testItExtractsOnlyTheBusinessName(string $query, ?string $location, ?string $expected): void
     {

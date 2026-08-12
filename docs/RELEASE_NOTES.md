@@ -7,6 +7,8 @@ may remain as dated files and are linked here rather than copied.
 
 - Ask accepts an active VanAssist provider's business name directly and still
   applies the question's place or the device GPS/radius boundary.
+- A provider business name without a place is no longer misread as the place;
+  Ask requests device GPS before searching, while an explicit place still wins.
 - Ask now defaults to current device GPS when no place is included in the
   question. A place written in the question always takes priority.
 - The protected release workflow now installs the already validated Google

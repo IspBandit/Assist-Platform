@@ -9,6 +9,23 @@ use App\Models\Provider;
 /** Direct business-name lookup for Ask queries not recognised as a service intent. */
 final class ProviderNameSearchAdapter
 {
+    public function explicitLocationText(string $rawQuery, ?string $interpretedLocation): ?string
+    {
+        $matches = [];
+        if (preg_match_all('/\b(?:near|in|around|at)\s+([^,?]+(?:,\s*[^?]+)?)\s*\??\z/ui', trim($rawQuery), $matches) < 1) {
+            return null;
+        }
+
+        $suffix = trim((string) end($matches[1]));
+        if ($suffix === '' || preg_match('/\A(?:me|my current location|current location|nearby)\z/ui', $suffix) === 1) {
+            return null;
+        }
+
+        return $interpretedLocation !== null && trim($interpretedLocation) !== ''
+            ? trim($interpretedLocation)
+            : $suffix;
+    }
+
     public function candidate(string $rawQuery, ?string $locationText): ?string
     {
         $candidate = trim($rawQuery);
