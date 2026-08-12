@@ -180,12 +180,13 @@ final class SearchOrchestrator
             $providerNameRows = [];
         }
         if ($providerNameRows !== []) {
+                $providerLocationText = $this->providerNames->explicitLocationText($raw, $intent->locationText);
                 $intent = new Intent(
                     intentType: Intent::TYPE_PROVIDER,
                     providerCategoryKeys: [],
                     stayTypeKeys: [],
                     facilityTypeKeys: [],
-                    locationText: $intent->locationText,
+                    locationText: $providerLocationText,
                     useCurrentLocation: $intent->useCurrentLocation,
                     radiusKm: $intent->radiusKm,
                     urgency: $intent->urgency,
