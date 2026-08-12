@@ -14,6 +14,21 @@ final class GoogleRoutesCredentialProvisioner
 {
     public function provision(string $apiKey): void
     {
+        $this->store($apiKey, null, null);
+    }
+
+    public function provisionForRelease(string $apiKey, string $release, string $nonceHash): void
+    {
+        if (!preg_match('/\A[a-f0-9]{40}\z/', $release)
+            || !preg_match('/\A[a-f0-9]{64}\z/', $nonceHash)) {
+            throw new InvalidArgumentException('Release credential metadata is invalid.');
+        }
+
+        $this->store($apiKey, $release, $nonceHash);
+    }
+
+    private function store(string $apiKey, ?string $release, ?string $nonceHash): void
+    {
         $apiKey = trim($apiKey);
         if (!preg_match('/\AAIza[0-9A-Za-z_-]{30,}\z/', $apiKey) || strlen($apiKey) > 255) {
             throw new InvalidArgumentException('Google Routes credential has an invalid format.');
@@ -39,6 +54,26 @@ final class GoogleRoutesCredentialProvisioner
                 throw new \RuntimeException('Google Routes connector could not be resolved.');
             }
 
+            if ($release !== null && $nonceHash !== null) {
+                $settingsRaw = Database::scalar(
+                    'SELECT settings_json FROM data_source_connectors WHERE id = ? FOR UPDATE',
+                    [$connectorId]
+                );
+                $settings = is_string($settingsRaw) ? json_decode($settingsRaw, true) : [];
+                $settings = is_array($settings) ? $settings : [];
+                if (hash_equals((string) ($settings['bootstrap_nonce_hash'] ?? ''), $nonceHash)) {
+                    throw new \RuntimeException('This release credential envelope has already been consumed.');
+                }
+                $settings['purpose'] = 'road_distance';
+                $settings['bootstrap_release'] = $release;
+                $settings['bootstrap_nonce_hash'] = $nonceHash;
+                $settings['bootstrap_consumed_at'] = gmdate('c');
+                Database::query(
+                    'UPDATE data_source_connectors SET settings_json = ?, updated_at = NOW() WHERE id = ?',
+                    [json_encode($settings, JSON_UNESCAPED_SLASHES), $connectorId]
+                );
+            }
+
             $encrypted = SecretCipher::encrypt($apiKey);
             $hint = '••••' . substr($apiKey, -4);
             Database::query(
@@ -61,7 +96,11 @@ final class GoogleRoutesCredentialProvisioner
             'data_source_connector',
             (string) $connectorId,
             null,
-            json_encode(['connector_key' => 'google_routes', 'source' => 'protected_deployment'])
+            json_encode([
+                'connector_key' => 'google_routes',
+                'source' => $release === null ? 'protected_deployment' : 'protected_release_bootstrap',
+                'release' => $release,
+            ])
         );
     }
 }

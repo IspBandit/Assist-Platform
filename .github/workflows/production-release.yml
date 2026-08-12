@@ -53,6 +53,12 @@ jobs:
         run: |
           mkdir release
           git archive HEAD | tar -x -C release
+          release_bootstrap_nonce="$(openssl rand -hex 32)"
+          echo "::add-mask::$release_bootstrap_nonce"
+          release_bootstrap_hash="$(printf '%s' "$release_bootstrap_nonce" | sha256sum | cut -d' ' -f1)"
+          printf '%s\n' '<?php' '' 'declare(strict_types=1);' '' "return ['release' => '${GITHUB_SHA}', 'nonce_sha256' => '${release_bootstrap_hash}'];" \
+            > release/config/google-routes-release-bootstrap.php
+          printf 'GOOGLE_ROUTES_BOOTSTRAP_NONCE=%s\n' "$release_bootstrap_nonce" >> "$GITHUB_ENV"
           composer install --working-dir=release --no-dev --no-interaction --prefer-dist --classmap-authoritative
           tar -C release -czf "assist-platform-${GITHUB_SHA}.tar.gz" .
           sha256sum "assist-platform-${GITHUB_SHA}.tar.gz" > "assist-platform-${GITHUB_SHA}.sha256"
@@ -67,16 +73,27 @@ jobs:
           chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
       - name: Upload and release
         env:
-          GOOGLE_ROUTES_API_KEY: ${{ secrets.GOOGLE_ROUTES_API_KEY }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           set -euo pipefail
-          test -n "$GOOGLE_ROUTES_API_KEY"
           scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
-          printf 'ASSIST_GOOGLE_ROUTES_CREDENTIAL_V1:%s\n' "$GOOGLE_ROUTES_API_KEY" |
-            ssh "$VPS_USER@$VPS_HOST" \
-              "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+          ssh "$VPS_USER@$VPS_HOST" \
+            "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+      - name: Provision encrypted Google Routes credential
+        env:
+          GOOGLE_ROUTES_API_KEY: ${{ secrets.GOOGLE_ROUTES_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$GOOGLE_ROUTES_API_KEY"
+          test -n "$GOOGLE_ROUTES_BOOTSTRAP_NONCE"
+          jq -nc --arg api_key "$GOOGLE_ROUTES_API_KEY" '{api_key:$api_key}' |
+            curl --fail --silent --show-error --max-time 20 \
+              -H 'Content-Type: application/json' \
+              -H "X-Assist-Release-Nonce: $GOOGLE_ROUTES_BOOTSTRAP_NONCE" \
+              --data-binary @- \
+              https://vanassist.com.au/ops/release/google-routes \
+              | grep -q '"status":"configured"'
       - name: Verify public user journeys
         shell: bash
         run: |

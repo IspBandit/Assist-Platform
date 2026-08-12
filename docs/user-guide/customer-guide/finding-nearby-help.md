@@ -30,7 +30,7 @@ No account is required. On the main VanAssist search, the browser may ask for op
 
 ## Fields
 
-**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage. Results without a measurable location cannot appear in a numeric-radius search.
+**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
 
 ## Actions
 
@@ -127,7 +127,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-12 (compact 20/40 result window and approved stay-facility results in Ask).
+2026-08-12 (road-distance release validation, compact result window and approved stay-facility results in Ask).
 
 ## Owner
 

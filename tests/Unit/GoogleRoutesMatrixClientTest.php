@@ -12,6 +12,18 @@ use PHPUnit\Framework\TestCase;
 
 final class GoogleRoutesMatrixClientTest extends TestCase
 {
+    public function testReleaseProvisioningRejectsInvalidEnvelopeMetadataBeforeDatabaseAccess(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('metadata is invalid');
+
+        (new GoogleRoutesCredentialProvisioner())->provisionForRelease(
+            'AIza' . str_repeat('x', 35),
+            'not-a-release',
+            str_repeat('a', 64)
+        );
+    }
+
     public function testProvisionerRejectsAnythingThatIsNotAGoogleApiKeyBeforeDatabaseAccess(): void
     {
         $this->expectException(InvalidArgumentException::class);
