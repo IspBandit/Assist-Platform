@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist Ask question library and cache safety (VAN-011)
+
+- Added a migration-backed, idempotent library of 1,325 versioned common Ask
+  question variations. Exact matches resolve through deterministic intents
+  before the expiring intent cache or paid AI, with aggregate hit counts only.
+- Corrected intent-cache keys so wording such as `near me` remains distinct
+  from a locationless query, preventing device-GPS behaviour from being reused
+  for the wrong search. The default internal interpretation TTL is now 30 days.
+- Admin API/RIC health reports the active Ask library count and the Google
+  Routes cache policy. Google distance/duration results remain non-persistent;
+  duplicate destinations are suppressed within each request.
+- Migration `131_ask_question_library.sql` creates and seeds the library during
+  the normal release. Rollback uses the prior immutable release; the table is
+  additive and can remain without affecting the prior runtime.
+
 - Ask accepts an active VanAssist provider's business name directly and still
   applies the question's place or the device GPS/radius boundary.
 - A provider business name without a place is no longer misread as the place;
