@@ -6,12 +6,14 @@ namespace App\Controllers\Api\V1\Admin;
 
 use App\Core\Config;
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Api\AdminApiEnvelope;
 use App\Services\Api\AdminApiBrandScope;
 use App\Services\Api\AdminApiScopes;
 use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
+use Throwable;
 
 /**
  * System endpoints for the versioned Admin API.
@@ -21,6 +23,13 @@ final class SystemController extends Controller
     public function health(Request $request): Response
     {
         $routes = (new GoogleRoutesCredentialResolver())->status();
+        try {
+            $askQuestionCount = (int) Database::scalar(
+                'SELECT COUNT(*) FROM ask_question_library WHERE is_active = 1'
+            );
+        } catch (Throwable) {
+            $askQuestionCount = 0;
+        }
         return AdminApiEnvelope::data([
             'status' => 'ok',
             'service' => 'assist-platform-admin-api',
@@ -31,6 +40,12 @@ final class SystemController extends Controller
                     'configured' => $routes['configured'],
                     'credential_source' => $routes['source'],
                     'persistent_cache' => false,
+                    'request_deduplication' => true,
+                    'cache_policy' => 'google_routes_results_not_persisted',
+                ],
+                'ask_question_library' => [
+                    'configured' => $askQuestionCount >= 1000,
+                    'active_questions' => $askQuestionCount,
                 ],
             ],
         ]);

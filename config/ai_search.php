@@ -17,7 +17,7 @@ return [
     'intent_rules_version' => 'intent_rules_v1',
     'intent_schema_version' => 'intent_schema_v1',
     'taxonomy_version' => 'taxonomy_v1',
-    'intent_cache_ttl_hours' => 168,
+    'intent_cache_ttl_hours' => 720,
     'weak_result_threshold' => 3,
     'dataset_max_results' => 12,
 

@@ -274,6 +274,18 @@ final class IntentRuleEngine
         ['id'=>'R62','patterns'=>['rubbish disposal','waste disposal','public bins'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['waste_disposal'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.86],
     ];
 
+    /** @return list<string> */
+    public static function questionPatterns(): array
+    {
+        $patterns = [];
+        foreach (self::RULES as $rule) {
+            foreach ($rule['patterns'] as $pattern) {
+                $patterns[] = (string) $pattern;
+            }
+        }
+        return array_values(array_unique($patterns));
+    }
+
     public function interpret(string $rawQuery): Intent
     {
         $meta = IntentNormaliser::analyse($rawQuery);
