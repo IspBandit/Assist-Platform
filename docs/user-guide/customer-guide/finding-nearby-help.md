@@ -63,6 +63,12 @@ facilities such as public toilets or dump points. Ask never invents caravan-park
 rows for toilets. Guidance remains non-authoritative; confirm details before you
 travel.
 
+If the question does not name a place, Ask automatically requests the device's
+current GPS location and runs the search after permission is granted. A town,
+suburb, postcode, campground or supported landmark written in the question
+always overrides GPS. If location permission is denied, use **Use my current
+location** after changing the browser setting or add the place to the question.
+
 Ask results reuse the same List and Map controls as category search. Providers,
 places to stay and traveller facilities inside the resolved radius receive a
 numbered map pin and the matching number in their list row. Ask fails closed:
