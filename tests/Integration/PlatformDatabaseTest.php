@@ -27,6 +27,7 @@ use App\Services\NationalRouteImportService;
 use App\Models\GarageAsset;
 use App\Models\Provider;
 use App\Services\Api\AdminApiFacilityService;
+use App\Platform\AiSearch\Adapters\StayFacilitySearchBridge;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -165,6 +166,39 @@ final class PlatformDatabaseTest extends TestCase
         } finally {
             Database::rollBack();
             BrandContext::clear();
+        }
+    }
+
+    public function testApprovedStayFacilityEvidenceAppearsInAskWithinRadius(): void
+    {
+        $stateId = (int) Database::scalar("SELECT id FROM states WHERE abbreviation='QLD' LIMIT 1");
+        self::assertGreaterThan(0, $stateId);
+
+        Database::beginTransaction();
+        try {
+            $slug = 'ask-stay-facility-' . bin2hex(random_bytes(5));
+            $parkId = Database::insert(
+                'INSERT INTO caravan_parks '
+                . '(name,slug,state_id,latitude,longitude,public_page_enabled,status,stay_type,price_type,created_at,updated_at) '
+                . "VALUES ('Griffiths Creek test camping area',?,?, -24.35,151.10,1,'active','national_park','unknown',NOW(),NOW())",
+                [$slug, $stateId]
+            );
+            Database::insert(
+                'INSERT INTO stay_facility_claims '
+                . '(park_id,facility_type,facility_status,facility_value,details,source_type,source_name,source_confidence,source_specificity,verified_at,last_seen_at,created_at,updated_at) '
+                . "VALUES (?,'dump_point','yes','portable_toilet_waste_disposal','Portable waste disposal is available.','government','Queensland Parks',100,'facility',NOW(),NOW(),NOW(),NOW())",
+                [$parkId]
+            );
+
+            $results = (new StayFacilitySearchBridge())->search(['dump_point'], -24.35, 151.10, 25);
+            $result = array_values(array_filter($results, static fn (array $row): bool => (int) ($row['stay_id'] ?? 0) === $parkId));
+
+            self::assertCount(1, $result);
+            self::assertSame('dump_point', $result[0]['facility_type']);
+            self::assertSame('yes', $result[0]['facility_status']);
+            self::assertLessThanOrEqual(25.0, (float) $result[0]['distance_km']);
+        } finally {
+            Database::rollBack();
         }
     }
 

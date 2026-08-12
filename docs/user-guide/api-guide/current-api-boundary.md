@@ -94,12 +94,17 @@ versioned `/api/v1` contract with tests and an accepted architecture decision.
 Neither route is a promise of long-term third-party compatibility.
 
 `GET /api/v1/admin/health` and `GET /api/v1/admin/capabilities` are the Admin API
-probe endpoints when the feature flag is on.
+probe endpoints when the feature flag is on. Health exposes safe road-distance
+readiness under `integrations.road_distance` (provider, configured state,
+credential source and persistent-cache state) without exposing the credential.
 
 `GET /api/v1/admin/overview` returns the RIC operational rollup (range query
 `7d`/`30d`/`90d`/`fy`/`pfy`/`custom`). `GET /api/v1/admin/website-insights`
 returns detailed traffic and demand figures; genuine visitors exclude
-bot/unknown page views and filtered bot views are labelled separately.
+bot/unknown page views and filtered bot views are labelled separately. The
+overview `data_quality` section summarises usable contact and coordinate
+coverage, stale providers, and stay facility-evidence freshness for the active
+brand.
 
 ## Common mistakes
 
@@ -130,7 +135,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-11 (facility detail/write brand scope and stays-workspace contribution guard).
+2026-08-12 (road-distance readiness and directory data-quality summaries).
 
 ## Owner
 

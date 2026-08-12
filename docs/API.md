@@ -16,7 +16,9 @@ is granted:
 - `GET /api/v1/admin/overview` — operational dashboard (API health/release,
   genuine website visitors with bot/unknown page views labelled separately,
   searches, no-result searches, provider contacts, scope-gated review queues,
-  AI cost when `ai:read`, dataset sync timestamps when `datasets:read`).
+  AI cost when `ai:read`, dataset sync timestamps when `datasets:read`). The
+  `data_quality` object also reports provider contact/coordinate/category/stale
+  coverage and stay coordinate/facility-evidence/stale-evidence coverage.
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   reusing `WebsiteInsightsService`; `filtered_bot_page_views` is never mixed
   into visitor totals.
@@ -80,6 +82,11 @@ rollups (summary includes nested `budget`), `GET /feature-flags`
 (`flags:read`) and `/audit`. It does not expose feature-flag writes, AI budget
 cap mutation, or import/publish controls from the Operations page. Dangerous
 production toggles stay in website admin with owner workflows.
+
+The health response includes `integrations.road_distance` with `provider`,
+`configured`, `source` and `persistent_cache`. It reports configuration state
+only and never returns a credential. `persistent_cache` is currently `false`;
+request-local duplicate suppression remains the only route-matrix cache.
 
 `GET /api/v1/admin/capabilities` is host scoped. Its `brand` object identifies
 the resolved Assist brand (`key`, `name`, `status`, `url` and enabled

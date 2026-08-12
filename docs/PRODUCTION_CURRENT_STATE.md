@@ -1,6 +1,6 @@
 # Production current state
 
-Last verified: 24 July 2026 (Australia/Brisbane).
+Last verified: 12 August 2026 (Australia/Brisbane).
 
 ## Deployment
 
@@ -8,11 +8,11 @@ Last verified: 24 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `14f818c082fcde30c7a823ba3f116cd9d97650a0`.
-- Release directory: `/opt/assist-platform/releases/14f818c082fcde30c7a823ba3f116cd9d97650a0`.
+- Production code commit: `9879b4bf41f3f691cb26f8d76d71515fb47b6a5c`.
+- Release directory: `/opt/assist-platform/releases/9879b4bf41f3f691cb26f8d76d71515fb47b6a5c`.
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `045_membership_entitlements.sql` are applied; the
+- All migrations through `130_merge_residual_duplicate_stays.sql` are applied; the
   installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
@@ -22,8 +22,13 @@ credentials in this file or Git.
 
 - All three `/healthz` and `/readyz` endpoints returned 200.
 - All three `/readyz` endpoints reported release
-  `14f818c082fcde30c7a823ba3f116cd9d97650a0` after protected production
-  workflow run `30064747345` completed successfully.
+  `9879b4bf41f3f691cb26f8d76d71515fb47b6a5c` after protected production
+  workflow run `31494159521` completed successfully.
+- The misspelled Griffiths Ask query resolves to Griffiths Creek rather than a
+  national alphabetical list. At this verification point its facility evidence
+  was not yet bridged into Ask, and Brisbane discovery still displayed
+  straight-line distances; both are explicitly gated by the next release rather
+  than being described as live.
 - Production deployment uses the restricted `assistdeploy` SSH account,
   pinned host keys and a root-owned release command. Remote root login and
   password authentication are disabled.

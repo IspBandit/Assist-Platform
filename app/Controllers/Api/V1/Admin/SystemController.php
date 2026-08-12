@@ -11,6 +11,7 @@ use App\Core\Response;
 use App\Services\Api\AdminApiEnvelope;
 use App\Services\Api\AdminApiBrandScope;
 use App\Services\Api\AdminApiScopes;
+use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
 
 /**
  * System endpoints for the versioned Admin API.
@@ -19,10 +20,19 @@ final class SystemController extends Controller
 {
     public function health(Request $request): Response
     {
+        $routes = (new GoogleRoutesCredentialResolver())->status();
         return AdminApiEnvelope::data([
             'status' => 'ok',
             'service' => 'assist-platform-admin-api',
             'api_version' => 'v1',
+            'integrations' => [
+                'road_distance' => [
+                    'provider' => 'google_routes',
+                    'configured' => $routes['configured'],
+                    'credential_source' => $routes['source'],
+                    'persistent_cache' => false,
+                ],
+            ],
         ]);
     }
 

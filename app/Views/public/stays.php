@@ -2,6 +2,8 @@
 /** @var array<int,array<string,mixed>> $stays */
 /** @var array<string,string> $stayTypes */
 /** @var array<string,string> $priceTypes */
+/** @var bool $hasMore */
+/** @var string|null $showMoreUrl */
 $this->extend('layouts.public');
 $facilityLabels = [
     'powered_sites' => 'Powered sites', 'unpowered_sites' => 'Unpowered sites',
@@ -95,6 +97,7 @@ foreach ($stays as $stay) {
                     </article>
                 <?php endforeach; ?>
             </div>
+            <?php if ($hasMore && $showMoreUrl !== null): ?><p class="results-show-more"><a class="btn btn-secondary" href="<?= e($showMoreUrl) ?>">Show up to 40 places</a></p><?php endif; ?>
         <?php endif; ?>
     </div>
 </section>

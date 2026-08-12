@@ -14,6 +14,7 @@ use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Services\Demand\DemandRecorder;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Handles the homepage "Find a service" search: a free-text town/postcode plus
@@ -31,6 +32,7 @@ final class SearchController extends Controller
         $location = trim((string) $request->input('location', ''));
         $categorySlug = trim((string) $request->input('category', ''));
         $timeframe = trim((string) $request->input('timeframe', ''));
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         // Optional device GPS coordinates ("Use my location"). Only used when no
         // town/postcode was typed.
@@ -114,6 +116,9 @@ final class SearchController extends Controller
             $townIdForFilter = $town !== null ? (int) $town['id'] : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townIdForFilter);
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
             $routed = (new RoadDistanceService())->enrichGroups(
                 ['matches' => $matches, 'possible' => $possible],
                 $originLat,
@@ -122,6 +127,10 @@ final class SearchController extends Controller
             );
             $matches = $routed['matches'];
             $possible = $routed['possible'];
+        } else {
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
         }
 
         // Paid visibility is kept in an explicitly labelled block. Organic
@@ -211,6 +220,16 @@ final class SearchController extends Controller
             'lat'              => $hasCoords ? $lat : null,
             'lng'              => $hasCoords ? $lng : null,
             'nearbyRuns'       => $nearbyRuns,
+            'hasMore'          => $resultWindow['has_more'],
+            'showMoreUrl'      => $resultWindow['has_more'] ? url('find?' . http_build_query(array_filter([
+                'location' => $location,
+                'category' => $categorySlug,
+                'timeframe' => $timeframe,
+                'max_distance' => $request->input('max_distance'),
+                'lat' => $hasCoords ? $lat : null,
+                'lng' => $hasCoords ? $lng : null,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 

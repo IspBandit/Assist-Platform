@@ -30,6 +30,7 @@ use App\Platform\AiSearch\Routing\SearchRouter;
 use App\Platform\AiSearch\Support\DatasetSearchFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Shared Assist AI Orchestrator — Phase AI-6 (traveller facilities + dataset routing).
@@ -51,6 +52,7 @@ final class SearchOrchestrator
     private IntentInterpreter $interpreter;
     private KnowledgeGapService $gaps;
     private RoadDistanceService $roadDistances;
+    private PublicResultWindow $resultWindow;
     /** @var (\Closure(SearchRequest,Intent):array{0:?array<string,mixed>,1:?float,2:?float,3:string})|null */
     private ?\Closure $locationResolver;
 
@@ -69,6 +71,7 @@ final class SearchOrchestrator
         ?IntentInterpreter $interpreter = null,
         ?KnowledgeGapService $gaps = null,
         ?RoadDistanceService $roadDistances = null,
+        ?PublicResultWindow $resultWindow = null,
         ?\Closure $locationResolver = null,
     ) {
         $this->rules = $rules ?? new IntentRuleEngine();
@@ -85,6 +88,7 @@ final class SearchOrchestrator
         $this->interpreter = $interpreter ?? new IntentInterpreter();
         $this->gaps = $gaps ?? new KnowledgeGapService();
         $this->roadDistances = $roadDistances ?? new RoadDistanceService();
+        $this->resultWindow = $resultWindow ?? new PublicResultWindow();
         $this->locationResolver = $locationResolver;
     }
 
@@ -398,6 +402,8 @@ final class SearchOrchestrator
             $originLng,
             $radiusKm,
         );
+        $window = $this->resultWindow->apply($aggregated, $request->resultLimit);
+        $aggregated = $window['groups'];
         $aggregated = $this->roadDistances->enrichGroups(
             $aggregated,
             $originLat,
@@ -461,6 +467,9 @@ final class SearchOrchestrator
             externals: $aggregated['externals'],
             facilities: $aggregated['facilities'],
             knowledgeGapId: $gapId,
+            hasMore: $window['has_more'],
+            resultLimit: $request->resultLimit,
+            totalCandidates: $window['total'],
         );
     }
 

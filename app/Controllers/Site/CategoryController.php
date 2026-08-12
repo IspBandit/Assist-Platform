@@ -16,6 +16,7 @@ use App\Services\Demand\ActivityTracker;
 use App\Services\Demand\DemandRecorder;
 use App\Services\SeoSchema;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Public service-category pages generated from the database.
@@ -88,6 +89,7 @@ final class CategoryController extends Controller
         $distanceFilter = Geo::resolveDistanceFilter($request->input('max_distance'), $townId !== null);
         $distanceSelection = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : $distanceFilter['scope'];
         $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         // Reference point for approximate distances (the searched town's centre).
         $trustedOrigin = $selectedTown !== null
@@ -110,6 +112,9 @@ final class CategoryController extends Controller
         if ($originLat !== null && $originLng !== null) {
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townId);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townId);
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
             $routed = (new RoadDistanceService())->enrichGroups(
                 ['matches' => $matches, 'possible' => $possible],
                 $originLat,
@@ -118,6 +123,10 @@ final class CategoryController extends Controller
             );
             $matches = $routed['matches'];
             $possible = $routed['possible'];
+        } else {
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
         }
 
         ActivityTracker::record('category_viewed', ['category_id' => (int) $category['id'], 'town_id' => $townId]);
@@ -163,6 +172,14 @@ final class CategoryController extends Controller
             'hasOrigin'       => $originLat !== null && $originLng !== null,
             'lat'             => $gpsLat,
             'lng'             => $gpsLng,
+            'hasMore'         => $resultWindow['has_more'],
+            'showMoreUrl'     => $resultWindow['has_more'] ? url('services/' . $category['slug'] . '?' . http_build_query(array_filter([
+                'town_id' => $townId,
+                'max_distance' => $request->input('max_distance'),
+                'lat' => $gpsLat,
+                'lng' => $gpsLng,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 

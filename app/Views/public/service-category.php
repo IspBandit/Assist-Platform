@@ -13,6 +13,8 @@
 /** @var string|null $distanceScope */
 /** @var string|int|null $distanceSelection */
 /** @var bool $hasOrigin */
+/** @var bool $hasMore */
+/** @var string|null $showMoreUrl */
 $this->extend('layouts.public');
 $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '';
 $mappedProviders=[];
@@ -106,6 +108,8 @@ $usesRoadDistance = \App\Services\RoadDistance\RoadDistanceService::groupsUseRoa
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <?php if ($hasMore && $showMoreUrl !== null): ?><p class="results-show-more"><a class="btn btn-secondary" href="<?= e($showMoreUrl) ?>">Show up to 40 providers</a></p><?php endif; ?>
 
         <?php if ($matches === [] && $possible === []): ?>
             <div class="card">

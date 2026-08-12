@@ -28,6 +28,22 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.sha }}
+      - name: Verify protected Google Routes credential
+        env:
+          GOOGLE_ROUTES_API_KEY: ${{ secrets.GOOGLE_ROUTES_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$GOOGLE_ROUTES_API_KEY"
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          curl --fail --silent --show-error --max-time 15 \
+            -X POST 'https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix' \
+            -H "X-Goog-Api-Key: $GOOGLE_ROUTES_API_KEY" \
+            -H 'X-Goog-FieldMask: originIndex,destinationIndex,condition,distanceMeters' \
+            -H 'Content-Type: application/json' \
+            --data '{"origins":[{"waypoint":{"location":{"latLng":{"latitude":-27.4698,"longitude":153.0251}}}}],"destinations":[{"waypoint":{"location":{"latLng":{"latitude":-27.4810,"longitude":153.0234}}}}],"travelMode":"DRIVE","routingPreference":"TRAFFIC_UNAWARE"}' \
+            --output "$response_file"
+          grep -q 'ROUTE_EXISTS' "$response_file"
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
@@ -115,6 +131,17 @@ jobs:
           grep -q '"short_name": "VanAssist"' <<<"$manifest"
           worker="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/service-worker.js)"
           grep -q "self.addEventListener('fetch'" <<<"$worker"
+
+          griffiths="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
+            --data-urlencode 'q=dump points near Grffiths camping ground, Queensland' \
+            https://vanassist.com.au/ask)"
+          grep -qi 'Griffiths Creek' <<<"$griffiths"
+          grep -qi 'dump point' <<<"$griffiths"
+
+          routed="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
+            --data-urlencode 'q=auto electrician near Brisbane, Queensland' \
+            https://vanassist.com.au/ask)"
+          grep -q 'km by road' <<<"$routed"
 
           for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
             brand_homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
