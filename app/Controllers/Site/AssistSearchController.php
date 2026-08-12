@@ -38,6 +38,7 @@ final class AssistSearchController extends Controller
                 'result' => null,
                 'structuredFindUrl' => url('find'),
                 'staysUrl' => url('stays'),
+                'needsDeviceLocation' => false,
             ]);
         }
 
@@ -79,6 +80,12 @@ final class AssistSearchController extends Controller
             ));
         }
 
+        $needsDeviceLocation = $q !== ''
+            && $result !== null
+            && $lat === null
+            && $lng === null
+            && ($result->intent->locationText === null || $result->intent->locationText === '');
+
         return $this->view('public.assist-search', [
             'title' => 'Ask VanAssist',
             'metaDescription' => 'Ask VanAssist what you need help finding — providers, stays and traveller essentials across Australia.',
@@ -90,6 +97,7 @@ final class AssistSearchController extends Controller
             'structuredFindUrl' => url('find'),
             'staysUrl' => url('stays'),
             'resultLimit' => $resultLimit,
+            'needsDeviceLocation' => $needsDeviceLocation,
         ]);
     }
 

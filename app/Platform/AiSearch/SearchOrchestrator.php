@@ -9,6 +9,7 @@ use App\Models\Town;
 use App\Platform\AiSearch\Adapters\DatasetSearchAdapter;
 use App\Platform\AiSearch\Adapters\FacilitySearchPort;
 use App\Platform\AiSearch\Adapters\ProviderSearchAdapter;
+use App\Platform\AiSearch\Adapters\ProviderNameSearchAdapter;
 use App\Platform\AiSearch\Adapters\StaySearchAdapter;
 use App\Platform\AiSearch\Adapters\TravellerFacilitySearchAdapter;
 use App\Platform\AiSearch\Aggregate\ResultAggregator;
@@ -41,6 +42,7 @@ final class SearchOrchestrator
     private IntentRuleEngine $rules;
     private SearchRouter $router;
     private ProviderSearchAdapter $providers;
+    private ProviderNameSearchAdapter $providerNames;
     private StaySearchAdapter $stays;
     private FacilitySearchPort $facilities;
     private DatasetSearchAdapter $datasets;
@@ -60,6 +62,7 @@ final class SearchOrchestrator
         ?IntentRuleEngine $rules = null,
         ?SearchRouter $router = null,
         ?ProviderSearchAdapter $providers = null,
+        ?ProviderNameSearchAdapter $providerNames = null,
         ?StaySearchAdapter $stays = null,
         ?FacilitySearchPort $facilities = null,
         ?DatasetSearchAdapter $datasets = null,
@@ -77,6 +80,7 @@ final class SearchOrchestrator
         $this->rules = $rules ?? new IntentRuleEngine();
         $this->router = $router ?? new SearchRouter();
         $this->providers = $providers ?? new ProviderSearchAdapter();
+        $this->providerNames = $providerNames ?? new ProviderNameSearchAdapter();
         $this->stays = $stays ?? new StaySearchAdapter();
         $this->facilities = $facilities ?? new TravellerFacilitySearchAdapter();
         $this->datasets = $datasets ?? new DatasetSearchAdapter();
@@ -151,6 +155,46 @@ final class SearchOrchestrator
             if ($intent->intentType !== Intent::TYPE_UNKNOWN) {
                 $this->intentCache->put($cacheKey, $request->brandKey, $meta['normalised'], $intent);
             }
+        }
+
+        $providerNameQuery = null;
+        $providerNameRows = [];
+        try {
+            $candidateProviderName = $this->providerNames->candidate($raw, $intent->locationText);
+            $candidateProviderRows = $candidateProviderName !== null
+                ? $this->providerNames->search($candidateProviderName, $request->brandDatabaseId)
+                : [];
+            $exactProviderRows = $this->providerNames->exactMatches($candidateProviderRows);
+            // Exact public business names outrank service keywords contained in
+            // that name. Partial names are accepted only for an otherwise
+            // unknown query, so “battery near me” remains a category search.
+            if ($exactProviderRows !== []) {
+                $providerNameQuery = $candidateProviderName;
+                $providerNameRows = $exactProviderRows;
+            } elseif ($intent->intentType === Intent::TYPE_UNKNOWN && $candidateProviderRows !== []) {
+                $providerNameQuery = $candidateProviderName;
+                $providerNameRows = $candidateProviderRows;
+            }
+        } catch (\Throwable) {
+            $providerNameQuery = null;
+            $providerNameRows = [];
+        }
+        if ($providerNameRows !== []) {
+                $intent = new Intent(
+                    intentType: Intent::TYPE_PROVIDER,
+                    providerCategoryKeys: [],
+                    stayTypeKeys: [],
+                    facilityTypeKeys: [],
+                    locationText: $intent->locationText,
+                    useCurrentLocation: $intent->useCurrentLocation,
+                    radiusKm: $intent->radiusKm,
+                    urgency: $intent->urgency,
+                    adapterKeys: ['providers'],
+                    confidence: 0.95,
+                    clarificationRequired: false,
+                    clarificationReason: null,
+                    source: 'provider_name',
+                );
         }
 
         $minConfidence = (float) config('ai_search.min_confidence', 0.55);
@@ -338,7 +382,9 @@ final class SearchOrchestrator
 
         if (in_array('providers', $adapters, true)) {
             try {
-                $providerRows = $this->providers->search($intent, $town, $originLat, $originLng);
+                $providerRows = $providerNameQuery !== null
+                    ? $providerNameRows
+                    : $this->providers->search($intent, $town, $originLat, $originLng);
                 if ($providerRows === [] && $intent->providerCategoryKeys !== []) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {

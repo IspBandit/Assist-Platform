@@ -30,6 +30,12 @@ Supported controlled values:
 | Admin API | `ADMIN_API_ENABLED`, `ADMIN_API_RESTRICTED`, `ADMIN_API_ALLOWED_USER_IDS`, `ADMIN_API_MFA_REQUIRED`, `ADMIN_API_*_TTL`, `ADMIN_API_MAX_BATCH_SIZE`, `ADMIN_API_RECYCLE_RETENTION_DAYS` | Disabled by default; never a substitute for production DB access; restricted allowlist or super-admin only until MFA; service token TTL max 3600s; MFA required before general remote admin use (CORE-011 / OPS-010) |
 | Road routing | `GOOGLE_ROUTES_API_KEY`, `GOOGLE_ROUTES_MAX_DESTINATIONS` | Separate server-only, Routes-only key; production IP restriction; bounded destinations; no persistent Google route-result cache. When the environment value is absent, the application may reuse an encrypted `google_routes` or `google_places` connector API key; Admin API health reports only the selected source. |
 
+The protected production release passes `GOOGLE_ROUTES_API_KEY` over SSH standard
+input to `scripts/configure-google-routes.php`. The script validates the key,
+encrypts it with `APP_KEY`, and stores it as the dedicated `google_routes`
+connector credential before public search smoke tests. It never writes or prints
+the plaintext value.
+
 ## Integration activation rule
 
 Code and database tables do not prove an integration is operational. Before an

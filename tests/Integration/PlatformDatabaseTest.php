@@ -28,6 +28,9 @@ use App\Models\GarageAsset;
 use App\Models\Provider;
 use App\Services\Api\AdminApiFacilityService;
 use App\Platform\AiSearch\Adapters\StayFacilitySearchBridge;
+use App\Services\RoadDistance\GoogleRoutesCredentialProvisioner;
+use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
+use App\Platform\AiSearch\Adapters\ProviderNameSearchAdapter;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -269,6 +272,51 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(5,(int)Database::scalar(
             "SELECT COUNT(*) FROM brand_provider_categories WHERE brand_id=1 AND category_key IN ('caravan-gas-appliances','trailer-brakes-suspension','mobile-diesel-mechanics','fuel-travel-stops','ev-charging')"
         ));
+    }
+
+    public function testProtectedRoutesCredentialIsEncryptedAndResolvable(): void
+    {
+        $apiKey = 'AIza' . str_repeat('R', 35);
+        try {
+            (new GoogleRoutesCredentialProvisioner())->provision($apiKey);
+
+            $stored = (string) Database::scalar(
+                "SELECT cr.encrypted_value
+                 FROM data_source_credentials cr
+                 JOIN data_source_connectors c ON c.id = cr.connector_id
+                 WHERE c.connector_key = 'google_routes' AND cr.credential_key = 'api_key'"
+            );
+            self::assertStringStartsWith('enc:v1:', $stored);
+            self::assertStringNotContainsString($apiKey, $stored);
+            self::assertSame(
+                ['key' => $apiKey, 'source' => 'encrypted_google_routes_connector'],
+                (new GoogleRoutesCredentialResolver())->resolve()
+            );
+        } finally {
+            Database::query(
+                "DELETE cr FROM data_source_credentials cr
+                 JOIN data_source_connectors c ON c.id = cr.connector_id
+                 WHERE c.connector_key = 'google_routes'"
+            );
+            Database::query("DELETE FROM data_source_connectors WHERE connector_key = 'google_routes'");
+        }
+    }
+
+    public function testAskCanFindAProviderDirectlyByBusinessNameWithinBrandScope(): void
+    {
+        $expected = Database::selectOne(
+            "SELECT COALESCE(NULLIF(pbl.display_name,''), p.business_name) AS name
+             FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id
+             WHERE pbl.brand_id = 1 AND pbl.status = 'active' AND pbl.search_visible = 1
+               AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL
+             ORDER BY pbl.id LIMIT 1"
+        );
+        self::assertNotNull($expected);
+
+        $rows = (new ProviderNameSearchAdapter())->search((string) $expected['name'], 1);
+        self::assertNotEmpty($rows);
+        self::assertSame((string) $expected['name'], (string) $rows[0]['business_name']);
+        self::assertTrue((bool) $rows[0]['assist_name_match']);
     }
 
     public function testNationalRouteCandidateRequiresIndependentEvidenceBeforeApproval(): void

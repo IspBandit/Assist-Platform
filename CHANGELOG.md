@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Fixed
+- Ask now supports direct provider business-name searches without weakening
+  brand, GPS, explicit-location or radius boundaries.
+- Ask now acquires device GPS automatically for requests with no location in
+  the question, while an explicit typed location remains authoritative.
+- Protected production releases now install the validated Google Routes secret
+  into the encrypted connector vault before road-distance smoke tests.
+- Search release checks identify missing Griffiths evidence and missing road
+  distance output explicitly instead of failing with an unlabelled grep error.
+
 ### Added
 - **Stay duplicate consolidation** — migration `129` merges all high-confidence
   stay duplicates that share a normalised name and state within 2 km, preserving

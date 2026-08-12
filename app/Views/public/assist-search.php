@@ -89,7 +89,7 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
         <p class="lead" style="max-width:40rem">Describe what you need in plain language. Category and town search remain available if you prefer them.</p>
         </header>
 
-        <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" style="margin:1.25rem 0 1.5rem">
+        <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>"<?= $query === '' || !empty($needsDeviceLocation) ? ' data-auto-location' : '' ?> data-ask-location-priority="typed-over-gps" style="margin:1.25rem 0 1.5rem">
             <div class="form-group mb-0 location-field">
                 <label for="ask-q">Your request</label>
                 <input type="text" id="ask-q" name="q" value="<?= e_attr($query) ?>" maxlength="240" placeholder="e.g. Dump point near Batehaven" autocomplete="off" required>
@@ -99,7 +99,7 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                     <label for="ask-website">Website</label>
                     <input type="text" id="ask-website" name="website" value="" tabindex="-1" autocomplete="off">
                 </div>
-                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => 'false']); ?>
+                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => !empty($needsDeviceLocation) ? 'true' : 'false']); ?>
                 <p class="location-status muted" role="status" aria-live="polite" hidden></p>
             </div>
             <div class="search-submit-row" style="margin-top:1rem">
@@ -108,6 +108,10 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                 <a class="btn btn-secondary btn-lg" href="<?= e($structuredFindUrl) ?>">Use category search</a>
             </div>
         </form>
+
+        <?php if (!empty($needsDeviceLocation)): ?>
+            <p class="muted" role="status">This request has no place in the question, so VanAssist is using your device location. Allow location access when your browser asks.</p>
+        <?php endif; ?>
 
         <p class="muted" style="margin:0 0 1.5rem">Examples: public toilets near me · LPG refill near Batemans Bay · mobile caravan repairer near Emerald · caravan park nearby · auto electrician within 50 km</p>
 
