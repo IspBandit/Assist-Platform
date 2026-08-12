@@ -10,8 +10,9 @@ may remain as dated files and are linked here rather than copied.
 - Ask now defaults to current device GPS when no place is included in the
   question. A place written in the question always takes priority.
 - The protected release workflow now installs the already validated Google
-  Routes key into the application's encrypted connector credential store before
-  live Ask checks, without placing plaintext secrets in the release or logs.
+  Routes key through a one-time, release-bound HTTPS hand-off before live Ask
+  checks. The package contains only a nonce hash; the key is encrypted
+  immediately, never printed, and the database rejects replay.
 
 ### VanAssist Ask and road-distance integrity (VAN-011 / CORE-012, ADR 0036)
 
