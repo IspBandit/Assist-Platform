@@ -9,6 +9,10 @@ use App\Core\Router;
  * verification (CSRF only enforces on state-changing methods).
  */
 return static function (Router $router): void {
+    $router->group(['middleware' => ['headers', 'rate:release.google-routes,5,3600,3600']], static function (Router $router): void {
+        $router->post('/ops/release/google-routes', 'Site\ReleaseBootstrapController@googleRoutes');
+    });
+
     $router->group(['middleware' => ['headers', 'csrf']], static function (Router $router): void {
         $router->get('/manifest.webmanifest', 'Site\AssetController@manifest', 'assets.manifest');
         $router->get('/service-worker.js', 'Site\AssetController@serviceWorker', 'assets.service-worker');

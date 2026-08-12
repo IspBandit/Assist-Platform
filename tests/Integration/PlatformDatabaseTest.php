@@ -277,8 +277,11 @@ final class PlatformDatabaseTest extends TestCase
     public function testProtectedRoutesCredentialIsEncryptedAndResolvable(): void
     {
         $apiKey = 'AIza' . str_repeat('R', 35);
+        $release = str_repeat('a', 40);
+        $nonceHash = str_repeat('b', 64);
         try {
-            (new GoogleRoutesCredentialProvisioner())->provision($apiKey);
+            $provisioner = new GoogleRoutesCredentialProvisioner();
+            $provisioner->provisionForRelease($apiKey, $release, $nonceHash);
 
             $stored = (string) Database::scalar(
                 "SELECT cr.encrypted_value
@@ -292,6 +295,18 @@ final class PlatformDatabaseTest extends TestCase
                 ['key' => $apiKey, 'source' => 'encrypted_google_routes_connector'],
                 (new GoogleRoutesCredentialResolver())->resolve()
             );
+            $settings = json_decode((string) Database::scalar(
+                "SELECT settings_json FROM data_source_connectors WHERE connector_key = 'google_routes'"
+            ), true);
+            self::assertSame($release, $settings['bootstrap_release'] ?? null);
+            self::assertSame($nonceHash, $settings['bootstrap_nonce_hash'] ?? null);
+
+            try {
+                $provisioner->provisionForRelease($apiKey, $release, $nonceHash);
+                self::fail('A consumed release credential envelope was accepted twice.');
+            } catch (\RuntimeException $error) {
+                self::assertStringContainsString('already been consumed', $error->getMessage());
+            }
         } finally {
             Database::query(
                 "DELETE cr FROM data_source_credentials cr
