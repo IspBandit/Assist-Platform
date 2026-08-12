@@ -89,6 +89,7 @@ jobs:
           test -n "$GOOGLE_ROUTES_BOOTSTRAP_NONCE"
           jq -nc --arg api_key "$GOOGLE_ROUTES_API_KEY" '{api_key:$api_key}' |
             curl --fail --silent --show-error --max-time 20 \
+              --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 AssistPlatform-Production-Release/1.0' \
               -H 'Content-Type: application/json' \
               -H "X-Assist-Release-Nonce: $GOOGLE_ROUTES_BOOTSTRAP_NONCE" \
               --data-binary @- \
