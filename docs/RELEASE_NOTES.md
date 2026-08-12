@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Documentation and VanAssist navigation (Aug 2026 production alignment)
+
+- Reconciled programme status and production-current-state docs with live
+  verification (release `6a3f09d`, Admin API + Ask + traveller facilities on
+  VanAssist). See assist-ric `docs/RIC_FACILITY_CATALOGUE_STATUS.md` for RIC upload posture.
+- VanAssist header, footer and category-search pages now link to **Ask VanAssist**
+  when `assist_ai_search` is enabled (previously only homepage/search panel).
+
 - Ask accepts an active VanAssist provider's business name directly and still
   applies the question's place or the device GPS/radius boundary.
 - A provider business name without a place is no longer misread as the place;

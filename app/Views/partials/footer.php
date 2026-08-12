@@ -1,5 +1,6 @@
 <?php
 use App\Services\Settings;
+use App\Platform\AiSearch\Support\AiSearchFeature;
 $footerBrand = current_brand();
 $footerMeta = $footerBrand->metadata();
 $bizAbn = (string) Settings::get('business_abn', '');
@@ -21,7 +22,7 @@ $bizEmail = $footerBrand->id() === 'vanassist' ? (string) Settings::get('contact
             <?php if ($footerBrand->id() === 'vanassist'): ?><button class="btn btn-light install-app-button" type="button" data-install-app>Save VanAssist to your phone</button><?php endif; ?>
         </div>
         <?php if ($footerBrand->id() === 'vanassist'): ?>
-            <div><h4>Find</h4><ul><li><a data-location-link href="<?= e(url('find')) ?>">RV service providers</a></li><li><a href="<?= e(url('services')) ?>">Browse services</a></li><li><a data-location-link href="<?= e(url('stays')) ?>">Places to stay</a></li><li><a href="<?= e(url('regions')) ?>">Browse regions</a></li><li><a href="<?= e(url('service-runs')) ?>">Service runs</a></li></ul></div>
+            <div><h4>Find</h4><ul><li><a data-location-link href="<?= e(url('find')) ?>">RV service providers</a></li><?php if (AiSearchFeature::enabled()): ?><li><a href="<?= e(url('ask')) ?>">Ask VanAssist</a></li><?php endif; ?><li><a href="<?= e(url('services')) ?>">Browse services</a></li><li><a data-location-link href="<?= e(url('stays')) ?>">Places to stay</a></li><li><a href="<?= e(url('regions')) ?>">Browse regions</a></li><li><a href="<?= e(url('service-runs')) ?>">Service runs</a></li></ul></div>
             <div><h4>Get involved</h4><ul><li><a href="<?= e(url('request-assistance')) ?>">Request assistance</a></li><li><a href="<?= e(url('for-providers')) ?>">For providers</a></li><li><a href="<?= e(url('for-caravan-parks')) ?>">For caravan parks</a></li><li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li></ul></div>
         <?php else: ?>
             <div><h4>Explore</h4><ul><?php foreach ($footerBrand->navigation() as $link): ?><li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li><?php endforeach; ?></ul></div>

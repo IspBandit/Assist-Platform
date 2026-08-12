@@ -56,6 +56,18 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('/assets/brands/vanassist/favicon.svg', $layout);
     }
 
+    public function testVanAssistHeaderLinksAskWhenFeatureFlagEnabled(): void
+    {
+        $header = $this->source('app/Views/partials/header.php');
+        $footer = $this->source('app/Views/partials/footer.php');
+
+        self::assertStringContainsString('AiSearchFeature::enabled()', $header);
+        self::assertStringContainsString("url('ask')", $header);
+        self::assertStringContainsString('Ask VanAssist', $header);
+        self::assertStringContainsString('AiSearchFeature::enabled()', $footer);
+        self::assertStringContainsString("url('ask')", $footer);
+    }
+
     public function testRadiusSearchUsesCoordinateCategoryLookup(): void
     {
         $controller = $this->source('app/Controllers/Site/SearchController.php');
