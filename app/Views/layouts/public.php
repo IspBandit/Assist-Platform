@@ -25,7 +25,7 @@ $dashboardHelp = $dashboardAudience !== null ? \App\Services\Documentation\Docum
         <?php if ($layoutBrand->id() === 'vanassist'): ?>
             <link rel="apple-touch-icon" sizes="192x192" href="<?= e(asset('assets/brands/vanassist/install-icon-192.png')) ?>">
         <?php else: ?>
-            <link rel="apple-touch-icon" href="<?= e(asset(ltrim((string) ($layoutBrandAssets['icon'] ?? $layoutBrandAssets['favicon'] ?? ''), '/'))) ?>">
+            <link rel="apple-touch-icon" href="<?= e(asset(ltrim((string) ($layoutBrandAssets['favicon'] ?? $layoutBrandAssets['icon'] ?? ''), '/'))) ?>">
         <?php endif; ?>
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">

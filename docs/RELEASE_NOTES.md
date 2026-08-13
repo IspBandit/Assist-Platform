@@ -12,6 +12,8 @@ may remain as dated files and are linked here rather than copied.
   button and save-to-phone install control with per-brand manifest metadata.
 - PWA manifests are generated per brand from `AssetController`; LocalTorque and
   private brands remain excluded.
+- Non-VanAssist apple-touch-icon links use each brand favicon so production smoke
+  checks do not flag retired symbol assets in public HTML.
 
 ### Documentation and VanAssist navigation (Aug 2026 production alignment)
 
