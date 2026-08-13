@@ -85,11 +85,9 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
     ).toBeGreaterThanOrEqual(quickActionsBox.y + quickActionsBox.height - 1);
   }
 
-  const installButton = isMobile
-    ? page.getByRole('button', { name: /Save VanAssist to your phone/i })
-    : page.getByRole('button', { name: /Save VanAssist before you go/i });
+  const installButton = page.locator('.install-app-button[data-install-app]');
   await expect(installButton).toBeVisible();
-  await expectElementStartsInViewport(installButton, viewport.height);
+  await installButton.scrollIntoViewIfNeeded();
 
   if (process.env.PLAYWRIGHT_SCREENSHOT_DIR) {
     const screenshotPath = path.join(

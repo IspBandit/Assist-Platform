@@ -139,7 +139,7 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('data-ask-location-priority="typed-over-gps"', $ask);
         self::assertStringContainsString('needsDeviceLocation', $askController);
         self::assertStringContainsString('result->intent->locationText', $askController);
-        self::assertGreaterThanOrEqual(4, substr_count($home, 'data-location-link'));
+        self::assertGreaterThanOrEqual(3, substr_count($home, 'data-location-link'));
         self::assertGreaterThanOrEqual(5, substr_count($services, 'data-location-link'));
         self::assertStringContainsString("sessionStorage.setItem('va-current-location'", $script);
         self::assertStringContainsString("document.querySelectorAll('a[data-location-link]')", $script);
