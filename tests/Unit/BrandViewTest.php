@@ -127,12 +127,10 @@ final class BrandViewTest extends TestCase
             'blocks' => [],
             'confirmedRuns' => [],
             'formingRuns' => [],
-            'nearbyTown' => null,
-            'nearbyProviders' => [],
-            'nearbyFindUrl' => 'https://vanassist.test/find',
-            'nearbyEndpoint' => 'https://vanassist.test/locations/nearby-providers',
             'providerDirectoryCount' => 1248,
             'categories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
+            'categoryGroups' => ['Services' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']]],
+            'popularCategories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
             'homeEvidence' => [
                 'directory_listings' => 1248,
                 'verified_providers' => 0,
@@ -144,6 +142,8 @@ final class BrandViewTest extends TestCase
 
         self::assertStringContainsString('class="hero hero--visual"', $html);
         self::assertStringContainsString('aria-label="Find VanAssist help"', $html);
+        self::assertStringNotContainsString('Service providers by location', $html);
+        self::assertStringNotContainsString('data-nearby-providers', $html);
         self::assertStringNotContainsString('journey-launcher', $html);
         self::assertStringNotContainsString('evidence-ribbon', $html);
         self::assertStringNotContainsString('active service listings', $html);

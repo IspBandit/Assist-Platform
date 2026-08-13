@@ -3,10 +3,6 @@
 /** @var array $categories */
 /** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
 /** @var array $popularCategories */
-/** @var array<string,mixed>|null $nearbyTown */
-/** @var array<int,array<string,mixed>> $nearbyProviders */
-/** @var string $nearbyFindUrl */
-/** @var string $nearbyEndpoint */
 $this->extend('layouts.public');
 $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
 $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
@@ -121,8 +117,6 @@ $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
         <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 42 C 240 84 480 4 720 26 C 960 48 1200 82 1440 40 L1440 80 L0 80 Z" fill="#fbf8f1"/></svg>
     </div>
 </section>
-
-<?php $this->include('partials.home-nearby-providers'); ?>
 
 <section class="section section-sand">
     <div class="container"><div class="product-cta">
