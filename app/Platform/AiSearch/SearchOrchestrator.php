@@ -547,25 +547,29 @@ final class SearchOrchestrator
 
     private function relatedProviderFallbackIntent(Intent $intent): ?Intent
     {
-        if (array_intersect(
-            $intent->providerCategoryKeys,
-            ['general-caravan-repairs', 'mobile-mechanics', 'mechanical-repairs']
-        ) !== []) {
-            return null;
-        }
+        $alreadyTried = array_values(array_unique($intent->providerCategoryKeys));
 
         $electrical = ['12-volt-electrical', '240-volt-electrical', 'solar-and-batteries',
             'dc-dc-charging', 'inverters', 'refrigeration', 'air-conditioning',
             'starlink-and-communications', 'auto-electrical-and-batteries'];
         $vehicle = ['brakes-and-bearings', 'suspension', 'tyres-and-wheels',
             'diesel-mechanics', 'towing-and-vehicle-recovery', '4wd-and-remote-area-recovery'];
+        $servicing = ['mobile-mechanics', 'mechanical-repairs', 'general-servicing', 'pre-trip-inspection',
+            'roadworthy-inspection'];
 
-        if (array_intersect($intent->providerCategoryKeys, $electrical) !== []) {
+        if (array_intersect($alreadyTried, $electrical) !== []) {
             $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries'];
-        } elseif (array_intersect($intent->providerCategoryKeys, $vehicle) !== []) {
+        } elseif (array_intersect($alreadyTried, $vehicle) !== []) {
             $categories = ['mobile-mechanics', 'mechanical-repairs', 'roadside-assistance'];
+        } elseif (array_intersect($alreadyTried, $servicing) !== []) {
+            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries', 'diesel-mechanics'];
         } else {
             $categories = ['general-caravan-repairs', 'mobile-mechanics'];
+        }
+
+        $categories = array_values(array_diff($categories, $alreadyTried));
+        if ($categories === []) {
+            return null;
         }
 
         return new Intent(

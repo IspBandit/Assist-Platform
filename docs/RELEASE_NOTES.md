@@ -5,6 +5,51 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask VanAssist everyday phrasing batch (VAN-011)
+
+- Expanded intent rules (v8) for common traveller wording: *anywhere to stay*,
+  *camping near*, *caravan repairs*, *roadside help*, *grey/black water disposal*,
+  *water fill*, *petrol station*, *where to weigh*, *motorhome/rv/4wd service*,
+  *find a …* / *where do I find …*, and bare *help near {town}* when a place is
+  present. Vague *help please* without location still asks for clarification.
+- Removed bare *tow* from towing rules to avoid false matches on tow-vehicle
+  servicing queries.
+- Location suffix cleanup now uses trailing state tokens only in the fallback
+  path as well (Mount Isa and similar names stay intact).
+
+### Ask VanAssist regression corpus (VAN-011)
+
+- Added a committed 1,000-question deterministic corpus at
+  `tests/fixtures/ask-question-corpus.json` (40 phrasing templates × 25 regional
+  hubs). Regenerate with `php tools/generate-ask-question-corpus.php`; CI can
+  verify drift with `--check`.
+- Added `AskQuestionCorpusTest` so every corpus entry must route without unknown
+  intent before release.
+
+### Ask VanAssist regional provider fallback (VAN-011)
+
+- When a servicing or mobile-mechanic category search returns no rows, Ask now
+  widens once to general caravan repairs, auto electrical and diesel mechanics
+  at 50 km instead of stopping at an empty specialist-only result.
+
+### Ask VanAssist location parsing (VAN-011)
+
+- State suffix cleanup no longer truncates town names such as Mount Isa when
+  removing a trailing `, SA` / ` NSW` style suffix.
+
+### Ask VanAssist stay phrasing (VAN-011)
+
+- Ask now recognises *where to stay*, *accommodation* and *overnight …* wording
+  for stay searches. Previously these returned unknown intent even when the town
+  was parsed correctly (for example *where to stay in Coober Pedy*).
+
+### Ask VanAssist vehicle service phrasing (VAN-011)
+
+- Ask now recognises everyday tow-vehicle and caravan service wording such as
+  *service my car*, *car service*, *logbook service* and *service my caravan*.
+  These route to general servicing, mechanical repairs, mobile mechanics and
+  general caravan repairs instead of returning an unknown-intent empty result.
+
 ### VanAssist homepage launch note styling (VAN-002 / EXP-001)
 
 - Restyled the admin-configurable free-launch message on the VanAssist homepage
