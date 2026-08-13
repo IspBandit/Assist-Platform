@@ -5,13 +5,19 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist mobile cache hotfix (VAN-002 / EXP-001)
+
+- Bumped the PWA service-worker static cache and added a client-side cleanup so
+  phones that still hold pre-simplification homepage HTML no longer show the
+  retired **Service providers by location** grid after the next visit or refresh.
+
 ### VanAssist homepage discovery simplification (VAN-002 / EXP-001)
 
 - Removed the **Service providers by location** block from the VanAssist
-  homepage. Discovery now starts from the hero search, four intent shortcuts,
-  stays CTA and popular categories instead of a default launch-town provider
-  grid. The `/locations/nearby-providers` JSON endpoint remains available for
-  future reuse but is no longer wired to the homepage.
+  homepage. Discovery now starts from the hero search and four intent shortcuts
+  instead of a default launch-town provider grid. The `/locations/nearby-providers`
+  JSON endpoint remains available for future reuse but is no longer wired to the
+  homepage.
 - Simplified the VanAssist homepage to a single hero: trimmed duplicate copy,
   removed below-the-fold stays, category, assistance and provider panels, and
   moved advanced search and assistance links into one muted note under the
