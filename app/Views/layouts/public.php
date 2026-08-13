@@ -20,12 +20,16 @@ $dashboardHelp = $dashboardAudience !== null ? \App\Services\Documentation\Docum
     <?php $this->include('partials.brand-theme'); ?>
     <meta name="theme-color" content="<?= e($layoutBrandTheme['brand'] ?? '#0f6e6e') ?>">
     <link rel="icon" type="image/svg+xml" href="<?= e(asset($layoutBrandAssets['favicon'] ?? '/assets/brands/vanassist/favicon.svg')) ?>">
-    <?php if ($layoutBrand->id() === 'vanassist'): ?>
+    <?php if (in_array($layoutBrand->id(), ['vanassist', 'towsmart', 'trailerwise'], true)): ?>
         <link rel="manifest" href="<?= e(url('manifest.webmanifest')) ?>">
-        <link rel="apple-touch-icon" sizes="192x192" href="<?= e(asset('assets/brands/vanassist/install-icon-192.png')) ?>">
+        <?php if ($layoutBrand->id() === 'vanassist'): ?>
+            <link rel="apple-touch-icon" sizes="192x192" href="<?= e(asset('assets/brands/vanassist/install-icon-192.png')) ?>">
+        <?php else: ?>
+            <link rel="apple-touch-icon" href="<?= e(asset(ltrim((string) ($layoutBrandAssets['icon'] ?? $layoutBrandAssets['favicon'] ?? ''), '/'))) ?>">
+        <?php endif; ?>
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="default">
-        <meta name="apple-mobile-web-app-title" content="VanAssist">
+        <meta name="apple-mobile-web-app-title" content="<?= e($layoutBrand->shortName()) ?>">
     <?php endif; ?>
     <link rel="alternate" type="application/xml" title="Sitemap" href="<?= e(url('sitemap.xml')) ?>">
     <?= $this->yield('head') ?>

@@ -12,9 +12,10 @@
         });
     }
 
-    // VanAssist home-screen installation. Android receives the native prompt;
+    // Home-screen installation. Android receives the native prompt;
     // iOS receives the exact Safari steps because Apple exposes no prompt API.
-    if (document.body.getAttribute('data-brand') === 'vanassist') {
+    var installBrand = document.body.getAttribute('data-brand');
+    if (installBrand === 'vanassist' || installBrand === 'towsmart' || installBrand === 'trailerwise') {
         var installPrompt = null;
         var installButtons = document.querySelectorAll('[data-install-app]');
         var installDialog = document.querySelector('[data-install-dialog]');

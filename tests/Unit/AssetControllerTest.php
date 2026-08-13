@@ -67,6 +67,19 @@ final class AssetControllerTest extends TestCase
         self::assertSame('VanAssist', json_decode($response->content(), true, 512, JSON_THROW_ON_ERROR)['short_name']);
     }
 
+    public function testServesTowSmartAndTrailerWiseManifests(): void
+    {
+        foreach (['towsmart' => 'TowSmart', 'trailerwise' => 'TrailerWise'] as $id => $shortName) {
+            BrandContext::set($this->brand($id));
+
+            $manifest = json_decode((new AssetController())->manifest($this->request())->content(), true, 512, JSON_THROW_ON_ERROR);
+
+            self::assertSame($shortName, $manifest['short_name']);
+            self::assertNotEmpty($manifest['icons']);
+            self::assertNotEmpty($manifest['shortcuts']);
+        }
+    }
+
     public function testServesVanAssistWorkerWithUpdateSafeHeaders(): void
     {
         BrandContext::set($this->brand('vanassist'));
@@ -82,7 +95,7 @@ final class AssetControllerTest extends TestCase
 
     public function testPwaAssetsAreNotPublishedByOtherBrands(): void
     {
-        BrandContext::set($this->brand('towsmart'));
+        BrandContext::set($this->brand('localtorque'));
 
         foreach (['manifest', 'serviceWorker'] as $method) {
             try {
@@ -101,22 +114,47 @@ final class AssetControllerTest extends TestCase
 
     private function brand(string $id): \App\Platform\Brand\Brand
     {
-        return BrandRegistry::fromArray([
-            $id => [
-                'database_id' => $id === 'vanassist' ? 1 : 2,
-                'name' => $id === 'vanassist' ? 'VanAssist' : 'TowSmart',
-                'legal_name' => 'Test Brand',
-                'short_name' => 'Test',
-                'status' => 'active',
-                'url' => 'https://' . $id . '.test',
-                'domains' => ['primary' => $id . '.test'],
-                'assets' => [],
-                'theme' => [],
-                'metadata' => [],
-                'contact' => [],
-                'legal' => [],
-                'storage_namespace' => $id,
+        $defaults = [
+            'database_id' => 1,
+            'name' => 'VanAssist',
+            'legal_name' => 'Test Brand',
+            'short_name' => 'VanAssist',
+            'status' => 'active',
+            'url' => 'https://' . $id . '.test',
+            'domains' => ['primary' => $id . '.test'],
+            'assets' => [
+                'icon' => '/assets/brands/' . $id . '/symbol-v2.svg',
+                'favicon' => '/assets/brands/' . $id . '/favicon.svg',
             ],
+            'theme' => ['brand' => '#0f6e6e', 'surface' => '#fbf8f1'],
+            'metadata' => ['description' => 'Test brand'],
+            'contact' => [],
+            'legal' => [],
+            'navigation' => [],
+            'footer' => [],
+            'features' => [],
+            'modules' => [],
+            'analytics' => [],
+            'search' => [],
+            'storage_namespace' => $id,
+        ];
+
+        if ($id === 'towsmart') {
+            $defaults['database_id'] = 2;
+            $defaults['name'] = 'TowSmart';
+            $defaults['short_name'] = 'TowSmart';
+        } elseif ($id === 'trailerwise') {
+            $defaults['database_id'] = 3;
+            $defaults['name'] = 'TrailerWise';
+            $defaults['short_name'] = 'TrailerWise';
+        } elseif ($id === 'localtorque') {
+            $defaults['database_id'] = 4;
+            $defaults['name'] = 'LocalTorque';
+            $defaults['short_name'] = 'LocalTorque';
+        }
+
+        return BrandRegistry::fromArray([
+            $id => $defaults,
         ])->get($id);
     }
 }

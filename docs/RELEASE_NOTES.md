@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### TowSmart and TrailerWise shell parity (EXP-001 / EXP-005)
+
+- TowSmart and TrailerWise now match VanAssist's shared public shell polish:
+  footer-action CTA bar, brand-specific footer link columns, primary header CTA
+  button and save-to-phone install control with per-brand manifest metadata.
+- PWA manifests are generated per brand from `AssetController`; LocalTorque and
+  private brands remain excluded.
+
 ### Documentation and VanAssist navigation (Aug 2026 production alignment)
 
 - Reconciled programme status and production-current-state docs with live
