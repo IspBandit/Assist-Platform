@@ -84,7 +84,12 @@ invented pin.
 The Ask field is also shown directly on the VanAssist homepage when enabled.
 On a phone, the four direct shortcuts for services, places to stay, fuel and the
 full help directory appear before Ask so the common journeys remain available
-without scrolling through the optional plain-language search first.
+without scrolling through the optional plain-language search first. The homepage
+shows one primary search form and those shortcuts only; duplicate below-the-fold
+panels for stays, popular categories, assistance requests and provider sign-up
+were removed. Use **More search options** on `/find` for timeframe and distance
+filters, the footer for provider registration, or **Request assistance** from
+the note under the homepage search when needed.
 It is limited to providers, places to stay, roadside/caravan help and traveller
 facilities; it is not a general-purpose AI assistant.
 
@@ -130,7 +135,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-12 (road-distance release validation, compact result window and approved stay-facility results in Ask).
+2026-08-13 (homepage simplified to hero search and shortcuts).
 
 ## Owner
 

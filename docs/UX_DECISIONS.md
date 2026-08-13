@@ -108,6 +108,18 @@ server-rendered text, uses no new image or script dependency, has visible focus,
 **Evidence:** VanAssistPublicUxTest, PHP syntax, static analysis and responsive
 CSS inspection.
 
+## 2026-08-13 — VanAssist homepage drops default provider grid
+
+**Context:** VAN-002/EXP-001. The homepage **Service providers by location**
+module duplicated the hero search and showed a launch-town provider grid
+(Bundaberg by default) before the visitor chose a place. Below-the-fold panels
+also repeated stays, categories, assistance and provider sign-up. **Decision:**
+remove the provider grid and duplicate panels. Keep one hero with the primary
+search form, four intent shortcuts and optional Ask. Link to advanced search,
+assistance and provider registration from the footer or muted helper links.
+Retain `/locations/nearby-providers` for possible future use but remove homepage
+JS wiring. **Evidence:** `BrandViewTest`, `VanAssistPublicUxTest`.
+
 ## 2026-07-27 — Authority-first rules and separated provider sponsorship
 
 **Context:** DATA-008. Readers need official vehicle rules while relevant local

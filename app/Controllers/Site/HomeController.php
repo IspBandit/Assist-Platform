@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers\Site;
 
 use App\Core\Controller;
-use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
-use App\Models\Provider;
-use App\Models\Town;
 use App\Services\Settings;
 use Throwable;
 
@@ -33,42 +30,15 @@ final class HomeController extends Controller
         if (current_brand()->id() === 'polaris') {
             return (new PolarisController())->home($request);
         }
-        $nearbyTown = null;
-        try {
-            $nearbyTown = Town::defaultLaunchTown();
-        } catch (Throwable) {
-            $nearbyTown = null;
-        }
-        $nearbyProviders = [];
-        $nearbyFindUrl = url('find');
-        if ($nearbyTown !== null) {
-            $nearbyProviders = $this->safe(static fn (): array => Provider::forHomeNearTown(
-                (int) $nearbyTown['id'],
-                isset($nearbyTown['region_id']) ? (int) $nearbyTown['region_id'] : null,
-            ));
-            if ($nearbyProviders !== []) {
-                $label = (string) $nearbyTown['name'];
-                if (!empty($nearbyTown['state_abbr'])) {
-                    $label .= ', ' . $nearbyTown['state_abbr'];
-                }
-                $nearbyFindUrl = url('find') . '?' . http_build_query(['location' => $label]);
-            }
-        }
 
         $categories = $this->safe(fn () => \App\Models\ServiceCategory::activeAll());
         $categoryGroups = \App\Models\ServiceCategory::groupedForVanAssist($categories);
-        $popularCategories = array_slice($categories, 0, 12);
 
         return $this->view('public.home', [
             'title'         => 'Caravan help, wherever you travel',
             'canonical'     => url('/'),
-            'nearbyTown'        => $nearbyTown,
-            'nearbyProviders'   => $nearbyProviders,
-            'nearbyFindUrl'     => $nearbyFindUrl,
-            'nearbyEndpoint'    => url('locations/nearby-providers'),
             'categories'        => $categories,
             'categoryGroups'    => $categoryGroups,
-            'popularCategories' => $popularCategories,
             'freeMessage'   => Settings::get('free_launch_message', ''),
             'jsonLd'        => $this->organisationSchema(),
         ]);
