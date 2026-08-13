@@ -23,12 +23,32 @@ final class SitemapController extends Controller
     {
         $urls = [];
         if (current_brand()->id() === 'towsmart') {
-            $urls = [['loc' => url(''), 'lastmod' => null, 'priority' => 1.0], ['loc' => url('calculator'), 'lastmod' => null, 'priority' => 0.9], ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9]];
+            $brand = current_brand();
+            $urls = [
+                ['loc' => url(''), 'lastmod' => null, 'priority' => 1.0],
+                ['loc' => url('calculator'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('tow-guide'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('checklist'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('providers'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('services'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
+            ];
+            $this->addRows($urls, 'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1', 'services/', 0.7, [$brand->databaseId()]);
             return $this->response($urls);
         }
         if (current_brand()->id() === 'trailerwise') {
-            $urls = [['loc' => url(''), 'lastmod' => null, 'priority' => 1.0], ['loc' => url('marketplace'), 'lastmod' => null, 'priority' => 0.9], ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9]];
-            $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = 3 AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.8);
+            $brand = current_brand();
+            $urls = [
+                ['loc' => url(''), 'lastmod' => null, 'priority' => 1.0],
+                ['loc' => url('providers'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('services'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('marketplace'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
+            ];
+            $this->addRows($urls, 'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1', 'services/', 0.7, [$brand->databaseId()]);
+            $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = ? AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.7, [$brand->databaseId()]);
             return $this->response($urls);
         }
         if (current_brand()->id() === 'localtorque') {

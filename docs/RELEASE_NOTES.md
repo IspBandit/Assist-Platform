@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### TowSmart and TrailerWise service discovery enrichment (EXP-001 / EXP-005)
+
+- `/services` on TowSmart and TrailerWise now lists each brand's
+  `brand_provider_categories` entries instead of VanAssist caravan categories.
+  Category detail pages link into the shared provider directory with location
+  search and honest empty-state copy when coverage is still growing.
+- TowSmart homepage adds an **After the check** section with linked specialist
+  category tiles and a quick path to the towing specialist directory.
+- TrailerWise homepage removes future-tense placeholder copy, links category
+  tiles to live service pages and surfaces marketplace, providers and categories
+  as quick paths.
+- Brand navigation and sitemaps now include calculator tools, tow guide,
+  checklist, provider directory, service categories and TrailerWise marketplace
+  URLs where applicable.
+
 ### TowSmart and TrailerWise shell parity (EXP-001 / EXP-005)
 
 - TowSmart and TrailerWise now match VanAssist's shared public shell polish:
