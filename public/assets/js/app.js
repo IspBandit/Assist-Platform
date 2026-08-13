@@ -2,6 +2,11 @@
 (function () {
     'use strict';
 
+    // Retired Aug 2026: drop cached homepage HTML that still embeds the old grid.
+    document.querySelectorAll('[data-nearby-providers]').forEach(function (section) {
+        section.remove();
+    });
+
     // Mobile navigation toggle (public site).
     var toggle = document.querySelector('.nav-toggle');
     var nav = document.getElementById('main-nav');
