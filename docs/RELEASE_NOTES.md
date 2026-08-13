@@ -5,6 +5,12 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist homepage launch note styling (VAN-002 / EXP-001)
+
+- Restyled the admin-configurable free-launch message on the VanAssist homepage
+  from a teal alert banner into muted inline copy below the hero, matching the
+  simplified search note typography.
+
 ### VanAssist mobile cache hotfix (VAN-002 / EXP-001)
 
 - Bumped the PWA service-worker static cache and added a client-side cleanup so

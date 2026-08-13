@@ -157,6 +157,23 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('companion.', $html);
     }
 
+    public function testVanAssistHomeLaunchNoteUsesMutedInlineCopy(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+
+        $html = View::render('public.home', [
+            'title' => 'Caravan help',
+            'categories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
+            'categoryGroups' => ['Services' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']]],
+            'freeMessage' => 'VanAssist is free during the initial launch.',
+        ]);
+
+        self::assertStringContainsString('class="home-launch-note container"', $html);
+        self::assertStringContainsString('VanAssist is free during the initial launch.', $html);
+        self::assertStringNotContainsString('alert alert-info', $html);
+        self::assertStringNotContainsString('section-sand home-launch-note', $html);
+    }
+
     public function testProviderDashboardPrioritisesOpenDemand(): void
     {
         BrandContext::set($this->vanAssistBrand());
