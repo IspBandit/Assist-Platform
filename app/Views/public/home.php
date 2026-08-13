@@ -90,9 +90,7 @@ $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
 </section>
 
 <?php if (!empty($freeMessage)): ?>
-<section class="section section-sand home-launch-note">
-    <div class="container"><div class="alert alert-info mb-0"><?= $this->e($freeMessage) ?></div></div>
-</section>
+<p class="home-launch-note container"><?= $this->e($freeMessage) ?></p>
 <?php endif; ?>
 
 <?php $this->endSection(); ?>
