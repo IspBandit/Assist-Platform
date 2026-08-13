@@ -33,6 +33,7 @@ final class TowSmartController extends Controller
             'title' => 'Tow smarter. Tow safer.',
             'metaDescription' => 'Check your loaded towing combination against vehicle and trailer mass limits with clear Australian towing guidance.',
             'canonical' => current_brand()->url() . '/',
+            'categories' => $this->brandCategories(),
         ]);
     }
 
@@ -147,6 +148,15 @@ final class TowSmartController extends Controller
             [$userId, current_brand()->databaseId()]
         );
         return $this->view('towsmart.combinations', ['title' => 'Saved towing combinations', 'items' => $items]);
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    private function brandCategories(): array
+    {
+        return Database::select(
+            'SELECT id, category_key AS slug, name, description FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name LIMIT 8',
+            [current_brand()->databaseId()]
+        );
     }
 
     private function requireBrand(): void

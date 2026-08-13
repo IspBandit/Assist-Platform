@@ -322,6 +322,17 @@ footer Find links and a category-search cross-link. Homepage Ask field order on
 mobile is unchanged (four capability cues, then search console, then optional Ask).
 **Evidence:** live production verification Aug 2026; `VanAssistPublicUxTest`.
 
+## 2026-08-13 — TowSmart and TrailerWise use brand-scoped service categories
+
+**Context:** EXP-001/005. `/services` still rendered VanAssist caravan categories
+on TowSmart and TrailerWise, breaking footer navigation and misleading visitors.
+Homepage service tiles were static or unlinked. **Decision:** reuse the shared
+`brand_provider_categories` directory for TowSmart, TrailerWise and LocalTorque
+through one `brands.service-categories` view. Homepages link into category detail
+and provider search; sitemaps and header navigation expose the same journeys.
+VanAssist caravan taxonomy and Ask/search UX remain VanAssist-only. **Evidence:**
+`BrandServiceCategoriesTest`, `DirectoryPresentationTest`.
+
 ## 2026-08-13 — TowSmart and TrailerWise share VanAssist shell polish
 
 **Context:** EXP-001/005. TowSmart and TrailerWise homepages already used the

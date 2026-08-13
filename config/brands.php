@@ -142,6 +142,7 @@ return [
                 ['label' => 'Weight calculator', 'path' => '/calculator'],
                 ['label' => 'Tow guide', 'path' => '/tow-guide'],
                 ['label' => 'Checklist', 'path' => '/checklist'],
+                ['label' => 'Specialist categories', 'path' => '/services'],
                 ['label' => 'Rules & compliance', 'path' => '/rules'],
                 ['label' => 'Towing specialists', 'path' => '/providers'],
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
@@ -226,6 +227,7 @@ return [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Find trailer services', 'path' => '/providers'],
                 ['label' => 'Service categories', 'path' => '/services'],
+                ['label' => 'Marketplace', 'path' => '/marketplace'],
                 ['label' => 'Rules & compliance', 'path' => '/rules'],
             ],
             'footer' => [

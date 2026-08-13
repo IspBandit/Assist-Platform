@@ -14,18 +14,21 @@ final class TrailerWiseController extends Controller
     public function home(Request $request): Response
     {
         $this->requireBrand();
-        $featured = $this->listings('', '', '', 6);
+        $featured = current_brand()->moduleEnabled('trailer_marketplace')
+            ? $this->listings('', '', '', 6)
+            : [];
         return $this->view('trailerwise.home', [
             'title' => 'Smarter trailer ownership',
             'metaDescription' => 'Find Australian trailer repairers, service centres, parts suppliers, inspectors, certifiers and specialist businesses.',
             'canonical' => current_brand()->url() . '/',
             'listings' => $featured,
+            'categories' => $this->brandCategories(),
         ]);
     }
 
     public function marketplace(Request $request): Response
     {
-        $this->requireBrand();
+        $this->requireMarketplace();
         $type = trim((string) $request->query('type', ''));
         $sale = trim((string) $request->query('listing_type', ''));
         $search = trim((string) $request->query('q', ''));
@@ -39,7 +42,7 @@ final class TrailerWiseController extends Controller
 
     public function show(Request $request): Response
     {
-        $this->requireBrand();
+        $this->requireMarketplace();
         $listing = Database::selectOne(
             "SELECT l.*, p.business_name, p.phone, p.email, p.website FROM trailer_listings l JOIN providers p ON p.id = l.provider_id WHERE l.brand_id = ? AND l.slug = ? AND l.status = 'active' AND l.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL",
             [current_brand()->databaseId(), (string) $request->route('slug')]
@@ -66,9 +69,26 @@ final class TrailerWiseController extends Controller
         return Database::select('SELECT l.*, p.business_name FROM trailer_listings l JOIN providers p ON p.id = l.provider_id WHERE ' . implode(' AND ', $where) . ' ORDER BY l.is_featured DESC, l.created_at DESC LIMIT ' . $limit, $params);
     }
 
+    /** @return array<int,array<string,mixed>> */
+    private function brandCategories(): array
+    {
+        return Database::select(
+            'SELECT id, category_key AS slug, name, description FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name',
+            [current_brand()->databaseId()]
+        );
+    }
+
     private function requireBrand(): void
     {
-        if (current_brand()->id() !== 'trailerwise' || !current_brand()->moduleEnabled('trailer_marketplace')) {
+        if (current_brand()->id() !== 'trailerwise' || !current_brand()->moduleEnabled('providers')) {
+            $this->abort(404);
+        }
+    }
+
+    private function requireMarketplace(): void
+    {
+        $this->requireBrand();
+        if (!current_brand()->moduleEnabled('trailer_marketplace')) {
             $this->abort(404);
         }
     }
