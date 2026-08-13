@@ -6,6 +6,7 @@ namespace App\Controllers\Site;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Models\BrandProviderCategory;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
@@ -153,9 +154,13 @@ final class TowSmartController extends Controller
     /** @return array<int,array<string,mixed>> */
     private function brandCategories(): array
     {
+        $brandId = current_brand()->databaseId();
+
         return Database::select(
-            'SELECT id, category_key AS slug, name, description FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name LIMIT 8',
-            [current_brand()->databaseId()]
+            'SELECT id, category_key AS slug, name, description FROM brand_provider_categories WHERE '
+            . BrandProviderCategory::publicDirectorySql($brandId)
+            . ' ORDER BY sort_order, name LIMIT 8',
+            BrandProviderCategory::publicDirectoryParams($brandId)
         );
     }
 

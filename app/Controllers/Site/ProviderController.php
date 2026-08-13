@@ -6,6 +6,7 @@ namespace App\Controllers\Site;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Models\BrandProviderCategory;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Provider;
@@ -58,7 +59,12 @@ final class ProviderController extends Controller
                 ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
                 : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage));
         $categories = $brandScoped
-            ? Database::select('SELECT id, name FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name', [$brand->databaseId()])
+            ? Database::select(
+                'SELECT id, name FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+                . ' ORDER BY sort_order, name',
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            )
             : Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name');
 
         // Treat a filtered directory browse as a search on every brand. This is

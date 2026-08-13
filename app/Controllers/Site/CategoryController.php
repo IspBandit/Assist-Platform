@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Helpers\Geo;
+use App\Models\BrandProviderCategory;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
@@ -217,8 +218,9 @@ final class CategoryController extends Controller
         $copy = $this->brandDirectoryCopy();
         $categories = Database::select(
             'SELECT id, category_key AS slug, name, description AS short_description '
-            . 'FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name',
-            [$brand->databaseId()]
+            . 'FROM brand_provider_categories WHERE ' . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+            . ' ORDER BY sort_order, name',
+            BrandProviderCategory::publicDirectoryParams($brand->databaseId())
         );
 
         return $this->view('brands.service-categories', [
@@ -238,8 +240,9 @@ final class CategoryController extends Controller
         $copy = $this->brandDirectoryCopy();
         $category = Database::selectOne(
             'SELECT id, category_key AS slug, name, description AS short_description '
-            . 'FROM brand_provider_categories WHERE brand_id = ? AND category_key = ? AND is_active = 1',
-            [$brand->databaseId(), $slug]
+            . 'FROM brand_provider_categories WHERE ' . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+            . ' AND category_key = ?',
+            [...BrandProviderCategory::publicDirectoryParams($brand->databaseId()), $slug]
         );
         if ($category === null) {
             $this->abort(404, 'Service category not found.');

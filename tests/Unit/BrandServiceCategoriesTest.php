@@ -16,7 +16,7 @@ final class BrandServiceCategoriesTest extends TestCase
         self::assertStringContainsString('brandDirectoryIndex()', $source);
         self::assertStringContainsString('brandDirectoryShow($request, $slug)', $source);
         self::assertStringContainsString("'brands.service-categories'", $source);
-        self::assertStringContainsString('FROM brand_provider_categories WHERE brand_id = ?', $source);
+        self::assertStringContainsString('BrandProviderCategory::publicDirectorySql', $source);
         self::assertStringContainsString('Provider::brandDirectory', $source);
     }
 
@@ -64,6 +64,7 @@ final class BrandServiceCategoriesTest extends TestCase
         self::assertStringContainsString("'Marketplace', 'path' => '/marketplace'", $brands);
         self::assertStringContainsString("url('tow-guide')", $sitemap);
         self::assertStringContainsString("url('checklist')", $sitemap);
-        self::assertStringContainsString("'services/', 0.7, [\$brand->databaseId()]", $sitemap);
+        self::assertStringContainsString('BrandProviderCategory::publicDirectorySql', $sitemap);
+        self::assertStringContainsString('BrandProviderCategory::publicDirectoryParams', $sitemap);
     }
 }
