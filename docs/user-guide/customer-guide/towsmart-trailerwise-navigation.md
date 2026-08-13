@@ -42,8 +42,9 @@ Start from the homepage quick paths or the header primary button. Use the footer
 Tools or Find columns for secondary journeys such as tow guides, rules,
 provider registration or marketplace listings. On TowSmart and TrailerWise,
 `/services` lists that brand's specialist categories—not VanAssist caravan
-services. Confirm directory details directly with the business before travel or
-compliance work.
+services. TowSmart and TrailerWise show curated categories only; import taxonomy
+rows used for data classification are hidden from public navigation. Confirm
+directory details directly with the business before travel or compliance work.
 
 **Save TowSmart to your phone** or **Save TrailerWise to your phone** opens
 installation instructions; Android may also show the browser install prompt when
@@ -82,7 +83,7 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-13 (brand-scoped service categories and homepage discovery tiles).
+2026-08-13 (curated public categories; import taxonomy hidden).
 
 ## Owner
 

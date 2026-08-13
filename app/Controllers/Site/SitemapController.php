@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Models\BrandProviderCategory;
 use App\Services\Settings;
 use Throwable;
 
@@ -34,7 +35,14 @@ final class SitemapController extends Controller
                 ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
                 ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
             ];
-            $this->addRows($urls, 'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1', 'services/', 0.7, [$brand->databaseId()]);
+            $this->addRows(
+                $urls,
+                'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId()),
+                'services/',
+                0.7,
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            );
             return $this->response($urls);
         }
         if (current_brand()->id() === 'trailerwise') {
@@ -47,7 +55,14 @@ final class SitemapController extends Controller
                 ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
                 ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
             ];
-            $this->addRows($urls, 'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1', 'services/', 0.7, [$brand->databaseId()]);
+            $this->addRows(
+                $urls,
+                'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId()),
+                'services/',
+                0.7,
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            );
             $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = ? AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.7, [$brand->databaseId()]);
             return $this->response($urls);
         }

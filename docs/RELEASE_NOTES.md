@@ -19,6 +19,11 @@ may remain as dated files and are linked here rather than copied.
 - Brand navigation and sitemaps now include calculator tools, tow guide,
   checklist, provider directory, service categories and TrailerWise marketplace
   URLs where applicable.
+- TowSmart and TrailerWise public `/services`, homepage tiles, provider filters
+  and sitemaps now show curated brand categories only. LocalTorque taxonomy
+  import rows remain for classification but are hidden from customer journeys.
+  Migration `130_restore_curated_brand_directory_categories` restores curated
+  copy if taxonomy imports overwrote shared keys.
 
 ### TowSmart and TrailerWise shell parity (EXP-001 / EXP-005)
 

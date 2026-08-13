@@ -702,7 +702,10 @@ final class LocalTorquePackSeeder
                 }
                 Database::query(
                     'INSERT INTO brand_provider_categories (brand_id,category_key,name,description,sort_order,is_active,created_at,updated_at) '
-                    . 'VALUES (?,?,?,?,100,1,NOW(),NOW()) ON DUPLICATE KEY UPDATE name=VALUES(name),description=VALUES(description),is_active=1,updated_at=NOW()',
+                    . 'VALUES (?,?,?,?,100,1,NOW(),NOW()) ON DUPLICATE KEY UPDATE '
+                    . 'name=IF(sort_order < 100, name, VALUES(name)), '
+                    . 'description=IF(sort_order < 100, description, VALUES(description)), '
+                    . 'is_active=1, updated_at=NOW()',
                     [$brandId, $key, $category['name'], 'LocalTorque taxonomy group: ' . $category['group']]
                 );
                 $this->categoryIds[$brandKey][$key] = (int) Database::scalar(

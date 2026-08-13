@@ -333,6 +333,16 @@ and provider search; sitemaps and header navigation expose the same journeys.
 VanAssist caravan taxonomy and Ask/search UX remain VanAssist-only. **Evidence:**
 `BrandServiceCategoriesTest`, `DirectoryPresentationTest`.
 
+## 2026-08-13 — Curated TowSmart and TrailerWise categories stay public-facing
+
+**Context:** EXP-001/005. LocalTorque taxonomy seeding added import-only
+`brand_provider_categories` rows to TowSmart and TrailerWise and could overwrite
+curated public copy on duplicate keys. **Decision:** keep import taxonomy for
+classification, but expose only curated categories (`sort_order < 100`) on public
+`/services`, homepage tiles, provider filters and sitemaps. Restore curated copy
+via migration 130 and prevent future seeder overwrites when `sort_order < 100`.
+**Evidence:** `BrandProviderCategoryTest`, migration 130.
+
 ## 2026-08-13 — TowSmart and TrailerWise share VanAssist shell polish
 
 **Context:** EXP-001/005. TowSmart and TrailerWise homepages already used the
