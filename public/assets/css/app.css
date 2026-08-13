@@ -1424,6 +1424,9 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
 .hero-bookmark:hover{background:rgba(16,73,130,.78)}
 .hero-bookmark svg{width:18px;height:18px;color:#55a1ff}
 .home-search-actions{margin-top:1rem}
+.home-search-note{margin:1rem 0 0;font-size:.86rem;line-height:1.5}
+.home-search-note a{font-weight:650}
+.home-launch-note{padding:1.25rem 0}
 .hero-search-panel .btn-primary{border-color:#0d62dc;background:#0d62dc;color:#fff}.hero-search-panel .btn-primary:hover{border-color:#084aa9;background:#084aa9}
 .hero-capabilities{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));max-width:1040px;margin:1.4rem 0 0;padding:1rem 1.2rem;list-style:none;border:1px solid rgba(255,255,255,.2);border-radius:16px;background:rgba(4,25,53,.78);box-shadow:0 18px 42px rgba(0,0,0,.24);backdrop-filter:blur(12px)}
 .hero-capabilities a{display:grid;grid-template-columns:2.4rem 1fr;grid-template-rows:auto auto;column-gap:.7rem;padding:.25rem 1rem;border-right:1px solid rgba(255,255,255,.18);border-radius:9px;color:#fff;text-decoration:none;transition:background .18s ease,transform .18s ease}

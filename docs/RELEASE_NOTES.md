@@ -12,6 +12,10 @@ may remain as dated files and are linked here rather than copied.
   stays CTA and popular categories instead of a default launch-town provider
   grid. The `/locations/nearby-providers` JSON endpoint remains available for
   future reuse but is no longer wired to the homepage.
+- Simplified the VanAssist homepage to a single hero: trimmed duplicate copy,
+  removed below-the-fold stays, category, assistance and provider panels, and
+  moved advanced search and assistance links into one muted note under the
+  primary search form.
 
 ### TowSmart and TrailerWise service discovery enrichment (EXP-001 / EXP-005)
 

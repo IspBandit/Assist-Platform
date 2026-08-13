@@ -112,11 +112,13 @@ CSS inspection.
 
 **Context:** VAN-002/EXP-001. The homepage **Service providers by location**
 module duplicated the hero search and showed a launch-town provider grid
-(Bundaberg by default) before the visitor chose a place. **Decision:** remove
-the module from the public homepage. Keep location-first discovery in the hero,
-intent shortcuts, stays CTA and popular categories. Retain
-`/locations/nearby-providers` for possible future use but remove homepage JS
-wiring. **Evidence:** `BrandViewTest`.
+(Bundaberg by default) before the visitor chose a place. Below-the-fold panels
+also repeated stays, categories, assistance and provider sign-up. **Decision:**
+remove the provider grid and duplicate panels. Keep one hero with the primary
+search form, four intent shortcuts and optional Ask. Link to advanced search,
+assistance and provider registration from the footer or muted helper links.
+Retain `/locations/nearby-providers` for possible future use but remove homepage
+JS wiring. **Evidence:** `BrandViewTest`, `VanAssistPublicUxTest`.
 
 ## 2026-07-27 — Authority-first rules and separated provider sponsorship
 

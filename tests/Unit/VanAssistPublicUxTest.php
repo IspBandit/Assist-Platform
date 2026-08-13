@@ -15,7 +15,10 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('fuel-and-travel-stops', $view);
         self::assertStringContainsString("url('stays')", $view);
         self::assertStringContainsString("url('services')", $view);
-        self::assertStringContainsString('Claimed and verified status shown clearly', $view);
+        self::assertStringContainsString('Claimed, verified and unclaimed listings are labelled clearly', $view);
+        self::assertStringNotContainsString('Popular service categories', $view);
+        self::assertStringNotContainsString('Getting tired?', $view);
+        self::assertStringNotContainsString('provider-conversion', $view);
         self::assertStringNotContainsString("include('partials.listing-accuracy-notice')", $view);
         self::assertStringContainsString('unclaimed listings', $this->source('app/Views/partials/listing-accuracy-notice.php'));
         self::assertStringNotContainsString('Verified local providers', $view);

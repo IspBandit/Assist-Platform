@@ -130,7 +130,6 @@ final class BrandViewTest extends TestCase
             'providerDirectoryCount' => 1248,
             'categories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
             'categoryGroups' => ['Services' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']]],
-            'popularCategories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
             'homeEvidence' => [
                 'directory_listings' => 1248,
                 'verified_providers' => 0,
@@ -144,6 +143,10 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('aria-label="Find VanAssist help"', $html);
         self::assertStringNotContainsString('Service providers by location', $html);
         self::assertStringNotContainsString('data-nearby-providers', $html);
+        self::assertStringNotContainsString('Popular service categories', $html);
+        self::assertStringNotContainsString('Getting tired?', $html);
+        self::assertStringNotContainsString('provider-conversion', $html);
+        self::assertStringContainsString('Find help nearby', $html);
         self::assertStringNotContainsString('journey-launcher', $html);
         self::assertStringNotContainsString('evidence-ribbon', $html);
         self::assertStringNotContainsString('active service listings', $html);

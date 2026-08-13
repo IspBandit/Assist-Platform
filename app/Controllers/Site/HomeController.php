@@ -33,14 +33,12 @@ final class HomeController extends Controller
 
         $categories = $this->safe(fn () => \App\Models\ServiceCategory::activeAll());
         $categoryGroups = \App\Models\ServiceCategory::groupedForVanAssist($categories);
-        $popularCategories = array_slice($categories, 0, 12);
 
         return $this->view('public.home', [
             'title'         => 'Caravan help, wherever you travel',
             'canonical'     => url('/'),
             'categories'        => $categories,
             'categoryGroups'    => $categoryGroups,
-            'popularCategories' => $popularCategories,
             'freeMessage'   => Settings::get('free_launch_message', ''),
             'jsonLd'        => $this->organisationSchema(),
         ]);
