@@ -74,7 +74,7 @@ final class VanAssistInstallTest extends TestCase
         $worker = $this->source('public/service-worker.js');
         self::assertStringContainsString("url.pathname.startsWith('/assets/')", $worker);
         self::assertStringNotContainsString("cache.add('/')", $worker);
-        self::assertStringContainsString('assist-platform-static-v1', $worker);
+        self::assertStringContainsString('assist-platform-static-v2', $worker);
     }
 
     private function brand(): \App\Platform\Brand\Brand

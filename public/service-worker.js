@@ -1,6 +1,6 @@
 'use strict';
 
-var CACHE_NAME = 'assist-platform-static-v1';
+var CACHE_NAME = 'assist-platform-static-v2';
 var STATIC_ASSETS = [
     '/assets/css/app.css',
     '/assets/js/app.js'
@@ -14,6 +14,14 @@ self.addEventListener('install', function (event) {
 self.addEventListener('activate', function (event) {
     event.waitUntil(caches.keys().then(function (keys) {
         return Promise.all(keys.filter(function (key) { return key !== CACHE_NAME; }).map(function (key) { return caches.delete(key); }));
+    }).then(function () {
+        return self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    }).then(function (clients) {
+        clients.forEach(function (client) {
+            if (client.url && client.url.indexOf(self.location.origin) === 0) {
+                client.navigate(client.url);
+            }
+        });
     }));
     self.clients.claim();
 });

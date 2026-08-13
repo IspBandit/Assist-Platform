@@ -90,6 +90,10 @@ panels for stays, popular categories, assistance requests and provider sign-up
 were removed. Use **More search options** on `/find` for timeframe and distance
 filters, the footer for provider registration, or **Request assistance** from
 the note under the homepage search when needed.
+If VanAssist was saved to your phone before August 2026 and still shows an old
+**Service providers by location** panel, close the app completely and reopen it,
+or pull to refresh in the browser; the updated install removes that retired block
+automatically.
 It is limited to providers, places to stay, roadside/caravan help and traveller
 facilities; it is not a general-purpose AI assistant.
 
