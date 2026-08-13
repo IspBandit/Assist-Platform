@@ -61,7 +61,8 @@ See **Account and My Garage** for saved combinations and account tools. See
 
 **Can I install TowSmart or TrailerWise like VanAssist?** Yes. Each brand publishes
 its own install manifest and footer control. The installed shortcut opens that
-brand's homepage and primary journeys.
+brand's homepage and primary journeys. Home-screen icons use each brand's
+favicon asset, not the retired platform symbol.
 
 ## Version introduced
 
@@ -69,7 +70,7 @@ brand's homepage and primary journeys.
 
 ## Last updated
 
-2026-08-13.
+2026-08-13 (apple-touch-icon favicon alignment).
 
 ## Owner
 
