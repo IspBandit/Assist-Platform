@@ -1,12 +1,9 @@
 'use strict';
 
-var CACHE_NAME = 'vanassist-static-v1';
+var CACHE_NAME = 'assist-platform-static-v1';
 var STATIC_ASSETS = [
     '/assets/css/app.css',
-    '/assets/js/app.js',
-    '/assets/brands/vanassist/install-icon.svg',
-    '/assets/brands/vanassist/install-icon-192.png',
-    '/assets/brands/vanassist/install-icon-512.png'
+    '/assets/js/app.js'
 ];
 
 self.addEventListener('install', function (event) {

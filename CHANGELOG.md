@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+- **TowSmart and TrailerWise shell parity** — footer-action CTA, richer footer
+  columns, primary header CTA and save-to-phone install with brand-scoped
+  manifests for TowSmart and TrailerWise.
+
 ### Documentation and VanAssist navigation (Aug 2026 production alignment)
 
 - Reconciled `PROJECT_STATUS.md`, `PRODUCTION_CURRENT_STATE.md`, SearchGap, Ask,

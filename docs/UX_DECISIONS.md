@@ -322,6 +322,19 @@ footer Find links and a category-search cross-link. Homepage Ask field order on
 mobile is unchanged (four capability cues, then search console, then optional Ask).
 **Evidence:** live production verification Aug 2026; `VanAssistPublicUxTest`.
 
+## 2026-08-13 — TowSmart and TrailerWise share VanAssist shell polish
+
+**Context:** EXP-001/005. TowSmart and TrailerWise homepages already used the
+approved product-hero pattern, but the shared header, footer and install shell
+lagged VanAssist: no footer-action CTA bar, generic Explore columns only, no
+primary nav button and no save-to-phone control. **Decision:** extend the same
+platform shell treatment to TowSmart and TrailerWise without copying VanAssist's
+traveller search UX. Each brand keeps its own primary journeys in the header
+CTA, footer-action bar, footer link columns, scoped install manifest and
+home-screen instructions. Manifests are generated per brand from the typed
+registry; the service worker caches versioned public assets only. **Evidence:**
+`ProductBrandShellTest`, `AssetControllerTest`, `VanAssistInstallTest`.
+
 ## 2026-07-30 — Large provider queues automate only safe decisions
 
 **Context:** CORE-003/005. A national queue cannot be operated record by record,
