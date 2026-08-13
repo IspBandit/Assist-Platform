@@ -128,6 +128,55 @@ final class IntentRuleEngineTest extends TestCase
         self::assertContains('providers', $intent->adapterKeys, $query);
     }
 
+    /** @return array<string,array{0:string,1:?string}> */
+    public static function vehicleServiceQueries(): array
+    {
+        return [
+            'car near karratha' => ['where to service my car near Karratha', 'Karratha'],
+            'car service' => ['car service near Karratha', 'Karratha'],
+            'logbook' => ['logbook service near Newman', 'Newman'],
+            'caravan phrasing' => ['where to service my caravan near Karratha', 'Karratha'],
+        ];
+    }
+
+    /** @return array<string,array{0:string,1:?string}> */
+    public static function stayLocationQueries(): array
+    {
+        return [
+            'where to stay in' => ['where to stay in Coober Pedy', 'Coober Pedy'],
+            'where to stay near' => ['where to stay near Coober Pedy', 'Coober Pedy'],
+            'accommodation in' => ['accommodation in Coober Pedy', 'Coober Pedy'],
+            'overnight in' => ['overnight in Coober Pedy', 'Coober Pedy'],
+        ];
+    }
+
+    /** @dataProvider stayLocationQueries */
+    public function testEverydayStayLocationLanguageResolves(string $query, ?string $location): void
+    {
+        $intent = $this->engine->interpret($query);
+
+        self::assertSame(Intent::TYPE_STAY, $intent->intentType, $query);
+        self::assertContains('stays', $intent->adapterKeys, $query);
+        self::assertFalse($intent->clarificationRequired, $query);
+        if ($location !== null) {
+            self::assertSame($location, $intent->locationText, $query);
+        }
+    }
+
+    /** @dataProvider vehicleServiceQueries */
+    public function testEverydayVehicleServiceLanguageResolves(string $query, ?string $location): void
+    {
+        $intent = $this->engine->interpret($query);
+
+        self::assertSame(Intent::TYPE_PROVIDER, $intent->intentType, $query);
+        self::assertContains('general-servicing', $intent->providerCategoryKeys, $query);
+        self::assertContains('providers', $intent->adapterKeys, $query);
+        self::assertFalse($intent->clarificationRequired, $query);
+        if ($location !== null) {
+            self::assertSame($location, $intent->locationText, $query);
+        }
+    }
+
     public function testUnclearCaravanFaultGetsUsefulFallbackButGeneralChatDoesNot(): void
     {
         $fault = $this->engine->interpret('something strange is broken in my caravan near Emerald');
@@ -186,6 +235,14 @@ final class IntentRuleEngineTest extends TestCase
         self::assertSame(['dump_point'], $intent->facilityTypeKeys);
         self::assertSame([], $intent->stayTypeKeys);
         self::assertSame('Grffiths Camping Ground, Queensland', $intent->locationText);
+    }
+
+    public function testStateSuffixStripDoesNotTruncateTownNamesLikeMountIsa(): void
+    {
+        $intent = $this->engine->interpret('mobile mechanic near Mount Isa');
+
+        self::assertSame('Mount Isa', $intent->locationText);
+        self::assertSame(Intent::TYPE_PROVIDER, $intent->intentType);
     }
 
     public function testSchemaValidatorStripsUnknownCategories(): void

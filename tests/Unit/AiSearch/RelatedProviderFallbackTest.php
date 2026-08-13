@@ -26,12 +26,30 @@ final class RelatedProviderFallbackTest extends TestCase
         self::assertSame('related_provider_fallback', $fallback->source);
     }
 
-    public function testBroadSearchDoesNotLoopIntoAnotherFallback(): void
+    public function testBroadSearchWidensToRemainingCategories(): void
     {
         $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Roma', false, 25,
             'normal', ['providers'], 0.8, false, null);
         $method = new ReflectionMethod(SearchOrchestrator::class, 'relatedProviderFallbackIntent');
-        self::assertNull($method->invoke(new SearchOrchestrator(), $intent));
+        $fallback = $method->invoke(new SearchOrchestrator(), $intent);
+
+        self::assertInstanceOf(Intent::class, $fallback);
+        self::assertSame(['mobile-mechanics'], $fallback->providerCategoryKeys);
+    }
+
+    public function testServicingMissCanWidenToCaravanAndAutoElectrical(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['mobile-mechanics', 'mechanical-repairs'], [], [], 'Karratha', false, 25,
+            'normal', ['providers'], 0.8, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'relatedProviderFallbackIntent');
+        $fallback = $method->invoke(new SearchOrchestrator(), $intent);
+
+        self::assertInstanceOf(Intent::class, $fallback);
+        self::assertSame(
+            ['general-caravan-repairs', 'auto-electrical-and-batteries', 'diesel-mechanics'],
+            $fallback->providerCategoryKeys
+        );
+        self::assertSame(50, $fallback->radiusKm);
     }
 
     public function testUnresolvedNamedLocationNeverFallsBackToNationalResults(): void

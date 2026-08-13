@@ -101,11 +101,15 @@ facilities; it is not a general-purpose AI assistant.
 
 Ask recognises the full VanAssist service catalogue and common descriptions of
 faults, including electrical, solar, refrigeration, plumbing, suspension,
-body, appliance and roadside problems. If a request is clearly about a caravan
+body, appliance and roadside problems. Everyday phrasing such as **where to stay
+in …**, **service my car near …** and **accommodation in …** is also supported.
+If a request is clearly about a caravan
 or RV fault but the precise trade cannot be established, it shows general
 caravan repair and unsure-service options instead of returning an empty answer.
 When the requested specialist category has no nearby listing, Ask may show a
-wider set of related repair, mechanical or roadside providers. These are
+wider set of related repair, mechanical or roadside providers. Servicing and
+mobile-mechanic misses widen once to general caravan repairs, auto electrical
+and diesel mechanics at 50 km before giving up. These are
 clearly labelled as related help and users are told to confirm suitability.
 Ask keeps conversational wording after a town out of the location name (for
 example, “near Gympie on my caravan”). If a named place cannot be resolved,
