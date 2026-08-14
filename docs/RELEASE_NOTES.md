@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask VanAssist regional town pool fallback (VAN-011)
+
+- When category search and the related-category widen both return no rows for a
+  resolved town, Ask now falls back once to the same regional provider pool used
+  on town pages (`Provider::inTown` coverage + same-region mobile operators) at
+  50 km, clearly labelled so travellers can confirm suitability.
+
+## Production release 3169a94 (13 August 2026)
+
+Commit `3169a9465e8bdec2d3284e0d8aeddc0d48a1e203` — PR #212. Deployed via
+[Production release workflow](https://github.com/IspBandit/Assist-Platform/actions/runs/31701185349).
+
 ### Ask VanAssist everyday phrasing batch (VAN-011)
 
 - Expanded intent rules (v8) for common traveller wording: *anywhere to stay*,

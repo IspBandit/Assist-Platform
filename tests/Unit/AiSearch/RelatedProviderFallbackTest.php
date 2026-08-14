@@ -59,4 +59,27 @@ final class RelatedProviderFallbackTest extends TestCase
 
         self::assertSame([], (new ProviderSearchAdapter())->search($intent, null, null, null));
     }
+
+    public function testRegionalTownPoolRequiresResolvedTown(): void
+    {
+        self::assertSame([], (new ProviderSearchAdapter())->searchRegionalTownPool(null, -20.7, 116.8, 50));
+    }
+
+    public function testProviderIntentCanUseRegionalTownPool(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-servicing'], [], [], 'Karratha', false, 25,
+            'normal', ['providers'], 0.88, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseRegionalTownPool');
+
+        self::assertTrue($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testMixedStayIntentDoesNotUseRegionalTownPool(): void
+    {
+        $intent = new Intent(Intent::TYPE_MIXED, ['general-servicing'], ['caravan_park'], [], 'Karratha', false, 25,
+            'normal', ['providers', 'stays'], 0.7, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseRegionalTownPool');
+
+        self::assertFalse($method->invoke(new SearchOrchestrator(), $intent));
+    }
 }

@@ -5,7 +5,7 @@
 **Backlog:** CORE-012, VAN-011, DATA-012, DATA-013  
 **Overall gate:** **CONDITIONAL PASS** — architecture and engineering evidence recorded 2026-08-02.
 
-**Production posture (verified 13 Aug 2026):** VanAssist release `6a3f09d` runs
+**Production posture (verified 14 Aug 2026):** VanAssist release `3169a94` runs
 Ask (`assist_ai_search`) and traveller facilities (`assist_ai_traveller_facilities`)
 with Admin API enabled for Assist RIC. This does **not** replace a recorded full
 Platform Quality Gate **PASS** or authorise paid AI / Google Places connectors.

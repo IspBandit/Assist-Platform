@@ -70,4 +70,37 @@ final class ProviderSearchAdapter
 
         return $list;
     }
+
+    /**
+     * Regional pool used when category search misses but the town page would
+     * still list operators who serve the area (coverage + same-region mobile).
+     *
+     * @param array<string,mixed>|null $town
+     * @return list<array<string,mixed>>
+     */
+    public function searchRegionalTownPool(?array $town, ?float $lat, ?float $lng, int $radiusKm, int $limit = 60): array
+    {
+        if ($town === null || (int) ($town['id'] ?? 0) <= 0) {
+            return [];
+        }
+
+        $townId = (int) $town['id'];
+        $regionId = isset($town['region_id']) ? (int) $town['region_id'] : null;
+        $list = Provider::inTown($townId, $regionId > 0 ? $regionId : null, $limit);
+        foreach ($list as $index => $row) {
+            $list[$index]['assist_origin'] = 'regional_town_pool';
+            $list[$index]['assist_source'] = 'providers';
+        }
+
+        if ($lat !== null && $lng !== null) {
+            $filter = [
+                'scope' => 'km',
+                'km' => max(1, min(500, $radiusKm)),
+                'town_radius_km' => (int) config('geo.default_town_radius_km', 20),
+            ];
+            $list = Geo::applyDistanceFilter($list, $lat, $lng, $filter, $townId);
+        }
+
+        return $list;
+    }
 }

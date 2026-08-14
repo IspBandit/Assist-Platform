@@ -395,6 +395,13 @@ final class SearchOrchestrator
                         }
                     }
                 }
+                if ($providerRows === [] && $town !== null && $this->shouldUseRegionalTownPool($intent)) {
+                    $poolRadius = max(50, (int) ($intent->radiusKm ?? (int) config('ai_search.default_radius_km', 25)));
+                    $providerRows = $this->providers->searchRegionalTownPool($town, $originLat, $originLng, $poolRadius);
+                    if ($providerRows !== []) {
+                        $messages[] = 'No exact category match nearby. Showing providers who service this area—confirm they handle your issue before travelling.';
+                    }
+                }
             } catch (\Throwable) {
                 $providerRows = [];
             }
@@ -543,6 +550,20 @@ final class SearchOrchestrator
         }
 
         return ['messages' => array_values(array_unique($messages)), 'results' => $results];
+    }
+
+    private function shouldUseRegionalTownPool(Intent $intent): bool
+    {
+        if ($intent->intentType !== Intent::TYPE_PROVIDER || $intent->providerCategoryKeys === []) {
+            return false;
+        }
+
+        // Keep narrow facility-only or stay-only mixed intents out of the pool.
+        if ($intent->stayTypeKeys !== [] || $intent->facilityTypeKeys !== []) {
+            return false;
+        }
+
+        return true;
     }
 
     private function relatedProviderFallbackIntent(Intent $intent): ?Intent

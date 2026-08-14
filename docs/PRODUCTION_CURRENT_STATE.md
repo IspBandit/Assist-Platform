@@ -1,6 +1,6 @@
 # Production current state
 
-Last verified: 13 August 2026 (Australia/Brisbane).
+Last verified: 14 August 2026 (Australia/Brisbane).
 
 ## Deployment
 
@@ -8,9 +8,9 @@ Last verified: 13 August 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (PR #201 — Ask provider-name/GPS integrity).
-- Release directory: `/opt/assist-platform/releases/6a3f09d78dda81f50fab584decb8fb4f382ef717` (confirm on server after next deploy if path differs).
-- Previous documented release: `9879b4bf41f3f691cb26f8d76d71515fb47b6a5c` (superseded August 2026).
+- Production code commit: `3169a9465e8bdec2d3284e0d8aeddc0d48a1e203` (PR #212 — Ask everyday phrasing, intent v8, regression corpus).
+- Release directory: `/opt/assist-platform/releases/3169a9465e8bdec2d3284e0d8aeddc0d48a1e203` (confirm on server if path differs).
+- Previous documented release: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (PR #201 — Ask provider-name/GPS integrity).
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
 - All migrations through `130_merge_residual_duplicate_stays.sql` are applied; the
@@ -22,7 +22,7 @@ credentials in this file or Git.
 ## Verified live controls
 
 - All three `/healthz` and `/readyz` endpoints returned 200.
-- All three `/readyz` endpoints reported release `6a3f09d` (verified 13 August 2026).
+- All three `/readyz` endpoints reported release `3169a94` (verified 14 August 2026).
 - **Admin API** responds on production (`GET /api/v1/admin/health` → 200;
   `POST /api/v1/admin/auth/token` validates credentials — not disabled).
 - **Ask VanAssist** is enabled on production VanAssist (`/ask` returns results;
@@ -32,8 +32,11 @@ credentials in this file or Git.
   is on.
 - **Google Routes** road-distance integration reports configured on Admin API
   health (`road_distance.provider=google_routes`).
-- Griffiths Creek typo recovery and road-distance enforcement ship in release
-  `6a3f09d` (see `docs/RELEASE_NOTES.md` unreleased notes merged to this release).
+- Ask intent rules v8 (`intent_rules_v8`) ship in release `3169a94`, including
+  everyday stay and vehicle-service phrasing, Mount Isa location parsing, a
+  1,000-question regression corpus in CI, and related-category widen for
+  servicing misses. Griffiths Creek typo recovery and road-distance enforcement
+  remain from release `6a3f09d`.
 - Production deployment uses the restricted `assistdeploy` SSH account,
   pinned host keys and a root-owned release command. Remote root login and
   password authentication are disabled.

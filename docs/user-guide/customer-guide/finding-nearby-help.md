@@ -109,8 +109,9 @@ caravan repair and unsure-service options instead of returning an empty answer.
 When the requested specialist category has no nearby listing, Ask may show a
 wider set of related repair, mechanical or roadside providers. Servicing and
 mobile-mechanic misses widen once to general caravan repairs, auto electrical
-and diesel mechanics at 50 km before giving up. These are
-clearly labelled as related help and users are told to confirm suitability.
+and diesel mechanics at 50 km. If category search still finds nothing for a
+resolved town, Ask may show the same regional provider pool used on town pages,
+clearly labelled so you can confirm suitability before travelling.
 Ask keeps conversational wording after a town out of the location name (for
 example, “near Gympie on my caravan”). If a named place cannot be resolved,
 Ask returns no providers rather than silently falling back to national results.
