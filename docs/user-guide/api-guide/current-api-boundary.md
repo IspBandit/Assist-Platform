@@ -20,12 +20,13 @@ CSRF.
 Facility-scoped clients can read `GET /facility-contributions` and `GET /facility-contributions/{id}` only when the selected workspace enables stays. Human Admin API sessions with `facilities:write` can post an explicit moderation action to `/facility-contributions/{id}/{action}`. Service accounts cannot approve community evidence because the route also requires `admin_api_human`. Facility list, detail and mutation queries expose records assigned to the selected brand plus explicitly shared records; another brand's record returns a non-enumerating `404` even when its ID is known.
 
 The versioned Admin API (`/api/v1/admin`) is a separate, token-authenticated
-management surface for Assist RIC and service accounts. It is disabled by
-default (`ADMIN_API_ENABLED=false`), brand-scoped, audited, and least-privilege
-by scope. Human sessions support optional TOTP MFA (`ADMIN_API_MFA_REQUIRED`,
-default false). It is not a public partner API and must not be enabled in
-production until Platform Quality Gate evidence is recorded. See
-`docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md` and ADRs 0018–0020.
+management surface for Assist RIC and service accounts. It is **disabled by
+default in new environments** (`ADMIN_API_ENABLED=false`), brand-scoped, audited,
+and least-privilege by scope. **Production VanAssist enables Admin API** for Assist
+RIC facility imports (verified Aug 2026). Human sessions support optional TOTP MFA
+(`ADMIN_API_MFA_REQUIRED`, default false). It is not a public partner API. See
+`docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`, `docs/PRODUCTION_CURRENT_STATE.md`
+and ADRs 0018–0020.
 
 No general public token-authenticated `/api/v1` product for third parties exists
 yet.

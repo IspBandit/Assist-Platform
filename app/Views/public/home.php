@@ -2,14 +2,8 @@
 /** @var \App\Core\View $this */
 /** @var array $categories */
 /** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
-/** @var array $popularCategories */
-/** @var array<string,mixed>|null $nearbyTown */
-/** @var array<int,array<string,mixed>> $nearbyProviders */
-/** @var string $nearbyFindUrl */
-/** @var string $nearbyEndpoint */
 $this->extend('layouts.public');
 $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
-$popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
 ?>
 <?php $this->section('content'); ?>
 
@@ -27,33 +21,19 @@ $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
                     Right across regional Australia
                 </span>
                 <h1><span class="hero-title-primary">Your travel</span> <span class="accent">companion.</span></h1>
-                <p class="hero-roadline">Wherever the road takes you.</p>
-                <p class="lead">Find trusted caravan, motorhome and RV services, places to stay, fuel and local help anywhere in Australia.</p>
-
-                <button class="hero-bookmark" type="button" data-install-app>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>
-                    Save VanAssist before you go
-                </button>
-
-                <ul class="hero-trust">
-                    <li>Claimed and verified status shown clearly</li>
-                    <li>Location-first results</li>
-                    <li>Free to search</li>
-                </ul>
+                <p class="lead">Find caravan and RV services, places to stay, fuel and practical help by town or current location.</p>
             </div>
 
             <div class="hero-search-panel">
                 <div class="mobile-hero-intro">
-                    <span>Right across regional Australia</span>
                     <h1>Your travel <strong>companion.</strong></h1>
-                    <p>Nearby services, fuel, stays and practical help. Search before you set off or while safely stopped.</p>
-                    <button type="button" data-install-app>Save VanAssist to your phone</button>
+                    <p>Search by town or use your location when safely stopped.</p>
                 </div>
                 <div class="search-card unified-search-card">
-                <form class="structured-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
+                <form class="structured-search-form home-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-                        Find help for the road ahead
+                        Find help nearby
                     </div>
                     <div class="grid grid-2 home-search-primary">
                         <div class="form-group mb-0">
@@ -79,29 +59,16 @@ $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
                             <p class="location-status muted" role="status" aria-live="polite" hidden></p>
                         </div>
                     </div>
-                    <details class="search-options">
-                        <summary>More search options</summary>
-                        <div class="grid grid-2">
-                            <div class="form-group mb-0">
-                                <label for="timeframe">Preferred timeframe</label>
-                                <select id="timeframe" name="timeframe">
-                                    <option value="">Any time</option>
-                                    <option value="2weeks">Within 2 weeks</option>
-                                    <option value="month">Within a month</option>
-                                    <option value="flexible">Flexible</option>
-                                </select>
-                            </div>
-                            <?php $this->include('partials.search-distance-filter', [
-                                'selected' => null,
-                                'disabled' => true,
-                            ]); ?>
-                        </div>
-                    </details>
                     <div class="btn-row home-search-actions">
                         <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary btn-lg']); ?>
                         <button type="submit" class="btn btn-primary btn-lg">Show nearby help</button>
-                        <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
+                    <p class="home-search-note muted">
+                        Claimed, verified and unclaimed listings are labelled clearly. Confirm details before you travel.
+                        <a href="<?= e(url('find')) ?>">More search options</a>
+                        ·
+                        <a href="<?= e(url('request-assistance')) ?>">Request assistance</a>
+                    </p>
                 </form>
                 <?php $this->include('partials.ask-vanassist'); ?>
                 </div>
@@ -122,54 +89,8 @@ $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
     </div>
 </section>
 
-<?php $this->include('partials.home-nearby-providers'); ?>
-
-<section class="section section-sand">
-    <div class="container"><div class="product-cta">
-        <div><div class="eyebrow">Plan a safe stop</div><h2>Getting tired? Find a place to stay.</h2><p>Use your location or search a town for caravan parks, campgrounds, showgrounds and free or low-cost stays nearby.</p></div>
-                    <a class="btn btn-primary btn-lg" data-location-link href="<?= e(url('stays')) ?>">Find a stay near me</a>
-    </div></div>
-</section>
-
 <?php if (!empty($freeMessage)): ?>
-<section class="section section-sand" style="padding:1.25rem 0">
-    <div class="container"><div class="alert alert-info mb-0"><?= $this->e($freeMessage) ?></div></div>
-</section>
+<p class="home-launch-note container"><?= $this->e($freeMessage) ?></p>
 <?php endif; ?>
-
-<?php if ($popularCategories !== []): ?>
-<section class="section section-sand">
-    <div class="container">
-        <h2>Popular service categories</h2>
-        <div class="btn-row">
-            <?php foreach ($popularCategories as $cat): ?>
-                    <a class="btn btn-ghost" data-location-link href="<?= e(url('services/' . $cat['slug'])) ?>"><?= $this->e($cat['name']) ?></a>
-            <?php endforeach; ?>
-        </div>
-    </div>
-</section>
-<?php endif; ?>
-
-<section class="section text-center">
-    <div class="container">
-        <h2>Can't find a provider for your area?</h2>
-        <p class="muted">No suitable provider is currently listed for some areas. Register your request and VanAssist will notify relevant providers when assistance becomes available.</p>
-        <a class="btn btn-primary btn-lg" href="<?= e(url('request-assistance')) ?>">Request assistance</a>
-    </div>
-</section>
-
-<section class="section provider-conversion">
-    <div class="container provider-conversion-inner">
-        <div>
-            <span class="directory-eyebrow">For Australian businesses</span>
-            <h2>Help travellers find the right service—not a guessed one.</h2>
-            <p>Claim an existing listing or create a provider profile, confirm the services you genuinely offer and keep your contact details current.</p>
-        </div>
-        <div class="provider-conversion-actions">
-            <a class="btn btn-primary btn-lg" href="<?= e(url('for-providers')) ?>">Claim or list a business</a>
-            <a class="btn btn-ghost" href="<?= e(url('login')) ?>">Provider sign in</a>
-        </div>
-    </div>
-</section>
 
 <?php $this->endSection(); ?>

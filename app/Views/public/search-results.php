@@ -86,6 +86,10 @@ foreach ($mappedResults as $index => $mappedProvider) {
         <?php endif; ?>
         </header>
 
+        <?php if (\App\Platform\AiSearch\Support\AiSearchFeature::enabled()): ?>
+            <p class="muted" style="margin:0 0 1rem">Prefer plain language? <a href="<?= e(url('ask')) ?>">Try Ask VanAssist</a> for providers, stays and traveller facilities.</p>
+        <?php endif; ?>
+
         <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location style="margin:1rem 0 1.5rem">
             <div class="grid grid-2 home-search-primary">
                 <div class="form-group mb-0">

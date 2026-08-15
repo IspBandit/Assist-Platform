@@ -61,6 +61,13 @@ final class AskQuestionCatalog
     private function cleanTerm(string $pattern): string
     {
         $term = mb_strtolower(trim($pattern));
+        // Punctuated abbreviations such as "a/c" are already covered by
+        // plain-language siblings (aircon, air conditioning). Generating them
+        // as standalone questions can leave punctuation behind when the rule
+        // engine removes matched terms and falsely treat it as a location.
+        if (preg_match('/[^\pL\pN\s\'-]/u', $term) === 1) {
+            return '';
+        }
         $term = (string) preg_replace('/\s+(?:near me|nearby|around me|closest|nearest)$/u', '', $term);
         return trim($term);
     }

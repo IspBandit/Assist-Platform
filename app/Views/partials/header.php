@@ -1,5 +1,7 @@
 <?php
 /** @var \App\Core\View $this */
+use App\Platform\AiSearch\Support\AiSearchFeature;
+
 $headerBrand = current_brand();
 $headerBrandMeta = $headerBrand->metadata();
 $headerPlatformContext = array_key_exists('header_platform_context', $headerBrandMeta)
@@ -36,7 +38,27 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
 
         <nav class="main-nav" id="main-nav" aria-label="Primary">
             <ul>
-                <?php if ($headerBrand->id() !== 'vanassist'): ?>
+                <?php if ($headerBrand->id() === 'towsmart'): ?>
+                    <?php foreach ($headerBrand->navigation() as $link): ?>
+                        <li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li>
+                    <?php endforeach; ?>
+                    <?php if (auth()->check()): ?>
+                        <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
+                    <?php else: ?>
+                        <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
+                    <?php endif; ?>
+                    <li><a class="btn btn-primary" href="<?= e(url('calculator')) ?>">Check weights</a></li>
+                <?php elseif ($headerBrand->id() === 'trailerwise'): ?>
+                    <?php foreach ($headerBrand->navigation() as $link): ?>
+                        <li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li>
+                    <?php endforeach; ?>
+                    <?php if (auth()->check()): ?>
+                        <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
+                    <?php else: ?>
+                        <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
+                    <?php endif; ?>
+                    <li><a class="btn btn-primary" href="<?= e(url('providers')) ?>">Find services</a></li>
+                <?php elseif ($headerBrand->id() !== 'vanassist'): ?>
                     <?php foreach ($headerBrand->navigation() as $link): ?>
                         <li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li>
                     <?php endforeach; ?>
@@ -48,6 +70,9 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
                 <?php else: ?>
                 <li><a data-location-link href="<?= e(url('find')) ?>">Find help</a></li>
                 <li><a data-location-link href="<?= e(url('stays')) ?>">Places to stay</a></li>
+                <?php if (AiSearchFeature::enabled()): ?>
+                <li><a href="<?= e(url('ask')) ?>">Ask VanAssist</a></li>
+                <?php endif; ?>
                 <li><a href="<?= e(url('how-it-works')) ?>">How it works</a></li>
                 <li><a href="<?= e(url('rules')) ?>">Rules & safety</a></li>
                 <li><a href="<?= e(url('for-providers')) ?>">For businesses</a></li>

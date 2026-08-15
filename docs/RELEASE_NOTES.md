@@ -7,7 +7,7 @@ may remain as dated files and are linked here rather than copied.
 
 ### VanAssist Ask question library and cache safety (VAN-011)
 
-- Added a migration-backed, idempotent library of 1,325 versioned common Ask
+- Added a migration-backed, idempotent library of 1,550 versioned common Ask
   question variations. Exact matches resolve through deterministic intents
   before the expiring intent cache or paid AI, with aggregate hit counts only.
 - Corrected intent-cache keys so wording such as `near me` remains distinct
@@ -19,6 +19,113 @@ may remain as dated files and are linked here rather than copied.
 - Migration `131_ask_question_library.sql` creates and seeds the library during
   the normal release. Rollback uses the prior immutable release; the table is
   additive and can remain without affecting the prior runtime.
+
+### Ask VanAssist everyday phrasing batch (VAN-011)
+
+- Expanded intent rules (v8) for common traveller wording: *anywhere to stay*,
+  *camping near*, *caravan repairs*, *roadside help*, *grey/black water disposal*,
+  *water fill*, *petrol station*, *where to weigh*, *motorhome/rv/4wd service*,
+  *find a …* / *where do I find …*, and bare *help near {town}* when a place is
+  present. Vague *help please* without location still asks for clarification.
+- Removed bare *tow* from towing rules to avoid false matches on tow-vehicle
+  servicing queries.
+- Location suffix cleanup now uses trailing state tokens only in the fallback
+  path as well (Mount Isa and similar names stay intact).
+
+### Ask VanAssist regression corpus (VAN-011)
+
+- Added a committed 1,000-question deterministic corpus at
+  `tests/fixtures/ask-question-corpus.json` (40 phrasing templates × 25 regional
+  hubs). Regenerate with `php tools/generate-ask-question-corpus.php`; CI can
+  verify drift with `--check`.
+- Added `AskQuestionCorpusTest` so every corpus entry must route without unknown
+  intent before release.
+
+### Ask VanAssist regional provider fallback (VAN-011)
+
+- When a servicing or mobile-mechanic category search returns no rows, Ask now
+  widens once to general caravan repairs, auto electrical and diesel mechanics
+  at 50 km instead of stopping at an empty specialist-only result.
+
+### Ask VanAssist location parsing (VAN-011)
+
+- State suffix cleanup no longer truncates town names such as Mount Isa when
+  removing a trailing `, SA` / ` NSW` style suffix.
+
+### Ask VanAssist stay phrasing (VAN-011)
+
+- Ask now recognises *where to stay*, *accommodation* and *overnight …* wording
+  for stay searches. Previously these returned unknown intent even when the town
+  was parsed correctly (for example *where to stay in Coober Pedy*).
+
+### Ask VanAssist vehicle service phrasing (VAN-011)
+
+- Ask now recognises everyday tow-vehicle and caravan service wording such as
+  *service my car*, *car service*, *logbook service* and *service my caravan*.
+  These route to general servicing, mechanical repairs, mobile mechanics and
+  general caravan repairs instead of returning an unknown-intent empty result.
+
+### VanAssist homepage launch note styling (VAN-002 / EXP-001)
+
+- Restyled the admin-configurable free-launch message on the VanAssist homepage
+  from a teal alert banner into muted inline copy below the hero, matching the
+  simplified search note typography.
+
+### VanAssist mobile cache hotfix (VAN-002 / EXP-001)
+
+- Bumped the PWA service-worker static cache and added a client-side cleanup so
+  phones that still hold pre-simplification homepage HTML no longer show the
+  retired **Service providers by location** grid after the next visit or refresh.
+
+### VanAssist homepage discovery simplification (VAN-002 / EXP-001)
+
+- Removed the **Service providers by location** block from the VanAssist
+  homepage. Discovery now starts from the hero search and four intent shortcuts
+  instead of a default launch-town provider grid. The `/locations/nearby-providers`
+  JSON endpoint remains available for future reuse but is no longer wired to the
+  homepage.
+- Simplified the VanAssist homepage to a single hero: trimmed duplicate copy,
+  removed below-the-fold stays, category, assistance and provider panels, and
+  moved advanced search and assistance links into one muted note under the
+  primary search form.
+
+### TowSmart and TrailerWise service discovery enrichment (EXP-001 / EXP-005)
+
+- `/services` on TowSmart and TrailerWise now lists each brand's
+  `brand_provider_categories` entries instead of VanAssist caravan categories.
+  Category detail pages link into the shared provider directory with location
+  search and honest empty-state copy when coverage is still growing.
+- TowSmart homepage adds an **After the check** section with linked specialist
+  category tiles and a quick path to the towing specialist directory.
+- TrailerWise homepage removes future-tense placeholder copy, links category
+  tiles to live service pages and surfaces marketplace, providers and categories
+  as quick paths.
+- Brand navigation and sitemaps now include calculator tools, tow guide,
+  checklist, provider directory, service categories and TrailerWise marketplace
+  URLs where applicable.
+- TowSmart and TrailerWise public `/services`, homepage tiles, provider filters
+  and sitemaps now show curated brand categories only. LocalTorque taxonomy
+  import rows remain for classification but are hidden from customer journeys.
+  Migration `130_restore_curated_brand_directory_categories` restores curated
+  copy if taxonomy imports overwrote shared keys.
+
+### TowSmart and TrailerWise shell parity (EXP-001 / EXP-005)
+
+- TowSmart and TrailerWise now match VanAssist's shared public shell polish:
+  footer-action CTA bar, brand-specific footer link columns, primary header CTA
+  button and save-to-phone install control with per-brand manifest metadata.
+- PWA manifests are generated per brand from `AssetController`; LocalTorque and
+  private brands remain excluded.
+- Non-VanAssist apple-touch-icon links use each brand favicon so production smoke
+  checks do not flag retired symbol assets in public HTML.
+
+### Documentation and VanAssist navigation (Aug 2026 production alignment)
+
+- Reconciled programme status and production-current-state docs with live
+  verification (release `6a3f09d`, Admin API + Ask + traveller facilities on
+  VanAssist). See assist-ric `docs/RIC_FACILITY_CATALOGUE_STATUS.md` for RIC upload posture.
+- VanAssist header, footer and category-search pages now link to **Ask VanAssist**
+  when `assist_ai_search` is enabled (previously only homepage/search panel).
 
 - Ask accepts an active VanAssist provider's business name directly and still
   applies the question's place or the device GPS/radius boundary.

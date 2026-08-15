@@ -2,6 +2,11 @@
 (function () {
     'use strict';
 
+    // Retired Aug 2026: drop cached homepage HTML that still embeds the old grid.
+    document.querySelectorAll('[data-nearby-providers]').forEach(function (section) {
+        section.remove();
+    });
+
     // Mobile navigation toggle (public site).
     var toggle = document.querySelector('.nav-toggle');
     var nav = document.getElementById('main-nav');
@@ -12,9 +17,10 @@
         });
     }
 
-    // VanAssist home-screen installation. Android receives the native prompt;
+    // Home-screen installation. Android receives the native prompt;
     // iOS receives the exact Safari steps because Apple exposes no prompt API.
-    if (document.body.getAttribute('data-brand') === 'vanassist') {
+    var installBrand = document.body.getAttribute('data-brand');
+    if (installBrand === 'vanassist' || installBrand === 'towsmart' || installBrand === 'trailerwise') {
         var installPrompt = null;
         var installButtons = document.querySelectorAll('[data-install-app]');
         var installDialog = document.querySelector('[data-install-dialog]');
@@ -540,149 +546,6 @@
     document.querySelectorAll('img[data-lazy]').forEach(function (img) {
         img.loading = 'lazy';
     });
-
-    // Homepage "Providers near you" — GPS or saved town, with discovered listings labelled.
-    var nearbySection = document.querySelector('[data-nearby-providers]');
-    if (nearbySection) {
-        var endpoint = nearbySection.getAttribute('data-endpoint') || '/locations/nearby-providers';
-        var nearestUrl = nearbySection.getAttribute('data-nearest-url') || '/locations/nearest';
-        var grid = nearbySection.querySelector('[data-nearby-grid]');
-        var subtitle = nearbySection.querySelector('[data-nearby-subtitle]');
-        var statusEl = nearbySection.querySelector('[data-nearby-status]');
-        var findLink = nearbySection.querySelector('[data-nearby-find]');
-        var locateBtn = nearbySection.querySelector('[data-nearby-locate]');
-        var storageKey = 'va-nearby-town-id';
-
-        var setStatus = function (msg, show) {
-            if (!statusEl) { return; }
-            if (!show || !msg) {
-                statusEl.hidden = true;
-                statusEl.textContent = '';
-                return;
-            }
-            statusEl.hidden = false;
-            statusEl.textContent = msg;
-        };
-
-        var escapeHtml = function (s) {
-            return String(s)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
-        };
-
-        var renderCard = function (p) {
-            var isFeatured = p.slot === 'featured' || p.is_featured;
-            var badges = '';
-            if (isFeatured) { badges += '<span class="badge badge-sponsored">Featured</span> '; }
-            if (p.is_verified) { badges += '<span class="badge badge-verified">Verified</span> '; }
-            if (p.is_unclaimed) { badges += '<span class="badge badge-neutral">Unclaimed</span> '; }
-            if (p.service_model) {
-                badges += '<span class="badge badge-neutral">' + escapeHtml(p.service_model.charAt(0).toUpperCase() + p.service_model.slice(1)) + '</span>';
-            }
-            var loc = '';
-            if (p.town_name) {
-                loc = '<p class="muted nearby-card-loc">' + escapeHtml(p.town_name);
-                if (p.state_abbr) { loc += ', ' + escapeHtml(p.state_abbr); }
-                loc += '</p>';
-            }
-            var cls = 'nearby-card card' + (isFeatured ? ' nearby-card-featured' : '');
-            var href = p.profile_url || ('/providers/' + encodeURIComponent(p.slug));
-            return '<a class="' + cls + '" href="' + escapeHtml(href) + '">'
-                + '<h3 class="nearby-card-title">' + escapeHtml(p.business_name) + '</h3>'
-                + '<div class="nearby-card-badges">' + badges + '</div>'
-                + loc
-                + '</a>';
-        };
-
-        var render = function (data) {
-            if (!grid) { return; }
-            var town = data && data.town;
-            var providers = (data && data.providers) || [];
-
-            if (subtitle && town && town.label) {
-                subtitle.innerHTML = 'Showing relevant listings serving <strong>' + escapeHtml(town.label) + '</strong>.';
-            }
-
-            if (findLink && data && data.find_url) {
-                findLink.setAttribute('href', data.find_url);
-            }
-
-            if (town && town.id) {
-                try { sessionStorage.setItem(storageKey, String(town.id)); } catch (e) { /* ignore */ }
-            }
-
-            if (!providers.length) {
-                grid.innerHTML = '<div class="nearby-empty card" data-nearby-empty>'
-                    + '<p style="margin:0"><strong>No matching providers in this area yet.</strong> '
-                    + '<a href="/providers">Browse the national directory</a> or <a href="/for-providers">list your business</a>.</p></div>';
-                return;
-            }
-
-            grid.innerHTML = providers.map(renderCard).join('');
-        };
-
-        var loadNearby = function (query) {
-            setStatus('Loading local providers\u2026', true);
-            return fetch(endpoint + '?' + query, { headers: { 'Accept': 'application/json' } })
-                .then(function (r) { return r.json(); })
-                .then(function (data) {
-                    setStatus('', false);
-                    if (!data || !data.town) {
-                        throw new Error((data && data.error) || 'No town found.');
-                    }
-                    render(data);
-                })
-                .catch(function (e) {
-                    setStatus('', false);
-                    window.alert(e.message || 'Could not load providers for your area.');
-                });
-        };
-
-        var savedTown = null;
-        try { savedTown = sessionStorage.getItem(storageKey); } catch (e) { savedTown = null; }
-
-        var initialTownId = nearbySection.getAttribute('data-initial-town-id');
-        if (savedTown && savedTown !== initialTownId) {
-            loadNearby('town_id=' + encodeURIComponent(savedTown));
-        }
-
-        if (locateBtn && 'geolocation' in navigator) {
-            locateBtn.hidden = false;
-            locateBtn.addEventListener('click', function () {
-                var original = locateBtn.innerHTML;
-                locateBtn.disabled = true;
-                locateBtn.setAttribute('aria-busy', 'true');
-                locateBtn.innerHTML = 'Locating\u2026';
-                setStatus('Getting your location\u2026', true);
-
-                navigator.geolocation.getCurrentPosition(
-                    function (pos) {
-                        var lat = pos.coords.latitude.toFixed(6);
-                        var lng = pos.coords.longitude.toFixed(6);
-                        loadNearby('lat=' + encodeURIComponent(lat) + '&lng=' + encodeURIComponent(lng))
-                            .finally(function () {
-                                locateBtn.disabled = false;
-                                locateBtn.removeAttribute('aria-busy');
-                                locateBtn.innerHTML = original;
-                            });
-                    },
-                    function (err) {
-                        locateBtn.disabled = false;
-                        locateBtn.removeAttribute('aria-busy');
-                        locateBtn.innerHTML = original;
-                        setStatus('', false);
-                        var msg = err && err.code === 1
-                            ? 'Location access was blocked. Allow location in your browser settings.'
-                            : 'We could not get your location. Try search instead.';
-                        window.alert(msg);
-                    },
-                    { enableHighAccuracy: true, timeout: 15000, maximumAge: 120000 }
-                );
-            });
-        }
-    }
 
     // Provider service-area form. Keep this behaviour in the trusted external
     // bundle so production's strict Content Security Policy remains effective.

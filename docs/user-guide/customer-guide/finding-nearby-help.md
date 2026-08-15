@@ -2,12 +2,13 @@
 
 ## Ask VanAssist traveller facilities
 
-When Ask VanAssist traveller facilities are enabled, requests for toilets,
-dump points and similar amenities appear as compact rows showing the facility
-name, type, locality, address, distance and reviewed source status. These
-facilities remain separate from business providers and places to stay.
-Approved facility evidence attached to a place to stay can also appear in this
-facility section. Opening it takes you to the stay page, where its conditions,
+On production VanAssist (Aug 2026), Ask and traveller facilities are enabled.
+When the flags are on, requests for toilets, dump points and similar amenities
+appear as compact rows showing the facility name, type, locality, address,
+distance and reviewed source status. These facilities remain separate from
+business providers and places to stay. Approved facility evidence attached to a
+place to stay can also appear in this facility section. Opening it takes you to
+the stay page, where its conditions,
 source and verification date remain visible.
 
 Stay pages show resolved facility conditions such as **Water: Available — treat before drinking**, not merely a yes/no icon. Open **Facility information** for source and verification date. Use **Suggest a facility or correction** to report missing or wrong details. The report stays pending until an administrator reviews it; an acknowledgement is not publication.
@@ -83,17 +84,32 @@ invented pin.
 The Ask field is also shown directly on the VanAssist homepage when enabled.
 On a phone, the four direct shortcuts for services, places to stay, fuel and the
 full help directory appear before Ask so the common journeys remain available
-without scrolling through the optional plain-language search first.
+without scrolling through the optional plain-language search first. The homepage
+shows one primary search form and those shortcuts only; duplicate below-the-fold
+panels for stays, popular categories, assistance requests and provider sign-up
+were removed. Use **More search options** on `/find` for timeframe and distance
+filters, the footer for provider registration, or **Request assistance** from
+the note under the homepage search when needed.
+When a launch message is configured, it appears as muted inline copy below the
+hero rather than a separate alert banner.
+If VanAssist was saved to your phone before August 2026 and still shows an old
+**Service providers by location** panel, close the app completely and reopen it,
+or pull to refresh in the browser; the updated install removes that retired block
+automatically.
 It is limited to providers, places to stay, roadside/caravan help and traveller
 facilities; it is not a general-purpose AI assistant.
 
 Ask recognises the full VanAssist service catalogue and common descriptions of
 faults, including electrical, solar, refrigeration, plumbing, suspension,
-body, appliance and roadside problems. If a request is clearly about a caravan
+body, appliance and roadside problems. Everyday phrasing such as **where to stay
+in …**, **service my car near …** and **accommodation in …** is also supported.
+If a request is clearly about a caravan
 or RV fault but the precise trade cannot be established, it shows general
 caravan repair and unsure-service options instead of returning an empty answer.
 When the requested specialist category has no nearby listing, Ask may show a
-wider set of related repair, mechanical or roadside providers. These are
+wider set of related repair, mechanical or roadside providers. Servicing and
+mobile-mechanic misses widen once to general caravan repairs, auto electrical
+and diesel mechanics at 50 km before giving up. These are
 clearly labelled as related help and users are told to confirm suitability.
 Ask keeps conversational wording after a town out of the location name (for
 example, “near Gympie on my caravan”). If a named place cannot be resolved,
@@ -129,7 +145,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-12 (road-distance release validation, compact result window and approved stay-facility results in Ask).
+2026-08-13 (homepage simplified to hero search and shortcuts).
 
 ## Owner
 

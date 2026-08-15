@@ -1,7 +1,7 @@
 # Natural-language search (Ask VanAssist)
 
-**Status:** implemented (AI-1–AI-7); public flag `assist_ai_search` **off** by
-default.  
+**Status:** implemented (AI-1–AI-7). New installs seed `assist_ai_search` **off**;
+production VanAssist has Ask **enabled** (release `6a3f09d`, verified 13 Aug 2026).  
 **Backlog:** VAN-011 / CORE-012.  
 **Gate:** [`PHASE_AI0_DESIGN.md`](PHASE_AI0_DESIGN.md),
 [`AI_QUALITY_GATE_EVIDENCE.md`](AI_QUALITY_GATE_EVIDENCE.md).

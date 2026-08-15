@@ -2,6 +2,19 @@
 
 ## Unreleased
 
+### Added
+- **TowSmart and TrailerWise shell parity** — footer-action CTA, richer footer
+  columns, primary header CTA and save-to-phone install with brand-scoped
+  manifests for TowSmart and TrailerWise.
+
+### Documentation and VanAssist navigation (Aug 2026 production alignment)
+
+- Reconciled `PROJECT_STATUS.md`, `PRODUCTION_CURRENT_STATE.md`, SearchGap, Ask,
+  Quality Gate and API boundary docs with verified production posture: release
+  `6a3f09d`, Admin API enabled, Ask and traveller facilities live on VanAssist.
+- Added **Ask VanAssist** to VanAssist primary header navigation, footer Find
+  links and category-search cross-link when `assist_ai_search` is enabled.
+
 ### Fixed
 - Ask now supports direct provider business-name searches without weakening
   brand, GPS, explicit-location or radius boundaries.
