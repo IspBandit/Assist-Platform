@@ -35,9 +35,12 @@ Start with a selected-brand insight, create a task where follow-up is justified,
 For VanAssist, the same aggregate Website Insights data is emailed daily to
 `support@vanassist.com.au` for the preceding Brisbane calendar day. The email is
 an operational summary, not a replacement for the date filters and exports on
-this page. A low/no-traffic warning can indicate genuine low use or a tracking
-problem; check the latest page-view time and scheduled-task state before drawing
-conclusions.
+this page. Technical paths (including admin, API, health checks and static
+assets) and explicitly identified synthetic monitoring are excluded from public
+traffic totals. The email includes repeated no-result searches as an enrichment
+queue; it never auto-publishes invented providers or facilities. A low/no-traffic
+warning can indicate genuine low use or a tracking problem; check the latest
+page-view time and scheduled-task state before drawing conclusions.
 
 ## Examples
 

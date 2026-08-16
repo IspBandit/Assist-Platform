@@ -29,6 +29,8 @@ final class WebsiteInsightsWiringTest extends TestCase
         $report = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
 
         self::assertStringContainsString('TrackingSession::isBot()', $writer);
+        self::assertStringContainsString('BotTraffic::isSynthetic()', $writer);
+        self::assertStringContainsString('PublicPageViewPolicy::sqlPredicate', $report);
         self::assertGreaterThanOrEqual(7, substr_count($report, "device_type NOT IN ('bot','unknown')"));
     }
 

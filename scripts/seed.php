@@ -11,6 +11,7 @@ declare(strict_types=1);
  *   php scripts/seed.php --osm        # OpenStreetMap businesses (loops until done)
  *   php scripts/seed.php --locality   # locality research matrix (loops until done)
  *   php scripts/seed.php --localtorque # authoritative LocalTorque MDM pack (loops until done)
+ *   php scripts/seed.php --ask-library # deterministic Ask question library only
  *   php scripts/seed.php --providers  # towns + national + osm + locality + feature cities
  */
 if (PHP_SAPI !== 'cli') {
@@ -24,6 +25,7 @@ require BASE_PATH . '/bootstrap/autoload.php';
 use App\Core\Config;
 use App\Helpers\Env;
 use App\Services\DemoSeeder;
+use App\Services\AskQuestionLibrarySeeder;
 use App\Services\MajorCityCoverageService;
 use App\Services\NationalImportSeeder;
 use App\Services\ProviderImportRunner;
@@ -51,6 +53,12 @@ $progress = static function (array $r): void {
 
 try {
     $runner = new ProviderImportRunner();
+
+    if (in_array('--ask-library', $arguments, true)) {
+        $count = (new AskQuestionLibrarySeeder())->seed();
+        echo "Ask question library: {$count} active catalogue entries applied.\n";
+        exit($count >= AskQuestionLibrarySeeder::MINIMUM_QUESTIONS ? 0 : 1);
+    }
 
     if (in_array('--national', $arguments, true)) {
         $summary = (new NationalImportSeeder())->seed();

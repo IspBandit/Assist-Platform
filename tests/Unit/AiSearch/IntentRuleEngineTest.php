@@ -237,6 +237,18 @@ final class IntentRuleEngineTest extends TestCase
         self::assertSame('Grffiths Camping Ground, Queensland', $intent->locationText);
     }
 
+    public function testRadiusFirstFacilityWordingKeepsOnlyTheLandmarkAsLocation(): void
+    {
+        $intent = $this->engine->interpret(
+            'dump points within 50 km of Grffiths camping ground, Queensland'
+        );
+
+        self::assertSame(Intent::TYPE_FACILITY, $intent->intentType);
+        self::assertSame(['dump_point'], $intent->facilityTypeKeys);
+        self::assertSame(50, $intent->radiusKm);
+        self::assertSame('Grffiths Camping Ground, Queensland', $intent->locationText);
+    }
+
     public function testStateSuffixStripDoesNotTruncateTownNamesLikeMountIsa(): void
     {
         $intent = $this->engine->interpret('mobile mechanic near Mount Isa');

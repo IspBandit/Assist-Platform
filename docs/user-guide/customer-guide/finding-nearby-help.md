@@ -41,7 +41,7 @@ The main search attempts to resolve the current location without submitting the 
 
 Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Provider profiles use a simple heading without a decorative business-name initial or repeated business name in the breadcrumb. Workspace help is shown only inside signed-in account/provider areas, not on public provider pages. Open directions only when safely stopped.
 
-A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider road routes use the provider's point when available; otherwise the card says **town-centre destination**. Stay routes use the stay's own point. Google Maps is attributed when its road distance and estimated time are displayed. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
+A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider road routes use an exact provider point. A provider with only a base locality says **Exact provider distance unavailable (town-centre estimate)** and does not present that locality route as the distance to the business. Stay routes use the stay's own point. Google Maps is attributed when its road distance and estimated time are displayed. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
 
 ## Examples
 
@@ -70,10 +70,10 @@ suburb, postcode, campground or supported landmark written in the question
 always overrides GPS. If location permission is denied, use **Use my current
 location** after changing the browser setting or add the place to the question.
 You can also enter a provider's business name directly, with an optional place
-such as “Marshall Batteries near Brisbane”. Name matches remain subject to the
-same selected location and radius as other Ask results. A business name entered
-without a place triggers the same device-location request as every other Ask
-question without a place; it is never treated as a national name search.
+such as “Marshall Batteries near Brisbane”. An exact public name can be shown
+without forcing a location; add a place or allow device location when you also
+need radius filtering and road distance. Name searches with an explicit place
+remain subject to that location and radius.
 
 Ask results reuse the same List and Map controls as category search. Providers,
 places to stay and traveller facilities inside the resolved radius receive a
@@ -145,7 +145,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-13 (homepage simplified to hero search and shortcuts).
+2026-08-16 (provider-name search, route accuracy and compact mobile shell).
 
 ## Owner
 

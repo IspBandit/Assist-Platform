@@ -2724,7 +2724,7 @@ components:
       properties:
         data:
           type: object
-          required: [status, service, api_version]
+          required: [status, service, api_version, integrations]
           properties:
             status:
               type: string
@@ -2734,6 +2734,43 @@ components:
             api_version:
               type: string
               enum: [v1]
+            integrations:
+              type: object
+              required: [road_distance, ask_question_library]
+              properties:
+                road_distance:
+                  type: object
+                  required: [provider, configured, credential_source, persistent_cache, request_deduplication, cache_policy, policy_basis, town_centre_routing]
+                  properties:
+                    provider:
+                      type: string
+                      enum: [google_routes]
+                    configured:
+                      type: boolean
+                    credential_source:
+                      type: string
+                    persistent_cache:
+                      type: boolean
+                      const: false
+                    request_deduplication:
+                      type: boolean
+                    cache_policy:
+                      type: string
+                      enum: [google_route_distance_and_duration_not_persisted]
+                    policy_basis:
+                      type: string
+                    town_centre_routing:
+                      type: boolean
+                      const: false
+                ask_question_library:
+                  type: object
+                  required: [configured, active_questions]
+                  properties:
+                    configured:
+                      type: boolean
+                    active_questions:
+                      type: integer
+                      minimum: 0
     VersionResponse:
       type: object
       required: [data]

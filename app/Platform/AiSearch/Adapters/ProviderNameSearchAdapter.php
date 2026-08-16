@@ -53,7 +53,10 @@ final class ProviderNameSearchAdapter
         );
         $candidate = trim($candidate, " \t\n\r\0\x0B\"'?.!");
 
-        if (mb_strlen($candidate) < 3 || mb_strlen($candidate) > 120
+        // Some legitimate registered business names include several service
+        // and locality descriptors. Keep the bound finite, but do not make
+        // those exact directory names impossible to search.
+        if (mb_strlen($candidate) < 3 || mb_strlen($candidate) > 200
             || preg_match('/[\p{L}\p{N}]/u', $candidate) !== 1) {
             return null;
         }

@@ -325,6 +325,20 @@ reduced motion is preserved and the page has no horizontal overflow at 1440 ×
 PWA-header and install-dialog checks, plus reviewed desktop and mobile
 screenshots.
 
+## 2026-08-16 — VanAssist mobile keeps core journeys in the first viewport
+
+**Context:** the mobile homepage and result pages had excessive vertical space,
+large cards and a footer that repeated low-priority content, pushing quick actions
+below several screens. **Decision:** at phone widths, place the four quick search
+capabilities before the structured form and optional Ask panel; reduce search
+hero and result-card spacing; show only essential VanAssist footer links; and use
+the compressed responsive wordmark and hero assets. Desktop structure and all
+core journeys remain available. **Accessibility:** controls retain touch target
+size and visible focus, content order remains logical, hidden footer content is
+duplicative rather than unique, and no horizontal overflow is introduced.
+**Evidence:** mobile/desktop rendered review plus `VanAssistInstallTest` and public
+UX regression coverage.
+
 ## 2026-08-13 — Ask VanAssist in primary navigation when enabled
 
 **Context:** Ask was live at `/ask` but discoverable only via the homepage search

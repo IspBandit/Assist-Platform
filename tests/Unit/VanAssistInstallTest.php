@@ -47,7 +47,7 @@ final class VanAssistInstallTest extends TestCase
         $header = $this->source('app/Views/partials/header.php');
         $brands = $this->source('config/brands.php');
         self::assertStringContainsString('class="vanassist-road-wordmark"', $header);
-        self::assertStringContainsString('brands/vanassist/wordmark-road.png', $header);
+        self::assertStringContainsString('brands/vanassist/wordmark-road.webp', $header);
         self::assertStringContainsString('Find. Connect. Get Assisted.', $header);
         self::assertStringContainsString('FIND · CONNECT · GET ASSISTED', $brands);
         self::assertStringNotContainsString('class="brand-road"', $header);

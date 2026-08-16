@@ -5,6 +5,27 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist reliability closure (VAN-011 / DATA-004 / EXP-005)
+
+- Website Insights now excludes assets, manifests, service workers, API and
+  health requests from both new and historical public-page reports. Authorised
+  release/performance checks carry a synthetic marker and no longer distort
+  visits, searches or conversion figures.
+- The production release seeds and then verifies at least 1,000 active Ask
+  question variations. Release acceptance also checks Griffiths Creek,
+  provider-name lookup and Google road-distance output.
+- Ask recognises `within 50 km of {place}` facility wording without treating
+  campground words as another requested stay type, and exact provider-name
+  searches no longer fail solely because GPS was unavailable.
+- Provider road distances are shown only for exact provider points. A
+  town-centre fallback remains visible but is labelled as an estimate without a
+  false numeric provider distance or avoidable Google route lookup.
+- VanAssist phone layouts place the four direct journeys before the larger
+  search form, shorten search-page artwork and reduce the footer to essential
+  links. Footer heading order and low-contrast fine print were corrected.
+- Replaced the oversized 218 KB PNG header wordmark with a 20 KB WebP and
+  reduced the mobile hero from 164 KB to 110 KB without changing its crop.
+
 ### VanAssist daily website performance email (VAN-012)
 
 - Added a VanAssist-only previous-day website performance email to
@@ -33,8 +54,9 @@ may remain as dated files and are linked here rather than copied.
 - Admin API/RIC health reports the active Ask library count and the Google
   Routes cache policy. Google distance/duration results remain non-persistent;
   duplicate destinations are suppressed within each request.
-- Migration `131_ask_question_library.sql` creates and seeds the library during
-  the normal release. Rollback uses the prior immutable release; the table is
+- Migration `131_ask_question_library.sql` creates the library; the normal
+  release now runs the idempotent `--ask-library` seed and verifies the live
+  active count. Rollback uses the prior immutable release; the table is
   additive and can remain without affecting the prior runtime.
 
 ### Ask VanAssist everyday phrasing batch (VAN-011)

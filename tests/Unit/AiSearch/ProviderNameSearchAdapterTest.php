@@ -40,6 +40,11 @@ final class ProviderNameSearchAdapterTest extends TestCase
         yield 'current location suffix' => ['Marshall Batteries near me', null, 'Marshall Batteries'];
         yield 'radius suffix' => ['Marshall Batteries within 25 km', null, 'Marshall Batteries'];
         yield 'quoted name' => ['"Bob’s Caravan Repairs"', null, 'Bob’s Caravan Repairs'];
+        yield 'long legitimate directory name' => [
+            'Startamotive - Mechanic Sunbury | Roadworthy Certificate RWC | Tyre Shop & Repair | Gisborne, Woodend, Kyneton, Diggers Rest',
+            null,
+            'Startamotive - Mechanic Sunbury | Roadworthy Certificate RWC | Tyre Shop & Repair | Gisborne, Woodend, Kyneton, Diggers Rest',
+        ];
         yield 'empty' => ['?', null, null];
     }
 

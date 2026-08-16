@@ -68,6 +68,24 @@ final class BotTraffic
         return false;
     }
 
+    /** Authorised monitoring and release checks are valid requests, not visitors. */
+    public static function isSynthetic(?string $userAgent = null): bool
+    {
+        $marker = strtolower(trim((string) ($_SERVER['HTTP_X_ASSIST_SYNTHETIC'] ?? '')));
+        if (in_array($marker, ['1', 'true', 'yes'], true)) {
+            return true;
+        }
+
+        $ua = self::normalise($userAgent);
+        foreach (['assistplatform-production-smoke', 'assistplatform-audit', 'lighthouse', 'pagespeed insights', 'gtmetrix'] as $needle) {
+            if (str_contains($ua, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static function normalise(?string $userAgent): string
     {
         return strtolower(trim($userAgent ?? (string) ($_SERVER['HTTP_USER_AGENT'] ?? '')));

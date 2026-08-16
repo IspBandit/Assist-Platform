@@ -116,6 +116,7 @@ final class VanAssistDailyPerformanceReport
             ['Devices used', $report['devices'] ?? [], 'Device', 'Visits', 'Views'],
             ['Services people searched for', $report['services'] ?? [], 'Service', 'Searches', 'No result'],
             ['Locations people searched', $report['locations'] ?? [], 'Location', 'Searches', 'No result'],
+            ['Search gaps needing coverage', self::coverageGapRows($report['coverage_gaps'] ?? []), 'Service and location', 'No-result searches', 'Repeated misses'],
             ['What visitors clicked', $report['actions'] ?? [], 'Action', 'Actions', 'Visitors'],
             ['Providers attracting interest', self::providerRows($report['providers'] ?? []), 'Provider', 'Contacts', 'Profile views'],
         ];
@@ -168,6 +169,26 @@ final class VanAssistDailyPerformanceReport
             'total' => (int) ($row['contacts'] ?? 0),
             'secondary' => (int) ($row['profile_views'] ?? 0),
         ], $rows);
+    }
+
+    /** @param mixed $rows @return array<int,array{label:string,total:int,secondary:int}> */
+    private static function coverageGapRows(mixed $rows): array
+    {
+        if (!is_array($rows)) {
+            return [];
+        }
+        return array_map(static function (array $row): array {
+            $location = trim((string) ($row['location_name'] ?? 'Location not supplied'));
+            $state = trim((string) ($row['state_abbr'] ?? ''));
+            if ($state !== '') {
+                $location .= ', ' . $state;
+            }
+            return [
+                'label' => (string) ($row['service_name'] ?? 'Any service') . ' — ' . $location,
+                'total' => (int) ($row['searches'] ?? 0),
+                'secondary' => (int) ($row['searches'] ?? 0) >= 2 ? (int) ($row['searches'] ?? 0) : 0,
+            ];
+        }, $rows);
     }
 
     /** @param array<int,array<string,mixed>> $rows */

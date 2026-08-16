@@ -231,7 +231,7 @@
 .workspace-notices{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:4rem}.workspace-notices article{padding:1.5rem;border:1px solid var(--color-border);background:#fff}.workspace-notices h2{margin:.3rem 0 .6rem}.workspace-notices p:not(.experience-kicker){color:var(--color-text-muted)}
 
 /* Credibility footer */
-.site-footer{padding:0;background:#0b2528;color:#fff}.footer-action{border-bottom:1px solid rgba(255,255,255,.15);background:#102f32}.footer-action .container{display:flex;min-height:120px;justify-content:space-between;gap:2rem;align-items:center}.footer-action span,.footer-action strong{display:block}.footer-action span{margin-bottom:.3rem;color:#f4c47d;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.footer-action strong{font-size:1.35rem}.site-footer .footer-main{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:clamp(2rem,5vw,5rem);padding-top:4.5rem;padding-bottom:4rem}.footer-wordmark{color:#fff;font-size:1.65rem;font-weight:850;letter-spacing:-.04em;text-decoration:none}.footer-brand-column>p{max-width:380px;color:rgba(255,255,255,.66);line-height:1.6}.footer-brand-column .footer-trust-copy{font-size:.82rem}.footer-brand-column address{display:flex;flex-direction:column;gap:.35rem;font-style:normal}.site-footer h4{margin:0 0 1.1rem;color:#f4c47d;font-size:.73rem;letter-spacing:.11em;text-transform:uppercase}.site-footer ul{margin:0;padding:0;list-style:none}.site-footer li{margin:.35rem 0}.site-footer a{color:rgba(255,255,255,.76);text-decoration:none}.site-footer li a,.footer-brand-column address a{display:inline-flex;min-height:32px;align-items:center}.site-footer a:hover{color:#fff}.site-footer .btn-light{color:#102f32}.site-footer .btn-light:hover{color:#102f32;background:#f4c47d}.site-footer .footer-bottom{display:flex;justify-content:space-between;gap:2rem;padding:1.5rem 0;border-top:1px solid rgba(255,255,255,.14)}.site-footer .footer-bottom p{margin:0;color:rgba(255,255,255,.48);font-size:.76rem}
+.site-footer{padding:0;background:#0b2528;color:#fff}.footer-action{border-bottom:1px solid rgba(255,255,255,.15);background:#102f32}.footer-action .container{display:flex;min-height:120px;justify-content:space-between;gap:2rem;align-items:center}.footer-action span,.footer-action strong{display:block}.footer-action span{margin-bottom:.3rem;color:#f4c47d;font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.footer-action strong{font-size:1.35rem}.site-footer .footer-main{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:clamp(2rem,5vw,5rem);padding-top:4.5rem;padding-bottom:4rem}.footer-wordmark{color:#fff;font-size:1.65rem;font-weight:850;letter-spacing:-.04em;text-decoration:none}.footer-brand-column>p{max-width:380px;color:rgba(255,255,255,.66);line-height:1.6}.footer-brand-column .footer-trust-copy{font-size:.82rem}.footer-brand-column address{display:flex;flex-direction:column;gap:.35rem;font-style:normal}.site-footer h2,.site-footer h4{margin:0 0 1.1rem;color:#f4c47d;font-size:.73rem;letter-spacing:.11em;text-transform:uppercase}.site-footer ul{margin:0;padding:0;list-style:none}.site-footer li{margin:.35rem 0}.site-footer a{color:rgba(255,255,255,.76);text-decoration:none}.site-footer li a,.footer-brand-column address a{display:inline-flex;min-height:32px;align-items:center}.site-footer a:hover{color:#fff}.site-footer .btn-light{color:#102f32}.site-footer .btn-light:hover{color:#102f32;background:#f4c47d}.site-footer .footer-bottom{display:flex;justify-content:space-between;gap:2rem;padding:1.5rem 0;border-top:1px solid rgba(255,255,255,.14)}.site-footer .footer-bottom p{margin:0;color:rgba(255,255,255,.72);font-size:.76rem}
 
 @media(max-width:1050px){
   .experience-hero-layout{grid-template-columns:1fr;gap:2.5rem;align-items:end}.experience-hero-copy{align-self:end}.experience-hero-copy h1{max-width:10ch}.discovery-panel{max-width:660px}
@@ -756,7 +756,7 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .site-footer { background: var(--charcoal); color: #d7d9db; padding: 2.5rem 0; margin-top: 3rem; }
 .site-footer a { color: #fff; }
 .site-footer .grid { gap: 1.5rem; }
-.site-footer h4 { color: #fff; font-size: 1rem; }
+.site-footer h2, .site-footer h4 { color: #fff; font-size: 1rem; }
 .site-footer ul { list-style: none; margin: 0; padding: 0; }
 .site-footer li { margin-bottom: .4rem; }
 .footer-bottom { border-top: 1px solid #444; margin-top: 1.5rem; padding-top: 1rem; font-size: .85rem; color: #9aa0a6; }
@@ -1699,7 +1699,7 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .mobile-hero-intro h1{margin:0 0 .2rem!important;font-size:clamp(1.8rem,9vw,2.25rem)!important;line-height:.98!important}
   .mobile-hero-intro p{font-size:.78rem;line-height:1.3}
   .mobile-hero-intro>button{min-height:44px;margin:0;padding:.15rem 0;font-size:.7rem}
-  .hero-search-panel .structured-search-form{order:2;padding:.58rem;border-radius:10px;background:rgba(255,255,255,.985);box-shadow:0 14px 38px rgba(0,0,0,.32)}
+  .hero-search-panel .structured-search-form{order:3;padding:.58rem;border-radius:10px;background:rgba(255,255,255,.985);box-shadow:0 14px 38px rgba(0,0,0,.32)}
   .hero-search-panel .search-head{display:none}
   .hero-search-panel .home-search-primary{gap:.4rem}
   .hero-search-panel label{margin-bottom:.2rem;font-size:.74rem}
@@ -1708,7 +1708,7 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .hero-search-panel .search-options summary{font-size:.74rem}
   .hero-search-panel .home-search-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;margin-top:.4rem}
   .hero-search-panel .home-search-actions .btn{min-height:46px;padding:.45rem .3rem;font-size:.72rem;line-height:1.15}
-  .hero-capabilities{order:3;margin:.45rem 0 0;padding:.3rem;gap:.3rem}
+  .hero-capabilities{order:2;margin:.35rem 0 .45rem;padding:.3rem;gap:.3rem}
   .hero-capabilities a{min-height:44px;grid-template-columns:1.65rem minmax(0,1fr);padding:.25rem .3rem}
   .hero-capabilities a>span{width:1.65rem;height:1.65rem;border-width:1px}
   .hero-capabilities a>span svg{width:1rem;height:1rem}
@@ -1719,4 +1719,27 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .ask-vanassist-home-row input,.ask-vanassist-home-row .btn{min-height:44px}
   .ask-vanassist-home-row .btn{width:auto;min-width:66px;padding:.45rem .55rem}
   .ask-vanassist-home-foot{flex-direction:row;align-items:center;gap:.4rem;font-size:.66rem}
+
+  body[data-brand="vanassist"] .interior-visual-heading{min-height:104px;margin:0 0 .55rem;padding:.7rem .8rem;border-radius:10px}
+  body[data-brand="vanassist"] .interior-visual-heading h1{margin:.15rem 0 0;font-size:1.45rem;line-height:1.05}
+  body[data-brand="vanassist"] .interior-visual-heading p{display:none}
+  .search-results-page{padding-top:.55rem}
+  .search-results-page>.container>p.muted{display:none}
+  .search-results-page .search-card{margin:.45rem 0 .65rem!important;padding:.6rem}
+
+  body[data-brand="vanassist"] .site-footer{margin-top:1rem;padding:0}
+  body[data-brand="vanassist"] .footer-action{display:none}
+  body[data-brand="vanassist"] .site-footer .footer-main{grid-template-columns:1fr 1fr;gap:.75rem 1rem;padding:1rem .75rem .7rem}
+  body[data-brand="vanassist"] .footer-brand-column{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.55rem}
+  body[data-brand="vanassist"] .footer-brand-column>p,
+  body[data-brand="vanassist"] .footer-brand-column>address{display:none}
+  body[data-brand="vanassist"] .footer-wordmark{font-size:1.25rem}
+  body[data-brand="vanassist"] .footer-brand-column .install-app-button{min-height:40px;margin:0;padding:.45rem .6rem;font-size:.68rem}
+  body[data-brand="vanassist"] .site-footer h2{margin:0 0 .25rem;font-size:.65rem}
+  body[data-brand="vanassist"] .site-footer li{display:none;margin:0}
+  body[data-brand="vanassist"] .site-footer li.footer-mobile-primary{display:block}
+  body[data-brand="vanassist"] .site-footer li a{min-height:36px;font-size:.72rem;line-height:1.15}
+  body[data-brand="vanassist"] .site-footer .footer-bottom{display:block;padding:.65rem .75rem}
+  body[data-brand="vanassist"] .site-footer .footer-bottom p{font-size:.67rem;line-height:1.3}
+  body[data-brand="vanassist"] .site-footer .footer-bottom p+p{display:none}
 }

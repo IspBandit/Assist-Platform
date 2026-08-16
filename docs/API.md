@@ -85,9 +85,11 @@ production toggles stay in website admin with owner workflows.
 
 The health response includes `integrations.road_distance` with `provider`,
 `configured`, `credential_source`, `persistent_cache`, `request_deduplication`
-and `cache_policy`. It reports configuration state only and never returns a
-credential. Google Routes distance/duration content is not persisted;
-request-local duplicate suppression avoids repeated destinations in a matrix.
+and `cache_policy`, plus `policy_basis` and `town_centre_routing`. It reports
+configuration state only and never returns a credential. Google Routes
+distance/duration content is not persisted; request-local duplicate suppression
+avoids repeated destinations in a matrix. Town-centre fallback coordinates are
+not routed or presented as exact provider distances.
 `integrations.ask_question_library` reports whether at least 1,000 active
 versioned questions are ready and gives the non-sensitive active count.
 

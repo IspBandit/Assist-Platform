@@ -46,7 +46,9 @@ RIC everyday management (analytics rollup) adds:
   failures.
 - `/health` includes a non-secret `integrations.road_distance` block reporting
   whether Google Routes is configured, which credential source was selected and
-  that persistent route-result caching is disabled.
+  that persistent route-result caching and town-centre routing are disabled. It
+  also reports the active Ask question-library count and whether the required
+  1,000-question baseline is ready.
 - `/overview` also returns `data_quality` counts for useful provider contact and
   exact-coordinate coverage, plus stay coordinate, facility-evidence and stale-
   evidence coverage. RIC uses these counts to make enrichment gaps actionable.

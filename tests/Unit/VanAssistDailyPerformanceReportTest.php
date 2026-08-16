@@ -28,6 +28,10 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
             'devices' => [['label' => 'mobile', 'total' => 17, 'secondary' => 42]],
             'services' => [['label' => 'Dump points', 'total' => 5, 'secondary' => 1]],
             'locations' => [['label' => 'Gladstone', 'total' => 4, 'secondary' => 0]],
+            'coverage_gaps' => [[
+                'service_name' => 'Roof leaks', 'location_name' => 'Gladstone',
+                'state_abbr' => 'QLD', 'searches' => 3,
+            ]],
             'actions' => [['label' => 'directions', 'total' => 3, 'secondary' => 3]],
             'providers' => [['label' => 'Example Caravan Repairs', 'contacts' => 2, 'profile_views' => 4]],
         ]);
@@ -37,6 +41,8 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
         self::assertStringContainsString('Most popular pages', $message['html']);
         self::assertStringContainsString('Places to stay', $message['html']);
         self::assertStringContainsString('Dump points', $message['html']);
+        self::assertStringContainsString('Search gaps needing coverage', $message['html']);
+        self::assertStringContainsString('Roof leaks — Gladstone, QLD', $message['html']);
         self::assertStringContainsString('Example Caravan Repairs', $message['html']);
         self::assertStringContainsString('aggregate, first-party VanAssist figures', $message['text']);
         self::assertStringNotContainsString('session_id', $message['html']);

@@ -97,7 +97,9 @@ Neither route is a promise of long-term third-party compatibility.
 `GET /api/v1/admin/health` and `GET /api/v1/admin/capabilities` are the Admin API
 probe endpoints when the feature flag is on. Health exposes safe road-distance
 readiness under `integrations.road_distance` (provider, configured state,
-credential source and persistent-cache state) without exposing the credential.
+credential source, persistent-cache state and town-centre-routing state) without
+exposing the credential. It also exposes only the non-sensitive active Ask
+question-library count and readiness state.
 
 `GET /api/v1/admin/overview` returns the RIC operational rollup (range query
 `7d`/`30d`/`90d`/`fy`/`pfy`/`custom`). `GET /api/v1/admin/website-insights`

@@ -41,7 +41,9 @@ final class SystemController extends Controller
                     'credential_source' => $routes['source'],
                     'persistent_cache' => false,
                     'request_deduplication' => true,
-                    'cache_policy' => 'google_routes_results_not_persisted',
+                    'cache_policy' => 'google_route_distance_and_duration_not_persisted',
+                    'policy_basis' => 'Google Maps Platform service-specific terms',
+                    'town_centre_routing' => false,
                 ],
                 'ask_question_library' => [
                     'configured' => $askQuestionCount >= 1000,
