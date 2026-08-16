@@ -25,6 +25,8 @@ use App\Platform\AiSearch\Intent\IntentInterpreter;
 use App\Platform\AiSearch\Intent\IntentNormaliser;
 use App\Platform\AiSearch\Intent\IntentRuleEngine;
 use App\Platform\AiSearch\Intent\IntentSchemaValidator;
+use App\Platform\AiSearch\Knowledge\AskQuestionLibrary;
+use App\Platform\AiSearch\Knowledge\AskQuestionCatalog;
 use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Platform\AiSearch\Logging\AssistSearchLogger;
 use App\Platform\AiSearch\Routing\SearchRouter;
@@ -55,6 +57,7 @@ final class SearchOrchestrator
     private KnowledgeGapService $gaps;
     private RoadDistanceService $roadDistances;
     private PublicResultWindow $resultWindow;
+    private AskQuestionLibrary $questionLibrary;
     /** @var (\Closure(SearchRequest,Intent):array{0:?array<string,mixed>,1:?float,2:?float,3:string})|null */
     private ?\Closure $locationResolver;
 
@@ -76,6 +79,7 @@ final class SearchOrchestrator
         ?RoadDistanceService $roadDistances = null,
         ?PublicResultWindow $resultWindow = null,
         ?\Closure $locationResolver = null,
+        ?AskQuestionLibrary $questionLibrary = null,
     ) {
         $this->rules = $rules ?? new IntentRuleEngine();
         $this->router = $router ?? new SearchRouter();
@@ -94,6 +98,7 @@ final class SearchOrchestrator
         $this->roadDistances = $roadDistances ?? new RoadDistanceService();
         $this->resultWindow = $resultWindow ?? new PublicResultWindow();
         $this->locationResolver = $locationResolver;
+        $this->questionLibrary = $questionLibrary ?? new AskQuestionLibrary();
     }
 
     public function handle(SearchRequest $request): SearchResponse
@@ -142,18 +147,22 @@ final class SearchOrchestrator
         }
 
         $meta = IntentNormaliser::analyse($raw);
-        $cacheKey = $this->intentCache->buildKey($request->brandKey, $meta['normalised']);
-        $cached = $this->intentCache->get($cacheKey);
-        $fromCache = $cached !== null;
+        $cacheQuestion = AskQuestionCatalog::normalize($raw);
+        $cacheKey = $this->intentCache->buildKey($request->brandKey, $cacheQuestion);
+        $libraryIntent = $this->questionLibrary->find($raw);
+        $cached = $libraryIntent === null ? $this->intentCache->get($cacheKey) : null;
+        $fromCache = $cached !== null || $libraryIntent !== null;
 
-        if ($fromCache) {
+        if ($libraryIntent !== null) {
+            $intent = $libraryIntent;
+        } elseif ($cached !== null) {
             $intent = $cached;
         } else {
             $intent = $this->rules->interpret($raw);
             $validated = IntentSchemaValidator::validate($intent);
             $intent = $validated['intent'];
             if ($intent->intentType !== Intent::TYPE_UNKNOWN) {
-                $this->intentCache->put($cacheKey, $request->brandKey, $meta['normalised'], $intent);
+                $this->intentCache->put($cacheKey, $request->brandKey, $cacheQuestion, $intent);
             }
         }
 
@@ -245,19 +254,19 @@ final class SearchOrchestrator
                     $modelVersion = is_string($ai['model']) ? $ai['model'] : null;
                     $aiCacheKey = $this->intentCache->buildKey(
                         $request->brandKey,
-                        $meta['normalised'],
+                        $cacheQuestion,
                         'en-AU',
                         $modelVersion
                     );
                     $this->intentCache->put(
                         $aiCacheKey,
                         $request->brandKey,
-                        $meta['normalised'],
+                        $cacheQuestion,
                         $intent,
                         'en-AU',
                         $modelVersion
                     );
-                    $this->intentCache->put($cacheKey, $request->brandKey, $meta['normalised'], $intent, 'en-AU', $modelVersion);
+                    $this->intentCache->put($cacheKey, $request->brandKey, $cacheQuestion, $intent, 'en-AU', $modelVersion);
                 } else {
                     $fallback = 'ai_failed';
                     if ($intent->clarificationReason === null) {

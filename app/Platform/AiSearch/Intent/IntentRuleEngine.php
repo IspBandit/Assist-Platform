@@ -276,6 +276,18 @@ final class IntentRuleEngine
         ['id'=>'R64','patterns'=>['where do i find','where can i get','looking for a','find a'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['unsure-which-service-is-needed','general-caravan-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.55],
     ];
 
+    /** @return list<string> */
+    public static function questionPatterns(): array
+    {
+        $patterns = [];
+        foreach (self::RULES as $rule) {
+            foreach ($rule['patterns'] as $pattern) {
+                $patterns[] = (string) $pattern;
+            }
+        }
+        return array_values(array_unique($patterns));
+    }
+
     public function interpret(string $rawQuery): Intent
     {
         $meta = IntentNormaliser::analyse($rawQuery);

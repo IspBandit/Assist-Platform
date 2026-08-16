@@ -84,9 +84,12 @@ cap mutation, or import/publish controls from the Operations page. Dangerous
 production toggles stay in website admin with owner workflows.
 
 The health response includes `integrations.road_distance` with `provider`,
-`configured`, `source` and `persistent_cache`. It reports configuration state
-only and never returns a credential. `persistent_cache` is currently `false`;
-request-local duplicate suppression remains the only route-matrix cache.
+`configured`, `credential_source`, `persistent_cache`, `request_deduplication`
+and `cache_policy`. It reports configuration state only and never returns a
+credential. Google Routes distance/duration content is not persisted;
+request-local duplicate suppression avoids repeated destinations in a matrix.
+`integrations.ask_question_library` reports whether at least 1,000 active
+versioned questions are ready and gives the non-sensitive active count.
 
 `GET /api/v1/admin/capabilities` is host scoped. Its `brand` object identifies
 the resolved Assist brand (`key`, `name`, `status`, `url` and enabled
