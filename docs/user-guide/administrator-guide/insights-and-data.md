@@ -32,6 +32,13 @@ Website insights requires `demand.view`, with CSV export separately requiring `d
 
 Start with a selected-brand insight, create a task where follow-up is justified, then hand an import opportunity to Data Sources. Treat Trust, rules & growth as global despite the workspace header. Keep connector credentials in the encrypted settings workflow. Review candidate provenance and duplicate signals before promotion.
 
+For VanAssist, the same aggregate Website Insights data is emailed daily to
+`support@vanassist.com.au` for the preceding Brisbane calendar day. The email is
+an operational summary, not a replacement for the date filters and exports on
+this page. A low/no-traffic warning can indicate genuine low use or a tracking
+problem; check the latest page-view time and scheduled-task state before drawing
+conclusions.
+
 ## Examples
 
 A zero-result service/location pattern can become a Data Intelligence task and then a scoped connector run. Candidates with adequate independent evidence can be advanced by the server worker. Restricted-source rows remain temporary review records until a lawful independent source supports publication.
@@ -61,7 +68,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30 (recognisable national/state coverage map, server-owned provider processing and explicit queue reasons).
+2026-08-16 (VanAssist daily website performance email and operational interpretation).
 
 ## Owner
 

@@ -5,6 +5,23 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist daily website performance email (VAN-012)
+
+- Added a VanAssist-only previous-day website performance email to
+  `support@vanassist.com.au`, using the existing first-party analytics and
+  Microsoft 365 queue rather than a second analytics store or direct PHP mail.
+- The plain-English report covers approximate visits, pages opened, pages per
+  visit, popular pages, sources, devices, provider searches, no-result searches,
+  search success, service/location interest, provider profiles, contact actions
+  and providers attracting interest. Low or zero activity is called out rather
+  than dressed up as a healthy result.
+- Each Brisbane calendar date has an idempotent queue key, so cron retries do
+  not send duplicate reports. Staff, known bots and raw visitor identities stay
+  outside the report.
+- Migration `132_register_vanassist_daily_performance_email.sql` registers the
+  monitored task. BinaryLane schedules it at 06:15 after the existing daily
+  aggregation, with normal queue delivery following within two minutes.
+
 ### VanAssist Ask question library and cache safety (VAN-011)
 
 - Added a migration-backed, idempotent library of 1,550 versioned common Ask

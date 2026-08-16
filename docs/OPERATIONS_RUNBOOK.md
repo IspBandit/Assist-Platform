@@ -51,6 +51,16 @@ release workflow must not run Docker Compose directly as the restricted deploy
 user. Review current queue counts in **Admin → Provider data**; use the
 root-owned cron runner for an authorised server-side diagnostic.
 
+VanAssist's daily website performance report runs at 06:15 Australia/Brisbane
+through `vanassist_daily_performance_email`. It reports the preceding calendar
+day to `support@vanassist.com.au`, then the existing two-minute email worker
+delivers it through Microsoft Graph. The task checks its date-specific queue key
+before inserting, so a retry reports `already_queued` and does not duplicate the
+email. Confirm both the task's `success` state and the matching email-queue row;
+an HTTP health check alone does not prove delivery. To suspend the report,
+remove or comment only that cron entry. To recover a missed day, run the task
+once before the next calendar day; never hand-insert a queue copy.
+
 The workflow cannot run from a pull request or feature branch. A human must type
 `DEPLOY`, approve the protected environment and allow the complete reusable CI
 workflow to pass before upload. The remote release script verifies the archive,
