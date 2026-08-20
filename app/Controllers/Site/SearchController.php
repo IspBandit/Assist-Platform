@@ -24,6 +24,9 @@ final class SearchController extends Controller
     public function find(Request $request): Response
     {
         $location = trim((string) $request->input('location', ''));
+        if ($location === '') {
+            $location = trim((string) $request->input('text', ''));
+        }
         $categorySlug = trim((string) $request->input('category', ''));
         $timeframe = trim((string) $request->input('timeframe', ''));
 

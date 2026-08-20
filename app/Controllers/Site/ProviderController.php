@@ -20,6 +20,9 @@ final class ProviderController extends Controller
     public function index(Request $request): Response
     {
         $search = trim((string) $request->input('q', ''));
+        if ($search === '') {
+            $search = trim((string) $request->input('text', ''));
+        }
         $page = max(1, (int) $request->input('page', 1));
         $perPage = 18;
         $townId = (int) $request->input('town') ?: null;

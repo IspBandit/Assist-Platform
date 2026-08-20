@@ -62,6 +62,36 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('HAVING distance_km <= ?', $provider);
     }
 
+    public function testFindAndDirectoryEndpointsAcceptLegacyTextInputAliases(): void
+    {
+        $searchController = $this->source('app/Controllers/Site/SearchController.php');
+        $providerController = $this->source('app/Controllers/Site/ProviderController.php');
+
+        self::assertStringContainsString('$location = trim((string) $request->input(\'location\', \'\'));', $searchController);
+        self::assertStringContainsString('if ($location === \'\') {', $searchController);
+        self::assertStringContainsString('$location = trim((string) $request->input(\'text\', \'\'));', $searchController);
+        self::assertStringContainsString('$search = trim((string) $request->input(\'q\', \'\'));', $providerController);
+        self::assertStringContainsString('if ($search === \'\') {', $providerController);
+        self::assertStringContainsString('$search = trim((string) $request->input(\'text\', \'\'));', $providerController);
+    }
+
+    public function testLocationEndpointsAcceptLatitudeLongitudeAliases(): void
+    {
+        $locationController = $this->source('app/Controllers/Site/LocationController.php');
+        $searchController = $this->source('app/Controllers/Site/SearchController.php');
+        $providerController = $this->source('app/Controllers/Site/ProviderController.php');
+
+        self::assertStringContainsString('$latRaw = $request->input(\'lat\');', $locationController);
+        self::assertStringContainsString('$latRaw = $request->input(\'latitude\');', $locationController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $locationController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'longitude\');', $locationController);
+
+        self::assertStringContainsString('$latRaw = $request->input(\'lat\');', $searchController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $searchController);
+        self::assertStringContainsString('$latRaw = $request->input(\'lat\');', $providerController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $providerController);
+    }
+
     private function source(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $relativePath);
