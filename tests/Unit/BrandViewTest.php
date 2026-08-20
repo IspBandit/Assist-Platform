@@ -118,7 +118,7 @@ final class BrandViewTest extends TestCase
         self::assertStringContainsString('--teal: var(--brand-primary);', $html);
     }
 
-    public function testVanAssistHomePresentsTaskPathsAndDataBackedEvidence(): void
+    public function testVanAssistHomePresentsTaskPathsWithoutStatisticsRibbon(): void
     {
         BrandContext::set($this->vanAssistBrand());
 
@@ -127,12 +127,9 @@ final class BrandViewTest extends TestCase
             'blocks' => [],
             'confirmedRuns' => [],
             'formingRuns' => [],
-            'nearbyTown' => null,
-            'nearbyProviders' => [],
-            'nearbyFindUrl' => 'https://vanassist.test/find',
-            'nearbyEndpoint' => 'https://vanassist.test/locations/nearby-providers',
             'providerDirectoryCount' => 1248,
             'categories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
+            'categoryGroups' => ['Services' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']]],
             'homeEvidence' => [
                 'directory_listings' => 1248,
                 'verified_providers' => 0,
@@ -143,12 +140,38 @@ final class BrandViewTest extends TestCase
         ]);
 
         self::assertStringContainsString('class="hero hero--visual"', $html);
-        self::assertStringContainsString('Start with what you need right now.', $html);
-        self::assertStringContainsString('From “who can help?” to a useful next step.', $html);
-        self::assertStringContainsString('1,248', $html);
-        self::assertStringContainsString('active service listings', $html);
-        self::assertStringNotContainsString('>0</strong><span>verified providers', $html);
-        self::assertStringContainsString('vanassist-hero-mobile.avif', $html);
+        self::assertStringContainsString('aria-label="Find VanAssist help"', $html);
+        self::assertStringNotContainsString('Service providers by location', $html);
+        self::assertStringNotContainsString('data-nearby-providers', $html);
+        self::assertStringNotContainsString('Popular service categories', $html);
+        self::assertStringNotContainsString('Getting tired?', $html);
+        self::assertStringNotContainsString('provider-conversion', $html);
+        self::assertStringContainsString('Find help nearby', $html);
+        self::assertStringNotContainsString('journey-launcher', $html);
+        self::assertStringNotContainsString('evidence-ribbon', $html);
+        self::assertStringNotContainsString('active service listings', $html);
+        self::assertStringNotContainsString('Upcoming confirmed service runs', $html);
+        self::assertStringNotContainsString('Know what each listing label means.', $html);
+        self::assertStringContainsString('vanassist-coastal-hero-mobile-v1.webp', $html);
+        self::assertStringContainsString('Your travel', $html);
+        self::assertStringContainsString('companion.', $html);
+    }
+
+    public function testVanAssistHomeLaunchNoteUsesMutedInlineCopy(): void
+    {
+        BrandContext::set($this->vanAssistBrand());
+
+        $html = View::render('public.home', [
+            'title' => 'Caravan help',
+            'categories' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']],
+            'categoryGroups' => ['Services' => [['name' => 'Caravan repairs', 'slug' => 'caravan-repairs']]],
+            'freeMessage' => 'VanAssist is free during the initial launch.',
+        ]);
+
+        self::assertStringContainsString('class="home-launch-note container"', $html);
+        self::assertStringContainsString('VanAssist is free during the initial launch.', $html);
+        self::assertStringNotContainsString('alert alert-info', $html);
+        self::assertStringNotContainsString('section-sand home-launch-note', $html);
     }
 
     public function testProviderDashboardPrioritisesOpenDemand(): void

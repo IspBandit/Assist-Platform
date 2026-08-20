@@ -6,6 +6,7 @@ namespace App\Controllers\Site;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Models\BrandProviderCategory;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
@@ -33,6 +34,7 @@ final class TowSmartController extends Controller
             'title' => 'Tow smarter. Tow safer.',
             'metaDescription' => 'Check your loaded towing combination against vehicle and trailer mass limits with clear Australian towing guidance.',
             'canonical' => current_brand()->url() . '/',
+            'categories' => $this->brandCategories(),
         ]);
     }
 
@@ -147,6 +149,19 @@ final class TowSmartController extends Controller
             [$userId, current_brand()->databaseId()]
         );
         return $this->view('towsmart.combinations', ['title' => 'Saved towing combinations', 'items' => $items]);
+    }
+
+    /** @return array<int,array<string,mixed>> */
+    private function brandCategories(): array
+    {
+        $brandId = current_brand()->databaseId();
+
+        return Database::select(
+            'SELECT id, category_key AS slug, name, description FROM brand_provider_categories WHERE '
+            . BrandProviderCategory::publicDirectorySql($brandId)
+            . ' ORDER BY sort_order, name LIMIT 8',
+            BrandProviderCategory::publicDirectoryParams($brandId)
+        );
     }
 
     private function requireBrand(): void

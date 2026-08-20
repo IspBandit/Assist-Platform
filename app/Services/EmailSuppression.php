@@ -42,6 +42,7 @@ final class EmailSuppression
             [$email, mb_substr($source, 0, 80)]
         );
         Database::query('UPDATE users SET marketing_opt_in=0,updated_at=NOW() WHERE LOWER(email)=?', [$email]);
+        self::cancelPending($email, 'marketing');
     }
 
     public static function suppressAll(string $email, string $reason, string $source): void
@@ -56,6 +57,7 @@ final class EmailSuppression
             . "ON DUPLICATE KEY UPDATE scope='all',source=VALUES(source),updated_at=NOW()",
             [$email, $reason, mb_substr(trim($source), 0, 80)]
         );
+        self::cancelPending($email, 'all');
     }
 
     public static function suppressDirectoryAccuracy(string $email, string $source = 'public_directory_notice_opt_out'): void
@@ -70,6 +72,7 @@ final class EmailSuppression
             . "ON DUPLICATE KEY UPDATE scope='directory_accuracy',source=VALUES(source),updated_at=NOW()",
             [$email, mb_substr($source, 0, 80)]
         );
+        self::cancelPending($email, 'directory_accuracy');
     }
 
     public static function unsubscribeUrl(string $email): string
@@ -104,6 +107,25 @@ final class EmailSuppression
     private static function normalise(string $email): string
     {
         return strtolower(trim($email));
+    }
+
+    private static function cancelPending(string $email, string $scope): void
+    {
+        $typeWhere = match ($scope) {
+            'marketing' => " AND message_type='marketing'",
+            'directory_accuracy' => " AND message_type='directory_accuracy'",
+            default => '',
+        };
+        Database::query(
+            "UPDATE email_queue SET status='cancelled',last_error='Recipient suppressed before delivery' "
+            . "WHERE LOWER(recipient_email)=? AND status='pending'{$typeWhere}",
+            [$email]
+        );
+        Database::query(
+            "UPDATE notification_recipients nr INNER JOIN email_queue eq ON eq.id=nr.queue_id SET nr.status='suppressed' "
+            . "WHERE LOWER(nr.email)=? AND eq.status='cancelled'{$typeWhere}",
+            [$email]
+        );
     }
 
     private static function key(): string

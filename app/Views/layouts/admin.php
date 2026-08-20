@@ -17,6 +17,9 @@ $nav = [
 $directory = [];
 if ($permitted('providers.manage')) {
     $directory[] = ['Providers', '/admin/providers'];
+    if ($platformAdmin) {
+        $directory[] = ['Recycle bin', '/admin/recycle-bin'];
+    }
 }
 if ($permitted('categories.manage')) {
     $directory[] = ['Service categories', '/admin/categories'];
@@ -26,8 +29,10 @@ if ($permitted('locations.manage')) {
 }
 if ($platformAdmin && $permitted('data_sources.review')) {
     $directory[] = ['Import review', '/admin/data-sources/review'];
+    $directory[] = ['Facility import review', '/admin/data-sources/facilities/review'];
 }
 if ($platformAdmin && $permitted('data_sources.view')) {
+    $directory[] = ['Government datasets', '/admin/data-sources/datasets'];
     $directory[] = ['Queensland coverage', '/admin/qld-coverage'];
 }
 if ($adminBrand->moduleEnabled('trailer_marketplace') && $permitted('providers.manage')) {
@@ -35,6 +40,20 @@ if ($adminBrand->moduleEnabled('trailer_marketplace') && $permitted('providers.m
 }
 if ($directory !== []) {
     $nav['Directory'] = $directory;
+}
+
+$polarisNav = [];
+if ($adminBrand->moduleEnabled('rv_catalogue') && $permitted('polaris.manage')) {
+    $polarisNav[] = ['Overview', '/admin/polaris'];
+    $polarisNav[] = ['Manufacturers', '/admin/polaris/manufacturers'];
+    $polarisNav[] = ['Models', '/admin/polaris/models'];
+    $polarisNav[] = ['Imports', '/admin/polaris/imports'];
+    $polarisNav[] = ['Review queue', '/admin/polaris/review-queue'];
+    $polarisNav[] = ['Recycle bin', '/admin/polaris/recycle-bin'];
+    $polarisNav[] = ['Settings', '/admin/polaris/settings'];
+}
+if ($polarisNav !== []) {
+    $nav['Polaris'] = $polarisNav;
 }
 
 $customerOperations = [];
@@ -52,6 +71,7 @@ if ($adminBrand->moduleEnabled('service_runs') && $permitted('runs.manage')) {
 }
 if ($adminBrand->moduleEnabled('parks') && $permitted('parks.manage')) {
     $customerOperations[] = ['Places to stay', '/admin/parks'];
+    $customerOperations[] = ['Facility contributions', '/admin/facility-contributions'];
     if ($platformAdmin && $adminBrand->id() === 'vanassist') {
         $customerOperations[] = ['Stay discovery review', '/admin/parks/import'];
     }
@@ -61,14 +81,15 @@ if ($customerOperations !== []) {
 }
 
 $growth = [];
+if ($permitted('notifications.send')) {
+    $growth[] = ['Email campaigns', '/admin/notifications'];
+    $growth[] = ['Free growth hub', '/admin/outreach-hub'];
+}
 if ($permitted('prospects.manage')) {
-    $growth[] = ['Provider outreach', '/admin/prospects'];
+    $growth[] = ['Provider prospects', '/admin/prospects'];
 }
 if ($permitted('content.manage')) {
     $growth[] = ['Social studio', '/admin/social-media'];
-}
-if ($permitted('notifications.send')) {
-    $growth[] = ['Provider email campaigns', '/admin/notifications'];
 }
 if ($growth !== []) {
     $nav['Growth'] = $growth;
@@ -83,6 +104,7 @@ if ($permitted('data_intelligence.view')) {
 }
 if ($permitted('demand.view')) {
     $insights[] = ['Website insights', '/admin/demand'];
+    $insights[] = ['Knowledge gaps', '/admin/ai-search/gaps'];
 }
 if ($insights !== []) {
     $nav['Insights'] = $insights;
@@ -106,6 +128,7 @@ if ($permitted('billing.manage')) {
 }
 
 $administration = [];
+$administration[] = ['Documentation', '/admin/help'];
 if ($permitted('users.manage')) {
     $administration[] = ['Users & access', '/admin/users'];
 }
@@ -114,15 +137,20 @@ if ($permitted('audit.view')) {
 }
 if ($permitted('settings.manage')) {
     $administration[] = ['Settings', '/admin/settings'];
+    $administration[] = ['Assist AI Search', '/admin/ai-search'];
 }
 if (auth()->isSuperAdmin()) {
     $administration[] = ['Backups', '/admin/backups'];
     $administration[] = ['Maintenance', '/admin/maintenance'];
 }
+if ($platformAdmin) {
+    $administration[] = ['API service accounts', '/admin/api-service-accounts'];
+}
 if ($administration !== []) {
     $nav['Administration'] = $administration;
 }
 $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/') ?: '/admin';
+$documentationTarget = \App\Services\Documentation\DocumentationLinkResolver::forRoute($current, 'administrator');
 ?>
 <!doctype html>
 <html lang="en-AU">
@@ -156,10 +184,15 @@ $current = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/',
         </nav>
     </aside>
 
+    <button type="button" class="admin-nav-scrim" aria-label="Close administration menu" tabindex="-1"></button>
+
     <div class="admin-main">
         <div class="admin-topbar">
             <div class="admin-page-heading"><span><?= $this->e($adminBrand->name()) ?></span><strong><?= $this->e($title ?? 'Admin') ?></strong></div>
             <div class="admin-topbar-actions">
+                <?php if (!str_starts_with($current, '/admin/help') && $documentationTarget !== null): ?>
+                    <a class="btn btn-ghost admin-context-help" href="<?= e(url('admin/help/' . $documentationTarget['guide'] . '/' . $documentationTarget['slug'])) ?>"><span aria-hidden="true">?</span><span class="admin-context-help-label">Help</span></a>
+                <?php endif; ?>
                 <?php if (count($adminBrands) > 1): ?>
                     <div class="admin-brand-switcher">
                         <button class="btn btn-ghost admin-brand-switcher__trigger" type="button" aria-expanded="false" aria-controls="admin-brand-menu">

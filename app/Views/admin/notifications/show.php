@@ -8,11 +8,24 @@
 /** @var array<int,array<string,mixed>> $providerCandidates */
 /** @var array<string,string> $consentBases */
 /** @var string $recipientSearch */
+/** @var array<string,int|string> $deliverySummary */
 $this->extend('layouts.admin');
 $status = (string) $notification['status'];
 $stage = (string) ($notification['delivery_stage'] ?? 'draft');
 $canCancel = !in_array($status, ['sent', 'cancelled'], true);
 $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'directory_accuracy';
+$isOrganisationOutreach = (string) ($notification['campaign_type'] ?? '') === 'organisation_outreach';
+$deliveryCounts = $deliverySummary;
+$nextStep = match (true) {
+    $status === 'sent' => 'Delivery is complete. Review the delivery results below.',
+    $status === 'cancelled' => 'This campaign is cancelled.',
+    $stage === 'draft' => 'Send a preview to yourself, check it, then start the provider pilot.',
+    $stage === 'test' => 'Preview sent. If it looks right, start the 25-recipient provider pilot.',
+    $stage === 'pilot' => 'Review the pilot results, then approve sending at 50 per day.',
+    $stage === 'daily_50' => 'Continue the next batch or approve the 100-per-day cap.',
+    $stage === 'daily_100' => 'Continue the next approved batch, or enable automatic factual batches where allowed.',
+    default => 'Review the campaign and continue with the available sending action.',
+};
 ?>
 <?php $this->section('content'); ?>
 <div class="card">
@@ -23,38 +36,46 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
     <p class="muted">
         Status: <strong><?= $this->e($status) ?></strong> ·
         Stage: <strong><?= $this->e($stage) ?></strong> ·
-        Type: <strong><?= $this->e($isDirectoryAccuracy ? 'Factual listing accuracy' : 'Consent-gated marketing') ?></strong> ·
+        Type: <strong><?= $this->e($isDirectoryAccuracy ? 'Factual listing accuracy' : ($isOrganisationOutreach ? 'Reviewed organisation PR outreach' : 'Consent-gated marketing')) ?></strong> ·
         Audience: <strong><?= $this->e((string) $notification['audience_type']) ?></strong> ·
-        <?php if ($status === 'sent'): ?>Sent to <strong><?= (int) $notification['recipient_count'] ?></strong> recipient(s)<?php else: ?>Estimated recipients: <strong><?= (int) $previewCount ?></strong><?php endif; ?>
+        <?php if ($isOrganisationOutreach): ?>Target: <strong><?= $this->e(str_replace('_', ' ', (string) ($notification['organisation_type'] ?? ''))) ?></strong> ·<?php endif; ?>
+        <?php if ($status === 'sent'): ?>Queue complete for <strong><?= (int) $notification['recipient_count'] ?></strong> recipient(s) · transport accepted <strong><?= (int) ($deliveryCounts['sent'] ?? 0) ?></strong> · failed <strong><?= (int) ($deliveryCounts['failed'] ?? 0) ?></strong> · suppressed <strong><?= (int) ($deliveryCounts['suppressed'] ?? 0) ?></strong><?php else: ?>Estimated recipients: <strong><?= (int) $previewCount ?></strong><?php endif; ?>
     </p>
     <?php if ($providerSummary !== null && $status !== 'sent'): ?>
         <div class="alert alert-info"><strong><?= (int) $providerSummary['with_email'] ?></strong> active provider(s) have an email address in this audience. <strong><?= (int) $providerSummary['eligible'] ?></strong> can be included now; every other address remains visible below for review.</div>
     <?php endif; ?>
+
+    <div class="alert alert-info">
+        <strong>Next step:</strong> <?= $this->e($nextStep) ?>
+        <?php if (!in_array($status, ['sent', 'cancelled'], true)): ?>
+            <a class="btn btn-primary" href="#delivery-controls">Continue sending</a>
+        <?php endif; ?>
+    </div>
 
     <div style="border:1px solid #e3e0d8;border-radius:8px;padding:1rem;background:#fff;margin:1rem 0">
         <?= $notification['body'] /* trusted admin-authored HTML */ ?>
     </div>
 
     <?php if (!in_array($status, ['sent', 'cancelled'], true)): ?>
-        <div class="card" style="margin:1rem 0">
-            <h2 style="margin-top:0">Safe delivery stages</h2>
+        <div class="card" id="delivery-controls" style="margin:1rem 0" tabindex="-1">
+            <h2 style="margin-top:0">Send this campaign</h2>
             <ol>
-                <li>Send and inspect an internal test.</li>
-                <li>Queue no more than 25 eligible providers, then review replies, corrections, complaints, bounces and opt-outs.</li>
+                <li>Email a preview to yourself and check the sender, wording, graphics and links.</li>
+                <li>Queue no more than 25 eligible recipients, then review replies, corrections, complaints, bounces and opt-outs.</li>
                 <li>After review, queue no more than 50 in any rolling 24 hours.</li>
                 <li>Only after another review, raise the hard cap to 100 in any rolling 24 hours.</li>
             </ol>
             <?php if (in_array($stage, ['draft', 'test'], true)): ?>
                 <form method="post" action="<?= e(url('admin/notifications/test')) ?>" class="btn-row">
                     <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>">
-                    <label for="test_email" class="sr-only">Internal test email</label>
-                    <input type="email" id="test_email" name="test_email" placeholder="Internal test email" required>
-                    <button type="submit" class="btn btn-secondary">Queue internal test</button>
+                    <label for="test_email" class="sr-only">Your preview email address</label>
+                    <input type="email" id="test_email" name="test_email" value="<?= e_attr((string) (current_user()['email'] ?? '')) ?>" placeholder="Your email address" required>
+                    <button type="submit" class="btn btn-primary">Email preview to me</button>
                 </form>
             <?php endif; ?>
             <div class="btn-row" style="margin-top:1rem">
                 <?php if ($stage === 'test'): ?>
-                    <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary">Test checked — queue pilot (max 25)</button></form>
+                    <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="pilot"><button class="btn btn-primary">Preview checked — start sending (max 25)</button></form>
                 <?php elseif ($stage === 'pilot'): ?>
                     <form method="post" action="<?= e(url('admin/notifications/stage')) ?>"><?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="stage" value="daily_50"><button class="btn btn-primary">Pilot reviewed — start 50/day</button></form>
                 <?php elseif ($stage === 'daily_50'): ?>
@@ -65,6 +86,28 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
                 <?php endif; ?>
             </div>
         </div>
+
+        <?php if ($isDirectoryAccuracy): ?>
+            <div class="card" style="margin:1rem 0">
+                <h2 style="margin-top:0">Optional factual batch continuation</h2>
+                <p class="muted">This switch never applies to marketing. It becomes available only after the internal test, pilot, 50/day review and manual 100/day approval. Every automatic batch still resolves the live audience, honours removals and suppressions, and is capped at 100 recipients in a rolling 24 hours.</p>
+                <?php if (!empty($notification['auto_continue_last_error'])): ?><div class="alert alert-error"><strong>Continuation stopped:</strong> <?= $this->e((string) $notification['auto_continue_last_error']) ?></div><?php endif; ?>
+                <?php if (!empty($notification['auto_continue_enabled'])): ?>
+                    <div class="alert alert-info"><strong>On.</strong> Next eligible run: <?= $this->e((string) ($notification['auto_continue_next_at'] ?? 'pending cron run')) ?>. You can switch it off immediately.</div>
+                    <form method="post" action="<?= e(url('admin/notifications/auto-continue')) ?>">
+                        <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="enabled" value="0">
+                        <button class="btn btn-ghost" type="submit">Switch off automatic continuation</button>
+                    </form>
+                <?php elseif ($status === 'sending' && $stage === 'daily_100' && !empty($notification['stage_reviewed_at']) && !empty($notification['stage_reviewed_by'])): ?>
+                    <form method="post" action="<?= e(url('admin/notifications/auto-continue')) ?>">
+                        <?= csrf_field() ?><input type="hidden" name="id" value="<?= (int) $notification['id'] ?>"><input type="hidden" name="enabled" value="1">
+                        <button class="btn btn-secondary" type="submit">Enable automatic factual batches (max 100/day)</button>
+                    </form>
+                <?php else: ?>
+                    <p class="muted mb-0"><strong>Off.</strong> Manually complete and review each earlier stage. This control remains unavailable until the campaign is actively sending at the reviewed 100/day stage.</p>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     <?php endif; ?>
 
     <?php if ($canCancel): ?>
@@ -114,7 +157,8 @@ $isDirectoryAccuracy = (string) ($notification['campaign_type'] ?? '') === 'dire
                         <td><strong><?= $this->e((string) $candidate['business_name']) ?></strong><small><?= $this->e((string) $candidate['email']) ?></small></td>
                         <td><span class="badge campaign-recipient-status status-<?= e_attr($candidateStatus) ?>"><?= $this->e(ucfirst($candidateStatus)) ?></span><?php if ($candidateStatus === 'excluded'): ?><small><?= $this->e((string) $candidate['exclusion_reason']) ?></small><?php elseif ($candidateStatus === 'suppressed'): ?><small><?= $this->e((string) $candidate['suppression_reason']) ?></small><?php endif; ?></td>
                         <td>
-                            <?php if ($isDirectoryAccuracy && !empty($candidate['has_directory_evidence'])): ?>
+                            <?php if (empty($candidate['valid_email'])): ?><span class="muted">Held: the stored email address is not valid for delivery</span>
+                            <?php elseif ($isDirectoryAccuracy && !empty($candidate['has_directory_evidence'])): ?>
                                 <strong>Unclaimed public record</strong>
                                 <small><?= $this->e((string) $candidate['source_evidence']) ?></small>
                             <?php elseif ($isDirectoryAccuracy): ?><span class="muted">Held: no adequate public source recorded</span>

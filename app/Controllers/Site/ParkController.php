@@ -17,6 +17,9 @@ use App\Helpers\Geo;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
 use App\Services\SeoSchema;
+use App\Services\StayFacilityService;
+use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 use App\Validation\Validator;
 
 /**
@@ -57,6 +60,7 @@ final class ParkController extends Controller
         $townId = filter_var($request->input('town_id'), FILTER_VALIDATE_INT) ?: null;
         if ($location !== '') {
             $townMatches = Town::searchActive($location, 1);
+            if ($townMatches === []) { $townMatches = Town::searchActiveFuzzy($location, 1); }
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
         $lat = is_numeric($request->input('lat')) ? (float) $request->input('lat') : null;
@@ -67,7 +71,15 @@ final class ParkController extends Controller
         if ($lng !== null && ($lng < -180 || $lng > 180)) {
             $lng = null;
         }
-        if ($townId !== null) {
+        if ($location !== '') {
+            // An explicitly typed place wins over hidden device coordinates.
+            $lat = null;
+            $lng = null;
+        } elseif ($lat !== null && $lng !== null) {
+            // Device coordinates are the accurate origin. The nearest-town
+            // label remains useful, but must not replace the phone's position.
+            $townId = null;
+        } elseif ($townId !== null) {
             $lat = null;
             $lng = null;
         }
@@ -75,16 +87,42 @@ final class ParkController extends Controller
         $priceType = (string) $request->input('price_type', '');
         $stayType = array_key_exists($stayType, self::STAY_TYPES) ? $stayType : null;
         $priceType = array_key_exists($priceType, self::PRICE_TYPES) ? $priceType : null;
+        $facilityType = (string) $request->input('facility', '');
+        $facilityType = isset(StayFacilityService::TYPES[$facilityType]) ? $facilityType : null;
         $distanceKm = Geo::stayDistance($request->input('distance'));
         $hasOrigin = $townId !== null || ($lat !== null && $lng !== null);
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
+        $stays = $hasOrigin ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm, 60, $facilityType ? [$facilityType] : []) : [];
+        $resultWindow = (new PublicResultWindow())->apply(['stays' => $stays], $resultLimit);
+        $stays = $resultWindow['groups']['stays'];
+        $routeLat = $lat;
+        $routeLng = $lng;
+        if (($routeLat === null || $routeLng === null) && $townId !== null) {
+            $townOrigin = Database::selectOne(
+                "SELECT latitude, longitude FROM towns WHERE id = ? AND is_active = 1 AND coordinate_confidence IN ('authoritative','statistical')",
+                [$townId]
+            );
+            $routeLat = is_numeric($townOrigin['latitude'] ?? null) ? (float) $townOrigin['latitude'] : null;
+            $routeLng = is_numeric($townOrigin['longitude'] ?? null) ? (float) $townOrigin['longitude'] : null;
+        }
+        if ($routeLat !== null && $routeLng !== null) {
+            $stays = (new RoadDistanceService())->enrichGroups(
+                ['stays' => $stays],
+                $routeLat,
+                $routeLng,
+                $distanceKm,
+            )['stays'];
+        }
+        $facilityMap = (new StayFacilityService())->forParks(array_map(static fn(array $stay): int => (int)$stay['id'], $stays));
         return $this->view('public.stays', [
             'title' => 'Getting tired? Find a place to stay',
             'metaDescription' => 'Find caravan parks, campgrounds, national-park camping and free or low-cost caravan stays near your location across Australia.',
             'canonical' => url('stays'),
-            'stays' => $hasOrigin
-                ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm)
-                : [],
+            'stays' => $stays,
+            'facilityMap' => $facilityMap,
+            'facilityTypes' => StayFacilityService::TYPES,
+            'selectedFacility' => $facilityType,
             'stayTypes' => self::STAY_TYPES,
             'priceTypes' => self::PRICE_TYPES,
             'selectedTownId' => $townId,
@@ -95,6 +133,18 @@ final class ParkController extends Controller
             'distanceOptions' => Geo::STAY_DISTANCE_OPTIONS,
             'hasOrigin' => $hasOrigin,
             'searched' => $hasOrigin,
+            'hasMore' => $resultWindow['has_more'],
+            'showMoreUrl' => $resultWindow['has_more'] ? url('stays?' . http_build_query(array_filter([
+                'location' => $location,
+                'town_id' => $townId,
+                'lat' => $lat,
+                'lng' => $lng,
+                'stay_type' => $stayType,
+                'price_type' => $priceType,
+                'facility' => $facilityType,
+                'distance' => $distanceKm,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 
@@ -284,6 +334,7 @@ final class ParkController extends Controller
             'park'            => $park,
             'runs'            => CaravanPark::nearbyRuns($park['town_id'] ? (int) $park['town_id'] : null, $park['region_id'] ? (int) $park['region_id'] : null),
             'isManaged'       => (int) Database::scalar('SELECT COUNT(*) FROM caravan_park_users WHERE park_id = ?', [$id]) > 0,
+            'facilities'      => Database::tableExists('stay_facility_claims') ? (new StayFacilityService())->forPark($id) : [],
         ]);
     }
 }

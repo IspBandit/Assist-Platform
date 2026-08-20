@@ -1,0 +1,4 @@
+id,name,facility_type,latitude,longitude,address,locality
+demo-toilet-1,Demo Roma Public Toilet,public_toilet,-26.5733,148.7876,Wyndham Street,Roma
+demo-toilet-2,Demo Byron Bay Public Toilet,public_toilet,-28.6474,153.6020,Main Beach,Byron Bay
+demo-toilet-3,Demo Batehaven Public Toilet,public_toilet,-35.7325,150.1985,Beach Road,Batehaven

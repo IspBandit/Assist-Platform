@@ -39,6 +39,7 @@ final class CronRunner
             'aggregate_daily_metrics'  => fn () => $this->aggregateDailyMetrics(),
             'customer_followups'       => fn () => $this->customerFollowups(),
             'analytics_retention'      => fn () => $this->analyticsRetention(),
+            'ai_retention'             => static fn () => (new \App\Platform\AiSearch\Retention\AiRetentionService())->purge(),
             // Automated request -> provider matching (no-op unless auto_matching flag is on).
             'update_match_suggestions' => static fn () => (new AutoMatchService())->runBatch(),
             // Provider directory imports (resume from seed fingerprint; no-op when up to date).
@@ -46,6 +47,7 @@ final class CronRunner
             'import_osm'               => static fn () => (new ProviderImportRunner())->cronOsm(45.0),
             'import_locality'          => static fn () => (new ProviderImportRunner())->cronLocality(45.0),
             'import_localtorque_pack'  => static fn () => (new ProviderImportRunner())->cronLocalTorque(45.0),
+            'process_provider_import_queue' => static fn () => (new ProviderImportQueueWorker())->run(45.0),
         ];
     }
 
@@ -165,6 +167,9 @@ final class CronRunner
     /** Dispatch any scheduled broadcasts that have come due. */
     private function processNotifications(): array
     {
+        // Keep reviewed factual campaigns moving even if an unrelated legacy
+        // scheduled broadcast later fails during this cron invocation.
+        $directoryAutoContinue = NotificationService::continueDirectoryCampaigns();
         $due = Database::select(
             "SELECT id FROM notifications WHERE status = 'scheduled' AND scheduled_at IS NOT NULL AND scheduled_at <= NOW() ORDER BY scheduled_at ASC LIMIT 50"
         );
@@ -175,7 +180,11 @@ final class CronRunner
             $dispatched++;
             $recipients += $result['recipients'];
         }
-        return ['dispatched' => $dispatched, 'recipients' => $recipients];
+        return [
+            'dispatched' => $dispatched,
+            'recipients' => $recipients,
+            'directory_auto_continue' => $directoryAutoContinue,
+        ];
     }
 
     /** Email a reminder to customers booked on runs starting in N days. */

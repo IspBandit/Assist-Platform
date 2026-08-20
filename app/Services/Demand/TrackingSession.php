@@ -6,6 +6,7 @@ namespace App\Services\Demand;
 
 use App\Auth\Auth;
 use App\Core\Database;
+use App\Services\BotTraffic;
 use Throwable;
 
 /**
@@ -122,20 +123,18 @@ final class TrackingSession
 
     public static function isBot(): bool
     {
-        $ua = strtolower(self::userAgent());
-        if ($ua === '') {
-            return false;
-        }
-        foreach (['bot', 'crawl', 'spider', 'slurp', 'bingpreview', 'facebookexternalhit', 'headless', 'python-requests', 'curl/', 'wget'] as $needle) {
-            if (str_contains($ua, $needle)) {
-                return true;
-            }
-        }
-        return false;
+        return BotTraffic::isBot(self::userAgent());
     }
 
     public static function referralSource(): ?string
     {
+        $utmSource = self::attributionValue($_GET['utm_source'] ?? null);
+        if ($utmSource !== null) {
+            $utmMedium = self::attributionValue($_GET['utm_medium'] ?? null);
+            $utmCampaign = self::attributionValue($_GET['utm_campaign'] ?? null);
+            return substr('utm:' . implode('/', array_filter([$utmSource, $utmMedium, $utmCampaign])), 0, 120);
+        }
+
         $ref = (string) ($_SERVER['HTTP_REFERER'] ?? '');
         if ($ref === '') {
             return 'direct';
@@ -150,6 +149,17 @@ final class TrackingSession
             }
         }
         return substr($host, 0, 120);
+    }
+
+    private static function attributionValue(mixed $value): ?string
+    {
+        if (!is_string($value)) {
+            return null;
+        }
+        $value = strtolower(trim($value));
+        $value = preg_replace('/[^a-z0-9._-]+/', '-', $value) ?? '';
+        $value = trim($value, '-');
+        return $value === '' ? null : substr($value, 0, 48);
     }
 
     // ----- internals -----------------------------------------------------

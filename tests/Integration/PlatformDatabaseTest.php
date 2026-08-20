@@ -6,6 +6,7 @@ namespace Tests\Integration;
 
 use App\Core\Database;
 use App\Core\Config;
+use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
 use App\Core\Response;
 use App\Middleware\RateLimit as RateLimitMiddleware;
@@ -25,6 +26,11 @@ use App\Services\DataSourceService;
 use App\Services\NationalRouteImportService;
 use App\Models\GarageAsset;
 use App\Models\Provider;
+use App\Services\Api\AdminApiFacilityService;
+use App\Platform\AiSearch\Adapters\StayFacilitySearchBridge;
+use App\Services\RoadDistance\GoogleRoutesCredentialProvisioner;
+use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
+use App\Platform\AiSearch\Adapters\ProviderNameSearchAdapter;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -93,6 +99,112 @@ final class PlatformDatabaseTest extends TestCase
         self::assertLessThanOrEqual(150.0, (float) $nearGladstone[0]['distance_km']);
     }
 
+    public function testProviderRadiusSearchNeverBuildsAHybridCoordinate(): void
+    {
+        $row = Database::selectOne(
+            'SELECT p.id, ps.category_id, t.latitude, t.longitude '
+            . 'FROM providers p JOIN provider_services ps ON ps.provider_id=p.id '
+            . 'JOIN towns t ON t.id=p.base_town_id '
+            . "WHERE p.status='active' AND p.deleted_at IS NULL "
+            . "AND t.coordinate_confidence IN ('authoritative','statistical') "
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL LIMIT 1'
+        );
+        self::assertNotNull($row);
+
+        Database::beginTransaction();
+        try {
+            Database::query('UPDATE providers SET latitude=0,longitude=NULL WHERE id=?', [(int) $row['id']]);
+            $matches = Provider::forCategoryNear(
+                (int) $row['category_id'],
+                (float) $row['latitude'],
+                (float) $row['longitude'],
+                25,
+                500,
+            );
+            $match = null;
+            foreach ($matches as $candidate) {
+                if ((int) $candidate['id'] === (int) $row['id']) {
+                    $match = $candidate;
+                    break;
+                }
+            }
+
+            self::assertNotNull($match, 'A partial provider point must fall back to its trusted town centre.');
+            self::assertSame('town_centre', $match['distance_basis']);
+            self::assertEqualsWithDelta((float) $row['latitude'], (float) $match['town_lat'], 0.0000001);
+            self::assertEqualsWithDelta((float) $row['longitude'], (float) $match['town_lng'], 0.0000001);
+        } finally {
+            Database::rollBack();
+        }
+    }
+
+    public function testTravellerFacilityDetailHonoursSelectedBrandScope(): void
+    {
+        $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+        BrandContext::set($registry->get('vanassist'));
+        $otherBrandId = (int) Database::scalar("SELECT id FROM brands WHERE brand_key='towsmart'");
+
+        Database::beginTransaction();
+        try {
+            $slug = 'scope-test-' . bin2hex(random_bytes(6));
+            $otherId = Database::insert(
+                'INSERT INTO traveller_facilities (facility_type,name,slug,verification_status,status,confidence,brand_id,created_at,updated_at) '
+                . "VALUES ('dump_point','Other brand facility',?,'verified','active',100,?,NOW(),NOW())",
+                [$slug, $otherBrandId]
+            );
+
+            try {
+                (new AdminApiFacilityService())->show($otherId);
+                self::fail('A facility from another brand must not be readable by guessed ID.');
+            } catch (AdminApiException $e) {
+                self::assertSame(404, $e->getStatusCode());
+            }
+
+            $sharedId = Database::insert(
+                'INSERT INTO traveller_facilities (facility_type,name,slug,verification_status,status,confidence,brand_id,created_at,updated_at) '
+                . "VALUES ('dump_point','Shared facility',?,'verified','active',100,NULL,NOW(),NOW())",
+                [$slug . '-shared']
+            );
+            self::assertSame((string) $sharedId, (new AdminApiFacilityService())->show($sharedId)['id']);
+        } finally {
+            Database::rollBack();
+            BrandContext::clear();
+        }
+    }
+
+    public function testApprovedStayFacilityEvidenceAppearsInAskWithinRadius(): void
+    {
+        $stateId = (int) Database::scalar("SELECT id FROM states WHERE abbreviation='QLD' LIMIT 1");
+        self::assertGreaterThan(0, $stateId);
+
+        Database::beginTransaction();
+        try {
+            $slug = 'ask-stay-facility-' . bin2hex(random_bytes(5));
+            $parkId = Database::insert(
+                'INSERT INTO caravan_parks '
+                . '(name,slug,state_id,latitude,longitude,public_page_enabled,status,stay_type,price_type,created_at,updated_at) '
+                . "VALUES ('Griffiths Creek test camping area',?,?, -24.35,151.10,1,'active','national_park','unknown',NOW(),NOW())",
+                [$slug, $stateId]
+            );
+            Database::insert(
+                'INSERT INTO stay_facility_claims '
+                . '(park_id,facility_type,facility_status,facility_value,details,source_type,source_name,source_confidence,source_specificity,verified_at,last_seen_at,created_at,updated_at) '
+                . "VALUES (?,'dump_point','yes','portable_toilet_waste_disposal','Portable waste disposal is available.','government','Queensland Parks',100,'facility',NOW(),NOW(),NOW(),NOW())",
+                [$parkId]
+            );
+
+            $results = (new StayFacilitySearchBridge())->search(['dump_point'], -24.35, 151.10, 25);
+            $result = array_values(array_filter($results, static fn (array $row): bool => (int) ($row['stay_id'] ?? 0) === $parkId));
+
+            self::assertCount(1, $result);
+            self::assertSame('dump_point', $result[0]['facility_type']);
+            self::assertSame('yes', $result[0]['facility_status']);
+            self::assertLessThanOrEqual(25.0, (float) $result[0]['distance_km']);
+        } finally {
+            Database::rollBack();
+        }
+    }
+
     public function testLaunchGateProducesAllFourEvidenceGroups(): void
     {
         $readiness = LaunchReadinessService::inspect();
@@ -110,8 +222,9 @@ final class PlatformDatabaseTest extends TestCase
     public function testPlatformBrandsAndBackfillIntegrity(): void
     {
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');
-        self::assertSame(['vanassist', 'towsmart', 'trailerwise', 'localtorque'], array_column($brands, 'brand_key'));
+        self::assertSame(['vanassist', 'towsmart', 'trailerwise', 'localtorque', 'polaris'], array_column($brands, 'brand_key'));
         self::assertSame('active', $brands[0]['status']);
+        self::assertSame('private', $brands[4]['status']);
 
         foreach ((new PlatformBackfill())->validate() as $check) {
             self::assertTrue($check['valid'], "Backfill count {$check['actual']} did not match {$check['expected']}");
@@ -159,6 +272,66 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(5,(int)Database::scalar(
             "SELECT COUNT(*) FROM brand_provider_categories WHERE brand_id=1 AND category_key IN ('caravan-gas-appliances','trailer-brakes-suspension','mobile-diesel-mechanics','fuel-travel-stops','ev-charging')"
         ));
+    }
+
+    public function testProtectedRoutesCredentialIsEncryptedAndResolvable(): void
+    {
+        $apiKey = 'AIza' . str_repeat('R', 35);
+        $release = str_repeat('a', 40);
+        $nonceHash = str_repeat('b', 64);
+        try {
+            $provisioner = new GoogleRoutesCredentialProvisioner();
+            $provisioner->provisionForRelease($apiKey, $release, $nonceHash);
+
+            $stored = (string) Database::scalar(
+                "SELECT cr.encrypted_value
+                 FROM data_source_credentials cr
+                 JOIN data_source_connectors c ON c.id = cr.connector_id
+                 WHERE c.connector_key = 'google_routes' AND cr.credential_key = 'api_key'"
+            );
+            self::assertStringStartsWith('enc:v1:', $stored);
+            self::assertStringNotContainsString($apiKey, $stored);
+            self::assertSame(
+                ['key' => $apiKey, 'source' => 'encrypted_google_routes_connector'],
+                (new GoogleRoutesCredentialResolver())->resolve()
+            );
+            $settings = json_decode((string) Database::scalar(
+                "SELECT settings_json FROM data_source_connectors WHERE connector_key = 'google_routes'"
+            ), true);
+            self::assertSame($release, $settings['bootstrap_release'] ?? null);
+            self::assertSame($nonceHash, $settings['bootstrap_nonce_hash'] ?? null);
+
+            try {
+                $provisioner->provisionForRelease($apiKey, $release, $nonceHash);
+                self::fail('A consumed release credential envelope was accepted twice.');
+            } catch (\RuntimeException $error) {
+                self::assertStringContainsString('already been consumed', $error->getMessage());
+            }
+        } finally {
+            Database::query(
+                "DELETE cr FROM data_source_credentials cr
+                 JOIN data_source_connectors c ON c.id = cr.connector_id
+                 WHERE c.connector_key = 'google_routes'"
+            );
+            Database::query("DELETE FROM data_source_connectors WHERE connector_key = 'google_routes'");
+        }
+    }
+
+    public function testAskCanFindAProviderDirectlyByBusinessNameWithinBrandScope(): void
+    {
+        $expected = Database::selectOne(
+            "SELECT COALESCE(NULLIF(pbl.display_name,''), p.business_name) AS name
+             FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id
+             WHERE pbl.brand_id = 1 AND pbl.status = 'active' AND pbl.search_visible = 1
+               AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL
+             ORDER BY pbl.id LIMIT 1"
+        );
+        self::assertNotNull($expected);
+
+        $rows = (new ProviderNameSearchAdapter())->search((string) $expected['name'], 1);
+        self::assertNotEmpty($rows);
+        self::assertSame((string) $expected['name'], (string) $rows[0]['business_name']);
+        self::assertTrue((bool) $rows[0]['assist_name_match']);
     }
 
     public function testNationalRouteCandidateRequiresIndependentEvidenceBeforeApproval(): void
@@ -738,7 +911,7 @@ final class PlatformDatabaseTest extends TestCase
     public function testStagedCampaignSchemaIsInstalled(): void
     {
         self::assertTrue(Database::tableExists('notification_test_deliveries'));
-        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by'] as $column) {
+        foreach (['delivery_stage','last_batch_at','stage_reviewed_at','stage_reviewed_by','auto_continue_enabled','auto_continue_enabled_at','auto_continue_enabled_by','auto_continue_next_at','auto_continue_last_run_at','auto_continue_last_error'] as $column) {
             self::assertSame(1, (int) Database::scalar(
                 "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() AND table_name='notifications' AND column_name=?",
                 [$column]

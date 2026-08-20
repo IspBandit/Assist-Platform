@@ -66,8 +66,21 @@ After migration `080_national_route_import_review.sql` is deployed:
    correct the service category, record the evidence URL and review note, then
    approve or merge. Google Search/Maps URLs do not qualify as independent
    evidence.
-7. Use bulk actions only for hold, reject or return-to-pending. Bulk approval is
-   deliberately unavailable.
+7. Controlled bulk actions can approve independently confirmed, categorised
+   records with no duplicate match, or merge strong duplicates into an existing
+   unclaimed provider. Duplicate merge requires at least 70% confidence, a
+   strong business-name match and the same phone or website. Claimed
+   providers are excluded. Ineligible records are safely skipped and remain in
+   review.
+8. Strong 70%+ duplicates of an existing unclaimed listing in the same workspace are
+   linked automatically during import. This only closes the duplicate candidate;
+   it does not copy candidate fields over the provider. Ambiguous matches and
+   records not yet listed in that workspace remain in review.
+9. After evidence review, apply any queue filters and choose **Process every
+   eligible filtered record** once. Bounded requests continue automatically,
+   merging safe unclaimed duplicates first and then publishing only confirmed
+   nonduplicates. The completion message reports merged, approved, blocked,
+   failed and remaining counts; rerunning safely resumes pending eligible rows.
 
 Automatic pre-screening holds non-operational businesses, candidates with no
 phone or website, and likely retail-only results. All remaining Google candidates

@@ -17,7 +17,7 @@ final class CaravanPark extends Model
      *
      * @return array<int,array<string,mixed>>
      */
-    public static function searchStays(?int $townId, ?float $lat, ?float $lng, ?string $stayType, ?string $priceType, int $maxDistanceKm = 150, int $limit = 60): array
+    public static function searchStays(?int $townId, ?float $lat, ?float $lng, ?string $stayType, ?string $priceType, int $maxDistanceKm = 150, int $limit = 60, array $requiredFacilities = []): array
     {
         $where = ["cp.status = 'active'", 'cp.public_page_enabled = 1', 'cp.deleted_at IS NULL'];
         $params = [];
@@ -56,15 +56,32 @@ final class CaravanPark extends Model
             $order = 'cp.is_featured DESC, distance_km ASC, cp.name ASC';
         }
 
-        $limit = max(1, min(100, $limit));
-        return Database::select(
+        $requestedLimit = max(1, min(100, $limit));
+        // Facility resolution happens against provenance-ranked claims after
+        // the geospatial query. Pull a wider in-radius candidate set so a
+        // facility filter cannot hide valid matches merely because 60 other
+        // stays appeared first.
+        $queryLimit = $requiredFacilities === [] ? $requestedLimit : 500;
+        $rows = Database::select(
             'SELECT cp.*, t.name AS town_name, s.abbreviation AS state_abbr, ' . $distanceSql . ' '
             . 'FROM caravan_parks cp '
             . 'LEFT JOIN towns t ON t.id = cp.town_id '
             . 'LEFT JOIN states s ON s.id = cp.state_id '
-            . 'WHERE ' . implode(' AND ', $where) . $having . ' ORDER BY ' . $order . ' LIMIT ' . $limit,
+            . 'WHERE ' . implode(' AND ', $where) . $having . ' ORDER BY ' . $order . ' LIMIT ' . $queryLimit,
             $params
         );
+        if ($requiredFacilities === [] || !Database::tableExists('stay_facility_claims')) {
+            return $rows;
+        }
+        $facilityMap = (new \App\Services\StayFacilityService())->forParks(array_map(static fn(array $row): int => (int)$row['id'], $rows));
+        $filtered = array_values(array_filter($rows, static function(array $row) use ($requiredFacilities, $facilityMap): bool {
+            $facts = $facilityMap[(int)$row['id']] ?? [];
+            foreach ($requiredFacilities as $type) {
+                if (!isset($facts[$type]) || !in_array($facts[$type]['facility_status'], ['yes','conditional'], true)) return false;
+            }
+            return true;
+        }));
+        return array_slice($filtered, 0, $requestedLimit);
     }
 
     public static function uniqueSlug(string $source): string
@@ -128,6 +145,123 @@ final class CaravanPark extends Model
             . "WHERE cp.slug = ? AND cp.status = 'active' AND cp.public_page_enabled = 1 AND cp.deleted_at IS NULL",
             [$slug]
         );
+    }
+
+    /**
+     * Resolve a named stay/campground as a search origin. This is deliberately
+     * read-only and restricted to active public records with complete
+     * coordinates. A conservative fuzzy score tolerates a small spelling
+     * mistake but rejects weak or ambiguous matches.
+     *
+     * @return array<string,mixed>|null
+     */
+    public static function resolvePublicLandmark(string $query): ?array
+    {
+        $parsed = Town::parseSearchQuery($query);
+        $core = self::normaliseLandmarkName($parsed['term']);
+        $tokens = preg_split('/\s+/u', $core, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $first = (string) ($tokens[0] ?? '');
+        if (mb_strlen($first) < 4) {
+            return null;
+        }
+
+        $select = 'SELECT cp.id AS park_id, cp.name, cp.slug, cp.town_id, cp.region_id, cp.state_id, '
+            . 'cp.latitude, cp.longitude, t.name AS town_name, s.name AS state_name, s.abbreviation AS state_abbr '
+            . 'FROM caravan_parks cp LEFT JOIN towns t ON t.id = cp.town_id '
+            . 'LEFT JOIN states s ON s.id = cp.state_id '
+            . "WHERE cp.status = 'active' AND cp.public_page_enabled = 1 AND cp.deleted_at IS NULL "
+            . 'AND cp.latitude IS NOT NULL AND cp.longitude IS NOT NULL ';
+        $stateSql = '';
+        $stateParams = [];
+        if ($parsed['state'] !== null) {
+            $stateSql = 'AND s.abbreviation = ? ';
+            $stateParams[] = $parsed['state'];
+        }
+
+        $rows = Database::select(
+            $select . $stateSql
+            . "AND (SOUNDEX(SUBSTRING_INDEX(cp.name, ' ', 1)) = SOUNDEX(?) OR LOWER(cp.name) LIKE LOWER(?)) "
+            . 'ORDER BY cp.is_featured DESC, cp.name LIMIT 250',
+            array_merge($stateParams, [$first, '%' . $core . '%'])
+        );
+        // Some names start with a generic prefix (for example "The"). A
+        // state-qualified query can safely use a bounded state fallback.
+        if ($rows === [] && $parsed['state'] !== null) {
+            $rows = Database::select(
+                $select . $stateSql . 'ORDER BY cp.is_featured DESC, cp.name LIMIT 2500',
+                $stateParams
+            );
+        }
+
+        $ranked = [];
+        foreach ($rows as $row) {
+            $score = self::landmarkMatchScore($core, (string) ($row['name'] ?? ''));
+            if ($score >= 0.78) {
+                $row['landmark_match_score'] = $score;
+                $ranked[] = $row;
+            }
+        }
+        usort($ranked, static function (array $a, array $b): int {
+            return ((float) $b['landmark_match_score']) <=> ((float) $a['landmark_match_score']);
+        });
+        if ($ranked === []) {
+            return null;
+        }
+        if (isset($ranked[1])
+            && abs((float) $ranked[0]['landmark_match_score'] - (float) $ranked[1]['landmark_match_score']) < 0.03
+            && self::normaliseLandmarkName((string) $ranked[0]['name']) !== self::normaliseLandmarkName((string) $ranked[1]['name'])) {
+            return null;
+        }
+
+        return $ranked[0];
+    }
+
+    public static function landmarkMatchScore(string $query, string $candidate): float
+    {
+        $query = self::normaliseLandmarkName($query);
+        $candidate = self::normaliseLandmarkName($candidate);
+        if ($query === '' || $candidate === '') {
+            return 0.0;
+        }
+        if ($query === $candidate) {
+            return 1.0;
+        }
+        if (str_contains($candidate, $query) || str_contains($query, $candidate)) {
+            return 0.95;
+        }
+
+        $queryTokens = preg_split('/\s+/u', $query, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $candidateTokens = preg_split('/\s+/u', $candidate, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        if ($queryTokens === [] || $candidateTokens === []) {
+            return 0.0;
+        }
+
+        $total = 0.0;
+        foreach ($queryTokens as $queryToken) {
+            $best = 0.0;
+            foreach ($candidateTokens as $candidateToken) {
+                $length = max(strlen($queryToken), strlen($candidateToken));
+                if ($length === 0) {
+                    continue;
+                }
+                $best = max($best, 1.0 - (levenshtein($queryToken, $candidateToken) / $length));
+            }
+            $total += $best;
+        }
+
+        return $total / count($queryTokens);
+    }
+
+    private static function normaliseLandmarkName(string $value): string
+    {
+        $value = mb_strtolower(trim($value));
+        $value = (string) preg_replace('/[^a-z0-9]+/u', ' ', $value);
+        $value = (string) preg_replace(
+            '/\b(?:the|camping ground|campground|camping area|camp site|campsite|caravan park|holiday park|recreation area|rest area)\b/u',
+            ' ',
+            $value
+        );
+        return trim((string) preg_replace('/\s+/u', ' ', $value));
     }
 
     /** The park a given user manages (first linked park). */

@@ -17,6 +17,8 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | CORE-008 | Controlled Brand Builder over validated configuration | in progress | ADR and private blueprint preview complete; persistence/promotion automation remains |
 | CORE-009 | Shared My Garage for vehicles, trailers, caravans and motorhomes | done | Owner isolation, mobile asset wallet, private document storage, expiry delivery and brand-aware actions |
 | CORE-010 | Cross-brand vehicle and journey handoffs without duplicate profiles | done | Explicit consent, limited preserved context, source/destination brand audit and private-field exclusion |
+| CORE-011 | Versioned Admin API (`/api/v1/admin`) for RIC and trusted management clients | done | OpenAPI contract, auth/scopes, providers/stays lifecycle, draft ingest, recycle bin, Option B A–L, contract tests; dual-source `/search-gaps` wire on this unify branch; production flags off |
+| CORE-012 | Shared Assist AI Orchestrator (NL search + knowledge growth) | done | AI-0–AI-7 + DATA-012/013; flags off; Quality Gate CONDITIONAL PASS (`docs/AI_QUALITY_GATE_EVIDENCE.md`) |
 
 ## Experience
 
@@ -36,7 +38,9 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
-| VAN-002 | Provider claims, assistance and nearby-help launch readiness | ready | End-to-end provider/customer acceptance |
+| VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Admin API claims/corrections shipped (Increment B); end-to-end acceptance remains |
+| VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
+| VAN-011 | AI-assisted natural-language search (intent → location/category) | done | Ask VanAssist `/ask` alongside structured search; flag off by default; CORE-012 |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
 | TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
@@ -45,13 +49,22 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | LOC-002 | LocalTorque national coverage, claims and search readiness | in progress | Coverage report, duplicate review and claim acceptance |
 | LOC-003 | LocalTorque production launch | blocked | Domain purchase, DNS, email, legal and launch acceptance |
 | LOC-004 | LocalTorque complete motorsport rule, venue and calendar discovery | in progress | Explicit national discipline taxonomy, official rule layers, verified venue websites/calendars, source freshness and mobile journey acceptance |
+| POL-001 | Polaris foundation: brand, docs, homepage, catalogue schema, browse/detail/find shell, admin nav | in progress | Private vertical slice; master prompt not complete — `docs/polaris/IMPLEMENTATION_STATUS.md` |
+| POL-002 | Polaris catalogue browse completeness (filters, provenance UI, SEO) | in progress | Filters/sort + provenance + year selector + a11y + demo volume (`119`); FULLTEXT open |
+| POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages + MatchScorer + prefs UI + Find hydration from saved prefs |
+| POL-004 | TowSmart compatibility service boundary for Polaris | in progress | `TowCompatibilityService` + `/tow-match` UX |
+| POL-005 | Multi-model comparison experience | in progress | Compare/share + account history + saved browse searches (alerts not delivered) |
+| POL-006 | Draft-first data acquisition and extraction review | in progress | CSV/JSON/XLSX + brochure text extract flags; AI import still off |
+| POL-007 | Manufacturer portal (claim-first) | in progress | Claim + edits + analytics views/saves + data-quality checklist |
+| POL-008 | VanAssist provider surfacing on Polaris pages | in progress | Related services + dealer mailto/website handoff (`120`) |
+| POL-009 | Polaris production hardening and public launch | blocked | Domain, Quality Gate, real catalogue; see `docs/polaris/RELEASE_CRITERIA.md` |
 
 ## Data
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls |
-| DATA-002 | Duplicate detection and merge with audit preservation | ready | Dry run, merge tests and administrator workflow |
+| DATA-002 | Duplicate detection and merge with audit preservation | done | Admin API check/dry_run/merge/not-duplicate/defer + merge-history; soft-delete absorbed provider; human-only `duplicates:merge`; HTML list-only (`/admin/providers/duplicates`); workflow unit tests |
 | DATA-003 | Cross-brand recommendation policies | ready | Relevance rules, labelled origin and analytics |
 | DATA-004 | Brand-scoped website, provider-interest and coverage-gap reporting | in progress | Shared first-party event scope, admin website-insights summary and zero-result/provider-interest reporting implemented; production data collection and acceptance remain |
 | DATA-005 | Data Intelligence, opportunity scoring and action queue | in progress | Modular metric sources, population-aware scoring, verification/import quality and direct Data Sources hand-off |
@@ -60,6 +73,11 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-008 | Four-brand authoritative Australian vehicle rules library | done | All-jurisdiction official-source catalogue, brand relevance, genuine downloads, source-change review, mobile filters and labelled local sponsorship |
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
 | DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
+| DATA-011 | Assist RIC live Admin API synchronisation | done | RIC live client, package mapper, validate-only submit, search-gaps pull and sync status shipped; staging rehearsal is operational (not a code gap) |
+| DATA-011A | National Dataset Catalogue (RIC acquisition SoR) | done | Extends `government_datasets` (`117`); portals/themes seeded; Admin API/HTML fields; ADR 0033; Assist RIC facility packs auto-publish per ADR 0034 |
+| DATA-012 | Government dataset catalogue and import connectors | done | Migrations `109`/`110` + Admin API `/datasets`; CKAN/ArcGIS/CSV/GeoJSON; admin catalogue + review; demo fixtures (disabled) |
+| DATA-013 | Search gap and knowledge growth engine | done | AI-4 tables + admin/CSV + SearchGap JSON export + `SearchGapDualSource`; dual-source wire into `GET /search-gaps` on unify branch |
+| DATA-014 | Canonical entity and source provenance model | ready | Stable entity IDs, source links, field-level provenance where practical; extends DATA-001 |
 
 ## Infrastructure
 
@@ -79,6 +97,10 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
 | OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
+| OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
+| OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, MFA, service-account HTML admin shipped; Option B programme conditional QG; production enable flags await staging rehearsal |
+| OPS-011 | Record lifecycle and Recycle Bin for providers and stays | done | Soft delete, restore, retention, purge permission and audited recycle APIs shipped in CORE-011 Phase 1 |
+| OPS-012 | VanAssist reliability release (QG + DATA-012 coverage + controlled Ask) | in progress | Readiness package landed; production Ask/facilities/paid AI remain off; see `docs/VANASSIST_PRODUCTION_READINESS_PACKAGE.md` |
 
 ## Commercial
 
@@ -101,6 +123,31 @@ implementation detail belongs in linked issues and pull requests. Status values:
 - Blocked external prerequisites remain explicit; code must fail closed.
 - Production defects can interrupt sequencing, but their resolution must update
   this backlog and the relevant operational record.
+
+## Local management / Admin API ID remapping
+
+Phase 0 requested IDs that collided with existing outcomes. Collision-free IDs:
+
+| Requested | Assigned | Notes |
+| --- | --- | --- |
+| CORE-010 Versioned Admin API | **CORE-011** | CORE-010 already = cross-brand Garage handoffs |
+| DATA-010 RIC Live API Sync | **DATA-011** | DATA-010 already = motorsport catalogue |
+| DATA-011 Government datasets | **DATA-012** | Extends DATA-006 |
+| DATA-012 Search gaps | **DATA-013** | Extends DATA-004 |
+| DATA-013 Canonical entity/provenance | **DATA-014** | Extends DATA-001 |
+| DATA-014 Duplicate review/merge | **DATA-002** | Consolidated into existing DATA-002 |
+| VAN-010 / VAN-011 / OPS-010 / OPS-011 | unchanged | No collision |
+
+See `docs/PHASE1_ADMIN_API_DESIGN.md`, `docs/OPTION_B_MANAGEMENT_PROGRAMME.md` and ADRs 0018–0020.
+
+## Assist AI Orchestration workstream
+
+Separate from Admin API Phase 1 (CORE-011). Gate: `docs/PHASE_AI0_DESIGN.md`
+(**AI-0 approved**). AI-1–AI-7 + DATA-012/013 **code-complete** (flags off by
+default). See `docs/AI_WORKSTREAM_STATUS.md`. Quality Gate: **CONDITIONAL PASS**
+— `docs/AI_QUALITY_GATE_EVIDENCE.md`. Primary IDs: **CORE-012**, **VAN-011**,
+**DATA-012**, **DATA-013**. ADRs 0021–0030 + **0032** accepted.
+
 
 ## Reconciled experience delivery
 

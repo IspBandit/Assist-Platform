@@ -8,11 +8,11 @@ alwaysApply: true
 Read `AGENTS.md` and `docs/START_HERE.md` before editing.
 
 - Assist Platform Enterprise is the primary product; VanAssist, TowSmart,
-  TrailerWise and LocalTorque are its brands.
+  TrailerWise, LocalTorque and Polaris are its brands.
 - Read the Enterprise specification, Platform Charter, Product Backlog, Design
   System, ADR process and Platform Quality Gate before material changes.
-- One shared PHP/MariaDB application serves all four brands; LocalTorque remains
-  private until its external launch prerequisites are confirmed.
+- One shared PHP/MariaDB application serves all brands; LocalTorque and Polaris
+  remain private until their external launch prerequisites are confirmed.
 - Use the typed brand registry and request brand context; never infer a tenant
   from an arbitrary production query parameter.
 - Preserve VanAssist compatibility and all existing production data.

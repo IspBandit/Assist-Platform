@@ -3,6 +3,30 @@
 `database/migrations/` is the authoritative field-level schema. This document is
 a domain map, not a substitute for reading the relevant ordered migration.
 
+## Stay facility evidence and contributions (migration 128)
+
+Migration 129 adds `caravan_park_source_aliases`, which maps an imported source
+identity to its canonical stay after a duplicate merge. Automatic cleanup is
+restricted to records with the same normalised name and state whose coordinates
+are within 2 km. The higher-trust record survives; linked operational records
+and facility claims move to it, while the absorbed source row is soft-deleted
+and retained for provenance. Ambiguous matches are not automatically merged.
+
+Migration 130 performs the forward-only residual pass. It catches exact-name
+records within 2 km even when imported state assignment differs, repeated
+`(source_type, external_id)` identities, and an exact-name lower-trust record in
+the same state (or with one state absent) when the authority survivor lacks
+coordinates and its authority address repeats the full name. It preserves any
+missing survivor coordinates, locality and address before moving relationships,
+records an audit event and soft-deletes the absorbed row. It contains no
+place-specific slug or ID rule.
+
+- `stay_facility_claims`: current and historical facility-level evidence for a canonical `caravan_parks` row, including status/value, source, confidence, specificity and verification timestamps. `superseded_at` retires a claim without deleting it.
+- `facility_contributions`: public submission envelope and moderation lifecycle. Contact fields are optional and never public.
+- `facility_contribution_items`: before/suggested values and per-item moderation result, linked to any approved claim.
+- `facility_contribution_confirmations`: deduplicated independent confirmations of an existing pending report.
+- `facility_moderation_actions`: immutable human decision history with old/new values and notes.
+
 | Domain | Principal tables | Ownership/scope |
 |---|---|---|
 | Identity | `users`, `roles`, `permissions`, `user_roles`, sessions, reset/verification/consent/history tables | User/global with explicit role and brand participation extensions |
@@ -15,6 +39,7 @@ a domain map, not a substitute for reading the relevant ordered migration.
 | Parks | `caravan_parks` and user/document/service-day tables | Park membership/ownership |
 | Content | `content_pages`, blocks, FAQs, settings and feature flags | Brand scope is mandatory for public content |
 | Email/notifications | templates, `email_queue`, `email_log`, notifications, staged/test deliveries, recipients and `notification_provider_exclusions` | Queue rows have required `brand_id`; marketing requires suppression, documented consent, campaign recipient review, internal test, pilot and reviewed rolling limits |
+| PR organisation outreach | `organisation_outreach_contacts` plus organisation-linked notification recipients | Global research register retains source, role, relevance, safety and review evidence; campaigns remain brand-attributed, single-target-type and staged |
 | Analytics | `page_views`, `tracking_sessions`, `analytics_events`, searches/results/contact actions, daily aggregates and follow-ups | New observations carry the trusted `brand_id`; anonymous visitors use a random first-party session id, IP addresses are not stored, retention controls apply and administrator reports enforce brand scope |
 | Billing | plans/prices/features/limits, subscriptions, entitlements, invoices, payments, refunds, discounts, webhooks, commissions and fees | Dormant until explicitly enabled; financial integrity required |
 | Owner finance | accounts, tax codes, periods, journal entries/lines, source/audit events | Platform owner ledger, never provider bookkeeping |

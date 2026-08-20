@@ -1,0 +1,26 @@
+{
+    "script": "stage-ckan-toilet-map",
+    "env": "local",
+    "limit": 25,
+    "approve_nsw_near_batehaven": true,
+    "fetches": [
+        {
+            "dataset_key": "au_national_public_toilet_map",
+            "result": {
+                "job_id": 11,
+                "found": 25,
+                "new": 25
+            }
+        },
+        {
+            "dataset_key": "au_national_toilet_map_dump_points",
+            "result": {
+                "job_id": 12,
+                "found": 25,
+                "new": 25
+            }
+        }
+    ],
+    "approved": 0,
+    "flags_untouched": true
+}

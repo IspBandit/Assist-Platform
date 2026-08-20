@@ -1,6 +1,415 @@
 # Changelog
 
+## Unreleased
+
+### Added
+- **TowSmart and TrailerWise shell parity** — footer-action CTA, richer footer
+  columns, primary header CTA and save-to-phone install with brand-scoped
+  manifests for TowSmart and TrailerWise.
+
+### Documentation and VanAssist navigation (Aug 2026 production alignment)
+
+- Reconciled `PROJECT_STATUS.md`, `PRODUCTION_CURRENT_STATE.md`, SearchGap, Ask,
+  Quality Gate and API boundary docs with verified production posture: release
+  `6a3f09d`, Admin API enabled, Ask and traveller facilities live on VanAssist.
+- Added **Ask VanAssist** to VanAssist primary header navigation, footer Find
+  links and category-search cross-link when `assist_ai_search` is enabled.
+
+### Fixed
+- Ask now supports direct provider business-name searches without weakening
+  brand, GPS, explicit-location or radius boundaries.
+- Ask now acquires device GPS automatically for requests with no location in
+  the question, while an explicit typed location remains authoritative.
+- Protected production releases now install the validated Google Routes secret
+  into the encrypted connector vault before road-distance smoke tests.
+- Search release checks identify missing Griffiths evidence and missing road
+  distance output explicitly instead of failing with an unlabelled grep error.
+
+### Added
+- **Stay duplicate consolidation** — migration `129` merges all high-confidence
+  stay duplicates that share a normalised name and state within 2 km, preserving
+  relationships, facility provenance and an audit record. Source aliases stop
+  later OSM refreshes recreating merged public pages; uncertain matches remain
+  separate for human review.
+  The production scan uses indexed temporary identity tables. The signed
+  migration command contains a one-time, checksum-bound retry for the
+  interrupted original migration. It may terminate only that old checksum's
+  named-lock owner after five minutes; every other dirty migration remains blocked.
+- **Assist RIC third-wave + gap-fill dataset keys** — migrations
+  `125_ric_third_wave_facility_import_datasets.sql` and
+  `126_ric_gap_fill_facility_import_datasets.sql` register remaining Ready-pack
+  `dataset_key`s (HealthDirect, VIC/QLD/TAS/ACT packs, NMI weighbridges,
+  OpenChargeMap, NPWS, etc.) so `/facility-imports` no longer returns
+  "Unknown government dataset_key".
+- **Assist RIC facility auto-publish (ADR 0034)** — `POST /facility-imports`
+  stages then publishes Assist RIC government packs into `traveller_facilities`.
+  `POST /facility-imports/publish-pending` drains the existing Assist RIC pending
+  queue in bounded batches (`imports:write`). Other connectors stay review-first.
+- **Assist RIC missing ready-pack keys** — migration
+  `127_ric_missing_ready_facility_import_datasets.sql` inserts
+  `nsw_rest_areas`, `nsw_ev_charging_locations`, `sa_rest_areas_state_maintained`,
+  `wa_major_rest_areas`, `nsw_boat_ramps`, and `gold_coast_caravan_parks`
+  (migration 124 only tried to enable rows that did not exist). Required before
+  Assist RIC can upload those packs via `/facility-imports`.
+- **Assist RIC facility package upload** — `POST /api/v1/admin/facility-imports`
+  (`imports:write`) stages Assist RIC facility packages (auto-publish added in
+  ADR 0034). Migration `124_ric_ready_facility_import_datasets.sql`
+  registers missing RIC ready dataset keys. Documented in `docs/LIVE_API.md`.
+- **Admin API brand identity** — `/capabilities` now reports the verified host
+  brand, status and enabled modules so RIC can switch safely across every Assist
+  brand and hide resources that the selected brand does not use.
+- **RIC overview Admin API** — `GET /api/v1/admin/overview` and
+  `GET /api/v1/admin/website-insights` for Assist RIC dashboards; bot/unknown
+  page views labelled separately; RIC scopes add corrections/duplicates/ai read.
+- **RIC Directory Management contract** — documented Assist RIC browse of
+  providers, stays, facilities, claims and corrections via existing Admin API
+  reads (cursor pagination; categories/locations remain website admin). OpenAPI
+  claim/correction list query parameters clarified.
+- **RIC Data Review contract** — documented Assist RIC browse of drafts,
+  duplicates and recycle-bin via existing Admin API reads; OpenAPI draft/
+  duplicate list filters clarified; RIC service scopes add `recycle_bin:restore`
+  (not purge).
+- **RIC Ask Insights contract** — documented Ask activity via
+  `/ai/usage/requests` + dual-source `/search-gaps`; knowledge-gap `meta`
+  adds click/contact/ai_used counts and taxonomy keys (additive); OpenAPI AI
+  usage paths clarified.
+- **RIC Operations contract** — documented read-only Assist RIC Operations
+  against health/version/capabilities, dataset sync-history, sync-conflicts,
+  import show, AI usage rollups and audit. Feature flags, import list index,
+  failed-job queues and AI budget caps remain website admin.
+- **RIC Operations Admin API gaps (Increment G)** — `GET /imports` list index;
+  nested `budget` on `/ai/usage/summary`; read-only `GET /feature-flags`
+  (`flags:read` in `RIC_SERVICE`). No flag write paths.
+- **Facility import-candidate review (Increment H.1)** — human-only
+  `POST /facility-import-candidates/{id}/approve|reject` with
+  `import_candidates:review` (`NEVER_SERVICE`, not in `RIC_SERVICE`).
+  Delegates to `GovernmentDatasetService::reviewCandidate`; optional `reason`
+  notes. Website admin review remains available.
+- **Provider import-candidate review (Increment H.2)** — human-only
+  `POST /provider-import-candidates/{id}/approve|reject` with the same
+  `import_candidates:review` human scope. Delegates to
+  `DataSourceService::review`; approve requires `retention_confirmed` and
+  independent `evidence_url`. Merge/hold remain website admin.
+- **Facility import-candidate bulk review (Increment H.3)** — human-only
+  `POST /facility-import-candidates/bulk-approve|bulk-reject` with the same
+  review scope. Body `{ "ids": [...], "reason": "..." }`; per-id results;
+  capped by `admin_api.max_batch_size`.
+- **Provider import-candidate merge (Increment H.4)** — human-only
+  `POST /provider-import-candidates/{id}/merge` with the same review scope.
+  Requires `retention_confirmed` + independent `evidence_url`; optional
+  `provider_id`. Exact-identity gates via `DataSourceService::review`.
+- **RIC ops + taxonomy reads (Increment I)** — `GET /ops/failed-emails` and
+  `GET /ops/failed-scheduled-tasks` (`ops:read`); `GET /categories`
+  (`categories:read`); `GET /locations/states|regions|towns`
+  (`locations:read`). All in `RIC_SERVICE`. Stale/missing quality queues remain
+  deferred pending product criteria.
+- **Import-candidate review queues (Increment H)** — read-only
+  `GET /facility-import-candidates` and `GET /provider-import-candidates`
+  (+ `/{id}`) with `import_candidates:read`. Separate from `GET /imports`
+  (RIC package jobs). Cursor pagination; default pending; list omits `raw_json`.
+
+- Fixed CKAN government imports silently truncating complete state or national
+  CSV extracts at 500 records. Review-first imports now honour the existing
+  25,000-record safety ceiling, and staging evidence writes to writable storage.
+
+- Removed the former 1,000-row CSV ingestion ceiling for bounded government
+  datasets, added multi-field jurisdiction filtering, and extended the National
+  Public Toilet Map catalogue to stage Queensland-first drinking-water and
+  shower records alongside toilets and dump points. All records remain
+  provenance-backed and review-first.
+
 All notable changes to VanAssist are documented here.
+
+### Changed
+- **Compact, routed public results** — Ask, provider/category search and stays
+  now start at 20 results with an explicit expansion to 40, bounding Google
+  Routes usage and preventing oversized mobile lists during fallback.
+- **Stay facilities in Ask** — approved, source-ranked facility evidence remains
+  owned by its stay but is now searchable as a traveller facility. Confirmed
+  absent, unknown and vague water evidence remains excluded.
+- **Operational data quality** — Admin API/RIC overview now exposes provider
+  contact/exact-coordinate and stay facility/freshness coverage; health reports
+  non-secret Google Routes credential state.
+- **Natural stay requests** — Ask VanAssist now recognises ordinary wording
+  such as “somewhere to stay free near Emerald” without requiring paid AI,
+  and free-camp searches include stays explicitly priced as free.
+- **Traveller question coverage** — deterministic Ask handling now covers a
+  tested matrix of everyday wording for common faults, stays, toilets, water,
+  showers, medical help and other supported traveller essentials.
+- **Consistent numbered result maps** — Find, Ask VanAssist, filtered provider
+  directories, stays, services, towns and regions now use the same responsive
+  map/list pattern. Unmappable records stay in the list without a fake pin.
+- **Cleaner directory and stay results** — stay listings are denser on mobile,
+  and the provider directory search and trust strip render correctly.
+- **Maps on Ask results** — Ask VanAssist now gives every reliably located
+  provider, stay and traveller facility a numbered map pin matched to the same
+  number in its concise result row; records without coordinates remain in the
+  list without a misleading pin.
+- **Safer Ask location handling** — conversational wording after a town is no
+  longer treated as part of its name, unresolved named places can never fall
+  through to Australia-wide providers, and proxy-aware rate limiting now keeps
+  visitors separate while showing a proper VanAssist retry page.
+- **Solar fault searches** — plain-language requests about failed caravan solar
+  panels now route directly to nearby auto-electrical and battery providers.
+- **Unified homepage search** — structured and plain-language VanAssist search
+  now share one clear panel instead of appearing as separate cards.
+- **Mobile homepage shortcuts** — all four main VanAssist capability buttons
+  now appear together in a compact two-by-two grid without horizontal scrolling.
+- **Cleaner VanAssist journeys** — homepage capability items are now direct
+  links, duplicate/statistics sections were removed, and key inner journeys use
+  distinct relevant photo headings rather than plain repeated layouts.
+- **Phone-aware save guidance** — the home-screen prompt now distinguishes
+  iPhone/iPad, Android and desktop instructions.
+- **Cleaner traffic reporting** — obvious bot traffic is excluded from website
+  insights and common abusive automation is stopped before public-page routing.
+- **Homepage Ask VanAssist** — the scoped plain-language search field now
+  appears directly in the homepage hero when enabled.
+- **Provider map references** — concise provider rows now show the same coloured
+  numbered pin shape used on the results map instead of a `Map pin N` text label;
+  unhelpful business-name initial tiles were removed from provider lists.
+- **Compact provider lists** — provider collections across directory, search,
+  town, region, service and saved-provider pages now use concise single-row
+  entries, with tighter mobile actions and full detail retained on profiles.
+- **VanAssist map/list matching** — each located provider card now displays the
+  same numbered map-pin reference used on the search-results map, and the
+  marker number remains visibly rendered inside every map pin.
+
+### Added
+- **POL-008 dealer enquiry handoff** — model-page mailto/website CTAs for
+  linked published dealers; `/dealers/{id}/enquire` tracks
+  `dealer_enquiry_click` then redirects. Demo contacts/links in `120`
+  (`example.invalid` only). No outbound enquiry mailer.
+- **POL-002 demo catalogue volume** — migration `119` expands Polaris
+  demonstration fixtures (new manufacturer + six models/variants, `is_demo`
+  only). Not production national catalogue data.
+- **POL-007 manufacturer portal data quality** — completeness checklist on
+  `/portal/manufacturer/data-quality` for claimed makers (ATM/length/berths/price
+  gaps). Guidance only, not a Quality Gate verdict.
+- **POL-007 manufacturer portal analytics** — manufacturer-scoped `rv_viewed` /
+  `rv_saved` rollups on `/portal/manufacturer/analytics` (7/30/90 day); find
+  impressions still planned.
+- **POL-003 Find preference hydration** — load saved travel preferences into
+  Find when query fields are absent; explicit params still override.
+- **POL-002 accessibility markup polish** — table captions, compare Differs
+  text markers, empty-state `role="status"`, year-selector focus/labelledby;
+  ACCESSIBILITY_QA remains CONDITIONAL (no WCAG PASS / no CI axe).
+- **POL-002 model year selector** — model detail `?year=` resolves published
+  `polaris_rv_model_years`, filters variants, keeps year-free canonicals; demo
+  migration `118` adds Southern Cross 2025 variant.
+- **POL-005 saved browse searches** — capture `/rvs` filters to
+  `polaris_saved_searches`, list/reopen from `/saved` and `/account/alerts`.
+  Email alert delivery remains deferred.
+
+### Added
+- **DATA-011A National Dataset Catalogue** — extended `government_datasets`
+  (`117`) with jurisdiction, source/API URLs, format, update frequency,
+  download/import timestamps, record count, auto-update, catalogue status,
+  duplicate rules and notes; seeded national portals/themes; ADR 0033 (RIC
+  acquisition engine). No auto-publish; no new dataset-specific importers.
+
+### Added
+- **DATA-002 duplicate workflow closeout** — OpenAPI coverage for show / merge-history /
+  not-duplicate / defer; dry-run-before-transaction and human-only merge scope tests;
+  Phase 1 design wording updated. Merge remains soft-delete + audit (no FK repoint).
+
+### Added
+- **Admin API dataset sync wire (DATA-012)** — `POST /api/v1/admin/datasets/{id}/sync`
+  executes `GovernmentDatasetService::fetchDataset` (optional `fixture=true`),
+  updates `government_dataset_sync_runs` to completed/failed, and stages facility
+  candidates for review. No auto-publish. OpenAPI documents show/patch/sync/history.
+
+### Added
+- **Unify CORE-011 + CORE-012 tree** — merged `origin/main` Admin API Phase 1 /
+  Option B A–L into the Assist AI / Polaris line; renumbered AI/Polaris
+  migrations to `101`–`116` and AI ADRs to `0021`–`0032` to clear Admin API
+  `085`–`092` / ADR `0018`–`0020`. Wired dual-source Option B into
+  `GET /api/v1/admin/search-gaps` via `SearchGapDualSource`. Production Admin
+  API / Ask / facilities / paid AI flags remain off.
+
+### Added
+- **VanAssist S1/S2 closeout (local)** — full Batehaven Ask acceptance PASS,
+  demo rest/visitor catalogues (`100`), capped CKAN Toilet Map stage script,
+  AI-flag rollback drill, LPG/fuel deferral note, SearchGap dual-source glue.
+  Production Ask / facilities / paid AI remain off; Platform QG CONDITIONAL PASS.
+
+### Added
+- **SearchGap dual-source glue (DATA-013 / CORE-011)** —
+  `SearchGapDualSource` merger + `docs/SEARCH_GAP_DUAL_SOURCE.md` for Option B
+  union of `provider_searches` + `knowledge_gaps` into inventoried
+  `GET /api/v1/admin/search-gaps` (`meta.source`). Admin API wiring waits for
+  CORE-011 merge; production AI flags remain off.
+
+### Added
+- **VanAssist readiness S1/S2** — Batehaven dry-run acceptance script, unit
+  Ask harness (`FacilitySearchPort`), demo drinking-water fixture (`098`),
+  orchestrator adapter/location fault tolerance. Full DB acceptance pending
+  configured MariaDB; production flags remain off.
+
+### Added
+- **VanAssist production-readiness package** — Platform QG execution plan,
+  DATA-012 coverage priority, Batehaven acceptance spec, flag matrix, release
+  metrics, rollback plan (`docs/VANASSIST_PRODUCTION_READINESS_PACKAGE.md`).
+  Production Ask / facilities / paid AI remain off.
+
+### Added
+- **Polaris provenance + extract slice** — model↔source links (`099`), specification
+  provenance table, flag-gated brochure/PDF text extract + XLSX import, import cost
+  UI, Find stages 2/3/6 inputs, `ACCESSIBILITY_QA.md` (CONDITIONAL). Launch still blocked.
+
+### Added
+- **Polaris master-prompt continuation** — deterministic NL preference hints on
+  Find, portal profile/media/dealer/team write paths, dealer claim scaffold,
+  CSV+JSON draft import, manufacturer merge admin, account shells, migration
+  `096` (dealers/media/team/merges). Master prompt still incomplete; launch blocked.
+
+### Added
+- **CORE-012 original-prompt gap closeout** — knowledge-gap click/contact
+  writers (`?g=` / `/ask/click`), Ask Turnstile unlock + honeypot,
+  offline OSM seed connector (`097` + `stage-osm-offline-seed.php`, no Ask
+  Overpass), DraftCandidate/OSM/budget/interpreter/matrix tests, required AI
+  topic docs brought to implementation-adequate status.
+
+### Added
+- **Polaris continuation** — progressive Find My RV stages, preference
+  persistence + `/account/preferences`, shareable comparisons
+  (`/compare/{token}`, migration `095`), manufacturer portal section shells,
+  admin inventory views, honest `IMPLEMENTATION_STATUS.md` / release criteria.
+  Master Polaris prompt remains incomplete; public launch still blocked.
+
+### Fixed
+- **DATA-012 provenance collision** — facility `source_key` is now
+  `gov:{dataset_key}` so Toilet Map toilet and dump-point catalogue rows do not
+  overwrite each other on the same FacilityID.
+- **CKAN Fetch redirects** — `SimpleHttpClient` follows safe same-policy
+  redirects (data.gov.au CDN) with re-validated hosts.
+- **Ask toilet copy** — clarification no longer exposes admin/AI-6 jargon when
+  the facilities flag is off.
+
+### Added
+- **DATA-012 finish-up** — town/state resolution on facility publish, job
+  completion after review, bulk facility approve/reject, demo CLI production
+  guard, AiReleaseGate migrations 108–110, Assist AI admin link to government
+  datasets, RELEASE_NOTES + admin/customer guide updates.
+
+### Added
+- **CORE-012 closeout** — ADR 0032 (stays vs facilities), demo facility CLI
+  bootstrap, SearchGap-shaped knowledge-gap JSON export
+  (`/admin/ai-search/gaps/export?format=json`), Quality Gate CONDITIONAL PASS
+  evidence (`docs/AI_QUALITY_GATE_EVIDENCE.md`). Production Ask still gated.
+
+### Added
+- **DATA-012 follow-on — curated AU Toilet Map catalogue** — migration `094`
+  National Public Toilet Map rows (CKAN `resource_id`, toilets + dump-point
+  filter; disabled), admin add/edit catalogue form, CSV `filter_field` /
+  `filter_value` for subset imports.
+
+### Added
+- **DATA-012 — government dataset catalogue** — migration `093`
+  (`government_datasets`, facility import jobs/candidates), CKAN/ArcGIS/CSV/
+  GeoJSON connectors on the DATA-006 contract, admin catalogue + facility
+  review UI, demo fixtures (disabled). Approve publishes to
+  `traveller_facilities` only; no auto-publish; no `caravan_parks` overload.
+
+### Changed
+- **AI-6 router** — `traveller_facilities` is executable when
+  `assist_ai_traveller_facilities` is on (was non-executable stub).
+
+### Added
+- **Phase AI-7 — Assist AI hardening (CORE-012)** — Ask rate limit 20/hour,
+  retention cron `ai_retention` (migration `091`), location-privacy helpers,
+  admin cost simulator + release-gate checklist, `docs/AI_RELEASE_CRITERIA.md`.
+  Production still requires Platform Quality Gate.
+
+### Added
+- **Phase AI-5 — dataset routing (CORE-012)** — `DatasetSearchAdapter` surfaces
+  staged `data_source_import_candidates` with ADR 0028 provenance labels;
+  `DraftCandidateService` stages trusted-review hits into DATA-006 (never
+  auto-publishes); Ask VanAssist never calls Google Places; flag
+  `assist_ai_datasets` off by default (migration `090`). Weak local results
+  may auto-augment with datasets when the flag is on.
+
+### Added
+- **Phase AI-4 — knowledge gaps (DATA-013 / CORE-012)** — grouped
+  `knowledge_gaps` + events (migration `089`), priority scoring, orchestrator
+  weak/zero/unknown observation, admin `/admin/ai-search/gaps` and RIC CSV
+  export. Admin API `/search-gaps` inventory unchanged (Phase 1 locked).
+
+### Added
+- **Phase AI-3 — OpenAI intent interpreter (CORE-012)** — provider-neutral
+  `AiProviderInterface`, `OpenAiProvider` (strict Structured Outputs),
+  `IntentInterpreter`, budget-gated orchestrator path, env `OPENAI_API_KEY`,
+  admin allowlist (no hard-coded model selection). Paid AI remains off until
+  configured; rules/cache/local search continue on failure. See
+  `docs/OPENAI_INTEGRATION.md`.
+
+### Added
+- **Phase AI-2 — cache and budget foundation (CORE-012)** — `ai_settings`,
+  `ai_intent_cache`, `ai_usage_events`, `ai_usage_daily` (migration `086`);
+  IntentCache, AIBudgetService, AIUsageService; admin `/admin/ai-search`
+  visibility and hard-stop controls. Paid AI remains off by default; no API
+  keys in DB; structured `/find` unchanged. AI-3 OpenAI interpreter not started.
+
+### Added
+- **Project Polaris Phases 6–9 slice (POL-006…POL-009)** — draft-first CSV
+  import + review queue (migration `088`), manufacturer claim portal
+  (`/portal/manufacturer`), VanAssist related-services surfacing without
+  provider duplication, saved shortlist, floorplans index, and fail-closed
+  first-party analytics events. Production domain and public launch remain
+  blocked; brand stays `private`.
+
+### Added
+- **Project Polaris Phases 2–5 slice (POL-002…POL-005)** — browse filters/sort,
+  price freshness warnings, provenance chips, deterministic MatchScorer with
+  explained Find My RV results, TowSmart-backed `TowCompatibilityService` +
+  `/tow-match`, and up to four-model comparison with difference highlighting.
+
+### Added
+- **Project Polaris foundation (POL-001)** — private fifth brand `polaris`,
+  migration `087` new-RV catalogue schema with demo fixtures, public homepage /
+  browse / model / manufacturer / Find My RV shell, shared admin Polaris nav,
+  documentation suite under `docs/polaris/`, ADR 0031. TowSmart and VanAssist
+  data boundaries preserved. Production domain not enabled.
+
+### Added
+- **Phase AI-1 — deterministic Assist AI Orchestrator (CORE-012 / VAN-011)** —
+  shared `App\Platform\AiSearch` with keyword intent engine, provider/stay
+  adapters, `/ask` Ask VanAssist UI (feature flag `assist_ai_search` **off** by
+  default), migration `101_assist_ai_search.sql`, and unit tests. No paid AI,
+  no external datasets, structured `/find` unchanged. AI-0 design package and
+  ADRs 0021–030 accepted.
+- **Admin API Increment 9 (CORE-011)** — RIC mock-client contract tests:
+  `tests/Contract/AdminApiRicContractTest.php`, Contract phpunit suite, Phase 1 path
+  inventory vs routes and OpenAPI parity checks.
+- **Admin API Increment 8b (OPS-010)** — MFA challenge/verify scaffold:
+  `POST /auth/mfa/challenge` and `/auth/mfa/verify` (501 until TOTP validation ships).
+- **Admin API Increment 8 (CORE-011)** — audit read (`GET /audit`, `/audit/{id}`) and
+  search-gap analytics (`GET /search-gaps`) aggregating `provider_searches` zero-result rows.
+- **Admin API Increment 7 (CORE-011)** — draft and import package submission for RIC:
+  `api_drafts` / `api_import_jobs` tables (migration 082), draft CRUD + approve/reject,
+  import validate/stage pipeline, idempotency keys for bulk/package writes.
+- **Admin API Increment 6 (CORE-011)** — recycle bin list/detail, restore, permanent
+  purge (single + bulk with idempotency), brand-scoped provider purge semantics.
+
+### Added
+- **Admin API Increment 5 (CORE-011)** — audited provider and stay create/update,
+  lifecycle transitions (publish/unpublish/archive/restore/soft-delete), `AdminApiAudit`
+  integration, and `read_write` capabilities for providers/stays.
+
+### Added
+- **Admin API Increment 4 (CORE-011)** — read-only `GET /providers` and
+  `GET /stays` with cursor pagination, lifecycle mapping, brand scope from host
+  context, and `providers:read` / `stays:read` enforcement.
+
+### Added
+- **Admin API Increment 3 (CORE-011)** — service accounts, machine token exchange
+  (`POST /auth/token`), scope catalog, human-only vs scope middleware, service
+  account CRUD and secret rotation. Capabilities reports `service_accounts: active`.
+
+### Added
+- **Admin API Increment 2 (CORE-011)** — human login/refresh/logout/me/sessions,
+  token tables (migration 080), MFA scaffold (081), restricted allowlist,
+  bearer verification and OpenAPI auth paths. Still disabled by default; MFA
+  verify endpoints not shipped.
 
 ### Added
 - **Town coverage report** — `TownCoverageService` + Admin Maintenance table +

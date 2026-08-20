@@ -9,12 +9,16 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Helpers\Geo;
+use App\Models\BrandProviderCategory;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Services\Demand\ActivityTracker;
 use App\Services\Demand\DemandRecorder;
+use App\Services\DirectoryPresentation;
 use App\Services\SeoSchema;
+use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Public service-category pages generated from the database.
@@ -23,8 +27,8 @@ final class CategoryController extends Controller
 {
     public function index(Request $request): Response
     {
-        if (current_brand()->id() === 'localtorque') {
-            return $this->localTorqueIndex();
+        if ($this->usesBrandDirectoryCategories()) {
+            return $this->brandDirectoryIndex();
         }
         $categories = ServiceCategory::activeAll();
 
@@ -40,8 +44,8 @@ final class CategoryController extends Controller
     public function show(Request $request): Response
     {
         $slug = (string) $request->route('slug');
-        if (current_brand()->id() === 'localtorque') {
-            return $this->localTorqueShow($request, $slug);
+        if ($this->usesBrandDirectoryCategories()) {
+            return $this->brandDirectoryShow($request, $slug);
         }
         $category = ServiceCategory::findActiveBySlug($slug);
         if ($category === null) {
@@ -58,9 +62,19 @@ final class CategoryController extends Controller
         // Optional area filter (e.g. "Brakes & bearings in Gympie").
         $townId = (int) $request->input('town') ?: null;
         $location = trim((string) $request->input('location', ''));
+        $gpsLat = is_numeric($request->input('lat')) ? (float) $request->input('lat') : null;
+        $gpsLng = is_numeric($request->input('lng')) ? (float) $request->input('lng') : null;
+        if ($gpsLat !== null && ($gpsLat < -90 || $gpsLat > 90)) { $gpsLat = null; }
+        if ($gpsLng !== null && ($gpsLng < -180 || $gpsLng > 180)) { $gpsLng = null; }
         if ($location !== '') {
             $townMatches = Town::searchActive($location, 1);
+            if ($townMatches === []) { $townMatches = Town::searchActiveFuzzy($location, 1); }
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+            $gpsLat = null;
+            $gpsLng = null;
+        } elseif ($gpsLat !== null && $gpsLng !== null) {
+            $nearestTown = Town::nearestActive($gpsLat, $gpsLng);
+            $townId = isset($nearestTown['id']) ? (int) $nearestTown['id'] : null;
         }
         $selectedTown = null;
         if ($townId !== null) {
@@ -77,16 +91,20 @@ final class CategoryController extends Controller
         $distanceFilter = Geo::resolveDistanceFilter($request->input('max_distance'), $townId !== null);
         $distanceSelection = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : $distanceFilter['scope'];
         $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         // Reference point for approximate distances (the searched town's centre).
         $trustedOrigin = $selectedTown !== null
             && in_array(($selectedTown['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true);
-        $originLat = $trustedOrigin && $selectedTown['latitude'] !== null ? (float) $selectedTown['latitude'] : null;
-        $originLng = $trustedOrigin && $selectedTown['longitude'] !== null ? (float) $selectedTown['longitude'] : null;
+        $originLat = $gpsLat ?? ($trustedOrigin && $selectedTown['latitude'] !== null ? (float) $selectedTown['latitude'] : null);
+        $originLng = $gpsLng ?? ($trustedOrigin && $selectedTown['longitude'] !== null ? (float) $selectedTown['longitude'] : null);
 
         $matches = [];
         $possible = [];
-        foreach (Provider::forCategory((int) $category['id'], $townId) as $row) {
+        $categoryProviders = $distanceFilter['scope'] === 'km' && $originLat !== null && $originLng !== null
+            ? Provider::forCategoryNear((int) $category['id'], $originLat, $originLng, (int) $distanceFilter['km'])
+            : Provider::forCategory((int) $category['id'], $townId);
+        foreach ($categoryProviders as $row) {
             if ((int) $row['is_inferred'] === 1) {
                 $possible[] = $row;
             } else {
@@ -96,6 +114,21 @@ final class CategoryController extends Controller
         if ($originLat !== null && $originLng !== null) {
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townId);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townId);
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
+            $routed = (new RoadDistanceService())->enrichGroups(
+                ['matches' => $matches, 'possible' => $possible],
+                $originLat,
+                $originLng,
+                $maxDistance,
+            );
+            $matches = $routed['matches'];
+            $possible = $routed['possible'];
+        } else {
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
         }
 
         ActivityTracker::record('category_viewed', ['category_id' => (int) $category['id'], 'town_id' => $townId]);
@@ -139,41 +172,83 @@ final class CategoryController extends Controller
             'distanceScope'   => $distanceFilter['scope'],
             'distanceSelection' => $distanceSelection,
             'hasOrigin'       => $originLat !== null && $originLng !== null,
+            'lat'             => $gpsLat,
+            'lng'             => $gpsLng,
+            'hasMore'         => $resultWindow['has_more'],
+            'showMoreUrl'     => $resultWindow['has_more'] ? url('services/' . $category['slug'] . '?' . http_build_query(array_filter([
+                'town_id' => $townId,
+                'max_distance' => $request->input('max_distance'),
+                'lat' => $gpsLat,
+                'lng' => $gpsLng,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 
-    private function localTorqueIndex(): Response
+    private function usesBrandDirectoryCategories(): bool
+    {
+        return in_array(current_brand()->id(), ['localtorque', 'towsmart', 'trailerwise'], true);
+    }
+
+    /** @return array{eyebrow:string,heading:string,intro:string,index_title:string,breadcrumb:string} */
+    private function brandDirectoryCopy(): array
     {
         $brand = current_brand();
+        $base = DirectoryPresentation::copyFor($brand->id());
+
+        return match ($brand->id()) {
+            'towsmart' => $base + [
+                'index_title' => 'Towing specialist categories',
+                'breadcrumb' => 'Specialist categories',
+            ],
+            'trailerwise' => $base + [
+                'index_title' => 'Trailer service categories',
+                'breadcrumb' => 'Service categories',
+            ],
+            default => $base + [
+                'index_title' => 'Automotive business categories',
+                'breadcrumb' => 'Automotive specialists',
+            ],
+        };
+    }
+
+    private function brandDirectoryIndex(): Response
+    {
+        $brand = current_brand();
+        $copy = $this->brandDirectoryCopy();
         $categories = Database::select(
             'SELECT id, category_key AS slug, name, description AS short_description '
-            . 'FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name',
-            [$brand->databaseId()]
+            . 'FROM brand_provider_categories WHERE ' . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+            . ' ORDER BY sort_order, name',
+            BrandProviderCategory::publicDirectoryParams($brand->databaseId())
         );
 
-        return $this->view('localtorque.categories', [
-            'title' => 'Automotive business categories — LocalTorque',
-            'metaDescription' => 'Browse Australian mechanics, workshops, mobile repairers and automotive specialists by category.',
+        return $this->view('brands.service-categories', [
+            'title' => $copy['index_title'] . ' — ' . $brand->name(),
+            'metaDescription' => $copy['intro'],
             'canonical' => url('services'),
             'categories' => $categories,
             'category' => null,
             'providers' => [],
+            'directoryCopy' => $copy,
         ]);
     }
 
-    private function localTorqueShow(Request $request, string $slug): Response
+    private function brandDirectoryShow(Request $request, string $slug): Response
     {
         $brand = current_brand();
+        $copy = $this->brandDirectoryCopy();
         $category = Database::selectOne(
             'SELECT id, category_key AS slug, name, description AS short_description '
-            . 'FROM brand_provider_categories WHERE brand_id = ? AND category_key = ? AND is_active = 1',
-            [$brand->databaseId(), $slug]
+            . 'FROM brand_provider_categories WHERE ' . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+            . ' AND category_key = ?',
+            [...BrandProviderCategory::publicDirectoryParams($brand->databaseId()), $slug]
         );
         if ($category === null) {
-            $this->abort(404, 'Automotive category not found.');
+            $this->abort(404, 'Service category not found.');
         }
         $townId = (int) $request->input('town') ?: null;
-        $providers = Provider::brandDirectory($brand->databaseId(), $townId, (int) $category['id'], '', 60, 0)['rows'];
+        $providers = Provider::brandDirectory($brand->databaseId(), $townId, (int) $category['id'], '', 12, 0)['rows'];
         ActivityTracker::record('category_viewed', ['category_id' => (int) $category['id'], 'town_id' => $townId]);
         $searchId = DemandRecorder::recordSearch([
             'town_id' => $townId,
@@ -182,13 +257,24 @@ final class CategoryController extends Controller
         ]);
         DemandRecorder::recordImpressions($searchId, $providers, (int) $category['id']);
 
-        return $this->view('localtorque.categories', [
-            'title' => $category['name'] . ' — LocalTorque',
-            'metaDescription' => $category['short_description'],
-            'canonical' => url('category/' . $category['slug']),
+        return $this->view('brands.service-categories', [
+            'title' => $category['name'] . ' — ' . $brand->name(),
+            'metaDescription' => (string) ($category['short_description'] ?: $copy['intro']),
+            'canonical' => url('services/' . $category['slug']),
             'categories' => [],
             'category' => $category,
             'providers' => $providers,
+            'directoryCopy' => $copy,
         ]);
+    }
+
+    private function localTorqueIndex(): Response
+    {
+        return $this->brandDirectoryIndex();
+    }
+
+    private function localTorqueShow(Request $request, string $slug): Response
+    {
+        return $this->brandDirectoryShow($request, $slug);
     }
 }

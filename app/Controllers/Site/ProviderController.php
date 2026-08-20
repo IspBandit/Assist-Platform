@@ -6,10 +6,12 @@ namespace App\Controllers\Site;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Models\BrandProviderCategory;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Provider;
 use App\Models\Town;
+use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Services\Demand\DemandRecorder;
 use App\Services\DirectoryPresentation;
 use App\Services\FoundingGraphicService;
@@ -60,7 +62,12 @@ final class ProviderController extends Controller
                 ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
                 : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage));
         $categories = $brandScoped
-            ? Database::select('SELECT id, name FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name', [$brand->databaseId()])
+            ? Database::select(
+                'SELECT id, name FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+                . ' ORDER BY sort_order, name',
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            )
             : Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name');
 
         // Treat a filtered directory browse as a search on every brand. This is
@@ -114,7 +121,12 @@ final class ProviderController extends Controller
         }
 
         $id = (int) $provider['id'];
-        DemandRecorder::recordProfileView($id);
+        $searchId = (int) $request->input('s') ?: null;
+        DemandRecorder::recordProfileView($id, $searchId);
+        $gapId = (int) $request->input('g');
+        if ($gapId > 0) {
+            (new KnowledgeGapService())->recordClickThrough($gapId);
+        }
         $runs = [];
         if ($brand->id() === 'vanassist' && Database::tableExists('service_runs')) {
             $runs = Database::select(
@@ -130,6 +142,7 @@ final class ProviderController extends Controller
             'metaDescription' => ($provider['brand_seo_description'] ?? $provider['seo_description'] ?? null) ?: ('Services from ' . $provider['business_name'] . ' on ' . $brand->name() . '.'),
             'canonical' => url($profilePath),
             'provider' => $provider,
+            'searchId' => $searchId,
             'services' => $brandScoped ? Provider::brandServices($brand->databaseId(), $id) : Provider::services($id),
             'areas' => Provider::areas($id),
             'licences' => Database::select(

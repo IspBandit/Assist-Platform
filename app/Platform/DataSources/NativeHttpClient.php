@@ -7,12 +7,14 @@ use RuntimeException;
 
 final class NativeHttpClient implements HttpClientInterface
 {
+    public function __construct(private readonly int $timeoutSeconds = 20) {}
+
     public function postJson(string $url, array $headers, array $payload): array
     {
         $lines = ['Content-Type: application/json'];
         foreach ($headers as $name => $value) { $lines[] = $name . ': ' . $value; }
         $context = stream_context_create(['http' => [
-            'method' => 'POST', 'timeout' => 20, 'ignore_errors' => true,
+            'method' => 'POST', 'timeout' => max(1, $this->timeoutSeconds), 'ignore_errors' => true,
             'header' => implode("\r\n", $lines),
             'content' => json_encode($payload, JSON_THROW_ON_ERROR),
         ]]);

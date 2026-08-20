@@ -6,6 +6,14 @@ $this->extend('layouts.admin');
 $summary = $insights['summary'];
 $qs = http_build_query(['range' => $range, 'from' => $from, 'to' => $to]);
 $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $value));
+$sourceHumanise = static function (string $value) use ($humanise): string {
+    if (!str_starts_with($value, 'utm:')) {
+        return $value === 'direct' ? 'Direct or untagged visit' : $value;
+    }
+    $parts = explode('/', substr($value, 4));
+    $labels = array_map($humanise, $parts);
+    return implode(' · ', $labels);
+};
 ?>
 <?php $this->section('content'); ?>
 
@@ -50,6 +58,27 @@ $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $
     <strong>Who visited?</strong>
     <span><?= number_format((int) $summary['visitors']) ?> anonymous visitor sessions and <?= number_format((int) $summary['signed_in_visitors']) ?> signed-in visitors were recorded. The platform does not store visitor IP addresses or attempt to identify anonymous people.</span>
 </div>
+
+<section class="card insight-decision-summary" aria-labelledby="insight-decision-heading">
+    <div><p class="eyebrow">What the numbers say</p><h2 id="insight-decision-heading">Demand and directory usefulness</h2></div>
+    <dl>
+        <div><dt>Search success</dt><dd><?= $summary['search_success_rate'] === null ? 'Not enough data' : $this->e((string) $summary['search_success_rate']) . '%' ?><small><?= number_format((int) $summary['successful_searches']) ?> searches returned at least one result</small></dd></div>
+        <div><dt>Search to contact</dt><dd><?= $summary['search_to_contact'] === null ? 'Not enough data' : $this->e((string) $summary['search_to_contact']) . '%' ?><small>Interest signal only—not a completed job</small></dd></div>
+        <div><dt>Latest page visit</dt><dd><?= $this->e((string) ($summary['last_page_view_at'] ?? 'None recorded')) ?><small>Confirms page tracking is alive</small></dd></div>
+        <div><dt>Latest provider action</dt><dd><?= $this->e((string) ($summary['last_demand_event_at'] ?? 'None recorded')) ?><small>Profile, contact or funnel event</small></dd></div>
+    </dl>
+</section>
+
+<details class="card insight-panel insight-panel--scroll" open data-mobile-collapse>
+    <summary><h2>Daily website pulse</h2><span>Visits over time</span></summary>
+    <div class="insight-panel-body">
+        <p class="muted">Daily page views and different anonymous visitor sessions. Use the pattern—not a single day—to judge whether outreach is increasing use.</p>
+        <div class="table-wrap"><table class="data data--compact"><thead><tr><th>Date</th><th>Page views</th><th>Visitors</th></tr></thead><tbody>
+        <?php foreach (array_slice($insights['daily'], -31) as $row): ?><tr><td><?= $this->e((string) $row['label']) ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
+        <?php if ($insights['daily'] === []): ?><tr><td colspan="3" class="muted">No daily visits recorded for this period.</td></tr><?php endif; ?>
+        </tbody></table></div>
+    </div>
+</details>
 
 <div class="insight-grid insight-grid--two">
     <details class="card insight-panel" open data-mobile-collapse>
@@ -110,7 +139,7 @@ $humanise = static fn (string $value): string => ucwords(str_replace('_', ' ', $
             <div class="table-wrap"><table class="data data--compact">
                 <thead><tr><th><?= $this->e($first) ?></th><th><?= $this->e($second) ?></th><th><?= $this->e($third) ?></th></tr></thead>
                 <tbody>
-                <?php foreach ($rows as $row): ?><tr><td><strong><?= $this->e((string) $row['label']) ?></strong><?php if ($heading === 'Most viewed pages' && isset($row['route'])): ?><small><?= $this->e((string) $row['route']) ?></small><?php endif; ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
+                <?php foreach ($rows as $row): ?><tr><td><strong><?= $this->e($heading === 'Visitor sources' ? $sourceHumanise((string) $row['label']) : (string) $row['label']) ?></strong><?php if ($heading === 'Most viewed pages' && isset($row['route'])): ?><small><?= $this->e((string) $row['route']) ?></small><?php endif; ?></td><td><?= number_format((int) $row['total']) ?></td><td><?= number_format((int) $row['secondary']) ?></td></tr><?php endforeach; ?>
                 <?php if ($rows === []): ?><tr><td colspan="3" class="muted">No data yet.</td></tr><?php endif; ?>
                 </tbody>
             </table></div></div>

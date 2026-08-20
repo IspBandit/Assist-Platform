@@ -33,6 +33,20 @@ formats include Instagram post, story and profile graphics plus Facebook post,
 cover and profile graphics. Campaign purposes include launch, provider
 recruitment, service discovery, education/safety and community engagement.
 
+## Government datasets and traveller facilities
+
+Open **Data sources → Government datasets** for the **DATA-011A National Dataset
+Catalogue** (extends DATA-012). Catalogue rows include jurisdiction, source/API
+URLs, licence, attribution, format, update frequency, trust, auto-update (RIC
+schedule only), duplicate rules, entity types and notes. National portals and
+themes are seeded disabled. Enable a concrete importable row and **Fetch**
+(row-capped) or **Import fixture**, then approve candidates under **Facility
+review**. Approval writes `traveller_facilities` only — never `caravan_parks`.
+Caravan parks/campgrounds remain stays. No dataset publishes directly to
+production; RIC stages and Admin API is the write path. See `docs/DATA_011A.md`.
+Use Assist AI Search to confirm the release gate before turning on
+`assist_ai_traveller_facilities`.
+
 ## Provider discovery and verification
 
 `php scripts/classify-brand-providers.php --dry-run` reports the canonical
@@ -41,9 +55,32 @@ TrailerWise brand listings and category assignments. Automated matches are
 always unverified and retain discovery evidence; they must be claimed by the
 business or reviewed by an administrator before a verified badge is granted.
 
+### Claim-first public onboarding (VAN-010)
+
+When `CLAIM_FIRST_ONBOARDING=true` (default), `/for-providers/register` on
+VanAssist runs search-before-create:
+
+1. The business enters name and town, then sees “Is this your business?” matches.
+2. They may claim an existing unclaimed listing or confirm **none of these** before
+   the full registration form appears.
+3. On submit, a second duplicate check runs. Likely duplicates create a **pending
+   hold** provider (not published) with an internal note and optional
+   `listing_corrections` row; clean submissions continue into Provider prospects.
+
+Disable with `CLAIM_FIRST_ONBOARDING=false` in `.env` if the flow must be rolled
+back without redeploying code.
+
+### Recycle bin and API service accounts
+
+- **Directory → Recycle bin** lists soft-deleted providers and stays (and facilities
+  when migrated). Restore actions reuse the Admin API recycle-bin service.
+- **Administration → API service accounts** manages machine credentials for
+  `/api/v1/admin` (create, rotate secret, disable). Requires administrator or
+  super-administrator role; secrets are shown once at creation or rotation.
+
 ## Provider email campaigns
 
-Open **Growth → Provider email campaigns**. VanAssist prepares two clearly
+Open **Growth → Growth & outreach**, then choose **Email campaigns**. VanAssist prepares two clearly
 separated drafts for each active service category that has at least one provider
 email: a fixed factual listing-accuracy notice and a consent-gated marketing
 campaign. Each remains a draft until an administrator reviews its audience and
@@ -67,6 +104,33 @@ For every campaign, send an internal test, inspect it in the mailbox, run the
 25-provider pilot and review bounces, replies, complaints and opt-outs before
 using the 50/day and 100/day stages. Do not treat a public business email as
 consent and do not edit database consent fields merely to increase reach.
+
+## PR and organisation outreach
+
+Open **Growth → Growth & outreach** to manage caravan/RV clubs, federations,
+industry bodies, manufacturers, dealer and rental networks, park groups,
+tourism organisations, 4WD/touring associations and publications. Research is
+imported with an official source URL, date checked, published role, publication
+context and relevance reason. Importing an address never makes it sendable.
+The initial official-source research set is loaded idempotently by the release
+migration command, so deployment does not leave contacts in a local file waiting
+for an operator upload.
+
+Review the official page and destination restrictions before marking a contact
+eligible. Personal or ambiguous addresses, stale sources and any no-unsolicited
+warning remain held. Prefer one peak-body approach before writing to every
+affiliated club. Never request or upload member, customer or subscriber lists.
+
+Organisation campaigns select one target type and matching copy: club member
+resource, industry/data collaboration, fleet/dealer owner support, tourism
+visitor resource or earned editorial pitch. Use the normal internal test,
+maximum-25 pilot and reviewed daily stages. There is no automatic continuation.
+The platform retains the organisation contact and evidence used for each queued
+recipient and honours marketing/all suppression. Record replies, interest,
+sharing, declines, bounces and opt-outs in the hub; an opted-out outcome adds
+marketing suppression and cancels applicable pending mail.
+
+The hub distinguishes an address accepted into the application queue from a message accepted by the configured outbound mail transport. Its append-only history records queue, sent, failure, suppression and manual response/outcome events. A campaign marked complete means the current reviewed audience was queued; it is not a delivery or mailbox-read claim.
 
 ## Paid caravan-stay discovery review
 

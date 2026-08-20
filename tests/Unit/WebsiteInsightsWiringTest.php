@@ -23,6 +23,25 @@ final class WebsiteInsightsWiringTest extends TestCase
         );
     }
 
+    public function testBotsAreNotRecordedOrIncludedInWebsiteFigures(): void
+    {
+        $writer = (string) file_get_contents(base_path('app/Services/Analytics.php'));
+        $report = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
+
+        self::assertStringContainsString('TrackingSession::isBot()', $writer);
+        self::assertGreaterThanOrEqual(7, substr_count($report, "device_type NOT IN ('bot','unknown')"));
+    }
+
+    public function testHomepageContainsThePlainLanguageAskForm(): void
+    {
+        $partial = (string) file_get_contents(base_path('app/Views/partials/ask-vanassist.php'));
+
+        self::assertStringContainsString('name="q"', $partial);
+        self::assertStringContainsString("action=\"<?= e(url('ask')) ?>\"", $partial);
+        self::assertStringContainsString('Providers, stays and traveller facilities only', $partial);
+        self::assertStringNotContainsString('ask-vanassist-teaser', $partial);
+    }
+
     public function testMobileHomeHeroDoesNotReserveAnEmptyImageScreen(): void
     {
         $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
@@ -67,6 +86,26 @@ final class WebsiteInsightsWiringTest extends TestCase
         }
     }
 
+    public function testSearchAttributionSurvivesProfileAndContactLinks(): void
+    {
+        $card = (string) file_get_contents(base_path('app/Views/partials/provider-result-card.php'));
+        $profile = (string) file_get_contents(base_path('app/Views/public/provider-profile.php'));
+        $map = (string) file_get_contents(base_path('app/Views/public/search-results.php'));
+
+        self::assertStringContainsString('$profileUrl =', $card);
+        self::assertStringContainsString("url('go/phone/' . \$slug) . \$contactQuery", $profile);
+        self::assertStringContainsString("url('go/directions/'", $map);
+        self::assertStringContainsString("'?s='", $map);
+    }
+
+    public function testProviderValueReportingIsBrandScoped(): void
+    {
+        $service = (string) file_get_contents(base_path('app/Services/Demand/ReportingService.php'));
+
+        self::assertStringContainsString('$brandId = current_brand()->databaseId()', $service);
+        self::assertGreaterThanOrEqual(8, substr_count($service, 'brand_id = ?'));
+    }
+
     public function testAdminDashboardExplainsAggregatePrivacyBoundary(): void
     {
         $view = (string) file_get_contents(base_path('app/Views/admin/demand/index.php'));
@@ -91,6 +130,23 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString('Website activity', $dashboard);
         self::assertStringContainsString("['Website insights', '/admin/demand']", $layout);
         self::assertStringContainsString('data-auto-refresh-seconds="10"', $layout);
+        self::assertStringContainsString('Needs attention', $dashboard);
+        self::assertStringContainsString('Directory and workspace totals', $dashboard);
+        self::assertStringContainsString('Recent administrative activity', $dashboard);
+    }
+
+    public function testFreeGrowthLinksAreRecordedAndShownInPlainEnglish(): void
+    {
+        $tracking = (string) file_get_contents(base_path('app/Services/Demand/TrackingSession.php'));
+        $insights = (string) file_get_contents(base_path('app/Views/admin/demand/index.php'));
+        $adminScript = (string) file_get_contents(base_path('public/assets/js/admin-platform.js'));
+
+        self::assertStringContainsString("\$_GET['utm_source']", $tracking);
+        self::assertStringContainsString("'utm:'", $tracking);
+        self::assertStringContainsString('Direct or untagged visit', $insights);
+        self::assertStringContainsString("\$heading === 'Visitor sources'", $insights);
+        self::assertStringContainsString('[data-copy-target]', $adminScript);
+        self::assertStringContainsString('[data-native-share]', $adminScript);
     }
 
     public function testMobileHeroClipsHorizontalOverflowAndConstrainsSearchPanel(): void
@@ -98,6 +154,29 @@ final class WebsiteInsightsWiringTest extends TestCase
         $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
         self::assertStringContainsString('overflow-x:clip', $css);
         self::assertStringContainsString('.hero-search-panel .search-card{width:100%;min-width:0;max-width:100%}', $css);
+    }
+
+    public function testHomeSearchUsesLocationFirstButManualPlaceWins(): void
+    {
+        $home = (string) file_get_contents(base_path('app/Views/public/home.php'));
+        $script = (string) file_get_contents(base_path('public/assets/js/app.js'));
+
+        self::assertStringContainsString('data-auto-location', $home);
+        self::assertStringContainsString("'autoSubmit' => 'false'", $home);
+        self::assertStringContainsString("form.setAttribute('data-location-manual', '1')", $script);
+        self::assertStringContainsString("form.getAttribute('data-location-manual') !== '1'", $script);
+    }
+
+    public function testTownSuggestionsAnchorToTheLocationInput(): void
+    {
+        $script = (string) file_get_contents(base_path('public/assets/js/app.js'));
+        $css = (string) file_get_contents(base_path('public/assets/css/app.css'));
+
+        self::assertStringContainsString('input.offsetTop', $script);
+        self::assertStringContainsString('input.offsetWidth', $script);
+        self::assertStringContainsString("strong.textContent = primary", $script);
+        self::assertStringContainsString('.location-field{position:relative', $css);
+        self::assertStringContainsString('z-index: 120', $css);
     }
 
     public function testMobileAdminAndInsightReportsUseCompactDisclosurePatterns(): void
