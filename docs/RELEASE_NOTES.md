@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist public search link compatibility
+
+- Restored compatibility for public search links that use `text` instead of
+  the current `location` or `q` fields.
+- Public location lookups now accept the descriptive `latitude` and
+  `longitude` names as aliases for `lat` and `lng`. Current links remain
+  unchanged; the aliases prevent older bookmarks and integrations from losing
+  their search text or device location.
+
 ### VanAssist Ask question library and cache safety (VAN-011)
 
 - Added a migration-backed, idempotent library of 1,550 versioned common Ask
