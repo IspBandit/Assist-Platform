@@ -37,6 +37,10 @@ No account is required. On the main VanAssist search, the browser may ask for op
 
 The main search attempts to resolve the current location without submitting the form. **Use my current location** repeats that request when needed. Fuel, EV charging, Places to Stay, service-category buttons, the provider directory, result refinements and assistance requests all inherit the same recent device location. A discovery page with no location automatically resolves it; nearby shortcut links carry the coordinates into the destination page. Typing any town, suburb or postcode clears the device coordinates immediately, so the typed place always wins. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. Drag the map to move it, pinch or use **Zoom in**/**Zoom out**, and use **Fit results** to restore every returned pin. A numbered pin opens the exact result summary, including **Details**, **Show in list** and **Directions** when available. Each mapped result row also shows the same numbered pin symbol as the map. The summary can be collapsed or moved with pointer, touch or arrow keys so it does not hide the map. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The result list remains fully usable without JavaScript or map tiles.
 
+Shared links and older bookmarks remain compatible when they use `text` for
+the search wording or the full `latitude` and `longitude` names for device
+coordinates. New VanAssist links continue to use the current form field names.
+
 ## Workflows
 
 Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Provider profiles use a simple heading without a decorative business-name initial or repeated business name in the breadcrumb. Workspace help is shown only inside signed-in account/provider areas, not on public provider pages. Open directions only when safely stopped.
@@ -145,7 +149,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-13 (homepage simplified to hero search and shortcuts).
+2026-08-21 (public search link compatibility documented).
 
 ## Owner
 

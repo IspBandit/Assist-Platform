@@ -30,6 +30,9 @@ final class SearchController extends Controller
         }
 
         $location = trim((string) $request->input('location', ''));
+        if ($location === '') {
+            $location = trim((string) $request->input('text', ''));
+        }
         $categorySlug = trim((string) $request->input('category', ''));
         $timeframe = trim((string) $request->input('timeframe', ''));
         $resultLimit = PublicResultWindow::requested($request->input('limit'));
