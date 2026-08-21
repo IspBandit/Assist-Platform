@@ -40,9 +40,9 @@
 	import security_headers
 	root * /var/www/cqdiggings
 	encode zstd gzip
-	@private path /.git* /.htaccess /analytics/config.php /analytics/dashboard-config.php /analytics/config.example.php /analytics/dashboard-config.example.php /analytics/_stats/* /analytics/_contributions/* /analytics/_marketplace/* /analytics/_messages/*
-	respond @private 404
 	route {
+		@private path /.git* /.htaccess /analytics/config.php /analytics/dashboard-config.php /analytics/config.example.php /analytics/dashboard-config.example.php /analytics/_stats/* /analytics/_contributions/* /analytics/_marketplace/* /analytics/_messages/*
+		respond @private 404
 		php_fastcgi cqdiggings:9000
 		file_server
 	}
