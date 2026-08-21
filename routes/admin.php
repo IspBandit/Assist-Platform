@@ -11,13 +11,59 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group([
         'prefix'     => '/admin',
-        'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator'],
+        'middleware' => ['headers', 'csrf', 'auth', 'role:moderator,administrator,super-administrator,platform-administrator,brand-administrator,editor,support,finance,marketing'],
     ], static function (Router $router): void {
         $router->get('', 'Admin\AdminController@dashboard', 'admin');
+        $router->get('/help', 'Admin\DocumentationController@index', 'admin.documentation.index');
+        $router->get('/help/whats-new', 'Admin\DocumentationController@whatsNew', 'admin.documentation.whats-new');
+        $router->get('/help/{guide}', 'Admin\DocumentationController@guide', 'admin.documentation.guide');
+        $router->get('/help/{guide}/{article}', 'Admin\DocumentationController@article', 'admin.documentation.article');
+        $router->get('/control-centre', 'Admin\PlatformController@controlCentre', 'admin.control-centre');
+        $router->post('/switch-brand', 'Admin\PlatformController@switchBrand', 'admin.switch-brand');
+        $router->get('/brand-builder', 'Admin\PlatformController@brandBuilder', 'admin.brand-builder');
+        $router->post('/brand-builder/preview', 'Admin\PlatformController@previewBrand', 'admin.brand-builder.preview');
+
+        // Platform-owned connector ingestion, quota controls and review queue.
+        $router->get('/data-sources', 'Admin\DataSourcesController@index', 'admin.data-sources');
+        $router->post('/data-sources/connector', 'Admin\DataSourcesController@saveConnector', 'admin.data-sources.connector');
+        $router->post('/data-sources/mapping', 'Admin\DataSourcesController@saveMapping', 'admin.data-sources.mapping');
+        $router->post('/data-sources/run', 'Admin\DataSourcesController@run', 'admin.data-sources.run');
+        $router->get('/data-sources/review', 'Admin\DataSourcesController@queue', 'admin.data-sources.review');
+        $router->post('/data-sources/review', 'Admin\DataSourcesController@review');
+        $router->post('/data-sources/review/bulk', 'Admin\DataSourcesController@bulkReview');
+        $router->post('/data-sources/review/process-eligible', 'Admin\DataSourcesController@processEligibleQueue');
+        $router->post('/data-sources/review/process-server', 'Admin\DataSourcesController@processServerQueue');
+        $router->post('/data-sources/review/resolve-exact', 'Admin\DataSourcesController@resolveExactDuplicates');
+        $router->post('/data-sources/national-route/upload', 'Admin\DataSourcesController@uploadNationalRoute');
+        $router->post('/data-sources/national-route/process', 'Admin\DataSourcesController@processNationalRoute');
+        $router->post('/data-sources/schedule', 'Admin\DataSourcesController@saveSchedule', 'admin.data-sources.schedule');
+        $router->get('/data-sources/datasets', 'Admin\GovernmentDatasetsController@index', 'admin.data-sources.datasets');
+        $router->get('/data-sources/datasets/edit', 'Admin\GovernmentDatasetsController@edit', 'admin.data-sources.datasets.edit');
+        $router->post('/data-sources/datasets/upsert', 'Admin\GovernmentDatasetsController@upsert', 'admin.data-sources.datasets.upsert');
+        $router->post('/data-sources/datasets/save', 'Admin\GovernmentDatasetsController@save', 'admin.data-sources.datasets.save');
+        $router->post('/data-sources/datasets/fetch', 'Admin\GovernmentDatasetsController@fetch', 'admin.data-sources.datasets.fetch');
+        $router->get('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@facilityReview', 'admin.data-sources.facilities.review');
+        $router->post('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@reviewFacility', 'admin.data-sources.facilities.review.post');
+        $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
+        $router->get('/facility-contributions', 'Admin\FacilityContributionsController@index', 'admin.facility-contributions');
+        $router->get('/facility-contributions/show', 'Admin\FacilityContributionsController@show', 'admin.facility-contributions.show');
+        $router->post('/facility-contributions/moderate', 'Admin\FacilityContributionsController@moderate', 'admin.facility-contributions.moderate');
+
+        // Platform intelligence derived from canonical provider, demand and
+        // optional population sources. Recommendations feed Data Sources.
+        $router->get('/data-intelligence', 'Admin\DataIntelligenceController@index', 'admin.data-intelligence');
+        $router->post('/data-intelligence/tasks', 'Admin\DataIntelligenceController@createTask', 'admin.data-intelligence.tasks');
+        $router->post('/data-intelligence/tasks/status', 'Admin\DataIntelligenceController@updateTask', 'admin.data-intelligence.tasks.status');
+        $router->get('/trust-growth', 'Admin\TrustGrowthController@index', 'admin.trust-growth');
+        $router->post('/trust-growth/check-sources', 'Admin\TrustGrowthController@checkSources', 'admin.trust-growth.check-sources');
+        $router->post('/trust-growth/source', 'Admin\TrustGrowthController@reviewSource', 'admin.trust-growth.source');
+        $router->post('/trust-growth/credential', 'Admin\TrustGrowthController@reviewCredential', 'admin.trust-growth.credential');
+        $router->post('/trust-growth/campaign', 'Admin\TrustGrowthController@reviewCampaign', 'admin.trust-growth.campaign');
 
         // Billing management (available even while billing is disabled, so plans
         // and entitlements can be configured privately ahead of launch).
         $router->get('/billing', 'Admin\BillingController@index', 'admin.billing');
+        $router->get('/billing/invoices/export', 'Admin\BillingController@exportInvoices', 'admin.billing.invoices.export');
         $router->get('/billing/plans/edit', 'Admin\BillingController@editPlan', 'admin.billing.plan.edit');
         $router->post('/billing/plans/update', 'Admin\BillingController@updatePlan', 'admin.billing.plan.update');
 
@@ -75,13 +121,26 @@ return static function (Router $router): void {
         $router->post('/providers/licence/verify', 'Admin\ProvidersController@verifyLicence');
         $router->post('/providers/send-claim-invite', 'Admin\ProvidersController@sendClaimInvite');
         $router->post('/providers/bulk-claim-invites', 'Admin\ProvidersController@bulkClaimInvites');
-        $router->get('/promotions', 'Admin\PromotionsController@index', 'admin.promotions');
         $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
         $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
-        $router->get('/promotions/show', 'Admin\PromotionsController@show', 'admin.promotions.show');
-        $router->post('/promotions/in-progress', 'Admin\PromotionsController@markInProgress');
-        $router->post('/promotions/deliver', 'Admin\PromotionsController@deliver');
+
+        $router->get('/polaris', 'Admin\PolarisAdminController@index', 'admin.polaris');
+        $router->get('/polaris/manufacturers', 'Admin\PolarisAdminController@manufacturers', 'admin.polaris.manufacturers');
+        $router->get('/polaris/models', 'Admin\PolarisAdminController@models', 'admin.polaris.models');
+        $router->post('/polaris/models/lifecycle', 'Admin\PolarisAdminController@setModelLifecycle', 'admin.polaris.models.lifecycle');
+        $router->get('/polaris/recycle-bin', 'Admin\PolarisAdminController@recycleBin', 'admin.polaris.recycle-bin');
+        $router->get('/polaris/review-queue', 'Admin\PolarisAdminController@reviewQueue', 'admin.polaris.review-queue');
+        $router->post('/polaris/review-queue/draft', 'Admin\PolarisAdminController@reviewDraft', 'admin.polaris.review-draft');
+        $router->post('/polaris/review-queue/claim', 'Admin\PolarisAdminController@reviewClaim', 'admin.polaris.review-claim');
+        $router->get('/polaris/imports', 'Admin\PolarisAdminController@imports', 'admin.polaris.imports');
+        $router->post('/polaris/imports/upload', 'Admin\PolarisAdminController@uploadImport', 'admin.polaris.imports.upload');
+        $router->post('/polaris/manufacturers/merge', 'Admin\PolarisAdminController@mergeManufacturers', 'admin.polaris.manufacturers.merge');
+        $router->post('/polaris/review-queue/dealer', 'Admin\PolarisAdminController@reviewDealerClaim', 'admin.polaris.review-dealer');
+        $router->get('/polaris/settings', 'Admin\PolarisAdminController@settings', 'admin.polaris.settings');
+        $router->get('/polaris/{section}', 'Admin\PolarisAdminController@placeholder', 'admin.polaris.section');
         $router->get('/providers/duplicates', 'Admin\ProvidersController@duplicates', 'admin.providers.duplicates');
+        $router->get('/recycle-bin', 'Admin\RecycleBinController@index', 'admin.recycle-bin');
+        $router->post('/recycle-bin/restore', 'Admin\RecycleBinController@restore', 'admin.recycle-bin.restore');
 
         // Provider prospect CRM (Phase 3): outreach, notes, CSV import/export, invitations.
         $router->get('/prospects', 'Admin\ProspectsController@index', 'admin.prospects');
@@ -132,6 +191,7 @@ return static function (Router $router): void {
         $router->post('/social-media/status', 'Admin\SocialMediaController@status');
         $router->get('/social-media/preview', 'Admin\SocialMediaController@preview');
         $router->get('/social-media/download', 'Admin\SocialMediaController@download');
+        $router->post('/social-media/facebook/publish', 'Admin\SocialMediaController@publishFacebook');
 
         // SEO settings (Phase 8): site meta, social image and the indexing switch.
         $router->get('/seo', 'Admin\SeoController@index', 'admin.seo');
@@ -142,6 +202,7 @@ return static function (Router $router): void {
         $router->get('/email-templates/edit', 'Admin\EmailTemplatesController@edit');
         $router->post('/email-templates/save', 'Admin\EmailTemplatesController@save');
         $router->post('/email-templates/test', 'Admin\EmailTemplatesController@sendTest');
+        $router->post('/email-templates/delivery-test', 'Admin\EmailTemplatesController@sendDeliveryTest');
         $router->post('/email-templates/smtp-test', 'Admin\EmailTemplatesController@sendSmtpTest');
         $router->post('/email-templates/process-queue', 'Admin\EmailTemplatesController@processQueueNow');
 
@@ -150,11 +211,28 @@ return static function (Router $router): void {
         $router->get('/notifications/compose', 'Admin\NotificationsController@compose', 'admin.notifications.compose');
         $router->post('/notifications/save', 'Admin\NotificationsController@store');
         $router->get('/notifications/show', 'Admin\NotificationsController@show', 'admin.notifications.show');
-        $router->post('/notifications/send', 'Admin\NotificationsController@send');
+        $router->post('/notifications/test', 'Admin\NotificationsController@test');
+        $router->post('/notifications/stage', 'Admin\NotificationsController@stage');
+        $router->post('/notifications/auto-continue', 'Admin\NotificationsController@autoContinue');
+        $router->post('/notifications/recipient-exclude', 'Admin\NotificationsController@recipientExclude');
+        $router->post('/notifications/recipient-restore', 'Admin\NotificationsController@recipientRestore');
+        $router->post('/notifications/recipient-include', 'Admin\NotificationsController@recipientInclude');
         $router->post('/notifications/cancel', 'Admin\NotificationsController@cancel');
+
+        // PR and organisation outreach: researched targets remain review-only
+        // until an administrator records role relevance and source evidence.
+        $router->get('/outreach-hub', 'Admin\OutreachHubController@index', 'admin.outreach-hub');
+        $router->get('/outreach-hub/template', 'Admin\OutreachHubController@template');
+        $router->post('/outreach-hub/import', 'Admin\OutreachHubController@import');
+        $router->post('/outreach-hub/review', 'Admin\OutreachHubController@review');
+        $router->post('/outreach-hub/outcome', 'Admin\OutreachHubController@outcome');
 
         // Caravan parks (Phase 7): applications, approval, documents, service-day requests.
         $router->get('/parks', 'Admin\ParksController@index', 'admin.parks');
+        $router->get('/parks/import', 'Admin\ParksController@importQueue', 'admin.parks.import');
+        $router->post('/parks/import/upload', 'Admin\ParksController@importUpload');
+        $router->post('/parks/import/process', 'Admin\ParksController@importProcess');
+        $router->post('/parks/import/review', 'Admin\ParksController@importReview');
         $router->get('/parks/show', 'Admin\ParksController@show', 'admin.parks.show');
         $router->get('/parks/form', 'Admin\ParksController@form');
         $router->post('/parks/save', 'Admin\ParksController@save');
@@ -208,6 +286,11 @@ return static function (Router $router): void {
         // Feature flags (Phase 10).
         $router->get('/feature-flags', 'Admin\FeatureFlagsController@index', 'admin.feature-flags');
         $router->post('/feature-flags', 'Admin\FeatureFlagsController@save');
+        $router->get('/ai-search', 'Admin\AiSearchAdminController@index', 'admin.ai-search');
+        $router->post('/ai-search', 'Admin\AiSearchAdminController@save');
+        $router->get('/ai-search/gaps', 'Admin\AiSearchAdminController@gaps', 'admin.ai-search.gaps');
+        $router->post('/ai-search/gaps', 'Admin\AiSearchAdminController@updateGap');
+        $router->get('/ai-search/gaps/export', 'Admin\AiSearchAdminController@exportGaps', 'admin.ai-search.gaps.export');
 
         // Backups — super administrators only (Phase 10).
         $router->get('/backups', 'Admin\BackupsController@index', 'admin.backups');
@@ -246,5 +329,11 @@ return static function (Router $router): void {
         $router->get('/customers/export', 'Admin\CustomersController@export', 'admin.customers.export');
         $router->get('/customers/show', 'Admin\CustomersController@show', 'admin.customers.show');
         $router->post('/customers/save', 'Admin\CustomersController@save');
+
+        // Admin API service accounts (super/platform administrators).
+        $router->get('/api-service-accounts', 'Admin\ApiServiceAccountsController@index', 'admin.api-service-accounts');
+        $router->post('/api-service-accounts', 'Admin\ApiServiceAccountsController@store');
+        $router->post('/api-service-accounts/rotate', 'Admin\ApiServiceAccountsController@rotate');
+        $router->post('/api-service-accounts/disable', 'Admin\ApiServiceAccountsController@disable');
     });
 };

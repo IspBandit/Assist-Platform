@@ -1,0 +1,4 @@
+id,name,facility_type,latitude,longitude,address,locality
+demo-rest-1,Demo Batehaven Rest Area,rest_area,-35.7280,150.1950,Princes Highway,Batehaven
+demo-rest-2,Demo Batemans Bay Highway Rest,rest_area,-35.7080,150.1740,Princes Highway,Batemans Bay
+demo-rest-3,Demo Roma Rest Area,rest_area,-26.5600,148.7800,Warrego Highway,Roma

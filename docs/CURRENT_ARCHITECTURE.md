@@ -175,3 +175,17 @@ single-brand and do not currently carry immutable brand attribution.
 ## Existing brand state
 
 VanAssist, TowSmart and TrailerWise are active configurations served by the shared hostname-aware runtime. LocalTorque is the fourth configured brand and remains private on `localtorque.test` until its production domain and launch controls are supplied. Shared providers use brand-specific listings and category assignments; brand-aware email, SEO, roles and feature gates prevent public presentation from falling back silently to another brand.
+
+## Living documentation
+
+- `docs/user-guide/registry.php` is the machine-readable documentation index;
+  registered Markdown under `docs/user-guide/` is the article source of truth.
+- `DocumentationRegistry` validates article metadata, required sections, route
+  links, source references and related-document links before content is used.
+- Public `/help/*` routes expose customer/provider guidance and release history.
+  Authenticated `/admin/help/*` routes expose all operational and engineering
+  guides under the existing admin role middleware.
+- Public and admin dashboard layouts use `DocumentationLinkResolver` to provide
+  a page-specific Help action without copying links into each page template.
+- CI compares interface/API changes to guide and release-note changes through
+  `scripts/validate-documentation.php`; no database or parallel CMS is required.

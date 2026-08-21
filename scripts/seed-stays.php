@@ -19,6 +19,8 @@ $payload = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_
 $states = [];
 foreach (Database::select('SELECT id, abbreviation FROM states') as $state) { $states[$state['abbreviation']] = (int) $state['id']; }
 $created = 0; $updated = 0; $skipped = 0;
+$stayTypes = ['caravan_park','campground','free_camp','national_park','showground','rest_area','council_camp','farm_stay','station_stay','other'];
+$priceTypes = ['free','donation','low_cost','paid','unknown'];
 foreach (($payload['stays'] ?? []) as $stay) {
     $stateId = $states[$stay['state'] ?? ''] ?? null;
     if ($stateId === null || empty($stay['name']) || empty($stay['external_id'])) { $skipped++; continue; }
@@ -26,14 +28,19 @@ foreach (($payload['stays'] ?? []) as $stay) {
         'SELECT id, region_id FROM towns WHERE state_id = ? AND LOWER(name) = LOWER(?) ORDER BY is_active DESC, id LIMIT 1',
         [$stateId, (string) ($stay['town'] ?? '')]
     );
-    $existing = Database::selectOne('SELECT id, slug FROM caravan_parks WHERE source_type = ? AND external_id = ?', ['openstreetmap', $stay['external_id']]);
+    $existing = Database::selectOne('SELECT id, slug, deleted_at FROM caravan_parks WHERE source_type = ? AND external_id = ?', ['openstreetmap', $stay['external_id']]);
+    $alias = Database::tableExists('caravan_park_source_aliases')
+        ? Database::selectOne('SELECT park_id FROM caravan_park_source_aliases WHERE source_type = ? AND external_id = ?', ['openstreetmap', $stay['external_id']])
+        : null;
+    if ($alias !== null) { $skipped++; continue; }
+    if ($existing !== null && $existing['deleted_at'] !== null) { $skipped++; continue; }
     $bool = static fn(mixed $v): ?int => $v === true ? 1 : ($v === false ? 0 : null);
     $values = [
         (string) $stay['name'], trim((string) ($stay['address'] ?? '')) ?: null, $town['id'] ?? null,
         $town['region_id'] ?? null, $stateId, $stay['latitude'], $stay['longitude'],
         trim((string) ($stay['phone'] ?? '')) ?: null, trim((string) ($stay['email'] ?? '')) ?: null,
         trim((string) ($stay['website'] ?? '')) ?: null, trim((string) ($stay['booking_url'] ?? '')) ?: null,
-        $stay['stay_type'] ?? 'other', $stay['price_type'] ?? 'unknown',
+        in_array($stay['stay_type'] ?? '',$stayTypes,true)?$stay['stay_type']:'other', in_array($stay['price_type'] ?? '',$priceTypes,true)?$stay['price_type']:'unknown',
         $bool($stay['powered_sites'] ?? null), $bool($stay['unpowered_sites'] ?? null), $bool($stay['toilets'] ?? null),
         $bool($stay['showers'] ?? null), $bool($stay['potable_water'] ?? null), $bool($stay['dump_point'] ?? null),
         $bool($stay['pets_allowed'] ?? null), (string) ($stay['source_url'] ?? ''), 'community',
@@ -45,6 +52,17 @@ foreach (($payload['stays'] ?? []) as $stay) {
         );
         $updated++;
     } else {
+        $canonical = Database::selectOne(
+            "SELECT id FROM caravan_parks WHERE state_id=? AND deleted_at IS NULL AND status='active' "
+            . "AND LOWER(TRIM(name))=LOWER(TRIM(?)) AND latitude IS NOT NULL AND longitude IS NOT NULL "
+            . "AND (111.045*DEGREES(ACOS(LEAST(1.0,COS(RADIANS(latitude))*COS(RADIANS(?))*COS(RADIANS(longitude)-RADIANS(?))+SIN(RADIANS(latitude))*SIN(RADIANS(?))))))<=2 "
+            . "ORDER BY FIELD(verification_type,'authority','operator','community','unverified'),id LIMIT 1",
+            [$stateId,(string)$stay['name'],$stay['latitude'],$stay['longitude'],$stay['latitude']]
+        );
+        if ($canonical !== null && Database::tableExists('caravan_park_source_aliases')) {
+            Database::query('INSERT IGNORE INTO caravan_park_source_aliases (park_id,source_type,external_id,source_url,created_at,updated_at) VALUES (?,?,?,?,NOW(),NOW())',[(int)$canonical['id'],'openstreetmap',(string)$stay['external_id'],(string)($stay['source_url']??'')]);
+            $skipped++; continue;
+        }
         Database::query(
             'INSERT INTO caravan_parks (name,slug,address,town_id,region_id,state_id,latitude,longitude,phone,email,website,booking_url,stay_type,price_type,powered_sites,unpowered_sites,toilets,showers,potable_water,dump_point,pets_allowed,source_url,verification_type,source_type,external_id,description,public_page_enabled,status,created_at,updated_at,source_checked_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW(),NOW(),NOW())',
             [$values[0], CaravanPark::uniqueSlug($values[0] . '-' . ($stay['town'] ?? '')), ...array_slice($values, 1),

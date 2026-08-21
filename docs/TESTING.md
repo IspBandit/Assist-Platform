@@ -11,17 +11,17 @@ composer analyse
 composer audit
 ```
 
-Current local baseline:
+Current CI baseline (run 30061371853 on 24 July 2026):
 
-- PHP 8.3
-- 55 unit tests and 139 assertions
-- 6 database integration tests and 21 assertions
+- PHP 8.3.32
+- 96 unit tests and 25,784 assertions
+- 12 database integration tests and 62 assertions
 - PHPStan level 3 over application/framework/config/route/script code
-- fresh MariaDB migration through migration 033
+- fresh MySQL 8 migration through migration 045
 - repeat migration produces no changes
 - core seed succeeds
 - platform backfill and integrity validation succeed
-- no known Composer advisory at the latest local run
+- no known Composer advisory in the recorded CI run
 
 The exact counts may grow; CI output is authoritative.
 

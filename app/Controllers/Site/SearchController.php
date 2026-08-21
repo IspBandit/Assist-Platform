@@ -13,6 +13,8 @@ use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Services\Demand\DemandRecorder;
+use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Handles the homepage "Find a service" search: a free-text town/postcode plus
@@ -23,9 +25,17 @@ final class SearchController extends Controller
 {
     public function find(Request $request): Response
     {
+        if (current_brand()->id() === 'polaris' && current_brand()->moduleEnabled('rv_catalogue')) {
+            return (new PolarisController())->find($request);
+        }
+
         $location = trim((string) $request->input('location', ''));
+        if ($location === '') {
+            $location = trim((string) $request->input('text', ''));
+        }
         $categorySlug = trim((string) $request->input('category', ''));
         $timeframe = trim((string) $request->input('timeframe', ''));
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         // Optional device GPS coordinates ("Use my location"). Only used when no
         // town/postcode was typed.
@@ -40,16 +50,21 @@ final class SearchController extends Controller
 
         $usedLocation = false;
         $alternatives = [];
-        // When lat/lng are present (device GPS), they take precedence over a typed
-        // town string — the label we fill may be "Gladstone, QLD" which does not
-        // match the towns.name column verbatim.
-        if ($hasCoords) {
-            $town = Town::nearestActive($lat, $lng);
-            $usedLocation = $town !== null;
-        } elseif ($location !== '') {
+        // A location the user typed always wins over hidden/stale device
+        // coordinates. GPS is used only when the location field is empty.
+        if ($location !== '') {
             $townMatches = Town::searchActive($location);
+            if ($townMatches === []) {
+                $townMatches = Town::searchActiveFuzzy($location);
+            }
             $town = $townMatches[0] ?? null;
             $alternatives = array_slice($townMatches, 1, 5);
+            $hasCoords = false;
+            $lat = null;
+            $lng = null;
+        } elseif ($hasCoords) {
+            $town = Town::nearestActive($lat, $lng);
+            $usedLocation = $town !== null;
         } else {
             $town = null;
         }
@@ -57,6 +72,9 @@ final class SearchController extends Controller
         $distanceFilter = Geo::resolveDistanceFilter($request->input('max_distance'), $town !== null);
         $distanceSelection = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : $distanceFilter['scope'];
         $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
+
+        [$originLat, $originLng, $originLabel] = $this->resolveOrigin($town, $hasCoords ? $lat : null, $hasCoords ? $lng : null, $usedLocation);
+        $hasOrigin = $originLat !== null && $originLng !== null;
 
         // What to show in the search box / heading after a GPS lookup.
         $locationDisplay = $location;
@@ -73,7 +91,10 @@ final class SearchController extends Controller
         if ($town !== null) {
             $townId = (int) $town['id'];
             if ($categoryId !== null) {
-                foreach (Provider::forCategory($categoryId, $townId) as $row) {
+                $categoryProviders = $distanceFilter['scope'] === 'km' && $hasOrigin
+                    ? Provider::forCategoryNear($categoryId, (float) $originLat, (float) $originLng, (int) $distanceFilter['km'])
+                    : Provider::forCategory($categoryId, $townId);
+                foreach ($categoryProviders as $row) {
                     if ((int) $row['is_inferred'] === 1) {
                         $possible[] = $row;
                     } else {
@@ -94,13 +115,32 @@ final class SearchController extends Controller
             }
         }
 
-        [$originLat, $originLng, $originLabel] = $this->resolveOrigin($town, $hasCoords ? $lat : null, $hasCoords ? $lng : null, $usedLocation);
-        $hasOrigin = $originLat !== null && $originLng !== null;
         if ($hasOrigin) {
             $townIdForFilter = $town !== null ? (int) $town['id'] : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townIdForFilter);
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
+            $routed = (new RoadDistanceService())->enrichGroups(
+                ['matches' => $matches, 'possible' => $possible],
+                $originLat,
+                $originLng,
+                $maxDistance,
+            );
+            $matches = $routed['matches'];
+            $possible = $routed['possible'];
+        } else {
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
         }
+
+        // Paid visibility is kept in an explicitly labelled block. Organic
+        // direct results rank verified listings first, then nearest distance;
+        // related/inferred services remain a separate group.
+        $matches = $this->rankDirectMatches($matches);
+        usort($possible, [$this, 'compareProviderDistance']);
 
         $locationNotFound = $town === null && ($location !== '' || $hasCoords);
 
@@ -154,9 +194,11 @@ final class SearchController extends Controller
             $heading .= ' in ' . $town['name'];
         }
 
+        $categories = ServiceCategory::activeAll();
+
         return $this->view('public.search-results', [
             'title'            => $heading . ' — VanAssist',
-            'metaDescription'  => 'Search caravan and RV service providers across the VanAssist network.',
+            'metaDescription'  => 'Find caravan and RV services, roadside help, fuel, EV charging and traveller essentials through VanAssist.',
             'metaRobots'       => 'noindex,follow',
             'heading'          => $heading,
             'location'         => $locationDisplay,
@@ -176,10 +218,21 @@ final class SearchController extends Controller
             'possible'         => $possible,
             'requestUrl'       => $requestUrl,
             'searchId'         => $searchId,
-            'categories'       => ServiceCategory::activeTopLevel(),
+            'categories'       => $categories,
+            'categoryGroups'   => ServiceCategory::groupedForVanAssist($categories),
             'lat'              => $hasCoords ? $lat : null,
             'lng'              => $hasCoords ? $lng : null,
             'nearbyRuns'       => $nearbyRuns,
+            'hasMore'          => $resultWindow['has_more'],
+            'showMoreUrl'      => $resultWindow['has_more'] ? url('find?' . http_build_query(array_filter([
+                'location' => $location,
+                'category' => $categorySlug,
+                'timeframe' => $timeframe,
+                'max_distance' => $request->input('max_distance'),
+                'lat' => $hasCoords ? $lat : null,
+                'lng' => $hasCoords ? $lng : null,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 
@@ -236,7 +289,8 @@ final class SearchController extends Controller
             return [$gpsLat, $gpsLng, $label];
         }
 
-        if ($town !== null && $town['latitude'] !== null && $town['longitude'] !== null) {
+        if ($town !== null && $town['latitude'] !== null && $town['longitude'] !== null
+            && in_array(($town['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true)) {
             $label = (string) $town['name'];
             if (!empty($town['state_abbr'])) {
                 $label .= ', ' . $town['state_abbr'];
@@ -246,5 +300,27 @@ final class SearchController extends Controller
         }
 
         return [null, null, null];
+    }
+
+    /** @param array<int,array<string,mixed>> $rows @return array<int,array<string,mixed>> */
+    private function rankDirectMatches(array $rows): array
+    {
+        $sponsored = array_values(array_filter($rows, static fn (array $row): bool => !empty($row['is_featured'])));
+        $organic = array_values(array_filter($rows, static fn (array $row): bool => empty($row['is_featured'])));
+        usort($sponsored, [$this, 'compareProviderDistance']);
+        usort($organic, function (array $a, array $b): int {
+            $verified = ((int) ($b['is_verified'] ?? 0)) <=> ((int) ($a['is_verified'] ?? 0));
+            return $verified !== 0 ? $verified : $this->compareProviderDistance($a, $b);
+        });
+        return array_merge($sponsored, $organic);
+    }
+
+    /** @param array<string,mixed> $a @param array<string,mixed> $b */
+    private function compareProviderDistance(array $a, array $b): int
+    {
+        $aDistance = isset($a['distance_km']) && is_numeric($a['distance_km']) ? (float) $a['distance_km'] : INF;
+        $bDistance = isset($b['distance_km']) && is_numeric($b['distance_km']) ? (float) $b['distance_km'] : INF;
+        $distance = $aDistance <=> $bDistance;
+        return $distance !== 0 ? $distance : strcasecmp((string) ($a['business_name'] ?? ''), (string) ($b['business_name'] ?? ''));
     }
 }

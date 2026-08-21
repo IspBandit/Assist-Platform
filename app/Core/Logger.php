@@ -19,6 +19,9 @@ final class Logger
 
     public static function log(string $level, string $message, array $context = [], string $channel = 'app'): void
     {
+        $message = SecretRedactor::redact($message);
+        /** @var array<string,mixed> $context */
+        $context = SecretRedactor::context($context);
         if (RequestContext::hasRequestId()) {
             $context['request_id'] = RequestContext::requestId();
         }
@@ -106,7 +109,7 @@ final class Logger
         if (is_file($file) && is_readable($file)) {
             foreach (self::tailFile($file, $maxLines) as $line) {
                 if (trim($line) !== '') {
-                    $lines[] = ['line' => $line, 'created_at' => '', 'source' => 'file'];
+                    $lines[] = ['line' => SecretRedactor::redact($line), 'created_at' => '', 'source' => 'file'];
                 }
             }
         }
@@ -128,7 +131,7 @@ final class Logger
                         $row['message'],
                         $ctx !== '' && $ctx !== null ? $ctx : ''
                     );
-                    $lines[] = ['line' => $line, 'created_at' => (string) $row['created_at'], 'source' => 'database'];
+                    $lines[] = ['line' => SecretRedactor::redact($line), 'created_at' => (string) $row['created_at'], 'source' => 'database'];
                 }
             } catch (Throwable) {
                 // ignore

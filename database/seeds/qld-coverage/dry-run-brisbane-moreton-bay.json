@@ -1,0 +1,22 @@
+{
+    "mode": "dry-run",
+    "batch_id": "brisbane-moreton-bay",
+    "batch_name": "Brisbane and Moreton Bay",
+    "generated_at": "2026-07-29T05:24:42+00:00",
+    "publishable_total": 2661,
+    "regulated_held_total": 123,
+    "regulated_excluded_from_publishable": 0,
+    "batch_matched": 862,
+    "places_provenance_flagged": 93,
+    "eligible_for_apply_estimate": 769,
+    "missing_phone": 617,
+    "missing_email": 692,
+    "notes": [
+        "Default dry-run does not write providers or import candidates to the database.",
+        "Regulated providers missing licence evidence are excluded (usually already absent from publishable).",
+        "Google Places provenance rows are flagged; do not treat Places content as unrestricted permanent directory content.",
+        "Marketing consent is never inferred from a public email.",
+        "Approve/merge/reject remains a manual admin action in the import review queue after an explicit --apply on local/test."
+    ],
+    "candidate_report": "storage/imports/qld-coverage/dry-run-brisbane-moreton-bay-candidates.jsonl"
+}

@@ -1,0 +1,180 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit;
+
+use App\Controllers\Site\SearchController;
+use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+
+final class VanAssistMobileSearchTest extends TestCase
+{
+    public function testDirectResultsKeepFeaturedSeparateThenRankOrganicVerifiedAndNearest(): void
+    {
+        $rank = new ReflectionMethod(SearchController::class, 'rankDirectMatches');
+        $rows = $rank->invoke(new SearchController(), [
+            ['id' => 1, 'business_name' => 'Far unverified', 'is_featured' => 0, 'is_verified' => 0, 'distance_km' => 3],
+            ['id' => 2, 'business_name' => 'Featured', 'is_featured' => 1, 'is_verified' => 0, 'distance_km' => 20],
+            ['id' => 3, 'business_name' => 'Near verified', 'is_featured' => 0, 'is_verified' => 1, 'distance_km' => 8],
+            ['id' => 4, 'business_name' => 'Near unverified', 'is_featured' => 0, 'is_verified' => 0, 'distance_km' => 1],
+        ]);
+
+        self::assertSame([2, 3, 4, 1], array_column($rows, 'id'));
+    }
+
+    public function testResultPageProvidesMapListParityAndTravellerShortcuts(): void
+    {
+        $view = (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/public/search-results.php');
+        $script = (string) file_get_contents(dirname(__DIR__, 2) . '/public/assets/js/app.js');
+        $css = (string) file_get_contents(dirname(__DIR__, 2) . '/public/assets/css/app.css');
+
+        self::assertStringContainsString('data-results-view="list"', $view);
+        self::assertStringContainsString('data-results-view="map"', $view);
+        self::assertStringContainsString('data-results-map-summary-list', $view);
+        self::assertStringContainsString('data-results-map-zoom-in', $view);
+        self::assertStringContainsString('data-results-map-zoom-out', $view);
+        self::assertStringContainsString('data-results-map-fit', $view);
+        self::assertStringContainsString('data-results-map-summary-toggle', $view);
+        self::assertStringContainsString('data-results-map-summary-drag', $view);
+        self::assertStringContainsString('Places to stay', $view);
+        self::assertStringContainsString('provider-result-', $view);
+        self::assertStringContainsString('$mapResultNumbers', $view);
+        self::assertStringContainsString("'mapResultNumber' =>", $view);
+        self::assertStringContainsString('Map pin', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
+        self::assertStringContainsString('class="provider-map-reference" data-number=', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
+        self::assertStringNotContainsString('provider-avatar', (string) file_get_contents(dirname(__DIR__, 2) . '/app/Views/partials/provider-result-card.php'));
+        self::assertStringContainsString("tile.openstreetmap.org/", $script);
+        self::assertStringContainsString("card.addEventListener('focusin'", $script);
+        self::assertStringContainsString("setResultsView('list')", $script);
+        self::assertStringContainsString("mapCanvas.addEventListener('pointermove'", $script);
+        self::assertStringContainsString('Math.log2(distance /', $script);
+        self::assertStringContainsString("mapCanvas.addEventListener('wheel'", $script);
+        self::assertStringContainsString("event.key === 'ArrowLeft'", $script);
+        self::assertStringContainsString('.provider-card--compact', $css);
+        self::assertStringContainsString('.provider-map-reference', $css);
+        self::assertStringContainsString('.provider-map-reference::after{content:attr(data-number)', $css);
+        self::assertStringContainsString('.results-map-pin::after{font-size:.78rem}', $css);
+        self::assertStringContainsString('.provider-card--compact{min-height:0', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-badges .badge:nth-child(n+3){display:none}', $css);
+        self::assertStringContainsString('touch-action:none', $css);
+        self::assertStringContainsString('.results-map-summary.is-collapsed', $css);
+        self::assertStringContainsString('min-height:44px', $css);
+    }
+
+    public function testMapTileHostIsNarrowlyAllowedByContentSecurityPolicy(): void
+    {
+        $security = require dirname(__DIR__, 2) . '/config/security.php';
+        self::assertStringContainsString("img-src 'self' data: https://tile.openstreetmap.org", $security['csp']);
+        self::assertStringNotContainsString('img-src *', $security['csp']);
+    }
+
+    public function testAskResultsReuseNumberedMapAndListExperience(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $view = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $script = (string) file_get_contents($root . '/public/assets/js/app.js');
+
+        self::assertStringContainsString('data-results-map', $view);
+        self::assertStringContainsString('data-results-map-data', $view);
+        self::assertStringContainsString('data-results-list', $view);
+        self::assertStringContainsString("'provider'", $view);
+        self::assertStringContainsString("'stay'", $view);
+        self::assertStringContainsString("'facility'", $view);
+        self::assertStringContainsString('provider-map-reference', $view);
+        self::assertStringContainsString("provider.listId || ('provider-result-'", $script);
+        self::assertStringContainsString("provider.profile", $script);
+    }
+
+    public function testProviderCollectionsUseConciseRowsAcrossPublicViews(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $card = (string) file_get_contents($root . '/app/Views/partials/provider-result-card.php');
+        $css = (string) file_get_contents($root . '/public/assets/css/app.css');
+
+        self::assertStringContainsString('$compact = !isset($compact) || $compact !== false;', $card);
+        self::assertStringContainsString('if (!$compact && $description', $card);
+        self::assertStringContainsString('.provider-card-grid,.provider-results{grid-template-columns:1fr}', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-badges{display:none}', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-main{grid-template-columns:minmax(0,1fr)}', $css);
+        self::assertStringContainsString('.provider-card--compact .provider-card-actions .provider-card-link:first-child{display:none}', $css);
+
+        foreach (['providers-index.php', 'service-category.php', 'region.php', 'town.php', 'assist-search.php'] as $view) {
+            self::assertStringContainsString('provider-card-grid', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
+        }
+    }
+
+    public function testAllBoundedPublicResultJourneysUseReusableNumberedMaps(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $partial = (string) file_get_contents($root . '/app/Views/partials/results-map.php');
+
+        self::assertStringContainsString('data-results-map-data', $partial);
+        self::assertStringContainsString('data-results-map-summary-list', $partial);
+        self::assertStringContainsString("'providers'=>\$mapItems", $partial);
+
+        foreach (['providers-index.php', 'stays.php', 'service-category.php', 'town.php', 'region.php'] as $view) {
+            $source = (string) file_get_contents($root . '/app/Views/public/' . $view);
+            self::assertStringContainsString("partials/results-map", $source, $view);
+            self::assertTrue(str_contains($source, 'mapResultNumber') || str_contains($source, 'provider-map-reference'), $view);
+        }
+
+        $stays = (string) file_get_contents($root . '/app/Views/public/stays.php');
+        self::assertStringContainsString('provider-card-grid stay-grid', $stays);
+        self::assertStringContainsString('class="provider-card stay-card"', $stays);
+    }
+
+    public function testEveryPublicDiscoveryJourneyCanInheritDeviceLocation(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $script = (string) file_get_contents($root . '/public/assets/js/app.js');
+        $home = (string) file_get_contents($root . '/app/Views/public/home.php');
+        $services = (string) file_get_contents($root . '/app/Views/public/services-index.php');
+
+        foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php', 'assist-search.php'] as $view) {
+            self::assertStringContainsString('data-auto-location', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
+        }
+        $ask = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $askController = (string) file_get_contents($root . '/app/Controllers/Site/AssistSearchController.php');
+        self::assertStringContainsString('data-ask-location-priority="typed-over-gps"', $ask);
+        self::assertStringContainsString('needsDeviceLocation', $askController);
+        self::assertStringContainsString('result->intent->locationText', $askController);
+        self::assertGreaterThanOrEqual(3, substr_count($home, 'data-location-link'));
+        self::assertGreaterThanOrEqual(5, substr_count($services, 'data-location-link'));
+        self::assertStringContainsString("sessionStorage.setItem('va-current-location'", $script);
+        self::assertStringContainsString("document.querySelectorAll('a[data-location-link]')", $script);
+        self::assertStringContainsString("form[data-location-manual=\"1\"] input[name=\"location\"]", $script);
+        self::assertStringContainsString("target.searchParams.set('lat'", $script);
+        self::assertStringContainsString("target.searchParams.set('location'", $script);
+    }
+
+    public function testGpsRemainsTheDistanceOriginForServiceAndStayPages(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $category = (string) file_get_contents($root . '/app/Controllers/Site/CategoryController.php');
+        $parks = (string) file_get_contents($root . '/app/Controllers/Site/ParkController.php');
+
+        self::assertStringContainsString('$originLat = $gpsLat ??', $category);
+        self::assertStringContainsString('if ($gpsLat !== null && $gpsLng !== null)', $category);
+        self::assertStringContainsString('Device coordinates are the accurate origin', $parks);
+    }
+
+    public function testStayResultsHavePhoneFirstCompactFacilitiesAndActions(): void
+    {
+        $root=dirname(__DIR__,2);
+        $view=(string)file_get_contents($root.'/app/Views/public/stays.php');
+        $css=(string)file_get_contents($root.'/public/assets/css/app.css');
+        self::assertStringContainsString('stay-card-facilities',$view);
+        self::assertStringContainsString('stay-card-content',$view);
+        self::assertStringContainsString('stay-card-actions',$view);
+        self::assertStringNotContainsString('provider-card--compact stay-card',$view);
+        self::assertStringContainsString('.stay-grid .stay-card{display:grid;grid-template-columns:minmax(0,1fr) 72px',$css);
+        self::assertStringContainsString('.stay-card-actions{display:flex!important;flex-direction:column',$css);
+        self::assertStringContainsString('width:72px;min-width:0;min-height:44px',$css);
+        self::assertStringContainsString('text-overflow:ellipsis;white-space:nowrap',$css);
+        self::assertStringContainsString('.stay-search-fields{grid-template-columns:1fr}',$css);
+        self::assertStringContainsString('data-mobile-stay-filter-toggle',$view);
+        self::assertStringContainsString('.stay-search-fields .form-group:not(.location-field){display:none}',$css);
+        self::assertStringContainsString("toggle.setAttribute('aria-expanded'",(string)file_get_contents($root.'/public/assets/js/app.js'));
+    }
+}

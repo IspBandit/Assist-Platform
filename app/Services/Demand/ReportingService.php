@@ -68,35 +68,36 @@ final class ReportingService
     public static function providerSummary(int $providerId, string $from, string $to): array
     {
         [$start, $end] = self::bounds($from, $to);
+        $brandId = current_brand()->databaseId();
 
         $impressions = (int) Database::scalar(
             'SELECT COUNT(*) FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id '
-            . 'WHERE r.provider_id = ? AND s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
-            [$providerId, $start, $end]
+            . 'WHERE r.provider_id = ? AND s.brand_id = ? AND s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
+            [$providerId, $brandId, $start, $end]
         );
         $uniqueImpressions = (int) Database::scalar(
             'SELECT COUNT(DISTINCT s.session_id) FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id '
-            . 'WHERE r.provider_id = ? AND s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
-            [$providerId, $start, $end]
+            . 'WHERE r.provider_id = ? AND s.brand_id = ? AND s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
+            [$providerId, $brandId, $start, $end]
         );
 
         $profileViews = (int) Database::scalar(
             "SELECT COUNT(*) FROM analytics_events WHERE event_name = 'provider_profile_viewed' "
-            . 'AND provider_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
-            [$providerId, $start, $end]
+            . 'AND provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
+            [$providerId, $brandId, $start, $end]
         );
         $uniqueProfileViews = (int) Database::scalar(
             "SELECT COUNT(DISTINCT session_id) FROM analytics_events WHERE event_name = 'provider_profile_viewed' "
-            . 'AND provider_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
-            [$providerId, $start, $end]
+            . 'AND provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
+            [$providerId, $brandId, $start, $end]
         );
 
         $clicks = ['phone' => 0, 'email' => 0, 'website' => 0, 'directions' => 0, 'message' => 0,
             'assistance_request' => 0, 'quote_request' => 0, 'booking_request' => 0];
         foreach (Database::select(
             'SELECT action_type, COUNT(*) c FROM provider_contact_actions '
-            . 'WHERE provider_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ? GROUP BY action_type',
-            [$providerId, $start, $end]
+            . 'WHERE provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ? GROUP BY action_type',
+            [$providerId, $brandId, $start, $end]
         ) as $row) {
             $clicks[(string) $row['action_type']] = (int) $row['c'];
         }
@@ -116,14 +117,14 @@ final class ReportingService
             . "SUM(confidence = 'provider_reported') AS provider_confirmed, "
             . "SUM(confidence IN ('both_confirmed','admin_verified')) AS mutually_confirmed, "
             . 'SUM(is_repeat_provider = 1) AS repeat_uses '
-            . 'FROM service_outcomes WHERE provider_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
-            [$providerId, $start, $end]
+            . 'FROM service_outcomes WHERE provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
+            [$providerId, $brandId, $start, $end]
         ) ?: [];
 
         $repeatCustomers = (int) Database::scalar(
             'SELECT COUNT(DISTINCT customer_id) FROM service_outcomes '
-            . 'WHERE provider_id = ? AND is_repeat_provider = 1 AND customer_id IS NOT NULL AND created_at BETWEEN ? AND ?',
-            [$providerId, $start, $end]
+            . 'WHERE provider_id = ? AND brand_id = ? AND is_repeat_provider = 1 AND customer_id IS NOT NULL AND created_at BETWEEN ? AND ?',
+            [$providerId, $brandId, $start, $end]
         );
 
         $rev = Database::selectOne(
@@ -134,13 +135,13 @@ final class ReportingService
 
         $topCategories = Database::select(
             'SELECT c.name, COUNT(*) c FROM service_outcomes o JOIN service_categories c ON c.id = o.category_id '
-            . 'WHERE o.provider_id = ? AND o.created_at BETWEEN ? AND ? GROUP BY o.category_id ORDER BY c DESC LIMIT 5',
-            [$providerId, $start, $end]
+            . 'WHERE o.provider_id = ? AND o.brand_id = ? AND o.created_at BETWEEN ? AND ? GROUP BY o.category_id ORDER BY c DESC LIMIT 5',
+            [$providerId, $brandId, $start, $end]
         );
         $topLocations = Database::select(
             'SELECT t.name, COUNT(*) c FROM service_outcomes o JOIN towns t ON t.id = o.town_id '
-            . 'WHERE o.provider_id = ? AND o.created_at BETWEEN ? AND ? GROUP BY o.town_id ORDER BY c DESC LIMIT 5',
-            [$providerId, $start, $end]
+            . 'WHERE o.provider_id = ? AND o.brand_id = ? AND o.created_at BETWEEN ? AND ? GROUP BY o.town_id ORDER BY c DESC LIMIT 5',
+            [$providerId, $brandId, $start, $end]
         );
 
         $requests = (int) ($o['engagements'] ?? 0);

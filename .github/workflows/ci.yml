@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_call:
   pull_request:
   push:
     branches: [main]
@@ -56,7 +57,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -65,8 +68,15 @@ jobs:
           extensions: pdo_mysql, mbstring, fileinfo, gd, intl, curl, zip, dom
           coverage: none
 
+      - name: Enforce living documentation updates
+        if: github.event_name == 'pull_request'
+        run: >-
+          php scripts/validate-documentation.php
+          --base-ref "${{ github.event.pull_request.base.sha }}"
+          --head-ref "${{ github.event.pull_request.head.sha }}"
+
       - name: Cache Composer downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.composer/cache/files
           key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
@@ -97,6 +107,11 @@ jobs:
 
       - name: Validate seeds
         run: php scripts/seed.php
+
+      - name: Validate authoritative LocalTorque provider pack
+        run: |
+          php scripts/seed.php --localtorque
+          php scripts/data-quality-audit.php --strict
 
       - name: Validate encrypted database secrets
         run: php scripts/encrypt-secrets.php --validate-only

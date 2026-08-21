@@ -6,6 +6,7 @@
     <p>Use this form if you own or manage this caravan park, campground or stay location. VanAssist checks claims before granting Park Partner access.</p>
     <form method="post" action="<?= e(url('caravan-parks/' . $park['slug'] . '/claim')) ?>" class="card stack">
         <?= csrf_field() ?>
+        <?php $this->include('partials.turnstile'); ?>
         <div class="form-group"><label for="claimant_name">Your name</label><input id="claimant_name" name="claimant_name" value="<?= e_attr((string) old('claimant_name')) ?>" required maxlength="150"></div>
         <div class="grid grid-2">
             <div class="form-group"><label for="claimant_email">Business email</label><input id="claimant_email" type="email" name="claimant_email" value="<?= e_attr((string) old('claimant_email')) ?>" required maxlength="190"></div>

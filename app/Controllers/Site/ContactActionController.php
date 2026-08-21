@@ -7,7 +7,10 @@ namespace App\Controllers\Site;
 use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
+use App\Core\Session;
 use App\Models\Provider;
+use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
+use App\Services\CampaignMetrics;
 use App\Services\Demand\DemandRecorder;
 
 /**
@@ -42,6 +45,19 @@ final class ContactActionController extends Controller
             'search_id' => (int) $request->input('s') ?: null,
             'route'     => 'providers/' . $provider['slug'],
         ]);
+        $gapId = (int) $request->input('g');
+        if ($gapId > 0) {
+            (new KnowledgeGapService())->recordContactAction($gapId);
+        }
+        $attribution = Session::get('sponsored_attribution');
+        if (is_array($attribution)
+            && (int) ($attribution['provider_id'] ?? 0) === (int) $provider['id']
+            && (int) ($attribution['campaign_id'] ?? 0) > 0
+            && (int) ($attribution['expires_at'] ?? 0) >= time()
+        ) {
+            CampaignMetrics::conversion((int) $attribution['campaign_id']);
+            Session::forget('sponsored_attribution');
+        }
 
         return $this->redirect($target);
     }
@@ -53,22 +69,20 @@ final class ContactActionController extends Controller
      */
     private function targetFor(string $action, array $p): ?string
     {
-        $isUnclaimed = !empty($p['is_unclaimed']);
-
         switch ($action) {
             case 'phone':
-                if (empty($p['show_public_phone']) && !$isUnclaimed) {
+                if (empty($p['show_public_phone'])) {
                     return null;
                 }
-                $phone = (string) ($p['public_phone'] ?? '') ?: (string) ($p['phone'] ?? '');
+                $phone = trim((string) ($p['public_phone'] ?? ''));
                 $phone = preg_replace('/[^0-9+]/', '', $phone);
                 return $phone !== '' ? 'tel:' . $phone : null;
 
             case 'email':
-                if (empty($p['show_public_email']) && !$isUnclaimed) {
+                if (empty($p['show_public_email'])) {
                     return null;
                 }
-                $email = (string) ($p['public_email'] ?? '') ?: (string) ($p['email'] ?? '');
+                $email = trim((string) ($p['public_email'] ?? ''));
                 return $email !== '' ? 'mailto:' . $email : null;
 
             case 'website':
@@ -93,7 +107,7 @@ final class ContactActionController extends Controller
         $address = trim((string) ($p['street_address'] ?? ''));
         $model = (string) ($p['service_model'] ?? '');
         $isWorkshop = in_array($model, ['workshop', 'both'], true);
-        if (!$isWorkshop || $address === '' || stripos($address, 'mobile') !== false) {
+        if (!$isWorkshop || !is_navigable_street_address($address)) {
             return '';
         }
         $dest = $address;

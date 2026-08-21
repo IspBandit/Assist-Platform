@@ -11,7 +11,6 @@ use App\Core\Response;
 use App\Models\Provider;
 use App\Services\AuditLog;
 use App\Services\EmailQueue;
-use App\Services\FoundingGraphicService;
 use App\Services\ProviderClaimService;
 use App\Services\SubscriptionService;
 
@@ -61,7 +60,6 @@ final class ProvidersController extends Controller
         $this->requirePermission('providers.manage');
         $provider = $this->findOr404((int) $request->input('id'));
         $id = (int) $provider['id'];
-        $foundingPromo = FoundingGraphicService::forProvider($id);
 
         return $this->view('admin.providers.show', [
             'title'         => $provider['business_name'],
@@ -78,8 +76,6 @@ final class ProvidersController extends Controller
             'allCategories' => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
             'allTowns'      => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'allRegions'    => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
-            'foundingPromo' => $foundingPromo,
-            'promoImageUrls' => $foundingPromo !== null ? FoundingGraphicService::imageUrls($foundingPromo) : ['desktop' => null, 'mobile' => null],
         ]);
     }
 
@@ -101,11 +97,19 @@ final class ProvidersController extends Controller
     {
         $this->requirePermission('providers.manage');
         $id = (int) $request->input('id');
+        $existing = $id > 0 ? $this->findOr404($id) : null;
         $name = trim((string) $request->input('business_name'));
         if ($name === '') {
             return $this->redirectWith('/admin/providers', 'error', 'Business name is required.');
         }
 
+        $marketingOptIn = $request->input('marketing_opt_in') ? 1 : 0;
+        $consentBasis = trim((string) $request->input('marketing_consent_source'));
+        $consentEvidence = trim((string) $request->input('marketing_consent_evidence'));
+        $allowedConsentBases = ['express_written', 'express_phone', 'express_web', 'inferred_role_relevant'];
+        if ($marketingOptIn && (!in_array($consentBasis, $allowedConsentBases, true) || $consentEvidence === '')) {
+            return $this->redirectWith('/admin/providers/' . ($id ? 'edit?id=' . $id : 'new'), 'error', 'Record the provider consent basis and supporting evidence before enabling promotional email.');
+        }
         $data = [
             'business_name'     => $name,
             'contact_name'      => trim((string) $request->input('contact_name')) ?: null,
@@ -122,6 +126,14 @@ final class ProvidersController extends Controller
             'description'       => trim((string) $request->input('description')) ?: null,
             'show_public_phone' => $request->input('show_public_phone') ? 1 : 0,
             'show_public_email' => $request->input('show_public_email') ? 1 : 0,
+            'marketing_opt_in'  => $marketingOptIn,
+            'marketing_consented_at' => $marketingOptIn
+                ? ((string) ($existing['marketing_consented_at'] ?? '') ?: date('Y-m-d H:i:s'))
+                : null,
+            'marketing_consent_source' => $marketingOptIn
+                ? $consentBasis
+                : null,
+            'marketing_consent_evidence' => $marketingOptIn ? mb_substr($consentEvidence, 0, 500) : null,
             'seo_title'         => trim((string) $request->input('seo_title')) ?: null,
             'seo_description'   => trim((string) $request->input('seo_description')) ?: null,
             'updated_at'        => date('Y-m-d H:i:s'),
@@ -198,9 +210,6 @@ final class ProvidersController extends Controller
         }
         $new = $provider[$col] ? 0 : 1;
         Database::query("UPDATE providers SET {$col} = ?, updated_at = NOW() WHERE id = ?", [$new, $id]);
-        if ($flag === 'verified' && $new === 1) {
-            FoundingGraphicService::onVerified($id);
-        }
         AuditLog::record('provider.flag_' . $flag, 'provider', (string) $id, (string) $provider[$col], (string) $new);
         return $this->redirectWith('/admin/providers/show?id=' . $id, 'success', 'Updated.');
     }

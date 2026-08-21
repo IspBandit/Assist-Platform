@@ -34,15 +34,20 @@ final class CronRunner
             'send_run_reminders'       => fn () => $this->sendRunReminders(),
             'provider_followups'       => fn () => $this->providerFollowups(),
             'document_expiry'          => fn () => $this->documentExpiry(),
+            'regulatory_alerts'         => static fn () => (new RegulatoryAlertService())->queueReviewedChanges(),
             // Demand analytics (Phase 11). No-op unless the demand_analytics flag is on.
             'aggregate_daily_metrics'  => fn () => $this->aggregateDailyMetrics(),
             'customer_followups'       => fn () => $this->customerFollowups(),
             'analytics_retention'      => fn () => $this->analyticsRetention(),
+            'ai_retention'             => static fn () => (new \App\Platform\AiSearch\Retention\AiRetentionService())->purge(),
             // Automated request -> provider matching (no-op unless auto_matching flag is on).
             'update_match_suggestions' => static fn () => (new AutoMatchService())->runBatch(),
             // Provider directory imports (resume from seed fingerprint; no-op when up to date).
+            'refresh_osm'              => fn () => $this->refreshOsm(),
             'import_osm'               => static fn () => (new ProviderImportRunner())->cronOsm(45.0),
             'import_locality'          => static fn () => (new ProviderImportRunner())->cronLocality(45.0),
+            'import_localtorque_pack'  => static fn () => (new ProviderImportRunner())->cronLocalTorque(45.0),
+            'process_provider_import_queue' => static fn () => (new ProviderImportQueueWorker())->run(45.0),
         ];
     }
 
@@ -162,6 +167,9 @@ final class CronRunner
     /** Dispatch any scheduled broadcasts that have come due. */
     private function processNotifications(): array
     {
+        // Keep reviewed factual campaigns moving even if an unrelated legacy
+        // scheduled broadcast later fails during this cron invocation.
+        $directoryAutoContinue = NotificationService::continueDirectoryCampaigns();
         $due = Database::select(
             "SELECT id FROM notifications WHERE status = 'scheduled' AND scheduled_at IS NOT NULL AND scheduled_at <= NOW() ORDER BY scheduled_at ASC LIMIT 50"
         );
@@ -172,7 +180,11 @@ final class CronRunner
             $dispatched++;
             $recipients += $result['recipients'];
         }
-        return ['dispatched' => $dispatched, 'recipients' => $recipients];
+        return [
+            'dispatched' => $dispatched,
+            'recipients' => $recipients,
+            'directory_auto_continue' => $directoryAutoContinue,
+        ];
     }
 
     /** Email a reminder to customers booked on runs starting in N days. */
@@ -242,7 +254,45 @@ final class CronRunner
                 $sent++;
             }
         }
-        return ['queued' => $sent];
+        $ownerRows = Database::select(
+            "SELECT d.id,d.label,d.expires_at,a.nickname,u.email,u.name,b.brand_key "
+            . "FROM garage_documents d INNER JOIN garage_assets a ON a.id=d.garage_asset_id AND a.deleted_at IS NULL "
+            . "INNER JOIN users u ON u.id=a.user_id INNER JOIN brands b ON b.id=a.created_in_brand_id "
+            . "INNER JOIN garage_reminder_preferences rp ON rp.garage_asset_id=a.id AND rp.user_id=a.user_id "
+            . "AND rp.reminder_kind='document_expiry' AND rp.enabled=1 AND rp.email_enabled=1 "
+            . "WHERE d.expires_at IN ({$placeholders})",
+            $dates
+        );
+        $ownerQueued = 0;
+        $hadPreviousBrand = \App\Platform\Brand\BrandContext::hasCurrent();
+        $previousBrand = $hadPreviousBrand ? \App\Platform\Brand\BrandContext::current() : null;
+        $registry = \App\Platform\Brand\BrandRegistry::fromArray((array) config('brands.registry', []));
+        try {
+            foreach ($ownerRows as $row) {
+                $email = (string) $row['email'];
+                $brand = $registry->find((string) $row['brand_key']);
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $brand === null) {
+                    continue;
+                }
+                \App\Platform\Brand\BrandContext::set($brand);
+                if (EmailQueue::queueTemplate('document_expiry_reminder', $email, (string) $row['name'], [
+                    'provider_name' => (string) $row['name'],
+                    'document_name' => (string) $row['label'],
+                    'vehicle_name' => (string) $row['nickname'],
+                    'expiry_date' => (string) $row['expires_at'],
+                    'action_url' => $brand->url() . '/account/garage',
+                ])) {
+                    $ownerQueued++;
+                }
+            }
+        } finally {
+            if ($previousBrand !== null) {
+                \App\Platform\Brand\BrandContext::set($previousBrand);
+            } else {
+                \App\Platform\Brand\BrandContext::clear();
+            }
+        }
+        return ['provider_queued' => $sent, 'owner_queued' => $ownerQueued];
     }
 
     /**
@@ -453,6 +503,24 @@ final class CronRunner
         );
 
         return ['events_purged' => $events, 'sessions_purged' => $sessions];
+    }
+
+    /**
+     * Advance one state/city OSM refresh step. Completed scans cool down for
+     * seven days so a frequent cron safely provides fresh national coverage.
+     */
+    private function refreshOsm(): array
+    {
+        $service = new OsmRefreshService();
+        if (!$service->isActive()) {
+            $completedAt = strtotime((string) Settings::get('osm_refresh_last_completed_at', ''));
+            if ($completedAt !== false && $completedAt >= strtotime('-7 days')) {
+                return ['skipped' => true, 'reason' => 'National OSM refresh completed within the last seven days.'];
+            }
+            $service->begin();
+        }
+
+        return $service->runNextStep();
     }
 
     private function markRunning(string $task): void

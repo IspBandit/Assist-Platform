@@ -12,19 +12,17 @@ $this->extend('layouts.public');
         <?php if ($providers === []): ?>
             <div class="card"><p class="mb-0">You have not saved any providers yet. Use the <strong>Save</strong> button on a provider profile to short-list them here.</p></div>
         <?php else: ?>
-            <div class="grid grid-3">
+            <div class="provider-card-grid">
                 <?php foreach ($providers as $p): ?>
-                    <div class="card stack">
-                        <h3 style="margin:0"><a href="<?= e(url('providers/' . $p['slug'])) ?>"><?= $this->e((string) $p['business_name']) ?></a></h3>
-                        <div>
-                            <?= $p['is_verified'] ? '<span class="badge badge-verified">Verified</span> ' : '' ?>
-                            <span class="badge badge-neutral"><?= $this->e(ucfirst((string) $p['service_model'])) ?></span>
-                        </div>
+                    <div class="provider-card provider-card--compact saved-provider-row">
+                        <a class="provider-card-main" href="<?= e(url('providers/' . $p['slug'])) ?>">
+                            <span class="provider-card-content"><span class="provider-card-title"><?= $this->e((string) $p['business_name']) ?></span><span class="provider-location"><?= $this->e(ucfirst((string) $p['service_model'])) ?><?= $p['is_verified'] ? ' · Verified' : '' ?></span></span>
+                        </a>
                         <form method="post" action="<?= e(url('account/providers/save')) ?>">
                             <?= csrf_field() ?>
                             <input type="hidden" name="provider_id" value="<?= (int) $p['id'] ?>">
                             <input type="hidden" name="action" value="unsave">
-                            <button type="submit" class="btn btn-ghost btn-sm">Remove</button>
+                            <button type="submit" class="provider-card-link">Remove</button>
                         </form>
                     </div>
                 <?php endforeach; ?>

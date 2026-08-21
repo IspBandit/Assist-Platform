@@ -104,8 +104,8 @@ final class ActivityTracker
             $sessionId = $context['session_id'] ?? TrackingSession::id();
             $userId = $context['user_id'] ?? self::currentUserId();
 
-            $columns = ['event_name'];
-            $values = [$eventName];
+            $columns = ['brand_id', 'event_name'];
+            $values = [current_brand()->databaseId(), $eventName];
             $columns[] = 'session_id';
             $values[] = $sessionId !== null ? (int) $sessionId : null;
             $columns[] = 'user_id';
@@ -136,7 +136,6 @@ final class ActivityTracker
             $columns[] = 'created_at';
             $placeholders = array_fill(0, count($columns), '?');
             $placeholders[count($placeholders) - 1] = 'NOW()';
-            array_pop($values); // created_at uses NOW(), no bound value
 
             $sql = 'INSERT INTO analytics_events (' . implode(', ', $columns) . ') VALUES (' . implode(', ', $placeholders) . ')';
             return Database::insert($sql, $values);
@@ -156,7 +155,10 @@ final class ActivityTracker
                 return true;
             }
             $auth = Auth::instance();
-            if ($auth->check() && $auth->hasAnyRole('administrator', Auth::SUPER_ADMIN, 'moderator')) {
+            if ($auth->check() && $auth->hasAnyRole(
+                'administrator', Auth::SUPER_ADMIN, 'platform-administrator', 'brand-administrator',
+                'moderator', 'marketing', 'support'
+            )) {
                 return true;
             }
         } catch (Throwable) {

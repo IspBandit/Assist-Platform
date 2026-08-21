@@ -1,0 +1,3 @@
+id,name,facility_type,latitude,longitude,address,locality
+demo-water-1,Demo Batehaven Potable Water,drinking_water,-35.7310,150.1970,Beach Road,Batehaven
+demo-water-2,Demo Emerald Potable Water,drinking_water,-23.5251,148.1625,Hospital Road,Emerald

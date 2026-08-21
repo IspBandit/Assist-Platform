@@ -10,23 +10,51 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Services\AuditLog;
 use App\Services\BroadcastAudience;
+use App\Services\CampaignRecipientManager;
+use App\Services\DirectoryAccuracyNotice;
 use App\Services\NotificationService;
+use App\Services\OrganisationOutreach;
+use App\Services\OrganisationCampaignCopy;
+use App\Services\ProviderCampaignCopy;
+use App\Services\ProviderCampaignDrafts;
+use RuntimeException;
 
 /**
  * Admin broadcasts: compose a targeted email to an audience (town, region,
  * category, providers, open-request customers, or everyone opted in), preview
- * the recipient count, then send now, schedule for later, or save as a draft.
+ * the recipient count, then use the gated test, pilot and daily batch stages.
  */
 final class NotificationsController extends Controller
 {
+    private const CAMPAIGN_TYPES = [
+        'provider_marketing' => 'Provider marketing — documented consent required',
+        'directory_accuracy' => 'Factual listing accuracy notice — fixed non-promotional wording',
+        'organisation_outreach' => 'Organisation PR outreach — reviewed role relevance required',
+        'general_marketing' => 'Customer/general marketing — opted-in audience only',
+    ];
+
     public function index(Request $request): Response
     {
         $this->requirePermission('notifications.send');
+        ProviderCampaignDrafts::prepareForBrand(current_brand()->databaseId());
+        $notifications = Database::select(
+            'SELECT n.*,u.name AS author,COALESCE(bpc.name,sc.name) AS category_name FROM notifications n '
+            . 'LEFT JOIN users u ON u.id=n.created_by LEFT JOIN service_categories sc ON sc.id=n.category_id '
+            . 'LEFT JOIN brand_provider_categories bpc ON bpc.id=n.provider_brand_category_id '
+            . "WHERE n.brand_id=? ORDER BY FIELD(n.campaign_type,'directory_accuracy','provider_marketing','general_marketing'),COALESCE(bpc.sort_order,999),n.id DESC LIMIT 250",
+            [current_brand()->databaseId()]
+        );
+        $audienceSummaries = [];
+        foreach ($notifications as $notification) {
+            if (!in_array((string) ($notification['campaign_type'] ?? ''), ['provider_marketing', 'directory_accuracy'], true)) {
+                continue;
+            }
+            $audienceSummaries[(int) $notification['id']] = CampaignRecipientManager::summary($notification);
+        }
         return $this->view('admin.notifications.index', [
-            'title'         => 'Notifications',
-            'notifications' => Database::select(
-                'SELECT n.*, u.name AS author FROM notifications n LEFT JOIN users u ON u.id = n.created_by ORDER BY n.id DESC LIMIT 100'
-            ),
+            'title'         => 'Provider email campaigns',
+            'notifications' => $notifications,
+            'audienceSummaries' => $audienceSummaries,
             'queue'         => $this->queueStats(),
         ]);
     }
@@ -34,7 +62,24 @@ final class NotificationsController extends Controller
     public function compose(Request $request): Response
     {
         $this->requirePermission('notifications.send');
-        return $this->renderForm([], null);
+        $campaignType = (string) $request->input('campaign_type');
+        $audienceType = (string) $request->input('audience_type');
+        $organisationType = (string) $request->input('organisation_type');
+        $copyStyle = (string) $request->input('copy_style');
+        $values = [
+            'campaign_type' => isset(self::CAMPAIGN_TYPES[$campaignType]) ? $campaignType : 'provider_marketing',
+            'audience_type' => isset(BroadcastAudience::TYPES[$audienceType]) ? $audienceType : 'providers',
+            'organisation_type' => isset(OrganisationOutreach::TYPES[$organisationType]) ? $organisationType : '',
+            'copy_style' => $copyStyle,
+        ];
+        if ($values['campaign_type'] === 'organisation_outreach') {
+            $style = OrganisationCampaignCopy::styles()[$copyStyle] ?? null;
+            if ($style !== null) {
+                $values['title'] = $style['subject'];
+                $values['body'] = $style['body'];
+            }
+        }
+        return $this->renderForm($values, null);
     }
 
     public function store(Request $request): Response
@@ -43,106 +88,242 @@ final class NotificationsController extends Controller
 
         $action = (string) $request->input('action', 'preview');
         $values = [
+            'campaign_type' => (string) $request->input('campaign_type', 'provider_marketing'),
             'title'         => trim((string) $request->input('title')),
             'body'          => (string) $request->input('body'),
             'audience_type' => (string) $request->input('audience_type'),
             'town_id'       => (int) $request->input('town_id') ?: null,
             'region_id'     => (int) $request->input('region_id') ?: null,
             'category_id'   => (int) $request->input('category_id') ?: null,
-            'scheduled_at'  => trim((string) $request->input('scheduled_at')),
+            'copy_style'    => (string) $request->input('copy_style'),
+            'organisation_type' => (string) $request->input('organisation_type'),
         ];
+
+        if ($values['campaign_type'] === 'directory_accuracy') {
+            $values['title'] = DirectoryAccuracyNotice::subject();
+            $values['body'] = DirectoryAccuracyNotice::previewBody();
+        }
+
+        if ($action === 'starter') {
+            $styles = $values['campaign_type'] === 'organisation_outreach'
+                ? OrganisationCampaignCopy::styles()
+                : ProviderCampaignCopy::styles();
+            $style = $styles[$values['copy_style']] ?? null;
+            if ($style === null) {
+                return $this->renderForm($values, null, 'Choose a valid provider-email starter.');
+            }
+            $values['title'] = $style['subject'];
+            $values['body'] = $style['body'];
+            return $this->renderForm($values, null);
+        }
 
         $error = $this->validate($values, $action);
         if ($error !== null) {
             return $this->renderForm($values, null, $error);
         }
 
-        $count = BroadcastAudience::count($values['audience_type'], $values['town_id'], $values['region_id'], $values['category_id']);
+        $draftNotification = array_merge($values, [
+            'id' => 0,
+            'brand_id' => current_brand()->databaseId(),
+        ]);
+        $isProviderCampaign = in_array($values['campaign_type'], ['provider_marketing', 'directory_accuracy'], true);
+        $count = $isProviderCampaign
+            ? CampaignRecipientManager::summary($draftNotification)['eligible']
+            : BroadcastAudience::count($values['audience_type'], $values['town_id'], $values['region_id'], $values['category_id'], $values['organisation_type'] ?: null);
 
         if ($action === 'preview') {
             return $this->renderForm($values, $count);
         }
 
-        if ($count === 0 && $action !== 'draft') {
-            return $this->renderForm($values, 0, 'That audience currently has no recipients. Save as a draft or adjust the audience.');
-        }
-
-        $status = $action === 'schedule' ? 'scheduled' : 'draft';
-        $scheduledAt = $action === 'schedule' ? date('Y-m-d H:i:s', strtotime($values['scheduled_at'])) : null;
-
         $id = Database::insert(
-            'INSERT INTO notifications (title, body, channel, audience_type, town_id, region_id, category_id, status, scheduled_at, created_by, created_at, updated_at) '
-            . "VALUES (?, ?, 'email', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
+            'INSERT INTO notifications (brand_id,title,body,channel,campaign_type,audience_type,town_id,region_id,category_id,organisation_type,status,scheduled_at,created_by,created_at,updated_at) '
+            . "VALUES (?, ?, ?, 'email', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())",
             [
-                $values['title'], $values['body'], $values['audience_type'],
-                $values['town_id'], $values['region_id'], $values['category_id'],
-                $status, $scheduledAt, current_user()['id'] ?? null,
+                current_brand()->databaseId(), $values['title'], $values['body'], $values['campaign_type'], $values['audience_type'],
+                $values['town_id'], $values['region_id'], $values['category_id'], $values['organisation_type'] ?: null,
+                'draft', null, current_user()['id'] ?? null,
             ]
         );
         AuditLog::record('notification.create', 'notification', (string) $id, null, $action);
-
-        if ($action === 'send') {
-            $result = NotificationService::dispatch($id);
-            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Broadcast queued to ' . $result['recipients'] . ' recipient(s).');
-        }
-        if ($action === 'schedule') {
-            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Broadcast scheduled for ' . $scheduledAt . '.');
-        }
-        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Draft saved.');
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Campaign saved. Send the preview to yourself, then start the first batch of up to 25 recipients.');
     }
 
     public function show(Request $request): Response
     {
         $this->requirePermission('notifications.send');
-        $notification = Database::selectOne('SELECT * FROM notifications WHERE id = ?', [(int) $request->input('id')]);
+        $notification = Database::selectOne('SELECT * FROM notifications WHERE id=? AND brand_id=?', [(int) $request->input('id'), current_brand()->databaseId()]);
         if ($notification === null) {
             $this->abort(404, 'Notification not found.');
         }
-        $previewCount = in_array($notification['status'], ['draft', 'scheduled'], true)
-            ? BroadcastAudience::count(
-                (string) $notification['audience_type'],
-                $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
-                $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
-                $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
-            )
+        $isProviderCampaign = in_array((string) ($notification['campaign_type'] ?? ''), ['provider_marketing', 'directory_accuracy'], true);
+        $resolved = [];
+        if (in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)) {
+            $resolved = $isProviderCampaign
+                ? CampaignRecipientManager::eligibleRecipients($notification)
+                : BroadcastAudience::resolve(
+                    (string) $notification['audience_type'],
+                    $notification['town_id'] !== null ? (int) $notification['town_id'] : null,
+                    $notification['region_id'] !== null ? (int) $notification['region_id'] : null,
+                    $notification['category_id'] !== null ? (int) $notification['category_id'] : null,
+                    $notification['organisation_type'] !== null ? (string) $notification['organisation_type'] : null,
+                );
+        }
+        $previewCount = in_array($notification['status'], ['draft', 'scheduled', 'sending'], true)
+            ? count($resolved)
             : (int) $notification['recipient_count'];
+        $recipientSearch = trim((string) $request->input('recipient_search'));
 
         return $this->view('admin.notifications.show', [
             'title'        => 'Broadcast: ' . $notification['title'],
             'notification' => $notification,
             'recipients'   => Database::select('SELECT email, status FROM notification_recipients WHERE notification_id = ? ORDER BY id LIMIT 200', [(int) $notification['id']]),
+            'deliverySummary' => array_column(
+                Database::select('SELECT status,COUNT(*) AS total FROM notification_recipients WHERE notification_id=? GROUP BY status', [(int) $notification['id']]),
+                'total',
+                'status'
+            ),
+            'tests'        => Database::select('SELECT recipient_email,created_at FROM notification_test_deliveries WHERE notification_id=? ORDER BY id DESC LIMIT 10', [(int) $notification['id']]),
             'previewCount' => $previewCount,
+            'providerSummary' => $isProviderCampaign ? CampaignRecipientManager::summary($notification) : null,
+            'providerCandidates' => $isProviderCampaign ? CampaignRecipientManager::candidates($notification, $recipientSearch) : [],
+            'recipientSearch' => $recipientSearch,
+            'consentBases' => CampaignRecipientManager::CONSENT_BASES,
         ]);
     }
 
-    public function send(Request $request): Response
+    public function recipientExclude(Request $request): Response
     {
         $this->requirePermission('notifications.send');
         $id = (int) $request->input('id');
-        $notification = Database::selectOne('SELECT status FROM notifications WHERE id = ?', [$id]);
-        if ($notification === null) {
-            $this->abort(404);
+        $providerId = (int) $request->input('provider_id');
+        $notification = $this->findBrandNotification($id);
+        try {
+            CampaignRecipientManager::exclude($notification, $providerId, (string) $request->input('reason'), $this->currentUserId());
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
         }
-        if (!in_array($notification['status'], ['draft', 'scheduled'], true)) {
-            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'Only draft or scheduled broadcasts can be sent.');
+        AuditLog::record('notification.recipient.exclude', 'provider', (string) $providerId, null, 'notification:' . $id);
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Provider removed from this campaign.');
+    }
+
+    public function recipientRestore(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $providerId = (int) $request->input('provider_id');
+        $notification = $this->findBrandNotification($id);
+        try {
+            CampaignRecipientManager::restore($notification, $providerId);
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
         }
-        $result = NotificationService::dispatch($id);
-        AuditLog::record('notification.send', 'notification', (string) $id, null, (string) $result['recipients']);
-        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Broadcast queued to ' . $result['recipients'] . ' recipient(s).');
+        AuditLog::record('notification.recipient.restore', 'provider', (string) $providerId, null, 'notification:' . $id);
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Provider restored to this campaign.');
+    }
+
+    public function recipientInclude(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $providerId = (int) $request->input('provider_id');
+        $notification = $this->findBrandNotification($id);
+        try {
+            CampaignRecipientManager::recordConsentAndInclude(
+                $notification,
+                $providerId,
+                (string) $request->input('consent_basis'),
+                (string) $request->input('consent_evidence'),
+                (string) $request->input('consented_at')
+            );
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
+        }
+        AuditLog::record('notification.recipient.consent', 'provider', (string) $providerId, null, (string) $request->input('consent_basis'));
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Consent evidence recorded and provider added to the eligible campaign audience.');
+    }
+
+    public function test(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $this->findBrandNotification($id);
+        try {
+            $queued = NotificationService::queueTest($id, (string) $request->input('test_email'), isset(current_user()['id']) ? (int) current_user()['id'] : null);
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
+        }
+        AuditLog::record('notification.test', 'notification', (string) $id, null, (string) $request->input('test_email'));
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, $queued ? 'success' : 'error', $queued ? 'Internal test queued. Check the mailbox before starting the pilot.' : 'The test could not be queued.');
+    }
+
+    public function stage(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $this->findBrandNotification($id);
+        $stage = (string) $request->input('stage');
+        try {
+            $result = NotificationService::queueStage($id, $stage, isset(current_user()['id']) ? (int) current_user()['id'] : null);
+        } catch (RuntimeException $error) {
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', $error->getMessage());
+        }
+        AuditLog::record('notification.stage', 'notification', (string) $id, null, $stage . ':' . $result['recipients']);
+        $message = $result['limited']
+            ? 'The rolling daily limit has been reached. No extra emails were queued; try again after 24 hours.'
+            : $result['recipients'] . ' email(s) queued. ' . $result['remaining'] . ' eligible recipient(s) remain.';
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, $result['limited'] ? 'error' : 'success', $message);
+    }
+
+    public function autoContinue(Request $request): Response
+    {
+        $this->requirePermission('notifications.send');
+        $id = (int) $request->input('id');
+        $notification = $this->findBrandNotification($id);
+        $enable = (string) $request->input('enabled') === '1';
+
+        if ($enable) {
+            if ((string) ($notification['campaign_type'] ?? '') !== 'directory_accuracy') {
+                return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'Automatic continuation is available only for fixed factual directory notices.');
+            }
+            if ((string) ($notification['status'] ?? '') !== 'sending'
+                || (string) ($notification['delivery_stage'] ?? '') !== 'daily_100'
+                || empty($notification['stage_reviewed_at'])
+                || empty($notification['stage_reviewed_by'])) {
+                return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'Complete and review the test, pilot and 50/day stages, then manually approve the 100/day stage first.');
+            }
+            Database::query(
+                'UPDATE notifications SET auto_continue_enabled=1,auto_continue_enabled_at=NOW(),auto_continue_enabled_by=?, '
+                . 'auto_continue_next_at=COALESCE(DATE_ADD(last_batch_at,INTERVAL 24 HOUR),NOW()),auto_continue_last_error=NULL,updated_at=NOW() WHERE id=?',
+                [$this->currentUserId(), $id]
+            );
+            AuditLog::record('notification.auto_continue.enabled', 'notification', (string) $id, 'off', 'directory_accuracy:100/day');
+            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Automatic factual batches enabled. The next reviewed batch remains capped at 100 in a rolling 24 hours.');
+        }
+
+        Database::query(
+            'UPDATE notifications SET auto_continue_enabled=0,auto_continue_next_at=NULL,updated_at=NOW() WHERE id=?',
+            [$id]
+        );
+        AuditLog::record('notification.auto_continue.disabled', 'notification', (string) $id, 'on', 'off');
+        return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Automatic continuation switched off. Already-sent email is unaffected; pending email can still be cancelled with the campaign control.');
     }
 
     public function cancel(Request $request): Response
     {
         $this->requirePermission('notifications.send');
         $id = (int) $request->input('id');
-        $notification = Database::selectOne('SELECT status FROM notifications WHERE id = ?', [$id]);
+        $notification = Database::selectOne('SELECT status FROM notifications WHERE id=? AND brand_id=?', [$id, current_brand()->databaseId()]);
         if ($notification === null) {
             $this->abort(404);
         }
         if (in_array($notification['status'], ['sent', 'sending'], true)) {
-            return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'A broadcast that is sending or sent cannot be cancelled.');
+            if ($notification['status'] === 'sent') {
+                return $this->redirectWith('/admin/notifications/show?id=' . $id, 'error', 'A completed broadcast cannot be cancelled.');
+            }
         }
-        Database::query("UPDATE notifications SET status = 'cancelled', updated_at = NOW() WHERE id = ?", [$id]);
+        Database::query("UPDATE email_queue SET status='cancelled' WHERE notification_id=? AND status='pending'", [$id]);
+        Database::query("UPDATE notification_recipients SET status='failed' WHERE notification_id=? AND status='queued'", [$id]);
+        Database::query("UPDATE notifications SET status='cancelled',auto_continue_enabled=0,auto_continue_next_at=NULL,updated_at=NOW() WHERE id=?", [$id]);
         AuditLog::record('notification.cancel', 'notification', (string) $id);
         return $this->redirectWith('/admin/notifications/show?id=' . $id, 'success', 'Broadcast cancelled.');
     }
@@ -156,22 +337,45 @@ final class NotificationsController extends Controller
         if (!isset(BroadcastAudience::TYPES[$values['audience_type']])) {
             return 'Choose a valid audience.';
         }
+        if (!isset(self::CAMPAIGN_TYPES[$values['campaign_type']])) {
+            return 'Choose a valid campaign type.';
+        }
+        $providerAudience = in_array($values['audience_type'], ['providers', 'provider_category'], true);
+        $providerCampaign = in_array($values['campaign_type'], ['provider_marketing', 'directory_accuracy'], true);
+        $organisationAudience = $values['audience_type'] === 'organisations';
+        $organisationCampaign = $values['campaign_type'] === 'organisation_outreach';
+        if ($organisationCampaign !== $organisationAudience) {
+            return 'Organisation outreach must use the separately reviewed organisation audience.';
+        }
+        if ($organisationCampaign && !isset(OrganisationOutreach::TYPES[$values['organisation_type']])) {
+            return 'Choose one organisation target type so each campaign remains narrowly relevant.';
+        }
+        if ($providerCampaign && !$providerAudience) {
+            return 'Provider campaign types can only use a provider audience.';
+        }
+        if (!$providerCampaign && !$organisationCampaign && $providerAudience) {
+            return 'Provider audiences require either a consent-gated provider marketing campaign or a factual listing accuracy notice.';
+        }
         if ($values['audience_type'] === 'town' && $values['town_id'] === null) {
             return 'Select a town for this audience.';
         }
         if ($values['audience_type'] === 'region' && $values['region_id'] === null) {
             return 'Select a region for this audience.';
         }
-        if ($values['audience_type'] === 'category' && $values['category_id'] === null) {
+        if (in_array($values['audience_type'], ['category', 'provider_category'], true) && $values['category_id'] === null) {
             return 'Select a service category for this audience.';
         }
-        if ($action === 'schedule') {
-            $ts = strtotime((string) $values['scheduled_at']);
-            if ($ts === false || $ts < time() + 60) {
-                return 'Choose a schedule time at least a minute in the future.';
-            }
-        }
         return null;
+    }
+
+    /** @return array<string,mixed> */
+    private function findBrandNotification(int $id): array
+    {
+        $notification = Database::selectOne('SELECT * FROM notifications WHERE id=? AND brand_id=?', [$id, current_brand()->databaseId()]);
+        if ($notification === null) {
+            $this->abort(404, 'Notification not found.');
+        }
+        return $notification;
     }
 
     /** @param array<string,mixed> $values */
@@ -186,6 +390,14 @@ final class NotificationsController extends Controller
             'towns'        => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'regions'      => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
             'categories'   => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
+            'campaignStyles' => ((string) ($values['campaign_type'] ?? '')) === 'organisation_outreach'
+                ? OrganisationCampaignCopy::styles()
+                : ProviderCampaignCopy::styles(),
+            'campaignTypes' => self::CAMPAIGN_TYPES,
+            'organisationTypes' => OrganisationOutreach::TYPES,
+            'providerSummary' => $previewCount !== null && in_array((string) ($values['audience_type'] ?? ''), ['providers', 'provider_category'], true)
+                ? CampaignRecipientManager::summary(array_merge($values, ['id' => 0, 'brand_id' => current_brand()->databaseId()]))
+                : null,
         ]);
     }
 
@@ -198,5 +410,10 @@ final class NotificationsController extends Controller
             $stats[(string) $row['status']] = (int) $row['c'];
         }
         return $stats;
+    }
+
+    private function currentUserId(): ?int
+    {
+        return isset(current_user()['id']) ? (int) current_user()['id'] : null;
     }
 }

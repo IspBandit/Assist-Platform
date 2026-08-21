@@ -1,0 +1,10 @@
+﻿php.exe : Note: Using configuration file D:\Works _in_progress\Assist-Platform\phpstan.neon.
+At C:\Users\glenc\scoop\apps\composer\current\composer.ps1:2 char:8
++ else { & php (Join-Path $PSScriptRoot "composer.phar") @args }
++        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Note: Using con...m\phpstan.neon.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+ [OK] No errors                                                                                                        
+

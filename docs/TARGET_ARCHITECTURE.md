@@ -1,4 +1,8 @@
-# Assist Platform Core: Target Architecture
+# Assist Platform Enterprise: Target Architecture
+
+> `ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` is authoritative for product
+> direction. This document describes the technical target and is retained for
+> detailed implementation context.
 
 ## Decision
 
@@ -37,7 +41,7 @@ Shared Domain Services
   Notifications | Billing | Analytics | Media | Audit
         |
 Brand Policies and Brand Modules
-  VanAssist | TowSmart | TrailerWise
+  VanAssist | TowSmart | TrailerWise | LocalTorque
         |
 PDO Repositories / Database
 ```
@@ -56,6 +60,7 @@ app/
     VanAssist/
     TowSmart/
     TrailerWise/
+    LocalTorque/
   Services/
   Views/
 config/
@@ -235,7 +240,7 @@ The design system remains server-rendered and CSS-based:
 
 - base tokens: spacing, typography, radii, breakpoints, focus, and status;
 - semantic tokens: surfaces, text, borders, actions, success, warning, danger;
-- brand token maps: VanAssist, TowSmart, TrailerWise;
+- brand token maps: VanAssist, TowSmart, TrailerWise and LocalTorque;
 - reusable PHP partials for forms, errors, cards, breadcrumbs, notices,
   navigation, tables, pagination, empty/loading states, and provider results.
 

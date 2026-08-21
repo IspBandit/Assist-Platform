@@ -1,0 +1,14 @@
+{
+  "batch_id": "wide-bay-burnett",
+  "batch_name": "Wide Bay–Burnett",
+  "towns": 434,
+  "categories": 134,
+  "cells": 58156,
+  "verified_cells": 752,
+  "zero_coverage_cells": 54440,
+  "weak_coverage_cells": 2964,
+  "providers_referenced": 292,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\wide-bay-burnett.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\wide-bay-burnett-report.jsonl",
+  "last_audited": "2026-07-29"
+}

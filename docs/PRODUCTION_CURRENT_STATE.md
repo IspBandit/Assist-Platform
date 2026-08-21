@@ -1,6 +1,6 @@
 # Production current state
 
-Last verified: 23 July 2026 (Australia/Brisbane).
+Last verified: 13 August 2026 (Australia/Brisbane).
 
 ## Deployment
 
@@ -8,11 +8,12 @@ Last verified: 23 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `434ede3`.
-- Release directory: `/opt/assist-platform/releases/434ede3`.
+- Production code commit: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (PR #201 — Ask provider-name/GPS integrity).
+- Release directory: `/opt/assist-platform/releases/6a3f09d78dda81f50fab584decb8fb4f382ef717` (confirm on server after next deploy if path differs).
+- Previous documented release: `9879b4bf41f3f691cb26f8d76d71515fb47b6a5c` (superseded August 2026).
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `041_localtorque_foundation.sql` are applied; the
+- All migrations through `130_merge_residual_duplicate_stays.sql` are applied; the
   installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
@@ -21,6 +22,21 @@ credentials in this file or Git.
 ## Verified live controls
 
 - All three `/healthz` and `/readyz` endpoints returned 200.
+- All three `/readyz` endpoints reported release `6a3f09d` (verified 13 August 2026).
+- **Admin API** responds on production (`GET /api/v1/admin/health` → 200;
+  `POST /api/v1/admin/auth/token` validates credentials — not disabled).
+- **Ask VanAssist** is enabled on production VanAssist (`/ask` returns results;
+  `assist_ai_search` on). Homepage includes the Ask form when the flag is on.
+- **Traveller facilities in Ask** return live results (toilets, hospitals,
+  pharmacies, showers, boat ramps, etc.) when `assist_ai_traveller_facilities`
+  is on.
+- **Google Routes** road-distance integration reports configured on Admin API
+  health (`road_distance.provider=google_routes`).
+- Griffiths Creek typo recovery and road-distance enforcement ship in release
+  `6a3f09d` (see `docs/RELEASE_NOTES.md` unreleased notes merged to this release).
+- Production deployment uses the restricted `assistdeploy` SSH account,
+  pinned host keys and a root-owned release command. Remote root login and
+  password authentication are disabled.
 - `/install` returned 403.
 - UFW, Fail2ban, unattended upgrades and a five-minute container health monitor
   were active.
@@ -65,20 +81,30 @@ credentials in this file or Git.
 
 ## Current launch posture
 
-The environment is viewable in `provider-onboarding` mode. Search indexing is
-disabled. This is not the same as full commercial/public launch approval.
+VanAssist remains in an **initial launch** posture: free search, provider
+onboarding and community stays are live; formal commercial launch approval and
+full Platform Quality Gate **PASS** are not yet recorded.
+
+Public pages use `index, follow` meta robots and expose sitemaps. Treat this as
+**limited public availability**, not signed-off commercial launch.
+
+Assist RIC facility catalogue packs (original, third-wave and gap-fill) have
+been submitted to production Admin API `/facility-imports` from the operator
+workstation (Aug 2026 — see assist-ric `docs/RIC_FACILITY_CATALOGUE_STATUS.md`).
+Admin-side row counts and any unpublished import candidates still require
+owner verification in MariaDB.
 
 Before full indexed launch:
 
-1. Complete the Microsoft Entra application registration, certificate and
-   mailbox policy, then activate and test Microsoft Graph transactional email.
+1. Correct Microsoft Graph brand attribution so recipients see the appropriate
+   VanAssist, TowSmart or TrailerWise support address rather than the shared
+   operations mailbox; then repeat external delivery acceptance.
 2. Supply an independent automated S3-compatible repository (for example
    Cloudflare R2) and credentials. A manual off-server restore drill has passed;
    scheduled off-site replication is not active without these credentials.
-3. Install owner-controlled SSH keys, disable password/root SSH as appropriate,
-   and rotate previously exposed temporary passwords.
-4. Change any exposed application administrator password.
-5. Complete owner acceptance of content, providers and critical journeys.
+3. Rotate previously exposed temporary server and application administrator
+   passwords through their owner-controlled consoles.
+4. Complete owner acceptance of content, providers and critical journeys.
 
 ## Known product limitations
 

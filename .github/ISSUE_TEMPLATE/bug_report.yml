@@ -7,7 +7,7 @@ body:
     id: brand
     attributes:
       label: Brand or area
-      options: [VanAssist, TowSmart, TrailerWise, Shared platform, Admin, Infrastructure]
+      options: [VanAssist, TowSmart, TrailerWise, LocalTorque, Shared platform, Admin, Infrastructure]
     validations:
       required: true
   - type: dropdown

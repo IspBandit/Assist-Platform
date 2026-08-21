@@ -3,7 +3,7 @@
 $this->extend('layouts.public');
 ?>
 <?php $this->section('content'); ?>
-<section class="hero hero--center">
+<section class="hero hero--center interior-photo-hero interior-photo-hero--how">
     <div class="container">
         <div class="hero-grid">
             <div class="hero-copy">

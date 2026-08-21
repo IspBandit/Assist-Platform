@@ -9,8 +9,6 @@
 /** @var array<int,array<string,mixed>> $allCategories */
 /** @var array<int,array<string,mixed>> $allTowns */
 /** @var array<int,array<string,mixed>> $allRegions */
-/** @var array<string,mixed>|null $foundingPromo */
-/** @var array{desktop:?string,mobile:?string} $promoImageUrls */
 $this->extend('layouts.admin');
 $id = (int) $provider['id'];
 $docBadge = ['verified' => 'badge-verified', 'rejected' => 'badge-neutral', 'pending' => 'badge-confirmed', 'expired' => 'badge-neutral'];
@@ -55,27 +53,6 @@ $docBadge = ['verified' => 'badge-verified', 'rejected' => 'badge-neutral', 'pen
         <?php if ($provider['phone']): ?> · <?= $this->e((string) $provider['phone']) ?><?php endif; ?>
     </p>
 </div>
-
-<?php if (!empty($foundingPromo)): ?>
-<div class="card" style="margin-top:1rem;border:2px solid #0f6e6e">
-    <h2 style="margin-top:0">Founding ad graphic</h2>
-    <p class="muted">Free launch offer for providers in a launch town who claim and verify.</p>
-    <p>Status: <strong><?= $this->e(ucfirst(str_replace('_', ' ', (string) $foundingPromo['status']))) ?></strong></p>
-    <?php if (!empty($foundingPromo['headline'])): ?>
-        <p style="margin:.5rem 0"><strong><?= $this->e((string) $foundingPromo['headline']) ?></strong><br>
-        <span class="muted"><?= $this->e((string) ($foundingPromo['tagline'] ?? '')) ?></span></p>
-    <?php endif; ?>
-    <?php if (!empty($promoImageUrls['desktop']) || !empty($promoImageUrls['mobile'])): ?>
-        <div style="margin:.75rem 0">
-            <?php $this->include('partials.provider-promotion-ad', [
-                'promo' => $foundingPromo,
-                'alt'   => (string) ($foundingPromo['headline'] ?? $provider['business_name']),
-            ]); ?>
-        </div>
-    <?php endif; ?>
-    <a class="btn btn-primary" href="<?= e(url('admin/promotions/show?id=' . (int) $foundingPromo['id'])) ?>">Manage in ad graphics queue</a>
-</div>
-<?php endif; ?>
 
 <div class="grid grid-2">
     <div class="card">

@@ -32,8 +32,9 @@ layered on top of the existing platform. Updated as each stage lands.
 - **Cron:** `App\Services\CronRunner` runs named tasks with a file lock and
   records outcomes in `scheduled_tasks`. cPanel cron calls `scripts/cron.php`.
 - **Feature flags:** `App\Services\FeatureFlag` (DB-backed, request-cached).
-- **Analytics today:** `App\Services\Analytics` records first-party, cookieless
-  public **page views** into `page_views` (off unless `analytics_enabled`).
+- **Analytics today:** `App\Services\Analytics` records first-party public
+  **page views** into `page_views` (off unless `analytics_enabled`) and uses the
+  same random first-party session as the demand funnel for unique-visitor counts.
 - **CSV export:** `App\Services\CsvExport`. **Audit:** `App\Services\AuditLog`.
 
 ### Existing demand model (reused, not duplicated)
@@ -227,6 +228,7 @@ Test the migration against a copy of the database first.
 | 6 | Admin demand/usage/funnel/coverage-gap dashboards + demand map (server SVG) + CSV exports | **Done** |
 | 7 | Follow-up email automation (`FollowupService` + tokenised landing), daily aggregation, retention, consent copy | **Done** |
 | 8 | Automated + manual tests, deployment/rollback, changelog, summary | **Done** |
+| 9 | Shared brand-scoped page, search, provider-interest and contact reporting in the unified admin | **Implemented; production acceptance pending** |
 
 ### New in stages 2–8
 
@@ -312,8 +314,33 @@ Add to the privacy policy (admin-editable CMS page) — **review with a lawyer**
    `analytics_retention_event_days`, `analytics_retention_session_days`).
 5. Confirm cron entries (section 6) exist; the hourly `customer_followups` now
    sends mail when the flag is on.
-6. Toggle `demand_analytics` **on** when ready to begin recording.
+6. Migration `078_activate_first_party_website_insights.sql` records the
+   owner's approval, publishes the analytics disclosure and enables both
+   first-party page and demand tracking. Either control can still be disabled
+   immediately in Admin.
 
 **Rollback:** flag off (instantly disables tracking, dashboards no-op cleanly),
 optionally drop `019` tables and the `014` tables (section 8). No existing data
 is altered by either migration.
+
+## 15. Shared website insights (migration 077)
+
+Migration `077_brand_scoped_website_analytics.sql` adds trusted `brand_id`
+attribution to page views, funnel events, provider searches, contact actions,
+demand-gap feedback and outcomes. Page views also receive the random first-party
+session id, optional already-authenticated user id and coarse device class.
+Existing observations remain unscoped because their original hostname cannot be
+reconstructed reliably; the migration does not guess or backfill them.
+
+`/admin/demand` is now the selected brand's Website Insights screen. It reports
+aggregate visitors, views, sources, devices, top pages, service and location
+interest, zero-result searches, provider result appearances, profile views,
+contact actions and strongly evidenced use. A compact thirty-day summary appears
+on each brand dashboard. Public directory and category journeys on all brands
+write through the shared demand recorder. Staff, bots and administrator previews
+are excluded.
+
+The dashboard never lists anonymous session tokens, IP addresses or raw event
+metadata. Signed-in visitor counts are aggregate only. Rollback is application
+release rollback plus disabling `analytics_enabled` and `demand_analytics`;
+the additive nullable columns and indexes may remain safely in place.

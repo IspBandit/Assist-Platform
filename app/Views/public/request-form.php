@@ -28,8 +28,9 @@ $maxImages = (int) config('uploads.max_request_images', 6);
             </div>
         <?php endif; ?>
 
-        <form method="post" action="<?= e(url('request-assistance')) ?>" enctype="multipart/form-data" class="stack" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+        <form method="post" action="<?= e(url('request-assistance')) ?>" enctype="multipart/form-data" class="stack" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
             <?= csrf_field() ?>
+            <?php $this->include('partials.turnstile'); ?>
             <?php if ($park !== null): ?><input type="hidden" name="park" value="<?= e_attr((string) $park['slug']) ?>"><?php endif; ?>
             <div class="honeypot" aria-hidden="true"><label>Leave this blank<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
 
@@ -37,7 +38,7 @@ $maxImages = (int) config('uploads.max_request_images', 6);
                 <h2>1. Location</h2>
                 <div class="form-group">
                     <label for="town_search">Nearest town or suburb <span class="required">*</span></label>
-                    <input type="text" id="town_search" value="<?= e_attr((string) old('town_label', $prefillTownLabel ?? '')) ?>" placeholder="Start typing town, suburb or postcode…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
+                    <input type="text" id="town_search" name="town_label" value="<?= e_attr((string) old('town_label', $prefillTownLabel ?? '')) ?>" placeholder="Start typing town, suburb or postcode…" autocomplete="off" data-town-search="<?= e_attr(url('locations/towns')) ?>" aria-autocomplete="list" aria-controls="town-suggest">
                     <input type="hidden" id="town_id" name="town_id" value="<?= e_attr((string) old('town_id', (string) ($prefillTownId ?? ''))) ?>" required>
                     <div id="town-suggest" class="town-suggest" role="listbox" hidden></div>
                     <?= $err('town_id') ?>

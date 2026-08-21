@@ -25,7 +25,19 @@ final class Request
 
     public static function capture(): self
     {
-        return new self($_GET, $_POST, $_SERVER, $_FILES);
+        $body = $_POST;
+        $contentType = strtolower((string) ($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? ''));
+        if (str_contains($contentType, 'application/json')) {
+            $raw = file_get_contents('php://input');
+            if (is_string($raw) && $raw !== '') {
+                $decoded = json_decode($raw, true);
+                if (is_array($decoded)) {
+                    $body = $decoded;
+                }
+            }
+        }
+
+        return new self($_GET, $body, $_SERVER, $_FILES);
     }
 
     public function method(): string
@@ -106,7 +118,7 @@ final class Request
     {
         $remote = $this->remoteIp();
         $trusted = (array) Config::get('security.trusted_proxies', []);
-        if (in_array($remote, $trusted, true)) {
+        if ($this->isTrustedProxy($remote, $trusted)) {
             $forwarded = explode(',', (string) $this->header('X-Forwarded-For', ''));
             $client = trim($forwarded[0] ?? '');
             if (filter_var($client, FILTER_VALIDATE_IP) !== false) {
@@ -115,6 +127,47 @@ final class Request
         }
 
         return $remote;
+    }
+
+    /** @param array<int,mixed> $trusted */
+    private function isTrustedProxy(string $remote, array $trusted): bool
+    {
+        foreach ($trusted as $proxy) {
+            if (!is_string($proxy)) {
+                continue;
+            }
+            if ($remote === $proxy) {
+                return true;
+            }
+            if (!str_contains($proxy, '/')) {
+                continue;
+            }
+            [$network, $prefixRaw] = array_pad(explode('/', $proxy, 2), 2, '');
+            $remotePacked = @inet_pton($remote);
+            $networkPacked = @inet_pton($network);
+            if ($remotePacked === false || $networkPacked === false || strlen($remotePacked) !== strlen($networkPacked)) {
+                continue;
+            }
+            $prefix = filter_var($prefixRaw, FILTER_VALIDATE_INT);
+            $maxBits = strlen($remotePacked) * 8;
+            if ($prefix === false || $prefix < 0 || $prefix > $maxBits) {
+                continue;
+            }
+            $wholeBytes = intdiv($prefix, 8);
+            $remainingBits = $prefix % 8;
+            if (substr($remotePacked, 0, $wholeBytes) !== substr($networkPacked, 0, $wholeBytes)) {
+                continue;
+            }
+            if ($remainingBits === 0) {
+                return true;
+            }
+            $mask = (0xff << (8 - $remainingBits)) & 0xff;
+            if ((ord($remotePacked[$wholeBytes]) & $mask) === (ord($networkPacked[$wholeBytes]) & $mask)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function remoteIp(): string

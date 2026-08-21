@@ -61,9 +61,20 @@ final class View
         }
 
         extract($__data, EXTR_SKIP);
+        $initialBufferLevel = ob_get_level();
         ob_start();
-        include $__file;
-        return (string) ob_get_clean();
+        try {
+            include $__file;
+            return (string) ob_get_clean();
+        } catch (\Throwable $exception) {
+            // A template can open nested section buffers before a later include,
+            // helper or layout fails. Never leak those buffers into the global
+            // error handler or the next response.
+            while (ob_get_level() > $initialBufferLevel) {
+                ob_end_clean();
+            }
+            throw $exception;
+        }
     }
 
     // ----- Template helpers (called as $this-> inside views) --------------

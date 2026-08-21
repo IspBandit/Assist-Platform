@@ -7,13 +7,13 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Services\Demand\TrackingSession;
 use Throwable;
 
 /**
- * Privacy-friendly, first-party page-view recording. No cookies, no third-party
- * scripts (so it never conflicts with the site CSP) and no IP storage — only the
- * route and a coarse referrer source. Off unless the analytics_enabled setting
- * is on, so there is zero overhead by default.
+ * Privacy-friendly, first-party page-view recording. No third-party scripts and
+ * no IP storage. A random first-party session provides de-duplicated visitor
+ * counts; user identity is linked only when the visitor is already signed in.
  */
 final class Analytics
 {
@@ -28,6 +28,12 @@ final class Analytics
             if ((string) Settings::get('analytics_enabled', '0') !== '1') {
                 return;
             }
+            if (TrackingSession::isBot()) {
+                return;
+            }
+            if (auth()->check() && auth()->hasAnyRole('super-administrator', 'administrator', 'platform-administrator', 'brand-administrator', 'moderator', 'marketing', 'support')) {
+                return;
+            }
 
             $path = '/' . ltrim($request->path(), '/');
             foreach (self::SKIP_PREFIXES as $prefix) {
@@ -39,9 +45,12 @@ final class Analytics
                 return;
             }
 
+            $user = current_user();
             Database::query(
-                'INSERT INTO page_views (route, event_type, referrer_source, created_at) VALUES (?, ?, ?, NOW())',
-                [substr($path, 0, 190), 'view', self::referrerSource()]
+                'INSERT INTO page_views (brand_id, session_id, user_id, route, event_type, referrer_source, device_type, created_at) '
+                . 'VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
+                [current_brand()->databaseId(), TrackingSession::id(), $user !== null ? (int) $user['id'] : null,
+                    substr($path, 0, 190), 'view', self::referrerSource(), TrackingSession::deviceType()]
             );
         } catch (Throwable) {
             // Analytics must never affect the response.
@@ -58,9 +67,10 @@ final class Analytics
         if (!is_string($host) || $host === '') {
             return 'direct';
         }
-        $self = parse_url((string) config('app.url', ''), PHP_URL_HOST);
-        if (is_string($self) && $self !== '' && str_ends_with($host, $self)) {
-            return 'internal';
+        foreach (current_brand()->domains() as $domain) {
+            if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+                return 'internal';
+            }
         }
         return substr($host, 0, 120);
     }

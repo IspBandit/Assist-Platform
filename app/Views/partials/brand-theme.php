@@ -13,6 +13,14 @@ $brandTheme = current_brand()->theme();
         --brand-text: <?= e($brandTheme['text'] ?? '#2b2f33') ?>;
         --brand-focus: <?= e($brandTheme['focus'] ?? '#b45309') ?>;
 
+        /* Official Assist Platform semantic design tokens. */
+        --color-brand: var(--brand-primary);
+        --color-brand-emphasis: var(--brand-primary-emphasis);
+        --color-accent: var(--brand-accent);
+        --color-surface: var(--brand-surface);
+        --color-text: var(--brand-text);
+        --color-focus: var(--brand-focus);
+
         /* Compatibility aliases while the existing VanAssist stylesheet is
            migrated component by component to semantic tokens. */
         --teal: var(--brand-primary);

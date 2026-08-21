@@ -1,0 +1,39 @@
+{
+    "scenario": "VA-ACCEPT-BATEHAVEN-001",
+    "mode": "dry-run",
+    "env": "local",
+    "query": "public toilets and dump points near Batehaven, NSW",
+    "radius_km": 50,
+    "origin": {
+        "lat": -35.7325,
+        "lng": 150.1985
+    },
+    "git_sha": "680de78",
+    "steps": [
+        {
+            "intent": {
+                "type": "find_traveller_facility",
+                "facilities": [
+                    "dump_point",
+                    "public_toilet"
+                ],
+                "location": "Batehaven",
+                "adapters": [
+                    "providers",
+                    "traveller_facilities"
+                ],
+                "source": "rules",
+                "ok": true
+            }
+        },
+        {
+            "fixtures": {
+                "demo-public-toilets.csv": true,
+                "demo-dump-points.geojson": true,
+                "demo-drinking-water.csv": true
+            }
+        }
+    ],
+    "result": "PASS",
+    "reason": "Dry-run: intent + Batehaven toilet/dump fixtures OK. Full DB Ask run still required when MariaDB is configured."
+}

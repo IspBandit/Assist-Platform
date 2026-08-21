@@ -13,6 +13,12 @@ return [
         'private_key_path' => Env::get('MICROSOFT_GRAPH_PRIVATE_KEY_PATH', ''),
         'private_key_password' => Env::get('MICROSOFT_GRAPH_PRIVATE_KEY_PASSWORD', ''),
         'mailbox' => Env::get('MICROSOFT_GRAPH_SENDING_MAILBOX', ''),
+        'mailboxes' => [
+            'vanassist' => Env::get('MICROSOFT_GRAPH_VANASSIST_MAILBOX', 'support@vanassist.com.au'),
+            'towsmart' => Env::get('MICROSOFT_GRAPH_TOWSMART_MAILBOX', 'support@towsmart.com.au'),
+            'trailerwise' => Env::get('MICROSOFT_GRAPH_TRAILERWISE_MAILBOX', 'support@trailerwise.com.au'),
+            'localtorque' => Env::get('MICROSOFT_GRAPH_LOCALTORQUE_MAILBOX', ''),
+        ],
     ],
     'host'         => Env::get('MAIL_HOST', ''),
     'port'         => (int) Env::get('MAIL_PORT', 587),

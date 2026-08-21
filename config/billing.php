@@ -23,7 +23,7 @@ return [
     'currency' => strtoupper((string) Env::get('BILLING_CURRENCY', 'AUD')),
 
     // Slug of the plan a provider falls back to instead of losing data.
-    'default_free_plan' => (string) Env::get('BILLING_DEFAULT_FREE_PLAN', 'founding_free'),
+    'default_free_plan' => (string) Env::get('BILLING_DEFAULT_FREE_PLAN', 'free_listing'),
 
     // Days a provider keeps paid access after a failed payment before features lock.
     'grace_days' => (int) Env::get('BILLING_GRACE_DAYS', 14),
