@@ -29,6 +29,12 @@ Caravan, motorhome and RV travellers planning before departure or searching whil
 
 No account is required. On the main VanAssist search, the browser may ask for optional device-location permission automatically so the nearest town can be prepared. Denying permission leaves the full manual search available.
 
+VanAssist may measure broad journey steps such as opening search results, a
+provider or a place to stay, and choosing phone, website, directions or claim
+actions. This measurement does not send names, contact details, search wording
+or precise device coordinates. Each Assist Platform brand uses its own
+measurement configuration.
+
 ## Fields
 
 **Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
@@ -149,7 +155,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-21 (public search link compatibility documented).
+2026-08-22 (brand-safe public journey measurement documented).
 
 ## Owner
 
