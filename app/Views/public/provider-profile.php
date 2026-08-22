@@ -2,11 +2,11 @@
 /** @var \App\Core\View $this */
 $this->extend('layouts.public');
 $isUnclaimed = !empty($provider['is_unclaimed']);
-$showPhone = (!empty($provider['show_public_phone']) || $isUnclaimed);
-$phone = $showPhone ? trim((string) (($provider['public_phone'] ?? '') ?: ($provider['phone'] ?? ''))) : '';
+$showPhone = !empty($provider['show_public_phone']);
+$phone = $showPhone ? trim((string) ($provider['public_phone'] ?? '')) : '';
 $showPhone = $phone !== '';
-$showEmail = (!empty($provider['show_public_email']) || $isUnclaimed);
-$email = $showEmail ? trim((string) (($provider['public_email'] ?? '') ?: ($provider['email'] ?? ''))) : '';
+$showEmail = !empty($provider['show_public_email']);
+$email = $showEmail ? trim((string) ($provider['public_email'] ?? '')) : '';
 $showEmail = $email !== '';
 $website = trim((string) ($provider['website'] ?? ''));
 $address = trim((string) ($provider['street_address'] ?? ''));
@@ -15,18 +15,19 @@ $model = (string) ($provider['service_model'] ?? '');
 $isWorkshop = in_array($model, ['workshop', 'both'], true);
 $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) $provider['business_name'];
-$initial = mb_strtoupper(mb_substr(trim($name), 0, 1));
 $slug = (string) $provider['slug'];
-$canNavigate = $isWorkshop && $address !== '' && stripos($address, 'mobile') === false;
+$searchId = isset($searchId) ? (int) $searchId : 0;
+$contactQuery = $searchId > 0 ? '?s=' . $searchId : '';
+$canNavigate = $isWorkshop && is_navigable_street_address($address);
 $locationLabel = $townName;
 if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .= ', ' . $provider['state_abbr']; }
+$mapDestination = map_destination(null, null, [$address, $townName, (string) ($provider['state_abbr'] ?? '')]);
 ?>
 <?php $this->section('content'); ?>
-<section class="profile-hero">
+<section class="profile-hero interior-photo-hero interior-photo-hero--profile">
     <div class="container">
-        <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="<?= e(url('/')) ?>">Home</a><span aria-hidden="true">/</span><a href="<?= e(url('providers')) ?>">Directory</a><span aria-hidden="true">/</span><span><?= $this->e($name) ?></span></nav>
+        <nav aria-label="Breadcrumb" class="breadcrumbs"><a href="<?= e(url('/')) ?>">Home</a><span aria-hidden="true">/</span><a href="<?= e(url('providers')) ?>">Directory</a></nav>
         <div class="profile-heading">
-            <span class="profile-avatar" aria-hidden="true"><?= e($initial) ?></span>
             <div class="profile-heading-copy">
                 <div class="profile-badges">
                     <?php if (!empty($provider['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
@@ -46,8 +47,8 @@ if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .
         <div class="profile-main">
             <?php if ($isUnclaimed): ?>
                 <aside class="trust-notice">
-                    <div><strong>This business has not claimed this profile yet.</strong><p>Details come from public sources and may change. Confirm services, qualifications, pricing and availability directly with the business.</p></div>
-                    <a class="btn btn-secondary btn-sm" href="<?= e(url('contact')) ?>">Claim this business</a>
+                    <div><strong>This business has not claimed this profile yet.</strong><p>Details come from public sources and may change. Confirm services, qualifications, pricing and availability directly with the business.</p><?php if (!empty($provider['source_note'])): ?><p><small>Source: <?= $this->e((string) $provider['source_note']) ?><?php if (!empty($provider['source_url'])): ?> · <a href="<?= e_attr((string) $provider['source_url']) ?>" target="_blank" rel="noopener nofollow">view source</a><?php endif; ?></small></p><?php endif; ?></div>
+                    <a class="btn btn-secondary btn-sm" href="<?= e(url('for-providers/register?listing=' . rawurlencode($slug))) ?>">Request to claim or correct this listing</a>
                 </aside>
             <?php endif; ?>
 
@@ -77,6 +78,10 @@ if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .
                 <section class="profile-panel"><h2>Verified credentials</h2><ul class="credential-list"><?php foreach ($licences as $l): ?><li><span aria-hidden="true">✓</span><div><strong><?= $this->e((string) $l['licence_type']) ?></strong><?php if ($l['issuing_authority']): ?><small><?= $this->e((string) $l['issuing_authority']) ?></small><?php endif; ?></div></li><?php endforeach; ?></ul></section>
             <?php endif; ?>
 
+            <?php if ($capabilities !== []): ?>
+                <section class="profile-panel"><h2>Verified specialist capabilities</h2><p class="muted">Evidence reviewed by <?= $this->e($brand->name()) ?>. This is not government endorsement; confirm suitability for the exact job.</p><ul class="credential-list"><?php foreach ($capabilities as $capability): ?><li><span aria-hidden="true">✓</span><div><strong><?= $this->e((string) $capability['capability_label']) ?></strong><small><?= $this->e((string) ($capability['jurisdiction_code'] ?: 'Australia-wide')) ?><?= $capability['valid_until'] ? ' · valid to ' . $this->e((string) $capability['valid_until']) : '' ?></small></div></li><?php endforeach; ?></ul></section>
+            <?php endif; ?>
+
             <?php if ($runs !== []): ?>
                 <section class="profile-panel"><h2>Upcoming service runs</h2><div class="grid grid-2"><?php foreach ($runs as $r): ?><a class="mini-result" href="<?= e(url('service-runs/' . $r['slug'])) ?>"><strong><?= $this->e((string) $r['title']) ?></strong><span><?= $this->e(ucfirst((string) $r['status'])) ?><?php if ($r['start_date']): ?> · from <?= $this->e((string) $r['start_date']) ?><?php endif; ?></span></a><?php endforeach; ?></div></section>
             <?php endif; ?>
@@ -87,10 +92,10 @@ if ($locationLabel !== '' && !empty($provider['state_abbr'])) { $locationLabel .
                 <h2>Contact <?= $this->e($name) ?></h2>
                 <?php if ($address !== ''): ?><div class="contact-detail"><span>Location</span><strong><?= $this->e($address) ?></strong></div><?php elseif ($locationLabel !== ''): ?><div class="contact-detail"><span>Based near</span><strong><?= $this->e($locationLabel) ?></strong></div><?php endif; ?>
                 <div class="profile-actions">
-                    <?php if ($showPhone): ?><a class="btn btn-primary btn-block" href="<?= e(url('go/phone/' . $slug)) ?>">Call <?= $this->e($phone) ?></a><?php endif; ?>
-                    <?php if ($showEmail): ?><a class="btn btn-secondary btn-block" href="<?= e(url('go/email/' . $slug)) ?>">Email business</a><?php endif; ?>
-                    <?php if ($website !== ''): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/website/' . $slug)) ?>" target="_blank" rel="noopener nofollow">Visit business website</a><?php endif; ?>
-                    <?php if ($canNavigate): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/directions/' . $slug)) ?>" target="_blank" rel="noopener">Get directions</a><?php endif; ?>
+                    <?php if ($showPhone): ?><a class="btn btn-primary btn-block" href="<?= e(url('go/phone/' . $slug) . $contactQuery) ?>">Call <?= $this->e($phone) ?></a><?php endif; ?>
+                    <?php if ($showEmail): ?><a class="btn btn-secondary btn-block" href="<?= e(url('go/email/' . $slug) . $contactQuery) ?>">Email business</a><?php endif; ?>
+                    <?php if ($website !== ''): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/website/' . $slug) . $contactQuery) ?>" target="_blank" rel="noopener nofollow">Visit business website</a><?php endif; ?>
+                    <?php if ($canNavigate): ?><a class="btn btn-ghost btn-block" href="<?= e(url('go/directions/' . $slug) . $contactQuery) ?>" target="_blank" rel="noopener" data-map-directions data-map-destination="<?= e_attr($mapDestination) ?>">Get directions</a><?php endif; ?>
                 </div>
                 <?php if (!$showPhone && !$showEmail && $website === ''): ?><div class="inline-empty"><strong>Contact details unavailable</strong><span>This business has not supplied public contact information.</span></div><?php endif; ?>
                 <p class="contact-disclaimer"><?= $this->e($brand->name()) ?> does not guarantee availability, pricing or suitability. Confirm important details with the provider.</p>

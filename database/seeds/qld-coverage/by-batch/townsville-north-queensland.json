@@ -1,0 +1,14 @@
+{
+  "batch_id": "townsville-north-queensland",
+  "batch_name": "Townsville and North Queensland",
+  "towns": 235,
+  "categories": 134,
+  "cells": 31490,
+  "verified_cells": 1197,
+  "zero_coverage_cells": 28358,
+  "weak_coverage_cells": 1935,
+  "providers_referenced": 273,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\townsville-north-queensland.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\townsville-north-queensland-report.jsonl",
+  "last_audited": "2026-07-29"
+}

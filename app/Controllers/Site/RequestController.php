@@ -129,6 +129,12 @@ final class RequestController extends Controller
         }
 
         $data = $request->all();
+        if (empty($data['town_id']) && trim((string) ($data['town_label'] ?? '')) !== '') {
+            $townMatches = \App\Models\Town::searchActive(trim((string) $data['town_label']), 1);
+            if (isset($townMatches[0]['id'])) {
+                $data['town_id'] = (int) $townMatches[0]['id'];
+            }
+        }
         $validator = Validator::make($data, [
             'contact_name'        => 'required|max:150',
             'contact_email'       => 'required|email|max:190',
@@ -151,7 +157,7 @@ final class RequestController extends Controller
             return $this->redirect('request-assistance');
         }
 
-        $town = Database::selectOne('SELECT id, region_id, state_id, primary_postcode FROM towns WHERE id = ?', [(int) $request->input('town_id')]);
+        $town = Database::selectOne('SELECT id, region_id, state_id, primary_postcode FROM towns WHERE id = ?', [(int) ($data['town_id'] ?? 0)]);
         $park = $this->resolvePark($request->input('park'));
 
         $auth = Auth::instance();

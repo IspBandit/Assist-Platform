@@ -1,0 +1,77 @@
+name: Staging release
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type DEPLOY-STAGING to release the selected ref
+        required: true
+      release_ref:
+        description: Branch, tag, or commit to deploy to isolated staging
+        required: true
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-release
+  cancel-in-progress: false
+
+jobs:
+  validate-and-deploy:
+    if: github.event.inputs.confirm == 'DEPLOY-STAGING'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.inputs.release_ref }}
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_mysql, mbstring, fileinfo, gd, intl, curl, zip, dom
+          coverage: none
+      - name: Validate release candidate
+        run: |
+          composer install --no-interaction --prefer-dist
+          composer validate --strict
+          composer analyse
+          php -d memory_limit=512M vendor/bin/phpunit
+          composer audit
+      - name: Build immutable staging release
+        run: |
+          release_sha="$(git rev-parse HEAD)"
+          mkdir release
+          git archive HEAD | tar -x -C release
+          composer install --working-dir=release --no-dev --no-interaction --prefer-dist --classmap-authoritative
+          tar -C release -czf "assist-platform-staging-${release_sha}.tar.gz" .
+          sha256sum "assist-platform-staging-${release_sha}.tar.gz" > "assist-platform-staging-${release_sha}.tar.gz.sha256"
+          echo "RELEASE_SHA=${release_sha}" >> "$GITHUB_ENV"
+      - name: Configure verified SSH host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Upload and release to isolated staging
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          archive="assist-platform-staging-${RELEASE_SHA}.tar.gz"
+          checksum="${archive}.sha256"
+          scp "$archive" "$checksum" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
+          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c '$checksum' && sudo /usr/local/sbin/assist-platform-staging-release '/opt/assist-platform/incoming/$archive' '$RELEASE_SHA'"
+      - name: Verify protected staging endpoint
+        run: |
+          status="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 20 https://vanassist-staging.43.224.181.15.nip.io/)"
+          test "$status" = "401"
+      - name: Record staging summary
+        run: |
+          echo "Released ${RELEASE_SHA} to the isolated, password-protected staging environment." >> "$GITHUB_STEP_SUMMARY"
+          echo "Production was not modified and production feature flags were not enabled." >> "$GITHUB_STEP_SUMMARY"

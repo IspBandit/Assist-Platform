@@ -1,0 +1,47 @@
+[
+  {
+    "source_name": "vanassist-national",
+    "source_licence": "internal-research",
+    "count": 144
+  },
+  {
+    "source_name": "national-research",
+    "source_licence": "internal-research",
+    "count": 149
+  },
+  {
+    "source_name": "localtorque-osm",
+    "source_licence": "ODbL",
+    "count": 89
+  },
+  {
+    "source_name": "vanassist-osm",
+    "source_licence": "ODbL",
+    "count": 436
+  },
+  {
+    "source_name": "openstreetmap",
+    "source_licence": "ODbL",
+    "count": 1427
+  },
+  {
+    "source_name": "qld-fuel-reporting",
+    "source_licence": "CC BY 4.0",
+    "count": 1753
+  },
+  {
+    "source_name": "vanassist-locality",
+    "source_licence": "internal-research",
+    "count": 186
+  },
+  {
+    "source_name": "locality-research",
+    "source_licence": "internal-research",
+    "count": 209
+  },
+  {
+    "source_name": "google-places",
+    "source_licence": "internal-research",
+    "count": 813
+  }
+]

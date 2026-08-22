@@ -63,7 +63,7 @@ return [
          'body' =>
             '<p>We are here to help. The fastest way to get the right service is to <a href="/request-assistance">register a request</a> — but you are welcome to reach us directly.</p>'
             . '<ul class="list-plain">'
-            . '<li><strong>Email:</strong> <a href="mailto:vanassist@condrendigital.com.au">vanassist@condrendigital.com.au</a></li>'
+            . '<li><strong>Email:</strong> <a href="mailto:support@vanassist.com.au">support@vanassist.com.au</a></li>'
             . '<li><strong>Phone:</strong> <a href="tel:0448007334">0448 007 334</a></li>'
             . '</ul>'
             . '<p>We aim to respond within one business day.</p>'
@@ -95,11 +95,11 @@ return [
             . '<h2>Unclaimed business listings</h2>'
             . '<p>Some provider listings are compiled from publicly available sources and marked "unclaimed". We display only the contact details a business already publishes. A business can claim, correct or request removal of its listing at any time by contacting us.</p>'
             . '<h2>Cookies &amp; analytics</h2>'
-            . '<p>We use essential cookies to keep you signed in and secure the site. If analytics are enabled, we use aggregated, non-identifying usage data to improve the service. You can control cookies through your browser settings.</p>'
+            . '<p>We use essential cookies to keep you signed in and secure the site. If first-party analytics are enabled, a randomly generated session identifier helps us count visits and understand searches and provider interest without storing visitor IP addresses in analytics or identifying anonymous people. You can control cookies through your browser settings.</p>'
             . '<h2>Security &amp; retention</h2>'
             . '<p>We take reasonable steps to protect your information from misuse, loss and unauthorised access, and we keep it only as long as needed for the purposes above or as required by law.</p>'
             . '<h2>Access, correction &amp; complaints</h2>'
-            . '<p>You can ask to access or correct your personal information, or raise a privacy concern, by emailing <a href="mailto:vanassist@condrendigital.com.au">vanassist@condrendigital.com.au</a>. If you are not satisfied with our response, you may contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" rel="nofollow noopener" target="_blank">oaic.gov.au</a>.</p>'
+            . '<p>You can ask to access or correct your personal information, or raise a privacy concern, by emailing <a href="mailto:support@vanassist.com.au">support@vanassist.com.au</a>. If you are not satisfied with our response, you may contact the Office of the Australian Information Commissioner (OAIC) at <a href="https://www.oaic.gov.au" rel="nofollow noopener" target="_blank">oaic.gov.au</a>.</p>'
             . '<h2>Changes</h2>'
             . '<p>We may update this policy from time to time. The current version will always be available on this page.</p>'
             . '<p class="muted">This policy is provided as a practical default and should be reviewed by a legal professional for your circumstances.</p>'],
@@ -182,7 +182,7 @@ return [
          'body' =>
             '<p>We want VanAssist to be trustworthy. If something goes wrong, here is how to raise it.</p>'
             . '<h2>1. Contact us</h2>'
-            . '<p>Email <a href="mailto:vanassist@condrendigital.com.au">vanassist@condrendigital.com.au</a> with the details. Please include your name, the provider or request involved, dates, and what happened.</p>'
+            . '<p>Email <a href="mailto:support@vanassist.com.au">support@vanassist.com.au</a> with the details. Please include your name, the provider or request involved, dates, and what happened.</p>'
             . '<h2>2. What happens next</h2>'
             . '<p>We aim to acknowledge complaints within two business days and to resolve them as quickly as is reasonable. We may contact the provider involved to understand both sides.</p>'
             . '<h2>3. Disputes with a provider</h2>'
@@ -198,7 +198,7 @@ return [
             . '<h2>Known limitations</h2>'
             . '<p>Some third-party content and map features may not yet fully meet these goals. We are continually improving.</p>'
             . '<h2>Feedback</h2>'
-            . '<p>If you have trouble accessing any part of VanAssist, please email <a href="mailto:vanassist@condrendigital.com.au">vanassist@condrendigital.com.au</a> and we will help and work to fix the issue.</p>'],
+            . '<p>If you have trouble accessing any part of VanAssist, please email <a href="mailto:support@vanassist.com.au">support@vanassist.com.au</a> and we will help and work to fix the issue.</p>'],
     ],
 
     'faqs' => [

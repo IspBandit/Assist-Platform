@@ -10,7 +10,11 @@ namespace App\Helpers;
 final class Geo
 {
     /** Allowed max-distance filter values (km). */
-    public const DISTANCE_OPTIONS = [25, 50, 100, 200, 500];
+    public const DISTANCE_OPTIONS = [25, 50, 100, 150, 200, 250, 500];
+
+    /** Stay-directory radii, with a travel-friendly 150 km default. */
+    public const STAY_DISTANCE_OPTIONS = [25, 50, 100, 150, 250, 500];
+    public const DEFAULT_STAY_DISTANCE_KM = 150;
 
     public const SCOPE_TOWN = 'town';
     public const SCOPE_ANY = 'any';
@@ -50,13 +54,19 @@ final class Geo
     /** Great-circle distance in kilometres, rounded to nearest km. */
     public static function haversineKm(float $lat1, float $lng1, float $lat2, float $lng2): float
     {
+        return (float) round(self::haversineExactKm($lat1, $lng1, $lat2, $lng2));
+    }
+
+    /** Great-circle distance without display rounding, for safety and trust thresholds. */
+    public static function haversineExactKm(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
         $earth = 6371.0;
         $dLat = deg2rad($lat2 - $lat1);
         $dLng = deg2rad($lng2 - $lng1);
         $a = sin($dLat / 2) ** 2
             + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLng / 2) ** 2;
 
-        return (float) round($earth * 2 * atan2(sqrt($a), sqrt(1 - $a)));
+        return $earth * 2 * atan2(sqrt($a), sqrt(1 - $a));
     }
 
     /** @return float|null Rounded km, or null when coordinates are missing. */
@@ -118,6 +128,15 @@ final class Geo
         return in_array($km, self::DISTANCE_OPTIONS, true) ? $km : null;
     }
 
+    public static function stayDistance(mixed $raw): int
+    {
+        $km = is_scalar($raw) ? (int) $raw : 0;
+
+        return in_array($km, self::STAY_DISTANCE_OPTIONS, true)
+            ? $km
+            : self::DEFAULT_STAY_DISTANCE_KM;
+    }
+
     /**
      * Annotate rows with distance_km, optionally filter by max km, then sort nearest first.
      *
@@ -138,10 +157,14 @@ final class Geo
 
         $out = [];
         foreach ($rows as $row) {
-            $distance = self::distanceKm($originLat, $originLng, $row[$latKey] ?? null, $row[$lngKey] ?? null);
-            $row['distance_km'] = $distance;
+            $targetLat = $row[$latKey] ?? null;
+            $targetLng = $row[$lngKey] ?? null;
+            $exactDistance = is_numeric($targetLat) && is_numeric($targetLng)
+                ? self::haversineExactKm($originLat, $originLng, (float) $targetLat, (float) $targetLng)
+                : null;
+            $row['distance_km'] = $exactDistance !== null ? (float) round($exactDistance) : null;
             if ($maxKm !== null) {
-                if ($distance === null || $distance > $maxKm) {
+                if ($exactDistance === null || $exactDistance > $maxKm) {
                     continue;
                 }
             }

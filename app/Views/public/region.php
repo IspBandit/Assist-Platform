@@ -7,6 +7,8 @@
 /** @var array<int,array<string,mixed>> $providers */
 $this->extend('layouts.public');
 $townTotal = $townTotal ?? count($towns);
+$mappedProviders=[];
+foreach ($providers as $p) { $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null; if(!is_numeric($pLat)||!is_numeric($pLng))continue; $id='region-provider-'.(int)$p['id']; $mappedProviders[]=['id'=>$id,'listId'=>$id,'number'=>count($mappedProviders)+1,'name'=>(string)$p['business_name'],'location'=>trim((string)($p['town_name']??'').(!empty($p['state_abbr'])?', '.$p['state_abbr']:'')),'lat'=>(float)$pLat,'lng'=>(float)$pLng,'profile'=>url('providers/'.$p['slug']),'directions'=>'','destination'=>'','featured'=>!empty($p['is_featured']),'possible'=>false]; }
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -41,20 +43,12 @@ $townTotal = $townTotal ?? count($towns);
         <?php endif; ?>
 
         <?php if ($providers !== []): ?>
+            <?php $this->include('partials/results-map',['mapItems'=>$mappedProviders,'mapTitle'=>count($mappedProviders).' located services in '.$region['name']]); ?>
             <h2 style="margin-top:2rem">Service businesses in <?= $this->e((string) $region['name']) ?></h2>
             <p class="muted">Unclaimed listings were compiled from public sources — confirm details before booking.</p>
-            <div class="grid grid-3">
-                <?php foreach ($providers as $p): ?>
-                    <a class="card stack" href="<?= e(url('providers/' . $p['slug'])) ?>" style="text-decoration:none;color:inherit">
-                        <h3 style="margin:0"><?= $this->e((string) $p['business_name']) ?></h3>
-                        <div>
-                            <?= $p['is_verified'] ? '<span class="badge badge-verified">Verified</span> ' : '' ?>
-                            <?= $p['is_founding_provider'] ? '<span class="badge badge-confirmed">Founding</span> ' : '' ?>
-                            <?= !empty($p['is_unclaimed']) ? '<span class="badge badge-neutral">Unclaimed</span> ' : '' ?>
-                            <span class="badge badge-neutral"><?= $this->e(ucfirst((string) $p['service_model'])) ?></span>
-                        </div>
-                        <?php if (!empty($p['town_name'])): ?><p class="muted" style="margin:0"><?= $this->e((string) $p['town_name']) ?></p><?php endif; ?>
-                    </a>
+            <div class="provider-card-grid">
+                <?php foreach ($providers as $p): $mapIndex=array_search('region-provider-'.(int)$p['id'],array_column($mappedProviders,'id'),true); ?>
+                    <?php $this->include('partials.provider-result-card',['p'=>$p,'isPossible'=>false,'resultCardId'=>'region-provider-'.(int)$p['id'],'mapResultNumber'=>$mapIndex===false?0:$mapIndex+1]); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>

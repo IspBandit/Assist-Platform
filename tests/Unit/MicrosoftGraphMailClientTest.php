@@ -10,13 +10,75 @@ use ReflectionMethod;
 
 final class MicrosoftGraphMailClientTest extends TestCase
 {
-    public function testSendEndpointTargetsImmutableBrandMailbox(): void
+    public function testSendEndpointTargetsConfiguredTransportMailbox(): void
     {
         $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'sendingEndpoint');
 
         $this->assertSame(
-            'https://graph.microsoft.com/v1.0/users/support%40towsmart.com.au/sendMail',
-            $method->invoke(null, 'support@towsmart.com.au')
+            'https://graph.microsoft.com/v1.0/users/operations%40vanassist.com.au/sendMail',
+            $method->invoke(null, 'operations@vanassist.com.au')
         );
+    }
+
+    public function testConfiguredOperationsMailboxOverridesBrandAlias(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'sendingMailbox');
+
+        $this->assertSame(
+            'operations@vanassist.com.au',
+            $method->invoke(null, ['graph_mailbox' => 'operations@vanassist.com.au'], 'support@towsmart.com.au')
+        );
+    }
+
+    public function testFallbackUsesRealMailboxAsFromAndBrandAliasAsReplyTo(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'messagePayload');
+        $payload = $method->invoke(
+            null,
+            ['from_name' => 'TowSmart'],
+            'operations@vanassist.com.au',
+            'support@towsmart.com.au',
+            'customer@example.com',
+            'Customer',
+            'Test',
+            '<p>Test</p>',
+            'Test'
+        );
+
+        $this->assertSame(
+            'operations@vanassist.com.au',
+            $payload['message']['from']['emailAddress']['address']
+        );
+        $this->assertSame(
+            'support@towsmart.com.au',
+            $payload['message']['replyTo'][0]['emailAddress']['address']
+        );
+    }
+
+    public function testExplicitMailboxRejectionCanUseOperationsFallback(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'shouldFallback');
+
+        $this->assertTrue($method->invoke(
+            null,
+            new \RuntimeException('Microsoft Graph request failed with HTTP 404: mailbox not found'),
+            'support@towsmart.com.au',
+            'operations@vanassist.com.au'
+        ));
+        $this->assertFalse($method->invoke(
+            null,
+            new \RuntimeException('Microsoft Graph request failed with HTTP 500: service unavailable'),
+            'support@towsmart.com.au',
+            'operations@vanassist.com.au'
+        ));
+    }
+
+    public function testGraphErrorBodyRedactsAccessTokens(): void
+    {
+        $method = new ReflectionMethod(MicrosoftGraphMailClient::class, 'safeErrorBody');
+        $safe = $method->invoke(null, '{"token_type":"Bearer","access_token":"eyJsecret.payload.signature"}');
+
+        $this->assertStringContainsString('[REDACTED]', $safe);
+        $this->assertStringNotContainsString('eyJsecret', $safe);
     }
 }

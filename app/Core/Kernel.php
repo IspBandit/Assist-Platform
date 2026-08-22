@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core;
 
 use App\Auth\Auth;
+use App\Core\Exceptions\AdminApiException;
 use App\Core\Exceptions\HttpException;
 use App\Helpers\Env;
 use App\Middleware\SecurityHeaders;
@@ -13,7 +14,10 @@ use App\Platform\Brand\BrandRegistry;
 use App\Platform\Brand\BrandResolver;
 use App\Platform\Support\EnvironmentValidator;
 use App\Platform\Support\RequestContext;
+use App\Services\Api\AdminApiEnvelope;
 use App\Services\Settings;
+use App\Services\AdminBrandAccess;
+use App\Services\BotTraffic;
 use Throwable;
 
 /**
@@ -24,6 +28,7 @@ final class Kernel
 {
     private Router $router;
     private BrandResolver $brandResolver;
+    private BrandRegistry $brandRegistry;
     private bool $booted = false;
 
     public function boot(): void
@@ -43,6 +48,7 @@ final class Kernel
             throw new \RuntimeException('Brand registry configuration must be an array');
         }
         $registry = BrandRegistry::fromArray($brandConfig);
+        $this->brandRegistry = $registry;
         $this->brandResolver = new BrandResolver(
             $registry,
             (string) Config::get('brands.default', 'vanassist'),
@@ -76,12 +82,13 @@ final class Kernel
         if (!$response instanceof Response) {
             throw new \RuntimeException('Kernel middleware did not return a Response');
         }
-        $response->send();
-
-        // First-party page-view recording (no-op unless analytics is enabled).
+        // Record before sending the response so a first-time anonymous visitor
+        // can receive the privacy-conscious first-party session cookie.
         if (self::isInstalled()) {
             \App\Services\Analytics::record($request, $response);
         }
+
+        $response->send();
     }
 
     public function handle(Request $request): Response
@@ -95,7 +102,32 @@ final class Kernel
             return $this->readinessResponse();
         }
 
+        // Reject obvious scraping and attack tools before they reach routing,
+        // sessions or the database. Health checks and versioned APIs remain
+        // available; recognised search crawlers are never caught here.
+        if (
+            PHP_SAPI !== 'cli'
+            &&
+            !str_starts_with($path, '/api/')
+            && BotTraffic::isAbusiveAutomation((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''))
+        ) {
+            return Response::text('Automated access is not permitted.', 403)
+                ->withHeader('Cache-Control', 'no-store')
+                ->withHeader('X-Robots-Tag', 'noindex, nofollow');
+        }
+
         $brand = $this->brandResolver->resolve($request);
+        if (str_starts_with($path, '/admin')) {
+            $overrideId = (int) Session::get('_admin_brand_id', 0);
+            $userId = (int) Session::get('_auth_user_id', 0);
+            $override = $overrideId > 0 ? $this->brandRegistry->forDatabaseId($overrideId) : null;
+            if ($override !== null && $userId > 0 && AdminBrandAccess::canAccess($userId, $override)) {
+                $brand = $override;
+            } elseif ($overrideId > 0) {
+                Session::forget('_admin_brand_id');
+                Session::forget('_admin_origin_url');
+            }
+        }
         BrandContext::set($brand);
 
         // Disabled/coming-soon brands must never fall through to VanAssist
@@ -104,6 +136,7 @@ final class Kernel
         if (
             !$brand->moduleEnabled('public_application')
             && !str_starts_with($path, '/admin')
+            && !self::isAdminApiPath($path)
             && !self::isAuthPath($path)
         ) {
             return Response::html(View::render('brands.coming-soon', [
@@ -136,6 +169,16 @@ final class Kernel
                 $private     = Settings::launchMode() === 'private';
 
                 if (($maintenance || $private) && !$isAdmin) {
+                    if (self::isAdminApiPath($path)) {
+                        return AdminApiEnvelope::error(
+                            'service_unavailable',
+                            $maintenance
+                                ? 'The platform is in maintenance mode.'
+                                : 'The platform is not open to the public yet.',
+                            503
+                        )->withHeader('Retry-After', '3600');
+                    }
+
                     [$heading, $message] = $maintenance
                         ? ['We\'ll be back soon', Settings::get('maintenance_message', $brand->name() . ' is briefly offline for maintenance.')]
                         : ['Coming soon', $brand->name() . ' is not open to the public just yet. Please check back soon.'];
@@ -151,6 +194,14 @@ final class Kernel
                 }
             } catch (Throwable) {
                 if ((string) Config::get('app.env', 'production') === 'production') {
+                    if (self::isAdminApiPath($path)) {
+                        return AdminApiEnvelope::error(
+                            'service_unavailable',
+                            'Service temporarily unavailable.',
+                            503
+                        )->withHeader('Retry-After', '60');
+                    }
+
                     return Response::html(View::render('errors.maintenance', [
                         'status' => 503,
                         'heading' => 'Service temporarily unavailable',
@@ -165,7 +216,12 @@ final class Kernel
 
         try {
             return $this->router->dispatch($request);
+        } catch (AdminApiException $e) {
+            return self::adminApiExceptionResponse($e);
         } catch (HttpException $e) {
+            if (self::isAdminApiPath($path)) {
+                return self::adminApiHttpExceptionResponse($e);
+            }
             throw $e; // handled by ErrorHandler for friendly pages
         }
     }
@@ -173,6 +229,45 @@ final class Kernel
     public function router(): Router
     {
         return $this->router;
+    }
+
+    public static function isAdminApiPath(string $path): bool
+    {
+        return $path === '/api/v1/admin' || str_starts_with($path, '/api/v1/admin/');
+    }
+
+    public static function adminApiExceptionResponse(AdminApiException $e): Response
+    {
+        return AdminApiEnvelope::error(
+            $e->errorCode(),
+            $e->getMessage(),
+            $e->getStatusCode(),
+            $e->fields() !== [] ? $e->fields() : null,
+            $e->meta()
+        );
+    }
+
+    public static function adminApiHttpExceptionResponse(HttpException $e): Response
+    {
+        $status = $e->getStatusCode();
+        $code = match ($status) {
+            404 => 'not_found',
+            405 => 'method_not_allowed',
+            403 => 'forbidden',
+            401 => 'unauthenticated',
+            429 => 'rate_limited',
+            default => 'http_error',
+        };
+        $message = trim($e->getMessage());
+        if ($message === '' || $message === 'Page not found') {
+            $message = match ($status) {
+                404 => 'Resource not found.',
+                405 => 'Method not allowed.',
+                default => 'Request failed.',
+            };
+        }
+
+        return AdminApiEnvelope::error($code, $message, $status);
     }
 
     private function readinessResponse(): Response
@@ -232,12 +327,19 @@ final class Kernel
         $this->router->aliasMiddleware('role', \App\Middleware\RequireRole::class);
         $this->router->aliasMiddleware('permission', \App\Middleware\RequirePermission::class);
         $this->router->aliasMiddleware('rate', \App\Middleware\RateLimit::class);
+        $this->router->aliasMiddleware('ask_rate', \App\Middleware\AskVanAssistRateLimit::class);
+        $this->router->aliasMiddleware('turnstile', \App\Middleware\VerifyTurnstile::class);
+        $this->router->aliasMiddleware('admin_api_enabled', \App\Middleware\RequireAdminApiEnabled::class);
+        $this->router->aliasMiddleware('admin_api_request', \App\Middleware\AdminApiRequest::class);
+        $this->router->aliasMiddleware('admin_api_bearer', \App\Middleware\RequireAdminApiBearer::class);
+        $this->router->aliasMiddleware('admin_api_human', \App\Middleware\RequireAdminApiHuman::class);
+        $this->router->aliasMiddleware('admin_api_scope', \App\Middleware\RequireAdminApiScope::class);
     }
 
     private function loadRoutes(): void
     {
         $router = $this->router;
-        foreach (['web', 'auth', 'install', 'admin', 'account', 'provider', 'park'] as $file) {
+        foreach (['web', 'auth', 'install', 'admin', 'account', 'provider', 'park', 'api_v1_admin'] as $file) {
             $routeFile = BASE_PATH . '/routes/' . $file . '.php';
             if (!is_file($routeFile)) {
                 continue;

@@ -1,6 +1,13 @@
 # VanAssist stays directory
 
-`/stays` is the location-aware directory for caravan parks, campgrounds, showgrounds, farm stays and free or low-cost overnight locations.
+`/stays` is the location-aware directory for caravan parks, campgrounds,
+national-park camping, showgrounds, permitted rest areas, council camps,
+station/farm stays and free or low-cost overnight locations. Hotels and motels
+are outside this directory.
+
+An appearance in the directory never means overnight parking is automatically
+legal or currently available. Users must see the source, verification level,
+access/vehicle limits and a reminder to confirm current rules before arrival.
 
 ## Trust labels
 
@@ -20,6 +27,39 @@ Never convert community data to authority/operator verified without preserving e
 5. Check a sample in every state and run public render tests.
 
 The import is idempotent through `(source_type, external_id)`.
+
+When duplicate stays are merged, the higher-trust authority/operator record
+remains canonical and its ID and slug are preserved. Source identities become
+aliases so later imports cannot recreate the absorbed listing. Linked claims,
+facility evidence and operational records move to the survivor. If the trusted
+record has an address but no point coordinate, a usable coordinate and locality
+from the absorbed geospatial record are retained so the canonical stay remains
+available in radius search. The absorbed row is audit logged and soft-deleted,
+not erased.
+
+All location searches use the stay's point coordinate and an unrounded
+great-circle boundary as a safe preliminary candidate filter. When Google Routes
+is configured, VanAssist then filters and sorts the bounded candidate set using
+actual driving distance and shows estimated drive time. If routing is temporarily
+unavailable, the fallback remains explicitly labelled straight-line.
+
+Provider results use a provider point only when both latitude and longitude are
+present. If either axis is missing, VanAssist uses the complete town-centre pair
+only when that town coordinate is marked authoritative or statistical; it never
+combines one provider axis with one town axis.
+
+## Queensland caravan-route discovery
+
+`tools/qld-caravan-stays-gap-fill.js` discovers caravan-suitable overnight
+options along likely Queensland touring routes under one hard A$100 total cap.
+It searches for caravan parks, campgrounds, national-park camping, showgrounds,
+council camps, lawful free/low-cost camps, station/farm stays and RV-accessible
+overnight stops. Hotels, motels and ordinary accommodation are excluded.
+
+The output is a private review file only: it must not publish automatically.
+Every candidate requires type, access, vehicle limits, current overnight legality,
+source rights and duplicate review. Missing phone, website, price, hours or access
+details remain unknown rather than being invented.
 
 ## Council data
 

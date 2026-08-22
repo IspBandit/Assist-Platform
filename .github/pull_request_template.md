@@ -37,6 +37,16 @@ Overall result: <!-- PASS / CONDITIONAL / FAIL -->
 - [ ] Production dependency build
 - [ ] Affected-brand smoke tests
 
+## Documentation impact
+
+- [ ] Matching public/customer/provider/administrator/API guide updated
+- [ ] `docs/RELEASE_NOTES.md` updated for the affected behaviour
+- [ ] Documentation is not affected (explain why below)
+
+Affected workflows and guide paths:
+
+Documentation-not-affected rationale:
+
 ## Impact
 
 - Database migrations:

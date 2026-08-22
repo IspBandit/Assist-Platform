@@ -75,10 +75,33 @@ and permit `.htaccess` overrides. Suggested local hosts:
 127.0.0.1 vanassist.test
 127.0.0.1 towsmart.test
 127.0.0.1 trailerwise.test
+127.0.0.1 localtorque.test
 127.0.0.1 admin.assist.test
 ```
 
-All three brands are operational. Use the matching local hostname to exercise brand-specific routes and data isolation.
+All four brands are available for local review. Use the matching local hostname to exercise brand-specific routes and data isolation.
+
+## Review every provider portal locally
+
+After migrations and core seed data, create or rotate one clearly labelled,
+local-only provider reviewer account:
+
+```bash
+php scripts/create-local-provider-review.php
+```
+
+The command refuses to run in staging or production. It prints a newly rotated
+password and four review addresses:
+
+- `http://vanassist.test/provider`
+- `http://towsmart.test/provider`
+- `http://trailerwise.test/provider`
+- `http://localtorque.test/provider`
+
+Sign in separately on each hostname using the printed credentials. The account
+owns only the labelled demo provider and receives an active demo listing for
+each brand; it does not bypass authentication, roles, provider ownership or
+brand resolution.
 
 ### PHP development server
 

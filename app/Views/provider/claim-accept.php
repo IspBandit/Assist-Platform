@@ -13,9 +13,6 @@ $err = static fn (string $k) => isset($formErrors[$k]) ? '<p class="field-error"
 <div class="card">
     <h1>Claim your listing</h1>
     <p class="muted">You are claiming <strong><?= $this->e($businessName) ?></strong><?php if ($townName !== ''): ?> in <?= $this->e($townName) ?><?php endif; ?> on VanAssist. Your imported services and coverage will stay in place — review and complete your profile after signing in.</p>
-    <?php if (!empty($launchOffer)): ?>
-        <p class="muted" style="padding:.75rem 1rem;background:#eef9f7;border-left:4px solid #0f6e6e;margin:0 0 1rem"><strong>Launch offer:</strong> Verify your profile to receive <strong>free local ad graphics</strong> (desktop + mobile, worth $99) for travellers searching near <?= $townName !== '' ? $this->e($townName) : 'your area' ?>.</p>
-    <?php endif; ?>
     <?php if ($services !== []): ?>
         <p class="muted">Services on file: <?= $this->e(implode(', ', array_column($services, 'name'))) ?></p>
     <?php endif; ?>
@@ -33,6 +30,7 @@ $err = static fn (string $k) => isset($formErrors[$k]) ? '<p class="field-error"
 
     <form method="post" action="<?= e(url('provider/claim/' . $token)) ?>" class="stack">
         <?= csrf_field() ?>
+        <?php $this->include('partials.turnstile'); ?>
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" id="email" value="<?= e_attr($email) ?>" disabled>

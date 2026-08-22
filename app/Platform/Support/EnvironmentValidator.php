@@ -68,8 +68,8 @@ final class EnvironmentValidator
         }
 
         foreach ((array) Config::get('security.trusted_proxies', []) as $proxy) {
-            if (!is_string($proxy) || filter_var($proxy, FILTER_VALIDATE_IP) === false) {
-                $errors[] = 'TRUSTED_PROXIES must contain exact valid IP addresses';
+            if (!is_string($proxy) || !self::validIpOrCidr($proxy)) {
+                $errors[] = 'TRUSTED_PROXIES must contain valid IP addresses or CIDR ranges';
                 break;
             }
         }
@@ -105,6 +105,18 @@ final class EnvironmentValidator
             if (filter_var((string) Config::get('mail.graph.mailbox', ''), FILTER_VALIDATE_EMAIL) === false) {
                 $errors[] = 'MICROSOFT_GRAPH_SENDING_MAILBOX must be a valid email address';
             }
+            $brandMailboxLabels = [
+                'vanassist' => 'MICROSOFT_GRAPH_VANASSIST_MAILBOX',
+                'towsmart' => 'MICROSOFT_GRAPH_TOWSMART_MAILBOX',
+                'trailerwise' => 'MICROSOFT_GRAPH_TRAILERWISE_MAILBOX',
+                'localtorque' => 'MICROSOFT_GRAPH_LOCALTORQUE_MAILBOX',
+            ];
+            foreach ($brandMailboxLabels as $brand => $label) {
+                $mailbox = trim((string) Config::get('mail.graph.mailboxes.' . $brand, ''));
+                if ($mailbox !== '' && filter_var($mailbox, FILTER_VALIDATE_EMAIL) === false) {
+                    $errors[] = $label . ' must be a valid email address when configured';
+                }
+            }
         }
 
         if ((bool) Config::get('security.turnstile.enabled', false)) {
@@ -129,5 +141,23 @@ final class EnvironmentValidator
                 "Invalid Assist Platform environment:\n- " . implode("\n- ", $errors)
             );
         }
+    }
+
+    private static function validIpOrCidr(string $value): bool
+    {
+        if (filter_var($value, FILTER_VALIDATE_IP) !== false) {
+            return true;
+        }
+        if (!str_contains($value, '/')) {
+            return false;
+        }
+        [$network, $prefixRaw] = array_pad(explode('/', $value, 2), 2, '');
+        $packed = @inet_pton($network);
+        $prefix = filter_var($prefixRaw, FILTER_VALIDATE_INT);
+
+        return $packed !== false
+            && $prefix !== false
+            && $prefix >= 0
+            && $prefix <= strlen($packed) * 8;
     }
 }

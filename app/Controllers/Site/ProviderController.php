@@ -6,28 +6,52 @@ namespace App\Controllers\Site;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Models\BrandProviderCategory;
 use App\Core\Request;
 use App\Core\Response;
 use App\Models\Provider;
 use App\Models\Town;
+use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Services\Demand\DemandRecorder;
 use App\Services\DirectoryPresentation;
 use App\Services\FoundingGraphicService;
+use App\Services\SeoSchema;
 
 final class ProviderController extends Controller
 {
     public function index(Request $request): Response
     {
         $search = trim((string) $request->input('q', ''));
+        if ($search === '') {
+            $search = trim((string) $request->input('text', ''));
+        }
         $page = max(1, (int) $request->input('page', 1));
         $perPage = 18;
         $townId = (int) $request->input('town') ?: null;
         $location = trim((string) $request->input('location', ''));
-        if ($location !== '') {
+        $latRaw = $request->input('lat');
+        $lngRaw = $request->input('lng');
+        $lat = is_numeric($latRaw) ? (float) $latRaw : null;
+        $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
+        $hasCoords = $lat !== null && $lng !== null
+            && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
+        $resolvedTown = null;
+        if ($hasCoords) {
+            $gpsTown = Town::nearestActive($lat, $lng);
+            $resolvedTown = $gpsTown;
+            $townId = isset($gpsTown['id']) ? (int) $gpsTown['id'] : null;
+            if ($gpsTown !== null) {
+                $location = (string) $gpsTown['name'];
+                if (!empty($gpsTown['state_abbr'])) {
+                    $location .= ', ' . $gpsTown['state_abbr'];
+                }
+            }
+        } elseif ($location !== '') {
             $townMatches = Town::searchActive($location);
+            $resolvedTown = $townMatches[0] ?? null;
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
-        $locationFound = $location === '' || $townId !== null;
+        $locationFound = ($location === '' && !$hasCoords) || $townId !== null;
         $categoryId = (int) $request->input('category') ?: null;
         $brand = current_brand();
         $brandScoped = $brand->id() !== 'vanassist';
@@ -38,8 +62,26 @@ final class ProviderController extends Controller
                 ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
                 : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage));
         $categories = $brandScoped
-            ? Database::select('SELECT id, name FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name', [$brand->databaseId()])
+            ? Database::select(
+                'SELECT id, name FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+                . ' ORDER BY sort_order, name',
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            )
             : Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name');
+
+        // Treat a filtered directory browse as a search on every brand. This is
+        // best-effort and remains a no-op while demand analytics is disabled.
+        if ($search !== '' || $location !== '' || $hasCoords || $categoryId !== null) {
+            $searchId = DemandRecorder::recordSearch([
+                'town_id' => $townId,
+                'region_id' => $resolvedTown['region_id'] ?? null,
+                'state_id' => $resolvedTown['state_id'] ?? null,
+                'category_id' => $categoryId,
+                'result_count' => (int) $result['total'],
+            ]);
+            DemandRecorder::recordImpressions($searchId, $result['rows'], $categoryId);
+        }
 
         return $this->view('public.providers-index', [
             'title' => 'Find a service provider — ' . $brand->name(),
@@ -51,6 +93,8 @@ final class ProviderController extends Controller
             'perPage' => $perPage,
             'search' => $search,
             'location' => $location,
+            'lat' => $hasCoords ? $lat : null,
+            'lng' => $hasCoords ? $lng : null,
             'locationFound' => $locationFound,
             'townId' => $townId,
             'categoryId' => $categoryId,
@@ -77,7 +121,12 @@ final class ProviderController extends Controller
         }
 
         $id = (int) $provider['id'];
-        DemandRecorder::recordProfileView($id);
+        $searchId = (int) $request->input('s') ?: null;
+        DemandRecorder::recordProfileView($id, $searchId);
+        $gapId = (int) $request->input('g');
+        if ($gapId > 0) {
+            (new KnowledgeGapService())->recordClickThrough($gapId);
+        }
         $runs = [];
         if ($brand->id() === 'vanassist' && Database::tableExists('service_runs')) {
             $runs = Database::select(
@@ -86,20 +135,33 @@ final class ProviderController extends Controller
             );
         }
         $publicSlug = (string) ($provider['brand_slug'] ?? $provider['slug']);
+        $profilePath = $brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug;
 
         return $this->view('public.provider-profile', [
             'title' => ($provider['brand_seo_title'] ?? $provider['seo_title'] ?? null) ?: ($provider['business_name'] . ' — ' . $brand->name()),
             'metaDescription' => ($provider['brand_seo_description'] ?? $provider['seo_description'] ?? null) ?: ('Services from ' . $provider['business_name'] . ' on ' . $brand->name() . '.'),
-            'canonical' => url($brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug),
+            'canonical' => url($profilePath),
             'provider' => $provider,
+            'searchId' => $searchId,
             'services' => $brandScoped ? Provider::brandServices($brand->databaseId(), $id) : Provider::services($id),
             'areas' => Provider::areas($id),
             'licences' => Database::select(
                 "SELECT licence_type, issuing_authority FROM provider_licences WHERE provider_id = ? AND verification_status = 'verified' AND display_publicly = 1 ORDER BY licence_type",
                 [$id]
             ),
+            'capabilities' => Database::select(
+                "SELECT capability_label,jurisdiction_code,valid_until FROM provider_capability_credentials WHERE provider_id=? AND brand_id=? AND verification_status='verified' AND (valid_until IS NULL OR valid_until>=CURRENT_DATE) ORDER BY capability_label",
+                [$id, $brand->databaseId()]
+            ),
             'runs' => $runs,
-            'jsonLd' => $this->providerSchema($provider, $publicSlug),
+            'jsonLd' => [
+                $this->providerSchema($provider, $publicSlug),
+                SeoSchema::breadcrumbs([
+                    ['name'=>'Home','url'=>url('/')],
+                    ['name'=>'Providers','url'=>url('providers')],
+                    ['name'=>(string)$provider['business_name'],'url'=>url($profilePath)],
+                ]),
+            ],
             'promotionAd' => $brand->id() === 'vanassist' ? FoundingGraphicService::deliveredAd($id) : null,
             'brand' => $brand,
             'requestsEnabled' => $brand->moduleEnabled('requests'),

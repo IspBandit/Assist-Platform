@@ -25,9 +25,9 @@ return [
                 'legacy' => 'vanassist.condrendigital.com.au',
             ],
             'assets' => [
-                'logo' => '/assets/brands/vanassist/mark.svg',
-                'icon' => '/assets/brands/vanassist/mark.svg',
-                'favicon' => '/assets/brands/vanassist/mark.svg',
+                'logo' => '/assets/brands/vanassist/symbol-v2.svg',
+                'icon' => '/assets/brands/vanassist/symbol-v2.svg',
+                'favicon' => '/assets/brands/vanassist/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#0f6e6e',
@@ -40,7 +40,8 @@ return [
             'metadata' => [
                 'wordmark_prefix' => 'Van',
                 'wordmark_accent' => 'Assist',
-                'header_descriptor' => 'RV SERVICE NETWORK',
+                'header_descriptor' => 'FIND · CONNECT · GET ASSISTED',
+                'header_platform_context' => '',
                 'tagline' => 'Caravan help, wherever you travel.',
                 'description' => 'Find caravan and RV service providers across regional Australia.',
                 'social_image' => '/assets/img/hero-home.jpg',
@@ -86,7 +87,6 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('VANASSIST_ANALYTICS_ID', ''),
-                'site_verification' => (string) Env::get('VANASSIST_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'vanassist_providers',
@@ -108,9 +108,9 @@ return [
                 'legacy_local' => 'towwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/towsmart/mark.svg',
-                'icon' => '/assets/brands/towsmart/mark.svg',
-                'favicon' => '/assets/brands/towsmart/mark.svg',
+                'logo' => '/assets/brands/towsmart/symbol-v2.svg',
+                'icon' => '/assets/brands/towsmart/symbol-v2.svg',
+                'favicon' => '/assets/brands/towsmart/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#1d4ed8',
@@ -142,6 +142,8 @@ return [
                 ['label' => 'Weight calculator', 'path' => '/calculator'],
                 ['label' => 'Tow guide', 'path' => '/tow-guide'],
                 ['label' => 'Checklist', 'path' => '/checklist'],
+                ['label' => 'Specialist categories', 'path' => '/services'],
+                ['label' => 'Rules & compliance', 'path' => '/rules'],
                 ['label' => 'Towing specialists', 'path' => '/providers'],
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
@@ -154,7 +156,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => true,
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
@@ -171,7 +173,6 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TOWSMART_ANALYTICS_ID', Env::get('TOWWISE_ANALYTICS_ID', '')),
-                'site_verification' => (string) Env::get('TOWSMART_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'towsmart_resources',
@@ -193,9 +194,9 @@ return [
                 'local' => 'trailerwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/trailerwise/mark.svg',
-                'icon' => '/assets/brands/trailerwise/mark.svg',
-                'favicon' => '/assets/brands/trailerwise/mark.svg',
+                'logo' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'icon' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'favicon' => '/assets/brands/trailerwise/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#7c3aed',
@@ -226,6 +227,8 @@ return [
                 ['label' => 'Home', 'path' => '/'],
                 ['label' => 'Find trailer services', 'path' => '/providers'],
                 ['label' => 'Service categories', 'path' => '/services'],
+                ['label' => 'Marketplace', 'path' => '/marketplace'],
+                ['label' => 'Rules & compliance', 'path' => '/rules'],
             ],
             'footer' => [
                 ['label' => 'Privacy', 'path' => '/privacy'],
@@ -236,7 +239,7 @@ return [
                 'providers.messaging' => false,
                 'reviews.enabled' => false,
                 'billing.enabled' => false,
-                'advertising.enabled' => false,
+                'advertising.enabled' => true,
                 'service_history.enabled' => false,
                 'reminders.enabled' => false,
             ],
@@ -253,7 +256,6 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TRAILERWISE_ANALYTICS_ID', ''),
-                'site_verification' => (string) Env::get('TRAILERWISE_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'trailerwise_businesses',
@@ -275,9 +277,9 @@ return [
                 'local' => 'localtorque.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/localtorque/mark.svg',
-                'icon' => '/assets/brands/localtorque/mark.svg',
-                'favicon' => '/assets/brands/localtorque/mark.svg',
+                'logo' => '/assets/brands/localtorque/symbol-v2.svg',
+                'icon' => '/assets/brands/localtorque/symbol-v2.svg',
+                'favicon' => '/assets/brands/localtorque/favicon.svg',
             ],
             'theme' => [
                 'brand' => '#0f3b4c',
@@ -307,6 +309,8 @@ return [
             'navigation' => [
                 ['label' => 'Find a business', 'path' => '/providers'],
                 ['label' => 'Categories', 'path' => '/services'],
+                ['label' => 'Rules & modifications', 'path' => '/rules'],
+                ['label' => 'Motorsport rules', 'path' => '/motorsport'],
                 ['label' => 'List your business', 'path' => '/for-providers'],
             ],
             'footer' => [
@@ -337,12 +341,98 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('LOCALTORQUE_ANALYTICS_ID', ''),
-                'site_verification' => (string) Env::get('LOCALTORQUE_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'localtorque_businesses',
             ],
             'storage_namespace' => 'localtorque',
+        ],
+
+        'polaris' => [
+            'database_id' => 5,
+            'name' => 'Polaris',
+            'legal_name' => (string) Env::get('POLARIS_LEGAL_NAME', 'Polaris'),
+            'short_name' => 'Polaris',
+            // Private until an owner-controlled production domain is supplied and verified.
+            'status' => (string) Env::get('POLARIS_STATUS', 'private'),
+            'url' => rtrim((string) Env::get('POLARIS_URL', 'https://polaris.test'), '/'),
+            'domains' => [
+                'primary' => (string) Env::get('POLARIS_DOMAIN', 'polaris.test'),
+                'www' => (string) Env::get('POLARIS_WWW_DOMAIN', ''),
+                'local' => 'polaris.test',
+            ],
+            'assets' => [
+                'logo' => '/assets/brands/polaris/symbol-v2.svg',
+                'icon' => '/assets/brands/polaris/symbol-v2.svg',
+                'favicon' => '/assets/brands/polaris/favicon.svg',
+            ],
+            'theme' => [
+                'brand' => '#1a3a4a',
+                'brand_emphasis' => '#122a36',
+                'accent' => '#c4a574',
+                'surface' => '#f7f5f2',
+                'text' => '#1c2429',
+                'focus' => '#a88955',
+            ],
+            'metadata' => [
+                'wordmark_prefix' => 'Pol',
+                'wordmark_accent' => 'aris',
+                'header_descriptor' => 'NEW RV DECISION PLATFORM',
+                'tagline' => 'Find the right RV for the way you travel.',
+                'description' => 'Research, match and compare new Australian caravans, hybrids, campers and motorhomes.',
+                'social_image' => '/assets/brands/polaris/mark.svg',
+            ],
+            'contact' => [
+                'support_email' => (string) Env::get('POLARIS_SUPPORT_EMAIL', ''),
+                'sender_email' => (string) Env::get('POLARIS_MAIL_FROM_ADDRESS', ''),
+                'sender_name' => 'Polaris',
+            ],
+            'legal' => [
+                'privacy_path' => '/privacy-policy',
+                'terms_path' => '/terms-of-use',
+            ],
+            'navigation' => [
+                ['label' => 'Find My RV', 'path' => '/find'],
+                ['label' => 'Browse RVs', 'path' => '/rvs'],
+                ['label' => 'Compare', 'path' => '/compare'],
+                ['label' => 'Manufacturers', 'path' => '/manufacturers'],
+                ['label' => 'Tow Match', 'path' => '/tow-match'],
+                ['label' => 'Buying Guides', 'path' => '/buying-guides'],
+                ['label' => 'Saved', 'path' => '/saved'],
+            ],
+            'footer' => [
+                ['label' => 'Privacy', 'path' => '/privacy-policy'],
+                ['label' => 'Terms', 'path' => '/terms-of-use'],
+                ['label' => 'Contact', 'path' => '/contact'],
+            ],
+            'features' => [
+                'identity.shared' => true,
+                'providers.messaging' => false,
+                'reviews.enabled' => false,
+                'billing.enabled' => false,
+                'advertising.enabled' => false,
+                'service_history.enabled' => false,
+                'reminders.enabled' => false,
+            ],
+            'modules' => [
+                'public_application' => true,
+                'providers' => false,
+                'requests' => false,
+                'service_runs' => false,
+                'parks' => false,
+                'cms' => true,
+                'admin' => true,
+                'towing_tools' => false,
+                'trailer_marketplace' => false,
+                'rv_catalogue' => true,
+            ],
+            'analytics' => [
+                'measurement_id' => (string) Env::get('POLARIS_ANALYTICS_ID', ''),
+            ],
+            'search' => [
+                'provider_index' => 'polaris_rv_models',
+            ],
+            'storage_namespace' => 'polaris',
         ],
     ],
 ];

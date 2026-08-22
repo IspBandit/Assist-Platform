@@ -32,11 +32,13 @@ return [
     'paths' => [
         'request_images'     => 'storage/private/request-images',
         'provider_documents' => 'storage/private/provider-documents',
+        'garage_documents'   => 'storage/private/garage-documents',
         'park_documents'     => 'storage/private/park-documents',
         'park_logos'         => 'public/uploads-public/park-logos',
         'provider_promotions' => 'public/uploads-public/provider-promotions',
         'social_media_assets' => 'storage/private/social-media-assets',
         'exports'            => 'storage/private/exports',
         'public_uploads'     => 'public/uploads-public',
+        'polaris_media'      => 'storage/private/polaris-media',
     ],
 ];

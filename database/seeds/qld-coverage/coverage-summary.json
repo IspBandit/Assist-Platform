@@ -1,0 +1,221 @@
+{
+  "generated_at": "2026-07-29T05:17:00.329Z",
+  "scope": "Queensland only — offline seed analysis, no production DB writes",
+  "towns_suburbs_processed": 3832,
+  "service_categories_processed": 134,
+  "existing_providers_reviewed": 4585,
+  "candidates_discovered": 4585,
+  "publishable_records": 2661,
+  "held_for_review": 1924,
+  "duplicates_flagged": 176,
+  "with_phone": 1712,
+  "with_sourced_email": 811,
+  "regulated_without_licence_evidence": 123,
+  "town_category_cells": 513488,
+  "verified_coverage_cells": 16551,
+  "zero_coverage_cells": 452180,
+  "weak_coverage_cells": 44757,
+  "batches": [
+    {
+      "batch_id": "brisbane-moreton-bay",
+      "batch_name": "Brisbane and Moreton Bay",
+      "towns": 686,
+      "categories": 134,
+      "cells": 91924,
+      "verified_cells": 7046,
+      "zero_coverage_cells": 68004,
+      "weak_coverage_cells": 16874,
+      "providers_referenced": 1606,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\brisbane-moreton-bay.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\brisbane-moreton-bay-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "gold-coast-scenic-rim",
+      "batch_name": "Gold Coast and Scenic Rim",
+      "towns": 263,
+      "categories": 134,
+      "cells": 35242,
+      "verified_cells": 2134,
+      "zero_coverage_cells": 27898,
+      "weak_coverage_cells": 5210,
+      "providers_referenced": 1091,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\gold-coast-scenic-rim.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\gold-coast-scenic-rim-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "sunshine-coast-noosa",
+      "batch_name": "Sunshine Coast and Noosa",
+      "towns": 210,
+      "categories": 134,
+      "cells": 28140,
+      "verified_cells": 1461,
+      "zero_coverage_cells": 23202,
+      "weak_coverage_cells": 3477,
+      "providers_referenced": 416,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\sunshine-coast-noosa.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\sunshine-coast-noosa-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "darling-downs-south-west",
+      "batch_name": "Darling Downs and South West",
+      "towns": 752,
+      "categories": 134,
+      "cells": 100768,
+      "verified_cells": 1060,
+      "zero_coverage_cells": 93697,
+      "weak_coverage_cells": 6011,
+      "providers_referenced": 740,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\darling-downs-south-west.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\darling-downs-south-west-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "wide-bay-burnett",
+      "batch_name": "Wide Bay–Burnett",
+      "towns": 434,
+      "categories": 134,
+      "cells": 58156,
+      "verified_cells": 752,
+      "zero_coverage_cells": 54440,
+      "weak_coverage_cells": 2964,
+      "providers_referenced": 292,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\wide-bay-burnett.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\wide-bay-burnett-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "central-queensland",
+      "batch_name": "Central Queensland",
+      "towns": 407,
+      "categories": 134,
+      "cells": 54538,
+      "verified_cells": 796,
+      "zero_coverage_cells": 51199,
+      "weak_coverage_cells": 2543,
+      "providers_referenced": 452,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\central-queensland.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\central-queensland-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "mackay-whitsunday",
+      "batch_name": "Mackay–Whitsunday",
+      "towns": 222,
+      "categories": 134,
+      "cells": 29748,
+      "verified_cells": 552,
+      "zero_coverage_cells": 26746,
+      "weak_coverage_cells": 2450,
+      "providers_referenced": 187,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\mackay-whitsunday.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\mackay-whitsunday-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "townsville-north-queensland",
+      "batch_name": "Townsville and North Queensland",
+      "towns": 235,
+      "categories": 134,
+      "cells": 31490,
+      "verified_cells": 1197,
+      "zero_coverage_cells": 28358,
+      "weak_coverage_cells": 1935,
+      "providers_referenced": 273,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\townsville-north-queensland.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\townsville-north-queensland-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "cairns-far-north",
+      "batch_name": "Cairns and Far North Queensland",
+      "towns": 385,
+      "categories": 134,
+      "cells": 51590,
+      "verified_cells": 1329,
+      "zero_coverage_cells": 47156,
+      "weak_coverage_cells": 3105,
+      "providers_referenced": 291,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\cairns-far-north.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\cairns-far-north-report.jsonl",
+      "last_audited": "2026-07-29"
+    },
+    {
+      "batch_id": "gulf-cape-remote",
+      "batch_name": "Gulf, Cape York and remote Queensland",
+      "towns": 238,
+      "categories": 134,
+      "cells": 31892,
+      "verified_cells": 224,
+      "zero_coverage_cells": 31480,
+      "weak_coverage_cells": 188,
+      "providers_referenced": 276,
+      "matrix_file": "storage\\imports\\qld-coverage\\matrix\\gulf-cape-remote.jsonl",
+      "report_file": "storage\\imports\\qld-coverage\\matrix\\gulf-cape-remote-report.jsonl",
+      "last_audited": "2026-07-29"
+    }
+  ],
+  "sources": [
+    {
+      "source_name": "vanassist-national",
+      "source_licence": "internal-research",
+      "count": 144
+    },
+    {
+      "source_name": "national-research",
+      "source_licence": "internal-research",
+      "count": 149
+    },
+    {
+      "source_name": "localtorque-osm",
+      "source_licence": "ODbL",
+      "count": 89
+    },
+    {
+      "source_name": "vanassist-osm",
+      "source_licence": "ODbL",
+      "count": 436
+    },
+    {
+      "source_name": "openstreetmap",
+      "source_licence": "ODbL",
+      "count": 1427
+    },
+    {
+      "source_name": "qld-fuel-reporting",
+      "source_licence": "CC BY 4.0",
+      "count": 1753
+    },
+    {
+      "source_name": "vanassist-locality",
+      "source_licence": "internal-research",
+      "count": 186
+    },
+    {
+      "source_name": "locality-research",
+      "source_licence": "internal-research",
+      "count": 209
+    },
+    {
+      "source_name": "google-places",
+      "source_licence": "internal-research",
+      "count": 813
+    }
+  ],
+  "notes": [
+    "Road distance is not claimed; only straight-line km is stored until a routing source is authorised.",
+    "Nearby candidates are never counted as confirmed coverage.",
+    "Category evidence is inherited from pack taxonomy assignment; website-level re-verification is still required for regulated services.",
+    "Google Places API was not called by this tool; some pack rows retain historical google-places provenance and must follow Places storage rules.",
+    "Production database was not modified."
+  ],
+  "import_ready_files": [
+    "database/seeds/qld-coverage/providers-publishable.json",
+    "database/seeds/qld-coverage/providers-review-queue.json",
+    "database/seeds/qld-coverage/coverage-summary.json",
+    "database/seeds/qld-coverage/zero-coverage.jsonl",
+    "database/seeds/qld-coverage/by-batch/*.json"
+  ]
+}

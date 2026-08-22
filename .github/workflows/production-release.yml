@@ -25,9 +25,25 @@ jobs:
     environment: production
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.sha }}
+      - name: Verify protected Google Routes credential
+        env:
+          GOOGLE_ROUTES_API_KEY: ${{ secrets.GOOGLE_ROUTES_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$GOOGLE_ROUTES_API_KEY"
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          curl --fail --silent --show-error --max-time 15 \
+            -X POST 'https://routes.googleapis.com/distanceMatrix/v2:computeRouteMatrix' \
+            -H "X-Goog-Api-Key: $GOOGLE_ROUTES_API_KEY" \
+            -H 'X-Goog-FieldMask: originIndex,destinationIndex,condition,distanceMeters' \
+            -H 'Content-Type: application/json' \
+            --data '{"origins":[{"waypoint":{"location":{"latLng":{"latitude":-27.4698,"longitude":153.0251}}}}],"destinations":[{"waypoint":{"location":{"latLng":{"latitude":-27.4810,"longitude":153.0234}}}}],"travelMode":"DRIVE","routingPreference":"TRAFFIC_UNAWARE"}' \
+            --output "$response_file"
+          grep -q 'ROUTE_EXISTS' "$response_file"
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
@@ -37,6 +53,12 @@ jobs:
         run: |
           mkdir release
           git archive HEAD | tar -x -C release
+          release_bootstrap_nonce="$(openssl rand -hex 32)"
+          echo "::add-mask::$release_bootstrap_nonce"
+          release_bootstrap_hash="$(printf '%s' "$release_bootstrap_nonce" | sha256sum | cut -d' ' -f1)"
+          printf '%s\n' '<?php' '' 'declare(strict_types=1);' '' "return ['release' => '${GITHUB_SHA}', 'nonce_sha256' => '${release_bootstrap_hash}'];" \
+            > release/config/google-routes-release-bootstrap.php
+          printf 'GOOGLE_ROUTES_BOOTSTRAP_NONCE=%s\n' "$release_bootstrap_nonce" >> "$GITHUB_ENV"
           composer install --working-dir=release --no-dev --no-interaction --prefer-dist --classmap-authoritative
           tar -C release -czf "assist-platform-${GITHUB_SHA}.tar.gz" .
           sha256sum "assist-platform-${GITHUB_SHA}.tar.gz" > "assist-platform-${GITHUB_SHA}.sha256"
@@ -54,7 +76,118 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
+          set -euo pipefail
           scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
-          ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+          ssh "$VPS_USER@$VPS_HOST" \
+            "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
+      - name: Provision encrypted Google Routes credential
+        env:
+          GOOGLE_ROUTES_API_KEY: ${{ secrets.GOOGLE_ROUTES_API_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$GOOGLE_ROUTES_API_KEY"
+          test -n "$GOOGLE_ROUTES_BOOTSTRAP_NONCE"
+          jq -nc --arg api_key "$GOOGLE_ROUTES_API_KEY" '{api_key:$api_key}' |
+            curl --fail --silent --show-error --max-time 20 \
+              --user-agent 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 AssistPlatform-Production-Release/1.0' \
+              -H 'Content-Type: application/json' \
+              -H "X-Assist-Release-Nonce: $GOOGLE_ROUTES_BOOTSTRAP_NONCE" \
+              --data-binary @- \
+              https://vanassist.com.au/ops/release/google-routes \
+              | grep -q '"status":"configured"'
+      - name: Verify public user journeys
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Public bot controls deliberately reject curl's default identity. These
+          # requests are an authorised release check, so present a browser-compatible
+          # identity while retaining an explicit smoke-test marker for server logs.
+          smoke_user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 AssistPlatform-Production-Smoke/1.0"
+          smoke_curl() {
+            curl --user-agent "$smoke_user_agent" "$@"
+          }
+          urls=(
+            "https://vanassist.com.au/"
+            "https://vanassist.com.au/providers"
+            "https://vanassist.com.au/request-assistance"
+            "https://vanassist.com.au/locations/nearest?lat=-27.4698&lng=153.0251"
+            "https://vanassist.com.au/login"
+            "https://vanassist.com.au/register"
+            "https://vanassist.com.au/forgot-password"
+            "https://towsmart.com.au/"
+            "https://towsmart.com.au/calculator"
+            "https://towsmart.com.au/rules"
+            "https://trailerwise.com.au/"
+            "https://trailerwise.com.au/marketplace"
+            "https://trailerwise.com.au/rules"
+          )
+          for url in "${urls[@]}"; do
+            smoke_curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+              --output /dev/null "$url"
+          done
+          if getent hosts localtorque.com.au >/dev/null 2>&1; then
+            for url in \
+              "https://localtorque.com.au/" \
+              "https://localtorque.com.au/rules" \
+              "https://localtorque.com.au/motorsport"; do
+              smoke_curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
+                --output /dev/null "$url"
+            done
+          else
+            echo "LocalTorque production DNS is not active yet; brand journey checks remain gated until it resolves."
+          fi
+          homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
+          grep -q '/runtime-assets/css/app.css' <<<"$homepage"
+          grep -q '/runtime-assets/js/app.js' <<<"$homepage"
+          grep -q 'class="brand brand--wordmark' <<<"$homepage"
+          grep -q 'class="hero-search-panel"' <<<"$homepage"
+          grep -q '/runtime-assets/brands/vanassist/wordmark-road.png' <<<"$homepage"
+          grep -q '/runtime-assets/img/vanassist-coastal-hero-desktop-v1.webp' <<<"$homepage"
+          grep -q '/runtime-assets/img/vanassist-coastal-hero-mobile-v1.webp' <<<"$homepage"
+          grep -q '/runtime-assets/brands/vanassist/favicon.svg' <<<"$homepage"
+          if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$homepage"; then
+            echo "Public VanAssist identity unexpectedly contains a retired platform symbol."
+            exit 1
+          fi
+
+          manifest="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/manifest.webmanifest)"
+          grep -q '"short_name": "VanAssist"' <<<"$manifest"
+          worker="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/service-worker.js)"
+          grep -q "self.addEventListener('fetch'" <<<"$worker"
+
+          griffiths="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
+            --data-urlencode 'q=dump points near Grffiths camping ground, Queensland' \
+            https://vanassist.com.au/ask)"
+          grep -qi 'Griffiths Creek' <<<"$griffiths" || { echo 'Griffiths Creek result missing.'; exit 1; }
+          grep -qi 'dump point' <<<"$griffiths" || { echo 'Griffiths dump-point evidence missing.'; exit 1; }
+
+          routed="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
+            --data-urlencode 'q=auto electrician near Brisbane, Queensland' \
+            https://vanassist.com.au/ask)"
+          grep -q 'km by road' <<<"$routed" || { echo 'Google road-distance output missing.'; exit 1; }
+
+          for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
+            brand_homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 "$brand_url")"
+            grep -q 'class="brand brand--wordmark' <<<"$brand_homepage"
+            grep -q '/runtime-assets/brands/' <<<"$brand_homepage"
+            grep -q '/favicon.svg' <<<"$brand_homepage"
+            if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$brand_homepage"; then
+              echo "Public identity at $brand_url unexpectedly contains a retired platform symbol."
+              exit 1
+            fi
+          done
+          app_js="$(smoke_curl --fail --silent --show-error --location --max-time 20 \
+            https://vanassist.com.au/runtime-assets/js/app.js)"
+          grep -q 'A manually entered town or postcode' <<<"$app_js"
+          smoke_curl --fail --silent --show-error --location --max-time 20 \
+            --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
+          smoke_curl --fail --silent --show-error --location --max-time 20 \
+            --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
+      - name: Record safeguarded provider processing
+        run: |
+          {
+            echo 'Provider imports resume through the root-owned `process_provider_import_queue` cron task.'
+            echo 'The task runs every five minutes; current counts remain available in Admin → Provider data.'
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Record release summary
         run: echo "Released ${GITHUB_SHA} to the protected production environment." >> "$GITHUB_STEP_SUMMARY"

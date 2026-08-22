@@ -1,6 +1,7 @@
 # Assist Platform scheduled work. Tasks safely no-op until installation is finalised.
 */2 * * * * root /usr/local/sbin/assist-cron process_email_queue >> /var/log/assist-platform/cron.log 2>&1
 */5 * * * * root /usr/local/sbin/assist-cron process_notifications >> /var/log/assist-platform/cron.log 2>&1
+*/5 * * * * root /usr/local/sbin/assist-cron process_provider_import_queue >> /var/log/assist-platform/cron.log 2>&1
 17 * * * * root /usr/local/sbin/assist-cron expire_sessions >> /var/log/assist-platform/cron.log 2>&1
 27 * * * * root /usr/local/sbin/assist-cron update_match_suggestions >> /var/log/assist-platform/cron.log 2>&1
 37 * * * * root /usr/local/sbin/assist-cron expire_requests >> /var/log/assist-platform/cron.log 2>&1

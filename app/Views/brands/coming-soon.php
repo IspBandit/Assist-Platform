@@ -5,7 +5,6 @@ declare(strict_types=1);
 /** @var \App\Platform\Brand\Brand $brand */
 $theme = $brand->theme();
 $metadata = $brand->metadata();
-$assets = $brand->assets();
 ?>
 <!doctype html>
 <html lang="en-AU">

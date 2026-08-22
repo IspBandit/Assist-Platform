@@ -86,8 +86,9 @@ final class Town extends Model
      * Resolve a free-text town, suburb or postcode query to active localities,
      * best match first. Postcodes match primary_postcode or the postcodes table;
      * names match exactly, then by prefix, then anywhere in the name (so suburbs
-     * and partial typing work). An optional state suffix ("Parramatta, NSW") is
-     * recognised.
+     * and partial typing work). Optional state suffixes such as
+     * "Parramatta NSW", "Parramatta, NSW" and "Parramatta / New South Wales"
+     * are recognised.
      *
      * @return array<int,array<string,mixed>>
      */
@@ -101,6 +102,7 @@ final class Town extends Model
 
         $limit = max(1, min(25, $limit));
         $select = 'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.latitude, t.longitude, '
+            . 't.coordinate_source, t.coordinate_confidence, t.coordinate_reference, '
             . 'r.name AS region_name, r.slug AS region_slug, s.name AS state_name, s.abbreviation AS state_abbr '
             . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
             . 'WHERE t.is_active = 1 AND ';
@@ -143,14 +145,107 @@ final class Town extends Model
     }
 
     /**
+     * Conservative spelling-tolerant fallback used only after the normal
+     * exact/prefix/contains lookup returns nothing.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function searchActiveFuzzy(string $query, int $limit = 5): array
+    {
+        $parsed = self::parseSearchQuery($query);
+        $term = trim($parsed['term']);
+        if (mb_strlen($term) < 4) {
+            return [];
+        }
+        $select = 'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.state_id, t.latitude, t.longitude, '
+            . 't.coordinate_source, t.coordinate_confidence, t.coordinate_reference, '
+            . 'r.name AS region_name, r.slug AS region_slug, s.name AS state_name, s.abbreviation AS state_abbr '
+            . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
+            . 'WHERE t.is_active = 1 ';
+        $stateSql = '';
+        $stateParams = [];
+        if ($parsed['state'] !== null) {
+            $stateSql = 'AND s.abbreviation = ? ';
+            $stateParams[] = $parsed['state'];
+        }
+        $rows = Database::select(
+            $select . $stateSql . 'AND SOUNDEX(t.name) = SOUNDEX(?) ORDER BY t.is_launch_town DESC, t.is_featured DESC, t.name LIMIT 100',
+            array_merge($stateParams, [$term])
+        );
+        if ($rows === [] && $parsed['state'] !== null) {
+            $rows = Database::select(
+                $select . $stateSql . 'ORDER BY t.is_launch_town DESC, t.is_featured DESC, t.name LIMIT 5000',
+                $stateParams
+            );
+        }
+
+        foreach ($rows as &$row) {
+            $row['locality_match_score'] = self::localityMatchScore($term, (string) ($row['name'] ?? ''));
+        }
+        unset($row);
+        $rows = array_values(array_filter(
+            $rows,
+            static fn (array $row): bool => (float) ($row['locality_match_score'] ?? 0) >= 0.82
+        ));
+        usort($rows, static fn (array $a, array $b): int => ((float) $b['locality_match_score']) <=> ((float) $a['locality_match_score']));
+        if (isset($rows[1])
+            && abs((float) $rows[0]['locality_match_score'] - (float) $rows[1]['locality_match_score']) < 0.04
+            && (int) ($rows[0]['state_id'] ?? 0) !== (int) ($rows[1]['state_id'] ?? 0)) {
+            return [];
+        }
+
+        return array_slice($rows, 0, max(1, min(10, $limit)));
+    }
+
+    public static function localityMatchScore(string $query, string $candidate): float
+    {
+        $normalise = static function (string $value): string {
+            $value = mb_strtolower(trim($value));
+            $value = (string) preg_replace('/[^a-z0-9]+/u', ' ', $value);
+            return trim((string) preg_replace('/\s+/u', ' ', $value));
+        };
+        $query = $normalise($query);
+        $candidate = $normalise($candidate);
+        if ($query === '' || $candidate === '') {
+            return 0.0;
+        }
+        if ($query === $candidate) {
+            return 1.0;
+        }
+        $length = max(strlen($query), strlen($candidate));
+        return $length > 0 ? max(0.0, 1.0 - (levenshtein($query, $candidate) / $length)) : 0.0;
+    }
+
+    /**
      * @return array{term:string,state:?string}
      */
     public static function parseSearchQuery(string $query): array
     {
-        $query = trim($query);
+        $query = trim((string) preg_replace('/\s+/', ' ', $query));
         $state = null;
-        if (preg_match('/,\s*([A-Za-z]{2,3})\s*$/', $query, $m)) {
-            $state = strtoupper($m[1]);
+        $states = [
+            'ACT' => 'ACT', 'AUSTRALIAN CAPITAL TERRITORY' => 'ACT',
+            'NSW' => 'NSW', 'NEW SOUTH WALES' => 'NSW',
+            'NT' => 'NT', 'NORTHERN TERRITORY' => 'NT',
+            'QLD' => 'QLD', 'QUEENSLAND' => 'QLD',
+            'SA' => 'SA', 'SOUTH AUSTRALIA' => 'SA',
+            'TAS' => 'TAS', 'TASMANIA' => 'TAS',
+            'VIC' => 'VIC', 'VICTORIA' => 'VIC',
+            'WA' => 'WA', 'WESTERN AUSTRALIA' => 'WA',
+        ];
+        $labels = implode('|', array_map(
+            static fn (string $label): string => preg_quote($label, '/'),
+            array_keys($states)
+        ));
+        if (preg_match('/(?:^|\s)(\d{4})\s*$/', $query, $postcode)) {
+            $prefix = trim(substr($query, 0, -strlen($postcode[0])));
+            if ($prefix !== '' && preg_match('/(?:\s*[,\/-]\s*|\s+)(' . $labels . ')\s*$/i', $prefix, $stateMatch)) {
+                $state = $states[strtoupper($stateMatch[1])];
+            }
+            return ['term' => $postcode[1], 'state' => $state];
+        }
+        if (preg_match('/(?:\s*[,\/-]\s*|\s+)(' . $labels . ')\s*$/i', $query, $m)) {
+            $state = $states[strtoupper($m[1])];
             $query = trim(substr($query, 0, -strlen($m[0])));
         }
 
@@ -172,12 +267,14 @@ final class Town extends Model
         }
 
         $select = 'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.state_id, t.latitude, t.longitude, '
+            . 't.coordinate_source, t.coordinate_confidence, t.coordinate_reference, '
             . 'r.name AS region_name, r.slug AS region_slug, s.name AS state_name, s.abbreviation AS state_abbr, '
             . '(6371 * acos(LEAST(1, '
             . 'cos(radians(?)) * cos(radians(t.latitude)) * cos(radians(t.longitude) - radians(?)) '
             . '+ sin(radians(?)) * sin(radians(t.latitude))))) AS distance_km '
             . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
-            . 'WHERE t.is_active = 1 AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL ';
+            . "WHERE t.is_active = 1 AND t.coordinate_confidence IN ('authoritative','statistical') "
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL ';
         $orderLimit = ' ORDER BY distance_km ASC LIMIT 1';
 
         // ~5 degrees (~550 km) bounding box first.

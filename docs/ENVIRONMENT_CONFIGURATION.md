@@ -27,6 +27,14 @@ Supported controlled values:
 | Billing/tax | `ENABLE_*`, `BILLING_*`, `STRIPE_*`, `GST_*` | All charging flags remain off until COM-004; `free_listing` is the safe fallback plan |
 | Uploads | `MAX_*`, `IMAGE_*`, `THUMBNAIL_WIDTH` | Limits are validated by upload services; production changes require capacity/security review |
 | Backup/security | `BACKUP_RETENTION_*`, login/admin timeouts | Credentials for independent backups live only in the protected backup environment |
+| Admin API | `ADMIN_API_ENABLED`, `ADMIN_API_RESTRICTED`, `ADMIN_API_ALLOWED_USER_IDS`, `ADMIN_API_MFA_REQUIRED`, `ADMIN_API_*_TTL`, `ADMIN_API_MAX_BATCH_SIZE`, `ADMIN_API_RECYCLE_RETENTION_DAYS` | Disabled by default in new `.env` files; production VanAssist enables for Assist RIC (Aug 2026). Never a substitute for production DB access; restricted allowlist or super-admin only until MFA; service token TTL max 3600s |
+| Road routing | `GOOGLE_ROUTES_API_KEY`, `GOOGLE_ROUTES_MAX_DESTINATIONS` | Separate server-only, Routes-only key; production IP restriction; bounded destinations; no persistent Google route-result cache. When the environment value is absent, the application may reuse an encrypted `google_routes` or `google_places` connector API key; Admin API health reports only the selected source. |
+
+The protected production release passes `GOOGLE_ROUTES_API_KEY` over SSH standard
+input to `scripts/configure-google-routes.php`. The script validates the key,
+encrypts it with `APP_KEY`, and stores it as the dedicated `google_routes`
+connector credential before public search smoke tests. It never writes or prints
+the plaintext value.
 
 ## Integration activation rule
 
@@ -35,11 +43,6 @@ integration is enabled, record its owner, secret location, least-privilege
 scope, sender/domain or endpoint verification, quota, health check, alert,
 rotation date, rollback and acceptance evidence. Missing prerequisites leave
 the related feature disabled.
-
-Each public brand may set its own `*_ANALYTICS_ID` (a GA4 `G-` measurement ID)
-and `*_GOOGLE_SITE_VERIFICATION` token. Both are optional and remain disabled
-when blank. Never reuse one brand's Search Console verification token for
-another brand or add either value directly to templates.
 
 ## Secret rotation
 

@@ -3,7 +3,9 @@
 
 <section class="product-hero product-hero--towsmart">
     <picture class="product-hero-media" aria-hidden="true">
-        <source media="(max-width: 719px)" srcset="<?= e(asset('img/towsmart-hero-mobile.webp')) ?>">
+        <source media="(max-width: 719px)" type="image/avif" srcset="<?= e(asset('img/towsmart-hero-mobile.avif')) ?>">
+        <source media="(max-width: 719px)" type="image/webp" srcset="<?= e(asset('img/towsmart-hero-mobile.webp')) ?>">
+        <source type="image/avif" srcset="<?= e(asset('img/towsmart-hero-desktop.avif')) ?>">
         <img src="<?= e(asset('img/towsmart-hero-desktop.webp')) ?>" width="1824" height="864" alt="" fetchpriority="high">
     </picture>
     <div class="product-hero-shade"></div>
@@ -31,7 +33,7 @@
     <div class="container quick-paths-grid">
         <a href="<?= e(url('calculator')) ?>"><span class="quick-icon">01</span><span><strong>Run a weight check</strong><small>Enter your loaded figures</small></span></a>
         <a href="<?= e(url('account/towing-combinations')) ?>"><span class="quick-icon">02</span><span><strong>Save combinations</strong><small>Keep checks for later</small></span></a>
-        <a href="#understand"><span class="quick-icon">03</span><span><strong>Understand the result</strong><small>See what each limit means</small></span></a>
+        <a href="<?= e(url('providers')) ?>"><span class="quick-icon">03</span><span><strong>Find specialists</strong><small>Weighbridges, towbars, brakes</small></span></a>
     </div>
 </section>
 
@@ -58,6 +60,24 @@
         <ol class="premium-steps"><li><strong>Gather the ratings</strong><span>Use the vehicle and trailer plates and manufacturer information.</span></li><li><strong>Measure the load</strong><span>Use current loaded weights wherever possible.</span></li><li><strong>Review every margin</strong><span>A green result is guidance—not certification.</span></li></ol>
     </div>
 </section>
+
+<?php if (!empty($categories)): ?>
+<section class="section product-section" id="specialists">
+    <div class="container">
+        <div class="section-heading"><span class="product-kicker dark">After the check</span><h2>Find towing specialists when you need hands-on help.</h2><p>Browse weighing services, towbar and brake specialists, trainers and other towing professionals in the TowSmart directory.</p></div>
+        <div class="service-tile-grid">
+            <?php foreach ($categories as $category): ?>
+                <a class="service-tile service-tile-link" href="<?= e(url('services/' . $category['slug'])) ?>">
+                    <span aria-hidden="true">→</span>
+                    <h3><?= $this->e((string) $category['name']) ?></h3>
+                    <p><?= $this->e((string) ($category['description'] ?? '')) ?></p>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <p style="margin-top:1.5rem"><a class="btn btn-ghost" href="<?= e(url('providers')) ?>">Search all towing specialists</a></p>
+    </div>
+</section>
+<?php endif; ?>
 
 <section class="section product-cta"><div class="container"><div><span class="product-kicker dark">Ready before the road</span><h2>Check your towing combination now.</h2><p>It takes only a few minutes when you have the figures ready.</p></div><a class="btn btn-primary btn-lg" href="<?= e(url('calculator')) ?>">Start the calculator</a></div></section>
 

@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Config;
 use App\Core\Database;
 use App\Core\Logger;
+use App\Core\SecretRedactor;
 use App\Platform\Brand\BrandRegistry;
 use PHPMailer\PHPMailer\PHPMailer;
 use RuntimeException;
@@ -20,26 +21,21 @@ use Throwable;
 final class Mailer
 {
     /** @return array{processed:int,sent:int,failed:int} */
-    public static function processQueue(int $batch = 25): array
+    public static function processQueue(int $batch = 25, ?int $queueId = null): array
     {
         $result = ['processed' => 0, 'sent' => 0, 'failed' => 0];
 
-        // Email can be delivered either via PHPMailer (when Composer deps are
-        // installed) or the built-in dependency-free SmtpClient fallback. Only a
-        // missing SMTP host means we genuinely cannot send — leave the queue
-        // pending in that case rather than burning delivery attempts.
+        // Leave the queue pending when the selected transport is incomplete
+        // rather than burning delivery attempts.
         $cfg = self::config();
         $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
-        $transportReady = $driver === 'graph'
-            ? trim((string) ($cfg['graph_tenant_id'] ?? '')) !== '' && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
-            : trim((string) $cfg['host']) !== '';
-        if (!$transportReady) {
-            Logger::warning('SMTP host not configured; email queue left pending. Set mail settings in Admin → Settings.', [], 'email');
+        if (!self::transportConfigured($cfg)) {
+            Logger::warning('Outgoing email transport is not configured; email queue left pending.', [], 'email');
             return $result;
         }
 
         $maxAttempts = (int) config('mail.max_attempts', 3);
-        $rows = self::claimBatch($batch, $maxAttempts);
+        $rows = self::claimBatch($batch, $maxAttempts, $queueId);
 
         $transport = $driver === 'graph' ? 'Microsoft Graph' : (class_exists(PHPMailer::class) ? 'PHPMailer' : 'SmtpClient (built-in)');
         Logger::info('Processing email queue: ' . count($rows) . ' pending item(s).', [
@@ -54,6 +50,12 @@ final class Mailer
         foreach ($rows as $row) {
             $result['processed']++;
 
+            if (EmailSuppression::isSuppressed((string) $row['recipient_email'], (string) $row['message_type'])) {
+                self::markSuppressed($row);
+                Logger::info('Queue #' . $row['id'] . ' -> CANCELLED because the recipient is suppressed.', [], 'email');
+                continue;
+            }
+
             Logger::info('Queue #' . $row['id'] . ' -> sending to ' . $row['recipient_email'] . ' [' . $row['subject'] . '] via ' . $transport . '.', [], 'email');
 
             try {
@@ -61,7 +63,7 @@ final class Mailer
             } catch (Throwable $e) {
                 $attempts = (int) $row['attempts'];
                 $status = $attempts >= $maxAttempts ? 'failed' : 'pending';
-                Logger::error('Queue #' . $row['id'] . ' -> ' . strtoupper($status) . ' (attempt ' . $attempts . '/' . $maxAttempts . '): ' . $e->getMessage(), [
+                Logger::error('Queue #' . $row['id'] . ' -> ' . strtoupper($status) . ' (attempt ' . $attempts . '/' . $maxAttempts . '): ' . SecretRedactor::redact($e->getMessage()), [
                     'to' => $row['recipient_email'],
                 ], 'email');
                 self::markFailedAttempt($row, $status, $e);
@@ -79,8 +81,21 @@ final class Mailer
         return $result;
     }
 
+    /** @param array<string,mixed> $cfg */
+    public static function transportConfigured(array $cfg): bool
+    {
+        $driver = strtolower((string) ($cfg['driver'] ?? 'smtp'));
+        if ($driver === 'graph') {
+            return trim((string) ($cfg['graph_tenant_id'] ?? '')) !== ''
+                && trim((string) ($cfg['graph_client_id'] ?? '')) !== ''
+                && trim((string) ($cfg['graph_mailbox'] ?? '')) !== '';
+        }
+
+        return trim((string) ($cfg['host'] ?? '')) !== '';
+    }
+
     /** @return array<int,array<string,mixed>> */
-    private static function claimBatch(int $batch, int $maxAttempts): array
+    private static function claimBatch(int $batch, int $maxAttempts, ?int $queueId = null): array
     {
         $batch = max(1, min($batch, 100));
         $maxAttempts = max(1, $maxAttempts);
@@ -95,13 +110,20 @@ final class Mailer
 
         Database::beginTransaction();
         try {
+            $params = [$maxAttempts];
+            $queueFilter = '';
+            if ($queueId !== null) {
+                $queueFilter = 'AND id = ? ';
+                $params[] = $queueId;
+            }
+            $params[] = $batch;
             $ids = Database::select(
-                "SELECT id FROM email_queue WHERE attempts < ? "
+                "SELECT id FROM email_queue WHERE attempts < ? {$queueFilter}"
                 . "AND (next_attempt_at IS NULL OR next_attempt_at <= NOW()) "
                 . "AND (scheduled_at IS NULL OR scheduled_at <= NOW()) "
                 . "AND (status = 'pending' OR (status = 'processing' AND leased_until <= NOW())) "
                 . 'ORDER BY id ASC LIMIT ? FOR UPDATE SKIP LOCKED',
-                [$maxAttempts, $batch]
+                $params
             );
             if ($ids === []) {
                 Database::commit();
@@ -148,6 +170,17 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'sent', NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject']]
             );
+            Database::query("UPDATE notification_recipients SET status='sent' WHERE queue_id=?", [$row['id']]);
+            Database::query(
+                "UPDATE organisation_outreach_contacts o INNER JOIN notification_recipients nr ON nr.organisation_contact_id=o.id "
+                . "SET o.outcome_status=IF(o.outcome_status='not_contacted','sent',o.outcome_status),o.last_contacted_at=COALESCE(o.last_contacted_at,NOW()),o.updated_at=NOW() WHERE nr.queue_id=?",
+                [$row['id']]
+            );
+            Database::query(
+                "INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,notes,created_at) "
+                . "SELECT organisation_contact_id,notification_id,id,'sent','Accepted by the configured outbound mail transport.',NOW() FROM notification_recipients WHERE queue_id=? AND organisation_contact_id IS NOT NULL",
+                [$row['id']]
+            );
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();
@@ -156,9 +189,39 @@ final class Mailer
     }
 
     /** @param array<string,mixed> $row */
+    private static function markSuppressed(array $row): void
+    {
+        Database::beginTransaction();
+        try {
+            $updated = Database::affecting(
+                "UPDATE email_queue SET status='cancelled', lease_token=NULL, leased_until=NULL, next_attempt_at=NULL, "
+                . "last_error='Recipient suppressed before delivery' WHERE id=? AND status='processing' AND lease_token=?",
+                [$row['id'], $row['lease_token']]
+            );
+            if ($updated !== 1) {
+                throw new RuntimeException('Email queue lease was lost while applying suppression');
+            }
+            Database::query(
+                "INSERT INTO email_log (queue_id,recipient_email,subject,status,error,created_at) VALUES (?,?,?,'suppressed','Recipient suppressed before delivery',NOW())",
+                [$row['id'], $row['recipient_email'], $row['subject']]
+            );
+            Database::query("UPDATE notification_recipients SET status='suppressed' WHERE queue_id=?", [$row['id']]);
+            Database::query(
+                "INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,notes,created_at) "
+                . "SELECT organisation_contact_id,notification_id,id,'suppressed','Suppressed before transport.',NOW() FROM notification_recipients WHERE queue_id=? AND organisation_contact_id IS NOT NULL",
+                [$row['id']]
+            );
+            Database::commit();
+        } catch (Throwable $error) {
+            Database::rollBack();
+            throw $error;
+        }
+    }
+
+    /** @param array<string,mixed> $row */
     private static function markFailedAttempt(array $row, string $status, Throwable $error): void
     {
-        $message = substr($error->getMessage(), 0, 500);
+        $message = substr(SecretRedactor::redact($error->getMessage()), 0, 500);
         $backoffSeconds = min(3600, 60 * (2 ** max(0, (int) $row['attempts'] - 1)));
 
         Database::beginTransaction();
@@ -185,6 +248,16 @@ final class Mailer
                 . "VALUES (?, ?, ?, 'failed', ?, NOW())",
                 [$row['id'], $row['recipient_email'], $row['subject'], $message]
             );
+            if ($status === 'failed') {
+                Database::query(
+                    "INSERT INTO organisation_outreach_events (organisation_contact_id,notification_id,notification_recipient_id,event_type,notes,created_at) "
+                    . "SELECT organisation_contact_id,notification_id,id,'failed',?,NOW() FROM notification_recipients WHERE queue_id=? AND organisation_contact_id IS NOT NULL",
+                    [$message, $row['id']]
+                );
+            }
+            if ($status === 'failed') {
+                Database::query("UPDATE notification_recipients SET status='failed' WHERE queue_id=?", [$row['id']]);
+            }
             Database::commit();
         } catch (Throwable $e) {
             Database::rollBack();
@@ -202,6 +275,7 @@ final class Mailer
     public static function config(?int $brandDatabaseId = null): array
     {
         $env = config('mail');
+        $graphMailbox = (string) ($env['graph']['mailbox'] ?? '');
         $db = static fn (string $key, string $envKey): string =>
             trim((string) Settings::get($key, '')) !== ''
                 ? trim((string) Settings::get($key, ''))
@@ -238,6 +312,11 @@ final class Mailer
             if ($fromAddress === '') {
                 throw new RuntimeException("Outbound sender is not configured for {$brand->name()}");
             }
+
+            $graphMailbox = self::graphMailboxForBrand(
+                (array) ($env['graph'] ?? []),
+                $brand->id()
+            );
         }
 
         return [
@@ -255,8 +334,23 @@ final class Mailer
             'graph_certificate_path' => (string) ($env['graph']['certificate_path'] ?? ''),
             'graph_private_key_path' => (string) ($env['graph']['private_key_path'] ?? ''),
             'graph_private_key_password' => (string) ($env['graph']['private_key_password'] ?? ''),
-            'graph_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
+            'graph_mailbox' => $graphMailbox,
+            'graph_fallback_mailbox' => (string) ($env['graph']['mailbox'] ?? ''),
         ];
+    }
+
+    /** @param array<string,mixed> $graph */
+    public static function graphMailboxForBrand(array $graph, ?string $brandId): string
+    {
+        $fallback = trim((string) ($graph['mailbox'] ?? ''));
+        if ($brandId === null) {
+            return $fallback;
+        }
+
+        $mailboxes = is_array($graph['mailboxes'] ?? null) ? $graph['mailboxes'] : [];
+        $brandMailbox = trim((string) ($mailboxes[$brandId] ?? ''));
+
+        return $brandMailbox !== '' ? $brandMailbox : $fallback;
     }
 
     private static function send(array $row): void

@@ -1,0 +1,161 @@
+# Current API boundary
+
+## Purpose
+
+Describe the JSON endpoints used by the first-party web application and the
+restricted Admin API foundation without presenting either as a general public
+partner API.
+
+## Intended users
+
+Developers maintaining the web client, Assist RIC operators, and integrators
+assessing — but not assuming — future public API capability.
+
+## Permissions
+
+Public lookup endpoints use the current verified host and brand context plus any
+route-level rate limits or module checks. Browser mutations retain sessions and
+CSRF.
+
+Facility-scoped clients can read `GET /facility-contributions` and `GET /facility-contributions/{id}` only when the selected workspace enables stays. Human Admin API sessions with `facilities:write` can post an explicit moderation action to `/facility-contributions/{id}/{action}`. Service accounts cannot approve community evidence because the route also requires `admin_api_human`. Facility list, detail and mutation queries expose records assigned to the selected brand plus explicitly shared records; another brand's record returns a non-enumerating `404` even when its ID is known.
+
+The versioned Admin API (`/api/v1/admin`) is a separate, token-authenticated
+management surface for Assist RIC and service accounts. It is **disabled by
+default in new environments** (`ADMIN_API_ENABLED=false`), brand-scoped, audited,
+and least-privilege by scope. **Production VanAssist enables Admin API** for Assist
+RIC facility imports (verified Aug 2026). Human sessions support optional TOTP MFA
+(`ADMIN_API_MFA_REQUIRED`, default false). It is not a public partner API. See
+`docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`, `docs/PRODUCTION_CURRENT_STATE.md`
+and ADRs 0018–0020.
+
+No general public token-authenticated `/api/v1` product for third parties exists
+yet.
+
+## Fields
+
+Town search and nearest-location responses use the fields returned by
+`LocationController`. Nearby providers use the controller's selected-brand
+provider projection. TowSmart catalogue endpoints use the fields returned by
+`TowSmartController`. These are implementation responses, not a published
+compatibility contract.
+
+Admin API success and error envelopes follow `docs/API.md` and
+`docs/openapi/admin-v1.yaml`.
+
+## Actions
+
+The first-party client can search towns, resolve a nearest town, request nearby
+providers, and load TowSmart catalogue data on the TowSmart brand. Consumers
+must handle validation and error responses implemented by each controller.
+
+When enabled, Assist RIC may authenticate as a service account, submit checksummed
+import packages, manage drafts, browse Directory Management resources
+(`GET /providers`, `/stays`, `/facilities`, `/claims`, `/corrections` with cursor
+pagination), browse Data Review queues (`GET /drafts`, `/duplicates`,
+`/recycle-bin` with cursor pagination), browse import-candidate queues
+(`GET /facility-import-candidates`, `/provider-import-candidates` with
+`import_candidates:read`; distinct from `GET /imports` package jobs), read
+datasets, audit, search analytics,
+search-gaps, operational overview (`GET /overview`) and website insights
+(`GET /website-insights`) through `/api/v1/admin` only — never by opening
+production MariaDB. Claim/correction approve/reject, draft approve, duplicate
+merge, recycle purge and facility/provider import-candidate approve/reject
+(including facility bulk-approve/bulk-reject) and provider merge remain
+human-session Admin API actions (`import_candidates:review` is never granted
+to service accounts) and are also available in the website admin.
+Provider hold/confirm remain PHP admin. Categories and locations stay on PHP
+admin routes. Ask Insights may also read
+`GET /ai/usage/requests` (and related AI usage rollups) plus dual-source
+`GET /search-gaps` for knowledge-gap engagement meta. Operations may read
+`GET /health`, `/version`, `/capabilities`, dataset `/sync-history`,
+`/sync-conflicts`, `GET /imports` and `/imports/{id}`, AI usage rollups
+(including summary `budget`), `GET /feature-flags` (`flags:read`) and
+`/audit` — never feature-flag writes or production toggles from RIC.
+Directory taxonomy pickers may use `GET /categories` and
+`GET /locations/*` (`categories:read` / `locations:read`). Ops may also read
+`GET /ops/failed-emails` and `/ops/failed-scheduled-tasks` (`ops:read`).
+Stale/missing quality queues remain website admin until criteria are defined.
+
+## Workflows
+
+Use first-party endpoints only inside the current browser application. Resolve
+brand from the approved host rather than sending a client-selected `brand_id`.
+
+Use the Admin API only from approved management clients with vault-stored
+credentials and least-privilege scopes. Prefer export-package hand-off while the
+Admin API remains disabled.
+
+If a public integration is required, design a separately authenticated and
+versioned `/api/v1` contract with tests and an accepted architecture decision.
+
+## Examples
+
+`GET /locations/towns` supports the site's town lookup.
+`GET /calculator/catalogue/{type}` supports TowSmart catalogue selection.
+Neither route is a promise of long-term third-party compatibility.
+
+`GET /api/v1/admin/health` and `GET /api/v1/admin/capabilities` are the Admin API
+probe endpoints when the feature flag is on. Health exposes safe road-distance
+readiness under `integrations.road_distance` (provider, configured state,
+credential source and persistent-cache state) without exposing the credential.
+
+`GET /api/v1/admin/overview` returns the RIC operational rollup (range query
+`7d`/`30d`/`90d`/`fy`/`pfy`/`custom`). `GET /api/v1/admin/website-insights`
+returns detailed traffic and demand figures; genuine visitors exclude
+bot/unknown page views and filtered bot views are labelled separately. The
+overview `data_quality` section summarises usable contact and coordinate
+coverage, stale providers, and stay facility-evidence freshness for the active
+brand.
+
+## Common mistakes
+
+- Calling first-party browser endpoints a supported public API.
+- Reusing browser session cookies as machine credentials.
+- Letting a client select private brand scope.
+- Depending on response fields without a published contract.
+- Connecting Assist RIC or importers directly to production MariaDB.
+- Enabling Admin API in production before MFA and Quality Gate evidence.
+
+## Related pages
+
+See **Repository workflow**, `docs/API.md`, `docs/LIVE_API.md` and
+`docs/openapi/admin-v1.yaml`.
+
+## FAQ
+
+**Is `/api/v1/admin` a public partner API?** No. It is a restricted management
+surface for Assist RIC and service accounts, disabled by default until MFA and
+Quality Gate evidence are recorded.
+
+**Can Assist RIC open production MariaDB?** No. Production writes and reads for
+management clients must use `/api/v1/admin` only (ADR 0018).
+
+## Version introduced
+
+Current repository baseline.
+
+## Last updated
+
+2026-08-12 (road-distance readiness and directory data-quality summaries).
+
+## Owner
+
+Assist Platform product and engineering.
+
+## Changelog
+
+| Date | Change |
+| --- | --- |
+| 2026-07-30 | Initial living-documentation page for the current first-party API boundary. |
+| 2026-08-01 | Documented `/api/v1/admin` Phase 1 foundation as a restricted, default-off management API (CORE-011). |
+| 2026-08-01 | Documented OPS-010 TOTP enrollment and MFA login challenge for Admin API humans. |
+| 2026-08-02 | Documented Option B Admin API Increments B–G: claims, corrections, duplicates, datasets, AI usage, search analytics, sync conflicts and `/facilities`. |
+| 2026-08-02 | Recorded Option B programme A–L conditional Quality Gate; production Admin API flags remain gated. |
+| 2026-08-04 | Documented RIC Operations Increment G: `GET /imports`, summary `budget`, `GET /feature-flags` (`flags:read`; no writes). |
+| 2026-08-04 | Documented Option B Increment H: read-only `/facility-import-candidates` and `/provider-import-candidates` (`import_candidates:read`; separate from `GET /imports`). |
+| 2026-08-04 | Documented Option B Increment H.1: human-only facility import-candidate approve/reject (`import_candidates:review`); RIC service accounts remain read-only; website admin retained. |
+| 2026-08-04 | Documented Option B Increment H.2: human-only provider import-candidate approve/reject (`import_candidates:review`); merge/hold remain website admin. |
+| 2026-08-04 | Documented Option B Increment H.3: human-only facility import-candidate bulk-approve/bulk-reject (`import_candidates:review`). |
+| 2026-08-04 | Documented Option B Increment H.4: human-only provider import-candidate merge (`import_candidates:review`); hold/confirm/auto-link remain website admin. |
+| 2026-08-04 | Documented Increment I: `ops:read` failed email/scheduled-task lists; `categories:read` / `locations:read` taxonomy; stale/missing quality deferred. |
+| 2026-08-11 | Clarified traveller-facility list/detail/write scope parity and limited facility-contribution review to stays-enabled workspaces. |

@@ -1,0 +1,14 @@
+{
+  "batch_id": "central-queensland",
+  "batch_name": "Central Queensland",
+  "towns": 407,
+  "categories": 134,
+  "cells": 54538,
+  "verified_cells": 796,
+  "zero_coverage_cells": 51199,
+  "weak_coverage_cells": 2543,
+  "providers_referenced": 452,
+  "matrix_file": "storage\\imports\\qld-coverage\\matrix\\central-queensland.jsonl",
+  "report_file": "storage\\imports\\qld-coverage\\matrix\\central-queensland-report.jsonl",
+  "last_audited": "2026-07-29"
+}

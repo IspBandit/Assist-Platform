@@ -1,6 +1,13 @@
 <?php
 /** @var \App\Core\View $this */
 $this->extend('layouts.admin');
+$gateCounts = ['pass' => 0, 'warning' => 0, 'fail' => 0];
+foreach ($launchReadiness['groups'] as $gateGroup) {
+    foreach ($gateGroup['checks'] as $gateCheck) {
+        $gateStatus = (string) ($gateCheck['status'] ?? 'fail');
+        $gateCounts[$gateStatus] = ($gateCounts[$gateStatus] ?? 0) + 1;
+    }
+}
 ?>
 <?php $this->section('content'); ?>
 <div class="page-heading platform-heading">
@@ -25,6 +32,26 @@ $this->extend('layouts.admin');
 
 <section class="card section-compact">
     <div class="page-header">
+        <div><p class="eyebrow">Platform-wide launch gate</p><h2>Trust, search, outreach and operations</h2><p class="muted">This is stricter than a website uptime check and covers every active brand. A failure is a launch blocker; a warning is incomplete scale or work requiring review. Missing or stale proof cannot display as a pass.</p></div>
+        <span class="badge badge-<?= $this->e((string) $launchReadiness['status']) ?>"><?= $this->e(strtoupper((string) $launchReadiness['status'])) ?></span>
+    </div>
+    <p class="muted"><strong><?= (int) $gateCounts['pass'] ?> passed</strong> · <strong><?= (int) $gateCounts['warning'] ?> warnings</strong> · <strong><?= (int) $gateCounts['fail'] ?> launch blockers</strong>. A failed operational evidence check does not mean the public website is down.</p>
+    <div class="grid grid-2">
+        <?php foreach ($launchReadiness['groups'] as $group): ?>
+            <article class="launch-gate-group">
+                <div class="page-header"><h3><?= $this->e((string) $group['label']) ?></h3><span class="badge badge-<?= $this->e((string) $group['status']) ?>"><?= $this->e((string) $group['status']) ?></span></div>
+                <ul class="control-centre-list">
+                    <?php foreach ($group['checks'] as $check): ?>
+                        <li><strong><?= $this->e((string) $check['label']) ?></strong><br><span class="muted"><?= $this->e((string) $check['detail']) ?></span> <span class="badge badge-<?= $this->e((string) $check['status']) ?>"><?= $this->e((string) $check['status']) ?></span></li>
+                    <?php endforeach; ?>
+                </ul>
+            </article>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<section class="card section-compact">
+    <div class="page-header">
         <div><p class="eyebrow">Transactional email</p><h2>Microsoft Graph certificate</h2><p class="muted">Private key material stays server-side and is never available through the admin console.</p></div>
         <span class="badge"><?= $this->e(ucfirst((string) $graphMail['status'])) ?></span>
     </div>
@@ -43,7 +70,7 @@ $this->extend('layouts.admin');
     <div class="platform-brand-grid">
         <?php foreach ($brands as $key => $brand): $theme = $brand->theme(); $assets = $brand->assets(); ?>
         <article class="card platform-brand-card" style="--tenant-colour:<?= e($theme['brand'] ?? '#0f6e6e') ?>">
-            <div class="platform-brand-title"><img src="<?= e($assets['logo'] ?? '/assets/brands/vanassist/mark.svg') ?>" alt="" width="48" height="48"><div><h3><?= $this->e($brand->name()) ?></h3><p class="muted"><?= $this->e($brand->status()) ?> · <?= $this->e($brand->primaryDomain()) ?></p></div></div>
+            <div class="platform-brand-title"><img src="<?= e(asset($assets['logo'] ?? '/assets/brands/vanassist/mark.svg')) ?>" alt="" width="48" height="48"><div><h3><?= $this->e($brand->name()) ?></h3><p class="muted"><?= $this->e($brand->status()) ?> · <?= $this->e($brand->primaryDomain()) ?></p></div></div>
             <dl class="platform-brand-metrics"><div><dt>Listings</dt><dd><?= (int) $brandStats[$key]['providers'] ?></dd></div><div><dt>Categories</dt><dd><?= (int) $brandStats[$key]['categories'] ?></dd></div><div><dt>Social assets</dt><dd><?= (int) $brandStats[$key]['assets'] ?></dd></div></dl>
             <form method="post" action="<?= e(url('admin/switch-brand')) ?>"><?= csrf_field() ?><input type="hidden" name="brand" value="<?= e($key) ?>"><input type="hidden" name="return_path" value="/admin"><button class="btn btn-primary" type="submit">Open <?= $this->e($brand->name()) ?> dashboard</button></form>
         </article>

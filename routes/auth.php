@@ -12,7 +12,7 @@ return static function (Router $router): void {
             $router->get('/login', 'Auth\AuthController@showLogin', 'login');
             $router->post('/login', 'Auth\AuthController@login');
             $router->get('/register', 'Auth\AuthController@showRegister', 'register');
-            $router->group(['middleware' => ['rate:auth.register,10,3600,3600']], static function (Router $router): void {
+            $router->group(['middleware' => ['rate:auth.register,10,3600,3600', 'turnstile']], static function (Router $router): void {
                 $router->post('/register', 'Auth\AuthController@register');
             });
             $router->get('/forgot-password', 'Auth\PasswordController@showForgot', 'forgot-password');

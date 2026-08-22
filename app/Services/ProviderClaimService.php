@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Core\Database;
 use App\Models\User;
 use App\Services\EmailQueue;
-use App\Services\FoundingGraphicService;
 use RuntimeException;
 
 /**
@@ -18,7 +17,7 @@ final class ProviderClaimService
     public static function sendClaimInvite(int $providerId, string $email, ?int $adminId = null): string
     {
         $provider = Database::selectOne(
-            'SELECT p.id, p.business_name, p.email, p.contact_name, p.slug, p.is_unclaimed, '
+            'SELECT p.id, p.business_name, p.email, p.contact_name, p.slug, p.is_unclaimed,p.marketing_opt_in, '
             . 'tw.name AS town_name, tw.is_launch_town, s.abbreviation AS state_abbr '
             . 'FROM providers p '
             . 'LEFT JOIN towns tw ON tw.id = p.base_town_id '
@@ -28,6 +27,9 @@ final class ProviderClaimService
         );
         if ($provider === null || empty($provider['is_unclaimed'])) {
             throw new RuntimeException('Provider is not an unclaimed listing.');
+        }
+        if (empty($provider['marketing_opt_in'])) {
+            throw new RuntimeException('Documented promotional-email consent is required before sending a claim invite.');
         }
 
         $email = strtolower(trim($email));
@@ -57,15 +59,7 @@ final class ProviderClaimService
         );
         $serviceNames = array_map(static fn (array $row): string => (string) $row['name'], $services);
 
-        $launchTownName = null;
-        if (!empty($provider['is_launch_town']) && !empty($provider['town_name'])) {
-            $launchTownName = (string) $provider['town_name'];
-            if (!empty($provider['state_abbr'])) {
-                $launchTownName .= ', ' . $provider['state_abbr'];
-            }
-        }
-
-        EmailQueue::queueTemplate('provider_claim_invite', $email, (string) $provider['business_name'], [
+        $queued = EmailQueue::queueTemplate('provider_claim_invite', $email, (string) $provider['business_name'], [
             'business_name'        => (string) $provider['business_name'],
             'greeting'             => self::greeting($provider),
             'town_line'            => self::townLine($provider),
@@ -74,9 +68,14 @@ final class ProviderClaimService
             'action_url'           => $url,
             'site_url'             => url('/'),
             'expiry_days'          => (string) $days,
-            'founding_offer_line'  => FoundingGraphicService::claimInviteOfferLine($launchTownName),
-            'founding_offer_text'  => FoundingGraphicService::claimInviteOfferText($launchTownName),
-        ]);
+            'founding_offer_line'  => '',
+            'founding_offer_text'  => '',
+            'unsubscribe_url'      => EmailSuppression::unsubscribeUrl($email),
+        ], null, 'marketing');
+        if (!$queued) {
+            Database::query('DELETE FROM provider_claim_tokens WHERE token_hash=? AND used_at IS NULL', [hash('sha256', $token)]);
+            throw new RuntimeException('The recipient has unsubscribed or is suppressed from email delivery.');
+        }
 
         return $url;
     }
@@ -272,6 +271,7 @@ final class ProviderClaimService
 
         if ($eligibleOnly) {
             $where[] = "p.email IS NOT NULL AND TRIM(p.email) != ''";
+            $where[] = 'p.marketing_opt_in=1';
             $where[] = 'NOT EXISTS (SELECT 1 FROM provider_claim_tokens pct WHERE pct.provider_id = p.id AND pct.used_at IS NULL AND pct.expires_at > NOW())';
         }
 

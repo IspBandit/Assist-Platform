@@ -69,6 +69,16 @@ if (!function_exists('app_base_url')) {
      */
     function app_base_url(): string
     {
+        // The unified administrator may intentionally inspect a private brand
+        // from any live brand host. Keep admin navigation on that trusted host
+        // while BrandContext controls the data, copy and theme being managed.
+        if (str_starts_with((string) ($_SERVER['REQUEST_URI'] ?? ''), '/admin')) {
+            $adminOrigin = rtrim((string) Session::get('_admin_origin_url', ''), '/');
+            if ($adminOrigin !== '' && preg_match('#^https://[A-Za-z0-9.-]+(?::\d+)?$#', $adminOrigin) === 1) {
+                return $adminOrigin;
+            }
+        }
+
         // Once the request/command has resolved a trusted brand, its configured
         // canonical URL is authoritative. This keeps links, assets, redirects,
         // sitemaps and queued brand email URLs on the correct domain while
@@ -105,7 +115,14 @@ if (!function_exists('asset')) {
     function asset(string $path): string
     {
         $rel = ltrim($path, '/');
-        $url = url('assets/' . $rel);
+        if (str_starts_with($rel, 'assets/')) {
+            $rel = substr($rel, 7);
+        }
+        // Serve release-owned assets through the application so the HTML and
+        // its CSS/JS/images always come from the same immutable release. This
+        // also protects deployments where a long-running web-server container
+        // still has the previous symlink target mounted.
+        $url = url('runtime-assets/' . $rel);
 
         // Cache-bust with the file's modification time so browsers (and phones)
         // pick up CSS/JS changes immediately after a deploy.
@@ -123,6 +140,49 @@ if (!function_exists('view')) {
     function view(string $template, array $data = []): string
     {
         return View::render($template, $data);
+    }
+}
+
+if (!function_exists('map_destination')) {
+    /** Build a maps destination from precise coordinates or address parts. */
+    function map_destination(mixed $latitude, mixed $longitude, array $addressParts = []): string
+    {
+        if (is_numeric($latitude) && is_numeric($longitude)) {
+            $lat = (float) $latitude;
+            $lng = (float) $longitude;
+            if ($lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180) {
+                return rtrim(rtrim(number_format($lat, 6, '.', ''), '0'), '.') . ','
+                    . rtrim(rtrim(number_format($lng, 6, '.', ''), '0'), '.');
+            }
+        }
+
+        $parts = array_values(array_filter(array_map(
+            static fn (mixed $part): string => trim((string) $part),
+            $addressParts
+        ), static fn (string $part): bool => $part !== ''));
+
+        return implode(', ', $parts);
+    }
+}
+
+if (!function_exists('map_directions_url')) {
+    function map_directions_url(string $destination): string
+    {
+        return 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode($destination);
+    }
+}
+
+if (!function_exists('is_navigable_street_address')) {
+    function is_navigable_street_address(mixed $address): bool
+    {
+        $value = trim((string) $address);
+        if ($value === '' || stripos($value, 'mobile') !== false) {
+            return false;
+        }
+        if (preg_match('/\d/', $value) === 1) {
+            return true;
+        }
+        return preg_match('/\b(street|st|road|rd|avenue|ave|highway|hwy|drive|dr|lane|ln|court|ct|place|pl|boulevard|blvd|way|parade|pde|terrace|tce)\b/i', $value) === 1;
     }
 }
 

@@ -47,4 +47,12 @@ final class ActivityTrackerTest extends TestCase
         $this->assertNull(ActivityTracker::record('provider_profile_viewed', ['provider_id' => 1]));
         $this->assertNull(ActivityTracker::record('not_a_real_event'));
     }
+
+    public function testDatabaseInsertKeepsEveryBoundValue(): void
+    {
+        $source = (string) file_get_contents(base_path('app/Services/Demand/ActivityTracker.php'));
+
+        self::assertStringContainsString("placeholders[count(\$placeholders) - 1] = 'NOW()';", $source);
+        self::assertStringNotContainsString('array_pop($values)', $source);
+    }
 }

@@ -17,13 +17,14 @@ final class OsmRefreshService
 {
     private const ENDPOINT = 'https://overpass-api.de/api/interpreter';
     private const MAX_KM = 60.0;
-    private const USER_AGENT = 'VanAssist-OSM-Import/1.3 (vanassist@condrendigital.com.au)';
+    private const USER_AGENT = 'VanAssist-OSM-Import/1.3 (support@vanassist.com.au)';
 
     /** @var list<string> */
     private const STATES = ['QLD', 'NSW', 'VIC', 'SA', 'WA', 'TAS', 'NT', 'ACT'];
 
     /** @var list<array{sel:string,cat:string}> */
     private const SELECTORS = [
+        ['sel' => '["amenity"="fuel"]', 'cat' => 'fuel'],
         ['sel' => '["shop"="car_repair"]', 'cat' => 'mechanical'],
         ['sel' => '["shop"="tyres"]', 'cat' => 'mechanical'],
         ['sel' => '["shop"="car_parts"]', 'cat' => 'mechanical'],
@@ -67,6 +68,7 @@ final class OsmRefreshService
 
     /** @var list<array{re:string,cat:string}> */
     private const NAME_RULES = [
+        ['re' => '/service station|fuel stop|petroleum|\bampol\b|\bcaltex\b|\bmobil\b|\bshell\b|\bunited petroleum\b/i', 'cat' => 'fuel'],
         ['re' => '/auto\s?elec|auto-?electric|12\s?volt|12v\b|dual\s?battery/i', 'cat' => 'autoelec'],
         ['re' => '/caravan|camper|\brv\b|recreational vehicle|motorhome|campervan/i', 'cat' => 'caravan'],
         ['re' => '/trailer|horse float|box trailer|brake.?s?\s*(and|&)?\s*bearing/i', 'cat' => 'trailer'],
@@ -89,6 +91,7 @@ final class OsmRefreshService
         'gasfitter' => 'Gas appliance servicing',
         'roadworthy' => 'Roadworthy / safety-certificate inspections',
         'roadside' => 'Roadside assistance',
+        'fuel' => 'Fuel station and traveller stop',
     ];
 
     public static function outputPath(): string
@@ -399,6 +402,7 @@ final class OsmRefreshService
         Settings::set(ProviderImportRunner::SETTING_OSM_FP, '');
         Settings::set('osm_refresh_active', '0');
         Settings::set('osm_refresh_step', '0');
+        Settings::set('osm_refresh_last_completed_at', gmdate('c'));
 
         return [
             'complete' => true,

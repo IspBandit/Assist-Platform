@@ -92,6 +92,15 @@ final class FileStorage
             ->withHeader('Cache-Control', 'private, no-store');
     }
 
+    public static function pathForRead(string $pathKey, string $storedName): string
+    {
+        $path = self::resolveDir($pathKey) . DIRECTORY_SEPARATOR . basename($storedName);
+        if (!is_file($path)) {
+            throw new RuntimeException('Stored file not found.');
+        }
+        return $path;
+    }
+
     private static function resolveDir(string $pathKey): string
     {
         $relative = (string) config('uploads.paths.' . $pathKey);

@@ -3,6 +3,30 @@
 `database/migrations/` is the authoritative field-level schema. This document is
 a domain map, not a substitute for reading the relevant ordered migration.
 
+## Stay facility evidence and contributions (migration 128)
+
+Migration 129 adds `caravan_park_source_aliases`, which maps an imported source
+identity to its canonical stay after a duplicate merge. Automatic cleanup is
+restricted to records with the same normalised name and state whose coordinates
+are within 2 km. The higher-trust record survives; linked operational records
+and facility claims move to it, while the absorbed source row is soft-deleted
+and retained for provenance. Ambiguous matches are not automatically merged.
+
+Migration 130 performs the forward-only residual pass. It catches exact-name
+records within 2 km even when imported state assignment differs, repeated
+`(source_type, external_id)` identities, and an exact-name lower-trust record in
+the same state (or with one state absent) when the authority survivor lacks
+coordinates and its authority address repeats the full name. It preserves any
+missing survivor coordinates, locality and address before moving relationships,
+records an audit event and soft-deletes the absorbed row. It contains no
+place-specific slug or ID rule.
+
+- `stay_facility_claims`: current and historical facility-level evidence for a canonical `caravan_parks` row, including status/value, source, confidence, specificity and verification timestamps. `superseded_at` retires a claim without deleting it.
+- `facility_contributions`: public submission envelope and moderation lifecycle. Contact fields are optional and never public.
+- `facility_contribution_items`: before/suggested values and per-item moderation result, linked to any approved claim.
+- `facility_contribution_confirmations`: deduplicated independent confirmations of an existing pending report.
+- `facility_moderation_actions`: immutable human decision history with old/new values and notes.
+
 | Domain | Principal tables | Ownership/scope |
 |---|---|---|
 | Identity | `users`, `roles`, `permissions`, `user_roles`, sessions, reset/verification/consent/history tables | User/global with explicit role and brand participation extensions |
@@ -14,12 +38,19 @@ a domain map, not a substitute for reading the relevant ordered migration.
 | Service runs | `service_runs`, towns, services, requests, bookings, history | Provider-owned and brand-aware where implemented |
 | Parks | `caravan_parks` and user/document/service-day tables | Park membership/ownership |
 | Content | `content_pages`, blocks, FAQs, settings and feature flags | Brand scope is mandatory for public content |
-| Email/notifications | templates, `email_queue`, `email_log`, notifications and recipients | Queue rows have required `brand_id`; sender must resolve from that brand |
-| Analytics | sessions, events, searches/results/contact actions, daily aggregates and follow-ups | Privacy/retention controls apply; reports must respect brand scope |
+| Email/notifications | templates, `email_queue`, `email_log`, notifications, staged/test deliveries, recipients and `notification_provider_exclusions` | Queue rows have required `brand_id`; marketing requires suppression, documented consent, campaign recipient review, internal test, pilot and reviewed rolling limits |
+| PR organisation outreach | `organisation_outreach_contacts` plus organisation-linked notification recipients | Global research register retains source, role, relevance, safety and review evidence; campaigns remain brand-attributed, single-target-type and staged |
+| Analytics | `page_views`, `tracking_sessions`, `analytics_events`, searches/results/contact actions, daily aggregates and follow-ups | New observations carry the trusted `brand_id`; anonymous visitors use a random first-party session id, IP addresses are not stored, retention controls apply and administrator reports enforce brand scope |
 | Billing | plans/prices/features/limits, subscriptions, entitlements, invoices, payments, refunds, discounts, webhooks, commissions and fees | Dormant until explicitly enabled; financial integrity required |
 | Owner finance | accounts, tax codes, periods, journal entries/lines, source/audit events | Platform owner ledger, never provider bookkeeping |
 | TowSmart | `tow_vehicles`, `towable_assets`, `towing_combinations` | User-owned and TowSmart brand-scoped |
 | TrailerWise | `trailer_listings` | Provider-owned, TrailerWise-scoped, currently secondary product capability |
+| Vehicle regulation | `regulatory_authorities`, `regulatory_documents`, `regulatory_source_checks`, `regulatory_document_brands` | Shared official-source register with brand-relevance mapping for all four platforms; issuing authorities retain document ownership |
+| Motorsport | `motorsport_authorities`, `motorsport_families`, `motorsport_disciplines`, `motorsport_documents`, document-family links, `motorsport_venues`, venue-family links, `motorsport_source_checks` | LocalTorque competition-rule and venue catalogue with fail-closed source fingerprints; sanctioning bodies and venue/calendar publishers retain source ownership |
+| Owner Garage | `garage_assets`, `garage_documents`, `garage_reminder_preferences`, `garage_brand_activity` | User-scoped vehicles/towables and private compliance wallet shared across brands; origin brand is context, never an access boundary |
+| Compliance journeys | `regulatory_journeys`, `regulatory_alert_subscriptions`, `regulatory_alert_deliveries`, `regulatory_provider_handoffs` | Owner-scoped saved pathways, explicit alert/handoff consent and auditable limited context |
+| Provider trust | `provider_capability_credentials` | Evidence-backed, expiring capability claims; only reviewed current rows may display publicly |
+| Campaign performance | `advertising_campaign_daily_metrics` plus `advertising_campaigns` budget/pricing columns | Campaign-only paid impressions, clicks, attributed contacts and media-value spend; never organic rank |
 | Operations | migrations, audit/system logs, tasks, health, exports, rate limits | Administrative/operational data |
 
 ## Migration rules
@@ -46,6 +77,13 @@ a domain map, not a substitute for reading the relevant ordered migration.
 - `data_intelligence_sources`: registry for pluggable metric providers.
 - `locality_population_statistics`: sourced, dated population facts by town.
 - `data_intelligence_tasks`: brand-scoped coverage, verification and quality actions that hand off to Data Sources.
+
+# Vehicle regulatory library (migration 050)
+
+- `regulatory_authorities`: issuing government or national-regulator identity and jurisdiction.
+- `regulatory_documents`: official source URL/download, vehicle applicability, version, effective dates, publication state and current fingerprint.
+- `regulatory_document_brands`: explicit per-brand relevance mapping for the four public rule-library views.
+- `regulatory_source_checks`: append-only HTTP/checksum observations. A changed source moves its document to review before further public display.
 
 # Membership catalogue (migration 045)
 

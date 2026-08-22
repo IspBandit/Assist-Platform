@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Core;
 
+use App\Core\Exceptions\AdminApiException;
 use App\Core\Exceptions\HttpException;
 use App\Middleware\SecurityHeaders;
+use App\Platform\Support\RequestContext;
+use App\Services\Api\AdminApiEnvelope;
 use Throwable;
 
 /**
  * Registers global error/exception handlers. In debug mode it shows detail;
  * in production it logs and renders friendly error pages without stack traces.
+ * Admin API paths always receive JSON envelopes.
  */
 final class ErrorHandler
 {
@@ -39,11 +43,45 @@ final class ErrorHandler
     {
         $status = $e instanceof HttpException ? $e->getStatusCode() : 500;
 
+        try {
+            $request = Request::capture();
+            $path = $request->path();
+            if (Kernel::isAdminApiPath($path) || $e instanceof AdminApiException) {
+                if (!RequestContext::hasRequestId()) {
+                    RequestContext::begin($request);
+                }
+                if ($status >= 500 && !$e instanceof AdminApiException) {
+                    Logger::error($e->getMessage(), [
+                        'exception' => get_class($e),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'request_id' => RequestContext::requestId(),
+                    ], 'errors');
+                }
+                $response = $e instanceof AdminApiException
+                    ? Kernel::adminApiExceptionResponse($e)
+                    : ($e instanceof HttpException
+                        ? Kernel::adminApiHttpExceptionResponse($e)
+                        : AdminApiEnvelope::error(
+                            'internal_error',
+                            'An unexpected error occurred.',
+                            500
+                        ));
+                (new SecurityHeaders())->handle(
+                    $request,
+                    static fn (): Response => $response
+                )->send();
+                return;
+            }
+        } catch (Throwable) {
+            // Fall through to HTML handling.
+        }
+
         if ($status >= 500) {
             Logger::error($e->getMessage(), [
                 'exception' => get_class($e),
-                'file'      => $e->getFile(),
-                'line'      => $e->getLine(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
             ], 'errors');
         }
 
@@ -89,7 +127,7 @@ final class ErrorHandler
 
         try {
             echo View::render($template, [
-                'status'  => $status,
+                'status' => $status,
                 'message' => $message,
             ]);
         } catch (Throwable) {

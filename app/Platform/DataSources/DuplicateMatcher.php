@@ -20,7 +20,9 @@ final class DuplicateMatcher
         $phoneA = $normal((string) ($candidate['phone'] ?? ''));
         $phoneB = $normal((string) ($provider['phone'] ?? ''));
         if ($phoneA !== '' && $phoneA === $phoneB) { $score += 35; $reasons[] = 'same phone'; }
-        $host = static function (string $url): string { return strtolower((string) parse_url($url, PHP_URL_HOST)); };
+        $host = static function (string $url): string {
+            return preg_replace('/^www\./', '', strtolower((string) parse_url($url, PHP_URL_HOST))) ?? '';
+        };
         if ($host((string) ($candidate['website'] ?? '')) !== '' && $host((string) ($candidate['website'] ?? '')) === $host((string) ($provider['website'] ?? ''))) { $score += 35; $reasons[] = 'same website'; }
         return ['score' => min(100, $score), 'reasons' => $reasons];
     }

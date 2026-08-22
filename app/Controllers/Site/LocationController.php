@@ -11,6 +11,7 @@ use App\Models\Provider;
 use App\Models\Region;
 use App\Models\ServiceCategory;
 use App\Models\Town;
+use App\Services\SeoSchema;
 
 /**
  * Public location pages (region index, region detail, town detail) generated
@@ -51,6 +52,12 @@ final class LocationController extends Controller
     {
         $latRaw = $request->input('lat');
         $lngRaw = $request->input('lng');
+        if ($latRaw === null) {
+            $latRaw = $request->input('latitude');
+        }
+        if ($lngRaw === null) {
+            $lngRaw = $request->input('longitude');
+        }
         if (!is_numeric($latRaw) || !is_numeric($lngRaw)) {
             return $this->json(['town' => null, 'error' => 'Invalid coordinates.']);
         }
@@ -64,7 +71,7 @@ final class LocationController extends Controller
 
         $label = (string) $town['name'];
         if (!empty($town['state_abbr'])) {
-            $label .= ' / ' . $town['state_abbr'];
+            $label .= ', ' . $town['state_abbr'];
         }
 
         return $this->json([
@@ -81,6 +88,12 @@ final class LocationController extends Controller
         $townId = (int) $request->input('town_id', 0);
         $latRaw = $request->input('lat');
         $lngRaw = $request->input('lng');
+        if ($latRaw === null) {
+            $latRaw = $request->input('latitude');
+        }
+        if ($lngRaw === null) {
+            $lngRaw = $request->input('longitude');
+        }
         $hasCoords = is_numeric($latRaw) && is_numeric($lngRaw);
 
         $town = null;
@@ -122,7 +135,7 @@ final class LocationController extends Controller
     {
         $label = (string) $town['name'];
         if (!empty($town['state_abbr'])) {
-            $label .= ' / ' . $town['state_abbr'];
+            $label .= ', ' . $town['state_abbr'];
         }
 
         return $label;
@@ -194,6 +207,11 @@ final class LocationController extends Controller
             'title'           => $region['seo_title'] ?: ($region['name'] . ' caravan services — VanAssist'),
             'metaDescription' => $region['seo_description'] ?: ('Caravan and RV services across ' . $region['name'] . ', ' . $region['state_name'] . '.'),
             'canonical'       => url('regions/' . $region['slug']),
+            'jsonLd'          => SeoSchema::breadcrumbs([
+                ['name'=>'Home','url'=>url('/')],
+                ['name'=>'Regions','url'=>url('regions')],
+                ['name'=>(string)$region['name'],'url'=>url('regions/'.$region['slug'])],
+            ]),
             'region'          => $region,
             'towns'           => Town::activeInRegion((int) $region['id']),
             'townTotal'       => Town::countActiveInRegion((int) $region['id']),
@@ -214,6 +232,11 @@ final class LocationController extends Controller
             'title'           => $town['seo_title'] ?: ($town['name'] . ' caravan & RV services — VanAssist'),
             'metaDescription' => $town['seo_description'] ?: ('Find caravan and RV help in ' . $town['name'] . ', ' . $town['state_abbr'] . '. Register a request to bring a provider to town.'),
             'canonical'       => url('towns/' . $town['slug']),
+            'jsonLd'          => SeoSchema::breadcrumbs([
+                ['name'=>'Home','url'=>url('/')],
+                ['name'=>'Regions','url'=>url('regions')],
+                ['name'=>(string)$town['name'],'url'=>url('towns/'.$town['slug'])],
+            ]),
             // Town pages default to noindex until they have enough local content.
             'metaRobots'      => ((int) $town['noindex'] === 1) ? 'noindex,follow' : null,
             'town'            => $town,

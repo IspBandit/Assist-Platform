@@ -1,6 +1,6 @@
 <?php $this->extend('layouts.admin'); ?>
 <?php $this->section('content'); ?>
-<div class="page-header"><div><p class="eyebrow">Platform Control Centre</p><h1>Data sources</h1><p class="muted">Discover gaps through pluggable connectors. Nothing becomes public until it passes the review queue.</p></div><a class="btn btn-primary" href="<?= e(url('admin/data-sources/review')) ?>">Open review queue</a></div>
+<div class="page-header"><div><p class="eyebrow">Platform Control Centre</p><h1>Data sources</h1><p class="muted">Discover gaps through pluggable connectors. Nothing becomes public until it passes the review queue.</p></div><div class="btn-row"><a class="btn btn-secondary" href="<?= e(url('admin/data-sources/datasets')) ?>">Government datasets</a><a class="btn btn-secondary" href="<?= e(url('admin/qld-coverage')) ?>">Queensland coverage</a><a class="btn btn-primary" href="<?= e(url('admin/data-sources/review')) ?>">Open review queue</a></div></div>
 <?php if(!empty($intelligenceTask)): ?><div class="notice notice-info"><strong>Recommended task #<?= (int)$intelligenceTask['id'] ?>:</strong> <?= $this->e($intelligenceTask['title']) ?>. The matching category and location are preselected below.</div><?php endif; ?>
 
 <div class="stats-grid">

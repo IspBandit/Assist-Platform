@@ -21,12 +21,18 @@ require BASE_PATH . '/bootstrap/autoload.php';
 use App\Core\Config;
 use App\Helpers\Env;
 use App\Services\Migrator;
+use App\Services\OrganisationOutreachImporter;
+use App\Services\ProviderPackActivation;
+use App\Services\TownCoordinateActivation;
 
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
 try {
     $migrator = new Migrator();
+    if ($migrator->repairInterruptedDuplicateStayMigration()) {
+        echo "Cleared the interrupted original migration 129 for its indexed retry.\n";
+    }
     $ran = $migrator->run();
     if ($ran === []) {
         echo "Nothing to migrate. Database is up to date.\n";
@@ -36,6 +42,17 @@ try {
             echo "  - {$name}\n";
         }
     }
+    $townCoordinates = TownCoordinateActivation::afterMigrations();
+    if (empty($townCoordinates['skipped'])) {
+        echo 'Activated verified town coordinates: ' . (int) ($townCoordinates['updated'] ?? 0) . " rows.\n";
+    }
+    $providerPack = ProviderPackActivation::afterMigrations();
+    if (empty($providerPack['skipped'])) {
+        echo 'Activated authoritative provider pack: ' . (int) ($providerPack['total'] ?? 0) . " records.\n";
+    }
+    $organisations = OrganisationOutreachImporter::afterMigrations();
+    echo 'Loaded PR outreach research: ' . (int) $organisations['imported'] . ' new, '
+        . (int) $organisations['updated'] . ' refreshed, ' . (int) $organisations['held'] . " invalid held out.\n";
     exit(0);
 } catch (Throwable $e) {
     fwrite(STDERR, 'Migration failed: ' . $e->getMessage() . "\n");

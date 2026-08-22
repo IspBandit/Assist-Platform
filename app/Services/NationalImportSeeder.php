@@ -41,51 +41,15 @@ final class NationalImportSeeder
         'gasfitter'  => 'Gas appliance servicing',
         'roadside'   => 'Roadside assistance',
         'roadworthy' => 'Roadworthy inspection',
+        'fuel'       => 'Fuel and travel stops',
     ];
 
-    /**
-     * Trade bucket => services that the trade plausibly covers and is therefore a
-     * POSSIBLE match for (shown publicly as "may offer this service"). Kept
-     * conservative to what each trade genuinely handles in the caravan/RV world.
-     *
-     * @var array<string,array<int,string>>
-     */
-    private const TRADE_RELATED = [
-        'caravan' => [
-            'Plumbing and water leaks', 'Hot water systems', 'Toilets', 'Brakes and bearings',
-            'Suspension', 'Tyres and wheels', 'Structural repairs', 'Fibreglass repairs',
-            'Awning repairs', 'Roof leaks', 'Appliance repairs', 'Gas appliance servicing',
-            'Refrigeration', 'Air conditioning', '12-volt electrical', 'Solar and batteries',
-            'DC-DC charging', 'Inverters', 'Starlink and communications',
-            'Insurance repairs', 'Pre-trip inspection', 'General servicing',
-        ],
-        'autoelec' => [
-            '240-volt electrical', 'Solar and batteries', 'DC-DC charging', 'Inverters',
-            'Refrigeration', 'Air conditioning', 'Appliance repairs', 'Starlink and communications',
-            'Pre-trip inspection',
-        ],
-        'mechanical' => [
-            'General servicing', 'Brakes and bearings', 'Suspension', 'Tyres and wheels',
-            'Air conditioning', 'Pre-trip inspection',
-        ],
-        'trailer' => [
-            'Brakes and bearings', 'Suspension', 'Tyres and wheels', 'Structural repairs',
-            'General servicing', 'Pre-trip inspection',
-        ],
-        'plumber' => [
-            'Hot water systems', 'Toilets', 'Gas appliance servicing', 'Roof leaks',
-            'Refrigeration', 'Pre-trip inspection',
-        ],
-        'gasfitter' => [
-            'Hot water systems', 'Plumbing and water leaks', 'Toilets', 'Appliance repairs',
-            'Refrigeration', 'Air conditioning', 'Pre-trip inspection',
-        ],
-        // Roadside clubs are a distinct service (no plausible repair "possible
-        // matches"); a roadworthy inspector commonly also does a pre-trip check.
-        'roadside' => [],
-        'roadworthy' => [
-            'Pre-trip inspection',
-        ],
+    private const SPECIALIST_SERVICE_NAMES = [
+        'Auto electrical and batteries', 'Windscreen and auto glass',
+        'Vehicle parts and accessories', 'Fuel and travel stops',
+        'LPG refills and bottle exchange', 'Towing and vehicle recovery',
+        'Weighbridges and mobile weighing', 'Vehicle and caravan washing',
+        'Caravan parks and campgrounds',
     ];
 
     /** @return array<string,int|string> summary counters */
@@ -373,7 +337,7 @@ final class NationalImportSeeder
 
         if ($providerId > 0) {
             $cats = (array) ($b['cats'] ?? []);
-            $this->ensureServices($providerId, $cats, $categoryIds);
+            $this->ensureServices($providerId, $cats, $categoryIds, $b);
             if ($townId > 0) {
                 $this->ensureTownArea($providerId, $townId);
             }
@@ -544,7 +508,6 @@ final class NationalImportSeeder
         ];
         $townId = $this->ensureTown($townName, $stateId, $stateAbbr, $regionId, $townCache, $counters, $coords);
 
-        $baseName = trim((string) ($biz['base'] ?? ''));
         [$baseTownId, $baseRegionId] = $this->resolveLocalityBusinessBase(
             $biz,
             $stateIds,
@@ -564,7 +527,9 @@ final class NationalImportSeeder
                 'source_url'          => (string) ($biz['source_url'] ?? ''),
                 'source_type'         => 'locality',
                 'coverage_confidence' => str_contains(strtolower((string) ($cov['band'] ?? '')), 'statewide') ? 'statewide' : 'curated',
-                'address'             => $baseName !== '' ? $baseName : $townName,
+                // A base suburb is not a navigable premises address. Preserve
+                // it through base_town_id and wait for sourced street detail.
+                'address'             => null,
                 'services'            => 'Coverage from locality-provider research. Confirm service radius before referral.',
                 'modes'               => (array) ($biz['modes'] ?? ['mobile']),
             ];
@@ -595,7 +560,7 @@ final class NationalImportSeeder
 
         $cat = (string) ($cov['cat'] ?? '');
         if ($cat !== '') {
-            $this->ensureServices($providerId, [$cat], $categoryIds);
+            $this->ensureServices($providerId, [$cat], $categoryIds, $biz);
         }
 
         $band = strtolower((string) ($cov['band'] ?? ''));
@@ -812,35 +777,58 @@ final class NationalImportSeeder
     }
 
     /**
-     * Links a provider to its services: the trade's headline service as a DIRECT
-     * match, plus every service the trade plausibly covers as a POSSIBLE match
-     * (is_inferred = 1). A service is never listed as possible if it is already a
-     * direct match for the same business.
+     * Links an imported provider only to services supported by its source bucket
+     * or a narrow business-name rule. Imported listings never receive broad
+     * possible-service guesses; claimed providers manage their own exact list.
      *
      * @param array<int,string> $cats
      * @param array<string,int> $categoryIds
      */
-    private function ensureServices(int $providerId, array $cats, array $categoryIds): void
+    private function ensureServices(int $providerId, array $cats, array $categoryIds, array $business = []): void
     {
-        $direct = [];
-        $possible = [];
-        foreach ($cats as $cat) {
-            $cat = (string) $cat;
-            if (isset(self::TRADE_PRIMARY[$cat])) {
-                $direct[self::TRADE_PRIMARY[$cat]] = true;
-            }
-            foreach (self::TRADE_RELATED[$cat] ?? [] as $name) {
-                $possible[$name] = true;
+        foreach (self::serviceNamesForImport($business, $cats) as $name) {
+            $this->linkService($providerId, $categoryIds[$name] ?? 0, 0);
+        }
+    }
+
+    /**
+     * @param array<string,mixed> $business
+     * @param array<int,string> $cats
+     * @return array<int,string>
+     */
+    public static function serviceNamesForImport(array $business, array $cats): array
+    {
+        $identity = mb_strtolower(implode(' ', [
+            (string) ($business['name'] ?? ''),
+            (string) ($business['website'] ?? ''),
+        ]));
+
+        $rules = [
+            ['/(battery world|\bbatter(?:y|ies)\b)/', 'Auto electrical and batteries'],
+            ['/(windscreen|auto glass|automotive glass)/', 'Windscreen and auto glass'],
+            ['/(supercheap|autopro|auto parts|parts store|parts centre)/', 'Vehicle parts and accessories'],
+            ['/(\btyres?\b|\btires?\b|tyrepower|bob jane|bridgestone|goodyear)/', 'Tyres and wheels'],
+            ['/(petroleum|service station|fuel stop|\bampol\b|\bcaltex\b|\b7-eleven\b)/', 'Fuel and travel stops'],
+            ['/(\belgas\b|lpg refill|gas bottle|bottle exchange)/', 'LPG refills and bottle exchange'],
+            ['/(towing|tow truck|vehicle recovery|roadside recovery)/', 'Towing and vehicle recovery'],
+            ['/(weighbridge|mobile weighing)/', 'Weighbridges and mobile weighing'],
+            ['/(car wash|truck wash|rv wash)/', 'Vehicle and caravan washing'],
+            ['/(caravan park|campground|holiday park)/', 'Caravan parks and campgrounds'],
+        ];
+        foreach ($rules as [$pattern, $service]) {
+            if (preg_match($pattern, $identity) === 1) {
+                return [$service];
             }
         }
 
-        foreach (array_keys($direct) as $name) {
-            unset($possible[$name]);
-            $this->linkService($providerId, $categoryIds[$name] ?? 0, 0);
+        $services = [];
+        foreach ($cats as $cat) {
+            $name = self::TRADE_PRIMARY[(string) $cat] ?? null;
+            if ($name !== null) {
+                $services[$name] = true;
+            }
         }
-        foreach (array_keys($possible) as $name) {
-            $this->linkService($providerId, $categoryIds[$name] ?? 0, 1);
-        }
+        return array_keys($services);
     }
 
     private function linkService(int $providerId, int $categoryId, int $isInferred): void
@@ -866,10 +854,8 @@ final class NationalImportSeeder
         foreach (self::TRADE_PRIMARY as $name) {
             $names[$name] = true;
         }
-        foreach (self::TRADE_RELATED as $list) {
-            foreach ($list as $name) {
-                $names[$name] = true;
-            }
+        foreach (self::SPECIALIST_SERVICE_NAMES as $name) {
+            $names[$name] = true;
         }
         foreach (array_keys($names) as $name) {
             $exists = (int) Database::scalar('SELECT COUNT(*) FROM service_categories WHERE slug = ?', [str_slug($name)]);

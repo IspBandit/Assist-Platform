@@ -10,12 +10,13 @@ implementing work, read `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`,
 `docs/PLATFORM_CHARTER.md`, `docs/PRODUCT_BACKLOG.md` and
 `docs/PLATFORM_QUALITY_GATE.md`.
 
-This repository contains one PHP application serving four brands:
+This repository contains one PHP application serving five brands:
 
 - VanAssist (`vanassist.com.au`): caravan/RV provider marketplace and assistance workflows.
 - TowSmart (`towsmart.com.au`): towing calculator, saved combinations and safety guidance.
 - TrailerWise (`trailerwise.com.au`): trailer marketplace and listing management.
 - LocalTorque (private until its production domain is confirmed): Australian automotive business directory.
+- Polaris (private until its production domain is confirmed): new RV research, matching and comparison.
 
 NDTFlow and SignConsole are separate products. Never add them here.
 
@@ -36,6 +37,11 @@ NDTFlow and SignConsole are separate products. Never add them here.
   never certification or legal advice.
 - Sponsored content must be labelled and must not silently alter organic results.
 - Do not claim a feature, compliance status or deployment is complete without evidence.
+- Treat product documentation as part of the feature: changes to public,
+  customer, provider, administrator or API behaviour must update the matching
+  user/administrator/API guide and `docs/RELEASE_NOTES.md` in the same pull
+  request. Do not defer documentation to a follow-up task or describe code as
+  self-documenting; the documentation-governance CI check is mandatory.
 - Preserve the UX redesign already present in the repository. Extend it through
   `docs/PLATFORM_DESIGN_SYSTEM.md`; do not create a competing design system.
 - Assign new work to one backlog workstream and reference its backlog ID.
@@ -54,7 +60,7 @@ NDTFlow and SignConsole are separate products. Never add them here.
 6. Run `composer validate --strict`, `composer analyse`, relevant PHPUnit tests,
    PHP syntax checks and a production dependency build when applicable.
 7. Document migrations, environment changes, security implications, deployment
-   steps and rollback.
+   steps, rollback, affected user/admin/API workflows and release notes.
 8. Record all four Quality Gate results in the pull request.
 9. Use a feature/fix branch and pull request. Do not push directly to production.
 

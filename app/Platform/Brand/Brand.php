@@ -208,6 +208,12 @@ final class Brand
         return $this->modules[$module] ?? false;
     }
 
+    /** @return array<string,bool> */
+    public function modules(): array
+    {
+        return $this->modules;
+    }
+
     /** @return array<string,mixed> */
     public function analytics(): array
     {

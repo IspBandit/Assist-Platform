@@ -1,6 +1,6 @@
 # Production current state
 
-Last verified: 24 July 2026 (Australia/Brisbane).
+Last verified: 13 August 2026 (Australia/Brisbane).
 
 ## Deployment
 
@@ -8,11 +8,12 @@ Last verified: 24 July 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `14f818c082fcde30c7a823ba3f116cd9d97650a0`.
-- Release directory: `/opt/assist-platform/releases/14f818c082fcde30c7a823ba3f116cd9d97650a0`.
+- Production code commit: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (PR #201 — Ask provider-name/GPS integrity).
+- Release directory: `/opt/assist-platform/releases/6a3f09d78dda81f50fab584decb8fb4f382ef717` (confirm on server after next deploy if path differs).
+- Previous documented release: `9879b4bf41f3f691cb26f8d76d71515fb47b6a5c` (superseded August 2026).
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `045_membership_entitlements.sql` are applied; the
+- All migrations through `130_merge_residual_duplicate_stays.sql` are applied; the
   installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
@@ -21,9 +22,18 @@ credentials in this file or Git.
 ## Verified live controls
 
 - All three `/healthz` and `/readyz` endpoints returned 200.
-- All three `/readyz` endpoints reported release
-  `14f818c082fcde30c7a823ba3f116cd9d97650a0` after protected production
-  workflow run `30064747345` completed successfully.
+- All three `/readyz` endpoints reported release `6a3f09d` (verified 13 August 2026).
+- **Admin API** responds on production (`GET /api/v1/admin/health` → 200;
+  `POST /api/v1/admin/auth/token` validates credentials — not disabled).
+- **Ask VanAssist** is enabled on production VanAssist (`/ask` returns results;
+  `assist_ai_search` on). Homepage includes the Ask form when the flag is on.
+- **Traveller facilities in Ask** return live results (toilets, hospitals,
+  pharmacies, showers, boat ramps, etc.) when `assist_ai_traveller_facilities`
+  is on.
+- **Google Routes** road-distance integration reports configured on Admin API
+  health (`road_distance.provider=google_routes`).
+- Griffiths Creek typo recovery and road-distance enforcement ship in release
+  `6a3f09d` (see `docs/RELEASE_NOTES.md` unreleased notes merged to this release).
 - Production deployment uses the restricted `assistdeploy` SSH account,
   pinned host keys and a root-owned release command. Remote root login and
   password authentication are disabled.
@@ -71,8 +81,18 @@ credentials in this file or Git.
 
 ## Current launch posture
 
-The environment is viewable in `provider-onboarding` mode. Search indexing is
-disabled. This is not the same as full commercial/public launch approval.
+VanAssist remains in an **initial launch** posture: free search, provider
+onboarding and community stays are live; formal commercial launch approval and
+full Platform Quality Gate **PASS** are not yet recorded.
+
+Public pages use `index, follow` meta robots and expose sitemaps. Treat this as
+**limited public availability**, not signed-off commercial launch.
+
+Assist RIC facility catalogue packs (original, third-wave and gap-fill) have
+been submitted to production Admin API `/facility-imports` from the operator
+workstation (Aug 2026 — see assist-ric `docs/RIC_FACILITY_CATALOGUE_STATUS.md`).
+Admin-side row counts and any unpublished import candidates still require
+owner verification in MariaDB.
 
 Before full indexed launch:
 

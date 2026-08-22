@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "VanAssist — Your Travel Companion",
+  "short_name": "VanAssist",
+  "description": "Find caravan and RV help, fuel, charging and places to stay across Australia.",
+  "start_url": "/?source=home-screen",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf8f1",
+  "theme_color": "#0f6e6e",
+  "categories": ["travel", "navigation", "lifestyle"],
+  "icons": [
+    {"src": "/assets/brands/vanassist/install-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"},
+    {"src": "/assets/brands/vanassist/install-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/brands/vanassist/install-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Find nearby help", "short_name": "Find help", "url": "/find"},
+    {"name": "Places to stay", "short_name": "Stays", "url": "/stays"},
+    {"name": "Request assistance", "short_name": "Request help", "url": "/request-assistance"}
+  ]
+}

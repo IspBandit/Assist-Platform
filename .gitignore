@@ -7,8 +7,12 @@
 
 # Composer
 /vendor/
+/.vendor-local/
 /.phpunit.cache/
 /.phpstan.cache/
+
+# Browser acceptance dependencies
+/node_modules/
 
 # Installation lock
 /storage/installed.lock
@@ -34,6 +38,8 @@
 # Overpass/OSM import cache (raw API responses; regenerable)
 /tools/.osm-cache/
 /tools/.osm-stays-cache/
+**/__pycache__/
+*.py[cod]
 
 # OS / editor
 .DS_Store

@@ -15,7 +15,39 @@ components only after rendered, responsive and accessibility verification.
 - Provider and admin tasks work on mobile, not only desktop.
 - Empty, loading, success and error states are designed states.
 - Paid and sponsored content is visibly labelled.
+- Regulatory content identifies its issuing authority and status; paid provider
+  placements are visually separated from official-source cards.
 - No fake counts, reviews, urgency, availability or endorsements.
+
+## Premium visual-content contract
+
+Major public journeys use original, subject-relevant hero photography rather
+than generic decoration. VanAssist shows regional caravan confidence; TowSmart
+shows measured towing safety; TrailerWise shows skilled trailer inspection;
+LocalTorque shows genuine automotive expertise; the rules library shows vehicle
+engineering/source review; and My Garage shows an organised mixed asset set.
+
+Hero images contain no baked-in words, logos, fake government marks or UI. Live
+HTML owns headings and actions. Every hero ships as an art-directed 1824 × 864
+desktop image and a 720 × 960 mobile crop, with AVIF first and WebP fallback.
+Desktop AVIF must remain at or below 110 KB and mobile AVIF at or below 65 KB;
+tests enforce dimensions, formats and transfer budgets. Above-the-fold heroes
+use `fetchpriority="high"`; below-the-fold editorial images must be lazy-loaded.
+Images never replace a usable text, list, map-fallback or form experience.
+
+VanAssist's travel-companion homepage is an approved art-direction variant of
+that contract. It uses a panoramic 1920 × 800 desktop crop and a portrait
+768 × 1619 mobile crop so the caravan road remains visible beside, rather than
+behind, the live search journey. The compressed WebP files are each below
+180 KB, contain no baked-in copy or interface, and are selected with a native
+`picture` source. The live navy/cobalt headline, search console, bookmark action
+and capability rail remain usable when imagery is unavailable. This variant
+must be acceptance-tested at 1440 × 900 and 390 × 844 before release.
+
+LocalTorque motorsport uses the same art-directed contract. Its hero may
+combine several credible competition disciplines but carries no sanctioning-body
+marks, sponsor liveries or implication that one authority governs every sport.
+Disciplines, rulebooks, venues and calendars remain live HTML below the image.
 
 ## Foundations
 
@@ -37,6 +69,80 @@ The system must include and document:
 - content, calculator and data-entry patterns;
 - Social Studio templates and export-safe areas.
 
+### Four-brand mobile rule-library contract
+
+The shared rule library is a required mobile journey for VanAssist, TowSmart,
+TrailerWise and LocalTorque. At 619px and below filters form one column, document
+metadata forms one column, download actions occupy the available width and
+sponsor disclosures precede sponsor cards. Jurisdiction navigation may scroll
+horizontally without clipping labels. At 979px and below authority cards and
+sponsor cards form a single column. Core official-source access must not depend
+on JavaScript; town autocomplete is an optional enhancement.
+
+### Regulatory library pattern
+
+Regulatory results use an authority-first card with jurisdiction, current or
+upcoming state, document type, applicable vehicle chips, issuer, version,
+effective date and last source check. The primary action opens the official
+authority source or download. Changed/unreviewed records are unavailable rather
+than shown with a weak warning. Sponsored local specialists appear only after
+the official results in a separately bordered region with a persistent
+`Sponsored` label and disclosure; they never appear inside a rule card.
+
+### Motorsport rule and venue pattern
+
+The LocalTorque motorsport journey starts with explicit discipline families and
+named disciplines, then presents the four rule layers: sanctioning body,
+discipline/class, state/series and event/venue. Cards identify the authority,
+version, jurisdictions, applicable families and source check. Venue cards
+identify permanent, temporary, route-based or club-network status, locality,
+official venue website where available, and a separately labelled official
+calendar source. A calendar link never implies that entries remain open. At
+680px and below family, rule and venue grids form one column and actions use
+touch-sized full-width controls where needed.
+
+### Shared Garage contract
+
+My Garage is an account-level experience shared by every brand. Its structure is
+consistent while colour, wordmark and relevant next actions inherit the current
+brand. The mobile index is a single-column asset wallet; desktop may use a
+three-column collection. Technical ratings are progressive disclosure, not a
+barrier to adding an asset. Private documents must always be described as
+owner-supplied and never receive a verified badge without separate review.
+
+Garage action cards may pass non-sensitive type and jurisdiction context into
+official rules or provider search. They do not pass private notes or documents.
+
+### Guided compliance and commercial separation
+
+The guided check uses three questions (jurisdiction, vehicle and job), followed
+by a numbered practical sequence and authority-linked cards. The limitation is
+always visible with the result. Saving, subscribing and provider handoff are
+separate actions; alert and handoff consent use unticked native checkboxes with
+plain-language scope.
+
+Verified capability labels require reviewed evidence and show jurisdiction and
+validity. They must never use authority seals or claim government endorsement.
+Sponsored provider cards remain in a labelled landmark after official results.
+Paid dashboards label paid impressions, clicks, attributed contacts and media
+spend separately from organic discovery.
+
+The administrative trust dashboard uses the same status vocabulary everywhere:
+current, review, overdue, failed, pending, verified, rejected, paused and active.
+Colour supplements those words and never replaces them.
+
+### Website-insights pattern
+
+The brand dashboard shows only a concise thirty-day activity strip. The full
+Website Insights view uses date filters, six primary metrics and progressively
+detailed tables for services, actions, providers, pages, sources, devices and
+locations. Tables remain horizontally contained and collapse to a single-column
+card flow on phones. Copy distinguishes result appearances, profile views,
+contact actions and confirmed provider use; clicks are never described as jobs.
+Anonymous visitor identity, IP addresses and raw event metadata are not shown.
+Tracking-disabled states name which stream is off and link authorised users to
+the relevant setting rather than displaying misleading zeroes without context.
+
 ## Brand expression
 
 - **VanAssist:** travel confidence, regional utility and caravan/RV assistance.
@@ -46,6 +152,88 @@ The system must include and document:
 
 Brand expression changes tokens, imagery, voice and relevant content—not basic
 usability conventions.
+
+### Brand mark family
+
+The four platform marks use a shared 64 × 64 solid-geometry SVG contract. They
+are abstract brand symbols, not vehicle illustrations: no depicted cars,
+caravans, trailers, tools, wheels, gradients, enclosing app tiles or decorative
+scenery. A deep neutral primary form and one restrained brand accent preserve
+clarity at favicon size. VanAssist combines a V with location confidence;
+TowSmart combines a T with an engineered connection; TrailerWise combines a W
+with verification; LocalTorque combines a torque aperture with a directional
+load. Marks must be checked at 16, 24, 32, 40 and 64px. Decorative consumers
+use an empty `alt`; a standalone mark retains its SVG title or receives an
+accessible name from its consumer. All mark URLs use file-version cache busting
+so a replaced identity cannot leave a stale browser-tab or shell asset behind.
+
+### Provider acquisition contract
+
+Provider landing pages receive the same visual priority as customer journeys.
+Each brand uses its responsive AVIF/WebP hero family, a legible directional
+overlay, one primary acquisition action, a returning-provider sign-in and a
+short proof row. Mobile retains the subject image above live copy rather than
+hiding the artwork. Benefits and onboarding steps follow the hero in a single
+column at phone width and may expand to three columns on desktop. One provider
+identity is explained as a reduction in administration, never as automatic or
+irrelevant cross-brand exposure.
+
+Provider workspace navigation groups tasks as Overview, Your listing, Trust,
+Work and Growth. Desktop may show the groups in one contained navigation strip;
+phones use one native disclosure showing the current page and touch-sized
+links. Claim/correction pages use plain language, distinguish public and private
+information, never imply that submission proves ownership, and keep optional
+promotional consent separate and unticked.
+
+### VanAssist traveller-intent launcher
+
+VanAssist keeps one location-first service form, then exposes repairs, fuel, EV
+charging and stays as four server-rendered intent paths before directory
+results. The launcher adds no image or script dependency and collapses from
+four columns to two and then one at phone width. It uses text and numbering
+rather than illustrative vehicle icons. Trust copy describes claimed, verified,
+featured and unclaimed states precisely and never implies universal provider or
+remote-town verification. Fuel, charging and stay paths still ask for location
+before presenting nearby relevance.
+
+### VanAssist travel-companion identity
+
+The VanAssist public header uses the transparent road wordmark with the exact
+descriptor “FIND. CONNECT. GET ASSISTED.” This horizontal wordmark is separate
+from the small geometric browser-tab mark and must not be substituted with a
+cartoon vehicle, app tile or generic text-only lock-up. The homepage uses a
+deep-navy and cobalt palette over a relevant coastal-road scene; teal or green
+hero washes are not part of this treatment. On phones the wordmark, menu,
+headline, save action and start of the search console remain in the first screen
+without horizontal overflow. Search and installation stay live HTML controls.
+
+### Enterprise admin shell
+
+The admin shell uses a neutral charcoal navigation surface and raised white
+work surfaces. Brand colour is limited to active/focus accents. The workspace
+selector shows the active brand icon, name and platform context; available
+brands keep server-authorised POST switching. It supports Escape, Home, End and
+arrow-key movement, visible focus and 44px-class touch targets. At 1100px and
+below navigation becomes a full-height scrollable drawer so both portrait and
+landscape tablets retain useful working width. The drawer has a touch-dismiss
+scrim, contains keyboard focus while open and leaves the main workspace inert.
+Below 900px secondary top-bar labels become compact touch controls; at 720px
+and below the drawer spans the phone viewport. The page itself must not scroll horizontally. Dense
+review data uses labelled record cards rather than squeezed table columns.
+Motion is restrained and disabled when `prefers-reduced-motion` is requested.
+
+Operational analytics use compact headline measures followed by disclosure-based
+detail. On phones, secondary reports begin collapsed and expanded content is
+bounded to the viewport with internal scrolling. Critical alerts and coverage gaps
+remain visible without opening a disclosure.
+
+The PR & Outreach Hub follows the same compact-admin rule: five headline counts,
+one filter row, an evidence-backed target register and a separate campaign
+pipeline. Desktop may use a contained table. Phones stack the header, import and
+filter controls, keep every action touch-sized and bound the target register to
+an internal vertical/horizontal scroll region rather than forcing the admin page
+outside the viewport. Official website and evidence links remain visible; source,
+role and relevance information must not be hidden behind colour alone.
 
 ## UX change workflow
 
@@ -72,3 +260,48 @@ Material changes to navigation, layout foundations, colour semantics, typography
 or interaction conventions require Experience workstream review and the UX part
 of the platform quality gate. Brand-only visual changes must still use shared
 tokens and components.
+
+## Conversion-led journey layer
+
+The premium visual system and conversion journey are complementary. Public
+homepages pair optimised contextual hero photography with typography-led brand
+wordmarks, concise evidence, a three-step process and explicit trust language.
+Public headers do not use the provisional platform symbols. Browser tabs use a
+separate 32px geometric lettermark family: dark neutral field, fine brand-colour
+keyline, warm-white monogram and at most one restrained accent. These favicons
+contain no vehicles, gradients, shadows or decorative scenes and are not reused
+as oversized page illustrations. Provider acquisition and provider workspaces reuse the
+same tokens, responsive breakpoints and focus treatment. These additions must
+not reintroduce cartoon vehicle artwork, hide primary search or use colour-heavy
+brand tiles.
+
+The VanAssist first screen uses an editorial two-column layout on desktop: the
+value proposition and trust statements sit beside a dedicated search console.
+At 919px and below it becomes a single-column journey, and at phone widths the
+trust chips are removed so the primary search remains concise and unobstructed.
+
+### VanAssist home-screen installation
+
+VanAssist exposes one clearly labelled “Save VanAssist to your phone” action in
+the public footer. Supporting Android browsers use their native install prompt;
+iPhone and iPad users receive short Safari Share → Add to Home Screen steps.
+The control disappears in standalone mode. Installation is optional and never
+blocks search, contact or assistance journeys.
+
+The installed experience uses the dedicated geometric VanAssist lettermark, a
+brand-scoped web manifest and a minimal service worker. The worker may cache
+release-owned public assets only; dynamic pages, searches, provider details,
+accounts and administration are always network-controlled and are never placed
+in an offline cache.
+
+## Living documentation surfaces
+
+Documentation reuses the existing typography, card, form, button, focus and
+responsive tokens. Its shared shell contains a narrow-width scrollable guide
+navigation, labelled search/filter form, result cards, article metadata and
+safe server-rendered Markdown. Operational guides are available only through
+the authenticated admin surface; public help exposes customer/provider guidance
+and release information. Every dashboard layout supplies a contextual Help
+action resolved from the current route. Help remains keyboard reachable,
+readable at 360px, usable without JavaScript and must not expose administrator
+or developer material through public routes.

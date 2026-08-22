@@ -11,7 +11,6 @@ use App\Services\Settings;
 $page = $page ?? null;
 $seoBrand = current_brand();
 $seoBrandMeta = $seoBrand->metadata();
-$seoBrandAnalytics = $seoBrand->analytics();
 
 $siteName = $seoBrand->id() === 'vanassist'
     ? (string) Settings::get('site_name', $seoBrand->name())
@@ -39,14 +38,26 @@ $canonicalUrl = $page['canonical_url'] ?? ($canonical ?? ($seoBrand->url() . '/'
 // overridable per page via noindex. Always honour an explicit $metaRobots.
 $allowIndex = (string) Settings::get('seo_allow_indexing', Settings::launchMode() === 'public' ? '1' : '0') === '1';
 $pageNoindex = !empty($noindex) || !empty($page['noindex']);
-$robots = $metaRobots ?? ((!$allowIndex || $pageNoindex) ? 'noindex, nofollow' : 'index, follow');
+$robots = $metaRobots ?? ((!$allowIndex || $pageNoindex)
+    ? 'noindex, nofollow'
+    : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
 
 $ogTitleVal = $ogTitle ?? ($page['og_title'] ?? $fullTitle);
 $ogDescVal = $ogDescription ?? ($page['og_description'] ?? $description);
 $ogImageVal = $ogImage ?? ($page['og_image'] ?? Settings::get('seo_og_image', $seoBrandMeta['social_image'] ?? ''));
+$ogImageVal = is_string($ogImageVal) && str_starts_with($ogImageVal, '/assets/')
+    ? asset($ogImageVal)
+    : $ogImageVal;
 $ogTypeVal = $ogType ?? 'website';
 $currentUrl = $canonicalUrl ?? ($seoBrand->url() . '/' . ltrim($requestPath, '/'));
-$googleVerification = trim((string) ($seoBrandAnalytics['site_verification'] ?? ''));
+$googleVerification = trim((string) Settings::get(
+    'google_site_verification_' . $seoBrand->id(),
+    $seoBrand->id() === 'vanassist' ? Settings::get('google_site_verification', '') : ''
+));
+$bingVerification = trim((string) Settings::get(
+    'bing_site_verification_' . $seoBrand->id(),
+    $seoBrand->id() === 'vanassist' ? Settings::get('bing_site_verification', '') : ''
+));
 
 $jsonBlocks = [];
 if (!empty($jsonLd)) {
@@ -63,20 +74,21 @@ if ($page !== null && !empty($page['schema_json'])) {
 <title><?= $this->e($fullTitle) ?></title>
 <meta name="description" content="<?= $this->e($description) ?>">
 <meta name="robots" content="<?= $this->e($robots) ?>">
-<?php if (!empty($canonicalUrl)): ?>
-<link rel="canonical" href="<?= e($canonicalUrl) ?>">
-<?php endif; ?>
-<?php if ($googleVerification !== ''): ?>
-<meta name="google-site-verification" content="<?= e($googleVerification) ?>">
-<?php endif; ?>
+<link rel="canonical" href="<?= e($currentUrl) ?>">
+<?php if ($googleVerification !== ''): ?><meta name="google-site-verification" content="<?= e($googleVerification) ?>"><?php endif; ?>
+<?php if ($bingVerification !== ''): ?><meta name="msvalidate.01" content="<?= e($bingVerification) ?>"><?php endif; ?>
 <meta property="og:site_name" content="<?= $this->e($siteName) ?>">
+<meta property="og:locale" content="en_AU">
 <meta property="og:type" content="<?= $this->e($ogTypeVal) ?>">
 <meta property="og:title" content="<?= $this->e($ogTitleVal) ?>">
 <meta property="og:description" content="<?= $this->e($ogDescVal) ?>">
 <meta property="og:url" content="<?= e($currentUrl) ?>">
 <?php if (!empty($ogImageVal)): ?>
 <meta property="og:image" content="<?= e($ogImageVal) ?>">
+<meta property="og:image:alt" content="<?= $this->e($ogTitleVal) ?>">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="<?= e($ogImageVal) ?>">
+<meta name="twitter:image:alt" content="<?= $this->e($ogTitleVal) ?>">
 <?php else: ?>
 <meta name="twitter:card" content="summary">
 <?php endif; ?>
