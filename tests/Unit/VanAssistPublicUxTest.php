@@ -111,6 +111,23 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $providerController);
     }
 
+    public function testPublicMeasurementIsBrandScopedAndContainsNoPersonalFields(): void
+    {
+        $layout = $this->source('app/Views/layouts/public.php');
+        $script = $this->source('public/assets/js/app.js');
+
+        self::assertStringContainsString('$layoutBrand->analytics()', $layout);
+        self::assertStringContainsString("data-brand=", $layout);
+        self::assertStringContainsString("window.assistMeasure", $script);
+        self::assertStringContainsString("'search_submitted'", $script);
+        self::assertStringContainsString("'provider_open'", $script);
+        self::assertStringContainsString("'stay_open'", $script);
+        self::assertStringContainsString("'phone_click'", $script);
+        self::assertStringContainsString("'provider_claim_submitted'", $script);
+        self::assertStringNotContainsString('contact_email', $script);
+        self::assertStringNotContainsString('contact_phone', $script);
+    }
+
     private function source(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $relativePath);

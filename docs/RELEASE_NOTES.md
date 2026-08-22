@@ -5,6 +5,17 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Brand-safe public discovery measurement (DATA-004)
+
+- Public pages load a brand's optional GA4 measurement ID only when it is a
+  valid `G-` identifier; empty or invalid settings remain disabled.
+- Search, result, provider, stay, phone, website, navigation and claim journeys
+  emit a shared non-personal event vocabulary alongside the existing
+  first-party demand records. No names, email addresses, phone numbers, search
+  text or precise locations are sent by this browser bridge.
+- Existing per-brand Google and Bing verification settings and automatic
+  canonical URLs remain the sole webmaster configuration path.
+
 ### VanAssist public search link compatibility
 
 - Restored compatibility for public search links that use `text` instead of
