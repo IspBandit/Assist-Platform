@@ -11,6 +11,7 @@ use App\Services\Settings;
 $page = $page ?? null;
 $seoBrand = current_brand();
 $seoBrandMeta = $seoBrand->metadata();
+$seoBrandAnalytics = $seoBrand->analytics();
 
 $siteName = $seoBrand->id() === 'vanassist'
     ? (string) Settings::get('site_name', $seoBrand->name())
@@ -31,7 +32,8 @@ $description = $page['seo_description'] ?? ($metaDescription ?? Settings::get(
 ));
 $description = trim((string) $description);
 
-$canonicalUrl = $page['canonical_url'] ?? ($canonical ?? null);
+$requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/');
+$canonicalUrl = $page['canonical_url'] ?? ($canonical ?? ($seoBrand->url() . '/' . ltrim($requestPath, '/')));
 
 // Indexing: a single site switch (default on only for the public launch mode),
 // overridable per page via noindex. Always honour an explicit $metaRobots.
@@ -43,8 +45,8 @@ $ogTitleVal = $ogTitle ?? ($page['og_title'] ?? $fullTitle);
 $ogDescVal = $ogDescription ?? ($page['og_description'] ?? $description);
 $ogImageVal = $ogImage ?? ($page['og_image'] ?? Settings::get('seo_og_image', $seoBrandMeta['social_image'] ?? ''));
 $ogTypeVal = $ogType ?? 'website';
-$requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/');
 $currentUrl = $canonicalUrl ?? ($seoBrand->url() . '/' . ltrim($requestPath, '/'));
+$googleVerification = trim((string) ($seoBrandAnalytics['site_verification'] ?? ''));
 
 $jsonBlocks = [];
 if (!empty($jsonLd)) {
@@ -63,6 +65,9 @@ if ($page !== null && !empty($page['schema_json'])) {
 <meta name="robots" content="<?= $this->e($robots) ?>">
 <?php if (!empty($canonicalUrl)): ?>
 <link rel="canonical" href="<?= e($canonicalUrl) ?>">
+<?php endif; ?>
+<?php if ($googleVerification !== ''): ?>
+<meta name="google-site-verification" content="<?= e($googleVerification) ?>">
 <?php endif; ?>
 <meta property="og:site_name" content="<?= $this->e($siteName) ?>">
 <meta property="og:type" content="<?= $this->e($ogTypeVal) ?>">

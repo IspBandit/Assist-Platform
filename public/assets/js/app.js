@@ -2,6 +2,46 @@
 (function () {
     'use strict';
 
+    var measure = function (eventName, params) {
+        if (typeof window.gtag !== 'function') { return; }
+        window.gtag('event', eventName, Object.assign({
+            event_category: document.body.getAttribute('data-brand') || 'assist-platform'
+        }, params || {}));
+    };
+    window.assistMeasure = measure;
+
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form || !form.action) { return; }
+        var path = new URL(form.action, window.location.href).pathname;
+        if (/\/find$/.test(path)) { measure('search_submitted', { search_type: 'provider' }); }
+        else if (/\/stays$/.test(path)) { measure('search_submitted', { search_type: 'stay' }); }
+        else if (/\/request-assistance$/.test(path)) { measure('ask_submitted', { form_type: 'assistance_request' }); }
+        else if (/\/claim$/.test(path)) { measure('provider_claim_submitted', { listing_type: path.indexOf('/caravan-parks/') >= 0 ? 'stay' : 'provider' }); }
+    });
+
+    document.addEventListener('click', function (event) {
+        var link = event.target.closest('a[href]');
+        if (!link) { return; }
+        var url = new URL(link.href, window.location.href);
+        var path = url.pathname;
+        var eventName = '';
+        if (/\/providers\//.test(path) || /\/business\//.test(path)) { eventName = 'provider_open'; }
+        if (/\/caravan-parks\//.test(path) && !/\/claim$/.test(path)) { eventName = 'stay_open'; }
+        if (/\/go\/phone\//.test(path)) { eventName = 'phone_click'; }
+        else if (/\/go\/website\//.test(path)) { eventName = 'website_click'; }
+        else if (/\/go\/directions\//.test(path)) { eventName = 'navigation_click'; }
+        else if (/\/claim$/.test(path)) { eventName = 'provider_claim_started'; }
+        else if (url.origin !== window.location.origin) { eventName = 'outbound_click'; }
+        if (eventName) { measure(eventName, { link_path: path.slice(0, 190) }); }
+    });
+
+    if (/\/find$/.test(window.location.pathname)) {
+        measure('results_viewed', { result_type: 'provider' });
+    } else if (/\/stays$/.test(window.location.pathname) && window.location.search) {
+        measure('results_viewed', { result_type: 'stay' });
+    }
+
     // Mobile navigation toggle (public site).
     var toggle = document.querySelector('.nav-toggle');
     var nav = document.getElementById('main-nav');

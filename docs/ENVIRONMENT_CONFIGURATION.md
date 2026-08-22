@@ -36,6 +36,11 @@ scope, sender/domain or endpoint verification, quota, health check, alert,
 rotation date, rollback and acceptance evidence. Missing prerequisites leave
 the related feature disabled.
 
+Each public brand may set its own `*_ANALYTICS_ID` (a GA4 `G-` measurement ID)
+and `*_GOOGLE_SITE_VERIFICATION` token. Both are optional and remain disabled
+when blank. Never reuse one brand's Search Console verification token for
+another brand or add either value directly to templates.
+
 ## Secret rotation
 
 1. Open a dated change record naming the secret, owner and affected services.

@@ -86,6 +86,7 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('VANASSIST_ANALYTICS_ID', ''),
+                'site_verification' => (string) Env::get('VANASSIST_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'vanassist_providers',
@@ -170,6 +171,7 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TOWSMART_ANALYTICS_ID', Env::get('TOWWISE_ANALYTICS_ID', '')),
+                'site_verification' => (string) Env::get('TOWSMART_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'towsmart_resources',
@@ -251,6 +253,7 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('TRAILERWISE_ANALYTICS_ID', ''),
+                'site_verification' => (string) Env::get('TRAILERWISE_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'trailerwise_businesses',
@@ -334,6 +337,7 @@ return [
             ],
             'analytics' => [
                 'measurement_id' => (string) Env::get('LOCALTORQUE_ANALYTICS_ID', ''),
+                'site_verification' => (string) Env::get('LOCALTORQUE_GOOGLE_SITE_VERIFICATION', ''),
             ],
             'search' => [
                 'provider_index' => 'localtorque_businesses',
