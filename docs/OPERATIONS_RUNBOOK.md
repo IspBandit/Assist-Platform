@@ -66,6 +66,10 @@ The workflow cannot run from a pull request or feature branch. A human must type
 workflow to pass before upload. The remote release script verifies the archive,
 takes a backup, uses an immutable commit directory, applies forward migrations,
 checks all live brands and restores the previous symlink on application failure.
+Before uploading, the workflow also compares the installed root-owned release
+command with the reviewed `scripts/release-remote.sh` in the exact release. A
+hash mismatch stops before production changes; install the reviewed command as
+root, verify its hash and retry rather than bypassing this drift check.
 
 ## Rollback
 

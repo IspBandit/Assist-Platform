@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Production release guard reliability (OPS-002 / DATA-001)
+
+- The strict provider-service audit now accepts any supported category matched
+  by a compound business name. Legitimate records such as tyre-and-petroleum or
+  parts-and-tyres businesses no longer cause a false rollback, while unrelated
+  category assignments still fail the release. The controlled LocalTorque seed
+  also removes unsupported, unverified shared-service links when the provider
+  has no publishable source evidence.
+- Production release now verifies that the installed root-owned release command
+  exactly matches the reviewed GitHub script before any artefact is uploaded,
+  exposing server command drift before it can create a partial deployment.
+
 ### Production zero-result search fixes (VAN-011 / DATA-004)
 
 - Structured selections for caravan parks and camps now open the stay directory;

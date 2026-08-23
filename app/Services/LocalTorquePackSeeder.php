@@ -145,6 +145,7 @@ final class LocalTorquePackSeeder
 
         $this->removeKnownBadFuelGasAssignments($providerId, $record);
         $this->removeUnsupportedBrandCategoryAssignments($providerId, $record, $validCategories);
+        $this->removeUnsupportedSharedServices($providerId, $name);
 
         $brands = $this->brandsForCategories($validCategories);
         $hasPublicEvidence = (int) Database::scalar(
@@ -606,6 +607,32 @@ final class LocalTorquePackSeeder
             . "AND c.category_key NOT IN ({$placeholders})",
             array_merge([$providerId], $categories)
         );
+    }
+
+    private function removeUnsupportedSharedServices(int $providerId, string $businessName): void
+    {
+        $hasPublicEvidence = (int) Database::scalar(
+            'SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND publishable=1 AND needs_review=0',
+            [$providerId]
+        ) > 0;
+        if ($hasPublicEvidence) {
+            return;
+        }
+
+        foreach (Database::select(
+            'SELECT ps.id, c.slug FROM provider_services ps '
+            . 'INNER JOIN service_categories c ON c.id=ps.category_id '
+            . 'WHERE ps.provider_id=? AND ps.is_inferred=0',
+            [$providerId]
+        ) as $service) {
+            if (!ProviderServiceClassificationPolicy::isUnsupportedSpecialistService(
+                $businessName,
+                (string) ($service['slug'] ?? '')
+            )) {
+                continue;
+            }
+            Database::query('DELETE FROM provider_services WHERE id=?', [(int) $service['id']]);
+        }
     }
 
     /** @param array<string,mixed> $record */

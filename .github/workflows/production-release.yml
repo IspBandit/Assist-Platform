@@ -77,6 +77,13 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           set -euo pipefail
+          expected_release_command_hash="$(sha256sum scripts/release-remote.sh | cut -d' ' -f1)"
+          installed_release_command_hash="$(ssh "$VPS_USER@$VPS_HOST" "sha256sum /usr/local/sbin/assist-platform-release | cut -d' ' -f1")"
+          if [[ "$installed_release_command_hash" != "$expected_release_command_hash" ]]; then
+            echo "Installed production release command does not match scripts/release-remote.sh at ${GITHUB_SHA}."
+            echo "Install the reviewed command as root before retrying this release."
+            exit 1
+          fi
           scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
           ssh "$VPS_USER@$VPS_HOST" \
             "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
