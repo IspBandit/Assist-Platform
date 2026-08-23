@@ -4,6 +4,7 @@
 /** @var float|null $lat */
 /** @var float|null $lng */
 /** @var \App\Platform\AiSearch\Dto\SearchResponse|null $result */
+/** @var array<string,mixed>|null $outcome */
 /** @var string $structuredFindUrl */
 /** @var string $staysUrl */
 /** @var int $resultLimit */
@@ -124,6 +125,28 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                 </div>
             <?php endif; ?>
 
+            <?php if ($outcome !== null): ?>
+                <section class="ask-outcome" aria-labelledby="ask-outcome-heading">
+                    <div class="ask-outcome__understanding">
+                        <span class="directory-eyebrow">What I understood</span>
+                        <h2 id="ask-outcome-heading"><?= $this->e((string) $outcome['understood']['need']) ?></h2>
+                        <dl class="ask-outcome__facts">
+                            <div><dt>Location</dt><dd><?= $this->e((string) $outcome['understood']['location']) ?></dd></div>
+                            <div><dt>Search area</dt><dd><?= $this->e((string) $outcome['understood']['radius']) ?></dd></div>
+                            <div><dt>Distance method</dt><dd><?= $this->e((string) $outcome['distance']['label']) ?></dd></div>
+                            <?php if (!empty($outcome['understood']['urgency'])): ?><div><dt>Urgency</dt><dd><?= $this->e((string) $outcome['understood']['urgency']) ?></dd></div><?php endif; ?>
+                        </dl>
+                        <p class="ask-outcome__distance"><?= $this->e((string) $outcome['distance']['detail']) ?></p>
+                    </div>
+                    <aside class="ask-outcome__next ask-outcome__next--<?= e_attr((string) $outcome['next_action']['tone']) ?>">
+                        <span class="directory-eyebrow">Safest next action</span>
+                        <h2><?= $this->e((string) $outcome['next_action']['heading']) ?></h2>
+                        <p><?= $this->e((string) $outcome['next_action']['body']) ?></p>
+                        <?php if (!empty($outcome['next_action']['url']) && !empty($outcome['next_action']['label'])): ?><a class="text-link" href="<?= e((string) $outcome['next_action']['url']) ?>"><?= $this->e((string) $outcome['next_action']['label']) ?></a><?php endif; ?>
+                    </aside>
+                </section>
+            <?php endif; ?>
+
             <?php if ($result->town !== null): ?>
                 <p class="muted">Interpreted near <strong><?= $this->e((string) $result->town['name']) ?><?= !empty($result->town['state_abbr']) ? ', ' . $this->e((string) $result->town['state_abbr']) : '' ?></strong>
                     <?php if ($result->intent->radiusKm !== null): ?> · within <?= (int) $result->intent->radiusKm ?> km<?php endif; ?>
@@ -171,6 +194,8 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                         $compact = true;
                         $this->include('partials.provider-result-card', compact('p', 'isPossible', 'searchId', 'gapId', 'resultCardId', 'mapResultNumber', 'compact'));
                         ?>
+                        <?php $fitReasons = $outcome['result_reasons'][$providerKey] ?? []; ?>
+                        <?php if ($fitReasons !== []): ?><details class="ask-fit-reasons"><summary>Why this fits</summary><ul><?php foreach ($fitReasons as $reason): ?><li><?= $this->e((string) $reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
                         <?php if (!empty($p['assist_provenance_label'])): ?>
                             <p class="muted" style="margin:-0.5rem 0 1rem 0;font-size:0.85rem"><?= $this->e((string) $p['assist_provenance_label']) ?></p>
                         <?php endif; ?>
@@ -201,6 +226,8 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                                 <?php if (!empty($stay['assist_provenance_label'])): ?> · <?= $this->e((string) $stay['assist_provenance_label']) ?><?php endif; ?>
                             </p>
                         </article>
+                        <?php $fitReasons = $outcome['result_reasons'][$stayKey] ?? []; ?>
+                        <?php if ($fitReasons !== []): ?><details class="ask-fit-reasons"><summary>Why this fits</summary><ul><?php foreach ($fitReasons as $reason): ?><li><?= $this->e((string) $reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
                     <?php endforeach; ?>
                 </div>
                 <p style="margin-top:0.75rem"><a href="<?= e($staysUrl) ?>">Open full stays search</a></p>
@@ -227,6 +254,8 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                                 <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" rel="noopener noreferrer">Source</a>
                             <?php endif; ?>
                         </article>
+                        <?php $fitReasons = $outcome['result_reasons'][$facilityKey] ?? []; ?>
+                        <?php if ($fitReasons !== []): ?><details class="ask-fit-reasons"><summary>Why this fits</summary><ul><?php foreach ($fitReasons as $reason): ?><li><?= $this->e((string) $reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>

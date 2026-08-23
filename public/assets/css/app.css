@@ -257,6 +257,15 @@
 
 * { box-sizing: border-box; }
 
+/* Ask VanAssist outcome layer: factual explanation around unchanged results. */
+.ask-outcome{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);margin:1.25rem 0 1.5rem;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 14px 34px rgba(8,45,48,.08)}
+.ask-outcome__understanding,.ask-outcome__next{padding:clamp(1.15rem,3vw,1.75rem)}.ask-outcome h2{margin:.35rem 0 .85rem;font-size:clamp(1.25rem,2.4vw,1.7rem)}
+.ask-outcome__facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin:0}.ask-outcome__facts div{padding:.7rem .8rem;border-left:3px solid var(--teal);background:var(--sand)}
+.ask-outcome__facts dt{color:var(--muted);font-size:.7rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}.ask-outcome__facts dd{margin:.2rem 0 0;font-weight:750;overflow-wrap:anywhere}.ask-outcome__distance{margin:1rem 0 0;color:var(--muted);font-size:.88rem}
+.ask-outcome__next{border-left:1px solid var(--line);background:#f4f8f6}.ask-outcome__next--urgent{background:#fff4ec;border-left-color:#d57a3a}.ask-outcome__next p{line-height:1.55}
+.ask-fit-reasons{margin:-.55rem 0 1rem;padding:.65rem .85rem;border:1px solid var(--line);border-top:0;background:#fbfcfb}.ask-fit-reasons summary{min-height:36px;display:flex;align-items:center;color:var(--teal-dark);font-size:.86rem;font-weight:800;cursor:pointer}.ask-fit-reasons ul{margin:.3rem 0 .25rem;padding-left:1.2rem;color:var(--muted);font-size:.85rem;line-height:1.5}
+@media(max-width:760px){.ask-outcome{grid-template-columns:1fr}.ask-outcome__facts{grid-template-columns:1fr}.ask-outcome__next{border-top:1px solid var(--line);border-left:0}.ask-outcome__next--urgent{border-top-color:#d57a3a}.ask-fit-reasons{margin-top:-.4rem}}
+
 html { -webkit-text-size-adjust: 100%; }
 
 body {
