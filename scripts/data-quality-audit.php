@@ -13,6 +13,7 @@ require BASE_PATH . '/bootstrap/autoload.php';
 use App\Core\Config;
 use App\Core\Database;
 use App\Helpers\Env;
+use App\Services\ProviderServiceClassificationPolicy;
 
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
@@ -67,6 +68,20 @@ $report = [
 
 try {
     $scalar = static fn (string $sql): int => (int) Database::scalar($sql);
+    $specialistServiceRows = Database::select(
+        "SELECT p.business_name, c.slug FROM provider_services ps INNER JOIN providers p ON p.id=ps.provider_id "
+        . "INNER JOIN service_categories c ON c.id=ps.category_id WHERE p.is_unclaimed=1 "
+        . "AND LOWER(p.business_name) REGEXP 'windscreen|auto glass|automotive glass|supercheap|autopro|auto parts|parts store|parts centre|tyre|tire|tyrepower|bob jane|bridgestone|goodyear|petroleum|service station|fuel stop|ampol|caltex|7-eleven|elgas|lpg refill|gas bottle|bottle exchange' "
+        . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records psr WHERE psr.provider_id=p.id '
+        . 'AND psr.publishable=1 AND psr.needs_review=0)'
+    );
+    $unsupportedSpecialistServices = count(array_filter(
+        $specialistServiceRows,
+        static fn (array $row): bool => ProviderServiceClassificationPolicy::isUnsupportedSpecialistService(
+            (string) ($row['business_name'] ?? ''),
+            (string) ($row['slug'] ?? '')
+        )
+    ));
     $report['database'] = [
         'towns' => [
             'total' => $scalar('SELECT COUNT(*) FROM towns'),
@@ -101,17 +116,7 @@ try {
                 . "INNER JOIN service_categories c ON c.id=ps.category_id WHERE p.is_unclaimed=1 "
                 . "AND LOWER(p.business_name) LIKE 'battery world%' AND c.slug<>'auto-electrical-and-batteries'"
             ),
-            'specialist_name_wrong_services' => $scalar(
-                "SELECT COUNT(*) FROM provider_services ps INNER JOIN providers p ON p.id=ps.provider_id "
-                . "INNER JOIN service_categories c ON c.id=ps.category_id WHERE p.is_unclaimed=1 AND ("
-                . "(LOWER(p.business_name) REGEXP 'windscreen|auto glass|automotive glass' AND c.slug<>'windscreen-and-auto-glass') OR "
-                . "(LOWER(p.business_name) REGEXP 'supercheap|autopro|auto parts|parts store|parts centre' AND c.slug<>'vehicle-parts-and-accessories') OR "
-                . "(LOWER(p.business_name) REGEXP 'tyre|tire|tyrepower|bob jane|bridgestone|goodyear' AND c.slug<>'tyres-and-wheels') OR "
-                . "(LOWER(p.business_name) REGEXP 'petroleum|service station|fuel stop|ampol|caltex|7-eleven' AND c.slug<>'fuel-and-travel-stops') OR "
-                . "(LOWER(p.business_name) REGEXP 'elgas|lpg refill|gas bottle|bottle exchange' AND c.slug<>'lpg-refills-and-bottle-exchange')) "
-                . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records psr WHERE psr.provider_id=p.id '
-                . 'AND psr.publishable=1 AND psr.needs_review=0)'
-            ),
+            'specialist_name_wrong_services' => $unsupportedSpecialistServices,
         ],
         'localtorque_pack' => [
             'source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records'),
