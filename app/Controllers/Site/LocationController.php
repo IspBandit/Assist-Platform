@@ -52,6 +52,12 @@ final class LocationController extends Controller
     {
         $latRaw = $request->input('lat');
         $lngRaw = $request->input('lng');
+        if ($latRaw === null) {
+            $latRaw = $request->input('latitude');
+        }
+        if ($lngRaw === null) {
+            $lngRaw = $request->input('longitude');
+        }
         if (!is_numeric($latRaw) || !is_numeric($lngRaw)) {
             return $this->json(['town' => null, 'error' => 'Invalid coordinates.']);
         }
@@ -82,6 +88,12 @@ final class LocationController extends Controller
         $townId = (int) $request->input('town_id', 0);
         $latRaw = $request->input('lat');
         $lngRaw = $request->input('lng');
+        if ($latRaw === null) {
+            $latRaw = $request->input('latitude');
+        }
+        if ($lngRaw === null) {
+            $lngRaw = $request->input('longitude');
+        }
         $hasCoords = is_numeric($latRaw) && is_numeric($lngRaw);
 
         $town = null;

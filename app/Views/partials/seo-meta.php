@@ -31,7 +31,8 @@ $description = $page['seo_description'] ?? ($metaDescription ?? Settings::get(
 ));
 $description = trim((string) $description);
 
-$canonicalUrl = $page['canonical_url'] ?? ($canonical ?? null);
+$requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/');
+$canonicalUrl = $page['canonical_url'] ?? ($canonical ?? ($seoBrand->url() . '/' . ltrim($requestPath, '/')));
 
 // Indexing: a single site switch (default on only for the public launch mode),
 // overridable per page via noindex. Always honour an explicit $metaRobots.
@@ -48,7 +49,6 @@ $ogImageVal = is_string($ogImageVal) && str_starts_with($ogImageVal, '/assets/')
     ? asset($ogImageVal)
     : $ogImageVal;
 $ogTypeVal = $ogType ?? 'website';
-$requestPath = (string) (parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH) ?: '/');
 $currentUrl = $canonicalUrl ?? ($seoBrand->url() . '/' . ltrim($requestPath, '/'));
 $googleVerification = trim((string) Settings::get(
     'google_site_verification_' . $seoBrand->id(),

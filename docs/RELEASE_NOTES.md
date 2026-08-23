@@ -43,6 +43,26 @@ may remain as dated files and are linked here rather than copied.
   monitored task. BinaryLane schedules it at 06:15 after the existing daily
   aggregation, with normal queue delivery following within two minutes.
 
+### Brand-safe public discovery measurement (DATA-004)
+
+- Public pages load a brand's optional GA4 measurement ID only when it is a
+  valid `G-` identifier; empty or invalid settings remain disabled.
+- Search, result, provider, stay, phone, website, navigation and claim journeys
+  emit a shared non-personal event vocabulary alongside the existing
+  first-party demand records. No names, email addresses, phone numbers, search
+  text or precise locations are sent by this browser bridge.
+- Existing per-brand Google and Bing verification settings and automatic
+  canonical URLs remain the sole webmaster configuration path.
+
+### VanAssist public search link compatibility
+
+- Restored compatibility for public search links that use `text` instead of
+  the current `location` or `q` fields.
+- Public location lookups now accept the descriptive `latitude` and
+  `longitude` names as aliases for `lat` and `lng`. Current links remain
+  unchanged; the aliases prevent older bookmarks and integrations from losing
+  their search text or device location.
+
 ### VanAssist Ask question library and cache safety (VAN-011)
 
 - Added a migration-backed, idempotent library of 1,550 versioned common Ask

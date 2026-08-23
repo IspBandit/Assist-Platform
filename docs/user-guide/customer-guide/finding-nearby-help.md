@@ -29,6 +29,12 @@ Caravan, motorhome and RV travellers planning before departure or searching whil
 
 No account is required. On the main VanAssist search, the browser may ask for optional device-location permission automatically so the nearest town can be prepared. Denying permission leaves the full manual search available.
 
+VanAssist may measure broad journey steps such as opening search results, a
+provider or a place to stay, and choosing phone, website, directions or claim
+actions. This measurement does not send names, contact details, search wording
+or precise device coordinates. Each Assist Platform brand uses its own
+measurement configuration.
+
 ## Fields
 
 **Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
@@ -36,6 +42,10 @@ No account is required. On the main VanAssist search, the browser may ask for op
 ## Actions
 
 The main search attempts to resolve the current location without submitting the form. **Use my current location** repeats that request when needed. Fuel, EV charging, Places to Stay, service-category buttons, the provider directory, result refinements and assistance requests all inherit the same recent device location. A discovery page with no location automatically resolves it; nearby shortcut links carry the coordinates into the destination page. Typing any town, suburb or postcode clears the device coordinates immediately, so the typed place always wins. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. Drag the map to move it, pinch or use **Zoom in**/**Zoom out**, and use **Fit results** to restore every returned pin. A numbered pin opens the exact result summary, including **Details**, **Show in list** and **Directions** when available. Each mapped result row also shows the same numbered pin symbol as the map. The summary can be collapsed or moved with pointer, touch or arrow keys so it does not hide the map. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The result list remains fully usable without JavaScript or map tiles.
+
+Shared links and older bookmarks remain compatible when they use `text` for
+the search wording or the full `latitude` and `longitude` names for device
+coordinates. New VanAssist links continue to use the current form field names.
 
 ## Workflows
 
@@ -145,7 +155,8 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-16 (provider-name search, route accuracy and compact mobile shell).
+2026-08-22 (provider-name search, route accuracy, compact mobile shell and
+brand-safe public journey measurement documented).
 
 ## Owner
 

@@ -82,6 +82,53 @@ final class VanAssistPublicUxTest extends TestCase
         self::assertStringContainsString('HAVING distance_km <= ?', $provider);
     }
 
+    public function testFindAndDirectoryEndpointsAcceptLegacyTextInputAliases(): void
+    {
+        $searchController = $this->source('app/Controllers/Site/SearchController.php');
+        $providerController = $this->source('app/Controllers/Site/ProviderController.php');
+
+        self::assertStringContainsString('$location = trim((string) $request->input(\'location\', \'\'));', $searchController);
+        self::assertStringContainsString('if ($location === \'\') {', $searchController);
+        self::assertStringContainsString('$location = trim((string) $request->input(\'text\', \'\'));', $searchController);
+        self::assertStringContainsString('$search = trim((string) $request->input(\'q\', \'\'));', $providerController);
+        self::assertStringContainsString('if ($search === \'\') {', $providerController);
+        self::assertStringContainsString('$search = trim((string) $request->input(\'text\', \'\'));', $providerController);
+    }
+
+    public function testLocationEndpointsAcceptLatitudeLongitudeAliases(): void
+    {
+        $locationController = $this->source('app/Controllers/Site/LocationController.php');
+        $searchController = $this->source('app/Controllers/Site/SearchController.php');
+        $providerController = $this->source('app/Controllers/Site/ProviderController.php');
+
+        self::assertStringContainsString('$latRaw = $request->input(\'lat\');', $locationController);
+        self::assertStringContainsString('$latRaw = $request->input(\'latitude\');', $locationController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $locationController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'longitude\');', $locationController);
+
+        self::assertStringContainsString('$latRaw = $request->input(\'lat\');', $searchController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $searchController);
+        self::assertStringContainsString('$latRaw = $request->input(\'lat\');', $providerController);
+        self::assertStringContainsString('$lngRaw = $request->input(\'lng\');', $providerController);
+    }
+
+    public function testPublicMeasurementIsBrandScopedAndContainsNoPersonalFields(): void
+    {
+        $layout = $this->source('app/Views/layouts/public.php');
+        $script = $this->source('public/assets/js/app.js');
+
+        self::assertStringContainsString('$layoutBrand->analytics()', $layout);
+        self::assertStringContainsString("data-brand=", $layout);
+        self::assertStringContainsString("window.assistMeasure", $script);
+        self::assertStringContainsString("'search_submitted'", $script);
+        self::assertStringContainsString("'provider_open'", $script);
+        self::assertStringContainsString("'stay_open'", $script);
+        self::assertStringContainsString("'phone_click'", $script);
+        self::assertStringContainsString("'provider_claim_submitted'", $script);
+        self::assertStringNotContainsString('contact_email', $script);
+        self::assertStringNotContainsString('contact_phone', $script);
+    }
+
     private function source(string $relativePath): string
     {
         $contents = file_get_contents(dirname(__DIR__, 2) . '/' . $relativePath);

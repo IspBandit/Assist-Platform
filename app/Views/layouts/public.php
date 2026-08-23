@@ -3,6 +3,8 @@
 $layoutBrand = current_brand();
 $layoutBrandAssets = $layoutBrand->assets();
 $layoutBrandTheme = $layoutBrand->theme();
+$layoutAnalytics = $layoutBrand->analytics();
+$layoutMeasurementId = trim((string) ($layoutAnalytics['measurement_id'] ?? ''));
 $layoutPath = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/', '/') ?: '/';
 $isCustomerWorkspace = $layoutPath === '/account' || str_starts_with($layoutPath, '/account/');
 $isProviderWorkspace = $layoutPath === '/provider' || str_starts_with($layoutPath, '/provider/');
@@ -33,6 +35,10 @@ $dashboardHelp = $dashboardAudience !== null ? \App\Services\Documentation\Docum
     <?php endif; ?>
     <link rel="alternate" type="application/xml" title="Sitemap" href="<?= e(url('sitemap.xml')) ?>">
     <?= $this->yield('head') ?>
+    <?php if (preg_match('/^G-[A-Z0-9]+$/i', $layoutMeasurementId) === 1): ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= e_attr($layoutMeasurementId) ?>"></script>
+    <script>window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config',<?= json_encode($layoutMeasurementId, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,{anonymize_ip:true});</script>
+    <?php endif; ?>
 </head>
 <body data-brand="<?= e_attr($layoutBrand->id()) ?>">
 <a class="skip-link" href="#main">Skip to main content</a>

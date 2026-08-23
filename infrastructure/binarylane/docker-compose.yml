@@ -47,6 +47,10 @@ services:
     volumes:
       - ./current:/var/www/html:ro
       - ./shared/uploads-public:/var/www/html/public/uploads-public:ro
+      - /opt/cqdiggings/current:/var/www/cqdiggings:ro
+      - /opt/cqdiggings/shared/data/community-contributions.json:/var/www/cqdiggings/data/community-contributions.json:ro
+      - /opt/cqdiggings/shared/data/marketplace-listings.json:/var/www/cqdiggings/data/marketplace-listings.json:ro
+      - /opt/cqdiggings/shared/assets/marketplace:/var/www/cqdiggings/assets/marketplace:ro
       - ./runtime/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
@@ -57,6 +61,25 @@ services:
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
     cap_add: [NET_BIND_SERVICE]
+
+  cqdiggings:
+    build:
+      context: ./runtime
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - /opt/cqdiggings/current:/var/www/cqdiggings:ro
+      - /opt/cqdiggings/shared/analytics/config.php:/var/www/cqdiggings/analytics/config.php:ro
+      - /opt/cqdiggings/shared/analytics/dashboard-config.php:/var/www/cqdiggings/analytics/dashboard-config.php:ro
+      - /opt/cqdiggings/shared/analytics/_stats:/var/www/cqdiggings/analytics/_stats
+      - /opt/cqdiggings/shared/analytics/_contributions:/var/www/cqdiggings/analytics/_contributions
+      - /opt/cqdiggings/shared/analytics/_marketplace:/var/www/cqdiggings/analytics/_marketplace
+      - /opt/cqdiggings/shared/analytics/_messages:/var/www/cqdiggings/analytics/_messages
+      - /opt/cqdiggings/shared/data/community-contributions.json:/var/www/cqdiggings/data/community-contributions.json
+      - /opt/cqdiggings/shared/data/marketplace-listings.json:/var/www/cqdiggings/data/marketplace-listings.json
+      - /opt/cqdiggings/shared/assets/marketplace:/var/www/cqdiggings/assets/marketplace
+    networks: [frontend]
+    security_opt: [no-new-privileges:true]
 
 networks:
   frontend:
