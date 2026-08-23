@@ -9,6 +9,7 @@
 /** @var bool $locationNotFound */
 /** @var array<int,array<string,mixed>> $matches */
 /** @var array<int,array<string,mixed>> $possible */
+/** @var bool $usedRegionalPool */
 /** @var string $requestUrl */
 /** @var int|null $searchId */
 /** @var array<int,array<string,mixed>> $categories */
@@ -211,7 +212,9 @@ foreach ($mappedResults as $index => $mappedProvider) {
 
         <?php if ($possible !== []): ?>
             <h2 style="margin-top:1.5rem">Businesses that may offer this service<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
-            <p class="muted result-section-note">Related trades may help, but are not confirmed for this exact service.</p>
+            <p class="muted result-section-note"><?= !empty($usedRegionalPool)
+                ? 'No exact or related category matched. These providers service the area but are not confirmed for this job—check before travelling.'
+                : 'Related trades may help, but are not confirmed for this exact service.' ?></p>
             <div class="provider-card-grid provider-result-list">
                 <?php foreach ($possible as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id'], 'mapResultNumber' => $mapResultNumbers[(int) $p['id']] ?? 0]); ?>

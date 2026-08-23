@@ -104,6 +104,8 @@ final class VanAssistDailyPerformanceReport
             'Pages per visit' => $pagesPerVisit === null ? '—' : number_format((float) $pagesPerVisit, 1),
             'Provider searches' => $searches,
             'Searches with no result' => $noResults,
+            'Exact category misses' => (int) ($summary['exact_misses'] ?? 0),
+            'Searches rescued with alternatives' => (int) ($summary['rescued_searches'] ?? 0),
             'Search success rate' => $successRate === null ? '—' : number_format((float) $successRate, 1) . '%',
             'Provider profiles opened' => (int) ($summary['profile_views'] ?? 0),
             'Contact actions' => $contacts,
@@ -116,7 +118,7 @@ final class VanAssistDailyPerformanceReport
             ['Devices used', $report['devices'] ?? [], 'Device', 'Visits', 'Views'],
             ['Services people searched for', $report['services'] ?? [], 'Service', 'Searches', 'No result'],
             ['Locations people searched', $report['locations'] ?? [], 'Location', 'Searches', 'No result'],
-            ['Search gaps needing coverage', self::coverageGapRows($report['coverage_gaps'] ?? []), 'Service and location', 'No-result searches', 'Repeated misses'],
+            ['Search gaps needing coverage', self::coverageGapRows($report['coverage_gaps'] ?? []), 'Service and location', 'Exact misses', 'Rescued'],
             ['What visitors clicked', $report['actions'] ?? [], 'Action', 'Actions', 'Visitors'],
             ['Providers attracting interest', self::providerRows($report['providers'] ?? []), 'Provider', 'Contacts', 'Profile views'],
         ];
@@ -186,7 +188,7 @@ final class VanAssistDailyPerformanceReport
             return [
                 'label' => (string) ($row['service_name'] ?? 'Any service') . ' — ' . $location,
                 'total' => (int) ($row['searches'] ?? 0),
-                'secondary' => (int) ($row['searches'] ?? 0) >= 2 ? (int) ($row['searches'] ?? 0) : 0,
+                'secondary' => (int) ($row['rescued_searches'] ?? 0),
             ];
         }, $rows);
     }

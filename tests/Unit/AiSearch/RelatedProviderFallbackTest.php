@@ -59,4 +59,45 @@ final class RelatedProviderFallbackTest extends TestCase
 
         self::assertSame([], (new ProviderSearchAdapter())->search($intent, null, null, null));
     }
+
+    public function testRegionalTownPoolRequiresResolvedTown(): void
+    {
+        self::assertSame([], (new ProviderSearchAdapter())->searchRegionalTownPool(null, -20.7, 116.8, 50));
+    }
+
+    public function testProviderIntentCanUseFallbacks(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-servicing'], [], [], 'Karratha', false, 25,
+            'normal', ['providers'], 0.88, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseProviderFallback');
+
+        self::assertTrue($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testFacilityIntentCannotFallBackToUnrelatedRepairProviders(): void
+    {
+        $intent = new Intent(Intent::TYPE_FACILITY, ['dump-points'], [], ['dump_point'], 'Gladstone', false, 25,
+            'normal', ['providers', 'traveller_facilities'], 0.92, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseProviderFallback');
+
+        self::assertFalse($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testLpgProviderIntentCannotFallBackToUnrelatedRepairProviders(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['lpg-refills-and-bottle-exchange'], [], [], 'Roma', false, 25,
+            'normal', ['providers'], 0.92, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseProviderFallback');
+
+        self::assertFalse($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testMixedStayIntentCannotUseProviderFallbacks(): void
+    {
+        $intent = new Intent(Intent::TYPE_MIXED, ['general-servicing'], ['caravan_park'], [], 'Karratha', false, 25,
+            'normal', ['providers', 'stays'], 0.7, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseProviderFallback');
+
+        self::assertFalse($method->invoke(new SearchOrchestrator(), $intent));
+    }
 }
