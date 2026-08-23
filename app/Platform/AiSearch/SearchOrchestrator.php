@@ -33,6 +33,7 @@ use App\Platform\AiSearch\Routing\SearchRouter;
 use App\Platform\AiSearch\Support\DatasetSearchFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\ProviderFallbackCategories;
 use App\Services\Search\PublicResultWindow;
 
 /**
@@ -403,13 +404,22 @@ final class SearchOrchestrator
                 $providerRows = $providerNameQuery !== null
                     ? $providerNameRows
                     : $this->providers->search($intent, $town, $originLat, $originLng);
-                if ($providerRows === [] && $intent->providerCategoryKeys !== []) {
+                if ($providerRows === [] && $this->shouldUseProviderFallback($intent)) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {
                         $providerRows = $this->providers->search($relatedIntent, $town, $originLat, $originLng);
                         if ($providerRows !== []) {
+                            $fallback = $fallback !== '' ? $fallback : 'related_provider_fallback';
                             $messages[] = 'No exact specialist matched nearby. Showing related providers—confirm they handle your issue before travelling.';
                         }
+                    }
+                }
+                if ($providerRows === [] && $town !== null && $this->shouldUseProviderFallback($intent)) {
+                    $poolRadius = max(50, (int) ($intent->radiusKm ?? (int) config('ai_search.default_radius_km', 25)));
+                    $providerRows = $this->providers->searchRegionalTownPool($town, $originLat, $originLng, $poolRadius);
+                    if ($providerRows !== []) {
+                        $fallback = $fallback !== '' ? $fallback : 'regional_provider_pool';
+                        $messages[] = 'No exact category match nearby. Showing providers who service this area—confirm they handle your issue before travelling.';
                     }
                 }
             } catch (\Throwable) {
@@ -565,26 +575,7 @@ final class SearchOrchestrator
     private function relatedProviderFallbackIntent(Intent $intent): ?Intent
     {
         $alreadyTried = array_values(array_unique($intent->providerCategoryKeys));
-
-        $electrical = ['12-volt-electrical', '240-volt-electrical', 'solar-and-batteries',
-            'dc-dc-charging', 'inverters', 'refrigeration', 'air-conditioning',
-            'starlink-and-communications', 'auto-electrical-and-batteries'];
-        $vehicle = ['brakes-and-bearings', 'suspension', 'tyres-and-wheels',
-            'diesel-mechanics', 'towing-and-vehicle-recovery', '4wd-and-remote-area-recovery'];
-        $servicing = ['mobile-mechanics', 'mechanical-repairs', 'general-servicing', 'pre-trip-inspection',
-            'roadworthy-inspection'];
-
-        if (array_intersect($alreadyTried, $electrical) !== []) {
-            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries'];
-        } elseif (array_intersect($alreadyTried, $vehicle) !== []) {
-            $categories = ['mobile-mechanics', 'mechanical-repairs', 'roadside-assistance'];
-        } elseif (array_intersect($alreadyTried, $servicing) !== []) {
-            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries', 'diesel-mechanics'];
-        } else {
-            $categories = ['general-caravan-repairs', 'mobile-mechanics'];
-        }
-
-        $categories = array_values(array_diff($categories, $alreadyTried));
+        $categories = ProviderFallbackCategories::related($alreadyTried);
         if ($categories === []) {
             return null;
         }
@@ -604,6 +595,15 @@ final class SearchOrchestrator
             clarificationReason: null,
             source: 'related_provider_fallback',
         );
+    }
+
+    private function shouldUseProviderFallback(Intent $intent): bool
+    {
+        return $intent->intentType === Intent::TYPE_PROVIDER
+            && $intent->providerCategoryKeys !== []
+            && $intent->stayTypeKeys === []
+            && $intent->facilityTypeKeys === []
+            && ProviderFallbackCategories::related($intent->providerCategoryKeys) !== [];
     }
 
     /** @param list<string> $adapters */

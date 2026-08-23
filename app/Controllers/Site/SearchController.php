@@ -12,9 +12,12 @@ use App\Helpers\Geo;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
+use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Services\Demand\DemandRecorder;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\ProviderFallbackCategories;
 use App\Services\Search\PublicResultWindow;
+use App\Services\Search\StructuredSearchDestination;
 
 /**
  * Handles the homepage "Find a service" search: a free-text town/postcode plus
@@ -44,6 +47,19 @@ final class SearchController extends Controller
         $lat = is_numeric($latRaw) ? (float) $latRaw : null;
         $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
         $hasCoords = $lat !== null && $lng !== null && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
+
+        if (current_brand()->id() === 'vanassist') {
+            $destination = StructuredSearchDestination::path(
+                $categorySlug,
+                $location,
+                $hasCoords ? $lat : null,
+                $hasCoords ? $lng : null,
+                AiSearchFeature::enabled(),
+            );
+            if ($destination !== null) {
+                return $this->redirect($destination);
+            }
+        }
 
         $category = $categorySlug !== '' ? ServiceCategory::findActiveBySlug($categorySlug) : null;
         $categoryId = $category !== null ? (int) $category['id'] : null;
@@ -87,6 +103,7 @@ final class SearchController extends Controller
 
         $matches = [];
         $possible = [];
+        $usedRegionalPool = false;
 
         if ($town !== null) {
             $townId = (int) $town['id'];
@@ -115,6 +132,43 @@ final class SearchController extends Controller
             }
         }
 
+        $exactMatchCount = count($matches) + count($possible);
+        $relatedCategorySlugs = ProviderFallbackCategories::related([$categorySlug]);
+        if ($categoryId !== null && $exactMatchCount === 0 && $relatedCategorySlugs !== []
+            && ($town !== null || $location === '')) {
+            $fallbackRows = [];
+            foreach ($relatedCategorySlugs as $relatedSlug) {
+                $relatedCategory = ServiceCategory::findActiveBySlug($relatedSlug);
+                if ($relatedCategory === null) {
+                    continue;
+                }
+                $rows = $town !== null
+                    ? ($distanceFilter['scope'] === 'km' && $hasOrigin
+                        ? Provider::forCategoryNear((int) $relatedCategory['id'], (float) $originLat, (float) $originLng, (int) $distanceFilter['km'])
+                        : Provider::forCategory((int) $relatedCategory['id'], (int) $town['id']))
+                    : Provider::forCategory((int) $relatedCategory['id']);
+                foreach ($rows as $row) {
+                    $providerId = (int) ($row['id'] ?? 0);
+                    if ($providerId <= 0 || isset($fallbackRows[$providerId])) {
+                        continue;
+                    }
+                    $row['is_inferred'] = 1;
+                    $row['search_fallback'] = 'related_category';
+                    $fallbackRows[$providerId] = $row;
+                }
+            }
+            $possible = array_values($fallbackRows);
+
+            if ($possible === [] && $town !== null) {
+                foreach (Provider::inTown((int) $town['id'], (int) ($town['region_id'] ?? 0), 60) as $row) {
+                    $row['is_inferred'] = 1;
+                    $row['search_fallback'] = 'regional_provider_pool';
+                    $possible[] = $row;
+                }
+                $usedRegionalPool = $possible !== [];
+            }
+        }
+
         if ($hasOrigin) {
             $townIdForFilter = $town !== null ? (int) $town['id'] : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);
@@ -136,6 +190,11 @@ final class SearchController extends Controller
             $possible = $resultWindow['groups']['possible'];
         }
 
+        $usedNearbyFallback = $exactMatchCount === 0 && array_filter(
+            $possible,
+            static fn (array $row): bool => isset($row['search_fallback'])
+        ) !== [];
+
         // Paid visibility is kept in an explicitly labelled block. Organic
         // direct results rank verified listings first, then nearest distance;
         // related/inferred services remain a separate group.
@@ -156,6 +215,8 @@ final class SearchController extends Controller
                 'postcode'     => preg_match('/^\d{3,4}$/', $location) === 1 ? $location : null,
                 'category_id'  => $categoryId,
                 'result_count' => count($shown),
+                'exact_match_count' => $exactMatchCount,
+                'used_nearby_fallback' => $usedNearbyFallback,
             ]);
             DemandRecorder::recordImpressions($searchId, $shown, $categoryId);
         }
@@ -216,6 +277,7 @@ final class SearchController extends Controller
             'locationNotFound' => $locationNotFound,
             'matches'          => $matches,
             'possible'         => $possible,
+            'usedRegionalPool' => $usedRegionalPool,
             'requestUrl'       => $requestUrl,
             'searchId'         => $searchId,
             'categories'       => $categories,

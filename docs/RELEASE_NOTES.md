@@ -5,6 +5,22 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Production zero-result search fixes (VAN-011 / DATA-004)
+
+- Structured selections for caravan parks and camps now open the stay directory;
+  dump points, potable water and rest areas open Ask when it is enabled, so the
+  request reaches the platform dataset that actually owns those records instead
+  of searching provider listings only. Typed locations and device coordinates
+  are preserved.
+- Provider-only searches with no exact result widen once to relevant repair,
+  mechanical or roadside categories, then to clearly labelled providers serving
+  the resolved region. Standalone facility, stay and travel-retail searches are
+  excluded from this fallback so unrelated repair businesses are not shown.
+- Ask now records successful related/regional fallback reasons. Structured Find
+  records exact result count separately from displayed alternatives, and Website
+  Insights reports exact coverage misses and rescued searches independently from
+  searches that still ended with no usable result.
+
 ### Ask VanAssist outcome explanations
 
 - Added a separately feature-gated, deterministic explanation layer around the

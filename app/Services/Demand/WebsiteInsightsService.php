@@ -24,6 +24,8 @@ final class WebsiteInsightsService
         $signedIn = self::count("SELECT COUNT(DISTINCT user_id) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND user_id IS NOT NULL AND created_at BETWEEN ? AND ?", $window);
         $searches = self::count('SELECT COUNT(*) FROM provider_searches WHERE brand_id=? AND is_excluded=0 AND created_at BETWEEN ? AND ?', $window);
         $noResults = self::count('SELECT COUNT(*) FROM provider_searches WHERE brand_id=? AND is_excluded=0 AND result_count=0 AND created_at BETWEEN ? AND ?', $window);
+        $exactMisses = self::count('SELECT COUNT(*) FROM provider_searches WHERE brand_id=? AND is_excluded=0 AND exact_match_count=0 AND created_at BETWEEN ? AND ?', $window);
+        $rescuedSearches = self::count('SELECT COUNT(*) FROM provider_searches WHERE brand_id=? AND is_excluded=0 AND exact_match_count=0 AND result_count>0 AND used_nearby_fallback=1 AND created_at BETWEEN ? AND ?', $window);
         $profileViews = self::count("SELECT COUNT(*) FROM analytics_events WHERE brand_id=? AND event_name='provider_profile_viewed' AND is_excluded=0 AND created_at BETWEEN ? AND ?", $window);
         $contacts = self::count('SELECT COUNT(*) FROM provider_contact_actions WHERE brand_id=? AND is_excluded=0 AND created_at BETWEEN ? AND ?', $window);
         $confirmed = self::count("SELECT COUNT(*) FROM service_outcomes WHERE brand_id=? AND is_excluded=0 AND confidence IN ('customer_reported','both_confirmed','admin_verified') AND created_at BETWEEN ? AND ?", $window);
@@ -38,6 +40,8 @@ final class WebsiteInsightsService
                 'pages_per_visitor' => $visitors > 0 ? round($views / $visitors, 1) : null,
                 'searches' => $searches,
                 'no_results' => $noResults,
+                'exact_misses' => $exactMisses,
+                'rescued_searches' => $rescuedSearches,
                 'profile_views' => $profileViews,
                 'contact_actions' => $contacts,
                 'confirmed_uses' => $confirmed,
@@ -87,11 +91,11 @@ final class WebsiteInsightsService
             'coverage_gaps' => Database::select(
                 "SELECT ps.town_id,ps.category_id,COALESCE(t.name,NULLIF(ps.postcode,''),'Location not supplied') AS location_name,"
                 . "COALESCE(st.abbreviation,'') AS state_abbr,COALESCE(bpc.name,sc.name,'Any service') AS service_name,"
-                . 'COUNT(*) AS searches,MAX(ps.created_at) AS last_searched '
+                . 'COUNT(*) AS searches,SUM(ps.result_count>0 AND ps.used_nearby_fallback=1) AS rescued_searches,MAX(ps.created_at) AS last_searched '
                 . 'FROM provider_searches ps LEFT JOIN towns t ON t.id=ps.town_id LEFT JOIN states st ON st.id=COALESCE(t.state_id,ps.state_id) '
                 . 'LEFT JOIN brand_provider_categories bpc ON bpc.id=ps.category_id AND bpc.brand_id=ps.brand_id '
                 . 'LEFT JOIN service_categories sc ON sc.id=ps.category_id '
-                . 'WHERE ps.brand_id=? AND ps.is_excluded=0 AND ps.result_count=0 AND ps.created_at BETWEEN ? AND ? '
+                . 'WHERE ps.brand_id=? AND ps.is_excluded=0 AND ps.exact_match_count=0 AND ps.created_at BETWEEN ? AND ? '
                 . "GROUP BY ps.town_id,ps.category_id,COALESCE(t.name,NULLIF(ps.postcode,''),'Location not supplied'),COALESCE(st.abbreviation,''),COALESCE(bpc.name,sc.name,'Any service') "
                 . 'ORDER BY searches DESC,last_searched DESC LIMIT 50',
                 $window

@@ -39,6 +39,12 @@ measurement configuration.
 
 **Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
 
+Some choices use a more suitable directory automatically. Caravan parks and
+camp choices open **Places to stay**. Dump points, potable-water refills and rest
+areas open **Ask VanAssist** when it is available, because those records are
+stored as traveller facilities rather than ordinary provider listings. The
+location you typed, or your permitted device location, is carried across.
+
 ## Actions
 
 The main search attempts to resolve the current location without submitting the form. **Use my current location** repeats that request when needed. Fuel, EV charging, Places to Stay, service-category buttons, the provider directory, result refinements and assistance requests all inherit the same recent device location. A discovery page with no location automatically resolves it; nearby shortcut links carry the coordinates into the destination page. Typing any town, suburb or postcode clears the device coordinates immediately, so the typed place always wins. **Update results** runs the search. On phones, **List** is the default compact view and **Map** reveals the same located results. Drag the map to move it, pinch or use **Zoom in**/**Zoom out**, and use **Fit results** to restore every returned pin. A numbered pin opens the exact result summary, including **Details**, **Show in list** and **Directions** when available. Each mapped result row also shows the same numbered pin symbol as the map. The summary can be collapsed or moved with pointer, touch or arrow keys so it does not hide the map. Selecting a result row highlights its matching pin. **Places to stay** carries the current location and a supported radius into caravan-friendly stay search. The result list remains fully usable without JavaScript or map tiles.
@@ -128,8 +134,11 @@ caravan repair and unsure-service options instead of returning an empty answer.
 When the requested specialist category has no nearby listing, Ask may show a
 wider set of related repair, mechanical or roadside providers. Servicing and
 mobile-mechanic misses widen once to general caravan repairs, auto electrical
-and diesel mechanics at 50 km before giving up. These are
-clearly labelled as related help and users are told to confirm suitability.
+and diesel mechanics at 50 km. If those categories still have no result for a
+resolved town, Ask may show clearly labelled providers serving the wider area.
+These alternatives are not claimed as exact matches; confirm suitability before
+travelling. Facility, stay, fuel, LPG and other travel-retail searches never
+widen to unrelated repair businesses.
 Ask keeps conversational wording after a town out of the location name (for
 example, “near Gympie on my caravan”). If a named place cannot be resolved,
 Ask returns no providers rather than silently falling back to national results.

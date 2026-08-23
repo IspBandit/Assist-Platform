@@ -63,6 +63,7 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
     <div><p class="eyebrow">What the numbers say</p><h2 id="insight-decision-heading">Demand and directory usefulness</h2></div>
     <dl>
         <div><dt>Search success</dt><dd><?= $summary['search_success_rate'] === null ? 'Not enough data' : $this->e((string) $summary['search_success_rate']) . '%' ?><small><?= number_format((int) $summary['successful_searches']) ?> searches returned at least one result</small></dd></div>
+        <div><dt>Exact coverage misses</dt><dd><?= number_format((int) $summary['exact_misses']) ?><small><?= number_format((int) $summary['rescued_searches']) ?> still received clearly labelled nearby options</small></dd></div>
         <div><dt>Search to contact</dt><dd><?= $summary['search_to_contact'] === null ? 'Not enough data' : $this->e((string) $summary['search_to_contact']) . '%' ?><small>Interest signal only—not a completed job</small></dd></div>
         <div><dt>Latest page visit</dt><dd><?= $this->e((string) ($summary['last_page_view_at'] ?? 'None recorded')) ?><small>Confirms page tracking is alive</small></dd></div>
         <div><dt>Latest provider action</dt><dd><?= $this->e((string) ($summary['last_demand_event_at'] ?? 'None recorded')) ?><small>Profile, contact or funnel event</small></dd></div>
@@ -162,9 +163,9 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
 <details class="card insight-panel insight-panel--scroll" open data-mobile-collapse>
     <summary><h2>Coverage gaps needing attention</h2><span>Report details</span></summary>
     <div class="insight-panel-body">
-    <p class="muted">Real searches that returned no providers. Repeated gaps are the best places to verify and recruit suitable providers next.</p>
+    <p class="muted">Searches with no exact category match. “Rescued” searches still showed clearly labelled related or area-serving providers; the exact coverage gap remains visible for recruitment.</p>
     <div class="table-wrap"><table class="data">
-        <thead><tr><th>Location</th><th>Service wanted</th><th>Empty searches</th><th>Most recent</th><th></th></tr></thead>
+        <thead><tr><th>Location</th><th>Service wanted</th><th>Exact misses</th><th>Rescued</th><th>Most recent</th><th></th></tr></thead>
         <tbody>
         <?php foreach ($insights['coverage_gaps'] as $row): ?>
             <?php $location = trim((string) $row['location_name'] . (!empty($row['state_abbr']) ? ', ' . $row['state_abbr'] : '')); ?>
@@ -172,11 +173,12 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
                 <td><strong><?= $this->e($location) ?></strong></td>
                 <td><?= $this->e((string) $row['service_name']) ?></td>
                 <td><?= number_format((int) $row['searches']) ?></td>
+                <td><?= number_format((int) ($row['rescued_searches'] ?? 0)) ?></td>
                 <td><?= $this->e((string) $row['last_searched']) ?></td>
                 <td><a class="btn btn-ghost btn-sm" href="<?= e(url('admin/providers?' . http_build_query(['town' => $row['location_name'], 'category' => $row['category_id']]))) ?>">Inspect providers</a></td>
             </tr>
         <?php endforeach; ?>
-        <?php if ($insights['coverage_gaps'] === []): ?><tr><td colspan="5" class="muted">No zero-result searches were recorded in this period.</td></tr><?php endif; ?>
+        <?php if ($insights['coverage_gaps'] === []): ?><tr><td colspan="6" class="muted">No exact-match coverage gaps were recorded in this period.</td></tr><?php endif; ?>
         </tbody>
     </table></div></div>
 </details>

@@ -18,6 +18,8 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
                 'pages_per_visitor' => 2.5,
                 'searches' => 12,
                 'no_results' => 2,
+                'exact_misses' => 4,
+                'rescued_searches' => 2,
                 'search_success_rate' => 83.3,
                 'profile_views' => 9,
                 'contact_actions' => 4,
@@ -30,7 +32,7 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
             'locations' => [['label' => 'Gladstone', 'total' => 4, 'secondary' => 0]],
             'coverage_gaps' => [[
                 'service_name' => 'Roof leaks', 'location_name' => 'Gladstone',
-                'state_abbr' => 'QLD', 'searches' => 3,
+                'state_abbr' => 'QLD', 'searches' => 3, 'rescued_searches' => 2,
             ]],
             'actions' => [['label' => 'directions', 'total' => 3, 'secondary' => 3]],
             'providers' => [['label' => 'Example Caravan Repairs', 'contacts' => 2, 'profile_views' => 4]],
@@ -42,6 +44,7 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
         self::assertStringContainsString('Places to stay', $message['html']);
         self::assertStringContainsString('Dump points', $message['html']);
         self::assertStringContainsString('Search gaps needing coverage', $message['html']);
+        self::assertStringContainsString('Searches rescued with alternatives', $message['html']);
         self::assertStringContainsString('Roof leaks — Gladstone, QLD', $message['html']);
         self::assertStringContainsString('Example Caravan Repairs', $message['html']);
         self::assertStringContainsString('aggregate, first-party VanAssist figures', $message['text']);

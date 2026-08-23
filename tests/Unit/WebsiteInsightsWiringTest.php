@@ -123,6 +123,8 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString("'/' => 'Home page'", $service);
         self::assertStringContainsString("'/find' => 'Provider search results'", $service);
         self::assertStringContainsString("'coverage_gaps'", $service);
+        self::assertStringContainsString("'rescued_searches'", $service);
+        self::assertStringContainsString('ps.exact_match_count=0', $service);
     }
 
     public function testBrandDashboardLinksToWebsiteInsights(): void
