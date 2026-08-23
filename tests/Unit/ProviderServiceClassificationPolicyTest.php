@@ -40,6 +40,7 @@ final class ProviderServiceClassificationPolicyTest extends TestCase
 
     public function testBusinessWithoutSpecialistNameRuleIsNotRejected(): void
     {
+        self::assertFalse(ProviderServiceClassificationPolicy::matchesSpecialistName('Emerald Automotive'));
         self::assertFalse(ProviderServiceClassificationPolicy::isUnsupportedSpecialistService(
             'Emerald Automotive',
             'general-mechanical-repairs'

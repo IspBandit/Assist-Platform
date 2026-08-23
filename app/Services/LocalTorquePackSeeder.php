@@ -143,15 +143,14 @@ final class LocalTorquePackSeeder
             return;
         }
 
-        $this->removeKnownBadFuelGasAssignments($providerId, $record);
-        $this->removeUnsupportedBrandCategoryAssignments($providerId, $record, $validCategories);
-        $this->removeUnsupportedSharedServices($providerId, $name);
-
         $brands = $this->brandsForCategories($validCategories);
         $hasPublicEvidence = (int) Database::scalar(
             'SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND publishable=1 AND needs_review=0',
             [$providerId]
         ) > 0;
+        $this->removeKnownBadFuelGasAssignments($providerId, $record);
+        $this->removeUnsupportedBrandCategoryAssignments($providerId, $record, $validCategories);
+        $this->removeUnsupportedSharedServices($providerId, $name, $hasPublicEvidence);
         if (!$hasPublicEvidence) {
             $this->quarantineUnclaimedProvider($providerId);
         }
@@ -609,13 +608,9 @@ final class LocalTorquePackSeeder
         );
     }
 
-    private function removeUnsupportedSharedServices(int $providerId, string $businessName): void
+    private function removeUnsupportedSharedServices(int $providerId, string $businessName, bool $hasPublicEvidence): void
     {
-        $hasPublicEvidence = (int) Database::scalar(
-            'SELECT COUNT(*) FROM provider_source_records WHERE provider_id=? AND publishable=1 AND needs_review=0',
-            [$providerId]
-        ) > 0;
-        if ($hasPublicEvidence) {
+        if ($hasPublicEvidence || !ProviderServiceClassificationPolicy::matchesSpecialistName($businessName)) {
             return;
         }
 

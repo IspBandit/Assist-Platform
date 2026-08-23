@@ -15,6 +15,17 @@ final class ProviderServiceClassificationPolicy
         'elgas|lpg refill|gas bottle|bottle exchange' => 'lpg-refills-and-bottle-exchange',
     ];
 
+    public static function matchesSpecialistName(string $businessName): bool
+    {
+        foreach (array_keys(self::NAME_SERVICE_RULES) as $pattern) {
+            if (preg_match('/' . $pattern . '/i', $businessName) === 1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static function isUnsupportedSpecialistService(string $businessName, string $serviceSlug): bool
     {
         $matchedNameRule = false;
