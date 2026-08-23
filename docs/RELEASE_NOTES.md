@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask VanAssist outcome explanations
+
+- Added a separately feature-gated, deterministic explanation layer around the
+  existing Ask pipeline. It states the interpreted need, location and radius,
+  labels the distance method, explains result fit from recorded evidence and
+  recommends a context-specific safest next action.
+- Search intent, adapters, radius filtering, result ranking and paid-AI
+  behaviour are unchanged. Disabling `assist_ai_outcomes` immediately restores
+  the previous Ask results presentation.
+
 ### VanAssist reliability closure (VAN-011 / DATA-004 / EXP-005)
 
 - Website Insights now excludes assets, manifests, service workers, API and

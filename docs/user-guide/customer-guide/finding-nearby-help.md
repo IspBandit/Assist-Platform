@@ -91,6 +91,15 @@ numbered map pin and the matching number in their list row. Ask fails closed:
 an unmeasurable or out-of-radius result is not shown and is never given an
 invented pin.
 
+When the outcome explanation is enabled, Ask also displays **What I understood**
+with the interpreted need, location, search area and distance method. Open
+**Why this fits** beneath a result to see only evidence held by VanAssist, such
+as direct or related match status, listed mobile/workshop service, verification,
+source status and the honestly labelled distance. **Safest next action** tells
+you what to confirm before travelling and gives additional roadside safety
+guidance for urgent requests. This explanation does not change which results
+are returned or their order.
+
 The Ask field is also shown directly on the VanAssist homepage when enabled.
 On a phone, the four direct shortcuts for services, places to stay, fuel and the
 full help directory appear before Ask so the common journeys remain available
@@ -155,8 +164,8 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## Last updated
 
-2026-08-22 (provider-name search, route accuracy, compact mobile shell and
-brand-safe public journey measurement documented).
+2026-08-24 (Ask outcome explanations, provider-name search, route accuracy,
+compact mobile shell and brand-safe public journey measurement documented).
 
 ## Owner
 
