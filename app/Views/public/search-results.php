@@ -81,7 +81,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
             <?php if (($distanceScope ?? '') === 'town' && $town !== null): ?>
                 <p class="muted" style="margin:0 0 .5rem">Showing providers in and serving <strong><?= $this->e((string) $town['name']) ?><?= !empty($town['state_abbr']) ? ', ' . $this->e((string) $town['state_abbr']) : '' ?></strong>, sorted by distance from <strong><?= $this->e((string) $originLabel) ?></strong>.</p>
             <?php else: ?>
-                <p class="muted" style="margin:0 0 .5rem">Sorted by <?= $usesRoadDistance ? 'driving distance' : 'straight-line distance' ?> from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (strictly within ' . (int) $maxDistance . ' km)' : '' ?>. Town-centre destinations are labelled.</p>
+                <p class="muted" style="margin:0 0 .5rem">Sorted by <?= $usesRoadDistance ? 'driving distance' : 'straight-line distance' ?> from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (strictly within ' . (int) $maxDistance . ' km)' : '' ?>. Providers without an exact pin are labelled and do not show a provider road distance.</p>
             <?php endif; ?>
         <?php endif; ?>
         </header>

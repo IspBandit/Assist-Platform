@@ -8,6 +8,7 @@ use App\Auth\Auth;
 use App\Core\Config;
 use App\Core\Database;
 use App\Services\FeatureFlag;
+use App\Services\BotTraffic;
 use Throwable;
 
 /**
@@ -151,7 +152,7 @@ final class ActivityTracker
     public static function excluded(): bool
     {
         try {
-            if (TrackingSession::isBot()) {
+            if (TrackingSession::isBot() || BotTraffic::isSynthetic()) {
                 return true;
             }
             $auth = Auth::instance();

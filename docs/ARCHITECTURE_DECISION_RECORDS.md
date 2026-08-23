@@ -17,6 +17,7 @@ See [ADR 0033](DECISIONS/0033-ric-national-dataset-acquisition.md) for RIC as th
 See [ADR 0034](DECISIONS/0034-assist-ric-facility-auto-publish.md) for Assist RIC government facility pack auto-publish.
 See [ADR 0035](DECISIONS/0035-stay-facility-evidence-and-moderation.md) for source-resolved stay facilities and moderated community evidence.
 See [ADR 0036](DECISIONS/0036-google-routes-road-distance.md) for Google Routes road-distance filtering across VanAssist discovery.
+See [ADR 0037](DECISIONS/0037-policy-safe-route-accuracy.md) for policy-safe route handling and truthful town-centre fallbacks.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -89,6 +90,7 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
   is the catalogue SoR (DATA-011A).
 - 0035: source-resolved stay facility evidence and human-moderated community contributions (proposed).
 - 0036: Google Routes road-distance filtering and drive-time enrichment for VanAssist public search (accepted).
+- 0037: policy-safe Google route accuracy and truthful town-centre provider fallbacks (accepted).
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;

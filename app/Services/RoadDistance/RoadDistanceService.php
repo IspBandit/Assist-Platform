@@ -32,6 +32,12 @@ final class RoadDistanceService
         $rowCoordinates = [];
         foreach ($groups as $group => $rows) {
             foreach ($rows as $rowIndex => $row) {
+                // A town-centre fallback is useful for service-area discovery,
+                // but routing to it is not the distance to the business. Keep
+                // the listing and never spend a Google element on a false pin.
+                if ($group === 'providers' && ($row['distance_basis'] ?? '') === 'town_centre') {
+                    continue;
+                }
                 $pair = $this->coordinatePair($row);
                 if ($pair === null) {
                     continue;
@@ -69,6 +75,12 @@ final class RoadDistanceService
                 $routeIndex = $rowCoordinates[$group][$rowIndex] ?? null;
                 $route = $routeIndex !== null ? ($routes[$routeIndex] ?? null) : null;
                 if ($route === null) {
+                    if ($group === 'providers' && ($row['distance_basis'] ?? '') === 'town_centre') {
+                        unset($row['distance_km'], $row['straight_line_distance_km'], $row['drive_time_seconds']);
+                        $row['distance_metric'] = 'location_estimate';
+                        $result[$group][] = $row;
+                        continue;
+                    }
                     // Once routing succeeded, omit unmeasured overflow/unroutable
                     // cards so every displayed distance and radius decision is real.
                     continue;
@@ -99,6 +111,9 @@ final class RoadDistanceService
     /** @param array<string,mixed> $row */
     public static function displayLabel(array $row): string
     {
+        if (($row['distance_basis'] ?? '') === 'town_centre') {
+            return 'Exact provider distance unavailable (town-centre estimate)';
+        }
         if (!isset($row['distance_km']) || !is_numeric($row['distance_km'])) {
             return '';
         }

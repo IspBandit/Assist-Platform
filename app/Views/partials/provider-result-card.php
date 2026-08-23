@@ -37,7 +37,7 @@ $canCall = $hasListedPhone && !empty($p['show_public_phone']);
                 <?php if ($mapResultNumber > 0): ?><span class="provider-map-reference" data-number="<?= $mapResultNumber ?>" aria-label="Map pin <?= $mapResultNumber ?>"></span><?php endif; ?>
                 <span class="provider-card-title"><?= e($name) ?></span>
             </span>
-            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($p); ?><?php if ($distanceLabel !== ''): ?> · <?= e($distanceLabel) ?><?= ($p['distance_basis'] ?? '') === 'town_centre' ? ' (town-centre destination)' : '' ?><?php endif; ?></span><?php endif; ?>
+            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($p); ?><?php if ($distanceLabel !== ''): ?> · <?= e($distanceLabel) ?><?php endif; ?></span><?php endif; ?>
         </span>
         <span class="provider-card-arrow" aria-hidden="true">→</span>
     </a>

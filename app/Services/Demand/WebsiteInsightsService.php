@@ -17,16 +17,17 @@ final class WebsiteInsightsService
     {
         [$start, $end] = [$from . ' 00:00:00', $to . ' 23:59:59'];
         $window = [$brandId, $start, $end];
+        $publicPages = PublicPageViewPolicy::sqlPredicate('route');
 
-        $views = self::count("SELECT COUNT(*) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND created_at BETWEEN ? AND ?", $window);
-        $visitors = self::count("SELECT COUNT(DISTINCT session_id) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND session_id IS NOT NULL AND created_at BETWEEN ? AND ?", $window);
-        $signedIn = self::count("SELECT COUNT(DISTINCT user_id) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND user_id IS NOT NULL AND created_at BETWEEN ? AND ?", $window);
+        $views = self::count("SELECT COUNT(*) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND created_at BETWEEN ? AND ?", $window);
+        $visitors = self::count("SELECT COUNT(DISTINCT session_id) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND session_id IS NOT NULL AND created_at BETWEEN ? AND ?", $window);
+        $signedIn = self::count("SELECT COUNT(DISTINCT user_id) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND user_id IS NOT NULL AND created_at BETWEEN ? AND ?", $window);
         $searches = self::count('SELECT COUNT(*) FROM provider_searches WHERE brand_id=? AND is_excluded=0 AND created_at BETWEEN ? AND ?', $window);
         $noResults = self::count('SELECT COUNT(*) FROM provider_searches WHERE brand_id=? AND is_excluded=0 AND result_count=0 AND created_at BETWEEN ? AND ?', $window);
         $profileViews = self::count("SELECT COUNT(*) FROM analytics_events WHERE brand_id=? AND event_name='provider_profile_viewed' AND is_excluded=0 AND created_at BETWEEN ? AND ?", $window);
         $contacts = self::count('SELECT COUNT(*) FROM provider_contact_actions WHERE brand_id=? AND is_excluded=0 AND created_at BETWEEN ? AND ?', $window);
         $confirmed = self::count("SELECT COUNT(*) FROM service_outcomes WHERE brand_id=? AND is_excluded=0 AND confidence IN ('customer_reported','both_confirmed','admin_verified') AND created_at BETWEEN ? AND ?", $window);
-        $lastPageView = Database::scalar("SELECT MAX(created_at) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown')", [$brandId]);
+        $lastPageView = Database::scalar("SELECT MAX(created_at) FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages}", [$brandId]);
         $lastDemandEvent = Database::scalar('SELECT MAX(created_at) FROM analytics_events WHERE brand_id=? AND is_excluded=0', [$brandId]);
 
         return [
@@ -49,22 +50,22 @@ final class WebsiteInsightsService
             ],
             'daily' => self::rows(
                 'SELECT DATE(created_at) AS label, COUNT(*) AS total, COUNT(DISTINCT session_id) AS secondary '
-                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND created_at BETWEEN ? AND ? GROUP BY DATE(created_at) ORDER BY label",
+                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND created_at BETWEEN ? AND ? GROUP BY DATE(created_at) ORDER BY label",
                 $window
             ),
             'pages' => self::humanisePages(self::rows(
                 'SELECT route AS label, COUNT(*) AS total, COUNT(DISTINCT session_id) AS secondary '
-                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND created_at BETWEEN ? AND ? GROUP BY route ORDER BY total DESC LIMIT 25",
+                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND created_at BETWEEN ? AND ? GROUP BY route ORDER BY total DESC LIMIT 25",
                 $window
             )),
             'sources' => self::rows(
                 "SELECT COALESCE(NULLIF(referrer_source,''),'direct') AS label, COUNT(DISTINCT session_id) AS total, COUNT(*) AS secondary "
-                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND created_at BETWEEN ? AND ? GROUP BY referrer_source ORDER BY total DESC LIMIT 20",
+                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND created_at BETWEEN ? AND ? GROUP BY referrer_source ORDER BY total DESC LIMIT 20",
                 $window
             ),
             'devices' => self::rows(
                 "SELECT COALESCE(NULLIF(device_type,''),'unknown') AS label, COUNT(DISTINCT session_id) AS total, COUNT(*) AS secondary "
-                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND created_at BETWEEN ? AND ? GROUP BY device_type ORDER BY total DESC",
+                . "FROM page_views WHERE brand_id=? AND device_type NOT IN ('bot','unknown') AND {$publicPages} AND created_at BETWEEN ? AND ? GROUP BY device_type ORDER BY total DESC",
                 $window
             ),
             'services' => self::rows(

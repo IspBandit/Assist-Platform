@@ -12,7 +12,7 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
     <div class="container">
         <a class="brand brand--wordmark brand--<?= e_attr($headerBrand->id()) ?>" href="<?= e(url('/')) ?>" aria-label="<?= e($headerBrand->name()) ?> home">
             <?php if ($headerBrand->id() === 'vanassist'): ?>
-                <img class="vanassist-road-wordmark" src="<?= e(asset('brands/vanassist/wordmark-road.png')) ?>" width="1200" height="340" alt="VanAssist — Find. Connect. Get Assisted.">
+                <img class="vanassist-road-wordmark" src="<?= e(asset('brands/vanassist/wordmark-road.webp')) ?>" width="480" height="136" alt="VanAssist — Find. Connect. Get Assisted.">
             <?php else: ?>
                 <span class="brand-copy">
                     <span class="brand-name"><?= e($headerBrandMeta['wordmark_prefix'] ?? $headerBrand->name()) ?><span class="assist"><?= e($headerBrandMeta['wordmark_accent'] ?? '') ?></span></span>

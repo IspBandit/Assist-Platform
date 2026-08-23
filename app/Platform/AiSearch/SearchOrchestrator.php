@@ -338,7 +338,11 @@ final class SearchOrchestrator
             ? ($this->locationResolver)($request, $intent)
             : $this->resolveLocation($request, $intent);
 
-        if ($originLat === null || $originLng === null) {
+        $directProviderNameWithoutLocation = $providerNameRows !== []
+            && ($intent->locationText === null || trim($intent->locationText) === '')
+            && $request->latitude === null
+            && $request->longitude === null;
+        if (($originLat === null || $originLng === null) && !$directProviderNameWithoutLocation) {
             $fallback = $intent->locationText !== null && $intent->locationText !== ''
                 ? 'location_unresolved'
                 : 'location_required';
@@ -384,6 +388,10 @@ final class SearchOrchestrator
                 facilities: [],
                 knowledgeGapId: $gapId,
             );
+        }
+        if ($directProviderNameWithoutLocation) {
+            $precision = 'provider_name';
+            $messages[] = 'Showing the matching provider by name. Use your location or add a place if you also need road distance.';
         }
 
         $adapters = $this->router->adaptersFor($intent);

@@ -31,6 +31,8 @@ use App\Platform\AiSearch\Adapters\StayFacilitySearchBridge;
 use App\Services\RoadDistance\GoogleRoutesCredentialProvisioner;
 use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
 use App\Platform\AiSearch\Adapters\ProviderNameSearchAdapter;
+use App\Platform\AiSearch\Dto\SearchRequest;
+use App\Platform\AiSearch\SearchOrchestrator;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -332,6 +334,36 @@ final class PlatformDatabaseTest extends TestCase
         self::assertNotEmpty($rows);
         self::assertSame((string) $expected['name'], (string) $rows[0]['business_name']);
         self::assertTrue((bool) $rows[0]['assist_name_match']);
+    }
+
+    public function testAskReturnsAnExactProviderNameWithoutForcingALocation(): void
+    {
+        $expected = Database::selectOne(
+            "SELECT COALESCE(NULLIF(pbl.display_name,''), p.business_name) AS name
+             FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id
+             WHERE pbl.brand_id = 1 AND pbl.status = 'active' AND pbl.search_visible = 1
+               AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL
+             ORDER BY CHAR_LENGTH(COALESCE(NULLIF(pbl.display_name,''), p.business_name)) DESC, pbl.id
+             LIMIT 1"
+        );
+        self::assertNotNull($expected);
+
+        $response = (new SearchOrchestrator())->handle(new SearchRequest(
+            rawQuery: (string) $expected['name'],
+            brandKey: 'vanassist',
+            brandDatabaseId: 1,
+            latitude: null,
+            longitude: null,
+            radiusKm: null,
+            requestId: 'integration-provider-name-no-location',
+            channel: 'acceptance',
+        ));
+
+        self::assertNotEmpty($response->providers);
+        self::assertSame((string) $expected['name'], (string) $response->providers[0]['business_name']);
+        self::assertSame('provider_name', $response->intent->source);
+        self::assertNull($response->originLat);
+        self::assertNull($response->originLng);
     }
 
     public function testNationalRouteCandidateRequiresIndependentEvidenceBeforeApproval(): void

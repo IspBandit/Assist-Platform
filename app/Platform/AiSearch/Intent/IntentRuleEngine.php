@@ -292,6 +292,12 @@ final class IntentRuleEngine
     {
         $meta = IntentNormaliser::analyse($rawQuery);
         $haystack = $meta['remainder'];
+        // IntentNormaliser removes the numeric radius for cache stability. For
+        // "within N km of PLACE", retain that connector here so the rule
+        // engine can keep PLACE out of the requested service terms.
+        if (preg_match('/\bwithin\s+\d{1,3}\s*(?:km|kilometres|kilometers)\s+of\s+/ui', $rawQuery) === 1) {
+            $haystack = mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $rawQuery)));
+        }
         // The final explicit location clause describes the search origin, not
         // another requested service. Without this split, a request such as
         // "dump point near Griffiths camping ground" also matched the
@@ -424,6 +430,19 @@ final class IntentRuleEngine
 
     private function intentSearchText(string $text): string
     {
+        $radiusMarker = [];
+        if (preg_match(
+            '/\bwithin\s+\d{1,3}\s*(?:km|kilometres|kilometers)\s+of\s+/ui',
+            $text,
+            $radiusMarker,
+            PREG_OFFSET_CAPTURE
+        ) === 1) {
+            $before = trim(mb_substr($text, 0, (int) $radiusMarker[0][1]));
+            if ($before !== '') {
+                return $before;
+            }
+        }
+
         $markers = [];
         if (preg_match_all('/\b(?:near|in|around|at)\s+/ui', $text, $markers, PREG_OFFSET_CAPTURE) === 0) {
             return $text;
@@ -451,6 +470,22 @@ final class IntentRuleEngine
      */
     private function extractLocationText(string $remainder, array $patterns): ?string
     {
+        // Radius-first wording is common in trip planning: "within 50 km of
+        // Griffiths Creek". Treat everything after "of" as the place, not as
+        // part of the requested facility or service.
+        $radiusLocation = [];
+        if (preg_match(
+            '/\bwithin\s+\d{1,3}\s*(?:km|kilometres|kilometers)\s+of\s+(.+?)\s*\??$/ui',
+            $remainder,
+            $radiusLocation
+        ) === 1) {
+            $place = trim((string) ($radiusLocation[1] ?? ''), " \t\n\r\0\x0B,.-");
+            $place = trim((string) preg_replace('/\s+/u', ' ', $place));
+            if ($place !== '' && mb_strlen($place) >= 2) {
+                return mb_convert_case($place, MB_CASE_TITLE, 'UTF-8');
+            }
+        }
+
         // Prefer the final explicit "near/in/around/at <place>". Using the
         // final marker avoids treating "in my caravan near Emerald" as a town.
         $markers = [];

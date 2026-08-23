@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Services\Demand\PublicPageViewPolicy;
 use App\Services\Demand\TrackingSession;
 use Throwable;
 
@@ -17,8 +18,6 @@ use Throwable;
  */
 final class Analytics
 {
-    private const SKIP_PREFIXES = ['/admin', '/install', '/account', '/provider', '/park', '/billing', '/assets', '/uploads'];
-
     public static function record(Request $request, Response $response): void
     {
         try {
@@ -28,7 +27,7 @@ final class Analytics
             if ((string) Settings::get('analytics_enabled', '0') !== '1') {
                 return;
             }
-            if (TrackingSession::isBot()) {
+            if (TrackingSession::isBot() || BotTraffic::isSynthetic()) {
                 return;
             }
             if (auth()->check() && auth()->hasAnyRole('super-administrator', 'administrator', 'platform-administrator', 'brand-administrator', 'moderator', 'marketing', 'support')) {
@@ -36,12 +35,7 @@ final class Analytics
             }
 
             $path = '/' . ltrim($request->path(), '/');
-            foreach (self::SKIP_PREFIXES as $prefix) {
-                if ($path === $prefix || str_starts_with($path, $prefix . '/')) {
-                    return;
-                }
-            }
-            if (in_array($path, ['/sitemap.xml', '/robots.txt', '/favicon.ico'], true)) {
+            if (!PublicPageViewPolicy::includes($path)) {
                 return;
             }
 

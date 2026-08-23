@@ -104,7 +104,7 @@ jobs:
           # identity while retaining an explicit smoke-test marker for server logs.
           smoke_user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 AssistPlatform-Production-Smoke/1.0"
           smoke_curl() {
-            curl --user-agent "$smoke_user_agent" "$@"
+            curl --user-agent "$smoke_user_agent" -H 'X-Assist-Synthetic: 1' "$@"
           }
           urls=(
             "https://vanassist.com.au/"
@@ -141,7 +141,7 @@ jobs:
           grep -q '/runtime-assets/js/app.js' <<<"$homepage"
           grep -q 'class="brand brand--wordmark' <<<"$homepage"
           grep -q 'class="hero-search-panel"' <<<"$homepage"
-          grep -q '/runtime-assets/brands/vanassist/wordmark-road.png' <<<"$homepage"
+          grep -q '/runtime-assets/brands/vanassist/wordmark-road.webp' <<<"$homepage"
           grep -q '/runtime-assets/img/vanassist-coastal-hero-desktop-v1.webp' <<<"$homepage"
           grep -q '/runtime-assets/img/vanassist-coastal-hero-mobile-v1.webp' <<<"$homepage"
           grep -q '/runtime-assets/brands/vanassist/favicon.svg' <<<"$homepage"
@@ -155,6 +155,13 @@ jobs:
           worker="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/service-worker.js)"
           grep -q "self.addEventListener('fetch'" <<<"$worker"
 
+          admin_health="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/api/v1/admin/health)"
+          active_questions="$(jq -r '.data.integrations.ask_question_library.active_questions // 0' <<<"$admin_health")"
+          if [[ "$active_questions" -lt 1000 ]]; then
+            echo "Ask question library has only $active_questions active questions; at least 1000 are required."
+            exit 1
+          fi
+
           griffiths="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
             --data-urlencode 'q=dump points near Grffiths camping ground, Queensland' \
             https://vanassist.com.au/ask)"
@@ -165,6 +172,11 @@ jobs:
             --data-urlencode 'q=auto electrician near Brisbane, Queensland' \
             https://vanassist.com.au/ask)"
           grep -q 'km by road' <<<"$routed" || { echo 'Google road-distance output missing.'; exit 1; }
+
+          provider_name="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
+            --data-urlencode 'q=Battery World Greenslopes' \
+            https://vanassist.com.au/ask)"
+          grep -qi 'Battery World Greenslopes' <<<"$provider_name" || { echo 'Direct provider-name result missing.'; exit 1; }
 
           for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
             brand_homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 "$brand_url")"

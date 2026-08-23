@@ -87,7 +87,6 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
 
   const installButton = page.locator('.install-app-button[data-install-app]');
   await expect(installButton).toBeVisible();
-  await installButton.scrollIntoViewIfNeeded();
 
   if (process.env.PLAYWRIGHT_SCREENSHOT_DIR) {
     const screenshotPath = path.join(
@@ -97,6 +96,7 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
     await page.screenshot({ path: screenshotPath });
   }
 
+  await installButton.scrollIntoViewIfNeeded();
   await installButton.click();
   await expect(page.getByRole('dialog', { name: /Save VanAssist to your phone/i })).toBeVisible();
 });

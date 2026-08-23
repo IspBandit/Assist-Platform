@@ -437,6 +437,7 @@ return [
         'clean_temp'               => 'Clean temporary files',
         'clean_logs'               => 'Clean old logs per retention settings',
         'aggregate_daily_metrics'  => 'Roll up daily provider & demand analytics metrics',
+        'vanassist_daily_performance_email' => 'Queue the previous day VanAssist website performance report for support',
         'customer_followups'       => 'Send due customer outcome follow-ups',
         'analytics_retention'      => 'Purge analytics events/sessions past retention window',
         'ai_retention'             => 'Purge Assist AI raw search/usage/cache/gap-event rows past retention windows',
