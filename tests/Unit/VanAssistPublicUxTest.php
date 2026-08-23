@@ -8,6 +8,18 @@ use PHPUnit\Framework\TestCase;
 
 final class VanAssistPublicUxTest extends TestCase
 {
+    public function testAskOutcomeLayerIsFeatureGatedAndAccessible(): void
+    {
+        $controller = file_get_contents(dirname(__DIR__, 2) . '/app/Controllers/Site/AssistSearchController.php');
+        $view = file_get_contents(dirname(__DIR__, 2) . '/app/Views/public/assist-search.php');
+        self::assertIsString($controller); self::assertIsString($view);
+        self::assertStringContainsString('OutcomeFeature::enabled()', $controller);
+        self::assertStringContainsString('What I understood', $view);
+        self::assertStringContainsString('Safest next action', $view);
+        self::assertStringContainsString('Why this fits', $view);
+        self::assertStringContainsString('aria-labelledby="ask-outcome-heading"', $view);
+    }
+
     public function testHomepageSurfacesCoreTravellerJourneysWithoutOverstatingTrust(): void
     {
         $view = $this->source('app/Views/public/home.php');

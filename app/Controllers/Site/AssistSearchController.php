@@ -9,8 +9,10 @@ use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
 use App\Platform\AiSearch\Dto\SearchRequest;
+use App\Platform\AiSearch\Outcome\OutcomeComposer;
 use App\Platform\AiSearch\SearchOrchestrator;
 use App\Platform\AiSearch\Support\AiSearchFeature;
+use App\Platform\AiSearch\Support\OutcomeFeature;
 use App\Platform\Brand\BrandContext;
 use App\Services\Demand\TrackingSession;
 use App\Services\RateLimiter;
@@ -36,6 +38,7 @@ final class AssistSearchController extends Controller
                 'lat' => null,
                 'lng' => null,
                 'result' => null,
+                'outcome' => null,
                 'structuredFindUrl' => url('find'),
                 'staysUrl' => url('stays'),
                 'needsDeviceLocation' => false,
@@ -85,6 +88,7 @@ final class AssistSearchController extends Controller
             && $lat === null
             && $lng === null
             && ($result->intent->locationText === null || $result->intent->locationText === '');
+        $outcome = $result !== null && OutcomeFeature::enabled() ? (new OutcomeComposer())->compose($result) : null;
 
         return $this->view('public.assist-search', [
             'title' => 'Ask VanAssist',
@@ -94,6 +98,7 @@ final class AssistSearchController extends Controller
             'lat' => $lat,
             'lng' => $lng,
             'result' => $result,
+            'outcome' => $outcome,
             'structuredFindUrl' => url('find'),
             'staysUrl' => url('stays'),
             'resultLimit' => $resultLimit,

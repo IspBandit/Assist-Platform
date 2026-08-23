@@ -10,6 +10,7 @@
 | --- | --- |
 | Deterministic golden intents (toilet, dump, water, LPG, park, mobile, electrician, tyres, towing, brakes, ambiguous) | `IntentRuleEngineTest` |
 | 1,000-entry regional Ask corpus (intent routing; regenerate via `tools/generate-ask-question-corpus.php`) | `AskQuestionCorpusTest` |
+| Deterministic outcome explanation, distance disclosure and no-result action | `OutcomeComposerTest` |
 | Multiple-intent / mixed | `PromptMatrixCoverageTest` + rules engine |
 | AI valid / invalid schema / timeout / null parsed / no allowlist / injection | `IntentInterpreterTest` |
 | Provider failure (non-timeout) | `PromptMatrixCoverageTest` |
