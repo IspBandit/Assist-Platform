@@ -16,6 +16,9 @@ may remain as dated files and are linked here rather than copied.
 - Production release now verifies that the installed root-owned release command
   exactly matches the reviewed GitHub script before any artefact is uploaded,
   exposing server command drift before it can create a partial deployment.
+- The post-release road-distance check now uses a stable provider with precise
+  coordinates. It no longer expects road distance from Brisbane results that
+  are intentionally labelled as town-centre estimates.
 
 ### Production zero-result search fixes (VAN-011 / DATA-004)
 
