@@ -71,6 +71,14 @@ command with the reviewed `scripts/release-remote.sh` in the exact release. A
 hash mismatch stops before production changes; install the reviewed command as
 root, verify its hash and retry rather than bypassing this drift check.
 
+The root-owned release command also refreshes bootstrap-managed Compose,
+Dockerfile, PHP, Caddy and operations scripts from the reviewed immutable
+release before rebuilding containers. It keeps the preceding runtime files for
+the duration of deployment and restores them with the prior application
+symlink if any migration, data audit or health check fails. This prevents a
+merged infrastructure change from remaining stranded in GitHub while the
+application code appears current.
+
 ## Rollback
 
 For additive compatible migrations, switch the current symlink to the previous

@@ -217,6 +217,13 @@ final class PlatformDatabaseTest extends TestCase
             self::assertNotEmpty($group['checks']);
             self::assertContains($group['status'], ['pass', 'warning', 'fail']);
         }
+        $coordinateCheck = array_values(array_filter(
+            $readiness['groups']['data_trust']['checks'],
+            static fn (array $check): bool => $check['label'] === 'Provider coordinates agree with displayed towns'
+        ));
+        self::assertCount(1, $coordinateCheck);
+        self::assertSame('pass', $coordinateCheck[0]['status']);
+        self::assertSame('0 unresolved public conflicts', $coordinateCheck[0]['detail']);
     }
 
     public function testPlatformBrandsAndBackfillIntegrity(): void

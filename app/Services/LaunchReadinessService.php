@@ -49,7 +49,7 @@ final class LaunchReadinessService
             . '* COS(RADIANS(t.latitude)) '
             . '* COS(RADIANS(t.longitude)-RADIANS(p.longitude)) '
             . '+ SIN(RADIANS(p.latitude)) '
-            . '* SIN(RADIANS(t.latitude))))) > 150'
+            . '* SIN(RADIANS(t.latitude)))))) > 150'
         );
 
         $checks = [

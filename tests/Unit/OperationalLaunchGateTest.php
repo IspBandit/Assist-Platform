@@ -29,6 +29,19 @@ final class OperationalLaunchGateTest extends TestCase
 
         self::assertStringContainsString('COS(RADIANS(p.latitude))', $gate);
         self::assertStringContainsString('RADIANS(p.longitude)', $gate);
+        self::assertStringContainsString('* SIN(RADIANS(t.latitude)))))) > 150', $gate);
         self::assertStringNotContainsString("JSON_EXTRACT(psr.payload_json,'$.lat')", $gate);
+    }
+
+    public function testImmutableReleaseRefreshesBootstrapManagedRuntimeFiles(): void
+    {
+        $release = (string) file_get_contents(base_path('scripts/release-remote.sh'));
+
+        self::assertStringContainsString('runtime_source="$target/infrastructure/binarylane"', $release);
+        self::assertStringContainsString('runtime-rollback-$release', $release);
+        self::assertStringContainsString('"$runtime_source/Dockerfile" "$root/runtime/Dockerfile"', $release);
+        self::assertStringContainsString('"$runtime_source/docker-compose.yml" "$root/docker-compose.yml"', $release);
+        self::assertStringContainsString('find "$root/runtime/ops" -maxdepth 1 -type f -name \'*.sh\' -delete', $release);
+        self::assertStringContainsString('find "$runtime_source/ops"', $release);
     }
 }
