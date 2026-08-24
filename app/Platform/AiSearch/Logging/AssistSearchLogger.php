@@ -7,6 +7,7 @@ namespace App\Platform\AiSearch\Logging;
 use App\Core\Database;
 use App\Platform\AiSearch\Dto\Intent;
 use App\Platform\AiSearch\Dto\SearchRequest;
+use App\Services\Demand\TrafficQuality;
 use Throwable;
 
 /**
@@ -34,8 +35,8 @@ final class AssistSearchLogger
                     brand_id, session_id, request_id, channel, raw_query, normalised_query,
                     intent_json, intent_source, confidence, adapter_keys,
                     local_result_count, external_result_count, fallback_reason, response_summary,
-                    town_id, radius_km, location_precision, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
+                    town_id, radius_km, location_precision, is_excluded, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())',
                 [
                     $request->brandDatabaseId,
                     $request->sessionId,
@@ -54,6 +55,7 @@ final class AssistSearchLogger
                     $town['id'] ?? null,
                     $intent->radiusKm,
                     $locationPrecision,
+                    TrafficQuality::excludesCurrentRequest() ? 1 : 0,
                 ]
             );
         } catch (Throwable) {

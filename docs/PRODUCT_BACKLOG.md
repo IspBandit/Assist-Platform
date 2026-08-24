@@ -38,7 +38,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
-| VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Admin API claims/corrections shipped (Increment B); end-to-end acceptance remains |
+| VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Inbound claim review, secure acceptance and evidence-backed verification are wired; production end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
 | VAN-011 | AI-assisted natural-language search (intent → location/category) | done | Ask VanAssist `/ask` alongside structured search; flag off by default; CORE-012 |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |

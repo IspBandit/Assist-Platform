@@ -230,6 +230,12 @@ final class PageController extends Controller
         if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'That email address does not look valid.';
         }
+        if ($listingProvider !== null && $email === '') {
+            $errors['email'] = 'Please give us a business email so an approved claim link can be sent securely.';
+        }
+        if ($listingProvider !== null && mb_strlen($message) < 10) {
+            $errors['message'] = 'Please explain your role and how we can verify your authority to act for this business.';
+        }
         if (!in_array($offersMobile, ['yes', 'no'], true)) {
             $errors['offers_mobile'] = 'Please let us know if you offer a mobile service.';
         }
@@ -308,8 +314,9 @@ final class PageController extends Controller
         try {
             Database::query(
                 'INSERT INTO provider_prospects (business_name, contact_name, phone, email, services_observed, '
-                . 'service_model, towns_serviced, source, outreach_status, consent_recorded, marketing_consented_at, marketing_consent_basis, marketing_consent_evidence, notes, created_at, updated_at) '
-                . "VALUES (?, ?, ?, ?, ?, ?, ?, 'other', 'interested', ?, " . ($marketingOptIn ? 'NOW()' : 'NULL') . ", ?, ?, ?, NOW(), NOW())",
+                . 'service_model, towns_serviced, source, outreach_status, provider_id, request_type, claim_status, authority_evidence, '
+                . 'consent_recorded, marketing_consented_at, marketing_consent_basis, marketing_consent_evidence, notes, created_at, updated_at) '
+                . "VALUES (?, ?, ?, ?, ?, ?, ?, 'other', 'interested', ?, ?, ?, ?, ?, " . ($marketingOptIn ? 'NOW()' : 'NULL') . ", ?, ?, ?, NOW(), NOW())",
                 [
                     $business,
                     $contact ?: null,
@@ -318,6 +325,10 @@ final class PageController extends Controller
                     $services ?: null,
                     $model,
                     $based ?: null,
+                    $listingProvider !== null ? (int) $listingProvider['id'] : null,
+                    $listingProvider !== null ? 'claim' : 'interest',
+                    $listingProvider !== null ? 'pending' : null,
+                    $listingProvider !== null ? $message : null,
                     $marketingOptIn,
                     $marketingOptIn ? 'express_web' : null,
                     $marketingOptIn ? 'Optional provider marketing checkbox affirmatively selected on the VanAssist provider registration form.' : null,

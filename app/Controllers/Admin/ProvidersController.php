@@ -73,6 +73,11 @@ final class ProvidersController extends Controller
                 . 'LEFT JOIN users u ON u.id = n.admin_id WHERE n.provider_id = ? ORDER BY n.id DESC',
                 [$id]
             ),
+            'claimRequests' => Database::select(
+                "SELECT pp.*,u.name AS reviewer_name FROM provider_prospects pp LEFT JOIN users u ON u.id=pp.claim_reviewed_by "
+                . "WHERE pp.provider_id=? AND pp.request_type IN ('claim','correction') AND pp.deleted_at IS NULL ORDER BY pp.id DESC",
+                [$id]
+            ),
             'allCategories' => Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name'),
             'allTowns'      => Database::select("SELECT t.id, CONCAT(t.name, ' / ', s.abbreviation) AS name FROM towns t JOIN states s ON s.id=t.state_id WHERE t.is_active=1 ORDER BY t.name,s.abbreviation"),
             'allRegions'    => Database::select('SELECT id, name FROM regions WHERE is_active = 1 ORDER BY name'),
@@ -209,9 +214,107 @@ final class ProvidersController extends Controller
             $this->requirePermission('documents.verify');
         }
         $new = $provider[$col] ? 0 : 1;
-        Database::query("UPDATE providers SET {$col} = ?, updated_at = NOW() WHERE id = ?", [$new, $id]);
+        if ($flag === 'verified') {
+            if ($new === 1) {
+                if (!empty($provider['is_unclaimed']) || (string) $provider['status'] !== 'active') {
+                    return $this->redirectWith('/admin/providers/show?id=' . $id, 'error', 'Only an active, claimed provider can be verified.');
+                }
+                $basis = (string) $request->input('verification_basis');
+                $notes = trim((string) $request->input('verification_notes'));
+                $allowed = ['approved_claim_request', 'verified_document', 'verified_licence', 'business_registry', 'direct_business_contact'];
+                if (!in_array($basis, $allowed, true) || mb_strlen($notes) < 10) {
+                    return $this->redirectWith('/admin/providers/show?id=' . $id, 'error', 'Choose the verification basis and record enough evidence to support it.');
+                }
+                if ($basis === 'verified_document' && (int) Database::scalar("SELECT COUNT(*) FROM provider_documents WHERE provider_id=? AND verification_status='verified'", [$id]) === 0) {
+                    return $this->redirectWith('/admin/providers/show?id=' . $id, 'error', 'Verify a provider document before using document evidence.');
+                }
+                if ($basis === 'verified_licence' && (int) Database::scalar("SELECT COUNT(*) FROM provider_licences WHERE provider_id=? AND verification_status='verified'", [$id]) === 0) {
+                    return $this->redirectWith('/admin/providers/show?id=' . $id, 'error', 'Verify a provider licence before using licence evidence.');
+                }
+                if ($basis === 'approved_claim_request' && (int) Database::scalar("SELECT COUNT(*) FROM provider_prospects WHERE provider_id=? AND request_type IN ('claim','correction') AND claim_status='approved' AND deleted_at IS NULL", [$id]) === 0) {
+                    return $this->redirectWith('/admin/providers/show?id=' . $id, 'error', 'No approved claim request is recorded for this provider.');
+                }
+                Database::beginTransaction();
+                try {
+                    Database::query(
+                        'UPDATE providers SET is_verified=1,verification_basis=?,verification_notes=?,verified_by=?,verified_at=NOW(),updated_at=NOW() WHERE id=?',
+                        [$basis, mb_substr($notes, 0, 500), current_user()['id'] ?? null, $id]
+                    );
+                    Database::query('UPDATE provider_brand_listings SET is_verified=1,updated_at=NOW() WHERE provider_id=? AND deleted_at IS NULL', [$id]);
+                    Database::commit();
+                } catch (\Throwable $e) {
+                    Database::rollBack();
+                    throw $e;
+                }
+            } else {
+                Database::query('UPDATE providers SET is_verified=0,verification_basis=NULL,verification_notes=NULL,verified_by=NULL,verified_at=NULL,updated_at=NOW() WHERE id=?', [$id]);
+                Database::query('UPDATE provider_brand_listings SET is_verified=0,updated_at=NOW() WHERE provider_id=? AND deleted_at IS NULL', [$id]);
+            }
+        } else {
+            Database::query("UPDATE providers SET {$col} = ?, updated_at = NOW() WHERE id = ?", [$new, $id]);
+        }
         AuditLog::record('provider.flag_' . $flag, 'provider', (string) $id, (string) $provider[$col], (string) $new);
         return $this->redirectWith('/admin/providers/show?id=' . $id, 'success', 'Updated.');
+    }
+
+    public function reviewClaimRequest(Request $request): Response
+    {
+        $this->requirePermission('providers.approve');
+        $claimId = (int) $request->input('claim_id');
+        $claim = Database::selectOne(
+            "SELECT pp.*,p.business_name,p.is_unclaimed FROM provider_prospects pp JOIN providers p ON p.id=pp.provider_id "
+            . "WHERE pp.id=? AND pp.request_type IN ('claim','correction') AND pp.deleted_at IS NULL",
+            [$claimId]
+        );
+        if ($claim === null) {
+            $this->abort(404, 'Claim request not found.');
+        }
+
+        $providerId = (int) $claim['provider_id'];
+        $action = (string) $request->input('action');
+        $notes = trim((string) $request->input('review_notes'));
+        if (!in_array($action, ['approve', 'request_evidence', 'reject'], true)) {
+            $this->abort(400, 'Unknown claim review action.');
+        }
+        if ($action !== 'approve' && mb_strlen($notes) < 5) {
+            return $this->redirectWith('/admin/providers/show?id=' . $providerId, 'error', 'Record the evidence needed or the rejection reason.');
+        }
+        if (!in_array((string) $claim['claim_status'], ['pending', 'evidence_requested'], true)) {
+            return $this->redirectWith('/admin/providers/show?id=' . $providerId, 'error', 'This claim request has already been decided.');
+        }
+
+        $email = strtolower(trim((string) $claim['email']));
+        if ($action === 'approve') {
+            if (empty($claim['is_unclaimed'])) {
+                return $this->redirectWith('/admin/providers/show?id=' . $providerId, 'error', 'The listing is no longer unclaimed.');
+            }
+            try {
+                ProviderClaimService::sendApprovedClaimInvite($providerId, $email, auth()->id());
+            } catch (\Throwable $e) {
+                return $this->redirectWith('/admin/providers/show?id=' . $providerId, 'error', 'The secure claim link could not be queued. The claim request was not approved: ' . $e->getMessage());
+            }
+            $status = 'approved';
+            $message = 'Claim authority approved. A secure account claim link was queued.';
+        } else {
+            $status = $action === 'request_evidence' ? 'evidence_requested' : 'rejected';
+            $template = $action === 'request_evidence' ? 'provider_claim_evidence_requested' : 'provider_claim_request_rejected';
+            $queued = EmailQueue::queueTemplate($template, $email, (string) ($claim['contact_name'] ?? ''), [
+                'business_name' => (string) $claim['business_name'],
+                'review_notes' => htmlspecialchars($notes, ENT_QUOTES, 'UTF-8'),
+            ]);
+            if (!$queued) {
+                return $this->redirectWith('/admin/providers/show?id=' . $providerId, 'error', 'The claim review email could not be queued. The claim status was not changed.');
+            }
+            $message = $action === 'request_evidence' ? 'Additional evidence requested.' : 'Claim request rejected.';
+        }
+
+        Database::query(
+            'UPDATE provider_prospects SET claim_status=?,claim_review_notes=?,claim_reviewed_by=?,claim_reviewed_at=NOW(),updated_at=NOW() WHERE id=?',
+            [$status, $notes !== '' ? mb_substr($notes, 0, 2000) : null, current_user()['id'] ?? null, $claimId]
+        );
+        AuditLog::record('provider.claim_request_' . $status, 'provider_prospect', (string) $claimId, (string) $claim['claim_status'], $notes);
+
+        return $this->redirectWith('/admin/providers/show?id=' . $providerId, 'success', $message);
     }
 
     public function addNote(Request $request): Response
@@ -348,12 +451,12 @@ final class ProvidersController extends Controller
             return $this->redirectWith('/admin/providers/show?id=' . (int) $provider['id'], 'error', 'Only unclaimed listings can receive a claim invite.');
         }
         try {
-            $url = ProviderClaimService::sendClaimInvite((int) $provider['id'], (string) $request->input('email', ''), auth()->id());
+            ProviderClaimService::sendClaimInvite((int) $provider['id'], (string) $request->input('email', ''), auth()->id());
         } catch (\Throwable $e) {
             return $this->redirectWith('/admin/providers/show?id=' . (int) $provider['id'], 'error', $e->getMessage());
         }
         AuditLog::record('provider.claim_invite_sent', 'provider', (string) $provider['id']);
-        return $this->redirectWith('/admin/providers/show?id=' . (int) $provider['id'], 'success', 'Claim invite queued. Link (for testing): ' . $url);
+        return $this->redirectWith('/admin/providers/show?id=' . (int) $provider['id'], 'success', 'Claim invite queued.');
     }
 
     public function bulkClaimInvites(Request $request): Response

@@ -121,6 +121,7 @@ return static function (Router $router): void {
         $router->post('/providers/licence/verify', 'Admin\ProvidersController@verifyLicence');
         $router->post('/providers/send-claim-invite', 'Admin\ProvidersController@sendClaimInvite');
         $router->post('/providers/bulk-claim-invites', 'Admin\ProvidersController@bulkClaimInvites');
+        $router->post('/providers/review-claim-request', 'Admin\ProvidersController@reviewClaimRequest');
         $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
         $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
 

@@ -1,6 +1,6 @@
 # Current Status
 
-Last aligned with production verification: 13 August 2026 (Australia/Brisbane).
+Last aligned with production verification: 24 August 2026 (Australia/Brisbane).
 
 ## Completed
 - CORE-001 Brand registry; CORE-004 Entitlements; CORE-009/010 Garage handoffs
@@ -19,7 +19,11 @@ Last aligned with production verification: 13 August 2026 (Australia/Brisbane).
 
 ## In Progress
 - **Documentation accuracy** — reconciling August gate docs with verified production posture
-- **VAN-002 Claims** end-to-end acceptance — owner/staging
+- **VAN-002 Claims** — structured authority review, transactional approved-claim
+  link and evidence-based verification are in the current release candidate;
+  production acceptance remains pending
+- **VAN-012 analytics accuracy** — traffic-quality filtering, directly measured
+  returning visitors and Ask/stay outcomes are in the current release candidate
 - **Admin-side facility audit** — confirm publish counts / import backlog in production MariaDB (operator)
 
 ## Blocked / owner-gated (not code-complete)
@@ -27,7 +31,9 @@ Last aligned with production verification: 13 August 2026 (Australia/Brisbane).
 - **Paid AI / Google Places connectors** — remain off by policy
 - **POL-009 / LOC-003 / COM-004** launches
 - **LocalTorque / Polaris** public domains
-- Pre-launch checklist items in `docs/PRODUCTION_CURRENT_STATE.md` (email branding, automated off-site backup replication, credential rotation, owner journey sign-off)
+- Pre-launch checklist items in `docs/PRODUCTION_CURRENT_STATE.md` (candidate
+  release, automated off-site backup and current restore evidence, credential
+  rotation, owner journey sign-off)
 - Feature-flag **writes**; provider hold/confirm/auto-link remain website admin
 
 ## Current task
@@ -35,8 +41,10 @@ Last aligned with production verification: 13 August 2026 (Australia/Brisbane).
 1. ~~RIC everyday management A–H.4~~ — merged
 2. ~~Increment I Platform + RIC UI~~ — merged
 3. ~~Third-wave + gap-fill catalogue seeds and RIC orchestration~~ — merged; production upload recorded locally
-4. Reconcile docs + nav with live posture; admin verify facility counts — **in progress**
-5. Full Quality Gate PASS + commercial launch sign-off — **owner/ops**
+4. Release and verify analytics accuracy, provider claims and local scheduled backup — **in progress**
+5. Configure independent encrypted backup, rehearse restore and record the formal gate — **owner/ops**
 
 ## Overall Completion %
-97% programme code; production VanAssist runs Ask, Admin API and traveller facilities on release `6a3f09d`; formal QG PASS and commercial launch remain owner-gated
+97% programme code; production VanAssist runs Ask, Admin API and traveller
+facilities on release `046a2c6`; formal QG PASS and commercial launch remain
+blocked by current independent backup/restore evidence and owner acceptance

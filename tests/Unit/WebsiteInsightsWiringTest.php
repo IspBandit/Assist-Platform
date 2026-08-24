@@ -28,10 +28,10 @@ final class WebsiteInsightsWiringTest extends TestCase
         $writer = (string) file_get_contents(base_path('app/Services/Analytics.php'));
         $report = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
 
-        self::assertStringContainsString('TrackingSession::isBot()', $writer);
-        self::assertStringContainsString('BotTraffic::isSynthetic()', $writer);
+        self::assertStringContainsString('TrafficQuality::excludesCurrentRequest()', $writer);
         self::assertStringContainsString('PublicPageViewPolicy::sqlPredicate', $report);
-        self::assertGreaterThanOrEqual(7, substr_count($report, "device_type NOT IN ('bot','unknown')"));
+        self::assertStringContainsString("TrafficQuality::eligibleSessionSql('ts')", $report);
+        self::assertStringContainsString('JOIN tracking_sessions ts', $report);
     }
 
     public function testHomepageContainsThePlainLanguageAskForm(): void
@@ -86,6 +86,32 @@ final class WebsiteInsightsWiringTest extends TestCase
             self::assertStringContainsString('DemandRecorder::recordSearch', $source, $file);
             self::assertStringContainsString('DemandRecorder::recordImpressions', $source, $file);
         }
+    }
+
+    public function testStayAndAskDemandAreIncludedInWebsiteReporting(): void
+    {
+        $park = (string) file_get_contents(base_path('app/Controllers/Site/ParkController.php'));
+        $tracker = (string) file_get_contents(base_path('app/Services/Demand/ActivityTracker.php'));
+        $report = (string) file_get_contents(base_path('app/Services/Demand/WebsiteInsightsService.php'));
+
+        self::assertStringContainsString("'stay_search_completed'", $tracker);
+        self::assertStringContainsString("'no_stay_found'", $tracker);
+        self::assertStringContainsString('ActivityTracker::record', $park);
+        self::assertStringContainsString('assist_searches', $report);
+        self::assertStringContainsString("'ask_searches'", $report);
+        self::assertStringContainsString("'stay_searches'", $report);
+        self::assertStringContainsString("'returning_visitors'", $report);
+        self::assertStringContainsString("'multi_day_visitors'", $report);
+    }
+
+    public function testAskSearchesRetainAnExplicitTrafficQualityMarker(): void
+    {
+        $migration = (string) file_get_contents(base_path('database/migrations/134_assist_search_traffic_quality.sql'));
+        $logger = (string) file_get_contents(base_path('app/Platform/AiSearch/Logging/AssistSearchLogger.php'));
+
+        self::assertStringContainsString('ADD COLUMN is_excluded', $migration);
+        self::assertStringContainsString('TrafficQuality::excludesCurrentRequest()', $logger);
+        self::assertStringContainsString('is_excluded, created_at', $logger);
     }
 
     public function testSearchAttributionSurvivesProfileAndContactLinks(): void

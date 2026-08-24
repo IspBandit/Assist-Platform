@@ -6,6 +6,7 @@
 /** @var array<int,array<string,mixed>> $documents */
 /** @var array<int,array<string,mixed>> $licences */
 /** @var array<int,array<string,mixed>> $notes */
+/** @var array<int,array<string,mixed>> $claimRequests */
 /** @var array<int,array<string,mixed>> $allCategories */
 /** @var array<int,array<string,mixed>> $allTowns */
 /** @var array<int,array<string,mixed>> $allRegions */
@@ -47,6 +48,24 @@ $docBadge = ['verified' => 'badge-verified', 'rejected' => 'badge-neutral', 'pen
             </form>
         </div>
     <?php endif; ?>
+    <?php if ($claimRequests !== []): ?>
+        <div class="card" style="margin-top:1rem">
+            <h2>Claim and correction requests</h2>
+            <?php foreach ($claimRequests as $claim): ?>
+                <article style="border-top:1px solid #e3e0d8;padding:.8rem 0">
+                    <p><strong><?= $this->e((string) ($claim['contact_name'] ?: 'Unnamed claimant')) ?></strong> · <?= $this->e((string) $claim['email']) ?> · <span class="badge badge-neutral"><?= $this->e(str_replace('_', ' ', (string) $claim['claim_status'])) ?></span></p>
+                    <p><?= nl2br($this->e((string) ($claim['authority_evidence'] ?? 'No authority evidence supplied.'))) ?></p>
+                    <?php if (in_array((string) $claim['claim_status'], ['pending','evidence_requested'], true)): ?>
+                        <form method="post" action="<?= e(url('admin/providers/review-claim-request')) ?>" class="stack">
+                            <?= csrf_field() ?><input type="hidden" name="claim_id" value="<?= (int) $claim['id'] ?>">
+                            <div class="form-group"><label>Review notes / evidence required</label><textarea name="review_notes" rows="2"></textarea></div>
+                            <div class="btn-row"><button class="btn btn-primary" name="action" value="approve">Approve authority and send secure claim link</button><button class="btn btn-secondary" name="action" value="request_evidence">Request evidence</button><button class="btn btn-ghost" name="action" value="reject">Reject</button></div>
+                        </form>
+                    <?php elseif (!empty($claim['claim_review_notes'])): ?><p class="muted">Review: <?= nl2br($this->e((string) $claim['claim_review_notes'])) ?></p><?php endif; ?>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
     <p class="muted">
         <?= $this->e((string) ($provider['town_name'] ?? '—')) ?>
         <?php if ($provider['email']): ?> · <?= $this->e((string) $provider['email']) ?><?php endif; ?>
@@ -84,8 +103,19 @@ $docBadge = ['verified' => 'badge-verified', 'rejected' => 'badge-neutral', 'pen
 
     <div class="card">
         <h2>Flags</h2>
+        <?php if (!$provider['is_verified']): ?>
+            <form method="post" action="<?= e(url('admin/providers/flag')) ?>" class="stack" style="margin-bottom:1rem">
+                <?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><input type="hidden" name="flag" value="verified">
+                <div class="form-group"><label>Verification basis</label><select name="verification_basis" required><option value="">Choose evidence…</option><option value="approved_claim_request">Approved claim request</option><option value="verified_document">Verified business document</option><option value="verified_licence">Verified licence</option><option value="business_registry">Business registry check</option><option value="direct_business_contact">Direct business contact</option></select></div>
+                <div class="form-group"><label>Verification evidence notes</label><textarea name="verification_notes" rows="2" minlength="10" required placeholder="Record what was checked, where and when."></textarea></div>
+                <button type="submit" class="btn btn-primary">Verify provider identity</button>
+            </form>
+        <?php else: ?>
+            <p><strong>Verification basis:</strong> <?= $this->e(str_replace('_', ' ', (string) ($provider['verification_basis'] ?? 'not recorded'))) ?><br><span class="muted"><?= $this->e((string) ($provider['verification_notes'] ?? '')) ?></span></p>
+            <form method="post" action="<?= e(url('admin/providers/flag')) ?>" style="margin-bottom:1rem"><?= csrf_field() ?><input type="hidden" name="id" value="<?= $id ?>"><input type="hidden" name="flag" value="verified"><button type="submit" class="btn btn-secondary">Remove verification</button></form>
+        <?php endif; ?>
         <div class="btn-row">
-            <?php foreach (['verified' => 'is_verified', 'insurance' => 'insurance_verified', 'featured' => 'is_featured'] as $flag => $col): ?>
+            <?php foreach (['insurance' => 'insurance_verified', 'featured' => 'is_featured'] as $flag => $col): ?>
                 <form method="post" action="<?= e(url('admin/providers/flag')) ?>" style="margin:0">
                     <?= csrf_field() ?>
                     <input type="hidden" name="id" value="<?= $id ?>">

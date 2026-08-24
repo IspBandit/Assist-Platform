@@ -1,6 +1,6 @@
 # Production current state
 
-Last verified: 13 August 2026 (Australia/Brisbane).
+Last verified: 24 August 2026 (Australia/Brisbane).
 
 ## Deployment
 
@@ -8,12 +8,13 @@ Last verified: 13 August 2026 (Australia/Brisbane).
 - Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (PR #201 — Ask provider-name/GPS integrity).
-- Release directory: `/opt/assist-platform/releases/6a3f09d78dda81f50fab584decb8fb4f382ef717` (confirm on server after next deploy if path differs).
-- Previous documented release: `9879b4bf41f3f691cb26f8d76d71515fb47b6a5c` (superseded August 2026).
+- Production code commit: `046a2c6b492935e4d56e6c3fd0f0372b28e83323`
+  (PR #221 — production zero-result search fixes and release guard repair).
+- Release directory: `/opt/assist-platform/releases/046a2c6b492935e4d56e6c3fd0f0372b28e83323`.
+- Previous documented release: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (superseded August 2026).
 - The deployed Social Studio service file was verified against the GitHub copy
   with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `130_merge_residual_duplicate_stays.sql` are applied; the
+- All migrations through `133_assist_ai_outcomes.sql` are applied; the
   installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
@@ -22,7 +23,7 @@ credentials in this file or Git.
 ## Verified live controls
 
 - All three `/healthz` and `/readyz` endpoints returned 200.
-- All three `/readyz` endpoints reported release `6a3f09d` (verified 13 August 2026).
+- All three `/readyz` endpoints reported release `046a2c6` (verified 24 August 2026).
 - **Admin API** responds on production (`GET /api/v1/admin/health` → 200;
   `POST /api/v1/admin/auth/token` validates credentials — not disabled).
 - **Ask VanAssist** is enabled on production VanAssist (`/ask` returns results;
@@ -40,8 +41,10 @@ credentials in this file or Git.
 - `/install` returned 403.
 - UFW, Fail2ban, unattended upgrades and a five-minute container health monitor
   were active.
-- Scheduled application jobs were installed and manual notification, cleanup and
-  database-backup runs succeeded after writable lock storage was corrected.
+- Scheduled application jobs are installed. The application database-backup
+  task was found stale in `running` state on 24 August; the deployed app image
+  lacks the MariaDB dump client and therefore fell back to an unsuitable large
+  PHP export. The release candidate adds the client and strict output checks.
 - Brand-specific canonical URLs, robots and sitemaps were verified.
 - VanAssist, TowSmart and TrailerWise homepages, contact pages, provider
   directories and mobile hero artwork returned 200. TowSmart's calculator and
@@ -96,15 +99,21 @@ owner verification in MariaDB.
 
 Before full indexed launch:
 
-1. Correct Microsoft Graph brand attribution so recipients see the appropriate
-   VanAssist, TowSmart or TrailerWise support address rather than the shared
-   operations mailbox; then repeat external delivery acceptance.
+1. Deploy and verify the observability, provider-claim and scheduled-backup
+   release candidate, including migrations `134` and `135` and a successful
+   bounded local backup run.
 2. Supply an independent automated S3-compatible repository (for example
    Cloudflare R2) and credentials. A manual off-server restore drill has passed;
    scheduled off-site replication is not active without these credentials.
-3. Rotate previously exposed temporary server and application administrator
+3. Run the independent automated restore rehearsal and retain current status
+   evidence; an old manual restore does not satisfy the current formal gate.
+4. Rotate previously exposed temporary server and application administrator
    passwords through their owner-controlled consoles.
-4. Complete owner acceptance of content, providers and critical journeys.
+5. Complete owner acceptance of content, providers and critical journeys.
+
+Microsoft Graph sender health is now healthy, all three application-path brand
+mailbox probes are sent, and the failed email queue is zero. This closes the
+previous email-delivery launch blocker; it does not create marketing consent.
 
 ## Known product limitations
 

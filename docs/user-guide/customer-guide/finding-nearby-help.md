@@ -157,7 +157,7 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 **Which map opens for directions?** iPhone and iPad use Apple Maps, Android hands off to the device's map handler, and desktop retains the Google Maps web fallback.
 
-**How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile; VanAssist reviews authority before granting control.
+**How do I report an incorrect listing?** Use **Report incorrect details** in the accuracy notice. A business representative can use **Request to claim or correct this listing** on an unclaimed profile and must provide a business email plus a short explanation of their authority. VanAssist may request more evidence, reject the request or approve a secure account-claim link. Approval of the request does not itself grant control or mark the business as verified.
 
 **How do I list my business?** Start at **For providers** / register. VanAssist asks you to search for an existing listing first (“Is this your business?”) so you can claim it instead of creating a duplicate. A new listing is only offered after you confirm none of the matches apply; likely duplicates are held for review and are not published automatically.
 

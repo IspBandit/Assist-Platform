@@ -41,6 +41,8 @@ final class VanAssistDailyPerformanceReport
         }
 
         $report = WebsiteInsightsService::report(self::BRAND_ID, $reportDate, $reportDate);
+        $previousDate = $now->modify('-2 days')->format('Y-m-d');
+        $report['comparison_summary'] = WebsiteInsightsService::report(self::BRAND_ID, $previousDate, $previousDate)['summary'] ?? [];
         $message = self::render($reportDate, $report);
         $brand = self::vanAssistBrand();
         $prior = BrandContext::hasCurrent() ? BrandContext::current() : null;
@@ -100,6 +102,9 @@ final class VanAssistDailyPerformanceReport
 
         $metrics = [
             'Approximate visits' => $visitors,
+            'New visitors' => (int) ($summary['new_visitors'] ?? 0),
+            'Returning visitors' => (int) ($summary['returning_visitors'] ?? 0),
+            'Visitors active on multiple days' => (int) ($summary['multi_day_visitors'] ?? 0),
             'Pages opened' => $views,
             'Pages per visit' => $pagesPerVisit === null ? '—' : number_format((float) $pagesPerVisit, 1),
             'Provider searches' => $searches,
@@ -107,10 +112,17 @@ final class VanAssistDailyPerformanceReport
             'Exact category misses' => (int) ($summary['exact_misses'] ?? 0),
             'Searches rescued with alternatives' => (int) ($summary['rescued_searches'] ?? 0),
             'Search success rate' => $successRate === null ? '—' : number_format((float) $successRate, 1) . '%',
+            'Ask VanAssist searches' => (int) ($summary['ask_searches'] ?? 0),
+            'Ask searches with no result' => (int) ($summary['ask_no_results'] ?? 0),
+            'Stay searches' => (int) ($summary['stay_searches'] ?? 0),
+            'Stay searches with no result' => (int) ($summary['stay_no_results'] ?? 0),
             'Provider profiles opened' => (int) ($summary['profile_views'] ?? 0),
             'Contact actions' => $contacts,
             'Confirmed provider uses' => (int) ($summary['confirmed_uses'] ?? 0),
         ];
+
+        $comparison = is_array($report['comparison_summary'] ?? null) ? $report['comparison_summary'] : [];
+        $comparisonText = self::comparisonText($summary, $comparison);
 
         $sections = [
             ['Most popular pages', $report['pages'] ?? [], 'Page', 'Views', 'Visits'],
@@ -148,16 +160,36 @@ final class VanAssistDailyPerformanceReport
         }
 
         $subject = 'VanAssist daily website performance — ' . $displayDate;
-        $privacy = 'These are aggregate, first-party VanAssist figures. Staff, known bots and raw visitor identities are excluded; visits are approximate.';
+        $privacy = 'These are aggregate, first-party VanAssist figures. Staff, known bots, synthetic checks and same-brand requests that did not retain the session cookie are excluded; visits are approximate.';
         $html = '<!doctype html><html><body style="font-family:Arial,sans-serif;color:#17202a;line-height:1.45;margin:0;padding:20px">'
             . '<main style="max-width:680px;margin:0 auto"><h1 style="font-size:24px;margin:0 0 6px">VanAssist daily website performance</h1>'
             . '<p style="color:#52606d;margin:0 0 20px">' . self::escape($displayDate) . '</p>'
             . '<div style="background:#eef8f7;border-left:4px solid #0f6e6e;padding:12px 14px;margin-bottom:18px"><strong>In plain English</strong><br>'
-            . self::escape($plainEnglish) . '</div><table role="presentation" style="width:100%;border-collapse:collapse">' . $metricHtml . '</table>'
+            . self::escape($plainEnglish) . '<br>' . self::escape($comparisonText) . '</div><table role="presentation" style="width:100%;border-collapse:collapse">' . $metricHtml . '</table>'
             . $detailHtml . '<p style="font-size:12px;color:#64748b;margin-top:28px">' . self::escape($privacy) . '</p></main></body></html>';
-        $text = "VanAssist daily website performance\n{$displayDate}\n\nIn plain English\n{$plainEnglish}\n\n{$metricText}{$detailText}\n{$privacy}\n";
+        $text = "VanAssist daily website performance\n{$displayDate}\n\nIn plain English\n{$plainEnglish}\n{$comparisonText}\n\n{$metricText}{$detailText}\n{$privacy}\n";
 
         return ['subject' => $subject, 'html' => $html, 'text' => $text];
+    }
+
+    /** @param array<string,mixed> $current @param array<string,mixed> $previous */
+    private static function comparisonText(array $current, array $previous): string
+    {
+        if ($previous === []) {
+            return 'No prior-day comparison was available.';
+        }
+        $parts = [];
+        foreach (['visitors' => 'visits', 'page_views' => 'page views', 'searches' => 'provider searches', 'contact_actions' => 'contact actions'] as $key => $label) {
+            $now = (int) ($current[$key] ?? 0);
+            $before = (int) ($previous[$key] ?? 0);
+            if ($before === 0) {
+                $parts[] = $label . ': ' . $now . ' (prior day 0)';
+                continue;
+            }
+            $change = round((($now - $before) / $before) * 100, 1);
+            $parts[] = $label . ': ' . ($change >= 0 ? '+' : '') . number_format($change, 1) . '%';
+        }
+        return 'Compared with the prior day — ' . implode('; ', $parts) . '.';
     }
 
     /** @param mixed $rows @return array<int,array{label:string,total:int,secondary:int}> */

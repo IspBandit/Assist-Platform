@@ -12,7 +12,7 @@ Authenticated provider users and administrators using the provider portal for an
 
 The provider route group requires authentication plus a provider or administrator role. Controllers also enforce provider ownership. Documents remain private and downloads use the same ownership boundary.
 
-An unclaimed public profile offers **Request to claim or correct this listing**. The form identifies the exact listing and records the claimant's details for review; submitting it does not prove ownership or grant access. Onboarding contact permission is limited to the request. Promotional provider email uses a separate, optional checkbox that is unticked by default.
+An unclaimed public profile offers **Request to claim or correct this listing**. The form identifies the exact listing and requires a business email plus an explanation of the claimant's role and authority. Submitting records a reviewable claim request; it does not prove ownership or grant access. An administrator can request evidence, reject the request, or approve authority and send a secure claim link. Onboarding contact permission is limited to the request. Promotional provider email uses a separate, optional checkbox that is unticked by default.
 
 New businesses registering via **For providers** must search existing listings first (“Is this your business?”) and claim a match when appropriate. Creating a new listing requires an explicit confirmation that none of the matches apply; likely duplicates are held for administrator review and are not auto-published.
 
@@ -28,7 +28,7 @@ Provider navigation is grouped as **Overview**, **Your listing**, **Trust**, **W
 
 ## Workflows
 
-Complete the profile first, then add only services the business actually performs and areas it genuinely serves. Upload evidence under **Documents** and record licences under **Licences**. Administrative verification is a separate review action.
+Complete the profile first, then add only services the business actually performs and areas it genuinely serves. Upload evidence under **Documents** and record licences under **Licences**. Claim approval, account control and administrative verification are separate steps; a successful claim does not create a public verification badge.
 
 ## Examples
 
@@ -63,7 +63,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-08-24.
 
 ## Owner
 

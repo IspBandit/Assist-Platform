@@ -46,6 +46,50 @@ may remain as dated files and are linked here rather than copied.
   behaviour are unchanged. Disabling `assist_ai_outcomes` immediately restores
   the previous Ask results presentation.
 
+### VanAssist observability closure (VAN-012 / DATA-004)
+
+- The daily first-party performance email now compares visits, page views,
+  provider searches and contact actions with the prior day instead of reporting
+  an isolated daily total.
+- Ask VanAssist searches and zero-result searches are reported separately from
+  structured provider searches. Structured stay searches and their zero-result
+  rate are now recorded behind the existing `demand_analytics` flag and included
+  in the same report. Tracking failures remain unable to affect search results.
+- Acquisition, device, search and contact figures now exclude recognised bots,
+  synthetic checks and same-brand navigations that did not retain the first-party
+  session cookie. Existing suspect sessions are filtered without deleting raw
+  evidence, and Ask rows retain an explicit exclusion marker for diagnosis.
+- Website Insights and the daily email distinguish new, previously seen and
+  multi-day visitors so retention is measured directly rather than inferred from
+  page views.
+
+### Provider claim and verification closure (VAN-002)
+
+- Public claim/correction submissions now create a structured request against
+  the exact provider record and require a business email plus authority evidence.
+  Administrators can request more evidence, reject the request or approve it and
+  queue a secure, transactional claim link without treating the request as
+  promotional consent.
+- Claim approval, account control and verification remain separate. Provider
+  verification now requires a recorded basis and evidence notes, cannot be set
+  on an unclaimed or inactive record, and updates the canonical provider and its
+  active brand listings together. No existing provider is auto-verified.
+
+### Formal launch-gate and backup evidence (OPS-002 / DATA-001)
+
+- The provider-coordinate launch check now measures the coordinates actually
+  published on the provider against its displayed town. It no longer depends
+  on optional JSON source fields, so unavailable or differently shaped source
+  payloads cannot turn a clean public-directory audit into unknown evidence.
+- The production application image now includes the MariaDB dump client used by
+  the scheduled local backup. Backup creation refuses to report success for an
+  empty file, writes and verifies a SHA-256 sidecar, and preserves the source
+  SQL if compression fails. The launch gate requires the recorded file and
+  checksum to exist and be no more than 36 hours old; a task left running for
+  more than an hour is identified explicitly.
+- Independent encrypted off-site backup and a recent isolated restore rehearsal
+  remain hard failures when their signed status evidence is absent or stale.
+
 ### VanAssist reliability closure (VAN-011 / DATA-004 / EXP-005)
 
 - Website Insights now excludes assets, manifests, service workers, API and
