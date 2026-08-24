@@ -15,6 +15,7 @@ use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Platform\AiSearch\Support\OutcomeFeature;
 use App\Platform\Brand\BrandContext;
 use App\Services\Demand\TrackingSession;
+use App\Services\Demand\TrafficQuality;
 use App\Services\RateLimiter;
 use App\Services\Search\PublicResultWindow;
 
@@ -64,7 +65,7 @@ final class AssistSearchController extends Controller
             $orchestrator = new SearchOrchestrator();
             $sessionId = null;
             try {
-                $sessionId = TrackingSession::id();
+                $sessionId = TrafficQuality::excludesCurrentRequest() ? null : TrackingSession::id();
             } catch (\Throwable) {
                 $sessionId = null;
             }

@@ -77,19 +77,17 @@ final class PlatformDatabaseTest extends TestCase
             . 'AND good.publishable=1 AND good.needs_review=0)'
         ));
         self::assertSame(0, (int) Database::scalar(
-            'SELECT COUNT(DISTINCT psr.id) FROM provider_source_records psr '
-            . 'JOIN providers p ON p.id=psr.provider_id JOIN towns t ON t.id=p.base_town_id '
+            'SELECT COUNT(DISTINCT p.id) FROM providers p JOIN towns t ON t.id=p.base_town_id '
             . 'JOIN provider_brand_listings l ON l.provider_id=p.id '
             . "WHERE p.is_unclaimed=1 AND p.status='active' AND l.status='active' AND l.search_visible=1 "
-            . 'AND psr.publishable=1 AND psr.needs_review=0 '
-            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lat')) IN ('INTEGER','DOUBLE') "
-            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lng')) IN ('INTEGER','DOUBLE') "
+            . 'AND p.deleted_at IS NULL AND l.deleted_at IS NULL '
+            . 'AND p.latitude IS NOT NULL AND p.longitude IS NOT NULL '
             . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
             . 'AND (6371 * ACOS(LEAST(1,GREATEST(-1, '
-            . "COS(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . 'COS(RADIANS(p.latitude)) '
             . '* COS(RADIANS(t.latitude)) '
-            . "* COS(RADIANS(t.longitude)-RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lng')) AS DECIMAL(10,6)))) "
-            . "+ SIN(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . '* COS(RADIANS(t.longitude)-RADIANS(p.longitude)) '
+            . '+ SIN(RADIANS(p.latitude)) '
             . '* SIN(RADIANS(t.latitude)))))) > 150'
         ), 'Public source coordinates must not contradict the displayed Australian town by more than 150 km.');
 

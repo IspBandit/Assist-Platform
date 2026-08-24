@@ -14,6 +14,9 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
         $message = VanAssistDailyPerformanceReport::render('2026-08-15', [
             'summary' => [
                 'visitors' => 24,
+                'new_visitors' => 20,
+                'returning_visitors' => 4,
+                'multi_day_visitors' => 3,
                 'page_views' => 61,
                 'pages_per_visitor' => 2.5,
                 'searches' => 12,
@@ -21,6 +24,10 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
                 'exact_misses' => 4,
                 'rescued_searches' => 2,
                 'search_success_rate' => 83.3,
+                'ask_searches' => 7,
+                'ask_no_results' => 1,
+                'stay_searches' => 5,
+                'stay_no_results' => 2,
                 'profile_views' => 9,
                 'contact_actions' => 4,
                 'confirmed_uses' => 1,
@@ -36,6 +43,9 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
             ]],
             'actions' => [['label' => 'directions', 'total' => 3, 'secondary' => 3]],
             'providers' => [['label' => 'Example Caravan Repairs', 'contacts' => 2, 'profile_views' => 4]],
+            'comparison_summary' => [
+                'visitors' => 20, 'page_views' => 50, 'searches' => 10, 'contact_actions' => 2,
+            ],
         ]);
 
         self::assertSame('VanAssist daily website performance — 15 Aug 2026', $message['subject']);
@@ -47,6 +57,12 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
         self::assertStringContainsString('Searches rescued with alternatives', $message['html']);
         self::assertStringContainsString('Roof leaks — Gladstone, QLD', $message['html']);
         self::assertStringContainsString('Example Caravan Repairs', $message['html']);
+        self::assertStringContainsString('Ask VanAssist searches', $message['html']);
+        self::assertStringContainsString('Returning visitors', $message['html']);
+        self::assertStringContainsString('Visitors active on multiple days', $message['html']);
+        self::assertStringContainsString('Stay searches with no result', $message['html']);
+        self::assertStringContainsString('Compared with the prior day', $message['text']);
+        self::assertStringContainsString('visits: +20.0%', $message['text']);
         self::assertStringContainsString('aggregate, first-party VanAssist figures', $message['text']);
         self::assertStringNotContainsString('session_id', $message['html']);
     }

@@ -38,19 +38,17 @@ final class LaunchReadinessService
         $unclaimed = self::scalar("SELECT COUNT(*) FROM providers WHERE status='active' AND is_unclaimed=1 AND deleted_at IS NULL");
         $verified = self::scalar("SELECT COUNT(*) FROM providers WHERE status='active' AND is_verified=1 AND deleted_at IS NULL");
         $locationConflicts = self::scalar(
-            'SELECT COUNT(DISTINCT psr.id) FROM provider_source_records psr '
-            . 'JOIN providers p ON p.id=psr.provider_id JOIN towns t ON t.id=p.base_town_id '
+            'SELECT COUNT(DISTINCT p.id) FROM providers p JOIN towns t ON t.id=p.base_town_id '
             . 'JOIN provider_brand_listings l ON l.provider_id=p.id '
             . "WHERE p.is_unclaimed=1 AND p.status='active' AND l.status='active' AND l.search_visible=1 "
-            . 'AND psr.publishable=1 AND psr.needs_review=0 '
-            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lat')) IN ('INTEGER','DOUBLE') "
-            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lng')) IN ('INTEGER','DOUBLE') "
+            . 'AND p.deleted_at IS NULL AND l.deleted_at IS NULL '
+            . 'AND p.latitude IS NOT NULL AND p.longitude IS NOT NULL '
             . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
             . 'AND (6371 * ACOS(LEAST(1,GREATEST(-1, '
-            . "COS(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . 'COS(RADIANS(p.latitude)) '
             . '* COS(RADIANS(t.latitude)) '
-            . "* COS(RADIANS(t.longitude)-RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lng')) AS DECIMAL(10,6)))) "
-            . "+ SIN(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . '* COS(RADIANS(t.longitude)-RADIANS(p.longitude)) '
+            . '+ SIN(RADIANS(p.latitude)) '
             . '* SIN(RADIANS(t.latitude))))) > 150'
         );
 
@@ -117,8 +115,8 @@ final class LaunchReadinessService
     private static function operationalProof(): array
     {
         $dirtyMigrations = self::scalar("SELECT COUNT(*) FROM migrations WHERE status<>'succeeded'");
-        $localBackupCount = self::scalar("SELECT COUNT(*) FROM scheduled_tasks WHERE task_key='database_backup' AND last_status='success'");
-        $localBackup = $localBackupCount !== null && $localBackupCount > 0;
+        $localBackupTask = self::row("SELECT last_status,last_run_at,last_message FROM scheduled_tasks WHERE task_key='database_backup'");
+        $localBackup = self::backupEvidence($localBackupTask, 36);
         $offsite = self::statusEvidence('offsite-backup.status.json', 36);
         $restore = self::statusEvidence('offsite-restore-drill.status.json', 24 * 8);
         $release = trim((string) config('app.release', ''));
@@ -127,7 +125,7 @@ final class LaunchReadinessService
             && trim((string) config('security.turnstile.secret_key', '')) !== '';
         $checks = [
             self::check('Migration integrity', $dirtyMigrations === 0 ? 'pass' : 'fail', $dirtyMigrations === null ? 'evidence unavailable' : $dirtyMigrations . ' incomplete migrations'),
-            self::check('Local scheduled database backup', $localBackup ? 'pass' : 'fail', $localBackupCount === null ? 'evidence unavailable' : ($localBackup ? 'successful task recorded' : 'no successful task recorded')),
+            self::check('Local scheduled database backup', $localBackup['status'], $localBackup['detail']),
             self::check('Encrypted independent off-site backup', $offsite['status'], $offsite['detail']),
             self::check('Independent restore rehearsal', $restore['status'], $restore['detail']),
             self::check('Traceable immutable release', $release !== '' ? 'pass' : 'fail', $release !== '' ? $release : 'release identifier missing'),
@@ -183,5 +181,56 @@ final class LaunchReadinessService
         } catch (Throwable) {
             return null;
         }
+    }
+
+    /** @return array<string,mixed>|null */
+    private static function row(string $sql): ?array
+    {
+        try {
+            return Database::selectOne($sql);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /** @param array<string,mixed>|null $task @return array{status:string,detail:string} */
+    private static function backupEvidence(?array $task, int $maxAgeHours): array
+    {
+        if ($task === null) {
+            return ['status' => 'fail', 'detail' => 'evidence unavailable'];
+        }
+        $status = (string) ($task['last_status'] ?? 'unknown');
+        $ranAt = trim((string) ($task['last_run_at'] ?? ''));
+        $message = trim((string) ($task['last_message'] ?? ''));
+        if ($status === 'running' && $ranAt !== '' && ($started = strtotime($ranAt)) !== false && $started < time() - 3600) {
+            return ['status' => 'fail', 'detail' => 'task has been stuck running since ' . $ranAt];
+        }
+        if ($status !== 'success') {
+            return ['status' => 'fail', 'detail' => 'latest task status is ' . $status . ($message !== '' ? ': ' . mb_substr($message, 0, 180) : '')];
+        }
+        $timestamp = $ranAt !== '' ? strtotime($ranAt) : false;
+        if ($timestamp === false) {
+            return ['status' => 'fail', 'detail' => 'successful task has no valid completion time'];
+        }
+        $ageHours = (int) floor((time() - $timestamp) / 3600);
+        if ($ageHours > $maxAgeHours) {
+            return ['status' => 'fail', 'detail' => 'last successful local backup is ' . $ageHours . ' hours old'];
+        }
+        $result = json_decode($message, true);
+        $name = is_array($result) ? basename((string) ($result['file'] ?? '')) : '';
+        if ($name === '' || $name !== (string) ($result['file'] ?? '')) {
+            return ['status' => 'fail', 'detail' => 'successful task has no safe backup filename evidence'];
+        }
+        $path = base_path('storage/backups/' . $name);
+        $manifest = $path . '.sha256';
+        if (!is_file($path) || filesize($path) === 0 || !is_file($manifest)) {
+            return ['status' => 'fail', 'detail' => 'recorded backup or checksum manifest is missing'];
+        }
+        $expected = strtok(trim((string) file_get_contents($manifest)), " \t");
+        $actual = hash_file('sha256', $path);
+        if (!is_string($expected) || !is_string($actual) || $expected === '' || !hash_equals($expected, $actual)) {
+            return ['status' => 'fail', 'detail' => 'recorded backup checksum does not verify'];
+        }
+        return ['status' => 'pass', 'detail' => $name . ' verified; completed ' . $ageHours . ' hour(s) ago'];
     }
 }

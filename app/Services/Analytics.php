@@ -8,6 +8,7 @@ use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Demand\PublicPageViewPolicy;
+use App\Services\Demand\TrafficQuality;
 use App\Services\Demand\TrackingSession;
 use Throwable;
 
@@ -27,7 +28,7 @@ final class Analytics
             if ((string) Settings::get('analytics_enabled', '0') !== '1') {
                 return;
             }
-            if (TrackingSession::isBot() || BotTraffic::isSynthetic()) {
+            if (TrafficQuality::excludesCurrentRequest()) {
                 return;
             }
             if (auth()->check() && auth()->hasAnyRole('super-administrator', 'administrator', 'platform-administrator', 'brand-administrator', 'moderator', 'marketing', 'support')) {
@@ -39,11 +40,16 @@ final class Analytics
                 return;
             }
 
+            $sessionId = TrackingSession::id();
+            if ($sessionId === null) {
+                return;
+            }
+
             $user = current_user();
             Database::query(
                 'INSERT INTO page_views (brand_id, session_id, user_id, route, event_type, referrer_source, device_type, created_at) '
                 . 'VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
-                [current_brand()->databaseId(), TrackingSession::id(), $user !== null ? (int) $user['id'] : null,
+                [current_brand()->databaseId(), $sessionId, $user !== null ? (int) $user['id'] : null,
                     substr($path, 0, 190), 'view', self::referrerSource(), TrackingSession::deviceType()]
             );
         } catch (Throwable) {

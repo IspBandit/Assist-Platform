@@ -40,6 +40,7 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
 <div class="insight-stat-grid" aria-label="Website performance summary">
     <?php foreach ([
         ['Visitors', $summary['visitors'], 'Anonymous first-party sessions'],
+        ['Returning visitors', $summary['returning_visitors'], ($summary['returning_visitor_rate'] ?? null) !== null ? $summary['returning_visitor_rate'] . '% of visitors' : 'No visitor baseline yet'],
         ['Page views', $summary['page_views'], $summary['pages_per_visitor'] !== null ? $summary['pages_per_visitor'] . ' pages per visitor' : 'No visitor baseline yet'],
         ['Provider searches', $summary['searches'], $summary['no_results'] . ' returned no results'],
         ['Provider profiles opened', $summary['profile_views'], 'Deliberate provider interest'],
@@ -56,7 +57,7 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
 
 <div class="insight-definition-note">
     <strong>Who visited?</strong>
-    <span><?= number_format((int) $summary['visitors']) ?> anonymous visitor sessions and <?= number_format((int) $summary['signed_in_visitors']) ?> signed-in visitors were recorded. The platform does not store visitor IP addresses or attempt to identify anonymous people.</span>
+    <span><?= number_format((int) $summary['new_visitors']) ?> new, <?= number_format((int) $summary['returning_visitors']) ?> returning and <?= number_format((int) $summary['multi_day_visitors']) ?> multi-day visitors were recorded. <?= number_format((int) $summary['signed_in_visitors']) ?> were signed in. The platform does not store visitor IP addresses or attempt to identify anonymous people.</span>
 </div>
 
 <section class="card insight-decision-summary" aria-labelledby="insight-decision-heading">
@@ -65,6 +66,7 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
         <div><dt>Search success</dt><dd><?= $summary['search_success_rate'] === null ? 'Not enough data' : $this->e((string) $summary['search_success_rate']) . '%' ?><small><?= number_format((int) $summary['successful_searches']) ?> searches returned at least one result</small></dd></div>
         <div><dt>Exact coverage misses</dt><dd><?= number_format((int) $summary['exact_misses']) ?><small><?= number_format((int) $summary['rescued_searches']) ?> still received clearly labelled nearby options</small></dd></div>
         <div><dt>Search to contact</dt><dd><?= $summary['search_to_contact'] === null ? 'Not enough data' : $this->e((string) $summary['search_to_contact']) . '%' ?><small>Interest signal only—not a completed job</small></dd></div>
+        <div><dt>Returning visitors</dt><dd><?= $summary['returning_visitor_rate'] === null ? 'Not enough data' : $this->e((string) $summary['returning_visitor_rate']) . '%' ?><small><?= number_format((int) $summary['returning_visitors']) ?> had a measured visit before this period</small></dd></div>
         <div><dt>Latest page visit</dt><dd><?= $this->e((string) ($summary['last_page_view_at'] ?? 'None recorded')) ?><small>Confirms page tracking is alive</small></dd></div>
         <div><dt>Latest provider action</dt><dd><?= $this->e((string) ($summary['last_demand_event_at'] ?? 'None recorded')) ?><small>Profile, contact or funnel event</small></dd></div>
     </dl>

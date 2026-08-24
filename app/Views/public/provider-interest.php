@@ -168,8 +168,9 @@ $this->extend('layouts.public');
             </div>
 
             <div class="form-group">
-                <label for="message">Anything else? (optional)</label>
-                <textarea id="message" name="message" rows="4" placeholder="<?= $listingProvider !== null ? 'Explain your role and any details that need correcting.' : 'Add any information that will help us review the business.' ?>"><?= e((string) old('message')) ?></textarea>
+                <label for="message"><?= $listingProvider !== null ? 'Your role and authority evidence' : 'Anything else? (optional)' ?><?= $listingProvider !== null ? ' <span style="color:#c0392b">*</span>' : '' ?></label>
+                <textarea id="message" name="message" rows="4" <?= $listingProvider !== null ? 'required minlength="10"' : '' ?> placeholder="<?= $listingProvider !== null ? 'Explain your role, your relationship to the business and how VanAssist can verify it.' : 'Add any information that will help us review the business.' ?>"><?= e((string) old('message')) ?></textarea>
+                <?= $err('message') ?>
             </div>
 
             <div class="form-group consent-choice">
@@ -178,7 +179,7 @@ $this->extend('layouts.public');
             </div>
 
             <div class="btn-row">
-                <button type="submit" class="btn btn-primary btn-lg">Register interest</button>
+                <button type="submit" class="btn btn-primary btn-lg"><?= $listingProvider !== null ? 'Submit claim request' : 'Register interest' ?></button>
                 <a class="btn btn-outline btn-lg" href="<?= e(url('how-it-works')) ?>">How it works</a>
             </div>
             <p class="muted" style="font-size:.85rem">By submitting, you consent to contact about this onboarding or listing request. We use the details to review authority, prevent misuse and respond to you. See our <a href="<?= e(url('privacy-policy')) ?>">privacy policy</a>. A submission does not prove ownership or grant listing access.</p>

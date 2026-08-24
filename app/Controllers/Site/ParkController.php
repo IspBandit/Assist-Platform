@@ -15,6 +15,7 @@ use App\Models\Town;
 use App\Models\User;
 use App\Helpers\Geo;
 use App\Services\AuditLog;
+use App\Services\Demand\ActivityTracker;
 use App\Services\EmailQueue;
 use App\Services\SeoSchema;
 use App\Services\StayFacilityService;
@@ -94,6 +95,19 @@ final class ParkController extends Controller
         $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         $stays = $hasOrigin ? CaravanPark::searchStays($townId, $lat, $lng, $stayType, $priceType, $distanceKm, 60, $facilityType ? [$facilityType] : []) : [];
+        if ($hasOrigin) {
+            ActivityTracker::record($stays === [] ? 'no_stay_found' : 'stay_search_completed', [
+                'town_id' => $townId,
+                'route' => '/stays',
+                'metadata' => [
+                    'results' => count($stays),
+                    'stay_type' => $stayType,
+                    'price_type' => $priceType,
+                    'facility' => $facilityType,
+                    'radius_km' => $distanceKm,
+                ],
+            ]);
+        }
         $resultWindow = (new PublicResultWindow())->apply(['stays' => $stays], $resultLimit);
         $stays = $resultWindow['groups']['stays'];
         $routeLat = $lat;
