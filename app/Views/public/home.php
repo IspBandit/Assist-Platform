@@ -31,7 +31,7 @@ $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
                 </div>
                 <div class="search-card unified-search-card">
                 <?php $this->include('partials.ask-vanassist'); ?>
-                <form class="structured-search-form home-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
+                <form class="structured-search-form home-search-form" style="order:4" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         Browse directly
@@ -76,7 +76,7 @@ $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
 
         </div>
 
-        <nav class="hero-capabilities" aria-label="Browse VanAssist directly">
+        <nav class="hero-capabilities" style="order:3" aria-label="Browse VanAssist directly">
             <a data-location-link href="<?= e(url('find')) ?>"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.7 6.3 3-3a4.2 4.2 0 0 1-5.4 5.4l-6.6 6.6a2.1 2.1 0 0 0 3 3l6.6-6.6a4.2 4.2 0 0 1 5.4-5.4l-3 3"/></svg></span><strong>Trusted services</strong><small>Repairs and mobile help</small></a>
             <a data-location-link href="<?= e(url('stays')) ?>"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-7h18v7M5 11V7h6v4M3 18v3m18-3v3M3 15h18"/></svg></span><strong>Places to stay</strong><small>Caravan-friendly stops</small></a>
             <a data-location-link href="<?= e(url('find?category=fuel-and-travel-stops')) ?>"><span aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v17M4 10h10M7 6h4M14 8h2l3 3v7a2 2 0 0 0 2 2"/></svg></span><strong>Fuel &amp; essentials</strong><small>Useful stops nearby</small></a>
