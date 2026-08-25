@@ -159,14 +159,6 @@ final class SearchController extends Controller
             }
             $possible = array_values($fallbackRows);
 
-            if ($possible === [] && $town !== null) {
-                foreach (Provider::inTown((int) $town['id'], (int) ($town['region_id'] ?? 0), 60) as $row) {
-                    $row['is_inferred'] = 1;
-                    $row['search_fallback'] = 'regional_provider_pool';
-                    $possible[] = $row;
-                }
-                $usedRegionalPool = $possible !== [];
-            }
         }
 
         if ($hasOrigin) {

@@ -10,6 +10,24 @@ On phones, Ask is deliberately presented before the four direct shortcuts and th
 
 Ask is not a general-purpose assistant. It is limited to VanAssist providers, stays, caravan/RV help and supported traveller facilities. Important details should still be confirmed before travel.
 
+## Search-result accuracy
+
+Provider results must match the requested service or a deliberately related
+repair category. If VanAssist has no supported caravan-repair listing near the
+selected location, it reports that coverage gap instead of filling the list
+with unrelated nearby businesses such as fuel stations or generic workshops.
+When the normal 25 km radius finds no repair specialist and the traveller did
+not set a distance limit, Ask retries the same service categories within a
+regional 150 km area. An explicit distance such as “within 25 km” remains a
+hard limit. Providers without an exact business pin can use a trusted town
+centre for a clearly labelled distance estimate.
+
+On result pages, the search form is collapsed under **Change this search** and
+the default phone view prioritises the location, distance, result list and next
+action. Try a wider radius or request assistance, but do not assume a business
+performs the requested work unless its result says so.
+
 ## Last updated
 
-2026-08-25 — Ask-first homepage hierarchy.
+2026-08-26 — Category-accurate regional search and concise mobile results.
+
