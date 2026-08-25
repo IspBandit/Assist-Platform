@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Production runtime and launch evidence follow-up (OPS-002 / DATA-001)
+
+- Fixed the published-provider coordinate launch query so its distance
+  expression executes in MariaDB and reports zero conflicts instead of
+  swallowing a syntax error as unavailable evidence.
+- Immutable releases now refresh the root-owned Compose, PHP, Caddy and
+  operations runtime files from the reviewed release artefact before rebuilding
+  containers. The previous runtime is retained during deployment and restored
+  automatically if release validation fails.
+
 ### Ask-first VanAssist homepage (VAN-011 / EXP-005)
 
 - Ask VanAssist is now the preferred homepage starting point when the existing

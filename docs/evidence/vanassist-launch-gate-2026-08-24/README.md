@@ -37,7 +37,10 @@ restore rehearsal, and owner acceptance of the final public journeys.
 - Database integration suite passed: 38 tests, 283 assertions, one explicitly
   skipped optional authentication test.
 - The launch gate now queries published provider coordinates rather than
-  optional JSON payload coordinates.
+  optional JSON payload coordinates. Live verification found and the follow-up
+  fixes a missing closing parenthesis that initially left this check at
+  unavailable evidence even though the underlying production query returned
+  zero conflicts.
 - The production PHP image includes `mariadb-client`; application backups reject
   empty output, write a SHA-256 manifest, retain uncompressed SQL after
   compression failure, and report a stale running task explicitly. The formal
@@ -57,3 +60,16 @@ restore rehearsal, and owner acceptance of the final public journeys.
 4. Configure the independent encrypted repository, run off-site backup, and verify current machine-readable evidence.
 5. Restore the newest backup into an isolated database, run integrity and critical-journey checks, destroy the rehearsal environment, and retain current evidence.
 6. Re-run the live launch gate. Commercial launch remains blocked unless every hard check passes and the owner records acceptance.
+
+## Live release verification update
+
+- Release `ebad280f1d4924d2beef0c7316c2333e6ca0961d` reached all three brands and
+  migrations `134` and `135` succeeded.
+- The scheduled application backup completed through `mariadb-dump` in 11.9
+  seconds. `db_20260824_130147.sql.gz` and its SHA-256 manifest verified, closing
+  the local-backup control.
+- The immutable release had reused the bootstrap-era app image. The live image
+  was rebuilt from the exact merged Dockerfile with a tagged rollback image;
+  the follow-up release makes reviewed runtime synchronisation automatic.
+- Independent encrypted off-site backup and current restore rehearsal evidence
+  remain absent, so the formal commercial launch gate remains **FAIL**.

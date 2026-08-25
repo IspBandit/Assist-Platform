@@ -25,10 +25,27 @@ if [[ ! -d "$target" ]]; then
   tar --extract --gzip --file "$archive" --directory "$target" --no-same-owner
 fi
 
+runtime_source="$target/infrastructure/binarylane"
+for required in docker-compose.yml Dockerfile Caddyfile php.ini firewall.sh; do
+  if [[ ! -f "$runtime_source/$required" ]]; then
+    echo "Reviewed runtime file is missing from the release: $required" >&2
+    exit 1
+  fi
+done
+if [[ ! -d "$runtime_source/ops" ]]; then
+  echo "Reviewed runtime operations directory is missing from the release." >&2
+  exit 1
+fi
+
 previous="$(readlink -f "$root/current" || true)"
 previous_app_release="$(sed -n 's/^APP_RELEASE=//p' "$app_env" | tail -n 1)"
-ln -sfn "$target" "$root/current.next"
-mv -Tf "$root/current.next" "$root/current"
+runtime_rollback="$root/runtime-rollback-$release"
+install -d -o root -g root -m 0700 "$runtime_rollback/ops"
+cp -a "$root/docker-compose.yml" "$runtime_rollback/docker-compose.yml"
+for file in Dockerfile Caddyfile php.ini firewall.sh; do
+  cp -a "$root/runtime/$file" "$runtime_rollback/$file"
+done
+cp -a "$root/runtime/ops/." "$runtime_rollback/ops/"
 
 set_app_release() {
   local value="$1"
@@ -38,9 +55,16 @@ set_app_release() {
     printf '\nAPP_RELEASE=%s\n' "$value" >> "$app_env"
   fi
 }
-set_app_release "$release"
 
 rollback() {
+  trap - ERR
+  install -o root -g root -m 0640 "$runtime_rollback/docker-compose.yml" "$root/docker-compose.yml"
+  install -o root -g root -m 0640 "$runtime_rollback/Dockerfile" "$root/runtime/Dockerfile"
+  install -o root -g root -m 0640 "$runtime_rollback/Caddyfile" "$root/runtime/Caddyfile"
+  install -o root -g root -m 0640 "$runtime_rollback/php.ini" "$root/runtime/php.ini"
+  install -o root -g root -m 0750 "$runtime_rollback/firewall.sh" "$root/runtime/firewall.sh"
+  find "$root/runtime/ops" -maxdepth 1 -type f -name '*.sh' -delete
+  find "$runtime_rollback/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$root/runtime/ops/" \;
   if [[ -n "$previous" && -d "$previous" ]]; then
     if [[ -n "$previous_app_release" ]]; then
       set_app_release "$previous_app_release"
@@ -49,8 +73,24 @@ rollback() {
     mv -Tf "$root/current.next" "$root/current"
     docker compose up -d --build --force-recreate app caddy
   fi
+  rm -rf -- "$runtime_rollback"
 }
 trap rollback ERR
+
+# Runtime and Compose configuration are bootstrap-installed outside the current
+# symlink. Refresh them from this reviewed immutable release before building so
+# infrastructure changes cannot remain silently stranded in GitHub.
+install -o root -g root -m 0640 "$runtime_source/docker-compose.yml" "$root/docker-compose.yml"
+install -o root -g root -m 0640 "$runtime_source/Dockerfile" "$root/runtime/Dockerfile"
+install -o root -g root -m 0640 "$runtime_source/Caddyfile" "$root/runtime/Caddyfile"
+install -o root -g root -m 0640 "$runtime_source/php.ini" "$root/runtime/php.ini"
+install -o root -g root -m 0750 "$runtime_source/firewall.sh" "$root/runtime/firewall.sh"
+find "$root/runtime/ops" -maxdepth 1 -type f -name '*.sh' -delete
+find "$runtime_source/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$root/runtime/ops/" \;
+
+ln -sfn "$target" "$root/current.next"
+mv -Tf "$root/current.next" "$root/current"
+set_app_release "$release"
 
 docker compose config -q
 docker compose up -d --build --force-recreate app caddy
@@ -67,5 +107,6 @@ for url in \
 done
 
 trap - ERR
+rm -rf -- "$runtime_rollback"
 rm -f "$archive"
 echo "Released $release successfully. Previous release: ${previous:-none}"
