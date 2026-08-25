@@ -62,6 +62,54 @@ final class LocalTorquePackTest extends TestCase
         );
     }
 
+    public function testEveryVanAssistPackCategoryBridgesToPublicSearchServices(): void
+    {
+        $taxonomy = $this->json('categories.json');
+        $map = LocalTorquePackSeeder::vanAssistCompatibilityMap();
+        $missing = [];
+        foreach ((array) ($taxonomy['groups'] ?? []) as $group) {
+            foreach ((array) ($group['categories'] ?? []) as $category) {
+                if (!in_array('vanassist', (array) ($category['brands'] ?? []), true)) {
+                    continue;
+                }
+                $id = (string) ($category['id'] ?? '');
+                if (!isset($map[$id]) || $map[$id] === []) {
+                    $missing[] = $id;
+                }
+            }
+        }
+
+        self::assertSame([], $missing);
+        self::assertContains('general-caravan-repairs', $map['caravan-repairs']);
+        self::assertContains('auto-electrical-and-batteries', $map['auto-electrician']);
+        self::assertContains('mobile-mechanics', $map['mobile-mechanic']);
+    }
+
+    public function testCompatibilityBridgeKeepsKnownRetailersConservative(): void
+    {
+        self::assertSame(
+            ['auto-electrical-and-batteries'],
+            LocalTorquePackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Battery World Rockhampton'],
+                ['battery-specialist', 'auto-electrician']
+            )
+        );
+        self::assertSame(
+            ['tyres-and-wheels'],
+            LocalTorquePackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Rockhampton Tyrepower'],
+                ['tyre-shop', 'general-mechanic']
+            )
+        );
+        self::assertSame(
+            ['general-caravan-repairs'],
+            LocalTorquePackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Capricorn Caravan Centre'],
+                ['caravan-repairs']
+            )
+        );
+    }
+
     public function testKnownRetailChainsDoNotInheritUnsupportedWorkshopServices(): void
     {
         self::assertSame(
