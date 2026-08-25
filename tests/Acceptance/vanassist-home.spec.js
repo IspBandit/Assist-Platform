@@ -8,7 +8,7 @@ async function expectElementStartsInViewport(locator, viewportHeight) {
   expect(box.y, 'element starts in the first viewport').toBeLessThan(viewportHeight);
 }
 
-test('VanAssist homepage keeps the core journey in the first viewport', async ({ page }, testInfo) => {
+test('VanAssist homepage keeps the core journey accessible and Ask first', async ({ page }, testInfo) => {
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
 
@@ -32,13 +32,16 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
 
   const isMobile = testInfo.project.name.startsWith('mobile');
   const headline = isMobile ? page.locator('.mobile-hero-intro h1') : page.locator('.hero-copy h1');
-  const search = page.locator('.hero-search-panel .structured-search-form');
+  const askVanAssist = page.locator('.ask-vanassist-home');
+  const structuredSearch = page.locator('.hero-search-panel .structured-search-form');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
-  await expect(search).toBeVisible();
+  await expect(askVanAssist).toBeVisible();
+  await expect(page.getByLabel('Ask VanAssist')).toBeVisible();
+  await expect(structuredSearch).toBeVisible();
   await expect(page.getByLabel('Service category')).toBeVisible();
   await expect(page.getByLabel('Town, suburb or postcode')).toBeVisible();
   await expectElementStartsInViewport(headline, viewport.height);
-  await expectElementStartsInViewport(search, viewport.height);
+  await expectElementStartsInViewport(askVanAssist, viewport.height);
 
   const overflow = await page.evaluate(() => ({
     body: document.body.scrollWidth - window.innerWidth,
@@ -46,6 +49,10 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
   }));
   expect(overflow.body, 'body horizontal overflow in pixels').toBeLessThanOrEqual(1);
   expect(overflow.document, 'document horizontal overflow in pixels').toBeLessThanOrEqual(1);
+
+  const quickActions = page.getByRole('navigation', { name: 'Browse VanAssist directly' });
+  await expect(quickActions).toBeVisible();
+  await expect(quickActions.getByRole('link')).toHaveCount(4);
 
   if (isMobile) {
     const topGap = await page.evaluate(() => {
@@ -58,30 +65,19 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
     expect(topGap, 'mobile header-to-hero gap in pixels').toBeGreaterThanOrEqual(-1);
     expect(topGap, 'mobile header-to-hero gap in pixels').toBeLessThanOrEqual(64);
 
-    const primarySearchButton = page.getByRole('button', { name: 'Show nearby help' });
-    await expect(primarySearchButton).toBeVisible();
-    const primarySearchBox = await primarySearchButton.boundingBox();
-    expect(primarySearchBox, 'mobile primary submit has a rendered box').not.toBeNull();
-    expect(
-      primarySearchBox.y + primarySearchBox.height,
-      'mobile primary submit is fully visible in the first viewport',
-    ).toBeLessThanOrEqual(viewport.height);
-    const quickActions = page.getByRole('navigation', { name: 'Find VanAssist help' });
-    await expect(quickActions).toBeVisible();
-    await expect(quickActions.getByRole('link')).toHaveCount(4);
-    const quickActionsBox = await quickActions.boundingBox();
-    expect(quickActionsBox, 'mobile quick actions have a rendered box').not.toBeNull();
-    expect(
-      quickActionsBox.y + quickActionsBox.height,
-      'all mobile quick actions are fully visible in the first viewport',
-    ).toBeLessThanOrEqual(viewport.height);
-
-    const askVanAssist = page.locator('.ask-vanassist-home');
     const askBox = await askVanAssist.boundingBox();
+    const quickActionsBox = await quickActions.boundingBox();
+    const structuredBox = await structuredSearch.boundingBox();
     expect(askBox, 'Ask VanAssist has a rendered box').not.toBeNull();
+    expect(quickActionsBox, 'mobile quick actions have a rendered box').not.toBeNull();
+    expect(structuredBox, 'structured browse search has a rendered box').not.toBeNull();
     expect(
-      askBox.y,
-      'optional Ask VanAssist follows the direct quick actions on phone',
+      quickActionsBox.y,
+      'direct quick actions follow Ask VanAssist on phone',
+    ).toBeGreaterThanOrEqual(askBox.y + askBox.height - 1);
+    expect(
+      structuredBox.y,
+      'structured browse search follows the quick direct journeys on phone',
     ).toBeGreaterThanOrEqual(quickActionsBox.y + quickActionsBox.height - 1);
   }
 

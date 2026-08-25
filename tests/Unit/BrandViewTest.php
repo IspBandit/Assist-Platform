@@ -140,13 +140,13 @@ final class BrandViewTest extends TestCase
         ]);
 
         self::assertStringContainsString('class="hero hero--visual"', $html);
-        self::assertStringContainsString('aria-label="Find VanAssist help"', $html);
+        self::assertStringContainsString('aria-label="Browse VanAssist directly"', $html);
         self::assertStringNotContainsString('Service providers by location', $html);
         self::assertStringNotContainsString('data-nearby-providers', $html);
         self::assertStringNotContainsString('Popular service categories', $html);
         self::assertStringNotContainsString('Getting tired?', $html);
         self::assertStringNotContainsString('provider-conversion', $html);
-        self::assertStringContainsString('Find help nearby', $html);
+        self::assertStringContainsString('Browse directly', $html);
         self::assertStringNotContainsString('journey-launcher', $html);
         self::assertStringNotContainsString('evidence-ribbon', $html);
         self::assertStringNotContainsString('active service listings', $html);
