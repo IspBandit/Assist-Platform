@@ -20,10 +20,14 @@ the earlier files creates a visible release drift.
 
 ## Decision
 
-The exact CQDiggings files changed by the two reviewed commits are copied into
+The exact CQDiggings files changed by the two reviewed commits, plus the
+supporting occurrence, historical-evidence, production, report-link and research
+catalogue datasets from the same target commit, are copied into
 `infrastructure/cqdiggings-overlay` with their source commit and SHA-256 values.
-Production Compose mounts each file read-only over the matching path in both the
-Caddy and CQDiggings PHP containers.
+The complete twenty-pass investigation record is retained in both platform
+documentation and the public overlay with the same SHA-256. Production Compose
+mounts each public file read-only over the matching path in both the Caddy and
+CQDiggings PHP containers.
 
 The base CQDiggings release, shared analytics, moderation records, uploads and
 approved public runtime data remain in their existing locations. The overlay is
@@ -65,8 +69,10 @@ checksum evidence unreliable.
 
 ## Validation and rollback
 
-CI verifies the source commit marker, required file set, GeoJSON feature counts,
-service-worker version and two read-only mounts per public file. Production
-verification checks the investigation page, all three GeoJSON layers and both
-map integrations. Rollback restores the preceding Assist Platform release,
-which restores the prior Compose file and removes the overlay mounts.
+CI verifies the source commit marker, required file set, 8,666 Queensland gold
+occurrence records, historical-evidence and research-register counts, the three
+Clermont GeoJSON layers, the twenty-pass dossier, service-worker version and two
+read-only mounts per public file. Production verification checks the same
+records plus both map integrations. Rollback restores the preceding Assist
+Platform release, which restores the prior Compose file and removes the overlay
+mounts.

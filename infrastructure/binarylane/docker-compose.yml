@@ -55,6 +55,14 @@ services:
       - ./current/infrastructure/cqdiggings-overlay/data/clermont-field-validation-points.geojson:/var/www/cqdiggings/data/clermont-field-validation-points.geojson:ro
       - ./current/infrastructure/cqdiggings-overlay/data/clermont-legal-gold-prospectivity.geojson:/var/www/cqdiggings/data/clermont-legal-gold-prospectivity.geojson:ro
       - ./current/infrastructure/cqdiggings-overlay/data/clermont-prospectivity-watercourses.geojson:/var/www/cqdiggings/data/clermont-prospectivity-watercourses.geojson:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/gladstone-gold-occurrences.json:/var/www/cqdiggings/data/gladstone-gold-occurrences.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/gold-path-model.json:/var/www/cqdiggings/data/gold-path-model.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/historical-research/gold/historical-alluvial-evidence.geojson:/var/www/cqdiggings/data/historical-research/gold/historical-alluvial-evidence.geojson:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/historical-research/gold/historical-gold-sources.geojson:/var/www/cqdiggings/data/historical-research/gold/historical-gold-sources.geojson:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/historical-research/research-data-catalog.json:/var/www/cqdiggings/data/historical-research/research-data-catalog.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/occurrence-report-matches.json:/var/www/cqdiggings/data/occurrence-report-matches.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/production-assay-register.json:/var/www/cqdiggings/data/production-assay-register.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/queensland-gold-occurrences.json:/var/www/cqdiggings/data/queensland-gold-occurrences.json:ro
       - ./current/infrastructure/cqdiggings-overlay/index.html:/var/www/cqdiggings/index.html:ro
       - ./current/infrastructure/cqdiggings-overlay/map-20260814.js:/var/www/cqdiggings/map-20260814.js:ro
       - ./current/infrastructure/cqdiggings-overlay/map.html:/var/www/cqdiggings/map.html:ro
@@ -63,6 +71,7 @@ services:
       - ./current/infrastructure/cqdiggings-overlay/service-worker.js:/var/www/cqdiggings/service-worker.js:ro
       - ./current/infrastructure/cqdiggings-overlay/site-index.html:/var/www/cqdiggings/site-index.html:ro
       - ./current/infrastructure/cqdiggings-overlay/sitemap.xml:/var/www/cqdiggings/sitemap.xml:ro
+      - ./current/infrastructure/cqdiggings-overlay/research/queensland-high-grade-gold-investigation.md:/var/www/cqdiggings/research/queensland-high-grade-gold-investigation.md:ro
       - /opt/cqdiggings/shared/data:/srv/cqdiggings-public/data:ro
       - /opt/cqdiggings/shared/assets:/srv/cqdiggings-public/assets:ro
       - ./runtime/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -90,6 +99,14 @@ services:
       - ./current/infrastructure/cqdiggings-overlay/data/clermont-field-validation-points.geojson:/var/www/cqdiggings/data/clermont-field-validation-points.geojson:ro
       - ./current/infrastructure/cqdiggings-overlay/data/clermont-legal-gold-prospectivity.geojson:/var/www/cqdiggings/data/clermont-legal-gold-prospectivity.geojson:ro
       - ./current/infrastructure/cqdiggings-overlay/data/clermont-prospectivity-watercourses.geojson:/var/www/cqdiggings/data/clermont-prospectivity-watercourses.geojson:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/gladstone-gold-occurrences.json:/var/www/cqdiggings/data/gladstone-gold-occurrences.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/gold-path-model.json:/var/www/cqdiggings/data/gold-path-model.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/historical-research/gold/historical-alluvial-evidence.geojson:/var/www/cqdiggings/data/historical-research/gold/historical-alluvial-evidence.geojson:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/historical-research/gold/historical-gold-sources.geojson:/var/www/cqdiggings/data/historical-research/gold/historical-gold-sources.geojson:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/historical-research/research-data-catalog.json:/var/www/cqdiggings/data/historical-research/research-data-catalog.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/occurrence-report-matches.json:/var/www/cqdiggings/data/occurrence-report-matches.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/production-assay-register.json:/var/www/cqdiggings/data/production-assay-register.json:ro
+      - ./current/infrastructure/cqdiggings-overlay/data/queensland-gold-occurrences.json:/var/www/cqdiggings/data/queensland-gold-occurrences.json:ro
       - ./current/infrastructure/cqdiggings-overlay/index.html:/var/www/cqdiggings/index.html:ro
       - ./current/infrastructure/cqdiggings-overlay/map-20260814.js:/var/www/cqdiggings/map-20260814.js:ro
       - ./current/infrastructure/cqdiggings-overlay/map.html:/var/www/cqdiggings/map.html:ro
@@ -98,6 +115,7 @@ services:
       - ./current/infrastructure/cqdiggings-overlay/service-worker.js:/var/www/cqdiggings/service-worker.js:ro
       - ./current/infrastructure/cqdiggings-overlay/site-index.html:/var/www/cqdiggings/site-index.html:ro
       - ./current/infrastructure/cqdiggings-overlay/sitemap.xml:/var/www/cqdiggings/sitemap.xml:ro
+      - ./current/infrastructure/cqdiggings-overlay/research/queensland-high-grade-gold-investigation.md:/var/www/cqdiggings/research/queensland-high-grade-gold-investigation.md:ro
       - /opt/cqdiggings/shared/analytics/config.php:/var/www/cqdiggings/analytics/config.php:ro
       - /opt/cqdiggings/shared/analytics/dashboard-config.php:/var/www/cqdiggings/analytics/dashboard-config.php:ro
       - /opt/cqdiggings/shared/analytics/_stats:/var/www/cqdiggings/analytics/_stats

@@ -223,6 +223,15 @@ jobs:
           test "$(jq '.features | length' <<<"$drainage")" -eq 150
           test "$(jq '.features | length' <<<"$validation")" -eq 15
 
+          dossier="$(fetch "https://cqdiggings.com.au/research/queensland-high-grade-gold-investigation.md?${cache_bust}")"
+          grep -q '## Pass 20: desktop field-validation points' <<<"$dossier"
+          test "$(fetch "https://cqdiggings.com.au/data/queensland-gold-occurrences.json?${cache_bust}" | jq '.records | length')" -eq 8666
+          test "$(fetch "https://cqdiggings.com.au/data/historical-research/gold/historical-gold-sources.geojson?${cache_bust}" | jq '.features | length')" -eq 757
+          test "$(fetch "https://cqdiggings.com.au/data/historical-research/gold/historical-alluvial-evidence.geojson?${cache_bust}" | jq '.features | length')" -eq 433
+          test "$(fetch "https://cqdiggings.com.au/data/production-assay-register.json?${cache_bust}" | jq '.records | length')" -eq 193
+          test "$(fetch "https://cqdiggings.com.au/data/occurrence-report-matches.json?${cache_bust}" | jq '.matches | length')" -eq 41
+          test "$(fetch "https://cqdiggings.com.au/data/historical-research/research-data-catalog.json?${cache_bust}" | jq '.passes | length')" -eq 26
+
           research_map="$(fetch "https://cqdiggings.com.au/map-20260814.js?${cache_bust}")"
           field_map="$(fetch "https://cqdiggings.com.au/old-diggings-map-regional.js?${cache_bust}")"
           grep -q 'clermont-legal-gold-prospectivity.geojson' <<<"$research_map"
