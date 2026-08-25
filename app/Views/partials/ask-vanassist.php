@@ -6,7 +6,7 @@ if (!AiSearchFeature::enabled() || current_brand()->id() !== 'vanassist') {
     return;
 }
 ?>
-<aside class="ask-vanassist-home" aria-labelledby="ask-vanassist-home-heading">
+<aside class="ask-vanassist-home" aria-labelledby="ask-vanassist-home-heading" style="order:2">
     <div class="ask-vanassist-divider"><span>Start here</span></div>
     <form method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
         <label id="ask-vanassist-home-heading" for="home-ask-q">Ask VanAssist</label>
