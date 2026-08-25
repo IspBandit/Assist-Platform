@@ -6,13 +6,14 @@ if (!AiSearchFeature::enabled() || current_brand()->id() !== 'vanassist') {
     return;
 }
 ?>
-<aside class="ask-vanassist-home">
-    <div class="ask-vanassist-divider"><span>or ask in plain language</span></div>
+<aside class="ask-vanassist-home" aria-labelledby="ask-vanassist-home-heading">
+    <div class="ask-vanassist-divider"><span>Start here</span></div>
     <form method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
-        <label for="home-ask-q">Ask VanAssist</label>
+        <label id="ask-vanassist-home-heading" for="home-ask-q">Ask VanAssist</label>
+        <p class="ask-vanassist-home-intro">Tell us what you need in plain English. We can look across providers, stays and traveller facilities.</p>
         <div class="ask-vanassist-home-row">
             <input type="text" id="home-ask-q" name="q" maxlength="240"
-                placeholder="e.g. My caravan is making a grinding noise near Emerald"
+                placeholder="e.g. Find a caravan repairer near Emerald"
                 autocomplete="off" required>
             <button type="submit" class="btn btn-primary">Ask</button>
         </div>
@@ -24,7 +25,7 @@ if (!AiSearchFeature::enabled() || current_brand()->id() !== 'vanassist') {
         </div>
         <div class="ask-vanassist-home-foot">
             <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => 'false']); ?>
-            <span>Providers, stays and traveller facilities only</span>
+            <span>Try: dump point, pet-friendly stay, mobile mechanic, drinking water</span>
         </div>
         <p class="location-status muted" role="status" aria-live="polite" hidden></p>
     </form>
