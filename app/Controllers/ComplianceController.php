@@ -128,9 +128,9 @@ final class ComplianceController extends Controller
             return ['vanassist', 1, 'travel inspection'];
         }
         if ($vehicle === 'street-rod') {
-            return ['localtorque', 4, 'street rod certification'];
+            return ['vanassist', 1, 'street rod certification'];
         }
-        return ['localtorque', 4, $intention === 'modify' ? 'vehicle engineering' : 'roadworthy inspection'];
+        return ['vanassist', 1, $intention === 'modify' ? 'vehicle engineering' : 'roadworthy inspection'];
     }
 
     private function userId(): int

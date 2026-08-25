@@ -24,7 +24,7 @@ return [
         'manufacturers-dealers' => ['trailer manufacturer', 'trailer builder', 'trailer dealer', 'trailers'],
         'mobile-trailer-services' => ['mobile trailer', 'mobile mechanic', 'mobile welder', 'roadside trailer'],
     ],
-    'localtorque' => [
+    'vanassist' => [
         'mechanics' => ['mechanic', 'mechanical repair', 'car service', 'automotive service', 'workshop'],
         'mobile-mechanics' => ['mobile mechanic', 'mobile automotive', 'on-site mechanic'],
         'auto-electricians' => ['auto electrician', 'auto electricians', 'auto electric', 'auto electrics', 'auto electrical', 'automotive electrical'],

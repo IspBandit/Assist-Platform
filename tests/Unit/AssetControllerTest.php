@@ -95,7 +95,7 @@ final class AssetControllerTest extends TestCase
 
     public function testPwaAssetsAreNotPublishedByOtherBrands(): void
     {
-        BrandContext::set($this->brand('localtorque'));
+        BrandContext::set($this->brand('polaris'));
 
         foreach (['manifest', 'serviceWorker'] as $method) {
             try {
@@ -147,10 +147,6 @@ final class AssetControllerTest extends TestCase
             $defaults['database_id'] = 3;
             $defaults['name'] = 'TrailerWise';
             $defaults['short_name'] = 'TrailerWise';
-        } elseif ($id === 'localtorque') {
-            $defaults['database_id'] = 4;
-            $defaults['name'] = 'LocalTorque';
-            $defaults['short_name'] = 'LocalTorque';
         }
 
         return BrandRegistry::fromArray([

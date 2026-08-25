@@ -187,7 +187,7 @@ final class CategoryController extends Controller
 
     private function usesBrandDirectoryCategories(): bool
     {
-        return in_array(current_brand()->id(), ['localtorque', 'towsmart', 'trailerwise'], true);
+        return in_array(current_brand()->id(), ['towsmart', 'trailerwise'], true);
     }
 
     /** @return array{eyebrow:string,heading:string,intro:string,index_title:string,breadcrumb:string} */
@@ -268,13 +268,4 @@ final class CategoryController extends Controller
         ]);
     }
 
-    private function localTorqueIndex(): Response
-    {
-        return $this->brandDirectoryIndex();
-    }
-
-    private function localTorqueShow(Request $request, string $slug): Response
-    {
-        return $this->brandDirectoryShow($request, $slug);
-    }
 }

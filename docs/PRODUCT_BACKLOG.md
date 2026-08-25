@@ -45,10 +45,10 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
 | TRL-002 | Trailer ownership and compliance content system | done | Shared Garage, trailer source/jurisdiction guide, freshness alerts and specialist handoff pass |
-| LOC-001 | LocalTorque first-class private brand foundation | done | Private render, categories, sitemap and enrichment report |
-| LOC-002 | LocalTorque national coverage, claims and search readiness | in progress | Coverage report, duplicate review and claim acceptance |
-| LOC-003 | LocalTorque production launch | blocked | Domain purchase, DNS, email, legal and launch acceptance |
-| LOC-004 | LocalTorque complete motorsport rule, venue and calendar discovery | in progress | Explicit national discipline taxonomy, official rule layers, verified venue websites/calendars, source freshness and mobile journey acceptance |
+| LOC-001 | Retire LocalTorque and transfer useful provider data to VanAssist | done | Runtime, routes and assets removed; canonical providers retained through VanAssist-owned pack |
+| LOC-002 | Retired | done | Superseded by VAN-011 and DATA-001 |
+| LOC-003 | Retired | done | No domain or production launch |
+| LOC-004 | Retired | done | Public motorsport surface removed |
 | POL-001 | Polaris foundation: brand, docs, homepage, catalogue schema, browse/detail/find shell, admin nav | in progress | Private vertical slice; master prompt not complete — `docs/polaris/IMPLEMENTATION_STATUS.md` |
 | POL-002 | Polaris catalogue browse completeness (filters, provenance UI, SEO) | in progress | Filters/sort + provenance + year selector + a11y + demo volume (`119`); FULLTEXT open |
 | POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages + MatchScorer + prefs UI + Find hydration from saved prefs |

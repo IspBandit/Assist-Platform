@@ -56,6 +56,16 @@ set_app_release() {
   fi
 }
 
+remove_compose_caddy() {
+  local ids=()
+  mapfile -t ids < <(docker ps -aq \
+    --filter 'label=com.docker.compose.project=assist-platform' \
+    --filter 'label=com.docker.compose.service=caddy')
+  if (( ${#ids[@]} > 0 )); then
+    docker rm -f "${ids[@]}"
+  fi
+}
+
 rollback() {
   trap - ERR
   install -o root -g root -m 0640 "$runtime_rollback/docker-compose.yml" "$root/docker-compose.yml"
@@ -71,6 +81,7 @@ rollback() {
     fi
     ln -sfn "$previous" "$root/current.next"
     mv -Tf "$root/current.next" "$root/current"
+    remove_compose_caddy
     docker compose up -d --build --force-recreate app caddy
   fi
   rm -rf -- "$runtime_rollback"
@@ -117,10 +128,11 @@ for public_json in community-contributions.json marketplace-listings.json; do
 done
 
 docker compose config -q
+remove_compose_caddy
 docker compose up -d --build --force-recreate app caddy
 docker compose exec -T app php scripts/migrate.php
 docker compose exec -T app php scripts/seed.php --ask-library
-docker compose exec -T app php scripts/seed.php --localtorque
+docker compose exec -T app php scripts/seed.php --provider-pack
 docker compose exec -T app php scripts/data-quality-audit.php --strict
 
 for url in \

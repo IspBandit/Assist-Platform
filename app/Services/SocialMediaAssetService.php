@@ -92,13 +92,6 @@ final class SocialMediaAssetService
                 'education-safety' => ['Service it before you tow it', "Check tyres, wheel bearings, brakes, lights, coupling and safety chains before every trip. Use qualified providers for inspections and repairs.\n\n#TrailerSafety #Roadworthy #TrailerWise"],
                 'community' => ['Built for every kind of trailer', "Boat, horse, box, plant or commercial: what type of trailer do you rely on? Tell the TrailerWise community.\n\n#TrailerOwners #TrailerWise #MadeForAustralia"],
             ],
-            'localtorque' => [
-                'launch' => ['Local automotive expertise, easier to find', "LocalTorque connects Australians with workshops, mobile mechanics and automotive specialists nationwide.\n\n#LocalTorque #AutomotiveAustralia #LocalBusiness"],
-                'provider-recruitment' => ['Put your workshop on Australia’s automotive map', "Mechanics, auto electricians, tyre shops, fabricators and specialists: claim your LocalTorque listing and help local customers find you.\n\n#LocalTorque #WorkshopAustralia #AutomotiveBusiness"],
-                'service-discovery' => ['Find the right automotive specialist nearby', "Search workshops, mobile mechanics and specialist automotive businesses by service, location and availability.\n\n#LocalMechanic #LocalTorque #AutomotiveServices"],
-                'education-safety' => ['Good maintenance starts with the right specialist', "Use qualified automotive businesses, verify the work required and keep clear service records for your vehicle.\n\n#VehicleMaintenance #LocalTorque #RoadSafety"],
-                'community' => ['Built around local automotive knowledge', "Which local workshop has earned your trust? Share the specialist skill that keeps your vehicle moving.\n\n#LocalTorqueCommunity #SupportLocal #AutomotiveAustralia"],
-            ],
         ];
         if (!isset($copy[$brand][$intention])) { throw new RuntimeException('Unknown social campaign intention.'); }
         $selected = $copy[$brand][$intention];
@@ -192,7 +185,6 @@ final class SocialMediaAssetService
             'vanassist' => ['name' => 'VanAssist', 'domain' => 'vanassist.com.au', 'dark' => '#073f43', 'accent' => '#f5a623'],
             'towsmart' => ['name' => 'TowSmart', 'domain' => 'towsmart.com.au', 'dark' => '#10275c', 'accent' => '#f5a623'],
             'trailerwise' => ['name' => 'TrailerWise', 'domain' => 'trailerwise.com.au', 'dark' => '#35135f', 'accent' => '#ff7a1a'],
-            'localtorque' => ['name' => 'LocalTorque', 'domain' => 'localtorque.com.au', 'dark' => '#0f3b4c', 'accent' => '#e56b2f'],
             default => throw new RuntimeException('Unknown brand.'),
         };
     }

@@ -10,7 +10,7 @@ declare(strict_types=1);
  *   php scripts/seed.php --towns      # national towns/suburbs only
  *   php scripts/seed.php --osm        # OpenStreetMap businesses (loops until done)
  *   php scripts/seed.php --locality   # locality research matrix (loops until done)
- *   php scripts/seed.php --localtorque # authoritative LocalTorque MDM pack (loops until done)
+ *   php scripts/seed.php --provider-pack # authoritative VanAssist provider pack (loops until done)
  *   php scripts/seed.php --ask-library # deterministic Ask question library only
  *   php scripts/seed.php --providers  # towns + national + osm + locality + feature cities
  */
@@ -86,10 +86,10 @@ try {
         exit(isset($summary['error']) ? 1 : 0);
     }
 
-    if (in_array('--localtorque', $arguments, true)) {
-        echo "LocalTorque provider-pack import (to completion)…\n";
-        $summary = $runner->runLocalTorqueToCompletion($progress);
-        echo 'LocalTorque: ' . json_encode($summary) . "\n";
+    if (in_array('--provider-pack', $arguments, true)) {
+        echo "VanAssist provider-pack import (to completion)…\n";
+        $summary = $runner->runProviderPackToCompletion($progress);
+        echo 'Provider pack: ' . json_encode($summary) . "\n";
         exit(isset($summary['error']) ? 1 : 0);
     }
 

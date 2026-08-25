@@ -10,13 +10,13 @@ use RuntimeException;
 use Throwable;
 
 /**
- * Additively imports the publishable LocalTorque MDM pack into canonical
+ * Additively imports the publishable VanAssist provider pack into canonical
  * providers, then routes visibility from the taxonomy's category.brands list.
  * Claimed providers are evidence-linked but never modified by this importer.
  */
-final class LocalTorquePackSeeder
+final class VanAssistProviderPackSeeder
 {
-    private const PACK_DIR = 'database/seeds/localtorque';
+    private const PACK_DIR = 'database/seeds/vanassist-provider-pack';
     private const VANASSIST_COMPATIBILITY_VERSION = 'vanassist-services-v2';
     private const MAX_DECLARED_TOWN_DISTANCE_KM = 150.0;
     private const MAX_NEAREST_AUSTRALIAN_TOWN_DISTANCE_KM = 150.0;
@@ -35,7 +35,7 @@ final class LocalTorquePackSeeder
     {
         $providers = $this->loadJson('providers-publishable.json');
         if (!array_is_list($providers)) {
-            throw new RuntimeException('LocalTorque providers-publishable.json must be a JSON array.');
+            throw new RuntimeException('VanAssist providers-publishable.json must be a JSON array.');
         }
         $this->loadTaxonomy();
         $this->prepareBrandCategories();
@@ -785,7 +785,7 @@ final class LocalTorquePackSeeder
             }
         }
         if ($this->taxonomy === []) {
-            throw new RuntimeException('LocalTorque categories.json contains no usable categories.');
+            throw new RuntimeException('VanAssist categories.json contains no usable categories.');
         }
     }
 
@@ -806,7 +806,7 @@ final class LocalTorquePackSeeder
                     . 'name=IF(sort_order < 100, name, VALUES(name)), '
                     . 'description=IF(sort_order < 100, description, VALUES(description)), '
                     . 'is_active=1, updated_at=NOW()',
-                    [$brandId, $key, $category['name'], 'LocalTorque taxonomy group: ' . $category['group']]
+                    [$brandId, $key, $category['name'], 'VanAssist provider taxonomy group: ' . $category['group']]
                 );
                 $this->categoryIds[$brandKey][$key] = (int) Database::scalar(
                     'SELECT id FROM brand_provider_categories WHERE brand_id=? AND category_key=?',
@@ -821,11 +821,11 @@ final class LocalTorquePackSeeder
     {
         $path = base_path(self::PACK_DIR . '/' . $name);
         if (!is_file($path)) {
-            throw new RuntimeException('Missing LocalTorque pack file: ' . $name);
+            throw new RuntimeException('Missing VanAssist provider-pack file: ' . $name);
         }
         $decoded = json_decode((string) file_get_contents($path), true);
         if (!is_array($decoded)) {
-            throw new RuntimeException('Invalid LocalTorque pack JSON: ' . $name);
+            throw new RuntimeException('Invalid VanAssist provider-pack JSON: ' . $name);
         }
         return $decoded;
     }
@@ -888,7 +888,7 @@ final class LocalTorquePackSeeder
         }
         return match (strtolower((string) ($record['source'] ?? ''))) {
             'geoscience-australia' => 'https://ecat.ga.gov.au/geonetwork/srv/eng/catalog.search#/metadata/147830',
-            'openstreetmap', 'vanassist-osm', 'localtorque-osm' => 'https://www.openstreetmap.org/copyright',
+            'openstreetmap', 'vanassist-osm', 'legacy-automotive-osm' => 'https://www.openstreetmap.org/copyright',
             default => null,
         };
     }

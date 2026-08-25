@@ -20,13 +20,6 @@ final class HomeController extends Controller
         if (current_brand()->id() === 'trailerwise') {
             return (new TrailerWiseController())->home($request);
         }
-        if (current_brand()->id() === 'localtorque') {
-            return $this->view('localtorque.home', [
-                'title' => 'Find local automotive expertise',
-                'canonical' => url('/'),
-                'jsonLd' => $this->organisationSchema(),
-            ]);
-        }
         if (current_brand()->id() === 'polaris') {
             return (new PolarisController())->home($request);
         }

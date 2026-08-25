@@ -47,7 +47,7 @@ foreach ($required as $file) {
     }
 }
 
-$cats = loadJson(BASE_PATH . '/database/seeds/localtorque/categories.json');
+$cats = loadJson(BASE_PATH . '/database/seeds/vanassist-provider-pack/categories.json');
 $catIds = [];
 if (is_array($cats) && isset($cats['groups'])) {
     foreach ($cats['groups'] as $g) {
@@ -111,7 +111,7 @@ if (!is_array($publishable)) {
                     break;
                 }
             }
-            if (!$ok && $brand !== 'localtorque') {
+            if (!$ok && $brand !== 'vanassist') {
                 $warnings[] = "publishable {$id} brand {$brand} not justified by categories";
             }
         }

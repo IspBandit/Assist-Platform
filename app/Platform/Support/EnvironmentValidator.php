@@ -109,7 +109,6 @@ final class EnvironmentValidator
                 'vanassist' => 'MICROSOFT_GRAPH_VANASSIST_MAILBOX',
                 'towsmart' => 'MICROSOFT_GRAPH_TOWSMART_MAILBOX',
                 'trailerwise' => 'MICROSOFT_GRAPH_TRAILERWISE_MAILBOX',
-                'localtorque' => 'MICROSOFT_GRAPH_LOCALTORQUE_MAILBOX',
             ];
             foreach ($brandMailboxLabels as $brand => $label) {
                 $mailbox = trim((string) Config::get('mail.graph.mailboxes.' . $brand, ''));

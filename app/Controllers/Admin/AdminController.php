@@ -56,9 +56,6 @@ final class AdminController extends Controller
             $stats['saved_combinations'] = $this->count('saved_combinations', 'SELECT COUNT(*) FROM towing_combinations WHERE brand_id=?', [$brandId]);
         } elseif ($brand->id() === 'trailerwise') {
             $stats['trailer_listings'] = $this->count('trailer_listings', "SELECT COUNT(*) FROM trailer_listings WHERE brand_id=? AND status<>'archived' AND deleted_at IS NULL", [$brandId]);
-        } elseif ($brand->id() === 'localtorque') {
-            $stats['regulatory_documents'] = $this->count('regulatory_documents', 'SELECT COUNT(*) FROM regulatory_document_brands WHERE brand_id=?', [$brandId]);
-            $stats['motorsport_venues'] = $this->count('motorsport_venues', 'SELECT COUNT(*) FROM motorsport_venues WHERE is_public=1');
         }
 
         $canViewAudit = can('audit.view');

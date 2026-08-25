@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Retire LocalTorque and transfer provider coverage (LOC-001 / DATA-001 / OPS-001)
+
+- Removed the LocalTorque brand registry entry, public routes, views, imagery,
+  social configuration and production journey checks.
+- Renamed the authoritative corpus and importer as the VanAssist provider pack.
+  Legitimate canonical provider records are retained; LocalTorque listings and
+  domains are disabled by a forward migration.
+- Moved shared automotive discovery and regulatory pathways to VanAssist-owned
+  configuration and removed the old import task and setting names.
+- Hardened production releases by removing only containers carrying the exact
+  Assist Platform Caddy Compose labels before replacement and rollback.
+
 ### CQDiggings Clermont gold investigation release (INF-001 / OPS-001 / OPS-002)
 
 - Packaged the exact reviewed CQDiggings commit

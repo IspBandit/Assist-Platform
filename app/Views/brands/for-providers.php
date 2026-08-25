@@ -7,7 +7,6 @@ $brandName = $providerBrand->name();
 $providerMessages = [
     'towsmart' => ['Turn towing expertise into qualified demand.', 'Reach people actively checking combinations, weights and safe setup—and show where your products or services fit.'],
     'trailerwise' => ['Put your trailer expertise in front of ready customers.', 'Build a trusted presence across ownership, maintenance, inspection, repair, parts and specialist trailer services.'],
-    'localtorque' => ['Be discovered for the specialist work you actually do.', 'Connect your workshop, mobile service or motorsport business with local customers searching by capability and location.'],
 ];
 [$providerHeading, $providerIntro] = $providerMessages[$brandId] ?? ['Grow your business through the Assist Platform.', 'Build a trusted local presence and connect with customers searching for relevant specialist services.'];
 ?>
@@ -51,7 +50,7 @@ $providerMessages = [
         <div class="section-heading">
             <span class="product-kicker dark">One account. Relevant opportunities.</span>
             <h2>A professional presence without duplicated admin.</h2>
-            <p>Your Assist Platform provider identity can support appropriate listings across VanAssist, TowSmart, TrailerWise and LocalTorque while each customer sees a focused specialist experience.</p>
+            <p>Your Assist Platform provider identity can support appropriate listings across VanAssist, TowSmart and TrailerWise while each customer sees a focused specialist experience.</p>
         </div>
         <ol class="provider-onboarding-steps">
             <li><span>01</span><div><strong>Tell us what you do</strong><small>Choose real capabilities, service areas and operating details.</small></div></li>

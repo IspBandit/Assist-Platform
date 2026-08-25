@@ -68,7 +68,6 @@ try {
     echo "  VanAssist:    http://vanassist.test/provider\n";
     echo "  TowSmart:     http://towsmart.test/provider\n";
     echo "  TrailerWise:  http://trailerwise.test/provider\n";
-    echo "  LocalTorque:  http://localtorque.test/provider\n\n";
     echo "Running this command again rotates the local review password.\n";
     exit(0);
 } catch (Throwable $exception) {

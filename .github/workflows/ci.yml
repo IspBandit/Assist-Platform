@@ -108,9 +108,9 @@ jobs:
       - name: Validate seeds
         run: php scripts/seed.php
 
-      - name: Validate authoritative LocalTorque provider pack
+      - name: Validate authoritative VanAssist provider pack
         run: |
-          php scripts/seed.php --localtorque
+          php scripts/seed.php --provider-pack
           php scripts/data-quality-audit.php --strict
 
       - name: Validate encrypted database secrets

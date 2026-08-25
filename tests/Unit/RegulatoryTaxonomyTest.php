@@ -9,10 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 final class RegulatoryTaxonomyTest extends TestCase
 {
-    public function testStreetRodsAreASeparateLocalTorquePathway(): void
+    public function testStreetRodNormalizationRemainsDeterministicForHistoricalRecords(): void
     {
-        self::assertArrayHasKey('street-rod', RegulatoryTaxonomy::vehiclesForBrand('localtorque'));
-        self::assertArrayHasKey('street_rods', RegulatoryTaxonomy::kindsForBrand('localtorque'));
         self::assertSame(
             ['vehicle' => 'street-rod', 'kind' => 'street_rods'],
             RegulatoryTaxonomy::normalize('street-rod', 'modifications')

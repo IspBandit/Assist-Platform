@@ -36,9 +36,9 @@ final class BrandProviderCategoryTest extends TestCase
         }
     }
 
-    public function testLocalTorqueSeederPreservesCuratedCategoryCopy(): void
+    public function testVanAssistProviderPackSeederPreservesCuratedCategoryCopy(): void
     {
-        $source = (string) file_get_contents(base_path('app/Services/LocalTorquePackSeeder.php'));
+        $source = (string) file_get_contents(base_path('app/Services/VanAssistProviderPackSeeder.php'));
 
         self::assertStringContainsString('name=IF(sort_order < 100, name, VALUES(name))', $source);
         self::assertStringContainsString('description=IF(sort_order < 100, description, VALUES(description))', $source);
