@@ -86,6 +86,22 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("provider.profile", $script);
     }
 
+    public function testAskResultsUseAConciseMobileDecisionFlow(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $view = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $css = (string) file_get_contents($root . '/public/assets/css/app.css');
+
+        self::assertStringContainsString('<summary>Change this search</summary>', $view);
+        self::assertStringContainsString('No matching service found nearby', $view);
+        self::assertStringContainsString('It will not substitute unrelated businesses.', $view);
+        self::assertStringContainsString('Nearest first by driving distance', $view);
+        self::assertStringNotContainsString('· confidence', $view);
+        self::assertStringNotContainsString('<p class="provider-result-provenance"', $view);
+        self::assertStringContainsString('@media(max-width:719px){.interior-visual-heading--ask', $css);
+        self::assertStringContainsString('.ask-no-results .btn-row{display:grid;grid-template-columns:1fr}', $css);
+    }
+
     public function testProviderCollectionsUseConciseRowsAcrossPublicViews(): void
     {
         $root = dirname(__DIR__, 2);

@@ -13,6 +13,7 @@ use App\Helpers\Env;
 return [
     'max_query_length' => 240,
     'default_radius_km' => 25,
+    'specialist_radius_km' => 150,
     'min_confidence' => 0.55,
     'intent_rules_version' => 'intent_rules_v1',
     'intent_schema_version' => 'intent_schema_v1',

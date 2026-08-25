@@ -5,6 +5,22 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+- Ask VanAssist now retries the same specialist service within 150 km when its
+  automatic 25 km search has no match. User-entered distance limits remain
+  fixed, and unrelated provider categories are never used to fill an empty
+  result list.
+- Ask result pages now use a shorter mobile-first flow with the edit form
+  collapsed, repeated explanations removed, and a clearer no-match action.
+
+### VanAssist category-search precision (VAN-011 / DATA-004)
+
+- Provider searches no longer fill an exact category miss with an unfiltered
+  regional provider pool. A search for caravan repairs therefore cannot show
+  nearby fuel stations or unrelated workshops merely because they are local.
+- General caravan repairs no longer widens to generic mobile mechanics. When no
+  supported repair listing matches, VanAssist reports the coverage gap instead
+  of presenting unrelated businesses as possible help.
+
 ### CQDiggings runtime mount release fix (OPS-002)
 
 - Caddy now reads CQDiggings' approved runtime JSON and image directories from
