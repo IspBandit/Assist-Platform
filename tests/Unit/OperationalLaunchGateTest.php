@@ -60,6 +60,8 @@ final class OperationalLaunchGateTest extends TestCase
         self::assertStringContainsString('/analytics/_detector-settings/*', $caddy);
         self::assertStringContainsString('/analytics/_detector-setting-uploads/*', $caddy);
         self::assertStringContainsString('install -d -o 82 -g 82 -m 0750', $release);
+        self::assertStringContainsString('install -d -o 82 -g 82 -m 0755', $release);
+        self::assertStringContainsString('chmod 0644 "$cq_root/shared/data/community-detector-settings.json"', $release);
         self::assertStringContainsString('community-detector-settings.json', $release);
     }
 }

@@ -11,6 +11,9 @@ may remain as dated files and are linked here rather than copied.
   a dedicated read-only runtime root instead of trying to create nested mount
   points below the site's read-only release tree. This removes the container
   startup failure while retaining the same narrow public paths.
+- Approved public JSON and copied public images now receive read-only public
+  file and traversal permissions during release. Private moderation reports and
+  original uploads retain their existing private directory permissions.
 
 ### VanAssist growth and trust operating loop (DATA-004 / DATA-014 / VAN-002 / EXP-004 / INF-004)
 
