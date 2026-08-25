@@ -188,7 +188,7 @@ final class LocalTorquePackSeeder
         }
 
         if (!$reviewOnly) {
-            $this->linkVanAssistCompatibility($providerId, $validCategories);
+            $this->linkVanAssistCompatibility($providerId, $validCategories, $record);
         }
         if ($location['town_id'] > 0) {
             if ($location['location_corrected']) {
@@ -670,23 +670,46 @@ final class LocalTorquePackSeeder
         return array_keys($brands);
     }
 
-    /** @param list<string> $categories */
-    private function linkVanAssistCompatibility(int $providerId, array $categories): void
+    /** @param list<string> $categories @param array<string,mixed> $record */
+    private function linkVanAssistCompatibility(int $providerId, array $categories, array $record): void
     {
-        foreach (self::vanAssistCompatibilityMap() as $packCategory => $serviceSlugs) {
-            if (!in_array($packCategory, $categories, true)) {
-                continue;
-            }
-            foreach ($serviceSlugs as $serviceSlug) {
-                $categoryId = (int) Database::scalar('SELECT id FROM service_categories WHERE slug=? AND is_active=1', [$serviceSlug]);
-                if ($categoryId > 0) {
-                    Database::query(
-                        'INSERT IGNORE INTO provider_services (provider_id,category_id,is_inferred,created_at) VALUES (?,?,0,NOW())',
-                        [$providerId, $categoryId]
-                    );
-                }
+        foreach (self::vanAssistServiceSlugs($record, $categories) as $serviceSlug) {
+            $categoryId = (int) Database::scalar('SELECT id FROM service_categories WHERE slug=? AND is_active=1', [$serviceSlug]);
+            if ($categoryId > 0) {
+                Database::query(
+                    'INSERT IGNORE INTO provider_services (provider_id,category_id,is_inferred,created_at) VALUES (?,?,0,NOW())',
+                    [$providerId, $categoryId]
+                );
             }
         }
+    }
+
+    /** @param array<string,mixed> $record @param list<string> $categories @return list<string> */
+    public static function vanAssistServiceSlugs(array $record, array $categories): array
+    {
+        $slugs = [];
+        foreach (self::vanAssistCompatibilityMap() as $packCategory => $serviceSlugs) {
+            if (in_array($packCategory, $categories, true)) {
+                $slugs = array_merge($slugs, $serviceSlugs);
+            }
+        }
+
+        $name = strtolower(trim((string) ($record['name'] ?? '')));
+        if (preg_match('/\bbattery world\b|\bbatter(?:y|ies)\b/', $name) === 1) {
+            return ['auto-electrical-and-batteries'];
+        }
+        if (preg_match('/\btyrepower\b|\bbob jane\b|\btyre\b|\btire\b/', $name) === 1) {
+            return ['tyres-and-wheels'];
+        }
+        if (preg_match('/\bsupercheap\b|\bauto parts\b|\bparts (?:store|centre)\b/', $name) === 1) {
+            return ['vehicle-parts-and-accessories'];
+        }
+        if (in_array('fuel-station', $categories, true)
+            && preg_match('/\b(?:ampol|bp|caltex|shell|mobil|united|7-eleven)\b/', $name) === 1) {
+            return ['fuel-and-travel-stops'];
+        }
+
+        return array_values(array_unique($slugs));
     }
 
     /** @return array<string,list<string>> */

@@ -85,6 +85,31 @@ final class LocalTorquePackTest extends TestCase
         self::assertContains('mobile-mechanics', $map['mobile-mechanic']);
     }
 
+    public function testCompatibilityBridgeKeepsKnownRetailersConservative(): void
+    {
+        self::assertSame(
+            ['auto-electrical-and-batteries'],
+            LocalTorquePackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Battery World Rockhampton'],
+                ['battery-specialist', 'auto-electrician']
+            )
+        );
+        self::assertSame(
+            ['tyres-and-wheels'],
+            LocalTorquePackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Rockhampton Tyrepower'],
+                ['tyre-shop', 'general-mechanic']
+            )
+        );
+        self::assertSame(
+            ['general-caravan-repairs'],
+            LocalTorquePackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Capricorn Caravan Centre'],
+                ['caravan-repairs']
+            )
+        );
+    }
+
     public function testKnownRetailChainsDoNotInheritUnsupportedWorkshopServices(): void
     {
         self::assertSame(
