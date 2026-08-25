@@ -44,4 +44,20 @@ final class OperationalLaunchGateTest extends TestCase
         self::assertStringContainsString('find "$root/runtime/ops" -maxdepth 1 -type f -name \'*.sh\' -delete', $release);
         self::assertStringContainsString('find "$runtime_source/ops"', $release);
     }
+
+    public function testCqDiggingsDetectorReportsUsePrivatePersistentStorage(): void
+    {
+        $compose = (string) file_get_contents(base_path('infrastructure/binarylane/docker-compose.yml'));
+        $caddy = (string) file_get_contents(base_path('infrastructure/binarylane/Caddyfile'));
+        $release = (string) file_get_contents(base_path('scripts/release-remote.sh'));
+
+        self::assertStringContainsString('/opt/cqdiggings/shared/analytics/_detector-settings:/var/www/cqdiggings/analytics/_detector-settings', $compose);
+        self::assertStringContainsString('/opt/cqdiggings/shared/analytics/_detector-setting-uploads:/var/www/cqdiggings/analytics/_detector-setting-uploads', $compose);
+        self::assertStringContainsString('/opt/cqdiggings/shared/data/community-detector-settings.json:/var/www/cqdiggings/data/community-detector-settings.json:ro', $compose);
+        self::assertStringContainsString('/opt/cqdiggings/shared/assets/community-detector-settings:/var/www/cqdiggings/assets/community-detector-settings:ro', $compose);
+        self::assertStringContainsString('/analytics/_detector-settings/*', $caddy);
+        self::assertStringContainsString('/analytics/_detector-setting-uploads/*', $caddy);
+        self::assertStringContainsString('install -d -o 82 -g 82 -m 0750', $release);
+        self::assertStringContainsString('community-detector-settings.json', $release);
+    }
 }
