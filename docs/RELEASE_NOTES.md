@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CQDiggings runtime mount release fix (OPS-002)
+
+- Caddy now reads CQDiggings' approved runtime JSON and image directories from
+  a dedicated read-only runtime root instead of trying to create nested mount
+  points below the site's read-only release tree. This removes the container
+  startup failure while retaining the same narrow public paths.
+
 ### VanAssist growth and trust operating loop (DATA-004 / DATA-014 / VAN-002 / EXP-004 / INF-004)
 
 - Added one VanAssist admin dashboard for facility publication coverage,
