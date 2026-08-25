@@ -16,7 +16,6 @@ final class HeroAssetTest extends TestCase
             'VanAssist home' => ['vanassist-hero'],
             'TowSmart home' => ['towsmart-hero'],
             'TrailerWise home' => ['trailerwise-hero'],
-            'LocalTorque home' => ['localtorque-hero'],
             'My Garage' => ['garage-hero'],
             'Rules library' => ['rules-hero'],
             'Rules — car' => ['rules-car-hero'],
@@ -25,7 +24,6 @@ final class HeroAssetTest extends TestCase
             'Rules — heavy vehicle' => ['rules-heavy-vehicle-hero'],
             'Rules — motorcycle' => ['rules-motorcycle-hero'],
             'Rules — street rod' => ['rules-street-rod-hero'],
-            'LocalTorque motorsport' => ['motorsport-hero'],
         ];
     }
 

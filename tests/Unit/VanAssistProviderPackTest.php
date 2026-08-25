@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Services\LocalTorquePackSeeder;
+use App\Services\VanAssistProviderPackSeeder;
 use PHPUnit\Framework\TestCase;
 
-final class LocalTorquePackTest extends TestCase
+final class VanAssistProviderPackTest extends TestCase
 {
     /** @return array<mixed> */
     private function json(string $name): array
     {
-        $value = json_decode((string) file_get_contents(base_path('database/seeds/localtorque/' . $name)), true);
+        $value = json_decode((string) file_get_contents(base_path('database/seeds/vanassist-provider-pack/' . $name)), true);
         self::assertIsArray($value);
         return $value;
     }
@@ -30,7 +30,7 @@ final class LocalTorquePackTest extends TestCase
         }
     }
 
-    public function testFuelTaxonomyRoutesOnlyToLocalTorqueAndVanAssist(): void
+    public function testFuelTaxonomyRoutesToVanAssist(): void
     {
         $taxonomy = $this->json('categories.json');
         $found = [];
@@ -42,8 +42,8 @@ final class LocalTorquePackTest extends TestCase
                 }
             }
         }
-        self::assertSame(['localtorque', 'vanassist'], $found['fuel-station'] ?? null);
-        self::assertSame(['localtorque', 'vanassist'], $found['ev-charging'] ?? null);
+        self::assertSame(['vanassist'], $found['fuel-station'] ?? null);
+        self::assertSame(['vanassist'], $found['ev-charging'] ?? null);
     }
 
     public function testLegacyFuelRowsAreNotPresentedAsGasCertifiers(): void
@@ -51,21 +51,21 @@ final class LocalTorquePackTest extends TestCase
         $record = ['source' => 'vanassist-osm'];
         self::assertSame(
             ['fuel-station', 'general-mechanic'],
-            LocalTorquePackSeeder::sanitiseCategories(
+            VanAssistProviderPackSeeder::sanitiseCategories(
                 $record,
                 ['gas-certification', 'fuel-station', 'general-mechanic']
             )
         );
         self::assertSame(
             ['gas-certification'],
-            LocalTorquePackSeeder::sanitiseCategories(['source' => 'other'], ['gas-certification'])
+            VanAssistProviderPackSeeder::sanitiseCategories(['source' => 'other'], ['gas-certification'])
         );
     }
 
     public function testEveryVanAssistPackCategoryBridgesToPublicSearchServices(): void
     {
         $taxonomy = $this->json('categories.json');
-        $map = LocalTorquePackSeeder::vanAssistCompatibilityMap();
+        $map = VanAssistProviderPackSeeder::vanAssistCompatibilityMap();
         $missing = [];
         foreach ((array) ($taxonomy['groups'] ?? []) as $group) {
             foreach ((array) ($group['categories'] ?? []) as $category) {
@@ -89,21 +89,21 @@ final class LocalTorquePackTest extends TestCase
     {
         self::assertSame(
             ['auto-electrical-and-batteries'],
-            LocalTorquePackSeeder::vanAssistServiceSlugs(
+            VanAssistProviderPackSeeder::vanAssistServiceSlugs(
                 ['name' => 'Battery World Rockhampton'],
                 ['battery-specialist', 'auto-electrician']
             )
         );
         self::assertSame(
             ['tyres-and-wheels'],
-            LocalTorquePackSeeder::vanAssistServiceSlugs(
+            VanAssistProviderPackSeeder::vanAssistServiceSlugs(
                 ['name' => 'Rockhampton Tyrepower'],
                 ['tyre-shop', 'general-mechanic']
             )
         );
         self::assertSame(
             ['general-caravan-repairs'],
-            LocalTorquePackSeeder::vanAssistServiceSlugs(
+            VanAssistProviderPackSeeder::vanAssistServiceSlugs(
                 ['name' => 'Capricorn Caravan Centre'],
                 ['caravan-repairs']
             )
@@ -114,21 +114,21 @@ final class LocalTorquePackTest extends TestCase
     {
         self::assertSame(
             ['auto-electrician', 'battery-specialist'],
-            LocalTorquePackSeeder::sanitiseCategories(
+            VanAssistProviderPackSeeder::sanitiseCategories(
                 ['name' => 'Battery World Emerald', 'source' => 'public-source'],
                 ['general-mechanic', 'tyre-shop', 'auto-electrician', 'battery-specialist', 'suspension']
             )
         );
         self::assertSame(
             ['tyre-shop'],
-            LocalTorquePackSeeder::sanitiseCategories(
+            VanAssistProviderPackSeeder::sanitiseCategories(
                 ['name' => 'Emerald Tyrepower', 'source' => 'public-source'],
                 ['general-mechanic', 'auto-electrician', 'tyre-shop']
             )
         );
         self::assertSame(
             ['fuel-station'],
-            LocalTorquePackSeeder::sanitiseCategories(
+            VanAssistProviderPackSeeder::sanitiseCategories(
                 ['name' => 'Ampol Emerald', 'source' => 'public-source', 'categories' => ['fuel-station', 'general-mechanic']],
                 ['fuel-station', 'general-mechanic']
             )

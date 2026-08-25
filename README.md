@@ -1,7 +1,7 @@
 # Assist Platform Enterprise
 
 Assist Platform Enterprise is the primary commercial product. VanAssist,
-TowSmart, TrailerWise and LocalTorque are brands running on its shared runtime,
+TowSmart, TrailerWise and Polaris are brands running on its shared runtime,
 data and administration platform. Start with
 [`docs/START_HERE.md`](docs/START_HERE.md) and the
 [`Enterprise architecture specification`](docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md).
@@ -14,7 +14,7 @@ Shared platform core for:
 - **VanAssist** (`vanassist.com.au`) — the existing caravan/RV service marketplace and compatibility baseline.
 - **TowSmart** (`towsmart.com.au`) — towing mass-limit calculator with saved user combinations and safety guidance.
 - **TrailerWise** (`trailerwise.com.au`) — trailer-industry business and service platform. Its current sales/hire listing MVP is secondary and requires product correction before full launch.
-- **LocalTorque** (private foundation; production domain pending) — Australian automotive workshop and specialist directory.
+- **Polaris** (private foundation; production domain pending) — RV research, matching and comparison.
 
 This is an incremental evolution of VanAssist, not a mass rename or three copied
 applications. VanAssist routes, IDs, slugs, users, providers, and workflows remain

@@ -25,7 +25,7 @@ final class EnvironmentValidatorTest extends TestCase
         'mail.graph.tenant_id', 'mail.graph.client_id', 'mail.graph.certificate_path',
         'mail.graph.private_key_path', 'mail.graph.mailbox',
         'mail.graph.mailboxes.vanassist', 'mail.graph.mailboxes.towsmart',
-        'mail.graph.mailboxes.trailerwise', 'mail.graph.mailboxes.localtorque',
+        'mail.graph.mailboxes.trailerwise',
     ];
 
     protected function setUp(): void

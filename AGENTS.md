@@ -10,12 +10,11 @@ implementing work, read `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`,
 `docs/PLATFORM_CHARTER.md`, `docs/PRODUCT_BACKLOG.md` and
 `docs/PLATFORM_QUALITY_GATE.md`.
 
-This repository contains one PHP application serving five brands:
+This repository contains one PHP application serving four brands:
 
 - VanAssist (`vanassist.com.au`): caravan/RV provider marketplace and assistance workflows.
 - TowSmart (`towsmart.com.au`): towing calculator, saved combinations and safety guidance.
 - TrailerWise (`trailerwise.com.au`): trailer marketplace and listing management.
-- LocalTorque (private until its production domain is confirmed): Australian automotive business directory.
 - Polaris (private until its production domain is confirmed): new RV research, matching and comparison.
 
 NDTFlow and SignConsole are separate products. Never add them here.

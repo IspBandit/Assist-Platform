@@ -67,7 +67,7 @@ final class PlatformDatabaseTest extends TestCase
         self::assertGreaterThanOrEqual(0, (int) $report['facility_summary']['published']);
     }
 
-    public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void
+    public function testAuthoritativeVanAssistProviderPackIsImportedWithSafeRouting(): void
     {
         self::assertTrue(Database::tableExists('provider_source_records'));
         self::assertSame(9730, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));

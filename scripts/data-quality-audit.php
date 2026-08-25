@@ -118,7 +118,7 @@ try {
             ),
             'specialist_name_wrong_services' => $unsupportedSpecialistServices,
         ],
-        'localtorque_pack' => [
+        'vanassist_provider_pack' => [
             'source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records'),
             'public_source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records WHERE publishable=1 AND needs_review=0'),
             'review_source_records' => $scalar('SELECT COUNT(*) FROM provider_source_records WHERE needs_review=1'),
@@ -170,7 +170,7 @@ echo ($json === false ? '{"error":"report encoding failed"}' : $json) . PHP_EOL;
 if (in_array('--strict', $argv ?? [], true) && isset($report['database']['provider_service_classification'])) {
     $classification = $report['database']['provider_service_classification'];
     $violations = array_sum(array_map('intval', is_array($classification) ? $classification : []));
-    $pack = $report['database']['localtorque_pack'] ?? [];
+    $pack = $report['database']['vanassist_provider_pack'] ?? [];
     if (is_array($pack)) {
         $violations += (int) ($pack['missing_required_source_licence'] ?? 0);
         $violations += (int) ($pack['unclaimed_review_rows_publicly_visible'] ?? 0);

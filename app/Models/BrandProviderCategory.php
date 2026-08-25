@@ -8,7 +8,7 @@ namespace App\Models;
  * Brand-scoped provider directory categories.
  *
  * TowSmart and TrailerWise expose curated public categories (migration 038,
- * sort_order below 100). LocalTorque taxonomy imports use sort_order 100 and
+ * sort_order below 100). Provider-pack taxonomy imports use sort_order 100 and
  * remain available for classification and admin workflows only.
  */
 final class BrandProviderCategory

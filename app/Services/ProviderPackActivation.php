@@ -22,15 +22,15 @@ final class ProviderPackActivation
 
         $townCount = (int) Database::scalar('SELECT COUNT(*) FROM towns WHERE is_active=1');
         $runner = new ProviderImportRunner();
-        $fingerprint = $runner->localTorqueFingerprint();
-        $savedFingerprint = (string) Settings::get(ProviderImportRunner::SETTING_LOCALTORQUE_FP, '');
-        $savedOffset = (string) Settings::get(ProviderImportRunner::SETTING_LOCALTORQUE_OFFSET, '0');
+        $fingerprint = $runner->providerPackFingerprint();
+        $savedFingerprint = (string) Settings::get(ProviderImportRunner::SETTING_PROVIDER_PACK_FP, '');
+        $savedOffset = (string) Settings::get(ProviderImportRunner::SETTING_PROVIDER_PACK_OFFSET, '0');
 
         if (!self::shouldRun($townCount, $fingerprint, $savedFingerprint, $savedOffset)) {
             return ['skipped' => true, 'note' => $townCount < 1000 ? 'national towns are not seeded' : 'provider pack is current'];
         }
 
-        $result = $runner->runLocalTorqueToCompletion();
+        $result = $runner->runProviderPackToCompletion();
         if (isset($result['error']) || empty($result['complete'])) {
             throw new \RuntimeException('Authoritative provider-pack activation did not complete: ' . (string) ($result['error'] ?? 'unknown error'));
         }

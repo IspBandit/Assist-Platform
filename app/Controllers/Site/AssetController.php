@@ -46,7 +46,7 @@ final class AssetController extends Controller
     ];
 
     /** @var list<string> */
-    private const BRANDS = ['vanassist', 'towsmart', 'trailerwise', 'localtorque'];
+    private const BRANDS = ['vanassist', 'towsmart', 'trailerwise'];
 
     /** @var list<string> */
     private const PWA_BRANDS = ['vanassist', 'towsmart', 'trailerwise'];

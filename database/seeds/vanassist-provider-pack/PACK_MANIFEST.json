@@ -1,5 +1,5 @@
 {
-  "project": "LocalTorque",
+  "project": "VanAssist",
   "role": "Master automotive business directory / MDM for the Assist Platform",
   "one_question": "Who can fix, build, inspect, modify or service my vehicle anywhere in Australia?",
   "not": [
@@ -8,7 +8,6 @@
     "camping platform"
   ],
   "brands_fed": [
-    "localtorque",
     "vanassist",
     "towsmart",
     "trailerwise"
@@ -92,7 +91,6 @@
         "caravan"
       ],
       "brands": [
-        "localtorque",
         "vanassist",
         "trailerwise"
       ],
@@ -131,7 +129,6 @@
         "caravan"
       ],
       "brands": [
-        "localtorque",
         "vanassist"
       ],
       "services_note": "Mobile caravan/RV repairs at home, on the road or at a campground: general servicing, brakes, leaks, 12V electrics.",
@@ -171,7 +168,6 @@
         "caravan"
       ],
       "brands": [
-        "localtorque",
         "vanassist"
       ],
       "services_note": "Mobile caravan repairs, servicing, upgrades & caravan gas certificates across SEQ. 20+ yrs with caravans & motorhomes.",

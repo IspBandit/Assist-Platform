@@ -135,7 +135,7 @@ final class ProviderController extends Controller
             );
         }
         $publicSlug = (string) ($provider['brand_slug'] ?? $provider['slug']);
-        $profilePath = $brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug;
+        $profilePath = 'providers/' . $publicSlug;
 
         return $this->view('public.provider-profile', [
             'title' => ($provider['brand_seo_title'] ?? $provider['seo_title'] ?? null) ?: ($provider['business_name'] . ' — ' . $brand->name()),
@@ -175,7 +175,7 @@ final class ProviderController extends Controller
             '@context' => 'https://schema.org',
             '@type' => 'LocalBusiness',
             'name' => (string) ($provider['brand_display_name'] ?? $provider['business_name']),
-            'url' => url(current_brand()->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug),
+            'url' => url('providers/' . $publicSlug),
         ];
         if (!empty($provider['description'])) { $data['description'] = mb_substr(strip_tags((string) $provider['description']), 0, 300); }
         if (!empty($provider['show_public_phone']) && !empty($provider['public_phone'])) { $data['telephone'] = (string) $provider['public_phone']; }

@@ -68,3 +68,10 @@ Current repository baseline.
 ## Owner
 
 Assist Platform product and engineering.
+## VanAssist provider-pack records
+
+The retired LocalTorque brand no longer publishes provider profiles. Legitimate
+source evidence and canonical provider identities from its former corpus remain
+available through VanAssist where the provider has a relevant VanAssist service.
+Existing provider IDs, claims and evidence are preserved; only the retired
+brand listing is suspended.

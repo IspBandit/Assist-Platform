@@ -1,5 +1,13 @@
 # VanAssist user guide
 
+## Provider coverage ownership
+
+Provider search is backed by a VanAssist-owned national provider pack. The
+retired LocalTorque brand is not a separate website or result source. Search
+results remain filtered by the requested service and location, and provider
+evidence is retained without publishing unrelated categories as fallback
+answers.
+
 ## Homepage discovery
 
 VanAssist now presents **Ask VanAssist** as the preferred starting point when the Ask feature is enabled. Enter a plain-language request such as **dump point near Emerald**, **pet-friendly stay near Rockhampton**, **mobile mechanic near me**, or **drinking water near Longreach**. Ask can return providers, places to stay and traveller facilities from the existing VanAssist search and data services.

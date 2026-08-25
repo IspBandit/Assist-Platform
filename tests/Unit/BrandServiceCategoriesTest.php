@@ -12,7 +12,7 @@ final class BrandServiceCategoriesTest extends TestCase
     {
         $source = (string) file_get_contents(base_path('app/Controllers/Site/CategoryController.php'));
 
-        self::assertStringContainsString("in_array(current_brand()->id(), ['localtorque', 'towsmart', 'trailerwise'], true)", $source);
+        self::assertStringContainsString("in_array(current_brand()->id(), ['towsmart', 'trailerwise'], true)", $source);
         self::assertStringContainsString('brandDirectoryIndex()', $source);
         self::assertStringContainsString('brandDirectoryShow($request, $slug)', $source);
         self::assertStringContainsString("'brands.service-categories'", $source);

@@ -4,7 +4,7 @@ $isPossible = !empty($isPossible);
 $model = (string) ($p['service_model'] ?? '');
 $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) ($p['business_name'] ?? 'Business');
-$profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'providers/';
+$profilePath = 'providers/';
 $location = trim((string) ($p['town_name'] ?? ''));
 if ($location !== '' && !empty($p['state_abbr'])) { $location .= ', ' . $p['state_abbr']; }
 $description = trim((string) ($p['description'] ?? ''));

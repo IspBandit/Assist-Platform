@@ -445,6 +445,6 @@ return [
         'refresh_osm'              => 'Refresh national OpenStreetMap provider and fuel-station data one state or city at a time',
         'import_osm'               => 'Import OpenStreetMap provider seed in batches (skips when up to date)',
         'import_locality'          => 'Import locality-provider research seed in batches (skips when up to date)',
-        'import_localtorque_pack'  => 'Import the authoritative LocalTorque provider pack in resumable batches',
+        'import_vanassist_provider_pack'  => 'Import the authoritative VanAssist provider pack in resumable batches',
     ],
 ];
