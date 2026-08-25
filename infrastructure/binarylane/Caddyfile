@@ -43,6 +43,26 @@
 	route {
 		@private path /.git* /.htaccess /analytics/config.php /analytics/dashboard-config.php /analytics/config.example.php /analytics/dashboard-config.example.php /analytics/_stats/* /analytics/_contributions/* /analytics/_detector-settings/* /analytics/_detector-setting-uploads/* /analytics/_marketplace/* /analytics/_messages/*
 		respond @private 404
+		handle /data/community-contributions.json {
+			root * /srv/cqdiggings-public
+			file_server
+		}
+		handle /data/community-detector-settings.json {
+			root * /srv/cqdiggings-public
+			file_server
+		}
+		handle /data/marketplace-listings.json {
+			root * /srv/cqdiggings-public
+			file_server
+		}
+		handle /assets/community-detector-settings/* {
+			root * /srv/cqdiggings-public
+			file_server
+		}
+		handle /assets/marketplace/* {
+			root * /srv/cqdiggings-public
+			file_server
+		}
 		php_fastcgi cqdiggings:9000
 		file_server
 	}

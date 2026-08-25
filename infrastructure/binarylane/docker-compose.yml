@@ -48,11 +48,8 @@ services:
       - ./current:/var/www/html:ro
       - ./shared/uploads-public:/var/www/html/public/uploads-public:ro
       - /opt/cqdiggings/current:/var/www/cqdiggings:ro
-      - /opt/cqdiggings/shared/data/community-contributions.json:/var/www/cqdiggings/data/community-contributions.json:ro
-      - /opt/cqdiggings/shared/data/community-detector-settings.json:/var/www/cqdiggings/data/community-detector-settings.json:ro
-      - /opt/cqdiggings/shared/data/marketplace-listings.json:/var/www/cqdiggings/data/marketplace-listings.json:ro
-      - /opt/cqdiggings/shared/assets/community-detector-settings:/var/www/cqdiggings/assets/community-detector-settings:ro
-      - /opt/cqdiggings/shared/assets/marketplace:/var/www/cqdiggings/assets/marketplace:ro
+      - /opt/cqdiggings/shared/data:/srv/cqdiggings-public/data:ro
+      - /opt/cqdiggings/shared/assets:/srv/cqdiggings-public/assets:ro
       - ./runtime/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
