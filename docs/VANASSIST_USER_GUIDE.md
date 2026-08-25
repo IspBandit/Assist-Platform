@@ -16,6 +16,9 @@ Provider results must match the requested service or a deliberately related
 repair category. If VanAssist has no supported caravan-repair listing near the
 selected location, it reports that coverage gap instead of filling the list
 with unrelated nearby businesses such as fuel stations or generic workshops.
+Providers imported through the shared LocalTorque catalogue are mapped into
+the same VanAssist service categories, so caravan repairers and other relevant
+specialists can be found by both Ask and the category search.
 When the normal 25 km radius finds no repair specialist and the traveller did
 not set a distance limit, Ask retries the same service categories within a
 regional 150 km area. An explicit distance such as “within 25 km” remains a

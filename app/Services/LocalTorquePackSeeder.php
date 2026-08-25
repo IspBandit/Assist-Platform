@@ -17,6 +17,7 @@ use Throwable;
 final class LocalTorquePackSeeder
 {
     private const PACK_DIR = 'database/seeds/localtorque';
+    private const VANASSIST_COMPATIBILITY_VERSION = 'vanassist-services-v2';
     private const MAX_DECLARED_TOWN_DISTANCE_KM = 150.0;
     private const MAX_NEAREST_AUSTRALIAN_TOWN_DISTANCE_KM = 150.0;
 
@@ -81,7 +82,7 @@ final class LocalTorquePackSeeder
     {
         $file = base_path(self::PACK_DIR . '/providers-publishable.json');
         return is_file($file)
-            ? hash('sha256', (string) filesize($file) . ':' . hash_file('sha256', $file))
+            ? hash('sha256', self::VANASSIST_COMPATIBILITY_VERSION . ':' . (string) filesize($file) . ':' . hash_file('sha256', $file))
             : '';
     }
 
@@ -672,19 +673,73 @@ final class LocalTorquePackSeeder
     /** @param list<string> $categories */
     private function linkVanAssistCompatibility(int $providerId, array $categories): void
     {
-        $map = ['fuel-station' => 'fuel-and-travel-stops', 'ev-charging' => 'ev-charging'];
-        foreach ($map as $packCategory => $serviceSlug) {
+        foreach (self::vanAssistCompatibilityMap() as $packCategory => $serviceSlugs) {
             if (!in_array($packCategory, $categories, true)) {
                 continue;
             }
-            $categoryId = (int) Database::scalar('SELECT id FROM service_categories WHERE slug=? AND is_active=1', [$serviceSlug]);
-            if ($categoryId > 0) {
-                Database::query(
-                    'INSERT IGNORE INTO provider_services (provider_id,category_id,is_inferred,created_at) VALUES (?,?,0,NOW())',
-                    [$providerId, $categoryId]
-                );
+            foreach ($serviceSlugs as $serviceSlug) {
+                $categoryId = (int) Database::scalar('SELECT id FROM service_categories WHERE slug=? AND is_active=1', [$serviceSlug]);
+                if ($categoryId > 0) {
+                    Database::query(
+                        'INSERT IGNORE INTO provider_services (provider_id,category_id,is_inferred,created_at) VALUES (?,?,0,NOW())',
+                        [$providerId, $categoryId]
+                    );
+                }
             }
         }
+    }
+
+    /** @return array<string,list<string>> */
+    public static function vanAssistCompatibilityMap(): array
+    {
+        return [
+            'general-mechanic' => ['mechanical-repairs', 'general-servicing'],
+            'mobile-mechanic' => ['mobile-mechanics', 'mechanical-repairs'],
+            'mobile-repairs' => ['mobile-mechanics', 'mechanical-repairs'],
+            'diesel-specialist' => ['diesel-mechanics'],
+            'auto-electrician' => ['auto-electrical-and-batteries', '12-volt-electrical'],
+            'battery-specialist' => ['auto-electrical-and-batteries'],
+            'battery-replacement' => ['auto-electrical-and-batteries', 'roadside-assistance'],
+            'lighting-installer' => ['12-volt-electrical'],
+            'dual-battery-installer' => ['dc-dc-charging', 'auto-electrical-and-batteries'],
+            'vehicle-solar-installer' => ['solar-and-batteries', '12-volt-electrical'],
+            'auto-aircon' => ['air-conditioning'],
+            'vehicle-refrigeration' => ['refrigeration'],
+            'suspension-specialist' => ['suspension'],
+            'lift-kit' => ['suspension'],
+            'tyre-shop' => ['tyres-and-wheels'],
+            'mobile-tyre' => ['tyres-and-wheels', 'roadside-assistance'],
+            'offroad-tyres' => ['tyres-and-wheels'],
+            'general-fabricator' => ['trailer-and-engineering', 'mobile-welding-and-fabrication'],
+            'custom-fabrication' => ['trailer-and-engineering', 'mobile-welding-and-fabrication'],
+            'caravan-repairs' => ['general-caravan-repairs'],
+            'camper-trailer-repairs' => ['general-caravan-repairs'],
+            'rv-repairs' => ['general-caravan-repairs'],
+            'motorhome-repairs' => ['general-caravan-repairs'],
+            'awning-repairs' => ['awning-repairs'],
+            'water-system-repairs' => ['plumbing-and-water-leaks'],
+            'gas-certification' => ['gas-appliance-servicing'],
+            'trailer-repairs' => ['trailer-and-engineering'],
+            'trailer-fabrication' => ['trailer-and-engineering'],
+            'trailer-electrical' => ['12-volt-electrical'],
+            'trailer-suspension' => ['suspension'],
+            'trailer-brakes' => ['brakes-and-bearings'],
+            'trailer-bearings' => ['brakes-and-bearings'],
+            'towbar-installation' => ['towing-equipment-and-accessories'],
+            'bullbar-installation' => ['vehicle-parts-and-accessories'],
+            'roof-rack-installation' => ['vehicle-parts-and-accessories'],
+            'recovery-gear' => ['vehicle-parts-and-accessories'],
+            'winch-installation' => ['vehicle-parts-and-accessories'],
+            'snorkel-installation' => ['vehicle-parts-and-accessories'],
+            'uhf-installation' => ['starlink-and-communications'],
+            'roadworthy' => ['roadworthy-inspection'],
+            'mobile-diagnostics' => ['mobile-mechanics'],
+            'fuel-delivery' => ['roadside-assistance'],
+            'jump-starts' => ['roadside-assistance'],
+            'roadside-assistance' => ['roadside-assistance'],
+            'fuel-station' => ['fuel-and-travel-stops'],
+            'ev-charging' => ['ev-charging'],
+        ];
     }
 
     private function loadTaxonomy(): void

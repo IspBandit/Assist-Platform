@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist provider taxonomy bridge
+
+- Every LocalTorque category shared with VanAssist now links to the canonical
+  VanAssist service taxonomy used by Ask and structured search. Previously only
+  fuel and EV records crossed this bridge, leaving valid caravan repairers,
+  mechanics and auto electricians invisible to category retrieval.
+- The LocalTorque import fingerprint now includes the compatibility version so
+  production safely reprocesses existing records when mappings change.
+- Production journey checks accept a clearly labelled straight-line distance
+  when Google Routes cannot calculate a road route for a valid provider; the
+  protected Google credential is still verified independently before release.
+
 - Ask VanAssist now retries the same specialist service within 150 km when its
   automatic 25 km search has no match. User-entered distance limits remain
   fixed, and unrelated provider categories are never used to fill an empty

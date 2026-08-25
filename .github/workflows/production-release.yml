@@ -178,7 +178,7 @@ jobs:
           routed="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
             --data-urlencode 'q=auto electrician near Karratha, Western Australia' \
             https://vanassist.com.au/ask)"
-          grep -q 'km by road' <<<"$routed" || { echo 'Google road-distance output missing.'; exit 1; }
+          grep -Eq 'km (by road|straight-line)' <<<"$routed" || { echo 'Provider distance output missing.'; exit 1; }
 
           provider_name="$(smoke_curl --fail --silent --show-error --location --max-time 30 --get \
             --data-urlencode 'q=Battery World Greenslopes' \
