@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask-first VanAssist homepage (VAN-011 / EXP-005)
+
+- Ask VanAssist is now the preferred homepage starting point when the existing
+  feature flag is enabled. It appears before the structured category/location
+  form on desktop and phone and uses plain-language examples covering providers,
+  stays and traveller facilities.
+- The four direct traveller shortcuts and the structured category/location
+  search remain available under a clear direct-browse hierarchy; no provider,
+  stay, facility, assistance or `/find` route is removed.
+- Phone acceptance now explicitly verifies that Ask appears before the direct
+  shortcut grid and structured browse form, preventing the previous mobile-only
+  ordering from returning unnoticed.
+- Added a dated site-audit record and matching customer guidance. No migration,
+  paid-AI enablement, billing change or production-data rewrite is included.
+
 ### Production release guard reliability (OPS-002 / DATA-001)
 
 - The strict provider-service audit now accepts any supported category matched
