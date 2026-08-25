@@ -42,6 +42,14 @@ queue; it never auto-publishes invented providers or facilities. A low/no-traffi
 warning can indicate genuine low use or a tracking problem; check the latest
 page-view time and scheduled-task state before drawing conclusions.
 
+Open **Insights → Growth & trust** in the VanAssist workspace to operate the
+coverage improvement loop. The page separates facility candidates from
+published/searchable records, ranks unresolved search demand, shows claim and
+verification workload, links provider-value reporting and identifies noindex
+towns that have enough live local evidence for human SEO review. Publishing a
+town requires SEO permission, reviewed public copy and at least three live local
+providers, stays or facilities; the action is audited.
+
 ## Examples
 
 A zero-result service/location pattern can become a Data Intelligence task and then a scoped connector run. Candidates with adequate independent evidence can be advanced by the server worker. Restricted-source rows remain temporary review records until a lawful independent source supports publication.

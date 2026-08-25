@@ -148,7 +148,9 @@ final class WebsiteInsightsService
         $eligible = TrafficQuality::eligibleSessionSql('ts');
         return Database::select(
             'SELECT p.id AS provider_id, COALESCE(NULLIF(pbl.display_name,\'\'),p.business_name) AS label, '
-            . 'SUM(x.impressions) AS impressions, SUM(x.profile_views) AS profile_views, SUM(x.contacts) AS contacts '
+            . 'SUM(x.impressions) AS impressions, SUM(x.profile_views) AS profile_views, SUM(x.contacts) AS contacts, '
+            . 'ROUND(100 * SUM(x.profile_views) / NULLIF(SUM(x.impressions),0),1) AS impression_to_profile_rate, '
+            . 'ROUND(100 * SUM(x.contacts) / NULLIF(SUM(x.profile_views),0),1) AS profile_to_contact_rate '
             . 'FROM ('
             . 'SELECT r.provider_id, COUNT(*) AS impressions, 0 AS profile_views, 0 AS contacts '
             . 'FROM provider_search_results r JOIN provider_searches s ON s.id=r.search_id JOIN tracking_sessions ts ON ts.id=s.session_id '
