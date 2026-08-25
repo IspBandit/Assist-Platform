@@ -20,7 +20,7 @@ final class RelatedProviderFallbackTest extends TestCase
         $fallback = $method->invoke(new SearchOrchestrator(), $intent);
 
         self::assertInstanceOf(Intent::class, $fallback);
-        self::assertSame(['general-caravan-repairs', 'auto-electrical-and-batteries'], $fallback->providerCategoryKeys);
+        self::assertSame(['general-caravan-repairs'], $fallback->providerCategoryKeys);
         self::assertSame(50, $fallback->radiusKm);
         self::assertSame('Emerald', $fallback->locationText);
         self::assertSame('related_provider_fallback', $fallback->source);
@@ -36,7 +36,50 @@ final class RelatedProviderFallbackTest extends TestCase
         self::assertNull($fallback);
     }
 
-    public function testServicingMissCanWidenToCaravanAndAutoElectrical(): void
+    public function testImplicitProviderRadiusCanExpandWithoutChangingCategory(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Boyne Island', true, 25,
+            'normal', ['providers'], 0.95, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'expandedExactProviderIntent');
+        $expanded = $method->invoke(new SearchOrchestrator(), $intent, ['radius_km' => null], -23.95, 151.35);
+
+        self::assertInstanceOf(Intent::class, $expanded);
+        self::assertSame(['general-caravan-repairs'], $expanded->providerCategoryKeys);
+        self::assertSame(150, $expanded->radiusKm);
+        self::assertSame('expanded_exact_radius', $expanded->source);
+    }
+
+    public function testExplicitProviderRadiusIsNeverExpanded(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Boyne Island', true, 25,
+            'normal', ['providers'], 0.95, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'expandedExactProviderIntent');
+
+        self::assertNull($method->invoke(
+            new SearchOrchestrator(),
+            $intent,
+            ['radius_km' => 25],
+            -23.95,
+            151.35,
+        ));
+    }
+
+    public function testEverydayFacilityStyleProviderSearchIsNotExpandedRegionally(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['fuel-and-travel-stops'], [], [], 'Boyne Island', true, 25,
+            'normal', ['providers'], 0.95, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'expandedExactProviderIntent');
+
+        self::assertNull($method->invoke(
+            new SearchOrchestrator(),
+            $intent,
+            ['radius_km' => null],
+            -23.95,
+            151.35,
+        ));
+    }
+
+    public function testServicingMissOnlyWidensToMechanicalHelp(): void
     {
         $intent = new Intent(Intent::TYPE_PROVIDER, ['mobile-mechanics', 'mechanical-repairs'], [], [], 'Karratha', false, 25,
             'normal', ['providers'], 0.8, false, null);
@@ -45,7 +88,7 @@ final class RelatedProviderFallbackTest extends TestCase
 
         self::assertInstanceOf(Intent::class, $fallback);
         self::assertSame(
-            ['general-caravan-repairs', 'auto-electrical-and-batteries', 'diesel-mechanics'],
+            ['general-servicing'],
             $fallback->providerCategoryKeys
         );
         self::assertSame(50, $fallback->radiusKm);

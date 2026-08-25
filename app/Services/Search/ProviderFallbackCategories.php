@@ -28,30 +28,44 @@ final class ProviderFallbackCategories
             return [];
         }
 
-        $electrical = [
-            '12-volt-electrical', '240-volt-electrical', 'solar-and-batteries',
-            'dc-dc-charging', 'inverters', 'refrigeration', 'air-conditioning',
-            'starlink-and-communications', 'auto-electrical-and-batteries',
-        ];
-        $vehicle = [
-            'brakes-and-bearings', 'suspension', 'tyres-and-wheels',
-            'diesel-mechanics', 'towing-and-vehicle-recovery', '4wd-and-remote-area-recovery',
-        ];
-        $servicing = [
-            'mobile-mechanics', 'mechanical-repairs', 'general-servicing',
-            'pre-trip-inspection', 'roadworthy-inspection',
+        $related = [
+            'structural-repairs' => ['general-caravan-repairs'],
+            'fibreglass-repairs' => ['general-caravan-repairs'],
+            'awning-repairs' => ['general-caravan-repairs'],
+            'roof-leaks' => ['general-caravan-repairs'],
+            'mobile-welding-and-fabrication' => ['general-caravan-repairs'],
+            '12-volt-electrical' => ['auto-electrical-and-batteries', 'general-caravan-repairs'],
+            '240-volt-electrical' => ['general-caravan-repairs'],
+            'solar-and-batteries' => ['auto-electrical-and-batteries', 'general-caravan-repairs'],
+            'dc-dc-charging' => ['auto-electrical-and-batteries', 'general-caravan-repairs'],
+            'inverters' => ['auto-electrical-and-batteries', 'general-caravan-repairs'],
+            'refrigeration' => ['general-caravan-repairs'],
+            'air-conditioning' => ['general-caravan-repairs'],
+            'gas-appliance-servicing' => ['general-caravan-repairs'],
+            'plumbing-and-water-leaks' => ['general-caravan-repairs'],
+            'hot-water-systems' => ['general-caravan-repairs'],
+            'toilets' => ['general-caravan-repairs'],
+            'appliance-repairs' => ['general-caravan-repairs'],
+            'starlink-and-communications' => ['auto-electrical-and-batteries', 'general-caravan-repairs'],
+            'brakes-and-bearings' => ['mechanical-repairs', 'mobile-mechanics'],
+            'suspension' => ['mechanical-repairs', 'mobile-mechanics'],
+            'tyres-and-wheels' => ['mechanical-repairs', 'mobile-mechanics'],
+            'diesel-mechanics' => ['mechanical-repairs', 'mobile-mechanics'],
+            'towing-and-vehicle-recovery' => ['roadside-assistance'],
+            '4wd-and-remote-area-recovery' => ['roadside-assistance'],
+            'general-servicing' => ['mechanical-repairs', 'mobile-mechanics'],
+            'pre-trip-inspection' => ['general-servicing', 'mechanical-repairs'],
+            'roadworthy-inspection' => ['general-servicing', 'mechanical-repairs'],
+            'auto-electrical-and-batteries' => ['12-volt-electrical'],
+            'mechanical-repairs' => ['general-servicing', 'mobile-mechanics'],
+            'mobile-mechanics' => ['mechanical-repairs', 'general-servicing'],
         ];
 
-        if (array_intersect($alreadyTried, $electrical) !== []) {
-            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries'];
-        } elseif (array_intersect($alreadyTried, $vehicle) !== []) {
-            $categories = ['mobile-mechanics', 'mechanical-repairs', 'roadside-assistance'];
-        } elseif (array_intersect($alreadyTried, $servicing) !== []) {
-            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries', 'diesel-mechanics'];
-        } else {
-            $categories = ['general-caravan-repairs', 'mobile-mechanics'];
+        $categories = [];
+        foreach ($alreadyTried as $slug) {
+            $categories = array_merge($categories, $related[$slug] ?? []);
         }
 
-        return array_values(array_diff($categories, $alreadyTried));
+        return array_values(array_diff(array_unique($categories), $alreadyTried));
     }
 }

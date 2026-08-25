@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+- Ask VanAssist now retries the same specialist service within 150 km when its
+  automatic 25 km search has no match. User-entered distance limits remain
+  fixed, and unrelated provider categories are never used to fill an empty
+  result list.
+- Ask result pages now use a shorter mobile-first flow with the edit form
+  collapsed, repeated explanations removed, and a clearer no-match action.
+
 ### VanAssist category-search precision (VAN-011 / DATA-004)
 
 - Provider searches no longer fill an exact category miss with an unfiltered

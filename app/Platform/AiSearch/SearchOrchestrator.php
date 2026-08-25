@@ -404,6 +404,19 @@ final class SearchOrchestrator
                 $providerRows = $providerNameQuery !== null
                     ? $providerNameRows
                     : $this->providers->search($intent, $town, $originLat, $originLng);
+                if ($providerRows === [] && $providerNameQuery === null) {
+                    $expandedIntent = $this->expandedExactProviderIntent($intent, $meta, $originLat, $originLng);
+                    if ($expandedIntent !== null) {
+                        $originalRadius = (int) ($intent->radiusKm ?? config('ai_search.default_radius_km', 25));
+                        $providerRows = $this->providers->search($expandedIntent, $town, $originLat, $originLng);
+                        if ($providerRows !== []) {
+                            $intent = $expandedIntent;
+                            $fallback = $fallback !== '' ? $fallback : 'expanded_exact_radius';
+                            $messages[] = 'No matching provider was found within ' . $originalRadius
+                                . ' km. Showing the nearest matching providers in a wider area.';
+                        }
+                    }
+                }
                 if ($providerRows === [] && $this->shouldUseProviderFallback($intent)) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {
@@ -586,6 +599,52 @@ final class SearchOrchestrator
             clarificationRequired: false,
             clarificationReason: null,
             source: 'related_provider_fallback',
+        );
+    }
+
+    /**
+     * Specialist services are often regional. If the user did not set a
+     * distance, retry the same categories over a wider area before considering
+     * any related category. Explicit distance limits are always respected.
+     *
+     * @param array<string,mixed> $normalisedMeta
+     */
+    private function expandedExactProviderIntent(
+        Intent $intent,
+        array $normalisedMeta,
+        ?float $originLat,
+        ?float $originLng,
+    ): ?Intent {
+        if ($intent->intentType !== Intent::TYPE_PROVIDER
+            || $intent->providerCategoryKeys === []
+            || (!$this->shouldUseProviderFallback($intent)
+                && !in_array('general-caravan-repairs', $intent->providerCategoryKeys, true))
+            || $originLat === null
+            || $originLng === null
+            || ($normalisedMeta['radius_km'] ?? null) !== null) {
+            return null;
+        }
+
+        $currentRadius = (int) ($intent->radiusKm ?? config('ai_search.default_radius_km', 25));
+        $expandedRadius = max($currentRadius, (int) config('ai_search.specialist_radius_km', 150));
+        if ($expandedRadius <= $currentRadius) {
+            return null;
+        }
+
+        return new Intent(
+            intentType: $intent->intentType,
+            providerCategoryKeys: $intent->providerCategoryKeys,
+            stayTypeKeys: $intent->stayTypeKeys,
+            facilityTypeKeys: $intent->facilityTypeKeys,
+            locationText: $intent->locationText,
+            useCurrentLocation: $intent->useCurrentLocation,
+            radiusKm: min(500, $expandedRadius),
+            urgency: $intent->urgency,
+            adapterKeys: $intent->adapterKeys,
+            confidence: $intent->confidence,
+            clarificationRequired: $intent->clarificationRequired,
+            clarificationReason: $intent->clarificationReason,
+            source: 'expanded_exact_radius',
         );
     }
 
