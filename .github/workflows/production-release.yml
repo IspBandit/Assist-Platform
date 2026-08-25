@@ -202,6 +202,37 @@ jobs:
             --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
           smoke_curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
+      - name: Verify CQDiggings Clermont investigation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cache_bust="release=${GITHUB_SHA}"
+          fetch() {
+            curl --fail --silent --show-error --location --max-time 30 --retry 3 --retry-delay 2 \
+              -H 'Cache-Control: no-cache' -H 'X-Assist-Synthetic: 1' "$1"
+          }
+
+          investigation="$(fetch "https://cqdiggings.com.au/clermont-gold-investigation.html?${cache_bust}")"
+          grep -q 'Where could a prospector legally look for gold near Clermont?' <<<"$investigation"
+          grep -q '15</strong><span>ranked prospecting sectors' <<<"$investigation"
+
+          prospectivity="$(fetch "https://cqdiggings.com.au/data/clermont-legal-gold-prospectivity.geojson?${cache_bust}")"
+          drainage="$(fetch "https://cqdiggings.com.au/data/clermont-prospectivity-watercourses.geojson?${cache_bust}")"
+          validation="$(fetch "https://cqdiggings.com.au/data/clermont-field-validation-points.geojson?${cache_bust}")"
+          test "$(jq '.features | length' <<<"$prospectivity")" -eq 24
+          test "$(jq '.features | length' <<<"$drainage")" -eq 150
+          test "$(jq '.features | length' <<<"$validation")" -eq 15
+
+          research_map="$(fetch "https://cqdiggings.com.au/map-20260814.js?${cache_bust}")"
+          field_map="$(fetch "https://cqdiggings.com.au/old-diggings-map-regional.js?${cache_bust}")"
+          grep -q 'clermont-legal-gold-prospectivity.geojson' <<<"$research_map"
+          grep -q 'clermont-field-validation-points.geojson' <<<"$research_map"
+          grep -q 'clermont-legal-gold-prospectivity.geojson' <<<"$field_map"
+          grep -q 'clermont-field-validation-points.geojson' <<<"$field_map"
+
+          worker="$(fetch "https://cqdiggings.com.au/service-worker.js?${cache_bust}")"
+          grep -q 'cqdiggings-field-v55' <<<"$worker"
+          fetch "https://cqdiggings.com.au/data/community-detector-settings.json?${cache_bust}" | jq -e '.records | type == "array"' >/dev/null
       - name: Record safeguarded provider processing
         run: |
           {

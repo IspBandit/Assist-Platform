@@ -64,4 +64,58 @@ final class OperationalLaunchGateTest extends TestCase
         self::assertStringContainsString('chmod 0644 "$cq_root/shared/data/community-detector-settings.json"', $release);
         self::assertStringContainsString('community-detector-settings.json', $release);
     }
+
+    public function testCqDiggingsClermontReleaseOverlayIsCompleteAndReadOnly(): void
+    {
+        $compose = (string) file_get_contents(base_path('infrastructure/binarylane/docker-compose.yml'));
+        $overlay = base_path('infrastructure/cqdiggings-overlay');
+        $release = (string) file_get_contents($overlay . '/RELEASE.md');
+        $files = [
+            'clermont-blair-athol.html',
+            'clermont-gold-investigation.css',
+            'clermont-gold-investigation.html',
+            'clermont-gold-investigation.js',
+            'data/clermont-field-validation-points.geojson',
+            'data/clermont-legal-gold-prospectivity.geojson',
+            'data/clermont-prospectivity-watercourses.geojson',
+            'index.html',
+            'map-20260814.js',
+            'map.html',
+            'old-diggings-map-regional.js',
+            'old-diggings-map.html',
+            'service-worker.js',
+            'site-index.html',
+            'sitemap.xml',
+        ];
+
+        self::assertStringContainsString('d3f4f5ea76c00ecea5ce6159abe1fa79e8ece3a0', $release);
+        foreach ($files as $file) {
+            self::assertFileExists($overlay . '/' . $file);
+            self::assertSame(
+                2,
+                substr_count(
+                    $compose,
+                    './current/infrastructure/cqdiggings-overlay/' . $file
+                    . ':/var/www/cqdiggings/' . $file . ':ro'
+                ),
+                $file . ' must be mounted read-only in Caddy and PHP.'
+            );
+        }
+
+        self::assertStringContainsString('cqdiggings-field-v55', (string) file_get_contents($overlay . '/service-worker.js'));
+        self::assertStringContainsString('Where could a prospector legally look for gold near Clermont?', (string) file_get_contents($overlay . '/clermont-gold-investigation.html'));
+        self::assertSame(24, $this->geoJsonFeatureCount($overlay . '/data/clermont-legal-gold-prospectivity.geojson'));
+        self::assertSame(150, $this->geoJsonFeatureCount($overlay . '/data/clermont-prospectivity-watercourses.geojson'));
+        self::assertSame(15, $this->geoJsonFeatureCount($overlay . '/data/clermont-field-validation-points.geojson'));
+    }
+
+    private function geoJsonFeatureCount(string $path): int
+    {
+        $decoded = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame('FeatureCollection', $decoded['type'] ?? null);
+        self::assertIsArray($decoded['features'] ?? null);
+
+        return count($decoded['features']);
+    }
 }
