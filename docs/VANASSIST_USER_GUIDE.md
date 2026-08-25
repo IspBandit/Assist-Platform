@@ -10,6 +10,15 @@ On phones, Ask is deliberately presented before the four direct shortcuts and th
 
 Ask is not a general-purpose assistant. It is limited to VanAssist providers, stays, caravan/RV help and supported traveller facilities. Important details should still be confirmed before travel.
 
+## Search-result accuracy
+
+Provider results must match the requested service or a deliberately related
+repair category. If VanAssist has no supported caravan-repair listing near the
+selected location, it reports that coverage gap instead of filling the list
+with unrelated nearby businesses such as fuel stations or generic workshops.
+Try a wider radius or request assistance, but do not assume a business performs
+the requested work unless its result says so.
+
 ## Last updated
 
-2026-08-25 — Ask-first homepage hierarchy.
+2026-08-26 — Category-accurate provider search misses.
