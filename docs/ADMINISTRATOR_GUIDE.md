@@ -1,5 +1,13 @@
 # Administrator guide
 
+## Active brands and provider imports
+
+LocalTorque is retired and no longer appears in the brand switcher, social
+studio, outreach controls or production checks. Its former provider corpus is
+managed as the **VanAssist provider pack**. Use the
+`import_vanassist_provider_pack` maintenance task; the old LocalTorque task and
+progress settings are removed by migration 136.
+
 The same platform administrator identity can administer all three brands. Browser
 sessions are scoped per domain, so signing in separately on each domain may be
 required. Credentials are never documented in Git.
