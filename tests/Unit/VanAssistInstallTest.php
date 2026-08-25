@@ -61,7 +61,7 @@ final class VanAssistInstallTest extends TestCase
         self::assertStringContainsString('Find caravan and RV services', $home);
         self::assertStringContainsString('vanassist-coastal-hero-desktop-v1.webp', $home);
         self::assertStringContainsString('vanassist-coastal-hero-mobile-v1.webp', $home);
-        self::assertStringContainsString('Find help nearby', $home);
+        self::assertStringContainsString('Browse directly', $home);
     }
 
     public function testManifestAndWorkerAvoidCachingPrivatePages(): void
