@@ -414,14 +414,6 @@ final class SearchOrchestrator
                         }
                     }
                 }
-                if ($providerRows === [] && $town !== null && $this->shouldUseProviderFallback($intent)) {
-                    $poolRadius = max(50, (int) ($intent->radiusKm ?? (int) config('ai_search.default_radius_km', 25)));
-                    $providerRows = $this->providers->searchRegionalTownPool($town, $originLat, $originLng, $poolRadius);
-                    if ($providerRows !== []) {
-                        $fallback = $fallback !== '' ? $fallback : 'regional_provider_pool';
-                        $messages[] = 'No exact category match nearby. Showing providers who service this area—confirm they handle your issue before travelling.';
-                    }
-                }
             } catch (\Throwable) {
                 $providerRows = [];
             }

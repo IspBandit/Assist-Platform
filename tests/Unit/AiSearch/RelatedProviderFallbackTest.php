@@ -26,15 +26,14 @@ final class RelatedProviderFallbackTest extends TestCase
         self::assertSame('related_provider_fallback', $fallback->source);
     }
 
-    public function testBroadSearchWidensToRemainingCategories(): void
+    public function testGeneralCaravanRepairMissDoesNotWidenToGenericMechanics(): void
     {
         $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Roma', false, 25,
             'normal', ['providers'], 0.8, false, null);
         $method = new ReflectionMethod(SearchOrchestrator::class, 'relatedProviderFallbackIntent');
         $fallback = $method->invoke(new SearchOrchestrator(), $intent);
 
-        self::assertInstanceOf(Intent::class, $fallback);
-        self::assertSame(['mobile-mechanics'], $fallback->providerCategoryKeys);
+        self::assertNull($fallback);
     }
 
     public function testServicingMissCanWidenToCaravanAndAutoElectrical(): void
@@ -60,11 +59,6 @@ final class RelatedProviderFallbackTest extends TestCase
         self::assertSame([], (new ProviderSearchAdapter())->search($intent, null, null, null));
     }
 
-    public function testRegionalTownPoolRequiresResolvedTown(): void
-    {
-        self::assertSame([], (new ProviderSearchAdapter())->searchRegionalTownPool(null, -20.7, 116.8, 50));
-    }
-
     public function testProviderIntentCanUseFallbacks(): void
     {
         $intent = new Intent(Intent::TYPE_PROVIDER, ['general-servicing'], [], [], 'Karratha', false, 25,
@@ -72,6 +66,24 @@ final class RelatedProviderFallbackTest extends TestCase
         $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseProviderFallback');
 
         self::assertTrue($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testGeneralCaravanRepairIntentCannotUseFallbacks(): void
+    {
+        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Boyne Island', true, 25,
+            'normal', ['providers'], 0.95, false, null);
+        $method = new ReflectionMethod(SearchOrchestrator::class, 'shouldUseProviderFallback');
+
+        self::assertFalse($method->invoke(new SearchOrchestrator(), $intent));
+    }
+
+    public function testCategorySearchesCannotUseAnUnfilteredRegionalProviderPool(): void
+    {
+        $orchestrator = (string) file_get_contents(base_path('app/Platform/AiSearch/SearchOrchestrator.php'));
+        $structuredSearch = (string) file_get_contents(base_path('app/Controllers/Site/SearchController.php'));
+
+        self::assertStringNotContainsString('searchRegionalTownPool', $orchestrator);
+        self::assertStringNotContainsString("search_fallback'] = 'regional_provider_pool'", $structuredSearch);
     }
 
     public function testFacilityIntentCannotFallBackToUnrelatedRepairProviders(): void

@@ -12,6 +12,7 @@ final class ProviderFallbackCategories
 {
     /** @var list<string> */
     private const NON_REPAIR_CATEGORIES = [
+        'general-caravan-repairs',
         'fuel-and-travel-stops', 'ev-charging', 'lpg-refills-and-bottle-exchange',
         'potable-water-refill', 'dump-points', 'rest-areas-and-rv-friendly-parking',
         'caravan-parks-and-campgrounds', 'free-and-low-cost-camps',
