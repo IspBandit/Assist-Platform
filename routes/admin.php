@@ -55,6 +55,8 @@ return static function (Router $router): void {
         $router->post('/data-intelligence/tasks', 'Admin\DataIntelligenceController@createTask', 'admin.data-intelligence.tasks');
         $router->post('/data-intelligence/tasks/status', 'Admin\DataIntelligenceController@updateTask', 'admin.data-intelligence.tasks.status');
         $router->get('/trust-growth', 'Admin\TrustGrowthController@index', 'admin.trust-growth');
+        $router->get('/growth-trust', 'Admin\GrowthTrustController@index', 'admin.growth-trust');
+        $router->post('/growth-trust/publish-town', 'Admin\GrowthTrustController@publishTown', 'admin.growth-trust.publish-town');
         $router->post('/trust-growth/check-sources', 'Admin\TrustGrowthController@checkSources', 'admin.trust-growth.check-sources');
         $router->post('/trust-growth/source', 'Admin\TrustGrowthController@reviewSource', 'admin.trust-growth.source');
         $router->post('/trust-growth/credential', 'Admin\TrustGrowthController@reviewCredential', 'admin.trust-growth.credential');

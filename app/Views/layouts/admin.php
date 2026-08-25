@@ -105,6 +105,9 @@ if ($permitted('data_intelligence.view')) {
 if ($permitted('demand.view')) {
     $insights[] = ['Website insights', '/admin/demand'];
     $insights[] = ['Knowledge gaps', '/admin/ai-search/gaps'];
+    if ($adminBrand->id() === 'vanassist') {
+        $insights[] = ['Growth & trust', '/admin/growth-trust'];
+    }
 }
 if ($insights !== []) {
     $nav['Insights'] = $insights;

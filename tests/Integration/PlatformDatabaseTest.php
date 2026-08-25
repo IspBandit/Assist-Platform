@@ -24,6 +24,7 @@ use App\Services\TownCoordinateActivation;
 use App\Services\CampaignMetrics;
 use App\Services\DataSourceService;
 use App\Services\NationalRouteImportService;
+use App\Services\VanAssistGrowthService;
 use App\Models\GarageAsset;
 use App\Models\Provider;
 use App\Services\Api\AdminApiFacilityService;
@@ -53,6 +54,17 @@ final class PlatformDatabaseTest extends TestCase
 
         self::assertSame(0, $dirty);
         self::assertSame(0, $missingChecksums);
+    }
+
+    public function testVanAssistGrowthDashboardQueriesFreshDatabase(): void
+    {
+        $brandId = (int) Database::scalar("SELECT id FROM brands WHERE brand_key='vanassist'");
+        $report = (new VanAssistGrowthService())->dashboard($brandId);
+        self::assertArrayHasKey('facility_summary', $report);
+        self::assertArrayHasKey('search_priorities', $report);
+        self::assertArrayHasKey('provider_trust', $report);
+        self::assertArrayHasKey('seo_candidates', $report);
+        self::assertGreaterThanOrEqual(0, (int) $report['facility_summary']['published']);
     }
 
     public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void

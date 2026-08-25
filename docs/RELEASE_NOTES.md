@@ -5,6 +5,20 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist growth and trust operating loop (DATA-004 / DATA-014 / VAN-002 / EXP-004 / INF-004)
+
+- Added one VanAssist admin dashboard for facility publication coverage,
+  prioritised search failures, provider claim/verification state and
+  evidence-backed regional SEO candidates.
+- Provider value reporting now includes appearance-to-profile and
+  profile-to-contact rates while retaining the existing warning that actions
+  are not completed jobs.
+- Town pages can be made indexable only through an audited permission-controlled
+  review after local evidence and reviewed SEO copy pass explicit thresholds.
+- Added repeatable desktop/mobile accessibility and performance budgets for the
+  core public journeys. The checks are an engineering baseline, not a claim of
+  WCAG certification.
+
 ### Production runtime and launch evidence follow-up (OPS-002 / DATA-001)
 
 - Fixed the published-provider coordinate launch query so its distance
