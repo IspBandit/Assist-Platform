@@ -92,6 +92,20 @@ ln -sfn "$target" "$root/current.next"
 mv -Tf "$root/current.next" "$root/current"
 set_app_release "$release"
 
+# CQDiggings community detector reports are runtime data, not release files.
+# Prepare the bind sources before Caddy reads the reviewed Compose file.
+cq_root="/opt/cqdiggings"
+install -d -o 82 -g 82 -m 0750 \
+  "$cq_root/shared/analytics/_detector-settings" \
+  "$cq_root/shared/analytics/_detector-setting-uploads" \
+  "$cq_root/shared/assets/community-detector-settings" \
+  "$cq_root/shared/data"
+if [[ ! -f "$cq_root/shared/data/community-detector-settings.json" ]]; then
+  printf '{"schema_version":1,"updated":null,"records":[]}\n' > "$cq_root/shared/data/community-detector-settings.json"
+fi
+chown 82:82 "$cq_root/shared/data/community-detector-settings.json"
+chmod 0640 "$cq_root/shared/data/community-detector-settings.json"
+
 docker compose config -q
 docker compose up -d --build --force-recreate app caddy
 docker compose exec -T app php scripts/migrate.php

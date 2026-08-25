@@ -19,6 +19,12 @@ may remain as dated files and are linked here rather than copied.
   core public journeys. The checks are an engineering baseline, not a claim of
   WCAG certification.
 
+### CQDiggings moderated detector-setting storage (INF-001 / OPS-006)
+
+- Added persistent, writable storage mounts for private detector-setting reports, private uploaded photos, the approved public settings index and approved public photo copies.
+- Caddy serves only the approved index and approved photo directory. Direct web access to pending report records and pending photo uploads is explicitly blocked.
+- The CQDiggings release prepares the shared paths and ownership before the containers are recreated. Rollback removes the four mounts and restores the preceding runtime files without altering retained reports.
+
 ### Production runtime and launch evidence follow-up (OPS-002 / DATA-001)
 
 - Fixed the published-provider coordinate launch query so its distance
