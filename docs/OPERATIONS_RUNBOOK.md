@@ -79,6 +79,27 @@ symlink if any migration, data audit or health check fails. This prevents a
 merged infrastructure change from remaining stranded in GitHub while the
 application code appears current.
 
+### CQDiggings reviewed overlays
+
+CQDiggings remains a separate product repository, but its public containers are
+part of the production Compose project. A bounded reviewed file set may be
+released from `infrastructure/cqdiggings-overlay` when its source repository,
+exact commit and SHA-256 values are recorded in that directory and CI verifies
+the complete read-only mount set. Do not place credentials, private analytics,
+moderation records or uploaded originals in the overlay.
+
+After release, verify all of the following with cache-busting requests:
+
+1. the nominated CQDiggings page returns 200 and contains its release marker;
+2. every nominated GeoJSON file parses and has the reviewed feature count;
+3. Research Map and Field Map load the nominated layer source;
+4. the service worker reports the reviewed cache version; and
+5. community runtime JSON and image paths still return their expected status.
+
+Rollback is the normal Assist Platform rollback. The preceding Compose file
+removes the overlay mounts and exposes the unchanged retained CQDiggings base
+release. See ADR 0038.
+
 ## Rollback
 
 For additive compatible migrations, switch the current symlink to the previous
@@ -119,4 +140,3 @@ packages. Never open production MariaDB from RIC or importers (ADR 0018).
 Record timestamps, release, affected brand/routes, request IDs, symptoms,
 containment, commands/actions, data impact, recovery and follow-up. Redact secrets
 and personal information.
-

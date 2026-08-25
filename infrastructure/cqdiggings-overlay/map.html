@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Queensland research map ; CQDiggings</title>
+    <meta name="description" content="Explore documented Queensland gold, gem, mining and geological evidence with source provenance, access context and permanent research records." />
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="assets/vendor/leaflet/MarkerCluster.css" />
+    <link
+      rel="stylesheet"
+      href="assets/vendor/leaflet/MarkerCluster.Default.css"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260825dense2" />
+    <link rel="stylesheet" href="brand.css" />
+    <link rel="stylesheet" href="mobile.css" />
+    <link rel="stylesheet" href="map.css?v=20260816s" />
+    <link rel="stylesheet" href="map-enhancements.css?v=20260823d" />
+    <link rel="stylesheet" href="map-restoration.css?v=20260817e" />
+    <link rel="stylesheet" href="field-notes.css?v=20260823d" />
+    <link rel="stylesheet" href="evidence-intelligence.css?v=20260818a" />
+    <link rel="stylesheet" href="research-data.css?v=20260822a" />
+    <link rel="icon" href="assets/cqdiggings-favicon.png" />
+  <link rel="stylesheet" href="retention.css?v=20260823e"><link rel="manifest" href="manifest.webmanifest?v=20260825home"></head>
+  <body class="map-page">
+    <header class="topbar">
+      <a class="brand" href="index.html"
+        ><img
+          class="brandmark brand-logo"
+          src="assets/cqdiggings-logo.png"
+          alt=""
+        /><span
+          >CQDiggings<small>Queensland Gold & Gem Research Platform</small></span
+        ></a
+      >
+      <nav data-research-nav></nav>
+    </header>
+    <script src="site-nav.js?v=20260825ux3"></script>
+    <main class="map-shell">
+      <aside class="map-sidebar">
+        <p class="eyebrow dark">Research map</p>
+        <h1>Queensland mining research map</h1>
+        <p class="map-intro">
+          Authoritative gold and gem records across all of Queensland, assembled for both
+          historical research and legal-ground intelligence. Statewide subsets load by region ; not all at once.
+        </p>
+        <div class="warning">
+          <strong>A map result is not permission.</strong><br />Verify it in
+          GeoResGlobe and obtain every required written consent.
+        </div>
+        <section class="map-presets" aria-labelledby="map-preset-title">
+          <h2 id="map-preset-title">Choose how much to show</h2>
+          <div class="map-preset-buttons" role="group" aria-label="Map detail preset">
+            <button type="button" data-map-preset="clean">Clean</button>
+            <button type="button" data-map-preset="beginner">Beginner</button>
+            <button type="button" data-map-preset="research" class="active">Research</button>
+            <button type="button" data-map-preset="field">Field</button>
+          </div>
+          <p id="mapPresetHelp"><strong>Clean:</strong> start with the background map only, then choose layers from the floating Layers button.</p>
+        </section>
+        <section class="basemap-section" aria-labelledby="basemap-heading">
+          <h2 id="basemap-heading">Background view</h2>
+          <div class="basemap-switch" role="group" aria-label="Choose map background">
+            <button type="button" class="active" data-basemap="map" aria-pressed="true">Map</button>
+            <button type="button" data-basemap="satellite" aria-pressed="false">Satellite</button>
+          </div>
+          <p class="overlay-note">Changes only the background. Evidence, tenure and gold-potential layers stay in place.</p>
+        </section>
+        <section class="commodity-group-section" aria-labelledby="commodity-group-heading">
+          <h2 id="commodity-group-heading">Show</h2>
+          <div class="commodity-group-switch map-preset-buttons" role="group" aria-label="Commodity group">
+            <button type="button" data-commodity-group="ALL" class="active" aria-pressed="true">All</button>
+            <button type="button" data-commodity-group="GOLD" aria-pressed="false">Gold</button>
+            <button type="button" data-commodity-group="GEMS" aria-pressed="false">Gems</button>
+          </div>
+          <p class="method">Filter the map to gold records, Queensland gem evidence, or both. Gold modelled potential is hidden in Gems mode.</p>
+        </section>
+        <section class="gem-type-filter-section gem-evidence-section" id="gemTypeFilterSection" hidden>
+          <h2>Gem type</h2>
+          <label>Gem type
+            <select id="gemTypeFilter">
+              <option value="all_gems">All Gems</option>
+            </select>
+          </label>
+          <p class="method">Secondary filter under Gems mode. Sapphire density layers remain sapphire-specific.</p>
+        </section>
+        <p class="method map-tip">Right-click or long-press the map for <strong>What do we know here?</strong> ; an evidence dossier for that location.</p>
+        <section class="gold-only-layer sidebar-layer-catalogue">
+          <h2>Gold ; Mineral evidence</h2>
+          <label
+            ><input type="checkbox" data-layer="historical" checked />
+            Historical workings <span id="historicalCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="occurrences" checked /> Mineral
+            occurrences <span id="occurrenceCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="archive" /> CQDiggings
+            sources</label
+          >
+          <h3 class="layer-subhead">Historical evidence</h3>
+          <label
+            ><input type="checkbox" data-layer="historicalGoldSources" checked />
+            Historical reefs / lodes / shafts
+            <span id="histGoldSrcCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="historicalGoldAlluvial" />
+            Historical alluvial / leads / gutters
+            <span id="histGoldAllCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="prospectivity" />
+            Experimental gold pathway corridors
+            <span id="potentialCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="legalGold" checked />
+            Clermont tenure-screened gold targets
+            <span id="legalGoldCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="recordDensity" checked />
+            Gold records density (green)
+            <span id="evidenceHeatCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="workingsDensity" />
+            Gold historical workings density
+            <span id="workingsHeatCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="occurrenceDensity" />
+            Gold mineral occurrence density
+            <span id="occurrenceHeatCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="prioritiesResearch" />
+            Experimental research-priority areas
+            <span id="prioritiesCount"></span></label
+          >
+          <p class="method gold-only-layer cei-layer-note">
+            <strong>Experimental research layers are off by default.</strong> They
+            preserve research history but are not validated prospectivity.
+          </p>
+          <p class="method gold-only-layer">
+            Density layers are optional. Turn one on to see where official
+            records cluster; individual markers stay readable with them off.
+          </p>
+          <p class="method gold-only-layer">
+            The main green layer follows official watercourses downstream from
+            records that explicitly mention a reef, lode, vein or quartz source.
+            It becomes stronger where evidence is stronger and is marked
+            “supported” when nearby alluvial records also match the corridor.
+          </p>
+          <div
+            class="priority-heat-key gold-only-layer"
+            aria-label="Modelled gold potential scale"
+          >
+            <strong>What the potential colours mean</strong>
+            <div class="priority-gradient" aria-hidden="true"></div>
+            <div class="priority-scale">
+              <span>Weaker model support</span
+              ><span>Stronger model support</span>
+            </div>
+            <p>
+              <strong>Deep green means stronger modelled likelihood, not a
+              guaranteed find.</strong> It does not show how much gold remains,
+              where a deposit ends, whether the land is public or whether you may
+              enter.
+            </p>
+            <p>
+              The separate known-record layer simply shows where official records
+              cluster. Turn it on to compare raw evidence with modelled pathways.
+            </p>
+            <p><a href="heatmap-method.html">How this heatmap is calculated →</a></p>
+          </div>
+        </section>
+        <section class="gem-evidence-section gem-records-section sidebar-layer-catalogue">
+          <h2>Gems ; Records</h2>
+          <label
+            ><input type="checkbox" data-layer="gemOccurrences" checked />
+            Authoritative gem occurrences <span id="gemOccurrenceCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="gemLocalities" />
+            Gemfield locality markers <span id="gemLocalityCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="gemFieldObservations" checked />
+            Confirmed field observations <span id="gemFieldObservationCount"></span></label
+          >
+          <p class="method">
+            Authoritative Queensland gem occurrences and localities by gem type. Separate from gold markers and gold density.
+          </p>
+        </section>
+        <section class="gem-evidence-section gem-historical-section sidebar-layer-catalogue">
+          <h2>Gems ; Historical evidence</h2>
+          <label
+            ><input type="checkbox" data-layer="historicalGemEvidence" checked />
+            Historical gem workings / wash / discoveries
+            <span id="histGemCount"></span></label
+          >
+          <p class="method">
+            Research-derived historical gem evidence with visible approximation styling. Text-only records remain search-only.
+          </p>
+        </section>
+        <section class="gem-evidence-section gem-density-section sidebar-layer-catalogue">
+          <h2>Gems ; Density</h2>
+          <label
+            ><input type="checkbox" data-layer="gemOccurrenceDensity" checked />
+            Sapphire / occurrence density (blue)
+            <span id="gemOccurrenceHeatCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="gemWorkingsDensity" checked />
+            Gem historical workings density (cyan)
+            <span id="gemWorkingsHeatCount"></span></label
+          >
+          <p class="method">
+            Optional gem-only heatmaps. Never blended with gold density layers. Turn off markers above if clusters obscure the pattern.
+          </p>
+        </section>
+        <section class="gem-evidence-section gem-ground-section sidebar-layer-catalogue">
+          <h2>Gems ; Ground</h2>
+          <label
+            ><input type="checkbox" data-layer="gemFossicking" />
+            Official fossicking boundaries <span id="gemFossickingCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="gemKnownWash" />
+            Known wash (official alluvial MINOCC) <span id="gemKnownWashCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="gemGeology" />
+            Surface geology subset (1:2M WMS)</label
+          >
+          <label id="gemWashDepthFilter" class="wash-depth-filter hidden"
+            >Max recorded wash depth
+            <input id="gemWashDepthMax" type="range" min="0" max="20" value="20" step="1" />
+            <output id="gemWashDepthValue">Any depth</output></label
+          >
+          <p class="method">
+            Fossicking boundaries, provenance-backed alluvial wash points and optional Queensland surface geology. No speculative wash polygons.
+          </p>
+        </section>
+        <section class="private-field-notes-section" aria-labelledby="research-private-field-notes-heading">
+          <h2 id="research-private-field-notes-heading">My Field Notes</h2>
+          <p class="method">Private on this device ; not uploaded or shared with other users.</p>
+          <label><input type="checkbox" id="showPrivateFieldNotes" /> Show My Field Notes layer</label>
+          <div class="pfn-sidebar-actions">
+            <button type="button" id="addPrivateFieldNote">Add Field Note</button>
+            <button type="button" id="addFieldNoteAtLocation">Add note at my location</button>
+            <button type="button" id="openPrivateFieldNotesList">View list</button>
+          </div>
+          <p id="fieldNotesStorageSidebar" class="method"></p>
+        </section>
+        <section class="private-field-validation-section" aria-labelledby="research-field-validation-heading">
+          <h2 id="research-field-validation-heading">My Validation Checks</h2>
+          <p class="method">Private research checkpoints ; not public. Disabled by default.</p>
+          <label><input type="checkbox" id="showFieldValidation" /> Show Field Validation layer (Glenalva)</label>
+          <label>Filter
+            <select id="fieldValidationFilter">
+              <option value="all">All</option>
+              <option value="unvisited">Unvisited</option>
+              <option value="visited">Visited</option>
+              <option value="very_high">Very High</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+            </select>
+          </label>
+          <div class="pfn-sidebar-actions">
+            <button type="button" id="nextValidationPoint">Next validation point</button>
+          </div>
+        </section>
+        <section class="sidebar-layer-catalogue">
+          <label
+            ><input type="checkbox" data-layer="allWatercourses" /> All official
+            mapped watercourses</label
+          >
+          <p class="method">
+            Optional Queensland Government layer. Major waterways appear first;
+            smaller creeks and gullies appear as you zoom in. The gold-potential
+            layer highlights only the mapped pathways connected to source
+            evidence.
+          </p>
+        </section>
+        <section class="sidebar-layer-catalogue">
+          <h2>Current resource tenure</h2>
+          <label
+            ><input type="checkbox" data-layer="grantedTenure" />
+            Granted permits, claims and leases
+            <span id="grantedCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="applicationTenure" />
+            Applications <span id="applicationCount"></span
+          ></label>
+          <p class="method">
+            Daily Queensland Government tenure service. Verify boundaries
+            officially.
+          </p>
+          <label
+            ><input type="checkbox" data-layer="fossickingLand" />
+            Declared fossicking land <span id="fossickingCount"></span></label
+          ><label
+            ><input type="checkbox" data-layer="constraints" />
+            Restricted/native-title indication <span id="constraintCount"></span
+          ></label
+          ><label
+            ><input type="checkbox" data-layer="protectedAreas" />
+            Protected areas and forests <span id="protectedCount"></span>
+          ></label>
+        </section>
+        <section class="statewide-filter-section" aria-labelledby="state-region-heading">
+          <h2 id="state-region-heading">Queensland region</h2>
+          <label for="stateRegionFilter"><span>State region</span>
+            <select id="stateRegionFilter">
+              <option value="">All Queensland (load on map move)</option>
+            </select></label>
+          <p class="method">
+            Regional authoritative subsets load on demand. Every Queensland region is visible in the selector so
+            empty areas remain explicit gaps to target next.
+          </p>
+        </section>
+        <section>
+          <h2>Commodity filter</h2>
+          <div id="commodityFilters" class="chips"></div>
+        </section>
+        <section class="sidebar-layer-catalogue">
+          <h2>Historical map overlay</h2>
+          <label
+            ><input type="checkbox" data-layer="historicalMaps" /> Mount Larcom
+            1:2500 map (1983)</label
+          ><label
+            ><input type="checkbox" data-layer="historicalMapExtents" /> Historical map coverage footprints
+            <span id="historicalMapExtentCount"></span></label
+          ><label class="opacity-control"
+            >Overlay opacity <output>58%</output
+            ><input
+              id="historicalOpacity"
+              type="range"
+              min="0"
+              max="1"
+              value="0.58"
+              step="0.02"
+              oninput="
+                this.previousElementSibling.value =
+                  Math.round(this.value * 100) + '%'
+              "
+          /></label>
+          <p class="overlay-note">
+            Grid-controlled research overlay. Historical, not current cadastral
+            information.
+          </p>
+          <p class="overlay-note"><strong>One positioned overlay; other Queensland areas are under review.</strong><br><a href="historical-overlays.html">Open the historical map register →</a></p>
+        </section>
+        <section>
+          <h2>Deep research</h2>
+          <p>
+            <a href="gold-occurrences.html">Browse all 1,319 gold records →</a
+            ><br /><a href="old-diggings.html">Open old diggings register and workings types →</a
+            ><br /><a href="old-diggings-map.html">Field Map with old diggings →</a
+            ><br /><a href="unified-search.html">Search maps and reports →</a
+            ><br /><a href="historical-overlays.html"
+              >Historical overlay register →</a
+            >
+            <br /><a href="historical-record.html">Historical evidence dossiers →</a>
+          </p>
+          <p>
+            <a href="maps-library.html">Maps library and preserved PDFs →</a>
+          </p>
+        </section>
+        <section class="assessment">
+          <h2>Can I fossick here?</h2>
+          <label class="assessment-toggle"
+            ><input id="assessmentMode" type="checkbox" /> Enable assessment
+            mode</label
+          >
+          <p>
+            Zoom in and click the exact proposed location. This checks the
+            public parcel and resource-tenure services.
+          </p>
+        </section>
+        <section class="method">
+          <h2>Research priority method</h2>
+          <p>Evidence-ranked hypotheses, not discoveries or access advice.</p>
+          <button type="button" class="gold-flow-research-trigger" data-gold-flow-research>Explore source-to-drainage evidence</button>
+          <button id="fit">Reset map view</button>
+        </section>
+        <p id="mapStatus" class="status">Loading official records…</p>
+      </aside>
+      <div id="map"></div>
+      <aside id="researchDataMapPanel" class="research-map-panel is-collapsed" aria-label="Statewide research evidence">
+        <button id="researchMapToggle" class="research-map-toggle" type="button" aria-expanded="false" aria-controls="researchMapBody">
+          <span>Research evidence</span><span aria-hidden="true">+</span>
+        </button>
+        <div id="researchMapBody" class="research-map-body" hidden>
+          <p class="research-map-intro"><strong>Documented evidence and geological context.</strong> These layers do not establish legal access, permission or remaining gold or gems.</p>
+          <fieldset>
+            <legend>Historical evidence density</legend>
+            <div id="researchContextOptions" class="research-map-options"><small>Loading published layers...</small></div>
+          </fieldset>
+          <fieldset>
+            <legend>Official geophysical imagery</legend>
+            <div id="researchImageryOptions" class="research-map-options"><small>Loading published layers...</small></div>
+            <label class="research-opacity" for="researchLayerOpacity">Opacity <input id="researchLayerOpacity" type="range" min="10" max="100" value="65"></label>
+          </fieldset>
+          <fieldset class="research-nearby-controls">
+            <legend>Documented map records</legend>
+            <label><input id="researchViewportRecords" type="checkbox"><span>Show representative records in this view<small>Loads compact, provenance-linked records only when zoomed in. Text-only evidence is not given invented coordinates.</small></span></label>
+            <p id="researchViewportSummary" class="research-viewport-summary"></p>
+            <label><input id="historicalLocalitiesToggle" type="checkbox"><span>Show archival gold localities<small>4,385 verified historical gold, reef, lode, vein, working and alluvial points across Queensland. Loads only for the current map view.</small></span></label>
+            <p id="historicalLocalitiesSummary" class="research-viewport-summary"></p>
+          </fieldset>
+          <div id="researchLayerGuide" class="research-layer-guide" hidden></div>
+          <div id="researchEvidenceDetails" class="research-evidence-details" hidden></div>
+          <p id="researchMapStatus" class="research-map-status">Loading the statewide research catalogue...</p>
+          <a class="research-explorer-link" href="maps-library.html">Browse sources and downloads</a>
+        </div>
+      </aside>
+      <div class="map-floating-controls" aria-label="Map controls">
+        <button id="mapLayersToggle" type="button" data-map-quick="layers" aria-expanded="false" aria-controls="mapLayersPanel" aria-label="Choose visible map layers">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4-8 4-8-4 8-4Zm-8 9 8 4 8-4M4 17l8 4 8-4"/></svg><span>Layers</span>
+        </button>
+        <button id="mapBasemapToggle" type="button" aria-label="Switch to satellite background">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15"/></svg><span>Satellite</span>
+        </button>
+        <button id="mapLocateFloating" type="button" data-map-quick="find" aria-label="Show my location">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/></svg><span>Locate</span>
+        </button>
+      </div>
+      <aside id="mapLayersPanel" class="map-layers-panel" aria-hidden="true" aria-label="Visible map layers">
+        <div class="map-layers-head"><div><small>Map display</small><strong>Choose layers by task</strong></div><button id="closeMapLayers" type="button" aria-label="Close map layers">x</button></div>
+        <p>Start with the task that brought you here. Every specialist layer remains available below.</p>
+        <div id="mapLayerChoices" class="map-layer-choices"></div>
+      </aside>
+      <div class="field-map-controls" aria-label="Mobile field map controls">
+        <button id="fieldModeToggle" type="button" aria-pressed="false">Full screen</button>
+        <button id="fieldLocate" type="button">Locate me</button>
+        <button id="fieldToolsToggle" type="button" aria-expanded="false" aria-controls="fieldTools">Tools</button>
+      </div>
+      <aside id="fieldTools" class="field-tools" aria-hidden="true" aria-label="Field map tools">
+        <div class="field-sheet-handle" aria-hidden="true"></div>
+        <div class="field-sheet-head"><div><strong>Field tools</strong><small id="fieldOnlineStatus">Checking connection…</small></div><button id="closeFieldTools" type="button" aria-label="Close field tools">×</button></div>
+        <div class="field-tool-grid">
+          <section>
+            <h2>Background</h2>
+            <div class="basemap-switch" role="group" aria-label="Field map background">
+              <button type="button" data-basemap="map" class="active" aria-pressed="true">Map</button>
+              <button type="button" data-basemap="satellite" aria-pressed="false">Satellite</button>
+            </div>
+          </section>
+          <section class="field-layer-section">
+            <h2>Map layers</h2>
+            <p class="method">Start with gold, gems, access or advanced research, then turn individual markings on or off.</p>
+            <div id="fieldLayerChoices" class="field-layer-choices"></div>
+          </section>
+          <section>
+            <h2>Your position</h2>
+            <p id="fieldCoordinates">Tap “Locate me” to show coordinates, accuracy and nearby records.</p>
+            <button id="fieldLocateSheet" type="button">Update location</button>
+            <button id="copyCoordinates" type="button" disabled>Copy coordinates</button>
+          </section>
+          <section>
+            <h2>Nearby records</h2>
+            <div class="nearby-ranges" role="group" aria-label="Nearby search distance">
+              <button type="button" data-nearby="1">1 km</button><button type="button" data-nearby="5">5 km</button><button type="button" data-nearby="10">10 km</button>
+            </div>
+            <div id="nearbyFieldResults"><small>Location is required for nearby results.</small></div>
+          </section>
+          <section>
+            <h2>Private field notes</h2>
+            <p class="method">Private on this device.</p>
+            <div class="pfn-field-tool-actions">
+              <button type="button" id="addPrivateFieldNoteMobile">Add Field Note</button>
+              <button type="button" id="addFieldNoteAtLocationMobile">Add note at my location</button>
+              <button type="button" id="openPrivateFieldNotesListMobile">My Field Notes</button>
+            </div>
+          </section>
+          <details>
+            <summary>Legend</summary>
+            <div class="field-legend">
+              <p><i class="legend-dot gold"></i><strong>Gold record</strong> ; an official occurrence or working, not proof that gold remains.</p>
+              <p><i class="legend-line potential"></i><strong>Green corridor</strong> ; modelled potential following mapped drainage.</p>
+              <p><i class="legend-line tenure"></i><strong>Tenure boundary</strong> ; verify authority and access before entering.</p>
+              <p><strong>Clusters</strong> combine nearby records; tap one to zoom in.</p>
+            </div>
+          </details>
+          <details>
+            <summary>Safety, access and offline use</summary>
+            <div class="field-help"><p><strong>A nearby record is not permission.</strong> Confirm land parcel, occupier, resource tenure, exclusions and every required consent.</p><p>Call <a href="tel:000">000</a> in an emergency. Copy your coordinates before calling if safe to do so. Satellite imagery and live government layers may disappear without reception.</p><p><a href="access.html">Access and licences</a> · <a href="starter-packs.html">Free regional packs</a></p></div>
+          </details>
+        </div>
+      </aside>
+      <aside id="detail" class="detail">
+        <button id="closeDetail" aria-label="Close">×</button>
+        <p class="eyebrow dark">Select a marker</p>
+        <h2>Site dossier</h2>
+        <p>
+          Click a point, tenure polygon or enable assessment mode and click the
+          proposed location.
+        </p>
+      </aside>
+    </main>
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
+    <script src="assets/vendor/leaflet/leaflet.markercluster.js"></script>
+    <script src="assets/vendor/leaflet/leaflet-heat.js"></script>
+    <script src="research-utils.js?v=20260818e"></script>
+    <script src="statewide-data.js?v=20260817h"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js?v=20260818d"></script>
+    <script src="field-notes-store.js?v=20260818d"></script>
+    <script src="field-notes-exif.js?v=20260818d"></script>
+    <script src="field-notes-sync.js?v=20260818d"></script>
+    <script src="field-notes-supabase.js?v=20260818d"></script>
+    <script src="field-notes-ui.js?v=20260818g"></script>
+    <script src="field-validation-layer.js?v=20260818d"></script>
+    <script src="evidence-intelligence.js?v=20260818a"></script>
+    <script src="evidence-intelligence-ui.js?v=20260818a"></script>
+    <script src="map-layer-guidance.js?v=20260825a"></script>
+    <script src="map-20260814.js?v=20260826a"></script>
+    <script src="research-data-map.js?v=20260823a"></script>
+    <script src="historical-localities-map.js?v=20260824a"></script>
+    <!-- map bundle 20260817i -->
+    <script src="retention.js?v=20260823e"></script>
+    <script defer src="analytics.js?v=20260821a"></script>
+  </body>
+</html>
+

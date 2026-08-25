@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>
+      Queensland Old Diggings & Gold Evidence Explorer - CQDiggings
+    </title>
+    <meta
+      name="description"
+      content="Explore documented Queensland gold workings and occurrences statewide, with extra detail for researched Central Queensland districts, working type, location accuracy and source provenance."
+    />
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="assets/vendor/leaflet/MarkerCluster.css" />
+    <link
+      rel="stylesheet"
+      href="assets/vendor/leaflet/MarkerCluster.Default.css"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260825dense2" />
+    <link rel="stylesheet" href="brand.css" />
+    <link rel="stylesheet" href="mobile.css" />
+    <link rel="stylesheet" href="old-diggings-map.css?v=20260817i" />
+    <link rel="stylesheet" href="map-enhancements.css?v=20260817h" />
+    <link rel="stylesheet" href="evidence-drawer.css?v=20260823a" />
+    <link rel="stylesheet" href="regional-scope.css?v=20260815a" />
+    <link rel="stylesheet" href="field-notes.css?v=20260823d" />
+    <link rel="stylesheet" href="evidence-intelligence.css?v=20260820g" />
+    <link rel="icon" href="assets/cqdiggings-favicon.png" />
+  <link rel="stylesheet" href="retention.css?v=20260823e"><link rel="manifest" href="manifest.webmanifest?v=20260825home"></head>
+  <body class="diggings-explorer-page">
+    <header class="topbar">
+      <a class="brand" href="index.html"
+        ><img
+          class="brandmark brand-logo"
+          src="assets/cqdiggings-logo.png"
+          alt=""
+        /><span
+          >CQDiggings<small>Old Diggings & Gold Evidence Explorer</small></span
+        ></a
+      >
+      <button class="menu" aria-label="Open navigation">Menu</button>
+      <nav data-research-nav></nav>
+    </header>
+    <script src="site-nav.js?v=20260825ux3"></script>
+    <main class="explorer-shell">
+      <aside class="explorer-controls">
+        <button
+          type="button"
+          id="closeMobileFilters"
+          class="mobile-filter-close"
+          aria-label="Close filters"
+        >
+          ×
+        </button>
+        <p class="eyebrow dark">Queensland field map</p>
+        <h1>See what was recorded - and how precisely.</h1>
+        <p>
+          Explore documented gold workings, gem records and occurrences across
+          Queensland, with additional historical detail where research is available.
+        </p>
+        <div class="warning">
+          <strong>Not an access map.</strong><br />A marker or shaded area does
+          not establish gold, gems, safety, ownership or permission.
+        </div>
+        <section class="commodity-group-section" aria-labelledby="field-commodity-heading">
+          <h2 id="field-commodity-heading">Show</h2>
+          <div class="commodity-group-switch map-preset-buttons" role="group" aria-label="Commodity group">
+            <button type="button" data-commodity-group="ALL" class="active" aria-pressed="true">All</button>
+            <button type="button" data-commodity-group="GOLD" aria-pressed="false">Gold</button>
+            <button type="button" data-commodity-group="GEMS" aria-pressed="false">Gems</button>
+          </div>
+          <p class="method">Gold mode keeps the historical workings explorer. Gems mode shows official fossicking boundaries and authoritative gem records only.</p>
+        </section>
+        <section class="gem-type-filter-section" id="gemTypeFilterSection" hidden>
+          <h2>Gem type</h2>
+          <label>Gem type
+            <select id="gemTypeFilter">
+              <option value="all_gems">All Gems</option>
+            </select>
+          </label>
+        </section>
+        <section class="gem-field-section">
+          <label><input type="checkbox" data-gem-layer="fossicking" checked /> Official fossicking boundaries</label>
+          <label><input type="checkbox" data-gem-layer="markers" checked /> Authoritative gem records</label>
+          <label><input type="checkbox" data-gem-layer="fieldObservations" checked /> Confirmed field observations</label>
+          <label><input type="checkbox" data-gem-layer="knownWash" checked /> Known wash (official alluvial)</label>
+          <label><input type="checkbox" data-gem-layer="density" /> Gem occurrence density (blue)</label>
+          <p class="method">Gem density is separate from gold evidence density and never blended.</p>
+        </section>
+        <label class="search-label" for="stateRegionFilter">Queensland region</label
+        ><select id="stateRegionFilter">
+          <option value="">All Queensland</option></select
+        ><label class="search-label" for="regionFilter">Detailed CQ district (optional)</label
+        ><select id="regionFilter">
+          <option value="all">All CQ districts</option></select
+        ><label class="search-label" for="diggingsSearch"
+          >Mine, gully, locality or site number</label
+        ><input
+          id="diggingsSearch"
+          type="search"
+          placeholder="Try Clermont, Dee River, Crocodile or 487849"
+        />
+        <div id="diggingsSearchResults" class="search-results"></div>
+        <section class="nearby-tool">
+          <h2>Old diggings near me</h2>
+          <p>
+            Use your phone's GPS to compare your position with official
+            historical records.
+          </p>
+          <button id="locateDiggings" type="button">
+            Use my current location
+          </button>
+          <div class="nearby-ranges" aria-label="Nearby search distance">
+            <button type="button" data-nearby-km="1" disabled>
+              Within 1 km</button
+            ><button type="button" data-nearby-km="5" disabled>
+              Within 5 km</button
+            ><button type="button" data-nearby-km="10" disabled>
+              Within 10 km</button
+            ><button type="button" data-nearby-km="25" disabled>
+              Within 25 km
+            </button>
+          </div>
+          <p id="nearbyStatus" class="method">
+            Location has not been requested.
+          </p>
+          <div id="nearbyResults" class="nearby-results"></div>
+          <details class="saved-tool">
+            <summary>Saved records on this device</summary>
+            <div id="savedRecords" class="nearby-results">
+              <p class="empty-nearby">No records saved.</p>
+            </div>
+          </details>
+          <p class="method">
+            Select a result to draw a direction line and optionally open road
+            directions. Your GPS remains in this browser. Neither the line nor
+            road directions establish a legal or safe access route.
+          </p>
+        </section>
+        <section class="private-field-notes-section" aria-labelledby="private-field-notes-heading">
+          <h2 id="private-field-notes-heading">My Field Notes</h2>
+          <p class="method">Private on this device, not uploaded or shared with other users.</p>
+          <label><input type="checkbox" id="showPrivateFieldNotes" checked /> Show My Field Notes layer</label>
+          <div class="pfn-sidebar-actions">
+            <button type="button" id="addPrivateFieldNote">Add Field Note</button>
+            <button type="button" id="addFieldNoteAtLocation">Add note at my location</button>
+            <button type="button" id="openPrivateFieldNotesList">View list</button>
+          </div>
+          <p id="fieldNotesStorageSidebar" class="method"></p>
+        </section>
+        <section class="private-field-validation-section" aria-labelledby="field-validation-heading">
+          <h2 id="field-validation-heading">My Validation Checks</h2>
+          <p class="method">Private research checkpoints are not public. Disabled by default.</p>
+          <label><input type="checkbox" id="showFieldValidation" /> Show Field Validation layer (Glenalva)</label>
+          <label>Filter
+            <select id="fieldValidationFilter">
+              <option value="all">All</option>
+              <option value="unvisited">Unvisited</option>
+              <option value="visited">Visited</option>
+              <option value="very_high">Very High</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+            </select>
+          </label>
+          <div class="pfn-sidebar-actions">
+            <button type="button" id="nextValidationPoint">Next validation point</button>
+          </div>
+        </section>
+        <section>
+          <h2>Evidence type</h2>
+          <label
+            ><input type="checkbox" data-type="hard-rock" checked /> Reef /
+            hard-rock working <span id="hardRockCount"></span></label
+          ><label
+            ><input type="checkbox" data-type="alluvial" checked /> Alluvial /
+            detrital working <span id="alluvialCount"></span></label
+          ><label
+            ><input type="checkbox" data-type="surface" checked /> Surface
+            prospect / outcrop <span id="surfaceCount"></span></label
+          ><label
+            ><input type="checkbox" data-type="occurrence" checked /> Mineral
+            occurrence only <span id="occurrenceOnlyCount"></span
+          ></label>
+        </section>
+        <section>
+          <h2>Beginner access</h2>
+          <label
+            ><input id="showBeginnerAccess" type="checkbox" checked /> Verified
+            gold fossicking GPAs <span id="beginnerAccessCount"></span></label
+          ><label
+            ><input id="showAccessExclusions" type="checkbox" checked />
+            Declared no-go areas <span id="accessExclusionCount"></span></label
+          ><label
+            ><input id="showPermissionParcels" type="checkbox" /> Private /
+            leased parcels <span id="permissionParcelCount"></span
+          ></label>
+          <p class="method">
+            Green: GPA conditions apply. Red: declared off-limits. Amber:
+            written permission required. Parcel shading loads from zoom level
+            13. An unshaded parcel, river or beach is not proof of access.
+          </p>
+          <p>
+            <a href="beginner-access.html">Read the beginner-access guide →</a>
+          </p>
+        </section>
+        <section>
+          <h2>Map interpretation</h2>
+          <label
+            ><input id="showAccuracy" type="checkbox" checked />
+            Location-accuracy halos</label
+          ><label
+            ><input id="showDensity" type="checkbox" /> Historical evidence
+            density</label
+          ><label
+            ><input id="showStudyAreas" type="checkbox" /> Broad research study
+            areas</label
+          >
+          <label><input id="showClermontLegalGold" type="checkbox" checked /> Clermont tenure-screened gold targets</label>
+          <p class="method">
+            Density shows where records cluster. It is not a prediction of
+            undiscovered gold.
+          </p>
+        </section>
+        <section>
+          <h2>Record quality</h2>
+          <label
+            ><input id="conditionNotesOnly" type="checkbox" /> Only records with
+            working-condition notes</label
+          ><label
+            ><input id="reportMatchesOnly" type="checkbox" /> Only records
+            linked to preserved reports</label
+          >
+        </section>
+        <section>
+          <h2>Record-to-map cross-links</h2>
+          <p>
+            <a href="map.html?commodity=Gold&mode=research"
+              >Open research map with matching gold layers →</a
+            ><br /><a href="gold-occurrences.html">Browse all gold records →</a
+            ><br /><a href="maps-library.html">Open maps library →</a
+            ><br /><a href="unified-search.html">Search records, maps and reports →</a
+            ><br /><a href="historical-overlays.html">Historical map overlays →</a>
+          </p>
+        </section>
+        <section class="explorer-legend">
+          <h2>Symbols</h2>
+          <div><i class="symbol hard-rock"></i> Reef / hard-rock</div>
+          <div><i class="symbol alluvial"></i> Alluvial / detrital</div>
+          <div><i class="symbol surface"></i> Surface evidence</div>
+          <div><i class="symbol occurrence"></i> Occurrence only</div>
+          <div><i class="halo-key"></i> Stated uncertainty</div>
+        </section>
+        <div class="actions">
+          <button id="resetDiggings" type="button">Reset view</button
+          ><button id="exportDiggings" type="button">Export visible CSV</button>
+        </div>
+        <p id="diggingsStatus" class="status">
+          Loading the curated register...
+        </p>
+      </aside>
+      <div
+        id="diggingsMap"
+        aria-label="Interactive map of documented old gold workings"
+      ></div>
+      <div class="mobile-map-tools" aria-label="Mobile map controls">
+        <button id="mobileFilters" type="button">Filters</button>
+        <button id="mobileNearby" type="button">Diggings near me</button>
+      </div>
+      <aside id="diggingsDetail" class="explorer-detail" aria-live="polite">
+        <button id="closeDiggingsDetail" aria-label="Close">x</button>
+        <p class="eyebrow dark">Evidence dossier</p>
+        <h2>Select a record</h2>
+        <p>
+          Click a symbol to see its source description, positional accuracy,
+          working extent, report matches and permanent CQDiggings record.
+        </p>
+      </aside>
+    </main>
+    <section class="explorer-explainer">
+      <div>
+        <p class="eyebrow dark">How to use it</p>
+        <h2>Follow evidence, not a promising-looking dot.</h2>
+      </div>
+      <ol>
+        <li>Filter to the evidence relevant to your method.</li>
+        <li>
+          Turn on uncertainty halos before comparing old workings with modern
+          terrain.
+        </li>
+        <li>Open the permanent record and linked reports.</li>
+        <li>
+          Use modern geology and drainage to form a testable source-to-trap
+          hypothesis.
+        </li>
+        <li>Check exact-ground access separately before any field visit.</li>
+      </ol>
+      <div class="warning">
+        <strong>Research-next areas are deliberately broad.</strong> They
+        identify documentary and sampling questions. They are not secret spots,
+        discovery predictions or permission to fossick.
+      </div>
+    </section>
+    <section class="section" data-coverage-ledger="Old Diggings Map,Gold and gem register,Legacy Gladstone pages"></section>
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
+    <script src="assets/vendor/leaflet/leaflet.markercluster.js"></script>
+    <script src="assets/vendor/leaflet/leaflet-heat.js"></script>
+    <script src="research-utils.js?v=20260817h"></script>
+    <script src="statewide-data.js?v=20260817h"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js?v=20260818d"></script>
+    <script src="field-notes-store.js?v=20260818d"></script>
+    <script src="field-notes-exif.js?v=20260818d"></script>
+    <script src="field-notes-sync.js?v=20260818d"></script>
+    <script src="field-notes-supabase.js?v=20260818d"></script>
+    <script src="field-notes-ui.js?v=20260820g"></script>
+    <script src="field-validation-layer.js?v=20260818d"></script>
+    <script src="evidence-intelligence.js?v=20260820g"></script>
+    <script src="evidence-intelligence-ui.js?v=20260820g"></script>
+    <script src="field-map-viewport.js?v=20260821a"></script>
+    <script src="old-diggings-map-regional.js?v=20260826a"></script>
+    <script src="coverage-ledger.js?v=20260825a"></script>
+    <script src="retention.js?v=20260823e"></script><script defer src="analytics.js?v=20260821b"></script>
+  </body>
+</html>
+

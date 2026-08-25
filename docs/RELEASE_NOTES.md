@@ -5,6 +5,23 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CQDiggings Clermont gold investigation release (INF-001 / OPS-001 / OPS-002)
+
+- Packaged the exact reviewed CQDiggings commit
+  `d3f4f5ea76c00ecea5ce6159abe1fa79e8ece3a0` as a read-only production
+  overlay, including the complete twenty-pass investigation dossier, 8,666
+  Queensland gold occurrence records, 757 historical gold-source features, 433
+  historical alluvial-evidence features, 193 production and assay records, 41
+  occurrence-to-report matches, 24 target and exclusion polygons, 150 drainage
+  features, 15 field-validation points and both map integrations.
+- The overlay uses the existing protected GitHub production environment,
+  checksummed immutable Assist release and root-owned release command. It does
+  not alter CQDiggings analytics, moderation records, uploaded images or other
+  shared runtime data.
+- Rollback restores the preceding Assist release and Compose file, removing the
+  overlay mounts while retaining the prior CQDiggings base release.
+
+
 ### VanAssist provider taxonomy bridge
 
 - Every LocalTorque category shared with VanAssist now links to the canonical
