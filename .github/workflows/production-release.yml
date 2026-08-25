@@ -84,6 +84,24 @@ jobs:
             echo "Install the reviewed command as root before retrying this release."
             exit 1
           fi
+          # Docker Compose can leave a stopped Caddy container holding the canonical
+          # name when a forced recreate is interrupted. Remove only that exact,
+          # stopped container after verifying its Compose project and service labels.
+          ssh "$VPS_USER@$VPS_HOST" 'sudo bash -se' <<'RECOVER_CADDY'
+          stale_id="$(docker ps -aq --filter 'name=^/assist-platform-caddy-1$')"
+          if [[ -n "$stale_id" ]]; then
+            project="$(docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$stale_id")"
+            service="$(docker inspect --format '{{ index .Config.Labels "com.docker.compose.service" }}' "$stale_id")"
+            running="$(docker inspect --format '{{ .State.Running }}' "$stale_id")"
+            if [[ "$project" != "assist-platform" || "$service" != "caddy" ]]; then
+              echo "Refusing to remove unexpected container occupying assist-platform-caddy-1." >&2
+              exit 1
+            fi
+            if [[ "$running" == "false" ]]; then
+              docker rm "$stale_id"
+            fi
+          fi
+          RECOVER_CADDY
           scp "assist-platform-${GITHUB_SHA}.tar.gz" "assist-platform-${GITHUB_SHA}.sha256" "$VPS_USER@$VPS_HOST:/opt/assist-platform/incoming/"
           ssh "$VPS_USER@$VPS_HOST" \
             "cd /opt/assist-platform/incoming && sha256sum -c assist-platform-${GITHUB_SHA}.sha256 && sudo /usr/local/sbin/assist-platform-release /opt/assist-platform/incoming/assist-platform-${GITHUB_SHA}.tar.gz ${GITHUB_SHA}"
