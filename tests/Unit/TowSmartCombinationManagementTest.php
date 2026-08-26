@@ -15,6 +15,8 @@ final class TowSmartCombinationManagementTest extends TestCase
         self::assertStringContainsString("'middleware' => ['headers', 'csrf', 'auth']", $routes);
         self::assertStringContainsString("/towing-combinations/{id}'", $routes);
         self::assertStringContainsString("/towing-combinations/{id}/remove'", $routes);
+        self::assertStringContainsString("/towing-combinations/compare'", $routes);
+        self::assertStringContainsString("/towing-combinations/{id}/edit'", $routes);
     }
 
     public function testReadAndDeleteRequireUserAndBrandOwnership(): void
@@ -23,8 +25,24 @@ final class TowSmartCombinationManagementTest extends TestCase
 
         self::assertStringContainsString('WHERE id = ? AND user_id = ? AND brand_id = ?', $controller);
         self::assertStringContainsString('DELETE FROM towing_combinations WHERE id = ? AND user_id = ? AND brand_id = ?', $controller);
+        self::assertStringContainsString('UPDATE towing_combinations SET label = ?', $controller);
+        self::assertStringContainsString('WHERE user_id = ? AND brand_id = ? AND id IN (', $controller);
         self::assertStringContainsString("current_brand()->databaseId()", $controller);
         self::assertStringContainsString("current_user()['id']", $controller);
+    }
+
+    public function testEditCompareAndPrintableReportPreserveSafetyBoundary(): void
+    {
+        $calculator = $this->source('app/Views/towsmart/calculator.php');
+        $comparison = $this->source('app/Views/towsmart/compare.php');
+        $report = $this->source('app/Views/towsmart/combination.php');
+
+        self::assertStringContainsString('Recalculate and save', $calculator);
+        self::assertStringContainsString("\$field('trailer_type', 'Caravan')", $calculator);
+        self::assertStringContainsString("\$field('tank_' . \$tank . '_position', 'middle')", $calculator);
+        self::assertStringContainsString('Only the first three selected combinations', $comparison);
+        self::assertStringContainsString('is not certification', $comparison);
+        self::assertStringContainsString('Print or save PDF', $report);
     }
 
     public function testSavedReportIsPrivateAndRetainsGuidanceBoundary(): void

@@ -5,6 +5,26 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Product-brand completion programme (CORE-003 / CORE-012 / EXP-004 / EXP-005 / TOW-002 / TRL-001)
+
+- Add owner-and-brand-scoped TowSmart edit/recalculate, three-way comparison
+  and print/PDF report journeys without weakening the guidance/not-certification
+  boundary.
+- Add deterministic TowSmart and TrailerWise Ask intent matrices with visible
+  routing provenance, safe clarification and no unrelated-provider fallback.
+  The shared paid-AI path remains gated and is not required for these routes.
+- Add direct TrailerWise repair, mobile, parts, inspection/certifier,
+  manufacturer/dealer and fabrication/engineering journeys. Keep the
+  marketplace secondary and give its empty state a service-directory route.
+- Bind provider claim tokens to their issuing brand and filter Admin API invite
+  review by selected brand. Expire ambiguous unused legacy links, retain their
+  audit rows and require correctly scoped replacement invitations.
+- Record a rendered 360 px production baseline for home, provider directory,
+  TowSmart calculator and TrailerWise marketplace: one H1/main landmark,
+  labelled controls, no horizontal overflow and no sub-24 px interactive
+  targets on the audited pages. Manual screen-reader sign-off remains a release
+  gate.
+
 ### Product-brand homepage discovery (EXP-005 / TRL-001)
 
 - Add one shared service/location finder to the TowSmart and TrailerWise
@@ -19,7 +39,7 @@ may remain as dated files and are linked here rather than copied.
 - Allow users to remove their own saved snapshots through a CSRF-protected
   account action without exposing whether another user's record exists.
 - Keep reports private from indexing and repeat the guidance/not-certification
-  boundary; edit and side-by-side comparison remain planned.
+  boundary.
 - Publish factual Organisation and WebSite structured data from the shared
   trusted Brand configuration on every public brand homepage.
 

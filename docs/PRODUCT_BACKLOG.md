@@ -42,7 +42,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
 | VAN-011 | AI-assisted natural-language search (intent → location/category) | done | Ask VanAssist `/ask` alongside structured search; flag off by default; CORE-012 |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
-| TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
+| TOW-002 | Rich saved combination edit/compare/report workflow | done | Owner/brand isolation, recalculated snapshots, three-way comparison, private printable report and safety-boundary tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
 | TRL-002 | Trailer ownership and compliance content system | done | Shared Garage, trailer source/jurisdiction guide, freshness alerts and specialist handoff pass |
 | LOC-001 | Retire LocalTorque and transfer useful provider data to VanAssist | done | Runtime, routes and assets removed; canonical providers retained through VanAssist-owned pack |

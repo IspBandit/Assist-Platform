@@ -42,6 +42,7 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
                     <?php foreach ($headerBrand->navigation() as $link): ?>
                         <li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li>
                     <?php endforeach; ?>
+                    <?php if (AiSearchFeature::enabled()): ?><li><a href="<?= e(url('ask')) ?>">Ask TowSmart</a></li><?php endif; ?>
                     <?php if (auth()->check()): ?>
                         <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
                     <?php else: ?>
@@ -52,6 +53,7 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
                     <?php foreach ($headerBrand->navigation() as $link): ?>
                         <li><a href="<?= e(url(ltrim($link['path'], '/'))) ?>"><?= $this->e($link['label']) ?></a></li>
                     <?php endforeach; ?>
+                    <?php if (AiSearchFeature::enabled()): ?><li><a href="<?= e(url('ask')) ?>">Ask TrailerWise</a></li><?php endif; ?>
                     <?php if (auth()->check()): ?>
                         <li class="nav-auth"><a href="<?= e(url('account')) ?>">My account</a></li>
                     <?php else: ?>

@@ -167,6 +167,78 @@ final class TowSmartController extends Controller
         ]);
     }
 
+    public function editCombination(Request $request): Response
+    {
+        $this->requireBrand();
+        $item = $this->ownedCombination($request);
+
+        return $this->view('towsmart.calculator', [
+            'title' => 'Edit ' . (string) $item['label'],
+            'canonical' => current_brand()->url() . '/account/towing-combinations/' . (int) $item['id'] . '/edit',
+            'values' => $this->decodeSnapshot((string) $item['input_snapshot']),
+            'result' => $this->decodeSnapshot((string) $item['result_snapshot']),
+            'errors' => Session::errors(),
+            'catalogueCounts' => TowSmartCatalog::counts(),
+            'editingCombination' => $item,
+            'metaRobots' => 'noindex,nofollow',
+        ]);
+    }
+
+    public function updateCombination(Request $request): Response
+    {
+        $this->requireBrand();
+        $item = $this->ownedCombination($request);
+        $values = $request->only(self::FIELDS);
+        try {
+            $result = TowSmartCalculator::calculate($values);
+        } catch (InvalidArgumentException $e) {
+            Session::flashErrors(['calculator' => $e->getMessage()]);
+            Session::flashInput($values);
+            return $this->redirect('/account/towing-combinations/' . (int) $item['id'] . '/edit');
+        }
+        $label = trim((string) $request->input('label', (string) $item['label']));
+        if ($label === '') {
+            $label = 'My towing combination';
+        }
+        Database::affecting(
+            'UPDATE towing_combinations SET label = ?, input_snapshot = ?, result_snapshot = ?, result_status = ?, updated_at = NOW() WHERE id = ? AND user_id = ? AND brand_id = ?',
+            [mb_substr($label, 0, 150), json_encode($values, JSON_THROW_ON_ERROR), json_encode($result, JSON_THROW_ON_ERROR), $result['status'], (int) $item['id'], (int) current_user()['id'], current_brand()->databaseId()]
+        );
+
+        return $this->redirectWith('/account/towing-combinations/' . (int) $item['id'], 'success', 'Saved combination updated with a new calculation snapshot.');
+    }
+
+    public function compareCombinations(Request $request): Response
+    {
+        $this->requireBrand();
+        $rawIds = $request->query('ids', []);
+        if (!is_array($rawIds)) {
+            $rawIds = explode(',', (string) $rawIds);
+        }
+        $ids = array_slice(array_values(array_unique(array_filter(array_map(
+            static fn (mixed $id): int => max(0, (int) $id),
+            $rawIds
+        )))), 0, 3);
+        $items = [];
+        if ($ids !== []) {
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $items = Database::select(
+                'SELECT id, label, result_status, input_snapshot, result_snapshot, created_at, updated_at FROM towing_combinations WHERE user_id = ? AND brand_id = ? AND id IN (' . $placeholders . ') ORDER BY created_at DESC',
+                array_merge([(int) current_user()['id'], current_brand()->databaseId()], $ids)
+            );
+        }
+
+        return $this->view('towsmart.compare', [
+            'title' => 'Compare saved towing combinations',
+            'items' => $items,
+            'available' => Database::select(
+                'SELECT id, label, result_status, created_at FROM towing_combinations WHERE user_id = ? AND brand_id = ? ORDER BY created_at DESC',
+                [(int) current_user()['id'], current_brand()->databaseId()]
+            ),
+            'metaRobots' => 'noindex,nofollow',
+        ]);
+    }
+
     public function removeCombination(Request $request): Response
     {
         $this->requireBrand();
