@@ -68,6 +68,7 @@ final class OperationalLaunchGateTest extends TestCase
     public function testCqDiggingsClermontReleaseOverlayIsCompleteAndReadOnly(): void
     {
         $compose = (string) file_get_contents(base_path('infrastructure/binarylane/docker-compose.yml'));
+        $caddy = (string) file_get_contents(base_path('infrastructure/binarylane/Caddyfile'));
         $overlay = base_path('infrastructure/cqdiggings-overlay');
         $release = (string) file_get_contents($overlay . '/RELEASE.md');
         $files = [
@@ -98,17 +99,18 @@ final class OperationalLaunchGateTest extends TestCase
         ];
 
         self::assertStringContainsString('d3f4f5ea76c00ecea5ce6159abe1fa79e8ece3a0', $release);
+        self::assertSame(1, substr_count(
+            $compose,
+            './current/infrastructure/cqdiggings-overlay:/srv/cqdiggings-overlay:ro'
+        ));
+        self::assertStringNotContainsString(
+            './current/infrastructure/cqdiggings-overlay/',
+            $compose
+        );
+        self::assertStringContainsString('root * /srv/cqdiggings-overlay', $caddy);
+        self::assertStringContainsString('@releaseOverlay path', $caddy);
         foreach ($files as $file) {
             self::assertFileExists($overlay . '/' . $file);
-            self::assertSame(
-                2,
-                substr_count(
-                    $compose,
-                    './current/infrastructure/cqdiggings-overlay/' . $file
-                    . ':/var/www/cqdiggings/' . $file . ':ro'
-                ),
-                $file . ' must be mounted read-only in Caddy and PHP.'
-            );
         }
 
         self::assertStringContainsString('cqdiggings-field-v55', (string) file_get_contents($overlay . '/service-worker.js'));
