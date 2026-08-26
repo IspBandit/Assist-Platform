@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CQDiggings overlay mount isolation
+
+- Mount the reviewed CQDiggings release overlay at its own read-only path and
+  route its static files through Caddy.
+- Avoid nested file mounts beneath the separate read-only CQDiggings release,
+  which prevented deployment when an overlay introduced a new filename.
+
 ### Retire LocalTorque and transfer provider coverage (LOC-001 / DATA-001 / OPS-001)
 
 - Removed the LocalTorque brand registry entry, public routes, views, imagery,
