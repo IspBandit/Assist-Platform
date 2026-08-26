@@ -55,8 +55,13 @@ Organisation/WebSite JSON-LD. TowSmart and TrailerWise should reuse the shared
 directory/location platform while keeping brand-specific intent; VanAssist
 stays and assistance must not be copied. The audited pages reported no desktop
 horizontal overflow and exposed main, navigation and footer landmarks. A
-reliable current 360 px capture was not obtained, so mobile, keyboard,
-screen-reader, menu, denied-location and error-state parity remain **not passed**.
+subsequent 360 px browser pass covered both homepages and directories plus the
+TowSmart calculator and TrailerWise marketplace. Every audited page had one H1
+and main landmark, labelled form controls, no horizontal overflow and no
+visible interactive target below 24 px. Both mobile menus opened and exposed a
+visible primary navigation with the shared three-pixel focus treatment. This is
+useful rendered evidence, but manual screen-reader, complete keyboard traversal,
+denied-location and injected error-state acceptance remain release conditions.
 
 ## Current parity
 
@@ -85,12 +90,12 @@ screen-reader, menu, denied-location and error-state parity remain **not passed*
 
 | Area | Gap | Required evidence or next action |
 | --- | --- | --- |
-| Ask / natural-language search | `Ask VanAssist` is intentionally VanAssist-only. TowSmart needs towing-calculation/safety intent design; TrailerWise needs brand-category and ownership-content intent coverage. | Add brand prompt matrices, provenance, zero-result and outcome tests under `CORE-012`; do not rename VanAssist copy and call it parity |
-| TowSmart calculations and data | Catalogue provenance is incomplete and formulas still require domain-expert review. Saved combinations lack edit/delete/compare/report. | Complete `TOW-001` and `TOW-002`; retain guidance/not-certification wording |
-| TrailerWise product depth | Representative manufacturer, dealer, repair, parts and certifier journeys need acceptance. Sales/hire remains secondary and partial. | Complete `TRL-001`; retain `TRL-002` shared Garage and regulatory boundaries |
+| Ask / natural-language search | Product-brand deterministic intent matrices, provenance, clarification and outcome routes are implemented behind the existing Assist-search flag. | Render and accept both brands after normal deployment; paid AI remains separately gated |
+| TowSmart calculations and data | Catalogue provenance and formulas still require domain-expert review. Saved combinations now support private detail/delete, edit/recalculate, comparison and print/PDF reporting. | Complete `TOW-001` domain review; retain guidance/not-certification wording |
+| TrailerWise product depth | Direct manufacturer/dealer, repair, mobile, parts, certifier and engineering journeys are implemented. Sales/hire remains secondary and partial. | Accept representative live providers and journeys under `TRL-001`; retain `TRL-002` shared Garage and regulatory boundaries |
 | Location and search UX | Directory location search, GPS town resolution and list fallback exist. Corrected `/find` lacks current two-brand rendered evidence. | Test 360 px, tablet, desktop, denied GPS, unknown location, empty results, map failure and keyboard-only use under `EXP-005`/`EXP-004` |
-| Accessibility | Shared semantics and focus styles exist, but current WCAG 2.2 AA sign-off is absent for all two-brand critical journeys. | Automated checks plus manual keyboard and screen-reader evidence under `EXP-004` |
-| Provider and claim operations | Shared claim/admin workflows exist. Production end-to-end claim acceptance and evidence-backed verification remain incomplete. | Complete `CORE-003` production acceptance and audit evidence |
+| Accessibility | The 360 px rendered baseline passes the checks described above, but current WCAG 2.2 AA sign-off is absent for all critical journeys. | Complete manual keyboard and screen-reader evidence under `EXP-004` |
+| Provider and claim operations | Shared claim/admin workflows now bind claim tokens and Admin API invite review to the selected brand. Production end-to-end acceptance and evidence-backed verification remain incomplete. | Complete `CORE-003` production acceptance and audit evidence |
 | Analytics | Events are brand scoped, but production collection, zero-result review and baselines are not signed off. | `DATA-004` dashboard evidence and privacy review |
 | SEO / bot readiness | Sitemap coverage is corrected in code. Search Console, structured-data and crawl evidence are not recorded for this head. | Deploy via `INF-002`, validate canonical/robots/sitemap/schema on every host, then record crawler evidence |
 | Configuration and deployment | Domains/mailboxes were previously verified. This change adds no migration, secret, integration or environment variable. | Normal immutable release, all-host smoke checks and rollback availability |

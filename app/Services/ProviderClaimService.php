@@ -55,9 +55,9 @@ final class ProviderClaimService
         $days = (int) config('security.provider_invite_expiry_days', 14);
 
         Database::query(
-            'INSERT INTO provider_claim_tokens (provider_id, email, token_hash, expires_at, created_by, created_at) '
-            . 'VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), ?, NOW())',
-            [$providerId, $email, hash('sha256', $token), $days, $adminId]
+            'INSERT INTO provider_claim_tokens (provider_id, brand_id, email, token_hash, expires_at, created_by, created_at) '
+            . 'VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), ?, NOW())',
+            [$providerId, current_brand()->databaseId(), $email, hash('sha256', $token), $days, $adminId]
         );
 
         $url = url('provider/claim/' . $token);
@@ -104,8 +104,8 @@ final class ProviderClaimService
             . 'FROM provider_claim_tokens t '
             . 'INNER JOIN providers p ON p.id = t.provider_id '
             . 'LEFT JOIN towns tw ON tw.id = p.base_town_id '
-            . 'WHERE t.token_hash = ? AND t.used_at IS NULL AND t.expires_at > NOW() AND p.is_unclaimed = 1 AND p.deleted_at IS NULL',
-            [hash('sha256', $token)]
+            . 'WHERE t.token_hash = ? AND t.brand_id = ? AND t.used_at IS NULL AND t.expires_at > NOW() AND p.is_unclaimed = 1 AND p.deleted_at IS NULL',
+            [hash('sha256', $token), current_brand()->databaseId()]
         );
         return $row ?: null;
     }
@@ -122,8 +122,8 @@ final class ProviderClaimService
             [$userId, $contactName, $providerId]
         );
         Database::query(
-            'UPDATE provider_claim_tokens SET used_at = NOW() WHERE id = ?',
-            [$tokenId]
+            'UPDATE provider_claim_tokens SET used_at = NOW() WHERE id = ? AND brand_id = ?',
+            [$tokenId, current_brand()->databaseId()]
         );
         User::assignRoleBySlug($userId, 'provider');
     }
@@ -284,7 +284,8 @@ final class ProviderClaimService
         if ($eligibleOnly) {
             $where[] = "p.email IS NOT NULL AND TRIM(p.email) != ''";
             $where[] = 'p.marketing_opt_in=1';
-            $where[] = 'NOT EXISTS (SELECT 1 FROM provider_claim_tokens pct WHERE pct.provider_id = p.id AND pct.used_at IS NULL AND pct.expires_at > NOW())';
+            $where[] = 'NOT EXISTS (SELECT 1 FROM provider_claim_tokens pct WHERE pct.provider_id = p.id AND pct.brand_id = ? AND pct.used_at IS NULL AND pct.expires_at > NOW())';
+            $params[] = current_brand()->databaseId();
         }
 
         return [' WHERE ' . implode(' AND ', $where), $params, $joins];

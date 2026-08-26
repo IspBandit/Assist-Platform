@@ -180,8 +180,8 @@ final class AdminApiClaimService
             return [];
         }
 
-        $where = ['1=1'];
-        $params = [];
+        $where = ['t.brand_id = ?'];
+        $params = [AdminApiBrandScope::brandId()];
 
         if ($status === 'pending' || $status === '') {
             $where[] = 't.used_at IS NULL AND t.expires_at > NOW()';
@@ -225,8 +225,8 @@ final class AdminApiClaimService
             'SELECT t.*, p.business_name, p.slug AS provider_slug '
             . 'FROM provider_claim_tokens t '
             . 'INNER JOIN providers p ON p.id = t.provider_id '
-            . 'WHERE t.id = ?',
-            [$id]
+            . 'WHERE t.id = ? AND t.brand_id = ?',
+            [$id, AdminApiBrandScope::brandId()]
         );
 
         if ($row === null) {

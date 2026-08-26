@@ -31,6 +31,15 @@
     </div>
 </section>
 
+<section class="section product-section" aria-labelledby="trailer-journeys-title"><div class="container"><div class="section-heading"><span class="product-kicker dark">Start with the job</span><h2 id="trailer-journeys-title">A direct path for common trailer needs.</h2><p>These routes use TrailerWise's curated categories and the same brand-scoped provider directory.</p></div><div class="service-tile-grid">
+    <a class="service-tile service-tile-link" href="<?= e(url('services/trailer-repairs')) ?>"><span aria-hidden="true">→</span><h3>Repair or service</h3><p>Workshop and general trailer servicing.</p></a>
+    <a class="service-tile service-tile-link" href="<?= e(url('services/mobile-trailer-services')) ?>"><span aria-hidden="true">→</span><h3>Mobile help</h3><p>On-site and roadside trailer specialists.</p></a>
+    <a class="service-tile service-tile-link" href="<?= e(url('services/parts-accessories')) ?>"><span aria-hidden="true">→</span><h3>Parts and accessories</h3><p>Replacement components and upgrades.</p></a>
+    <a class="service-tile service-tile-link" href="<?= e(url('services/roadworthy-inspections')) ?>"><span aria-hidden="true">→</span><h3>Inspection or certification</h3><p>Roadworthy, safety and compliance services.</p></a>
+    <a class="service-tile service-tile-link" href="<?= e(url('services/manufacturers-dealers')) ?>"><span aria-hidden="true">→</span><h3>Manufacturer or dealer</h3><p>Builders, dealers and authorised support.</p></a>
+    <a class="service-tile service-tile-link" href="<?= e(url('services/fabrication-engineering')) ?>"><span aria-hidden="true">→</span><h3>Fabrication or engineering</h3><p>Chassis, welding and modification work.</p></a>
+</div></div></section>
+
 <?php $this->include('partials.brand-directory-finder', [
     'categories' => $categories,
     'heading' => 'Find the right trailer service nearby.',

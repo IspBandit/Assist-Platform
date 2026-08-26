@@ -29,8 +29,9 @@ discovery, business registration and trust pages.
 On TowSmart, use **Check weights** or the footer **Check my combination**
 action to open the weight calculator. Open **My combinations** when signed in to
 review a saved result, its headline inputs and the original limit table. You can
-print that private snapshot through your browser or remove it from the detail
-page. Run a new check whenever the load or specifications change. Use
+edit and recalculate the saved snapshot, compare up to three combinations, print
+or save the private report as PDF, or remove it. Recalculate whenever the load
+or specifications change. Use
 **Specialist categories** or the homepage **After the
 check** tiles to browse weighing, towbar, brake and other towing specialists,
 then search with your town or postcode. On TrailerWise, use **Find services** or
@@ -38,6 +39,14 @@ the footer **Find trailer services** action to open the service directory. Brows
 **Service categories** from the header or homepage tiles when you know the type of
 work you need. Open **Marketplace** for sale and hire listings separate from the
 core directory.
+
+When the Assist-search feature is enabled, **Ask TowSmart** and **Ask
+TrailerWise** use reviewed brand-specific matrices. TowSmart routes weight,
+capacity and safety wording to the calculator and specialist wording to its
+curated directory. TrailerWise routes repair, mobile, parts, inspection,
+certifier, manufacturer/dealer and engineering wording to its curated
+categories. The result names its routing source. Unknown requests ask for a
+category instead of substituting an unrelated business.
 
 Direct `/find` links and saved structured-search links also open the current
 brand's provider directory. TowSmart and TrailerWise keep the supplied business,
@@ -77,8 +86,9 @@ details.
 
 - Assuming a green calculator result is certification or legal advice.
 - Treating an unclaimed directory listing as verified current contact details.
-- Expecting VanAssist Ask or caravan stay search on TowSmart or TrailerWise; those
-  journeys remain VanAssist-only.
+- Expecting VanAssist stays, traveller facilities or assistance requests on
+  TowSmart or TrailerWise. Product-brand Ask only routes their reviewed towing
+  and trailer intents.
 
 ## Related pages
 
@@ -98,7 +108,8 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-26 (homepage service/location finder and private saved reports).
+2026-08-26 (product-brand Ask, TowSmart edit/compare/report and direct
+TrailerWise service journeys).
 
 ## Owner
 

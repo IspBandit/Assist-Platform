@@ -2,6 +2,7 @@
 $this->extend('layouts.public');
 $errors = $errors ?? [];
 $counts = $catalogueCounts ?? ['vehicles' => 199, 'trailers' => 3769];
+$editingCombination = $editingCombination ?? null;
 $field = static fn(string $key, string $default = ''): string => (string) ($values[$key] ?? old($key, $default));
 $number = static function (string $name, string $label, string $help, string $value = '') use ($field): string {
     return '<div class="form-group"><label for="' . e_attr($name) . '">' . e($label) . '</label><input id="' . e_attr($name) . '" name="' . e_attr($name) . '" type="number" min="0" step="0.1" inputmode="decimal" value="' . e_attr($field($name, $value)) . '"><p class="help">' . e($help) . '</p></div>';
@@ -12,13 +13,13 @@ $number = static function (string $name, string $label, string $help, string $va
 <section class="section towsmart-workbench"><div class="container calculator-shell">
     <header class="calculator-intro">
         <span class="product-kicker dark">TowSmart combination builder</span>
-        <h1>Build your real towing combination.</h1>
+        <h1><?= $editingCombination ? 'Update your towing combination.' : 'Build your real towing combination.' ?></h1>
         <p class="lead">Choose from <?= number_format((int) $counts['vehicles']) ?> Australian tow vehicles and <?= number_format((int) $counts['trailers']) ?> caravans, campers, hybrids and trailers—or enter your own.</p>
         <div class="alert alert-info">Catalogue figures are advertised reference specifications recovered from TowWise. Confirm every rating against the exact vehicle, trailer, compliance plate and current manufacturer information.</div>
     </header>
     <?php if (!empty($errors['calculator'])): ?><div class="alert alert-error" role="alert"><?= $this->e((string) $errors['calculator']) ?></div><?php endif; ?>
 
-    <form class="calculator-form" method="post" action="<?= e(url('calculator')) ?>" data-towsmart-calculator data-catalogue-base="<?= e_attr(url('calculator/catalogue')) ?>">
+    <form class="calculator-form" method="post" action="<?= e($editingCombination ? url('account/towing-combinations/' . (int) $editingCombination['id']) : url('calculator')) ?>" data-towsmart-calculator data-catalogue-base="<?= e_attr(url('calculator/catalogue')) ?>">
         <?= csrf_field() ?>
         <nav class="calculator-progress" aria-label="Calculator sections"><a href="#tow-vehicle">1 Vehicle</a><a href="#tow-trailer">2 Trailer</a><a href="#tow-loading">3 Loading</a><a href="#tow-review">4 Check</a></nav>
 
@@ -56,8 +57,8 @@ $number = static function (string $name, string $label, string $help, string $va
             <div class="selected-spec" data-selected-summary="trailer" hidden></div>
             <div class="spec-grid" data-spec-fields="trailer">
                 <div class="form-group span-2"><label for="trailer_name">Trailer description</label><input id="trailer_name" name="trailer_name" required value="<?= e_attr($field('trailer_name')) ?>" placeholder="Brand, model, type and year"></div>
-                <div class="form-group"><label for="trailer_type">Type</label><select id="trailer_type" name="trailer_type"><option>Caravan</option><option>Camper</option><option>Hybrid</option><option>Boat trailer</option><option>Horse float</option><option>Utility trailer</option><option>Other</option></select></div>
-                <div class="form-group"><label for="trailer_axle_config">Axles</label><select id="trailer_axle_config" name="trailer_axle_config"><option>Single</option><option>Dual</option><option>Tri-axle</option></select></div>
+                <div class="form-group"><label for="trailer_type">Type</label><select id="trailer_type" name="trailer_type"><?php foreach (['Caravan','Camper','Hybrid','Boat trailer','Horse float','Utility trailer','Other'] as $option): ?><option <?= $field('trailer_type', 'Caravan') === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?></select></div>
+                <div class="form-group"><label for="trailer_axle_config">Axles</label><select id="trailer_axle_config" name="trailer_axle_config"><?php foreach (['Single','Dual','Tri-axle'] as $option): ?><option <?= $field('trailer_axle_config', 'Single') === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?></select></div>
                 <?= $number('trailer_tare_mass', 'Tare mass (kg)', 'Unladen trailer mass as specified.') ?>
                 <?= $number('trailer_atm', 'ATM (kg)', 'Maximum aggregate trailer mass when uncoupled.') ?>
                 <?= $number('trailer_gtm', 'GTM limit (kg)', 'Maximum mass carried by the trailer wheels when coupled.') ?>
@@ -82,7 +83,7 @@ $number = static function (string $name, string $label, string $help, string $va
                 </div></fieldset>
                 <?php foreach ([1, 2] as $tank): ?><fieldset><legend>Water tank <?= $tank ?></legend><div class="spec-grid">
                     <?= $number('tank_' . $tank . '_litres', 'Water carried (litres)', 'One litre of water is approximately one kilogram.', '0') ?>
-                    <div class="form-group"><label for="tank_<?= $tank ?>_position">Position</label><select id="tank_<?= $tank ?>_position" name="tank_<?= $tank ?>_position"><option value="front">Forward of axle</option><option value="middle" selected>Near/over axle</option><option value="behind">Behind axle</option></select><p class="help">Position affects the estimated towball load.</p></div>
+                    <div class="form-group"><label for="tank_<?= $tank ?>_position">Position</label><select id="tank_<?= $tank ?>_position" name="tank_<?= $tank ?>_position"><?php foreach (['front'=>'Forward of axle','middle'=>'Near/over axle','behind'=>'Behind axle'] as $value=>$label): ?><option value="<?= e_attr($value) ?>" <?= $field('tank_' . $tank . '_position', 'middle') === $value ? 'selected' : '' ?>><?= e($label) ?></option><?php endforeach; ?></select><p class="help">Position affects the estimated towball load.</p></div>
                 </div></fieldset><?php endforeach; ?>
                 <fieldset class="accessory-builder"><legend>Detailed accessories</legend><p class="muted">Add individual fitted items as in the TowWise app. Their totals feed the calculation fields above.</p>
                     <div class="grid grid-2"><div><h3>Vehicle accessories</h3><div data-accessory-list="vehicle"></div><button class="btn btn-ghost" type="button" data-add-accessory="vehicle">+ Add vehicle accessory</button></div><div><h3>Trailer accessories</h3><div data-accessory-list="trailer"></div><button class="btn btn-ghost" type="button" data-add-accessory="trailer">+ Add trailer accessory</button></div></div>
@@ -94,7 +95,8 @@ $number = static function (string $name, string $label, string $help, string $va
 
         <section class="card calculator-step calculator-submit" id="tow-review">
             <div><span class="product-kicker dark">Ready to check</span><h2>Review the margins, not just one number.</h2><p>TowSmart will compare the loaded combination against GVM, GCM, towing, ATM and towball limits.</p></div>
-            <button class="btn btn-primary btn-lg" type="submit">Calculate my combination</button>
+            <?php if ($editingCombination): ?><div class="form-group"><label for="label">Combination name</label><input id="label" name="label" maxlength="150" value="<?= e_attr((string) $editingCombination['label']) ?>"></div><?php endif; ?>
+            <button class="btn btn-primary btn-lg" type="submit"><?= $editingCombination ? 'Recalculate and save' : 'Calculate my combination' ?></button>
         </section>
     </form>
 
@@ -105,7 +107,7 @@ $number = static function (string $name, string $label, string $help, string $va
         <div class="result-summary"><div><strong><?= $this->e((string) $result['calculated']['vehicle_loaded_mass']) ?> kg</strong><span>Loaded vehicle</span></div><div><strong><?= $this->e((string) $result['calculated']['trailer_gtm']) ?> kg</strong><span>Estimated trailer GTM</span></div><div><strong><?= $this->e((string) $result['calculated']['combination_mass']) ?> kg</strong><span>Combined mass · towball <?= $this->e((string) $result['calculated']['towball_percentage']) ?>%</span></div></div>
         <div class="table-wrap"><table class="data"><thead><tr><th>Check</th><th>Actual</th><th>Limit</th><th>Margin</th><th>Status</th></tr></thead><tbody><?php foreach ($result['checks'] as $check): ?><tr><td><?= $this->e($check['label']) ?></td><td><?= $this->e((string) $check['actual']) ?> kg</td><td><?= $this->e((string) $check['limit']) ?> kg</td><td><?= $this->e((string) $check['remaining']) ?> kg</td><td><?= $this->e(str_replace('_', ' ', $check['status'])) ?></td></tr><?php endforeach; ?></tbody></table></div>
         <div class="alert alert-info"><?= $this->e($result['disclaimer']) ?></div>
-        <?php if (auth()->check()): ?><form method="post" action="<?= e(url('account/towing-combinations')) ?>"><?= csrf_field() ?><?php foreach ($values as $key => $value): ?><input type="hidden" name="<?= e_attr($key) ?>" value="<?= e_attr((string) $value) ?>"><?php endforeach; ?><div class="form-group"><label for="label">Combination name</label><input id="label" name="label" maxlength="150" value="<?= e_attr(trim($field('vehicle_name') . ' + ' . $field('trailer_name'), ' +')) ?>"></div><button class="btn btn-secondary" type="submit">Save this combination</button></form><?php else: ?><a class="btn btn-secondary" href="<?= e(url('login')) ?>">Sign in to save this combination</a><?php endif; ?>
+        <?php if (!$editingCombination && auth()->check()): ?><form method="post" action="<?= e(url('account/towing-combinations')) ?>"><?= csrf_field() ?><?php foreach ($values as $key => $value): ?><input type="hidden" name="<?= e_attr($key) ?>" value="<?= e_attr((string) $value) ?>"><?php endforeach; ?><div class="form-group"><label for="save-label">Combination name</label><input id="save-label" name="label" maxlength="150" value="<?= e_attr(trim($field('vehicle_name') . ' + ' . $field('trailer_name'), ' +')) ?>"></div><button class="btn btn-secondary" type="submit">Save this combination</button></form><?php elseif (!$editingCombination): ?><a class="btn btn-secondary" href="<?= e(url('login')) ?>">Sign in to save this combination</a><?php endif; ?>
     </section>
     <?php endif; ?>
 </div></section>

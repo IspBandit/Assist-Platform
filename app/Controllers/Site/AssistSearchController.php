@@ -18,6 +18,7 @@ use App\Services\Demand\TrackingSession;
 use App\Services\Demand\TrafficQuality;
 use App\Services\RateLimiter;
 use App\Services\Search\PublicResultWindow;
+use App\Services\ProductBrandAsk;
 
 /**
  * Ask VanAssist — parallel NL search entry (Phase AI-1).
@@ -28,6 +29,10 @@ final class AssistSearchController extends Controller
     public function form(Request $request): Response
     {
         $this->guard();
+
+        if (in_array(current_brand()->id(), ['towsmart', 'trailerwise'], true)) {
+            return $this->productBrandForm($request);
+        }
 
         // Honeypot: bots filling hidden website field get an empty form response.
         if (trim((string) $request->input('website', '')) !== '') {
@@ -121,11 +126,30 @@ final class AssistSearchController extends Controller
 
     private function guard(): void
     {
-        if (current_brand()->id() !== 'vanassist') {
+        if (!in_array(current_brand()->id(), ['vanassist', 'towsmart', 'trailerwise'], true)) {
             $this->abort(404, 'Page not found.');
         }
         if (!AiSearchFeature::enabled()) {
             $this->abort(404, 'Page not found.');
         }
+    }
+
+    private function productBrandForm(Request $request): Response
+    {
+        $brand = current_brand();
+        $query = trim((string) $request->input('q', ''));
+        if (mb_strlen($query) > (int) config('ai_search.max_query_length', 240)) {
+            $query = mb_substr($query, 0, (int) config('ai_search.max_query_length', 240));
+        }
+        $result = $query !== '' ? (new ProductBrandAsk())->resolve($brand->id(), $query) : null;
+
+        return $this->view('brands.ask', [
+            'title' => 'Ask ' . $brand->name(),
+            'metaDescription' => 'Describe the towing or trailer help you need and ' . $brand->name() . ' will route you to the appropriate shared service or guidance.',
+            'canonical' => url('ask'),
+            'query' => $query,
+            'result' => $result,
+            'brand' => $brand,
+        ]);
     }
 }
