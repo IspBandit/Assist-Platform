@@ -54,6 +54,13 @@ services. TowSmart and TrailerWise show curated categories only; import taxonomy
 rows used for data classification are hidden from public navigation. Confirm
 directory details directly with the business before travel or compliance work.
 
+Each homepage also has the same focused service/location finder as its public
+directory. Enter a service or business, add a town/suburb/postcode or use the
+device-location control, and optionally choose one of that brand's curated
+categories. Results stay within the current brand; TowSmart does not return
+TrailerWise-only listings and neither finder exposes VanAssist stays or
+assistance requests.
+
 **Save TowSmart to your phone** or **Save TrailerWise to your phone** opens
 installation instructions; Android may also show the browser install prompt when
 available. After installation the control hides automatically.
@@ -91,7 +98,7 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-26 (brand-scoped discovery and private saved-combination reports).
+2026-08-26 (homepage service/location finder and private saved reports).
 
 ## Owner
 
