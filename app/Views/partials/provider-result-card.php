@@ -42,6 +42,7 @@ $canCall = $hasListedPhone && !empty($p['show_public_phone']);
         <span class="provider-card-arrow" aria-hidden="true">→</span>
     </a>
     <div class="provider-card-badges">
+        <?php if (!empty($p['category_match_verified'])): ?><span class="badge badge-verified">Verified for this service</span><?php elseif (isset($p['category_match_inferred']) && empty($p['category_match_inferred'])): ?><span class="badge badge-confirmed">Direct service match</span><?php endif; ?>
         <?php if ($compact && $isPossible): ?><span class="badge badge-neutral">Related service — confirm fit</span><?php endif; ?>
         <?php if (!empty($p['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
         <?php if (str_contains((string) ($p['source_note'] ?? ''), 'qld-fuel-reporting')): ?><span class="badge badge-neutral">Queensland Government source</span><?php endif; ?>

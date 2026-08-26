@@ -5,6 +5,17 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Shared provider-match quality and service mode
+
+- Add one shared mobile-versus-workshop filter to the public provider directory
+  used by VanAssist, TowSmart and TrailerWise, including an explicit fallback
+  that widens only that filter when local coverage is thin.
+- Rank direct or verified category matches ahead of paid featured placement and
+  label those stronger matches on result cards without overstating imported or
+  heuristic category assignments.
+- Record the selected service mode in existing privacy-safe directory demand
+  analytics so coverage work can distinguish mobile and workshop shortages.
+
 ### Canonical public brand schema logos
 
 - Publish each public brand's canonical `mark.svg` alias in Organization

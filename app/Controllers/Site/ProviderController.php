@@ -61,12 +61,16 @@ final class ProviderController extends Controller
         if ($brandScoped && $categoryId === null && $categoryInput !== '') {
             $categoryId = $this->brandCategoryId($brand->databaseId(), $categoryInput);
         }
+        $serviceModel = trim((string) $request->input('service_model', ''));
+        if (!in_array($serviceModel, ['mobile', 'workshop'], true)) {
+            $serviceModel = '';
+        }
 
         $result = !$locationFound
             ? ['rows' => [], 'total' => 0]
             : ($brandScoped
-                ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
-                : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage));
+                ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage, $serviceModel)
+                : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage, $serviceModel));
         $categories = $brandScoped
             ? Database::select(
                 'SELECT id, name FROM brand_provider_categories WHERE '
@@ -84,6 +88,7 @@ final class ProviderController extends Controller
                 'region_id' => $resolvedTown['region_id'] ?? null,
                 'state_id' => $resolvedTown['state_id'] ?? null,
                 'category_id' => $categoryId,
+                'service_type' => $serviceModel !== '' ? $serviceModel : 'either',
                 'result_count' => (int) $result['total'],
             ]);
             DemandRecorder::recordImpressions($searchId, $result['rows'], $categoryId);
@@ -105,6 +110,7 @@ final class ProviderController extends Controller
             'townId' => $townId,
             'categoryId' => $categoryId,
             'categoryKey' => $categoryInput,
+            'serviceModel' => $serviceModel,
             'categories' => $categories,
             'brand' => $brand,
             'directoryCopy' => DirectoryPresentation::copyFor($brand->id()),

@@ -109,7 +109,7 @@ final class Provider extends Model
      *
      * @return array{rows:array<int,array<string,mixed>>,total:int}
      */
-    public static function publicDirectory(?int $townId, ?int $categoryId, string $search, int $limit, int $offset): array
+    public static function publicDirectory(?int $townId, ?int $categoryId, string $search, int $limit, int $offset, string $serviceModel = ''): array
     {
         $where = ["p.status = 'active'", 'p.deleted_at IS NULL'];
         $params = [];
@@ -127,14 +127,20 @@ final class Provider extends Model
             $where[] = 'p.business_name LIKE ?';
             $params[] = '%' . $search . '%';
         }
+        if (in_array($serviceModel, ['mobile', 'workshop'], true)) {
+            $where[] = 'p.service_model IN (?, \'both\')';
+            $params[] = $serviceModel;
+        }
         $clause = ' WHERE ' . implode(' AND ', $where);
 
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $join . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.description, p.service_model, '
             . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
+            . ($categoryId !== null ? ', ps.is_inferred AS category_match_inferred ' : '')
             . 'FROM providers p ' . $join . $clause
-            . ' ORDER BY p.is_featured DESC, p.is_verified DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
+            . ' ORDER BY ' . ($categoryId !== null ? 'ps.is_inferred ASC, ' : '')
+            . 'p.is_verified DESC, p.is_featured DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
         );
 
@@ -142,7 +148,7 @@ final class Provider extends Model
     }
 
     /** @return array{rows:array<int,array<string,mixed>>,total:int} */
-    public static function brandDirectory(int $brandId, ?int $townId, ?int $categoryId, string $search, int $limit, int $offset): array
+    public static function brandDirectory(int $brandId, ?int $townId, ?int $categoryId, string $search, int $limit, int $offset, string $serviceModel = ''): array
     {
         $where = ["pbl.status = 'active'", 'pbl.search_visible = 1', 'pbl.deleted_at IS NULL', "p.status = 'active'", 'p.deleted_at IS NULL', 'pbl.brand_id = ?'];
         $params = [$brandId];
@@ -160,13 +166,19 @@ final class Provider extends Model
             $like = '%' . $search . '%';
             array_push($params, $like, $like, $like);
         }
+        if (in_array($serviceModel, ['mobile', 'workshop'], true)) {
+            $where[] = 'p.service_model IN (?, \'both\')';
+            $params[] = $serviceModel;
+        }
         $clause = ' WHERE ' . implode(' AND ', $where);
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $joins . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, pbl.slug, pbl.display_name AS business_name, p.description, p.service_model, '
             . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
+            . ($categoryId !== null ? ', pbca.is_verified AS category_match_verified, pbca.assignment_source AS category_match_source ' : '')
             . 'FROM providers p ' . $joins . $clause
-            . ' ORDER BY pbl.is_featured DESC, pbl.is_verified DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
+            . ' ORDER BY ' . ($categoryId !== null ? 'pbca.is_verified DESC, ' : '')
+            . 'pbl.is_verified DESC, pbl.is_featured DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
         );
         return ['rows' => $rows, 'total' => $total];

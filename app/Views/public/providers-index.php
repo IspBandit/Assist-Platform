@@ -4,7 +4,7 @@
 /** @var array{eyebrow:string,heading:string,intro:string,search_placeholder:string} $directoryCopy */
 $this->extend('layouts.public');
 $pages = (int) ceil(max(1, $total) / $perPage);
-$hasFilters = $search !== '' || $location !== '' || $townId !== null || $categoryId !== null;
+$hasFilters = $search !== '' || $location !== '' || $townId !== null || $categoryId !== null || $serviceModel !== '';
 $mappedProviders = [];
 if ($hasFilters) foreach ($providers as $p) {
     $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null;
@@ -12,8 +12,8 @@ if ($hasFilters) foreach ($providers as $p) {
     $id='directory-provider-'.(int)$p['id'];
     $mappedProviders[]=['id'=>$id,'listId'=>$id,'number'=>count($mappedProviders)+1,'name'=>(string)$p['business_name'],'location'=>trim((string)($p['town_name']??'').(!empty($p['state_abbr'])?', '.$p['state_abbr']:'')),'lat'=>(float)$pLat,'lng'=>(float)$pLng,'profile'=>url('providers/'.$p['slug']),'directions'=>'','destination'=>'','featured'=>!empty($p['is_featured']),'possible'=>false];
 }
-$qs = static function (array $extra) use ($search, $location, $townId, $categoryId): string {
-    $params = array_filter(['q' => $search, 'location' => $location, 'town' => $location === '' ? $townId : null, 'category' => $categoryId] + $extra, static fn ($v) => $v !== null && $v !== '');
+$qs = static function (array $extra) use ($search, $location, $townId, $categoryId, $serviceModel): string {
+    $params = array_filter(array_merge(['q' => $search, 'location' => $location, 'town' => $location === '' ? $townId : null, 'category' => $categoryId, 'service_model' => $serviceModel], $extra), static fn ($v) => $v !== null && $v !== '');
     return $params === [] ? '' : ('?' . http_build_query($params));
 };
 ?>
@@ -58,6 +58,14 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
                     <?php endforeach; ?>
                 </select>
             </div>
+            <div class="form-group mb-0">
+                <label for="service_model">How should they help?</label>
+                <select id="service_model" name="service_model">
+                    <option value="">Mobile or workshop</option>
+                    <option value="mobile" <?= $serviceModel === 'mobile' ? 'selected' : '' ?>>Can come to me</option>
+                    <option value="workshop" <?= $serviceModel === 'workshop' ? 'selected' : '' ?>>I can visit a workshop</option>
+                </select>
+            </div>
             <div class="directory-search-actions">
                 <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary']); ?>
                 <button type="submit" class="btn btn-primary">Search directory</button>
@@ -67,7 +75,7 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
         <div class="directory-summary">
             <div>
                 <p class="directory-count"><strong><?= number_format($total) ?></strong> <?= $total === 1 ? 'business' : 'businesses' ?><?= $hasFilters ? ' matching your search' : ' in this directory' ?></p>
-                <p class="muted">Listings are ordered by relevance, featured status and verification. Always confirm suitability and availability directly.</p>
+                <p class="muted">Direct and verified service matches are shown before featured placement. Always confirm capability, availability and travel area directly.</p>
             </div>
             <?php if ($hasFilters): ?><a class="btn btn-ghost btn-sm" href="<?= e(url('providers')) ?>">Clear search</a><?php endif; ?>
         </div>
@@ -78,7 +86,7 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
                 <h2><?= !$locationFound ? 'We couldn\'t recognise that location' : 'No matching businesses yet' ?></h2>
                 <p><?= !$locationFound ? 'Try entering a nearby Australian town, suburb or four-digit postcode, then choose a suggestion from the list.' : 'Try a nearby town, remove a category, or search using fewer words. The directory is expanding as businesses claim and verify their profiles.' ?></p>
                 <div class="btn-row">
-                    <a class="btn btn-primary" href="<?= e(url('providers')) ?>">View the full directory</a>
+                    <?php if ($serviceModel !== ''): ?><a class="btn btn-primary" href="<?= e(url('providers' . $qs(['service_model' => '']))) ?>">Show mobile and workshop options</a><?php else: ?><a class="btn btn-primary" href="<?= e(url('providers')) ?>">View the full directory</a><?php endif; ?>
                     <a class="btn btn-secondary" href="<?= e(url('for-providers/register')) ?>">Suggest or list a business</a>
                 </div>
             </div>

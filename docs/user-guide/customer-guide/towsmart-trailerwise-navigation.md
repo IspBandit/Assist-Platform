@@ -53,6 +53,13 @@ brand's provider directory. TowSmart and TrailerWise keep the supplied business,
 town/postcode and curated category filters; they do not show VanAssist stays,
 fuel shortcuts, service runs or assistance-request actions.
 
+In either provider directory, use **How should they help?** when you specifically
+need a business that can come to you or when you can visit a workshop. A listing
+marked **Verified for this service** has a reviewed category assignment. Direct
+or verified service matches appear before featured placement. If that delivery
+choice produces no result, **Show mobile and workshop options** widens only that
+choice and keeps the other search filters.
+
 ## Workflows
 
 Start from the homepage quick paths or the header primary button. Use the footer
@@ -108,8 +115,8 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-26 (product-brand Ask, TowSmart edit/compare/report and direct
-TrailerWise service journeys).
+2026-08-26 (product-brand Ask, TowSmart edit/compare/report, direct TrailerWise
+service journeys and shared mobile/workshop provider matching).
 
 ## Owner
 
