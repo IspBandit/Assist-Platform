@@ -52,7 +52,8 @@ Partial/planned:
 - catalogue expansion requires licensed or manufacturer-sourced specifications
   with model-year provenance; it must not be represented as every Australian
   model ever sold;
-- saved combinations still need richer edit/delete/compare/report workflows;
+- saved combinations can be reviewed as private snapshot reports and deleted
+  with owner-and-brand enforcement; edit and side-by-side compare remain planned;
 - axle load calculations require adequate manufacturer data and domain-expert
   review before stronger claims;
 - formulas require domain-expert review before stronger safety claims.

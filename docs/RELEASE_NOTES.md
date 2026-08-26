@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### TowSmart saved combination management (TOW-002)
+
+- Add authenticated, owner-and-brand-scoped saved combination detail reports.
+- Allow users to remove their own saved snapshots through a CSRF-protected
+  account action without exposing whether another user's record exists.
+- Keep reports private from indexing and repeat the guidance/not-certification
+  boundary; edit and side-by-side comparison remain planned.
+- Publish factual Organisation and WebSite structured data from the shared
+  trusted Brand configuration on every public brand homepage.
+
 ### TowSmart and TrailerWise directory parity (EXP-005 / TRL-001)
 
 - Route TowSmart and TrailerWise `/find` requests through the shared,

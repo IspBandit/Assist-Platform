@@ -13,6 +13,51 @@ production state in `PRODUCTION_CURRENT_STATE.md`. GitHub is the code source of
 truth. A route or test in Git is implemented, not automatically deployed or
 accepted. Production claims are limited to checks recorded on 24 August 2026.
 
+## Live rendered audit — 26 August 2026
+
+The public production sites were inspected without authentication at their
+canonical hosts. This proves rendered public behaviour only; it is not
+acceptance of signed-in, provider or administrator journeys.
+
+### TowSmart
+
+- Homepage, calculator, provider directory, specialist categories and rules
+  rendered with the correct shell, canonical URL and indexable robots policy.
+- The directory returned 18 cards with business/service, town/postcode, curated
+  category and device-location controls.
+- The calculator exposes the expected vehicle, trailer, loading, tank and
+  accessory inputs. Completion, error recovery and assistive-technology
+  behaviour still need current production evidence.
+- The homepage links clearly to the calculator and directory but contains no
+  direct service/location search or Ask form.
+- No JSON-LD block was present on the audited homepage, directory, categories,
+  calculator or rules pages. VanAssist's homepage exposes two blocks, making
+  shared Brand-driven Organisation/WebSite schema a confirmed SEO gap.
+
+### TrailerWise
+
+- Homepage, directory, categories, marketplace and rules rendered with the
+  correct shell, canonical URL and indexable robots policy.
+- The directory returned 18 cards with the same shared location and category
+  controls, correctly scoped to TrailerWise.
+- The homepage has no direct location/service search or Ask entry point.
+- The marketplace default view showed no listings. Because TrailerWise is
+  service-first this is not a launch blocker, but the empty secondary module
+  should not gain more navigation weight until inventory and owner acceptance
+  justify it.
+- No JSON-LD block was present on the audited homepage, directory, categories,
+  marketplace or rules pages.
+
+### VanAssist comparison and evidence limit
+
+VanAssist starts with Ask and structured search on its homepage and publishes
+Organisation/WebSite JSON-LD. TowSmart and TrailerWise should reuse the shared
+directory/location platform while keeping brand-specific intent; VanAssist
+stays and assistance must not be copied. The audited pages reported no desktop
+horizontal overflow and exposed main, navigation and footer landmarks. A
+reliable current 360 px capture was not obtained, so mobile, keyboard,
+screen-reader, menu, denied-location and error-state parity remain **not passed**.
+
 ## Current parity
 
 | Area | TowSmart | TrailerWise | Shared-platform conclusion |
@@ -50,6 +95,32 @@ accepted. Production claims are limited to checks recorded on 24 August 2026.
 | SEO / bot readiness | Sitemap coverage is corrected in code. Search Console, structured-data and crawl evidence are not recorded for this head. | Deploy via `INF-002`, validate canonical/robots/sitemap/schema on every host, then record crawler evidence |
 | Configuration and deployment | Domains/mailboxes were previously verified. This change adds no migration, secret, integration or environment variable. | Normal immutable release, all-host smoke checks and rollback availability |
 | Commercial readiness | Billing remains disabled and full commercial launch approval is absent. | Keep charging off until `COM-004` and the four-part quality gate pass |
+
+## Required delivery sequence
+
+1. **P0 production truth and safety:** deploy the merged brand-scoped `/find`
+   and sitemap corrections normally; verify every host, claim route, sender,
+   scheduled backup and rollback evidence.
+2. **P0 rendered acceptance:** test 360 px, tablet and desktop home, directory,
+   category/profile, TowSmart calculator/result, TrailerWise rules/marketplace,
+   provider registration, claim and sign-in. Include keyboard, screen-reader,
+   denied-GPS, empty and error states.
+3. **P1 discovery entry:** add a compact brand-specific service/location finder
+   to each homepage using the existing directory and location endpoints.
+4. **P1 structured data:** add Brand-driven Organisation/WebSite schema and
+   validated breadcrumb, profile and collection schema where supported.
+5. **P1 provider operations:** accept search-before-create, claim, proof review,
+   ownership transfer, portal editing and admin moderation in both brand scopes.
+6. **P1 TowSmart depth:** finish `TOW-001`, then detail/delete, edit, compare and
+   report increments under `TOW-002` without stronger unreviewed safety claims.
+7. **P1 TrailerWise depth:** accept representative repair, mobile, parts,
+   inspector, certifier, manufacturer and dealer data/journeys. Keep the empty
+   marketplace secondary until it is useful.
+8. **P2 brand Ask:** design brand intent matrices and deterministic knowledge
+   routing before enabling the shared orchestrator.
+9. **P2 measurement and launch:** baseline search success, zero results,
+   contact conversion, claims, calculator completion and marketplace utility;
+   obtain all four Quality Gate approvals before claiming commercial parity.
 
 ## Quality-gate assessment
 
