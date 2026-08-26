@@ -38,4 +38,26 @@ final class BrandWebsiteSchemaTest extends TestCase
             self::assertStringContainsString('SeoSchema::brandWebsite(current_brand())', $source);
         }
     }
+
+    public function testPublicBrandSchemasUseCanonicalMarkUrls(): void
+    {
+        $configuration = require dirname(__DIR__, 2) . '/config/brands.php';
+        self::assertIsArray($configuration['registry'] ?? null);
+        $registry = BrandRegistry::fromArray($configuration['registry']);
+
+        foreach (['vanassist', 'towsmart', 'trailerwise'] as $brandId) {
+            $organisation = json_decode(
+                SeoSchema::brandWebsite($registry->get($brandId))[0],
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
+
+            self::assertSame(
+                "https://{$registry->get($brandId)->primaryDomain()}/assets/brands/{$brandId}/mark.svg",
+                $organisation['logo'] ?? null
+            );
+            self::assertStringNotContainsString('symbol-v2.svg', (string) ($organisation['logo'] ?? ''));
+        }
+    }
 }
