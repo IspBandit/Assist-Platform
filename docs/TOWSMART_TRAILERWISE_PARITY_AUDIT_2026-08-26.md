@@ -69,7 +69,7 @@ denied-location and injected error-state acceptance remain release conditions.
 | --- | --- | --- | --- |
 | Brand resolution and deployment | Live domain, canonical host, health, robots, sitemap and brand assets previously verified | Same | The shared `Brand` registry, application and release process are correct |
 | Public shell and navigation | Branded responsive shell, calculator, guide, checklist, rules, directory and saved combinations | Branded responsive shell, directory, categories, rules and secondary marketplace | Shared header/footer, install metadata and design tokens are implemented |
-| Provider discovery | Curated towing categories and brand-scoped listings | Curated trailer categories and brand-scoped listings | Provider pages, contact attribution, location lookup and demand analytics are shared and server-scoped |
+| Provider discovery | Curated towing categories and brand-scoped listings | Curated trailer categories and brand-scoped listings | Provider pages, contact attribution, location lookup and demand analytics are shared and server-scoped. The shared directory now filters mobile/workshop delivery and ranks verified category matches before featured placement. |
 | Provider onboarding and claims | Shared search-before-create, invitation, claim, portal and admin review routes | Same | Canonical provider ownership is preserved; no duplicate brand claim system is required |
 | Administration | Unified admin, permissions, brand switching, campaigns, analytics, data sources and audit foundations | Same | Production acceptance remains part of the platform gate |
 | Analytics | Brand-scoped directory filters, impressions, profiles and contacts | Same | Production collection and dashboard acceptance remain under `DATA-004` |
@@ -85,6 +85,10 @@ denied-location and injected error-state acceptance remain release conditions.
    now use one shared provider-listing query and trust-page list.
 3. Brand footer configuration referenced `/privacy` and `/terms`, while the
    implemented CMS routes are `/privacy-policy` and `/terms-of-use`.
+4. Provider discovery could not express whether the customer needed a mobile
+   service or could attend a workshop, and paid placement preceded stronger
+   category evidence. The shared directory now supports that intent, exposes a
+   narrow empty-result fallback and labels only direct or verified matches.
 
 ## Remaining gaps and release conditions
 
@@ -96,7 +100,7 @@ denied-location and injected error-state acceptance remain release conditions.
 | Location and search UX | Directory location search, GPS town resolution and list fallback exist. Corrected `/find` lacks current two-brand rendered evidence. | Test 360 px, tablet, desktop, denied GPS, unknown location, empty results, map failure and keyboard-only use under `EXP-005`/`EXP-004` |
 | Accessibility | The 360 px rendered baseline passes the checks described above, but current WCAG 2.2 AA sign-off is absent for all critical journeys. | Complete manual keyboard and screen-reader evidence under `EXP-004` |
 | Provider and claim operations | Shared claim/admin workflows now bind claim tokens and Admin API invite review to the selected brand. Production end-to-end acceptance and evidence-backed verification remain incomplete. | Complete `CORE-003` production acceptance and audit evidence |
-| Analytics | Events are brand scoped, but production collection, zero-result review and baselines are not signed off. | `DATA-004` dashboard evidence and privacy review |
+| Analytics | Events are brand scoped and now include mobile/workshop directory intent, but production collection, zero-result review and baselines are not signed off. | `DATA-004` dashboard evidence and privacy review |
 | SEO / bot readiness | Sitemap coverage is corrected in code. Search Console, structured-data and crawl evidence are not recorded for this head. | Deploy via `INF-002`, validate canonical/robots/sitemap/schema on every host, then record crawler evidence |
 | Configuration and deployment | Domains/mailboxes were previously verified. This change adds no migration, secret, integration or environment variable. | Normal immutable release, all-host smoke checks and rollback availability |
 | Commercial readiness | Billing remains disabled and full commercial launch approval is absent. | Keep charging off until `COM-004` and the four-part quality gate pass |

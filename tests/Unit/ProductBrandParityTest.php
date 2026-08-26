@@ -24,6 +24,25 @@ final class ProductBrandParityTest extends TestCase
         self::assertStringContainsString("AND category_key = ?", $controller);
     }
 
+    public function testSharedDirectorySupportsServiceModelMatchingAndHonestRanking(): void
+    {
+        $controller = $this->source('app/Controllers/Site/ProviderController.php');
+        $provider = $this->source('app/Models/Provider.php');
+        $view = $this->source('app/Views/public/providers-index.php');
+        $card = $this->source('app/Views/partials/provider-result-card.php');
+
+        self::assertStringContainsString("in_array(\$serviceModel, ['mobile', 'workshop'], true)", $controller);
+        self::assertStringContainsString("'service_type' => \$serviceModel !== '' ? \$serviceModel : 'either'", $controller);
+        self::assertSame(2, substr_count($provider, "p.service_model IN (?, \\'both\\')"));
+        self::assertStringContainsString('ps.is_inferred ASC', $provider);
+        self::assertStringContainsString('pbca.is_verified DESC', $provider);
+        self::assertStringContainsString('name="service_model"', $view);
+        self::assertStringContainsString('array_merge(', $view);
+        self::assertStringContainsString('Show mobile and workshop options', $view);
+        self::assertStringContainsString('Verified for this service', $card);
+        self::assertStringContainsString('Direct service match', $card);
+    }
+
     public function testProductBrandSitemapsContainProviderAndTrustSurfaces(): void
     {
         $controller = $this->source('app/Controllers/Site/SitemapController.php');
