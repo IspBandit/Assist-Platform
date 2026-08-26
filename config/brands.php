@@ -61,8 +61,8 @@ return [
                 ['label' => 'Service runs', 'path' => '/service-runs'],
             ],
             'footer' => [
-                ['label' => 'Privacy', 'path' => '/privacy'],
-                ['label' => 'Terms', 'path' => '/terms'],
+                ['label' => 'Privacy', 'path' => '/privacy-policy'],
+                ['label' => 'Terms', 'path' => '/terms-of-use'],
                 ['label' => 'Contact', 'path' => '/contact'],
             ],
             'features' => [
@@ -148,8 +148,8 @@ return [
                 ['label' => 'My combinations', 'path' => '/account/towing-combinations'],
             ],
             'footer' => [
-                ['label' => 'Privacy', 'path' => '/privacy'],
-                ['label' => 'Terms', 'path' => '/terms'],
+                ['label' => 'Privacy', 'path' => '/privacy-policy'],
+                ['label' => 'Terms', 'path' => '/terms-of-use'],
             ],
             'features' => [
                 'identity.shared' => false,
@@ -231,8 +231,8 @@ return [
                 ['label' => 'Rules & compliance', 'path' => '/rules'],
             ],
             'footer' => [
-                ['label' => 'Privacy', 'path' => '/privacy'],
-                ['label' => 'Terms', 'path' => '/terms'],
+                ['label' => 'Privacy', 'path' => '/privacy-policy'],
+                ['label' => 'Terms', 'path' => '/terms-of-use'],
             ],
             'features' => [
                 'identity.shared' => false,

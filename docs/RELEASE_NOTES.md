@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### TowSmart and TrailerWise directory parity (EXP-005 / TRL-001)
+
+- Route TowSmart and TrailerWise `/find` requests through the shared,
+  brand-scoped provider directory instead of the VanAssist-only results journey.
+- Accept curated brand category keys without weakening server-side brand scope.
+- Include public provider profiles and trust/legal pages in both product-brand
+  sitemaps, and correct configured privacy and terms paths.
+- Record remaining launch gaps in
+  `TOWSMART_TRAILERWISE_PARITY_AUDIT_2026-08-26.md`.
+
 ### CQDiggings overlay mount isolation
 
 - Mount the reviewed CQDiggings release overlay at its own read-only path and

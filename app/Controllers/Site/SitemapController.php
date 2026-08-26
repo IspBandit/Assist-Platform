@@ -35,6 +35,7 @@ final class SitemapController extends Controller
                 ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
                 ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
             ];
+            $this->addBrandTrustPages($urls);
             $this->addRows(
                 $urls,
                 'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE '
@@ -43,6 +44,7 @@ final class SitemapController extends Controller
                 0.7,
                 BrandProviderCategory::publicDirectoryParams($brand->databaseId())
             );
+            $this->addBrandProviders($urls, $brand->databaseId());
             return $this->response($urls);
         }
         if (current_brand()->id() === 'trailerwise') {
@@ -55,6 +57,7 @@ final class SitemapController extends Controller
                 ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
                 ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
             ];
+            $this->addBrandTrustPages($urls);
             $this->addRows(
                 $urls,
                 'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE '
@@ -63,6 +66,7 @@ final class SitemapController extends Controller
                 0.7,
                 BrandProviderCategory::publicDirectoryParams($brand->databaseId())
             );
+            $this->addBrandProviders($urls, $brand->databaseId());
             $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = ? AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.7, [$brand->databaseId()]);
             return $this->response($urls);
         }
@@ -98,6 +102,30 @@ final class SitemapController extends Controller
         }));
 
         return $this->response($urls);
+    }
+
+    /** @param array<int,array<string,mixed>> $urls */
+    private function addBrandTrustPages(array &$urls): void
+    {
+        foreach (['about', 'contact', 'privacy-policy', 'terms-of-use', 'disclaimer', 'safety-information', 'complaints-process', 'accessibility-statement'] as $path) {
+            $urls[] = ['loc' => url($path), 'lastmod' => null, 'priority' => 0.4];
+        }
+    }
+
+    /** @param array<int,array<string,mixed>> $urls */
+    private function addBrandProviders(array &$urls, int $brandId): void
+    {
+        $this->addRows(
+            $urls,
+            "SELECT pbl.slug, COALESCE(pbl.updated_at,p.updated_at) AS updated_at
+             FROM provider_brand_listings pbl
+             INNER JOIN providers p ON p.id=pbl.provider_id
+             WHERE pbl.brand_id=? AND pbl.status='active' AND pbl.search_visible=1
+               AND pbl.deleted_at IS NULL AND p.status='active' AND p.deleted_at IS NULL",
+            'providers/',
+            0.8,
+            [$brandId]
+        );
     }
 
     /** @param array<int,array<string,mixed>> $urls */

@@ -31,6 +31,9 @@ final class SearchController extends Controller
         if (current_brand()->id() === 'polaris' && current_brand()->moduleEnabled('rv_catalogue')) {
             return (new PolarisController())->find($request);
         }
+        if (in_array(current_brand()->id(), ['towsmart', 'trailerwise'], true)) {
+            return (new ProviderController())->index($request);
+        }
 
         $location = trim((string) $request->input('location', ''));
         if ($location === '') {

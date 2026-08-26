@@ -36,6 +36,11 @@ the footer **Find trailer services** action to open the service directory. Brows
 work you need. Open **Marketplace** for sale and hire listings separate from the
 core directory.
 
+Direct `/find` links and saved structured-search links also open the current
+brand's provider directory. TowSmart and TrailerWise keep the supplied business,
+town/postcode and curated category filters; they do not show VanAssist stays,
+fuel shortcuts, service runs or assistance-request actions.
+
 ## Workflows
 
 Start from the homepage quick paths or the header primary button. Use the footer
@@ -83,7 +88,7 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-13 (curated public categories; import taxonomy hidden).
+2026-08-26 (brand-scoped `/find`, provider discovery and legal navigation).
 
 ## Owner
 
