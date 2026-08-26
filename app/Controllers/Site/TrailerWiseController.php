@@ -9,6 +9,7 @@ use App\Core\Database;
 use App\Models\BrandProviderCategory;
 use App\Core\Request;
 use App\Core\Response;
+use App\Services\SeoSchema;
 
 final class TrailerWiseController extends Controller
 {
@@ -24,6 +25,7 @@ final class TrailerWiseController extends Controller
             'canonical' => current_brand()->url() . '/',
             'listings' => $featured,
             'categories' => $this->brandCategories(),
+            'jsonLd' => SeoSchema::brandWebsite(current_brand()),
         ]);
     }
 

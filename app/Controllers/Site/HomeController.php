@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Settings;
+use App\Services\SeoSchema;
 use Throwable;
 
 final class HomeController extends Controller
@@ -33,35 +34,7 @@ final class HomeController extends Controller
             'categories'        => $categories,
             'categoryGroups'    => $categoryGroups,
             'freeMessage'   => Settings::get('free_launch_message', ''),
-            'jsonLd'        => $this->organisationSchema(),
-        ]);
-    }
-
-    /** @return array<int,string> Organization + WebSite JSON-LD blocks. */
-    private function organisationSchema(): array
-    {
-        $siteName = (string) Settings::get('site_name', 'VanAssist');
-        $org = [
-            '@context' => 'https://schema.org',
-            '@type'    => 'Organization',
-            'name'     => $siteName,
-            'url'      => url('/'),
-            'description' => (string) Settings::get('seo_default_description', 'Find caravan and RV specialists coming to your area across regional Australia.'),
-        ];
-        $logo = (string) Settings::get('seo_og_image', '');
-        if ($logo !== '') {
-            $org['logo'] = $logo;
-        }
-        $website = [
-            '@context' => 'https://schema.org',
-            '@type'    => 'WebSite',
-            'name'     => $siteName,
-            'url'      => url('/'),
-        ];
-
-        return array_filter([
-            json_encode($org, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '',
-            json_encode($website, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '',
+            'jsonLd'        => SeoSchema::brandWebsite(current_brand()),
         ]);
     }
 

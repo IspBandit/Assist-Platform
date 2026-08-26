@@ -28,7 +28,10 @@ discovery, business registration and trust pages.
 
 On TowSmart, use **Check weights** or the footer **Check my combination**
 action to open the weight calculator. Open **My combinations** when signed in to
-review saved checks. Use **Specialist categories** or the homepage **After the
+review a saved result, its headline inputs and the original limit table. You can
+print that private snapshot through your browser or remove it from the detail
+page. Run a new check whenever the load or specifications change. Use
+**Specialist categories** or the homepage **After the
 check** tiles to browse weighing, towbar, brake and other towing specialists,
 then search with your town or postcode. On TrailerWise, use **Find services** or
 the footer **Find trailer services** action to open the service directory. Browse
@@ -88,7 +91,7 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-26 (brand-scoped `/find`, provider discovery and legal navigation).
+2026-08-26 (brand-scoped discovery and private saved-combination reports).
 
 ## Owner
 

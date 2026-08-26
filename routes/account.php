@@ -25,6 +25,8 @@ return static function (Router $router): void {
         $router->post('/compliance/handoff', 'ComplianceController@handoff', 'account.compliance.handoff');
         $router->get('/towing-combinations', 'Site\TowSmartController@combinations', 'account.towing-combinations');
         $router->post('/towing-combinations', 'Site\TowSmartController@save', 'account.towing-combinations.save');
+        $router->get('/towing-combinations/{id}', 'Site\TowSmartController@combination', 'account.towing-combinations.show');
+        $router->post('/towing-combinations/{id}/remove', 'Site\TowSmartController@removeCombination', 'account.towing-combinations.remove');
 
         // Saved providers (Phase 11).
         $router->get('/saved', 'AccountController@saved', 'account.saved');

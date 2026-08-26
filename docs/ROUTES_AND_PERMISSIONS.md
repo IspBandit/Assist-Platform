@@ -8,7 +8,7 @@ state-changing browser routes use CSRF protection.
 | Public | `/`, `/providers`, `/find`, `/ask` (Ask VanAssist; flag `assist_ai_search`), `/services`, `/regions`, `/request-assistance` | Brand/module checks plus rate limits on abuse-prone submissions |
 | Public stay facilities | `GET/POST /caravan-parks/{slug}/suggest-facility` | VanAssist active stay; CSRF, rate limit and Turnstile; creates pending evidence only |
 | LocalTorque motorsport | `/motorsport` | LocalTorque host only; official sanctioning-body, venue and calendar links are public/read-only |
-| TowSmart | `/calculator`, `/account/towing-combinations` | TowSmart host/module; saving requires authenticated owner |
+| TowSmart | `/calculator`, `/account/towing-combinations`, `/account/towing-combinations/{id}` | TowSmart host/module; saved snapshot read/delete requires authenticated user and matching owner + brand |
 | TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
 | Polaris | `/rvs`, `/find`, `/compare`, `/tow-match`, `/floorplans`, `/saved`, `/portal/manufacturer` | Polaris host + `rv_catalogue` module; brand remains private until launch |
 | Authentication | `/login`, `/register`, reset/verification/logout | Guest/auth state, CSRF and rate limiting |

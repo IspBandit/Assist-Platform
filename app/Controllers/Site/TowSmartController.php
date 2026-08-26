@@ -12,6 +12,7 @@ use App\Core\Response;
 use App\Core\Session;
 use App\Services\TowSmartCalculator;
 use App\Services\TowSmartCatalog;
+use App\Services\SeoSchema;
 use InvalidArgumentException;
 
 final class TowSmartController extends Controller
@@ -35,6 +36,7 @@ final class TowSmartController extends Controller
             'metaDescription' => 'Check your loaded towing combination against vehicle and trailer mass limits with clear Australian towing guidance.',
             'canonical' => current_brand()->url() . '/',
             'categories' => $this->brandCategories(),
+            'jsonLd' => SeoSchema::brandWebsite(current_brand()),
         ]);
     }
 
@@ -149,6 +151,58 @@ final class TowSmartController extends Controller
             [$userId, current_brand()->databaseId()]
         );
         return $this->view('towsmart.combinations', ['title' => 'Saved towing combinations', 'items' => $items]);
+    }
+
+    public function combination(Request $request): Response
+    {
+        $this->requireBrand();
+        $item = $this->ownedCombination($request);
+
+        return $this->view('towsmart.combination', [
+            'title' => (string) $item['label'] . ' — saved towing combination',
+            'item' => $item,
+            'input' => $this->decodeSnapshot((string) $item['input_snapshot']),
+            'result' => $this->decodeSnapshot((string) $item['result_snapshot']),
+            'metaRobots' => 'noindex,nofollow',
+        ]);
+    }
+
+    public function removeCombination(Request $request): Response
+    {
+        $this->requireBrand();
+        $item = $this->ownedCombination($request);
+        Database::affecting(
+            'DELETE FROM towing_combinations WHERE id = ? AND user_id = ? AND brand_id = ?',
+            [(int) $item['id'], (int) current_user()['id'], current_brand()->databaseId()]
+        );
+
+        return $this->redirectWith('/account/towing-combinations', 'success', 'Saved combination removed.');
+    }
+
+    /** @return array<string,mixed> */
+    private function ownedCombination(Request $request): array
+    {
+        $id = filter_var($request->route('id'), FILTER_VALIDATE_INT);
+        if ($id === false || $id < 1) {
+            $this->abort(404, 'Saved combination not found.');
+        }
+        $item = Database::selectOne(
+            'SELECT id, label, result_status, input_snapshot, result_snapshot, created_at, updated_at '
+            . 'FROM towing_combinations WHERE id = ? AND user_id = ? AND brand_id = ?',
+            [(int) $id, (int) current_user()['id'], current_brand()->databaseId()]
+        );
+        if ($item === null) {
+            $this->abort(404, 'Saved combination not found.');
+        }
+
+        return $item;
+    }
+
+    /** @return array<string,mixed> */
+    private function decodeSnapshot(string $json): array
+    {
+        $decoded = json_decode($json, true);
+        return is_array($decoded) ? $decoded : [];
     }
 
     /** @return array<int,array<string,mixed>> */
