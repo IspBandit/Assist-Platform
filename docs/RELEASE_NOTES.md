@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Product-brand homepage discovery (EXP-005 / TRL-001)
+
+- Add one shared service/location finder to the TowSmart and TrailerWise
+  homepages using the existing brand-scoped directory, curated categories,
+  town suggestions and device-location service.
+- Keep trust wording visible and preserve the boundary that neither brand owns
+  VanAssist stays or assistance requests.
+
 ### TowSmart saved combination management (TOW-002)
 
 - Add authenticated, owner-and-brand-scoped saved combination detail reports.

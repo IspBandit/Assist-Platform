@@ -37,6 +37,14 @@
     </div>
 </section>
 
+<?php $this->include('partials.brand-directory-finder', [
+    'categories' => $categories,
+    'heading' => 'Find towing specialists near you.',
+    'intro' => 'Search weighing, towbar, brake, suspension, electrical, tyre, training and inspection services by location.',
+    'servicePlaceholder' => 'e.g. mobile weighing or towbar fitting',
+    'submitLabel' => 'Find towing specialists',
+]); ?>
+
 <section class="section product-section" id="understand">
     <div class="container">
         <div class="section-heading"><span class="product-kicker dark">One check, five limits</span><h2>See the pressure points before they become problems.</h2><p>TowSmart compares one loaded combination against the headline ratings that matter most.</p></div>

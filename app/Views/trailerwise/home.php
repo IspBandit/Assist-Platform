@@ -31,6 +31,14 @@
     </div>
 </section>
 
+<?php $this->include('partials.brand-directory-finder', [
+    'categories' => $categories,
+    'heading' => 'Find the right trailer service nearby.',
+    'intro' => 'Search repairers, inspectors, parts, tyres, brakes, electrical, fabrication, manufacturers and mobile services by location.',
+    'servicePlaceholder' => 'e.g. trailer bearings or mobile repairs',
+    'submitLabel' => 'Find trailer services',
+]); ?>
+
 <section class="section product-section" id="services">
     <div class="container">
         <div class="section-heading"><span class="product-kicker dark">Everything trailer-related</span><h2>Start with the help you need.</h2><p>Search by service category, then confirm suitability and current details directly with each business.</p></div>
