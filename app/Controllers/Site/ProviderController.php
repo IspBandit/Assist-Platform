@@ -52,9 +52,15 @@ final class ProviderController extends Controller
             $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
         $locationFound = ($location === '' && !$hasCoords) || $townId !== null;
-        $categoryId = (int) $request->input('category') ?: null;
         $brand = current_brand();
         $brandScoped = $brand->id() !== 'vanassist';
+        $categoryInput = trim((string) $request->input('category', ''));
+        $categoryId = ctype_digit($categoryInput) && (int) $categoryInput > 0
+            ? (int) $categoryInput
+            : null;
+        if ($brandScoped && $categoryId === null && $categoryInput !== '') {
+            $categoryId = $this->brandCategoryId($brand->databaseId(), $categoryInput);
+        }
 
         $result = !$locationFound
             ? ['rows' => [], 'total' => 0]
@@ -98,10 +104,23 @@ final class ProviderController extends Controller
             'locationFound' => $locationFound,
             'townId' => $townId,
             'categoryId' => $categoryId,
+            'categoryKey' => $categoryInput,
             'categories' => $categories,
             'brand' => $brand,
             'directoryCopy' => DirectoryPresentation::copyFor($brand->id()),
         ]);
+    }
+
+    private function brandCategoryId(int $brandId, string $categoryKey): ?int
+    {
+        $category = Database::selectOne(
+            'SELECT id FROM brand_provider_categories WHERE '
+            . BrandProviderCategory::publicDirectorySql($brandId)
+            . ' AND category_key = ?',
+            [...BrandProviderCategory::publicDirectoryParams($brandId), $categoryKey]
+        );
+
+        return $category !== null ? (int) $category['id'] : null;
     }
 
     public function show(Request $request): Response
