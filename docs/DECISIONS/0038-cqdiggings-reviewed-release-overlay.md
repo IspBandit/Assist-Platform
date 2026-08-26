@@ -34,6 +34,12 @@ approved public runtime data remain in their existing locations. The overlay is
 part of the checksummed Assist Platform release artefact and is applied only by
 the existing protected production workflow and root-owned release command.
 
+On 26 August 2026, CQDiggings PR #71 corrected the two reviewed map integrations
+to load the already-published field-validation dataset. The overlay was refreshed
+from source commit `1172690e6f50fea5b1e303dfad1ff6d73f8c8311`; its markers retain
+the legal gate and state that they are planning aids, not dig-here coordinates
+or access guarantees.
+
 This is a bounded cross-repository release bridge, not a transfer of CQDiggings
 product ownership into Assist Platform. Future CQDiggings releases should either
 replace this overlay with a dedicated restricted release command or refresh the

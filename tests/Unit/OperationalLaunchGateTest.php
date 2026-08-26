@@ -98,7 +98,7 @@ final class OperationalLaunchGateTest extends TestCase
             'research/queensland-high-grade-gold-investigation.md',
         ];
 
-        self::assertStringContainsString('d3f4f5ea76c00ecea5ce6159abe1fa79e8ece3a0', $release);
+        self::assertStringContainsString('1172690e6f50fea5b1e303dfad1ff6d73f8c8311', $release);
         self::assertSame(1, substr_count(
             $compose,
             './current/infrastructure/cqdiggings-overlay:/srv/cqdiggings-overlay:ro'
@@ -118,6 +118,12 @@ final class OperationalLaunchGateTest extends TestCase
         self::assertSame(24, $this->geoJsonFeatureCount($overlay . '/data/clermont-legal-gold-prospectivity.geojson'));
         self::assertSame(150, $this->geoJsonFeatureCount($overlay . '/data/clermont-prospectivity-watercourses.geojson'));
         self::assertSame(15, $this->geoJsonFeatureCount($overlay . '/data/clermont-field-validation-points.geojson'));
+        foreach (['map-20260814.js', 'old-diggings-map-regional.js'] as $mapScript) {
+            $map = (string) file_get_contents($overlay . '/' . $mapScript);
+            self::assertStringContainsString('clermont-legal-gold-prospectivity.geojson', $map);
+            self::assertStringContainsString('clermont-field-validation-points.geojson', $map);
+            self::assertStringContainsString('not a dig-here coordinate or access guarantee', $map);
+        }
         self::assertSame(757, $this->geoJsonFeatureCount($overlay . '/data/historical-research/gold/historical-gold-sources.geojson'));
         self::assertSame(433, $this->geoJsonFeatureCount($overlay . '/data/historical-research/gold/historical-alluvial-evidence.geojson'));
         self::assertSame(8_666, $this->jsonListCount($overlay . '/data/queensland-gold-occurrences.json', 'records'));

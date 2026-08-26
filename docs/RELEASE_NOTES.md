@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CQDiggings validation-map release correction
+
+- Refresh the reviewed CQDiggings overlay from source PR #71 and commit
+  `1172690e6f50fea5b1e303dfad1ff6d73f8c8311`.
+- Load the 15 published Clermont desktop validation points in both Research Map
+  and Field Map, preserving the legal gate and explicit planning-only warning.
+- Add local regression checks matching the protected production verification so
+  a missing map integration fails before release.
+
 ### Product-brand completion programme (CORE-003 / CORE-012 / EXP-004 / EXP-005 / TOW-002 / TRL-001)
 
 - Add owner-and-brand-scoped TowSmart edit/recalculate, three-way comparison

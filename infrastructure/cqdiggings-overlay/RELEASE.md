@@ -1,8 +1,8 @@
 # CQDiggings Clermont investigation overlay
 
 - Source repository: `IspBandit/CQDiggings`
-- Source commit: `d3f4f5ea76c00ecea5ce6159abe1fa79e8ece3a0`
-- Source pull requests: CQDiggings #66 and #67
+- Source commit: `1172690e6f50fea5b1e303dfad1ff6d73f8c8311`
+- Source pull requests: CQDiggings #66, #67 and #71
 - Content: Clermont investigation page, complete twenty-pass dossier, 8,666
   Queensland occurrence records, historical evidence, assay and report-link
   registers, three investigation GeoJSON layers, Research Map and Field Map
@@ -37,9 +37,9 @@ b74404e535101db190a4e3a27b70598a2ff57a202d8dd924b328921fe393aa54  data/historica
 81d1893bd7906f3a171e9a9749e6c6cfed6ca69e129454b4e70d65bb4e83ba76  data/production-assay-register.json
 558bc634df5aac379a30185c924db30399a35537c12f2a1c156ebf1e9abbefc6  data/queensland-gold-occurrences.json
 06735a62630a012a91e8d4d2769de6ac8ad0c962d280f292674b757c0fd98a46  index.html
-ddb16dd49546d15678410016f0f5506a555a524484e45bb1b5bb3bf53917fb10  map-20260814.js
+41ac0557c61303b1c459a7d4572efd974d396b91f0b694f4b9754f6c952f7904  map-20260814.js
 e24231c171548a7c9ed0ef94945b99e1954c411923f6836961074476a6809980  map.html
-edc26e34d03b36a41329cbbd9e2b803b78ee239e732952a002a2f555eee13883  old-diggings-map-regional.js
+f3a894018749f4e0d5fbe503b8416e44e10a9e7dd314277bf0665df564e1591d  old-diggings-map-regional.js
 a0359cfbb771a667d3f95f6d906230c03102a61b8d250d89af1adb3fa12a54c3  old-diggings-map.html
 69e61970fea9fa2c5c5164459577ddfe4368b5182369b20de236210082099758  service-worker.js
 6b8d6230e883f71b65f503ea2104cbcf1c02aae87f1652bc68afcca448f350ef  site-index.html
