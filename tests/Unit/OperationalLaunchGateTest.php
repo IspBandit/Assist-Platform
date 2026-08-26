@@ -65,73 +65,16 @@ final class OperationalLaunchGateTest extends TestCase
         self::assertStringContainsString('community-detector-settings.json', $release);
     }
 
-    public function testCqDiggingsClermontReleaseOverlayIsCompleteAndReadOnly(): void
+    public function testCqDiggingsProductFilesAreOwnedByItsRelease(): void
     {
         $compose = (string) file_get_contents(base_path('infrastructure/binarylane/docker-compose.yml'));
         $caddy = (string) file_get_contents(base_path('infrastructure/binarylane/Caddyfile'));
-        $overlay = base_path('infrastructure/cqdiggings-overlay');
-        $release = (string) file_get_contents($overlay . '/RELEASE.md');
-        $files = [
-            'clermont-blair-athol.html',
-            'clermont-gold-investigation.css',
-            'clermont-gold-investigation.html',
-            'clermont-gold-investigation.js',
-            'data/clermont-field-validation-points.geojson',
-            'data/clermont-legal-gold-prospectivity.geojson',
-            'data/clermont-prospectivity-watercourses.geojson',
-            'data/gladstone-gold-occurrences.json',
-            'data/gold-path-model.json',
-            'data/historical-research/gold/historical-alluvial-evidence.geojson',
-            'data/historical-research/gold/historical-gold-sources.geojson',
-            'data/historical-research/research-data-catalog.json',
-            'data/occurrence-report-matches.json',
-            'data/production-assay-register.json',
-            'data/queensland-gold-occurrences.json',
-            'index.html',
-            'map-20260814.js',
-            'map.html',
-            'old-diggings-map-regional.js',
-            'old-diggings-map.html',
-            'service-worker.js',
-            'site-index.html',
-            'sitemap.xml',
-            'research/queensland-high-grade-gold-investigation.md',
-        ];
 
-        self::assertStringContainsString('1172690e6f50fea5b1e303dfad1ff6d73f8c8311', $release);
-        self::assertSame(1, substr_count(
-            $compose,
-            './current/infrastructure/cqdiggings-overlay:/srv/cqdiggings-overlay:ro'
-        ));
-        self::assertStringNotContainsString(
-            './current/infrastructure/cqdiggings-overlay/',
-            $compose
-        );
-        self::assertStringContainsString('root * /srv/cqdiggings-overlay', $caddy);
-        self::assertStringContainsString('@releaseOverlay path', $caddy);
-        foreach ($files as $file) {
-            self::assertFileExists($overlay . '/' . $file);
-        }
-
-        self::assertStringContainsString('cqdiggings-field-v55', (string) file_get_contents($overlay . '/service-worker.js'));
-        self::assertStringContainsString('Where could a prospector legally look for gold near Clermont?', (string) file_get_contents($overlay . '/clermont-gold-investigation.html'));
-        self::assertSame(24, $this->geoJsonFeatureCount($overlay . '/data/clermont-legal-gold-prospectivity.geojson'));
-        self::assertSame(150, $this->geoJsonFeatureCount($overlay . '/data/clermont-prospectivity-watercourses.geojson'));
-        self::assertSame(15, $this->geoJsonFeatureCount($overlay . '/data/clermont-field-validation-points.geojson'));
-        foreach (['map-20260814.js', 'old-diggings-map-regional.js'] as $mapScript) {
-            $map = (string) file_get_contents($overlay . '/' . $mapScript);
-            self::assertStringContainsString('clermont-legal-gold-prospectivity.geojson', $map);
-            self::assertStringContainsString('clermont-field-validation-points.geojson', $map);
-            self::assertStringContainsString('not a dig-here coordinate or access guarantee', $map);
-        }
-        self::assertSame(757, $this->geoJsonFeatureCount($overlay . '/data/historical-research/gold/historical-gold-sources.geojson'));
-        self::assertSame(433, $this->geoJsonFeatureCount($overlay . '/data/historical-research/gold/historical-alluvial-evidence.geojson'));
-        self::assertSame(8_666, $this->jsonListCount($overlay . '/data/queensland-gold-occurrences.json', 'records'));
-        self::assertSame(193, $this->jsonListCount($overlay . '/data/production-assay-register.json', 'records'));
-        self::assertSame(193, $this->jsonListCount($overlay . '/data/gladstone-gold-occurrences.json', 'records'));
-        self::assertSame(26, $this->jsonListCount($overlay . '/data/historical-research/research-data-catalog.json', 'passes'));
-        self::assertSame(41, $this->jsonListCount($overlay . '/data/occurrence-report-matches.json', 'matches'));
-        self::assertStringContainsString('## Pass 20: desktop field-validation points', (string) file_get_contents($overlay . '/research/queensland-high-grade-gold-investigation.md'));
+        self::assertStringContainsString('/opt/cqdiggings/current:/var/www/cqdiggings:ro', $compose);
+        self::assertStringNotContainsString('/srv/cqdiggings-overlay', $compose);
+        self::assertStringNotContainsString('/srv/cqdiggings-overlay', $caddy);
+        self::assertStringNotContainsString('@releaseOverlay', $caddy);
+        self::assertStringContainsString('root * /var/www/cqdiggings', $caddy);
     }
 
     private function geoJsonFeatureCount(string $path): int

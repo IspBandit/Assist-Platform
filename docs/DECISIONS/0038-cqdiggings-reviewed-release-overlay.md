@@ -1,6 +1,6 @@
 # ADR 0038: CQDiggings reviewed release overlay
 
-- Status: accepted
+- Status: superseded on 27 August 2026 by restoration of CQDiggings-owned releases
 - Date: 26 August 2026
 - Backlog: INF-001, OPS-001, OPS-002
 
@@ -45,6 +45,14 @@ product ownership into Assist Platform. Future CQDiggings releases should either
 replace this overlay with a dedicated restricted release command or refresh the
 reviewed overlay from an exact CQDiggings commit.
 
+## Superseded
+
+CQDiggings now has its own protected, immutable production release path. The
+temporary Assist Platform overlay is no longer mounted or routed. All
+investigation pages, maps, service-worker assets and research data are served
+from `/opt/cqdiggings/current`, so CQDiggings is the sole release owner and a
+new CQDiggings release cannot be masked by stale Assist Platform files.
+
 ## Alternatives considered
 
 ### Reuse the former root SSH deployment
@@ -70,8 +78,8 @@ checksum evidence unreliable.
 - The release remains checksummed, reversible and tied to reviewed commits.
 - Compose contains explicit file mounts for the bounded change set. This is
   verbose, but visible and fail-closed if a packaged file is absent.
-- A later full CQDiggings release must remove or deliberately refresh the
-  overlay so stale files do not mask newer base-release content.
+- The completed full CQDiggings release removes the overlay from the runtime
+  boundary; the retained directory is historical evidence only and is inert.
 
 ## Validation and rollback
 
