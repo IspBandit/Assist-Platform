@@ -43,11 +43,6 @@
 	route {
 		@private path /.git* /.htaccess /analytics/config.php /analytics/dashboard-config.php /analytics/config.example.php /analytics/dashboard-config.example.php /analytics/_stats/* /analytics/_contributions/* /analytics/_detector-settings/* /analytics/_detector-setting-uploads/* /analytics/_marketplace/* /analytics/_messages/*
 		respond @private 404
-		@releaseOverlay path / /index.html /clermont-* /map.html /map-*.js /old-diggings-map* /service-worker.js /site-index.html /sitemap.xml /data/clermont-* /data/gladstone-gold-occurrences.json /data/gold-path-model.json /data/historical-research/* /data/occurrence-report-matches.json /data/production-assay-register.json /data/queensland-gold-occurrences.json /research/queensland-high-grade-gold-investigation.md
-		handle @releaseOverlay {
-			root * /srv/cqdiggings-overlay
-			file_server
-		}
 		handle /data/community-contributions.json {
 			root * /srv/cqdiggings-public
 			file_server
