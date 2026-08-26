@@ -25,7 +25,7 @@ return [
                 'legacy' => 'vanassist.condrendigital.com.au',
             ],
             'assets' => [
-                'logo' => '/assets/brands/vanassist/symbol-v2.svg',
+                'logo' => '/assets/brands/vanassist/mark.svg',
                 'icon' => '/assets/brands/vanassist/symbol-v2.svg',
                 'favicon' => '/assets/brands/vanassist/favicon.svg',
             ],
@@ -108,7 +108,7 @@ return [
                 'legacy_local' => 'towwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/towsmart/symbol-v2.svg',
+                'logo' => '/assets/brands/towsmart/mark.svg',
                 'icon' => '/assets/brands/towsmart/symbol-v2.svg',
                 'favicon' => '/assets/brands/towsmart/favicon.svg',
             ],
@@ -194,7 +194,7 @@ return [
                 'local' => 'trailerwise.test',
             ],
             'assets' => [
-                'logo' => '/assets/brands/trailerwise/symbol-v2.svg',
+                'logo' => '/assets/brands/trailerwise/mark.svg',
                 'icon' => '/assets/brands/trailerwise/symbol-v2.svg',
                 'favicon' => '/assets/brands/trailerwise/favicon.svg',
             ],

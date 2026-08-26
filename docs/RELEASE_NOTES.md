@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Canonical public brand schema logos
+
+- Publish each public brand's canonical `mark.svg` alias in Organization
+  structured data instead of the retired `symbol-v2.svg` filename.
+- Keep the rendered artwork unchanged while aligning SEO/bot metadata with the
+  protected public-identity release gate.
+
 ### CQDiggings validation-map release correction
 
 - Refresh the reviewed CQDiggings overlay from source PR #71 and commit
