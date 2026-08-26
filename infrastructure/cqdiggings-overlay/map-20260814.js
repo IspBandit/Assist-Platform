@@ -1600,6 +1600,28 @@ loadClermontLegalGold().catch(() => {
   if (count) count.textContent = "(unavailable)";
 });
 
+async function loadClermontValidationPoints() {
+  const response = await fetch("data/clermont-field-validation-points.geojson?v=20260826b");
+  if (!response.ok) throw new Error("Clermont validation points unavailable");
+  const data = await response.json();
+  L.geoJSON(data, {
+    pointToLayer: (_feature, latlng) =>
+      L.circleMarker(latlng, {
+        radius: 6,
+        color: "#4f3a73",
+        weight: 2,
+        fillColor: "#f2c14e",
+        fillOpacity: 0.9,
+      }),
+    onEachFeature: (feature, layer) => {
+      const p = feature.properties || {};
+      const drains = (p.nearby_named_drainage || []).join(", ") || "No named watercourse recorded nearby";
+      layer.bindPopup(`<strong>${esc(p.validation_id)} · ${esc(p.target_name)}</strong><p><strong>Desktop planning point only — not a dig-here coordinate or access guarantee.</strong></p><p>${esc(p.field_task)}</p><small>Confidence: ${esc(p.confidence)} · approximate target-edge clearance: ${esc(p.edge_clearance_m_approx)} m<br>Drainage: ${esc(drains)}</small><p>${esc(p.legal_gate)}</p><a href="clermont-gold-investigation.html">Open the full investigation</a>`);
+    },
+  }).addTo(groups.legalGold);
+}
+loadClermontValidationPoints().catch(() => {});
+
 async function loadMinerals(id, g) {
   let offset = 0;
   for (;;) {
@@ -2749,4 +2771,3 @@ async function initGemTypeFilter() {
   });
 }
 initGemTypeFilter();
-
