@@ -54,7 +54,7 @@ final class BrandWebsiteSchemaTest extends TestCase
             );
 
             self::assertSame(
-                "https://{$registry->get($brandId)->primaryDomain()}/assets/brands/{$brandId}/mark.svg",
+                $registry->get($brandId)->url() . "/assets/brands/{$brandId}/mark.svg",
                 $organisation['logo'] ?? null
             );
             self::assertStringNotContainsString('symbol-v2.svg', (string) ($organisation['logo'] ?? ''));
