@@ -213,7 +213,8 @@ jobs:
           test "$(jq '.features | length' <<<"$validation")" -eq 15
 
           dossier="$(fetch "https://cqdiggings.com.au/qld-high-grade-gold-investigation.html?${cache_bust}")"
-          grep -q '## Pass 20: desktop field-validation points' <<<"$dossier"
+          grep -q 'Queensland high-grade gold investigation — CQDiggings' <<<"$dossier"
+          grep -q 'Full investigation dossier' <<<"$dossier"
           test "$(fetch "https://cqdiggings.com.au/data/queensland-gold-occurrences.json?${cache_bust}" | jq '.records | length')" -eq 8666
           test "$(fetch "https://cqdiggings.com.au/data/historical-research/gold/historical-gold-sources.geojson?${cache_bust}" | jq '.features | length')" -eq 757
           test "$(fetch "https://cqdiggings.com.au/data/historical-research/gold/historical-alluvial-evidence.geojson?${cache_bust}" | jq '.features | length')" -eq 433
