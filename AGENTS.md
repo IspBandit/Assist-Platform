@@ -10,12 +10,16 @@ implementing work, read `docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md`,
 `docs/PLATFORM_CHARTER.md`, `docs/PRODUCT_BACKLOG.md` and
 `docs/PLATFORM_QUALITY_GATE.md`.
 
-This repository contains one PHP application serving four brands:
+The active saleable product serves exactly three public brands:
 
 - VanAssist (`vanassist.com.au`): caravan/RV provider marketplace and assistance workflows.
 - TowSmart (`towsmart.com.au`): towing calculator, saved combinations and safety guidance.
-- TrailerWise (`trailerwise.com.au`): trailer marketplace and listing management.
-- Polaris (private until its production domain is confirmed): new RV research, matching and comparison.
+- TrailerWise (`trailerwise.com.au`): trailer services, ownership resources and secondary marketplace functionality.
+
+LocalTorque and Polaris are retired/excluded brands. Historical migrations, ADRs
+and audit records may remain where required to preserve upgrade and due-diligence
+integrity, but they must not be reintroduced into the active runtime, current
+product documentation or acquisition scope.
 
 NDTFlow and SignConsole are separate products. Never add them here.
 
@@ -70,4 +74,3 @@ MariaDB 11.4 and Caddy. Its secrets and credentials are deliberately not stored
 in Git. Production changes require an immutable release, checksum verification,
 backup, controlled migration, health checks and rollback availability. See
 `docs/OPERATIONS_RUNBOOK.md` and `docs/PRODUCTION_CURRENT_STATE.md`.
-
