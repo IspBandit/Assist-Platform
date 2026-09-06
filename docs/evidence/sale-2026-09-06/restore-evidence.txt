@@ -1,0 +1,12 @@
+backups/database/assist-20260906T193058.sql.gz: OK
+232
+providers	14098
+users	4
+towns	17615
+restore_test.user_mfa_methods                      OK
+restore_test.user_roles                            OK
+restore_test.user_sessions                         OK
+restore_test.users                                 OK
+restore_elapsed_seconds=44
+release=/opt/assist-platform/releases/ccb8fb2c96c85dc1760fca0a407627aef8e6728e
+completed_at=2026-09-06T11:18:25Z

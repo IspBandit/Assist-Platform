@@ -26,6 +26,11 @@ due-diligence integrity.
 
 ## Buyer review order
 
+Start with [the dated sale review](SALE_REVIEW_2026-09-06.md),
+[privacy register](PRIVACY_REGISTER.md), [data provenance](DATA_PROVENANCE_REGISTER.md)
+and [measured analytics](ANALYTICS_2026-09-06.md). These distinguish current
+evidence from the outstanding transaction and production gates.
+
 1. `../SALE_READINESS.md` — authoritative pre-sale gate and remaining work.
 2. `ASSET_REGISTER.md` — domains, repositories, infrastructure and account-transfer register.
 3. `../PRODUCTION_CURRENT_STATE.md` — last verified production state.

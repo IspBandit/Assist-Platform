@@ -1,5 +1,18 @@
 # Production current state
 
+## Verified update: 6 September 2026
+
+SSH confirms release `ccb8fb2c96c85dc1760fca0a407627aef8e6728e` is current.
+Release run 34024561960 passed full reusable CI, upload/release and Assist public
+checks, then failed a CQDiggings content assertion. A checksum-verified local
+database restore passed with 232 tables in 44 seconds. Independent off-site backup
+configuration is absent; no users have MFA enrolled. Public-key root SSH was
+available, superseding the older all-root-login-disabled claim below.
+See `acquisition/SALE_REVIEW_2026-09-06.md` and its evidence directory for the
+current counts, limitations and source data. A service-worker reload defect has
+been found; the candidate correction is not yet deployed. The following older
+snapshot is historical context, not current sale sign-off.
+
 Last verified: 24 August 2026 (Australia/Brisbane).
 Sale-readiness boundary updated: 6 September 2026.
 

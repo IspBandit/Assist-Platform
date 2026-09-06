@@ -5,6 +5,19 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Sale evidence and form-preserving service worker (OPS-005 / COM-005)
+
+- Stop service-worker activation from reloading open pages and discarding forms.
+- Add desktop/mobile three-brand acceptance and a worker activation regression test.
+- Separate called release CI concurrency from standalone CI; remove obsolete
+  CQDiggings investigation assertions from the Assist release workflow.
+- Record current production SHA, isolated database restore, aggregate analytics,
+  source/licence gaps and privacy inventory in the acquisition data room.
+- No migrations or new environment requirements. Normal reviewed release only;
+  rollback to the preceding release reintroduces the worker reload defect.
+  Independent backup, full transfer rehearsal and seller legal/account evidence
+  remain open; these changes do not certify the platform sale-ready.
+
 ### Three-brand runtime cleanup and acquisition evidence (OPS-005 / COM-005)
 
 - Removed retired Polaris routes, administrator navigation, search delegation,

@@ -81,6 +81,17 @@ application code appears current.
 
 ### CQDiggings release ownership
 
+Assist's release workflow no longer asserts CQDiggings research counts or worker
+versions. Those checks belong to the CQDiggings release at its nominated SHA.
+Shared proxy configuration remains owned here and must still be checked when changed.
+Called CI has a workflow-specific concurrency key so standalone CI cannot cancel
+the validation job within a production release.
+
+Service-worker activation must preserve open forms and navigation; release changes
+must not force-reload active browser tabs. Retest first-visit and existing-browser
+journeys after deployment. See acquisition/SALE_REVIEW_2026-09-06.md for current
+recovery evidence and unresolved off-site/full-application restore gates.
+
 CQDiggings investigations, maps, service-worker assets and research data are
 released only from the CQDiggings repository into `/opt/cqdiggings/current`.
 Assist Platform owns the shared reverse proxy and runtime community-data mounts,

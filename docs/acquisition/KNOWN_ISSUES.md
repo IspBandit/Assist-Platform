@@ -13,6 +13,16 @@ for upgrade/audit integrity are not active product promises.
 
 ## Production and reliability
 
+### 6 September review: current blockers
+
+See [the dated review](SALE_REVIEW_2026-09-06.md) for evidence and ownership.
+The live worker can reload an open form on activation; its candidate fix remains
+undeployed. Independent backup configuration/account is absent. A local 232-table
+restore passed, but full application/media recovery and rollback are unproven.
+No user has MFA enrolled. Ten registered tasks have never run. Provider licence
+metadata is missing on 10,979 non-deleted records. Authenticated buyer journeys,
+cost invoices, account/IP assignments and privacy approval remain outstanding.
+
 ### Formal sale/quality gate not yet complete
 
 The platform has substantial production verification, but the final sale-ready
