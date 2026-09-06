@@ -42,20 +42,6 @@ if ($directory !== []) {
     $nav['Directory'] = $directory;
 }
 
-$polarisNav = [];
-if ($adminBrand->moduleEnabled('rv_catalogue') && $permitted('polaris.manage')) {
-    $polarisNav[] = ['Overview', '/admin/polaris'];
-    $polarisNav[] = ['Manufacturers', '/admin/polaris/manufacturers'];
-    $polarisNav[] = ['Models', '/admin/polaris/models'];
-    $polarisNav[] = ['Imports', '/admin/polaris/imports'];
-    $polarisNav[] = ['Review queue', '/admin/polaris/review-queue'];
-    $polarisNav[] = ['Recycle bin', '/admin/polaris/recycle-bin'];
-    $polarisNav[] = ['Settings', '/admin/polaris/settings'];
-}
-if ($polarisNav !== []) {
-    $nav['Polaris'] = $polarisNav;
-}
-
 $customerOperations = [];
 if ($adminBrand->moduleEnabled('requests') && $permitted('customers.manage')) {
     $customerOperations[] = ['Customers', '/admin/customers'];

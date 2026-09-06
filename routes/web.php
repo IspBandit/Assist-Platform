@@ -36,50 +36,6 @@ return static function (Router $router): void {
         $router->get('/marketplace', 'Site\TrailerWiseController@marketplace', 'trailerwise.marketplace');
         $router->get('/trailers/{slug}', 'Site\TrailerWiseController@show', 'trailerwise.show');
 
-        // Polaris new-RV catalogue (brand-gated in controller via rv_catalogue module).
-        // Note: /find is shared with VanAssist provider search — SearchController delegates for Polaris.
-        $router->get('/rvs', 'Site\PolarisController@browse', 'polaris.browse');
-        $router->get('/rvs/{manufacturer}/{model}', 'Site\PolarisController@showModel', 'polaris.model');
-        $router->get('/dealers/{id}/enquire', 'Site\PolarisController@dealerEnquire', 'polaris.dealer.enquire');
-        $router->get('/compare', 'Site\PolarisController@compare', 'polaris.compare');
-        $router->get('/compare/{token}', 'Site\PolarisController@compare', 'polaris.compare.shared');
-        $router->post('/compare/share', 'Site\PolarisController@shareCompare', 'polaris.compare.share');
-        $router->get('/manufacturers', 'Site\PolarisController@manufacturers', 'polaris.manufacturers');
-        $router->get('/manufacturers/{manufacturer}', 'Site\PolarisController@showManufacturer', 'polaris.manufacturer');
-        $router->get('/tow-match', 'Site\PolarisController@towMatch', 'polaris.tow-match');
-        $router->get('/floorplans', 'Site\PolarisController@floorplans', 'polaris.floorplans');
-        $router->get('/buying-guides', 'Site\PolarisController@buyingGuides', 'polaris.buying-guides');
-        $router->get('/buying-guides/{slug}', 'Site\PolarisController@buyingGuide', 'polaris.buying-guide');
-        $router->get('/saved', 'Site\PolarisController@saved', 'polaris.saved');
-        $router->post('/saved/models', 'Site\PolarisController@saveModel', 'polaris.saved.save');
-        $router->post('/saved/models/remove', 'Site\PolarisController@unsaveModel', 'polaris.saved.remove');
-        $router->post('/saved/searches', 'Site\PolarisController@saveSearch', 'polaris.saved.search');
-        $router->post('/saved/searches/remove', 'Site\PolarisController@unsaveSearch', 'polaris.saved.search.remove');
-        $router->get('/account/preferences', 'Site\PolarisController@accountPreferences', 'polaris.account.preferences');
-        $router->post('/account/preferences', 'Site\PolarisController@saveAccountPreferences', 'polaris.account.preferences.save');
-        $router->get('/account/comparisons', 'Site\PolarisController@accountComparisons', 'polaris.account.comparisons');
-        $router->get('/account/alerts', 'Site\PolarisController@accountAlerts', 'polaris.account.alerts');
-        $router->get('/account/tow-vehicles', 'Site\PolarisController@accountTowVehicles', 'polaris.account.tow-vehicles');
-
-        $router->get('/portal/manufacturer', 'Site\ManufacturerPortalController@index', 'polaris.portal');
-        $router->get('/portal/manufacturer/claims', 'Site\ManufacturerPortalController@claims', 'polaris.portal.claims');
-        $router->post('/portal/manufacturer/claims', 'Site\ManufacturerPortalController@submitClaim', 'polaris.portal.claims.submit');
-        $router->get('/portal/manufacturer/models', 'Site\ManufacturerPortalController@models', 'polaris.portal.models');
-        $router->get('/portal/manufacturer/models/{id}', 'Site\ManufacturerPortalController@editModel', 'polaris.portal.models.edit');
-        $router->post('/portal/manufacturer/models/save', 'Site\ManufacturerPortalController@saveModel', 'polaris.portal.models.save');
-        $router->get('/portal/manufacturer/profile', 'Site\ManufacturerPortalController@profile', 'polaris.portal.profile');
-        $router->post('/portal/manufacturer/profile', 'Site\ManufacturerPortalController@saveProfile', 'polaris.portal.profile.save');
-        $router->get('/portal/manufacturer/media', 'Site\ManufacturerPortalController@media', 'polaris.portal.media');
-        $router->post('/portal/manufacturer/media', 'Site\ManufacturerPortalController@uploadMedia', 'polaris.portal.media.upload');
-        $router->get('/portal/manufacturer/dealers', 'Site\ManufacturerPortalController@dealers', 'polaris.portal.dealers');
-        $router->post('/portal/manufacturer/dealers/link', 'Site\ManufacturerPortalController@linkDealer', 'polaris.portal.dealers.link');
-        $router->get('/portal/manufacturer/analytics', 'Site\ManufacturerPortalController@analytics', 'polaris.portal.analytics');
-        $router->get('/portal/manufacturer/team', 'Site\ManufacturerPortalController@team', 'polaris.portal.team');
-        $router->post('/portal/manufacturer/team', 'Site\ManufacturerPortalController@addTeamMember', 'polaris.portal.team.add');
-        $router->get('/portal/manufacturer/data-quality', 'Site\ManufacturerPortalController@dataQuality', 'polaris.portal.data-quality');
-        $router->get('/portal/dealer/claims', 'Site\DealerPortalController@claims', 'polaris.dealer.claims');
-        $router->post('/portal/dealer/claims', 'Site\DealerPortalController@submitClaim', 'polaris.dealer.claims.submit');
-
         // Informational landing pages.
         $router->get('/how-it-works', 'Site\PageController@howItWorks', 'how-it-works');
         $router->get('/for-providers', 'Site\PageController@forProviders', 'for-providers');

@@ -39,6 +39,5 @@ return [
         'social_media_assets' => 'storage/private/social-media-assets',
         'exports'            => 'storage/private/exports',
         'public_uploads'     => 'public/uploads-public',
-        'polaris_media'      => 'storage/private/polaris-media',
     ],
 ];

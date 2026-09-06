@@ -2,11 +2,11 @@
 
 **Status:** Authoritative product and architecture specification  
 **Product:** Assist Platform Enterprise  
-**Brands:** VanAssist, TowSmart, TrailerWise and LocalTorque
+**Brands:** VanAssist, TowSmart and TrailerWise
 
 ## 1. Purpose and authority
 
-Assist Platform Enterprise is the primary commercial product. The four public
+Assist Platform Enterprise is the primary commercial product. The three public
 brands are domain-resolved products operated by one platform, not independent
 websites or duplicated applications.
 
@@ -34,7 +34,7 @@ value consists of:
 - one canonical provider and organisation dataset;
 - shared memberships, billing, reviews, search, maps, CMS, media, email,
   analytics, Social Studio and operational controls;
-- four distinct brands with proven domain models and datasets;
+- three distinct brands with proven domain models and datasets;
 - brand configuration, feature flags and controlled cross-brand relationships;
 - documented data imports, operations, security, quality gates and recovery.
 
@@ -66,7 +66,7 @@ stays, rest areas, dump points, RV service providers, mobile assistance and
 regional travel support.
 
 VanAssist is not a generic accommodation marketplace and must not absorb the
-core product purposes of TowSmart, TrailerWise or LocalTorque.
+core product purposes of TowSmart or TrailerWise.
 
 ### TowSmart
 
@@ -92,17 +92,11 @@ It is not a parks/stays product and is not primarily a classified-advertising
 site. Any sales/hire listings remain secondary to service and business
 discovery unless an approved ADR changes that product decision.
 
-### LocalTorque
+### Retired products
 
-LocalTorque is Australia's automotive workshop and specialist directory and the
-canonical automotive-provider discovery brand. It covers data-driven categories
-such as mechanics, mobile mechanics, auto electricians, diesel, tyres, brakes,
-suspension, fabrication, inspections, fleet, 4WD, agricultural, marine and
-motorcycle services.
-
-LocalTorque is built as a first-class production-capable brand. Until its domain,
-mail, legal, DNS and launch acceptance are confirmed, production launch remains
-disabled. Development must not assume that a pending purchase is complete.
+LocalTorque and Polaris are retired and excluded from the acquisition. Retain
+historical migrations and audit evidence; neither is an active product, launch
+initiative or required dependency of the three-brand platform.
 
 ## 5. Shared platform model
 
@@ -200,9 +194,9 @@ through explicit brand relationships.
 
 Examples:
 
-- a mobile mechanic can be a LocalTorque business and a relevant VanAssist
+- a mobile mechanic can be a relevant VanAssist
   recommendation;
-- a trailer fabricator can appear in LocalTorque and TrailerWise;
+- a trailer fabricator can appear in TrailerWise and, where relevant, VanAssist;
 - a TowSmart result may recommend relevant weighing, brake or suspension
   services without changing TowSmart into a directory;
 - a VanAssist stay page may show nearby relevant providers without moving the
@@ -239,8 +233,7 @@ brand impact, UX impact, tests, migrations, business outcome and rollback.
 2. Complete and verify the unified admin and brand-switching experience.
 3. Formalise the current UX redesign as the shared design system.
 4. Close launch blockers for the three public brands.
-5. Make LocalTorque production-capable while keeping public launch disabled
-   until domain and operational prerequisites are supplied.
+5. Complete three-brand sale acceptance and document operational transfer evidence.
 6. Complete membership entitlements, provider launch email templates and safe
    bulk-campaign preparation before enabling billing.
 7. Improve data quality, provider claiming and coverage reporting.

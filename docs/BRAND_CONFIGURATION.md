@@ -119,14 +119,16 @@ domain API exposed to application code.
 - Production domain: `trailerwise.com.au`; `www.trailerwise.com.au` resolves to
   the same brand; local domain: `trailerwise.test`.
 
-### LocalTorque
+### LocalTorque (retired)
 
-- Status: private until an owner-controlled production domain is supplied.
+- Status: retired and excluded from the active sale package; retained for historical
+  migration and audit context.
 - Automotive directory foundation with brand-scoped categories.
 
-### Polaris
+### Polaris (retired)
 
-- Status: private until an owner-controlled production domain is supplied.
+- Status: retired and excluded from the active sale package; retained for historical
+  migration and audit context.
 - New RV decision platform (catalogue, guided matching, TowSmart compatibility).
 - Local domain: `polaris.test`. Module: `rv_catalogue`.
 - Documentation: `docs/polaris/`. Backlog: POL-001+.
