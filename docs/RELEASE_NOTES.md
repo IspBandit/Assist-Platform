@@ -5,6 +5,20 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Generic shared public edge extension (OPS-001)
+
+- Keep the existing Assist Caddy service as the sole public listener on host
+  ports 80 and 443 while allowing reviewed host-only vhost drop-ins for separate
+  products sharing the VPS temporarily.
+- Mount `/opt/shared-public-edge/sites` read-only into Caddy and attach Caddy to
+  the named `shared-public-edge` Docker network.
+- Preserve the three-brand Assist application and acquisition boundary: separate
+  products remain independently deployed, do not become Assist brands and own
+  their own vhost, application, credentials and data.
+- No migrations or new application environment variables. Validate Caddy and
+  Compose configuration plus all existing public domains after release. Rollback
+  removes the drop-in/network extension and restores the preceding edge runtime.
+
 ### Sale evidence and form-preserving service worker (OPS-005 / COM-005)
 
 - Stop service-worker activation from reloading open pages and discarding forms.

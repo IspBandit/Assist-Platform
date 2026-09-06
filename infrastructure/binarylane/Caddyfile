@@ -101,3 +101,8 @@ www.cqdiggings.com.au {
 cqdiggings.com.au {
 	import cqdiggings_site
 }
+
+# Reviewed host-only vhosts for separate products can be mounted here without
+# becoming Assist Platform application brands or dependencies. Caddy permits an
+# empty glob, so the three-brand runtime is unchanged when none are installed.
+import /etc/caddy/sites/*.caddy
