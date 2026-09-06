@@ -1,12 +1,22 @@
 # VanAssist user guide
 
+## Assist Platform product boundary
+
+VanAssist is one of three active Assist Platform products alongside **TowSmart**
+and **TrailerWise**. LocalTorque and Polaris are retired product experiments and
+are not separate active websites, search sources or dependencies of VanAssist.
+Historical technical records for those retired experiments may remain in the
+repository for database-upgrade and audit integrity.
+
 ## Provider coverage ownership
 
 Provider search is backed by a VanAssist-owned national provider pack. The
-retired LocalTorque brand is not a separate website or result source. Search
-results remain filtered by the requested service and location, and provider
-evidence is retained without publishing unrelated categories as fallback
-answers.
+retired LocalTorque brand is not a separate website or result source. Legitimate
+canonical provider coverage transferred during its retirement remains owned and
+served by VanAssist where the provider and service evidence support that use.
+Search results remain filtered by the requested service and location, and
+provider evidence is retained without publishing unrelated categories as
+fallback answers.
 
 ## Homepage discovery
 
@@ -24,9 +34,11 @@ Provider results must match the requested service or a deliberately related
 repair category. If VanAssist has no supported caravan-repair listing near the
 selected location, it reports that coverage gap instead of filling the list
 with unrelated nearby businesses such as fuel stations or generic workshops.
-Providers imported through the shared LocalTorque catalogue are mapped into
-the same VanAssist service categories, so caravan repairers and other relevant
-specialists can be found by both Ask and the category search.
+Providers transferred from the retired LocalTorque provider corpus are mapped
+into the same VanAssist service categories, so relevant caravan repairers and
+other supported specialists can be found by both Ask and category search. The
+retired LocalTorque brand itself is not queried or exposed.
+
 When the normal 25 km radius finds no repair specialist and the traveller did
 not set a distance limit, Ask retries the same service categories within a
 regional 150 km area. An explicit distance such as “within 25 km” remains a
@@ -40,5 +52,4 @@ performs the requested work unless its result says so.
 
 ## Last updated
 
-2026-08-26 — Category-accurate regional search and concise mobile results.
-
+2026-09-06 — Sale-readiness product boundary and retired-brand clarification.
