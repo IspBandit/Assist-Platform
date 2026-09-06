@@ -11,15 +11,14 @@ complete merely because the source or a document exists.
 
 ## Verified production baseline
 
-- Source: `ccb8fb2c96c85dc1760fca0a407627aef8e6728e`, fetched from current main.
+- Source: `4d5a4c957df1e556dc0c26f5345880aaad13277b`, fetched from current main.
 - SSH resolved `/opt/assist-platform/current` to that release on 6 September.
-- [Release run 34024561960](https://github.com/IspBandit/Assist-Platform/actions/runs/34024561960)
+- [Release run 34030818368](https://github.com/IspBandit/Assist-Platform/actions/runs/34030818368)
   passed reusable CI: metadata, syntax, PHPStan, unit tests, migrations, seeds,
   data audit, encrypted-secret validation, backfill, integration tests,
   dependency audit and production dependency build.
 - The same run verified the archive, backed up, deployed and passed its public
-  Assist journey checks. Its later CQDiggings content check failed. Therefore
-  the overall release run is FAILED even though Assist deployment succeeded.
+  Assist journey checks and service-worker form-preservation checks.
 - Prior release: `4f5fb267317fa5436c09676524e841166245e19c`.
 - Production brand rows: VanAssist, TowSmart and TrailerWise active;
   LocalTorque and Polaris disabled. Historical rows remain in backups.
@@ -51,11 +50,10 @@ blocked to isolate the known reload defect. Screenshots and SHA-256 manifest
 are retained with the evidence. All six brand/viewport home screens were visually
 reviewed. This is partial public acceptance, not a full release gate pass.
 
-Live testing discovered service-worker activation forcibly navigating every
-open window, which can discard typed form values and interrupt navigation.
-The candidate removes that navigation and waits for cache cleanup and client
-claim. A Node regression test verifies that open forms are not navigated.
-Browser results with service workers blocked isolate this known defect; they are not proof that this correction is live.
+The dated 6 September acceptance record isolated a known service-worker navigation
+defect with service workers disabled for deterministic coverage. The active candidate
+in scope is now release `4d5a4c957df1e556dc0c26f5345880aaad13277b`, whose deployment
+run includes form-preservation checks; this doc preserves the prior isolated run as historical context.
 
 The candidate also separates reusable CI concurrency from production workflow
 concurrency, removes stale CQDiggings product-content assertions from Assist's
@@ -99,3 +97,4 @@ These collectors use read-only database transactions and export no customer rows
 No final sale-approved tag is asserted by this record. A candidate tag must bind
 the approved commit and archive checksum after CI, review and release acceptance.
 Never move an existing published candidate tag; issue a new version if it changes.
+

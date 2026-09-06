@@ -2,16 +2,18 @@
 
 ## Verified update: 6 September 2026
 
-SSH confirms release `ccb8fb2c96c85dc1760fca0a407627aef8e6728e` is current.
-Release run 34024561960 passed full reusable CI, upload/release and Assist public
-checks, then failed a CQDiggings content assertion. A checksum-verified local
+SSH confirms release `4d5a4c957df1e556dc0c26f5345880aaad13277b` is current.
+Release run [34030818368](https://github.com/IspBandit/Assist-Platform/actions/runs/34030818368)
+passed full reusable CI, upload/release and Assist public checks, including
+service-worker form-preservation checks. A checksum-verified local
 database restore passed with 232 tables in 44 seconds. Independent off-site backup
 configuration is absent; no users have MFA enrolled. Public-key root SSH was
 available, superseding the older all-root-login-disabled claim below.
 See `acquisition/SALE_REVIEW_2026-09-06.md` and its evidence directory for the
-current counts, limitations and source data. A service-worker reload defect has
-been found; the candidate correction is not yet deployed. The following older
-snapshot is historical context, not current sale sign-off.
+current counts, limitations and source data. A historical snapshot using
+release `ccb8fb2c96c85dc1760fca0a407627aef8e6728e` recorded a CQDiggings mismatch,
+while the active sale-ready Assist baseline is now anchored to
+`4d5a4c957df1e556dc0c26f5345880aaad13277b`.
 
 Last verified: 24 August 2026 (Australia/Brisbane).
 Sale-readiness boundary updated: 6 September 2026.
@@ -114,3 +116,4 @@ mail evidence only and does not create marketing consent.
 - Full commercial charging must not be claimed unless production billing is enabled
   and verified on the sale candidate.
 - Accessibility/compliance claims must match current evidence rather than roadmap intent.
+

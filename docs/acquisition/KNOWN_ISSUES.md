@@ -16,8 +16,7 @@ for upgrade/audit integrity are not active product promises.
 ### 6 September review: current blockers
 
 See [the dated review](SALE_REVIEW_2026-09-06.md) for evidence and ownership.
-The live worker can reload an open form on activation; its candidate fix remains
-undeployed. Independent backup configuration/account is absent. A local 232-table
+The live worker navigation-fix has been delivered in release `4d5a4c957df1e556dc0c26f5345880aaad13277b` and verified by the production release workflow `34030818368`; current residual checks now focus on authenticated and operational gate closure (backup, MFA, provenance, transfer) rather than the original form-reload defect. Independent backup configuration/account is absent. A local 232-table
 restore passed, but full application/media recovery and rollback are unproven.
 No user has MFA enrolled. Ten registered tasks have never run. Provider licence
 metadata is missing on 10,979 non-deleted records. Authenticated buyer journeys,
@@ -140,3 +139,4 @@ buyer requirement makes them necessary:
 - additional marketplaces;
 - broad AI expansion;
 - infrastructure scaling without measured load justification.
+
