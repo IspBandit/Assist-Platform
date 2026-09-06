@@ -28,8 +28,8 @@ is **not** the independent encrypted off-site backup required by the sale gate.
 
 ## Verified Microsoft billing-profile invoice
 
-A Microsoft billing email received 20 July 2026 records invoice `G172558364` for
-**$138.60 AUD**, billing/due date 20 July 2026, under the Condren billing profile.
+A Microsoft billing email received 20 July 2026 records a **$138.60 AUD** charge,
+with billing/due date 20 July 2026, under the current business billing profile.
 The message does not identify the subscription line items, GST split or which
 share belongs specifically to Assist Platform.
 
@@ -46,7 +46,7 @@ Assist cost is calculated.
 | BinaryLane VPS compute | Paid 22 Aug 2026 invoice, 21 Jul-21 Aug period | $21.56 incl. GST ($19.60 ex GST) | Monthly evidence; current invoice period recorded | Current host is shared; transfer account or price a clean buyer host |
 | BinaryLane 2-day daily backup option | Same paid invoice | $6.60 incl. GST ($6.00 ex GST) | Monthly evidence; 2-day retention | Do not treat as independent off-site recovery; buyer may replace |
 | Current shared BinaryLane invoice total | Same paid invoice | **$28.16 incl. GST** | Monthly evidence | Gross current-host cost only; Assist allocation/standalone buyer cost still required |
-| Microsoft 365 / shared-mailbox tenant billing profile | Microsoft invoice email dated 20 Jul 2026 | **$138.60 AUD gross shared invoice** | Billing date/due date 20 Jul 2026; subscription composition not yet captured | Confirm subscription line items, GST, tenant owner and buyer mailbox/Graph transfer or recreate method |
+| Microsoft 365 / shared-mailbox tenant billing profile | Microsoft billing email dated 20 Jul 2026 | **Unknown Assist allocation; $138.60 AUD verified gross shared invoice** | Billing date/due date 20 Jul 2026; subscription composition/cadence not yet captured | Confirm subscription line items, GST, tenant owner and buyer mailbox/Graph transfer or recreate method |
 | Three included domains | Registrar invoices per domain | Unknown | Expiry per domain required | Confirm holder and transfer procedure |
 | DNS/proxy | Cloudflare plan/account evidence | Unknown | Unknown | Transfer/recreate zones and controls |
 | Transactional/support email allocation to Assist | Brand delivery is proven; Microsoft account allocation not yet isolated | Unknown portion of shared Microsoft invoice | Subscription detail required | Buyer tenant/mailbox and sender setup |
