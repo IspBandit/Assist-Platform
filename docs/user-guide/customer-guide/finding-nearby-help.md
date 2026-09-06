@@ -151,6 +151,12 @@ Use **Places to stay** for caravan-friendly stops, the service directory to brow
 
 ## FAQ
 
+**Why can I open a listing or town page that I cannot find on Google?** Public
+provider pages are available to search engines when site indexing is enabled,
+but Google decides whether and when to index them. Some town pages deliberately
+stay out of search results pending content review; they can still be used on
+VanAssist. Being featured on the site does not change that review requirement.
+
 **Why are there more list results than pins?** A public listing can be useful without having coordinates reliable enough to map.
 
 **How do I reset the map after moving or zooming it?** Choose **Fit results** or focus the map and press `0` or `F`.

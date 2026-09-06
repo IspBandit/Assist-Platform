@@ -74,9 +74,9 @@ final class SitemapController extends Controller
         $this->addRows($urls, "SELECT slug, updated_at FROM content_pages WHERE is_published = 1 AND noindex = 0", 'slug', 0.6);
         $this->addRows($urls, "SELECT slug, updated_at FROM service_categories WHERE is_active = 1", 'services/', 0.7);
         $this->addRows($urls, "SELECT slug, updated_at FROM regions WHERE is_active = 1", 'regions/', 0.6);
-        // Only surface curated/indexable towns in the sitemap; the bulk national
-        // locality import is noindex by default and would otherwise flood it.
-        $this->addRows($urls, "SELECT slug, updated_at FROM towns WHERE is_active = 1 AND (noindex = 0 OR is_launch_town = 1 OR is_featured = 1)", 'towns/', 0.5);
+        // Match LocationController's noindex decision. Launch/featured flags
+        // affect presentation, but must not override an explicit noindex flag.
+        $this->addRows($urls, "SELECT slug, updated_at FROM towns WHERE is_active = 1 AND noindex = 0", 'towns/', 0.5);
         $this->addRows(
             $urls,
             "SELECT pbl.slug, COALESCE(pbl.updated_at,p.updated_at) AS updated_at
@@ -153,7 +153,11 @@ final class SitemapController extends Controller
         $lines = ['User-agent: *'];
         if ($allowIndex) {
             foreach (['/admin', '/account', '/provider', '/park', '/install', '/billing'] as $path) {
-                $lines[] = 'Disallow: ' . $path;
+                // Match the private route, its query strings and descendants,
+                // without blocking public siblings such as /providers or /provider-terms.
+                $lines[] = 'Disallow: ' . $path . '$';
+                $lines[] = 'Disallow: ' . $path . '?';
+                $lines[] = 'Disallow: ' . $path . '/';
             }
             $lines[] = 'Allow: /';
         } else {

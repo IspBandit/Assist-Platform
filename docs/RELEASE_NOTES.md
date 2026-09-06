@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Public provider crawl access (OPS-012)
+
+- Restrict private-area robots rules to exact routes, query strings and
+  descendants. The former `/provider` prefix also blocked public `/providers`
+  listings and `/provider-terms`.
+- Preserve authentication and the indexing-off switch. Shared controller
+  behaviour applies to VanAssist, TowSmart and TrailerWise without brand forks.
+- Exclude towns marked noindex from VanAssist's sitemap even when marked
+  featured or launch towns. Preserve their deliberate page-level noindex setting.
+- Add behavioural regression tests for public pages, private routes and launch
+  settings. No migrations, environment changes or visual changes.
+- Release through the reviewed immutable release process. Rollback uses the
+  preceding release and restores the old crawl restriction. Search Console
+  recovery requires Google's subsequent recrawl; deployment is not proof of indexing.
+
 ### Generic shared public edge extension (OPS-001)
 
 - Keep the existing Assist Caddy service as the sole public listener on host
