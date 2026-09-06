@@ -12,6 +12,8 @@ The active sale package is:
 
 **Excluded:** LocalTorque and Polaris. They are retired product experiments and are not active brands, sale assets, dependencies or implied future products. Historical migrations, ADRs and evidence files may remain where removal would damage the integrity of the database upgrade history or technical audit trail.
 
+No buyer-facing document, runtime brand registry, active host mapping, navigation, sitemap, administrator menu or current product status may present LocalTorque or Polaris as part of the active platform.
+
 ## Sale-ready definition
 
 Assist Platform is sale-ready when a competent buyer can diligence, acquire, transfer, deploy and operate the three-brand platform without undocumented founder knowledge or undisclosed material technical dependencies.
