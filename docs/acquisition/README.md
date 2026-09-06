@@ -5,14 +5,17 @@ sale of Assist Platform.
 
 ## Acquisition boundary
 
-Included active products:
+Included active public products:
 
 1. **VanAssist** — `vanassist.com.au`
 2. **TowSmart** — `towsmart.com.au`
 3. **TrailerWise** — `trailerwise.com.au`
 4. Shared Assist Platform source code, database schema, administration,
    deployment tooling and operational documentation required by those products.
-5. Transferable provider, catalogue, location and content data where provenance
+5. **Assist RIC** (`IspBandit/assist-ric`) as proprietary supporting operational
+   tooling for controlled research, catalogue management and Admin API data sync.
+   RIC is not a fourth public brand.
+6. Transferable provider, catalogue, location and content data where provenance
    and licence records support transfer.
 
 Excluded products and experiments:
@@ -21,53 +24,92 @@ Excluded products and experiments:
 - **Polaris** — retired; not an active product or sale dependency.
 
 Historical migrations, ADRs and deployment/audit evidence for excluded work may
-remain in the repository where required to preserve database upgrade history and
-due-diligence integrity.
+remain where required to preserve database upgrade history and due-diligence
+integrity.
+
+## Current production evidence
+
+The current verified Assist application baseline is production release
+`4d5a4c957df1e556dc0c26f5345880aaad13277b`, deployed successfully through
+GitHub Actions run `34030818368` on 6 September 2026. The release passed reusable
+validation, immutable archive/checksum verification, production backup, healthy
+container restart, Google Routes provisioning and protected public smoke checks
+across VanAssist, TowSmart and TrailerWise.
+
+The later main commit `5618605ac82cbca6a83343c61c336ffa3634b857`
+(PR #248) is unrelated shared-host edge plumbing and is not required for the
+current Assist application sale baseline.
 
 ## Buyer review order
 
-Start with [the dated sale review](SALE_REVIEW_2026-09-06.md),
-[privacy register](PRIVACY_REGISTER.md), [data provenance](DATA_PROVENANCE_REGISTER.md)
-and [measured analytics](ANALYTICS_2026-09-06.md). These distinguish current
-evidence from the outstanding transaction and production gates.
+Start with [the dated sale review](SALE_REVIEW_2026-09-06.md), then read the
+current production/status reconciliation because the dated review predates the
+successful corrective production release.
 
 1. `../SALE_READINESS.md` — authoritative pre-sale gate and remaining work.
-2. `ASSET_REGISTER.md` — domains, repositories, infrastructure and account-transfer register.
-3. `../PRODUCTION_CURRENT_STATE.md` — last verified production state.
-4. `../CURRENT_ARCHITECTURE.md` — current application architecture.
-5. `../DATABASE_DICTIONARY.md` — production schema/data model.
-6. `../OPERATIONS_RUNBOOK.md` and `../BACKUP_AND_RESTORE.md` — operations and recovery.
-7. `../SECURITY.md` — application/security posture.
-8. `../PRODUCT_AND_FEATURES.md` — implemented product capability and limitations.
-9. `../TOWSMART_CATALOGUE.md` and `../VANASSIST_STAYS.md` — product data notes.
-10. `../RELEASE_NOTES.md` — change history.
+2. `../PRODUCTION_CURRENT_STATE.md` — current reconciled production baseline.
+3. `EVIDENCE_REGISTER.md` — what is closed, partial and still open.
+4. `ASSET_REGISTER.md` — included/excluded assets, domains, repositories and
+   account-transfer requirements.
+5. `PRIVACY_REGISTER.md` — engineering inventory and outstanding seller/legal decisions.
+6. `DATA_PROVENANCE_REGISTER.md` — measured source/licence gaps and transfer decisions required.
+7. `ANALYTICS_2026-09-06.md` — measured application/production aggregates.
+8. `OPERATING_COSTS.md` — invoice-backed monthly/annual cost schedule still to complete.
+9. `KNOWN_ISSUES.md` — buyer-facing limitations and remaining gates.
+10. `TRANSFER_REHEARSAL.md` — buyer-controlled build/restore/account-transfer acceptance.
+11. `DEPENDENCIES.md` — locked runtime/development dependencies and declared licences.
+12. `../CURRENT_ARCHITECTURE.md` and `../DATABASE_DICTIONARY.md` — technical architecture/schema.
+13. `../OPERATIONS_RUNBOOK.md` and `../BACKUP_AND_RESTORE.md` — operations and recovery.
+14. `../SECURITY.md` — application/security posture.
+15. `../PRODUCT_AND_FEATURES.md`, `../TOWSMART_CATALOGUE.md` and
+    `../VANASSIST_STAYS.md` — implemented product/data capability and limitations.
+16. `../RELEASE_NOTES.md` — change history.
 
-## Current working registers
+## Registers already created
 
-- [Evidence register](EVIDENCE_REGISTER.md): three-site acceptance, recovery, monitoring, privacy and provenance evidence still needed.
-- [Operating costs](OPERATING_COSTS.md): invoice-backed monthly cost and renewal schedule.
-- [Locked dependencies](DEPENDENCIES.md): runtime/development versions and declared licences from the lock file.
-- [Transfer rehearsal](TRANSFER_REHEARSAL.md): buyer-controlled build, restore, account transfer and operational acceptance.
+The following acquisition records now exist and should not be described as
+missing deliverables merely because individual rows remain open:
 
-These are working records, not completed sale-gate evidence.
-
-## Data-room deliverables still required before sale-ready sign-off
-
+- asset register;
+- evidence register;
 - data/provenance register;
-- third-party dependency and licence register;
-- monthly operating-cost schedule;
-- analytics and traction export;
-- known-issues/deferred-features register;
-- privacy/subprocessor/retention summary;
-- current encrypted backup and isolated restore evidence;
-- immutable deployment and rollback evidence for the sale candidate;
-- domain/account transfer checklist with owner-console actions;
-- IP/source-code assignment schedule;
-- excluded-assets schedule confirming LocalTorque and Polaris are not included.
+- dependency/licence register;
+- measured analytics snapshot;
+- known-issues/deferred-work register;
+- privacy/data-field/subprocessor working register;
+- operating-cost schedule template;
+- transfer-rehearsal checklist; and
+- current production/recovery review evidence.
+
+Their existence is not the same as completion. Open rows and unknown values must
+still be resolved, evidenced, excluded or explicitly accepted/disclosed.
+
+## Remaining data-room evidence before sale-ready sign-off
+
+The principal missing transaction evidence is now:
+
+- invoice-backed monthly/annual operating costs and renewal dates;
+- domain, hosting, Cloudflare, mail, analytics, monitoring, maps/API and backup
+  account ownership/transfer mechanics;
+- independent encrypted off-site backup plus full application/media/config restore
+  and rollback evidence;
+- authenticated provider/admin/TowSmart owner-isolation acceptance and final
+  live-service-worker browser evidence;
+- external uptime/error and scheduled-task failure alert receipt;
+- administrator MFA, credential-rotation and privileged-access evidence;
+- resolved/quarantined/excluded dataset rights for sources with unknown or
+  conflicting licences;
+- source-code, Assist RIC, logo/image/icon and contributor IP assignment evidence;
+- seller-approved privacy retention/export/deletion/subprocessor position and any
+  qualified legal review;
+- buyer-style clean-host transfer rehearsal; and
+- final immutable sale-candidate tag/archive checksum tied to completed quality
+  gate evidence.
 
 ## Information handling
 
 Never place credentials, password-reset links, API secrets, private customer
 data, database dumps or transfer tokens in this repository. Buyer-sensitive
-secrets and account-transfer actions belong in an access-controlled transaction
-data room only after the buyer is authorised to receive them.
+secrets, invoices, legal assignments and account-transfer actions belong in an
+access-controlled transaction data room only after the buyer is authorised to
+receive them.
