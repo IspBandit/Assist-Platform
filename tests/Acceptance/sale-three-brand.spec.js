@@ -1,20 +1,13 @@
 const { test, expect } = require('@playwright/test');
 const path = require('node:path');
-const fs = require('node:fs');
 
 // Read-only production journeys. Never submit a claim or contact a real provider.
 // Explicit opt-in prevents ordinary local acceptance from hitting production.
 test.skip(process.env.ASSIST_SALE_LIVE !== '1', 'Set ASSIST_SALE_LIVE=1 for authorised live acceptance');
 
-// Explicit candidate overlay: reports must distinguish this from deployed code.
-test.beforeEach(async ({ context }) => {
-  if (process.env.ASSIST_CANDIDATE_WORKER === '1') {
-    await context.route('**/service-worker.js', route => route.fulfill({
-      contentType: 'text/javascript',
-      body: fs.readFileSync(path.join(__dirname, '../../public/service-worker.js'), 'utf8'),
-    }));
-  }
-});
+// Isolate the known live worker reload defect while checking other journeys.
+// This mode is partial acceptance, never final deployed-candidate acceptance.
+test.use({ serviceWorkers: process.env.ASSIST_ISOLATE_WORKER === '1' ? 'block' : 'allow' });
 
 async function capture(page, testInfo, name) {
   await page.waitForLoadState('networkidle');

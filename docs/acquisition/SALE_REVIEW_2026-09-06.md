@@ -46,11 +46,16 @@ It covers all three homepage/directory/profile journeys, public health and
 installer lock, VanAssist Ask and stays, legal-page reachability and TowSmart
 custom calculation/over-limit warning at 1440x900 and 390x844.
 
+Final isolated run: 12/12 passed in 32.5 seconds, with live service workers
+blocked to isolate the known reload defect. Screenshots and SHA-256 manifest
+are retained with the evidence. All six brand/viewport home screens were visually
+reviewed. This is partial public acceptance, not a full release gate pass.
+
 Live testing discovered service-worker activation forcibly navigating every
 open window, which can discard typed form values and interrupt navigation.
 The candidate removes that navigation and waits for cache cleanup and client
 claim. A Node regression test verifies that open forms are not navigated.
-Candidate-overlay browser results are not proof that this correction is live.
+Browser results with service workers blocked isolate this known defect; they are not proof that this correction is live.
 
 The candidate also separates reusable CI concurrency from production workflow
 concurrency, removes stale CQDiggings product-content assertions from Assist's
