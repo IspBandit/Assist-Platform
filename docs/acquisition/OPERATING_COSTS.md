@@ -26,6 +26,19 @@ cost must be priced separately or an allocation method agreed.
 The provider's two-day daily-backup option is useful local/provider recovery but
 is **not** the independent encrypted off-site backup required by the sale gate.
 
+## Verified Microsoft billing-profile invoice
+
+A Microsoft billing email received 20 July 2026 records invoice `G172558364` for
+**$138.60 AUD**, billing/due date 20 July 2026, under the Condren billing profile.
+The message does not identify the subscription line items, GST split or which
+share belongs specifically to Assist Platform.
+
+Because the Microsoft tenant/billing profile may support non-Assist activity,
+**$138.60 is recorded only as a verified shared Microsoft-account invoice, not an
+Assist monthly cost allocation**. The restricted transaction data room must retain
+the Microsoft admin-centre invoice/subscription breakdown before a buyer-facing
+Assist cost is calculated.
+
 ## Cost register
 
 | Service | Evidence/source | Monthly AUD | Renewal/commitment | Transfer treatment |
@@ -33,9 +46,10 @@ is **not** the independent encrypted off-site backup required by the sale gate.
 | BinaryLane VPS compute | Paid 22 Aug 2026 invoice, 21 Jul-21 Aug period | $21.56 incl. GST ($19.60 ex GST) | Monthly evidence; current invoice period recorded | Current host is shared; transfer account or price a clean buyer host |
 | BinaryLane 2-day daily backup option | Same paid invoice | $6.60 incl. GST ($6.00 ex GST) | Monthly evidence; 2-day retention | Do not treat as independent off-site recovery; buyer may replace |
 | Current shared BinaryLane invoice total | Same paid invoice | **$28.16 incl. GST** | Monthly evidence | Gross current-host cost only; Assist allocation/standalone buyer cost still required |
+| Microsoft 365 / shared-mailbox tenant billing profile | Microsoft invoice email dated 20 Jul 2026 | **$138.60 AUD gross shared invoice** | Billing date/due date 20 Jul 2026; subscription composition not yet captured | Confirm subscription line items, GST, tenant owner and buyer mailbox/Graph transfer or recreate method |
 | Three included domains | Registrar invoices per domain | Unknown | Expiry per domain required | Confirm holder and transfer procedure |
 | DNS/proxy | Cloudflare plan/account evidence | Unknown | Unknown | Transfer/recreate zones and controls |
-| Transactional/support email | Provider plan and usage invoice | Unknown | Unknown | Buyer tenant/mailbox and sender setup |
+| Transactional/support email allocation to Assist | Brand delivery is proven; Microsoft account allocation not yet isolated | Unknown portion of shared Microsoft invoice | Subscription detail required | Buyer tenant/mailbox and sender setup |
 | Independent off-site encrypted storage | Storage, requests and egress invoice | Not configured / unknown future cost | Not yet established | Buyer repository and encryption custody required |
 | Uptime/error monitoring | Configured provider and plan | Unknown | Unknown | Buyer alert destinations and test receipts |
 | External APIs/AI/maps | Enabled services, usage export and caps | Unknown | Unknown | Buyer keys and agreements |
@@ -47,14 +61,15 @@ is **not** the independent encrypted off-site backup required by the sale gate.
 
 For each remaining entry retain billing period, gross amount, GST, currency,
 invoice/account evidence, account custodian and whether dedicated or shared.
-Annual charges are divided by 12 for monthly comparison; retain actual cash
-renewal dates separately. For shared accounts document the allocation basis and
-buyer standalone cost. For foreign-currency invoices record the invoice conversion
-rate/date.
+Annual charges are divided by 12 for monthly comparison only after the charging
+period is confirmed; retain actual cash renewal dates separately. For shared
+accounts document the allocation basis and buyer standalone cost. For
+foreign-currency invoices record the invoice conversion rate/date.
 
 Calculate fixed monthly commitments plus measured variable usage for the same
 period only when required entries have evidence. Show one-off transfer costs
-separately. Do not publish a consolidated operating-cost total while material
-entries remain unknown. Record disabled optional services separately from active
-costs and forecasts separately from actual invoices. No revenue, margin or
-valuation claim is supported by this unfinished schedule.
+separately. Do not publish a consolidated Assist operating-cost total while
+material entries or shared allocations remain unknown. Record disabled optional
+services separately from active costs and forecasts separately from actual
+invoices. No revenue, margin or valuation claim is supported by this unfinished
+schedule.
