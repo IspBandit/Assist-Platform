@@ -2,6 +2,11 @@
 
 ## Active brands and provider imports
 
+The active registry and administration navigation contain VanAssist, TowSmart
+and TrailerWise only. Polaris catalogue administration and manufacturer/dealer
+portals have been removed. Historical records remain for audit and upgrades;
+do not recreate retired brand entries or enable old permissions as products.
+
 LocalTorque is retired and no longer appears in the brand switcher, social
 studio, outreach controls or production checks. Its former provider corpus is
 managed as the **VanAssist provider pack**. Use the

@@ -49,15 +49,15 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | LOC-002 | Retired | done | Superseded by VAN-011 and DATA-001 |
 | LOC-003 | Retired | done | No domain or production launch |
 | LOC-004 | Retired | done | Public motorsport surface removed |
-| POL-001 | Polaris foundation: brand, docs, homepage, catalogue schema, browse/detail/find shell, admin nav | in progress | Private vertical slice; master prompt not complete — `docs/polaris/IMPLEMENTATION_STATUS.md` |
-| POL-002 | Polaris catalogue browse completeness (filters, provenance UI, SEO) | in progress | Filters/sort + provenance + year selector + a11y + demo volume (`119`); FULLTEXT open |
-| POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages + MatchScorer + prefs UI + Find hydration from saved prefs |
-| POL-004 | TowSmart compatibility service boundary for Polaris | in progress | `TowCompatibilityService` + `/tow-match` UX |
-| POL-005 | Multi-model comparison experience | in progress | Compare/share + account history + saved browse searches (alerts not delivered) |
-| POL-006 | Draft-first data acquisition and extraction review | in progress | CSV/JSON/XLSX + brochure text extract flags; AI import still off |
-| POL-007 | Manufacturer portal (claim-first) | in progress | Claim + edits + analytics views/saves + data-quality checklist |
-| POL-008 | VanAssist provider surfacing on Polaris pages | in progress | Related services + dealer mailto/website handoff (`120`) |
-| POL-009 | Polaris production hardening and public launch | blocked | Domain, Quality Gate, real catalogue; see `docs/polaris/RELEASE_CRITERIA.md` |
+| POL-001 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-002 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-003 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-004 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-005 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-006 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-007 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-008 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-009 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
 
 ## Data
 
@@ -96,7 +96,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-002 | Backup, restore and rollback rehearsal | ready | Fresh machine-readable off-site backup and restore evidence displayed in the launch gate |
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
-| OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
+| OPS-005 | Sale-readiness operational/data room index | in progress | Architecture, licences, data provenance, runbooks and metrics indexed |
 | OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
 | OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, MFA, service-account HTML admin shipped; Option B programme conditional QG; production enable flags await staging rehearsal |
 | OPS-011 | Record lifecycle and Recycle Bin for providers and stays | done | Soft delete, restore, retention, purge permission and audited recycle APIs shipped in CORE-011 Phase 1 |
@@ -110,7 +110,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
-| COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |
+| COM-005 | Sale-readiness product, licence, data and operating package | in progress | Indexed due-diligence pack and transfer rehearsal |
 | COM-006 | Verified provider capability credentials | done | Private evidence, expiry, reviewer audit, public labels and explicit no-endorsement controls |
 | COM-007 | Provider campaign relevance and performance workspace | done | Self-service local/context targeting, transparent sponsorship, daily/total budgets, click/contact attribution and organic separation |
 

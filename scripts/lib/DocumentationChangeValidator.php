@@ -60,7 +60,6 @@ final class DocumentationChangeValidator
                 'docs/VANASSIST_USER_GUIDE.md',
                 'docs/TOWSMART_USER_GUIDE.md',
                 'docs/TRAILERWISE_USER_GUIDE.md',
-                'docs/LOCALTORQUE_USER_GUIDE.md',
                 'docs/user-guide/customer-guide/',
             ],
         ],

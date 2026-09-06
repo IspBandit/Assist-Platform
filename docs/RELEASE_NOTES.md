@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Three-brand runtime cleanup and acquisition evidence (OPS-005 / COM-005)
+
+- Removed retired Polaris routes, administrator navigation, search delegation,
+  registry configuration, upload path and unused public styles.
+- Aligned the Enterprise specification, charter and backlog with VanAssist,
+  TowSmart and TrailerWise; historical migrations and audit records are retained.
+- Added acquisition evidence requirements, operating-cost schedule and transfer
+  rehearsal steps. Unverified production controls remain open sale gates.
+- No new migrations or environment variables. Deploy through the existing
+  immutable release process; rollback uses the preceding release. A code rollback
+  may restore retired surfaces and must not be described as sale-ready.
+
 ### Sale-readiness three-brand boundary
 
 - Define the active Assist Platform product and acquisition boundary as

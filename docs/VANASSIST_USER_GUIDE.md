@@ -8,6 +8,10 @@ are not separate active websites, search sources or dependencies of VanAssist.
 Historical technical records for those retired experiments may remain in the
 repository for database-upgrade and audit integrity.
 
+Retired Polaris catalogue, comparison and manufacturer/dealer portal links are
+no longer offered. VanAssist search continues to use the active provider journey.
+TowSmart calculation and TrailerWise service discovery remain separate products.
+
 ## Provider coverage ownership
 
 Provider search is backed by a VanAssist-owned national provider pack. The

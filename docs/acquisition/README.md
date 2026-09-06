@@ -37,6 +37,15 @@ due-diligence integrity.
 9. `../TOWSMART_CATALOGUE.md` and `../VANASSIST_STAYS.md` — product data notes.
 10. `../RELEASE_NOTES.md` — change history.
 
+## Current working registers
+
+- [Evidence register](EVIDENCE_REGISTER.md): three-site acceptance, recovery, monitoring, privacy and provenance evidence still needed.
+- [Operating costs](OPERATING_COSTS.md): invoice-backed monthly cost and renewal schedule.
+- [Locked dependencies](DEPENDENCIES.md): runtime/development versions and declared licences from the lock file.
+- [Transfer rehearsal](TRANSFER_REHEARSAL.md): buyer-controlled build, restore, account transfer and operational acceptance.
+
+These are working records, not completed sale-gate evidence.
+
 ## Data-room deliverables still required before sale-ready sign-off
 
 - data/provenance register;

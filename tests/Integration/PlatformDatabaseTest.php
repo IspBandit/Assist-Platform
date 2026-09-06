@@ -243,7 +243,8 @@ final class PlatformDatabaseTest extends TestCase
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');
         self::assertSame(['vanassist', 'towsmart', 'trailerwise', 'localtorque', 'polaris'], array_column($brands, 'brand_key'));
         self::assertSame('active', $brands[0]['status']);
-        self::assertSame('private', $brands[4]['status']);
+        self::assertSame('disabled', $brands[3]['status']);
+        self::assertSame('disabled', $brands[4]['status']);
 
         foreach ((new PlatformBackfill())->validate() as $check) {
             self::assertTrue($check['valid'], "Backfill count {$check['actual']} did not match {$check['expected']}");

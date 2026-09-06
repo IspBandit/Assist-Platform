@@ -7,10 +7,8 @@ state-changing browser routes use CSRF protection.
 |---|---|---|
 | Public | `/`, `/providers`, `/find`, `/ask` (Ask VanAssist; flag `assist_ai_search`), `/services`, `/regions`, `/request-assistance` | Brand/module checks plus rate limits on abuse-prone submissions |
 | Public stay facilities | `GET/POST /caravan-parks/{slug}/suggest-facility` | VanAssist active stay; CSRF, rate limit and Turnstile; creates pending evidence only |
-| LocalTorque motorsport | `/motorsport` | LocalTorque host only; official sanctioning-body, venue and calendar links are public/read-only |
 | TowSmart | `/calculator`, `/account/towing-combinations`, `/account/towing-combinations/{id}` | TowSmart host/module; saved snapshot read/delete requires authenticated user and matching owner + brand |
 | TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
-| Polaris | `/rvs`, `/find`, `/compare`, `/tow-match`, `/floorplans`, `/saved`, `/portal/manufacturer` | Polaris host + `rv_catalogue` module; brand remains private until launch |
 | Authentication | `/login`, `/register`, reset/verification/logout | Guest/auth state, CSRF and rate limiting |
 | Customer account | `/account/*` | `auth`; controllers must enforce user ownership and brand scope |
 | Provider portal | `/provider/*` | `auth` plus provider/administrator/super-administrator role; controllers enforce provider ownership |
@@ -45,20 +43,10 @@ roles require an assigned permission.
 | `POST /admin/ai-search/gaps` | `settings.manage` | Update gap status / RIC job notes |
 | `GET /admin/ai-search/gaps/export` | `demand.export` or `settings.manage` | CSV for RIC research hand-off |
 
-## Polaris catalogue (POL-001…POL-009)
+## Polaris (retired)
 
-| Route | Permission | Scope |
-| --- | --- | --- |
-| `GET /admin/polaris` | `polaris.manage` | Selected brand with `rv_catalogue` |
-| `GET /admin/polaris/manufacturers` | `polaris.manage` | Lifecycle-filtered manufacturer list |
-| `GET /admin/polaris/models` | `polaris.manage` | Lifecycle-filtered model list |
-| `POST /admin/polaris/models/lifecycle` | `polaris.manage` | Soft lifecycle transitions |
-| `GET /admin/polaris/imports` | `polaris.manage` | CSV draft import jobs |
-| `POST /admin/polaris/imports/upload` | `polaris.manage` | Creates drafts only; never auto-publishes |
-| `GET /admin/polaris/review-queue` | `polaris.manage` | Pending drafts and manufacturer claims |
-| `POST /admin/polaris/review-queue/draft` | `polaris.review` | Approve (publish) or reject draft |
-| `POST /admin/polaris/review-queue/claim` | `polaris.manage` | Approve or reject manufacturer claim |
-| `GET/POST /portal/manufacturer*` | auth + claim gate | Claim-first; edits set verification pending |
+Polaris has been retired from the active platform boundary. Legacy Polaris route and
+permission references are intentionally omitted from active route/permission surfaces.
 
 Anonymous session ids are never shown in the administrator UI. Signed-in and
 anonymous counts are aggregated; reports do not expose IP addresses or raw

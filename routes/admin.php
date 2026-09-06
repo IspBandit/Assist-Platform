@@ -127,20 +127,6 @@ return static function (Router $router): void {
         $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
         $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
 
-        $router->get('/polaris', 'Admin\PolarisAdminController@index', 'admin.polaris');
-        $router->get('/polaris/manufacturers', 'Admin\PolarisAdminController@manufacturers', 'admin.polaris.manufacturers');
-        $router->get('/polaris/models', 'Admin\PolarisAdminController@models', 'admin.polaris.models');
-        $router->post('/polaris/models/lifecycle', 'Admin\PolarisAdminController@setModelLifecycle', 'admin.polaris.models.lifecycle');
-        $router->get('/polaris/recycle-bin', 'Admin\PolarisAdminController@recycleBin', 'admin.polaris.recycle-bin');
-        $router->get('/polaris/review-queue', 'Admin\PolarisAdminController@reviewQueue', 'admin.polaris.review-queue');
-        $router->post('/polaris/review-queue/draft', 'Admin\PolarisAdminController@reviewDraft', 'admin.polaris.review-draft');
-        $router->post('/polaris/review-queue/claim', 'Admin\PolarisAdminController@reviewClaim', 'admin.polaris.review-claim');
-        $router->get('/polaris/imports', 'Admin\PolarisAdminController@imports', 'admin.polaris.imports');
-        $router->post('/polaris/imports/upload', 'Admin\PolarisAdminController@uploadImport', 'admin.polaris.imports.upload');
-        $router->post('/polaris/manufacturers/merge', 'Admin\PolarisAdminController@mergeManufacturers', 'admin.polaris.manufacturers.merge');
-        $router->post('/polaris/review-queue/dealer', 'Admin\PolarisAdminController@reviewDealerClaim', 'admin.polaris.review-dealer');
-        $router->get('/polaris/settings', 'Admin\PolarisAdminController@settings', 'admin.polaris.settings');
-        $router->get('/polaris/{section}', 'Admin\PolarisAdminController@placeholder', 'admin.polaris.section');
         $router->get('/providers/duplicates', 'Admin\ProvidersController@duplicates', 'admin.providers.duplicates');
         $router->get('/recycle-bin', 'Admin\RecycleBinController@index', 'admin.recycle-bin');
         $router->post('/recycle-bin/restore', 'Admin\RecycleBinController@restore', 'admin.recycle-bin.restore');
