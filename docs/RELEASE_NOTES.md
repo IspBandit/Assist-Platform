@@ -7,6 +7,10 @@ may remain as dated files and are linked here rather than copied.
 
 ### Public provider crawl access (OPS-012)
 
+- Add exact CQDiggings legacy navigation redirects to the shared Caddy edge:
+  `/occurrences/site-index.html` and `/occurrences/glossary.html` return 301 to
+  their root-level pages. Apache `.htaccess` rules do not run on this server.
+  Exercise the real Caddy engine in CI, including unchanged missing/private URLs.
 - Restrict private-area robots rules to exact routes, query strings and
   descendants. The former `/provider` prefix also blocked public `/providers`
   listings and `/provider-terms`.

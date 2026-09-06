@@ -41,6 +41,9 @@
 	root * /var/www/cqdiggings
 	encode zstd gzip
 	route {
+		# Exact legacy navigation aliases; CQDiggings is served by Caddy, not Apache.
+		redir /occurrences/site-index.html /site-index.html 301
+		redir /occurrences/glossary.html /glossary.html 301
 		@private path /.git* /.htaccess /analytics/config.php /analytics/dashboard-config.php /analytics/config.example.php /analytics/dashboard-config.example.php /analytics/_stats/* /analytics/_contributions/* /analytics/_detector-settings/* /analytics/_detector-setting-uploads/* /analytics/_marketplace/* /analytics/_messages/*
 		respond @private 404
 		handle /data/community-contributions.json {

@@ -1,5 +1,23 @@
 # Indexing repair evidence (OPS-012)
 
+## CQDiggings shared-edge correction
+
+CQDiggings release `1876d5bcb467e2e999c8efb7779a20f75431b46f` is deployed.
+Live checks confirmed 340 sitemap URLs without query variants and passing
+desktop/mobile map checks. The two legacy navigation aliases still returned
+404, including a cache-busting request. Their Apache `.htaccess` rules were
+ineffective because production serves CQDiggings through Caddy and PHP-FPM.
+
+Add exact 301 rules in the existing `cqdiggings_site` Caddy snippet, before file
+handling, for `/occurrences/site-index.html` and `/occurrences/glossary.html`.
+Do not redirect other occurrence paths or private files. CI starts an isolated
+Caddy container using the actual production snippet and checks redirects,
+destinations, query variants and unchanged 404 behaviour. No production data,
+migrations or environment variables change. The correction is not live until
+the reviewed Assist immutable release deploys its shared-edge configuration.
+
+## VanAssist evidence
+
 Public checks on 7 September 2026 found 17,758 URLs in VanAssist's sitemap.
 The live robots prefix `/provider` blocked 7,196 `/providers` URLs and the
 separate `/provider-terms` page. Restrict private rules to the exact route,
