@@ -37,6 +37,8 @@ The remaining material blockers are:
   transfer/security decision;
 - external uptime/error and scheduled-task failure alert receipt has not yet been
   retained as buyer-grade evidence;
+- ten registered tasks had never run in the dated review; their expected schedule
+  and execution evidence remain to be reconciled;
 - authenticated provider/admin/TowSmart owner-isolation journeys remain to be
   completed on the selected sale baseline;
 - provider/data licence metadata remains materially incomplete, including 10,979
@@ -180,3 +182,4 @@ buyer requirement makes them necessary:
 - bulk marketing/founding-membership campaign tooling;
 - production billing activation; and
 - infrastructure scaling without measured load justification.
+

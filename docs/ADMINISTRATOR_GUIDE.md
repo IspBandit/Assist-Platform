@@ -19,6 +19,16 @@ required. Credentials are never documented in Git.
 
 ## Access
 
+### Shared-edge legacy CQDiggings links (OPS-012)
+
+CQDiggings is independently deployed, but its public HTTP routing uses the shared
+Caddy edge. Its two legacy `/occurrences/site-index.html` and
+`/occurrences/glossary.html` aliases redirect permanently to the root-level pages.
+Maintain these rules in `infrastructure/binarylane/Caddyfile`, not `.htaccess`.
+Release edge changes through the immutable Assist workflow and confirm both
+301 responses and HTTP 200 destinations. Rollback restores the prior edge rules.
+These routes do not add CQDiggings to the three-brand Assist product boundary.
+
 Use `/login`, then `/admin` on the applicable brand domain. Use a named human
 account for normal work. Reserve emergency accounts for recovery only. Enable MFA
 when implemented and use a password manager.

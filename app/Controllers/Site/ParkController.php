@@ -336,9 +336,12 @@ final class ParkController extends Controller
         }
         $id = (int) $park['id'];
 
+        $location = CaravanPark::publicLocation($park);
+        $locationSuffix = $location !== '' ? ' in ' . $location : '';
+
         return $this->view('public.park', [
-            'title'           => ($park['seo_title'] ?: $park['name']) . ' — VanAssist',
-            'metaDescription' => $park['seo_description'] ?: ('Find caravan and RV service near ' . $park['name'] . '.'),
+            'title'           => ($park['seo_title'] ?: $park['name'] . $locationSuffix) . ' — VanAssist',
+            'metaDescription' => $park['seo_description'] ?: ('Find caravan and RV service near ' . $park['name'] . $locationSuffix . '.'),
             'canonical'       => url('caravan-parks/' . $park['slug']),
             'jsonLd'          => SeoSchema::breadcrumbs([
                 ['name'=>'Home','url'=>url('/')],

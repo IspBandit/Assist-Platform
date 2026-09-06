@@ -5,6 +5,30 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Public provider crawl access (OPS-012)
+
+- Add exact CQDiggings legacy navigation redirects to the shared Caddy edge:
+  `/occurrences/site-index.html` and `/occurrences/glossary.html` return 301 to
+  their root-level pages. Apache `.htaccess` rules do not run on this server.
+  Exercise the real Caddy engine in CI, including unchanged missing/private URLs.
+- Restrict private-area robots rules to exact routes, query strings and
+  descendants. The former `/provider` prefix also blocked public `/providers`
+  listings and `/provider-terms`.
+- Preserve authentication and the indexing-off switch. Shared controller
+  behaviour applies to VanAssist, TowSmart and TrailerWise without brand forks.
+- Exclude towns marked noindex from VanAssist's sitemap even when marked
+  featured or launch towns. Preserve their deliberate page-level noindex setting.
+- Exclude `/go/` contact tracking actions from crawling while retaining their
+  normal phone, email, website and directions behaviour.
+- Show the stored state on stay pages even without a town, and include location
+  in default page titles/descriptions to distinguish same-name campsites.
+  Existing custom SEO text, identifiers and canonical URLs are preserved.
+- Add behavioural regression tests for public pages, private routes and launch
+  settings and stay location fallbacks. No migrations or environment changes.
+- Release through the reviewed immutable release process. Rollback uses the
+  preceding release and restores the old crawl restriction. Search Console
+  recovery requires Google's subsequent recrawl; deployment is not proof of indexing.
+
 ### Generic shared public edge extension (OPS-001)
 
 - Keep the existing Assist Caddy service as the sole public listener on host
