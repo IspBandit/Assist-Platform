@@ -34,7 +34,15 @@ Observation on 6 September 2026, approximately 18:56 AEST: all six public
 `/healthz` and `/readyz` endpoints returned HTTP 200 across VanAssist, TowSmart
 and TrailerWise. This was a status-only request; response identity and deployed
 SHA were not captured. It does not close REL-02 for this undeployed candidate.
-Browser access timed out, so no new desktop/mobile visual acceptance is claimed.
+Browser access initially timed out but recovered on retry. At approximately
+19:01 AEST, live VanAssist entry and TowSmart/TrailerWise specialist-directory
+screens were visually inspected at 1440x900 and 390x844. The visible mobile
+layouts stack search controls with a Menu button. TrailerWise presents services
+as primary and its initial homepage labels sale/hire as secondary. Screenshots
+are retained in the working conversation, not a signed release evidence pack.
+Desktop directory trust-list text appears pale against the light hero; contrast
+needs measurement before accessibility acceptance. These are partial live
+observations, not full journey or candidate-release acceptance.
 
 | ID | Existing basis | Evidence required to close | Status |
 | --- | --- | --- | --- |
