@@ -1,89 +1,69 @@
 # Assist Platform Enterprise
 
-Assist Platform Enterprise is the primary commercial product. VanAssist,
-TowSmart, TrailerWise and Polaris are brands running on its shared runtime,
-data and administration platform. Start with
-[`docs/START_HERE.md`](docs/START_HERE.md) and the
-[`Enterprise architecture specification`](docs/ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md).
-The [`Product Bible`](docs/PRODUCT_BIBLE.md) defines the portfolio promises and
-brand boundaries; the [`UX component inventory`](docs/UX_COMPONENT_INVENTORY.md)
-tracks promotion of the current redesign into the shared Design System.
+Assist Platform Enterprise is the shared commercial platform behind three active Australian brands:
 
-Shared platform core for:
+- **VanAssist** (`vanassist.com.au`) — caravan/RV services, traveller assistance, provider discovery and stays.
+- **TowSmart** (`towsmart.com.au`) — towing calculations, compatibility, saved combinations, safety guidance and specialist discovery.
+- **TrailerWise** (`trailerwise.com.au`) — trailer services, repairs, parts, inspections, compliance and ownership support, with sales/hire secondary.
 
-- **VanAssist** (`vanassist.com.au`) — the existing caravan/RV service marketplace and compatibility baseline.
-- **TowSmart** (`towsmart.com.au`) — towing mass-limit calculator with saved user combinations and safety guidance.
-- **TrailerWise** (`trailerwise.com.au`) — trailer-industry business and service platform. Its current sales/hire listing MVP is secondary and requires product correction before full launch.
-- **Polaris** (private foundation; production domain pending) — RV research, matching and comparison.
+LocalTorque and Polaris are retired and are not part of the active product or sale boundary. Historical migrations and audit records may remain where deleting or rewriting them would reduce database or due-diligence integrity.
 
-This is an incremental evolution of VanAssist, not a mass rename or three copied
-applications. VanAssist routes, IDs, slugs, users, providers, and workflows remain
-the backward-compatibility baseline.
+This is one shared platform rather than three copied applications. VanAssist remains the compatibility baseline for routes, users, providers and mature operational workflows.
 
-## Current status
+Start with [`docs/START_HERE.md`](docs/START_HERE.md), [`docs/PRODUCTION_CURRENT_STATE.md`](docs/PRODUCTION_CURRENT_STATE.md) and [`docs/SALE_READINESS.md`](docs/SALE_READINESS.md).
 
-Implemented foundation:
+## Implemented foundation
 
-- Existing VanAssist public, customer, provider, park, and admin functionality.
-- Typed brand registry, domain/environment resolution, and request brand context.
-- Disabled-brand gate that prevents TowSmart/TrailerWise hosts from exposing
-  VanAssist routes.
-- Additive brand, provider-listing, brand-profile, brand-role, and provider-
-  membership database migrations.
-- Restartable batched VanAssist data backfill with integrity validation.
-- Migration advisory locking, checksums, and failed/dirty state.
-- Installer, SMTP, middleware, outcome/review, upload, redirect, persistent
-  throttling, session-revocation, proxy, secret-storage, and queue-lease controls.
-- Brand-aware queued email attribution, liveness/readiness endpoints, request
-  correlation, and authenticated no-store responses.
-- PHPUnit unit/database integration tests, PHPStan, Composer audit, and fresh
-  MySQL migration/seed/backfill CI checks.
+- Shared brand registry, trusted host resolution and request brand context.
+- Existing VanAssist public, customer, provider, park and administration functionality.
+- TowSmart towing calculator, catalogue, saved combinations and guidance.
+- TrailerWise service-first directory and marketplace foundations.
+- Shared provider/listing architecture and brand-specific presentation.
+- Migration locking, checksums, dirty-state handling and restartable backfills.
+- SMTP, queued email, throttling, session revocation, upload controls and secret storage.
+- Health/readiness endpoints, release correlation, structured logging and rollback tooling.
+- PHPUnit, integration tests, PHPStan, Composer validation/audit and CI migration checks.
+- BinaryLane Docker production runtime for the three public domains.
 
-Implemented brand applications:
+## Sale-readiness objective
 
-- TowSmart towing calculator, saved combinations, safety explanations, and
-  brand-isolated public routes.
-- TrailerWise searchable trailer marketplace, provider listing management, and
-  admin moderation foundations.
-- BinaryLane Docker production runtime for the shared three-domain deployment.
+The active acquisition package is deliberately limited to VanAssist, TowSmart and TrailerWise plus the shared Assist Platform runtime, operational tooling, permitted data, documentation and associated transferable assets.
 
-Future expansion:
+Before marketing the business, the sale-readiness gate requires:
 
-- Full brand-scoping of every operational table/query.
-- Shared cross-domain sign-in.
-- Full integration/E2E/accessibility test coverage.
-- Production Stripe charging.
-- Transactional production email, off-server application backups, and final
-  public-launch acceptance testing.
+- all three critical public/provider/admin journeys accepted;
+- automated independent backup and current restore evidence;
+- buyer-grade analytics and operating-cost records;
+- privacy/data inventory and retention position documented;
+- provider/data provenance and transfer rights documented;
+- remaining production credentials rotated and account ownership recorded;
+- no active dependency on retired brands;
+- an acquisition asset register and handover runbook completed.
 
-Do not treat the current branch as production-ready without following
-[`docs/PRODUCTION_READINESS.md`](docs/PRODUCTION_READINESS.md).
+See [`docs/SALE_READINESS.md`](docs/SALE_READINESS.md) for the working gate.
 
 ## Runtime
 
 - PHP 8.1+ (PHP 8.3 validated)
-- Apache `mod_rewrite`
 - MySQL 8 or MariaDB
 - Composer 2
 - Server-rendered PHP and vanilla JavaScript
+- Docker/Caddy production runtime on BinaryLane; conventional Linux/cPanel also supported
 
-Production runs on the documented BinaryLane Docker runtime. The application
-also supports conventional Linux/cPanel hosting. Only `public/` should be
-web-accessible.
+Only `public/` should be web-accessible.
 
 ## Local setup
 
 ```bash
 composer install
 cp .env.example .env
-# configure a dedicated local database in .env
 php scripts/migrate.php
 php scripts/seed.php
 php scripts/backfill-platform.php --batch=500
 php scripts/backfill-platform.php --validate-only
 ```
 
-Point Apache at `public/`, or use the limited PHP development server:
+For a limited development server:
 
 ```bash
 php -S 127.0.0.1:8080 -t public public/index.php
@@ -111,12 +91,12 @@ app/Core                 custom HTTP/runtime framework
 app/Platform/Brand       typed brand registry, resolver and context
 app/Controllers          public and portal/admin endpoints
 app/Models               lightweight PDO models
-app/Services             shared and legacy VanAssist business services
-app/Views                server-rendered, brand-aware application templates
+app/Services             shared business services
+app/Views                server-rendered, brand-aware templates
 config                   environment-derived application and brand configuration
 database/migrations      authoritative ordered schema changes
 database/seeds           core/content/location/provider seed data
-public                   only web-accessible directory
+public                   web-accessible directory
 storage                  private runtime data
 routes                   route registrars
 scripts                  migration, seed, backfill and deployment tools
@@ -124,18 +104,15 @@ infrastructure/binarylane production Docker, Caddy, monitoring and backup toolin
 tests                    unit and database integration tests
 ```
 
-`database/migrations/` is authoritative. The stale legacy consolidated schema
-was removed so fresh installs cannot accidentally bypass later migrations.
+`database/migrations/` is authoritative. Historical brand migrations remain part of the immutable upgrade history even where those brands are retired.
 
 ## Architecture and operations
 
 - [Start here](docs/START_HERE.md)
+- [Sale readiness](docs/SALE_READINESS.md)
 - [Products and feature status](docs/PRODUCT_AND_FEATURES.md)
 - [Verified production state](docs/PRODUCTION_CURRENT_STATE.md)
 - [Current architecture](docs/CURRENT_ARCHITECTURE.md)
-- [Target architecture](docs/TARGET_ARCHITECTURE.md)
-- [Migration plan](docs/MIGRATION_PLAN.md)
-- [Platform audit](docs/PLATFORM_AUDIT.md)
 - [Production readiness](docs/PRODUCTION_READINESS.md)
 - [Brand configuration](docs/BRAND_CONFIGURATION.md)
 - [Security](docs/SECURITY.md)
@@ -150,11 +127,7 @@ was removed so fresh installs cannot accidentally bypass later migrations.
 - [Transactional email](docs/TRANSACTIONAL_EMAIL.md)
 - [Backup and restore](docs/BACKUP_AND_RESTORE.md)
 
-AI coding agents must also follow [`AGENTS.md`](AGENTS.md) and the permanent
-Cursor rules under `.cursor/rules/`.
-
-Legacy VanAssist implementation notes remain under `docs/` for historical
-context. Where they conflict, the Assist Platform documents above are current.
+AI coding agents must also follow [`AGENTS.md`](AGENTS.md) and the permanent Cursor rules under `.cursor/rules/`.
 
 ## Licence
 

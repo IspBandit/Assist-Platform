@@ -1,14 +1,18 @@
 # Assist Platform Enterprise documentation
 
 This directory is the version-controlled project memory for the single Assist
-Platform Enterprise workstream. VanAssist, TowSmart, TrailerWise and LocalTorque
-are brands within this product; they are not parallel projects.
+Platform Enterprise workstream. **VanAssist, TowSmart and TrailerWise are the
+three active brands within this product.** They are not parallel projects.
+LocalTorque and Polaris are retired experiments and are excluded from the active
+product and acquisition boundary; historical records may remain only where they
+are needed for database, audit or due-diligence integrity.
 
 ## Authoritative documents
 
 | Concern | Source of truth |
 | --- | --- |
 | Product purpose and brand boundaries | `PRODUCT_BIBLE.md` |
+| Sale-readiness and acquisition boundary | `SALE_READINESS.md` |
 | Platform architecture | `ASSIST_PLATFORM_ENTERPRISE_SPECIFICATION.md` |
 | Product principles | `PLATFORM_CHARTER.md` |
 | Technical target | `TARGET_ARCHITECTURE.md` |

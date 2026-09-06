@@ -1,125 +1,103 @@
 # Production current state
 
 Last verified: 24 August 2026 (Australia/Brisbane).
+Sale-readiness boundary updated: 6 September 2026.
 
 ## Deployment
 
 - Host: BinaryLane Ubuntu 24.04 VPS in Brisbane.
-- Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
+- Public acquisition-scope domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
   with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `046a2c6b492935e4d56e6c3fd0f0372b28e83323`
-  (PR #221 — production zero-result search fixes and release guard repair).
-- Release directory: `/opt/assist-platform/releases/046a2c6b492935e4d56e6c3fd0f0372b28e83323`.
-- Previous documented release: `6a3f09d78dda81f50fab584decb8fb4f382ef717` (superseded August 2026).
-- The deployed Social Studio service file was verified against the GitHub copy
-  with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `133_assist_ai_outcomes.sql` are applied; the
-  installer remains locked.
+- Production code commit at last live verification: `046a2c6b492935e4d56e6c3fd0f0372b28e83323`.
+- All migrations through `133_assist_ai_outcomes.sql` were applied at the last
+  verified production-state snapshot; later sale-readiness retirement migrations
+  must be applied only through the normal controlled release process.
+- The installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
 credentials in this file or Git.
 
-## Verified live controls
+## Active saleable brands
 
-- All three `/healthz` and `/readyz` endpoints returned 200.
-- All three `/readyz` endpoints reported release `046a2c6` (verified 24 August 2026).
-- **Admin API** responds on production (`GET /api/v1/admin/health` → 200;
-  `POST /api/v1/admin/auth/token` validates credentials — not disabled).
-- **Ask VanAssist** is enabled on production VanAssist (`/ask` returns results;
-  `assist_ai_search` on). Homepage includes the Ask form when the flag is on.
-- **Traveller facilities in Ask** return live results (toilets, hospitals,
-  pharmacies, showers, boat ramps, etc.) when `assist_ai_traveller_facilities`
-  is on.
-- **Google Routes** road-distance integration reports configured on Admin API
-  health (`road_distance.provider=google_routes`).
-- Griffiths Creek typo recovery and road-distance enforcement ship in release
-  `6a3f09d` (see `docs/RELEASE_NOTES.md` unreleased notes merged to this release).
+The active product and acquisition boundary is exactly:
+
+1. VanAssist
+2. TowSmart
+3. TrailerWise
+
+LocalTorque and Polaris are retired/excluded. Historical database rows,
+migrations, ADRs and audit material may remain for upgrade and due-diligence
+integrity. They are not active sale brands and must not be re-enabled by future
+configuration or deployment work.
+
+## Verified live controls at last production check
+
+- All three public acquisition-scope `/healthz` and `/readyz` endpoints returned 200.
+- Admin API responds on production and validates configured authentication.
+- Ask VanAssist and traveller-facility results were live on VanAssist.
+- Google Routes road-distance integration reported configured.
 - Production deployment uses the restricted `assistdeploy` SSH account,
   pinned host keys and a root-owned release command. Remote root login and
   password authentication are disabled.
 - `/install` returned 403.
 - UFW, Fail2ban, unattended upgrades and a five-minute container health monitor
   were active.
-- Scheduled application jobs are installed. The application database-backup
-  task was found stale in `running` state on 24 August; the deployed app image
-  lacks the MariaDB dump client and therefore fell back to an unsuitable large
-  PHP export. The release candidate adds the client and strict output checks.
-- Brand-specific canonical URLs, robots and sitemaps were verified.
+- Scheduled application jobs were installed. At the last verification, the local
+  application database-backup task needed the MariaDB dump client/strict-output
+  release correction and a new formal scheduled-backup verification.
+- Brand-specific canonical URLs, robots and sitemaps were verified for VanAssist,
+  TowSmart and TrailerWise.
 - VanAssist, TowSmart and TrailerWise homepages, contact pages, provider
   directories and mobile hero artwork returned 200. TowSmart's calculator and
   TrailerWise's secondary marketplace also returned 200.
-- TowSmart contains 199 tow-vehicle reference records and 3,769 caravan,
-  camper, hybrid and trailer records. Its current-vehicle pass now includes
-  separate 2025/2026 Prado 250 grades, Kia Tasman, BYD Shark 6, JAC T9,
-  LDV Terron 9, GWM Cannon Alpha and all 20 current Mazda BT-50
-  configurations with source metadata on new data.
-- The calculator clears every mapped field before applying a selected catalogue
-  record, preventing an unavailable value from being inherited from the
-  previously selected vehicle.
-- Public support addresses resolve to `support@vanassist.com.au`,
+- TowSmart contained 199 tow-vehicle reference records and 3,769 caravan,
+  camper, hybrid and trailer records at the last verified snapshot.
+- Public support addresses resolved to `support@vanassist.com.au`,
   `support@towsmart.com.au` and `support@trailerwise.com.au` respectively.
-- Production contains 7,304 providers, 20,272 brand listings and 54,133
-  brand-category assignments. Imported evidence remains
-  explicitly unverified until a business is verified.
-- LocalTorque is installed as a private fourth brand with 40 data-driven automotive categories, 6,760 relevant brand listings and 26,677 category assignments. Its private homepage, directory, category, sitemap and robots responses passed direct application checks. It has no public production domain and is not publicly launched.
-- VanAssist contains 8,457 community-sourced Australian stay listings across all
-  states and territories: caravan parks, campgrounds and 853 identified free
-  stays. Council/authority and operator verification use distinct evidence-based
-  labels. Town/GPS search and operator claims are live.
-- Social Studio contains 33 reviewable/downloadable draft assets for each brand
-  (99 total), covering Instagram and Facebook posts, stories, profiles and
-  covers across five campaign intentions. The latest nine launch assets use the
-  corrected responsive wide-cover layout and have been visually reviewed.
+- Production contained 7,304 providers, 20,272 brand listings and 54,133
+  brand-category assignments at the last verified snapshot. Imported evidence
+  remains explicitly unverified until a business is verified.
+- VanAssist contained 8,457 community-sourced Australian stay listings across all
+  states and territories, including 853 identified free stays, at the last
+  verified snapshot.
 - A post-import database backup from 23 July was downloaded off-server, passed
   SHA-256 verification and restored into an isolated MariaDB database with 136
-  tables, 7,304 providers, 8,457 stays and 17,615 towns. The test database was
-  removed after validation.
+  tables, 7,304 providers, 8,457 stays and 17,615 towns. This historical manual
+  restore is useful evidence but does not replace a current automated restore gate.
 - A super-administrator login reached `/admin` successfully.
-- GitHub CI passed for the production commit.
+- GitHub CI passed for the then-production commit.
 - A rendered acceptance pass covered 72 public pages and 70 authenticated
   provider pages across desktop and mobile viewports with no HTTP failures,
   broken images, horizontal overflow, browser errors or cross-brand email
-  mismatches. See `RENDERED_ACCEPTANCE_2026-07-22.md`.
+  mismatches at that time.
 
-## Current launch posture
+## Current sale-readiness posture
 
-VanAssist remains in an **initial launch** posture: free search, provider
-onboarding and community stays are live; formal commercial launch approval and
-full Platform Quality Gate **PASS** are not yet recorded.
+The platform remains production-backed but is now in a **sale-readiness release
+cycle**. Do not describe it as sale-ready until `docs/SALE_READINESS.md` is fully
+satisfied and current evidence is attached to the exact candidate commit.
 
-Public pages use `index, follow` meta robots and expose sitemaps. Treat this as
-**limited public availability**, not signed-off commercial launch.
+Before a sale candidate can be signed off:
 
-Assist RIC facility catalogue packs (original, third-wave and gap-fill) have
-been submitted to production Admin API `/facility-imports` from the operator
-workstation (Aug 2026 — see assist-ric `docs/RIC_FACILITY_CATALOGUE_STATUS.md`).
-Admin-side row counts and any unpublished import candidates still require
-owner verification in MariaDB.
+1. Deploy and verify the current observability, provider-claim and scheduled-backup changes.
+2. Configure an independent automated encrypted S3-compatible backup target and credentials.
+3. Run and record a current automated restore rehearsal.
+4. Rotate any previously exposed temporary server/application administrator credentials.
+5. Complete owner acceptance of critical VanAssist, TowSmart and TrailerWise journeys.
+6. Verify retired LocalTorque and Polaris hosts/brand keys cannot resolve as active product brands.
+7. Complete buyer-facing asset, provenance, cost and transfer inventories.
 
-Before full indexed launch:
+Microsoft Graph sender health was healthy at the last verification and all three
+application-path brand mailbox probes were sent successfully. This is operational
+mail evidence only and does not create marketing consent.
 
-1. Deploy and verify the observability, provider-claim and scheduled-backup
-   release candidate, including migrations `134` and `135` and a successful
-   bounded local backup run.
-2. Supply an independent automated S3-compatible repository (for example
-   Cloudflare R2) and credentials. A manual off-server restore drill has passed;
-   scheduled off-site replication is not active without these credentials.
-3. Run the independent automated restore rehearsal and retain current status
-   evidence; an old manual restore does not satisfy the current formal gate.
-4. Rotate previously exposed temporary server and application administrator
-   passwords through their owner-controlled consoles.
-5. Complete owner acceptance of content, providers and critical journeys.
+## Known product limitations requiring disclosure or close-out
 
-Microsoft Graph sender health is now healthy, all three application-path brand
-mailbox probes are sent, and the failed email queue is zero. This closes the
-previous email-delivery launch blocker; it does not create marketing consent.
-
-## Known product limitations
-
-See `PRODUCT_AND_FEATURES.md`. TowSmart remains an MVP whose calculations are
-general guidance, and provider records still require progressive owner/business
-verification. TrailerWise is now service-first; trailer sales remain a clearly
-secondary module. Never infer commercial launch completion from an HTTP 200
-response.
-
+- TowSmart calculations are general guidance, not certification or legal advice.
+- Provider records require progressive owner/business verification.
+- TrailerWise is service-first; trailer sales remain a secondary module.
+- Formal scheduled off-site backup/restore evidence must be current.
+- Full commercial charging must not be claimed unless production billing is enabled
+  and verified on the sale candidate.
+- Accessibility/compliance claims must match current evidence rather than roadmap intent.

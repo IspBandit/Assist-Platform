@@ -22,10 +22,10 @@ This is the authoritative orientation page for developers and AI agents.
 10. For releases, `docs/OPERATIONS_MANUAL.md`, `docs/OPERATIONS_RUNBOOK.md`,
     `docs/BACKUP_AND_RESTORE.md`, `docs/ENVIRONMENT_CONFIGURATION.md` and
     `docs/RELEASE_NOTES.md`.
-11. For product-specific data, `docs/TOWSMART_CATALOGUE.md`,
-    `docs/VANASSIST_STAYS.md`, `docs/LOCALTORQUE.md` and
-    `docs/polaris/README.md` and `docs/polaris/IMPLEMENTATION_STATUS.md`
-    (Project Polaris — master prompt not complete; private vertical slice).
+11. For product-specific data, use `docs/TOWSMART_CATALOGUE.md` and
+    `docs/VANASSIST_STAYS.md`, plus the current TrailerWise product documentation.
+    LocalTorque and Polaris documentation is historical only and is not part of
+    the active product or acquisition scope.
 12. For living customer, provider, administrator, developer and API guidance,
     read `docs/user-guide/README.md` and `docs/user-guide/registry.php`.
 13. For the versioned Admin API and Assist RIC synchronisation (CORE-011,
@@ -48,14 +48,14 @@ This is the authoritative orientation page for developers and AI agents.
     second search-gaps API or expand locked Phase 1 OpenAPI schemas. See
     `docs/OPENAI_INTEGRATION.md` and `docs/AI_RELEASE_CRITERIA.md` before
     enabling paid AI or facilities in production.
-15. For VanAssist production readiness / controlled release (no AI scope
-    expansion; flags stay off in production):
+15. For VanAssist production readiness / controlled release:
     `docs/VANASSIST_PRODUCTION_READINESS_PACKAGE.md`,
     `docs/acceptance/VA_ACCEPT_BATEHAVEN_001.md`,
     `docs/evidence/vanassist-readiness-2026-08-02/`,
     `docs/SEARCH_GAP_DUAL_SOURCE.md`, and
-    `docs/PLATFORM_QUALITY_GATE.md`. Local S0–S2 + CONDITIONAL PASS evidence
-    is recorded; do not enable production Ask/facilities/paid AI.
+    `docs/PLATFORM_QUALITY_GATE.md`.
+16. For acquisition preparation and transferability, read
+    `docs/SALE_READINESS.md` before describing the platform as sale-ready.
 
 ## Sources of truth
 
@@ -69,16 +69,21 @@ When documents disagree, use this precedence:
 5. Historical audit, migration and implementation notes.
 
 Historical documents describe what was true when written; they are not proof
-that a feature remains incomplete or has since been delivered.
+that a feature remains incomplete or has since been delivered. Historical
+LocalTorque and Polaris material is retained only where useful for migration,
+audit or due-diligence history.
 
 ## Platform summary
 
-Assist Platform Enterprise is the primary product. One server-rendered PHP
-application, one MariaDB database and one production deployment serves three
-public brands, one private LocalTorque foundation, and Project Polaris as a
-private fifth brand until its production domain is confirmed. The hostname
-resolves a trusted `Brand` object. Brand context affects presentation, links,
-email, features, modules, SEO and data scoping.
+Assist Platform Enterprise is the primary saleable product. One server-rendered
+PHP application, one MariaDB database and one production deployment serve three
+public brands: VanAssist, TowSmart and TrailerWise. The hostname resolves a
+trusted `Brand` object. Brand context affects presentation, links, email,
+features, modules, SEO and data scoping.
+
+LocalTorque and Polaris are retired/excluded and must not resolve as active
+runtime brands. Forward migrations disable their historical database brand rows
+without rewriting applied migration history.
 
 Never use production credentials for local development. A code change is not
 permission to deploy, migrate live data, change DNS or enable charging.

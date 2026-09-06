@@ -21,9 +21,6 @@ final class HomeController extends Controller
         if (current_brand()->id() === 'trailerwise') {
             return (new TrailerWiseController())->home($request);
         }
-        if (current_brand()->id() === 'polaris') {
-            return (new PolarisController())->home($request);
-        }
 
         $categories = $this->safe(fn () => \App\Models\ServiceCategory::activeAll());
         $categoryGroups = \App\Models\ServiceCategory::groupedForVanAssist($categories);
