@@ -14,8 +14,13 @@ may remain as dated files and are linked here rather than copied.
   behaviour applies to VanAssist, TowSmart and TrailerWise without brand forks.
 - Exclude towns marked noindex from VanAssist's sitemap even when marked
   featured or launch towns. Preserve their deliberate page-level noindex setting.
+- Exclude `/go/` contact tracking actions from crawling while retaining their
+  normal phone, email, website and directions behaviour.
+- Show the stored state on stay pages even without a town, and include location
+  in default page titles/descriptions to distinguish same-name campsites.
+  Existing custom SEO text, identifiers and canonical URLs are preserved.
 - Add behavioural regression tests for public pages, private routes and launch
-  settings. No migrations, environment changes or visual changes.
+  settings and stay location fallbacks. No migrations or environment changes.
 - Release through the reviewed immutable release process. Rollback uses the
   preceding release and restores the old crawl restriction. Search Console
   recovery requires Google's subsequent recrawl; deployment is not proof of indexing.

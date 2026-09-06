@@ -80,4 +80,13 @@ final class SitemapRobotsTest extends TestCase
             }
         }
     }
+
+    public function testContactActionsAreNotCrawled(): void
+    {
+        $robots = $this->robots(['seo_allow_indexing' => '1']);
+        foreach (['phone', 'email', 'website', 'directions'] as $action) {
+            self::assertFalse($this->canCrawl($robots, '/go/' . $action . '/example?s=1'));
+        }
+        self::assertTrue($this->canCrawl($robots, '/providers/example'));
+    }
 }

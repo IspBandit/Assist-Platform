@@ -138,13 +138,27 @@ final class CaravanPark extends Model
     public static function findPublicBySlug(string $slug): ?array
     {
         return Database::selectOne(
-            'SELECT cp.*, t.name AS town_name, t.slug AS town_slug, r.name AS region_name '
+            'SELECT cp.*, t.name AS town_name, t.slug AS town_slug, r.name AS region_name, s.name AS state_name '
             . 'FROM caravan_parks cp '
             . 'LEFT JOIN towns t ON t.id = cp.town_id '
             . 'LEFT JOIN regions r ON r.id = cp.region_id '
+            . 'LEFT JOIN states s ON s.id = cp.state_id '
             . "WHERE cp.slug = ? AND cp.status = 'active' AND cp.public_page_enabled = 1 AND cp.deleted_at IS NULL",
             [$slug]
         );
+    }
+
+    /** Build the visible/SEO location from stored facts, even without a town. */
+    public static function publicLocation(array $park): string
+    {
+        $parts = [];
+        foreach (['town_name', 'region_name', 'state_name'] as $key) {
+            $value = trim((string) ($park[$key] ?? ''));
+            if ($value !== '' && !in_array($value, $parts, true)) {
+                $parts[] = $value;
+            }
+        }
+        return implode(', ', $parts);
     }
 
     /**

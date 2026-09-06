@@ -29,13 +29,30 @@ and both indexing-off configurations.
 Sample provider and park profiles returned 200 with matching canonicals and
 indexable metadata; the complete 17,419 individual profile URLs were not crawled.
 HTTP and www homepage redirect chains on both sites resolved successfully.
-The email alerts do not identify the individual redirect-error or
-Google-selected-canonical URLs. No speculative redirects or canonical changes
-are justified by these checks.
+Search Console was then inspected directly (report last updated 4 September).
+All 145 redirect-error examples are `/go/phone/` actions. All six 404 examples
+are `/go/phone/` or `/go/directions/` actions. Exclude the `/go/` action namespace
+from crawling; preserve user contact behaviour and existing 404s for unavailable
+providers. These are not missing content pages.
 
-No migrations, credentials, environment or rendered UI changes. Shared robots
+The five Google-selected-canonical examples are Mill Creek, Policemans Point,
+Little Beach, Heartbreak Hill and Northbrook Mountain campsite `-2` pages.
+Google's inspected Mill Creek decision chose the unsuffixed Tasmania page for
+the NSW record. Read-only checks of the ten stored records confirm three pairs
+are in different states (Tasmania and NSW). Their state was omitted from the
+public query and hidden unless a town existed. Join the stored state and show
+it in the existing location line and default title/description. Preserve custom
+SEO text and self-canonicals. This improves identity signals; it does not prove
+Google has changed its selection.
+
+Do not merge these records based on names. Northbrook's two OSM source records
+have different coordinates; Heartbreak Hill lacks coordinates/address and needs
+identity review. No speculative record merges, redirects or data changes.
+
+No migrations, credentials or environment changes. Shared robots
 behaviour also benefits TowSmart and TrailerWise. Architecture: existing shared
-controller and brand URL helper. UX: no visual or interaction changes. Business:
+controller and brand URL helper. UX: existing stay location line now includes
+stored state; desktop/mobile rendering requires validation. Business:
 restore crawler access to public directory content without publishing unreviewed
 towns. Engineering and release gate require CI results on the exact candidate.
 

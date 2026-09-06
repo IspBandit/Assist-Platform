@@ -6,6 +6,7 @@ $this->extend('layouts.public');
 $logo = $park['logo_path'] ? url('uploads-public/park-logos/' . $park['logo_path']) : null;
 $stayLabels = ['caravan_park'=>'Caravan park','campground'=>'Campground','free_camp'=>'Free camp','national_park'=>'National park camping','showground'=>'Showground','rest_area'=>'Permitted overnight rest area','council_camp'=>'Council camp','farm_stay'=>'Farm stay','station_stay'=>'Station stay','other'=>'Place to stay'];
 $mapDestination = map_destination($park['latitude'] ?? null, $park['longitude'] ?? null, [$park['address'] ?? '', $park['town_name'] ?? '']);
+$parkLocation = \App\Models\CaravanPark::publicLocation($park);
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -20,7 +21,7 @@ $mapDestination = map_destination($park['latitude'] ?? null, $park['longitude'] 
             <div>
                 <h1 style="margin-bottom:.25rem"><?= $this->e((string) $park['name']) ?></h1>
                 <div class="badge-row"><?php if (($park['verification_type'] ?? '') === 'authority'): ?><span class="badge badge-verified">Authority confirmed</span><?php elseif (($park['verification_type'] ?? '') === 'operator'): ?><span class="badge badge-verified">Operator verified</span><?php else: ?><span class="badge badge-neutral">Confirm before arrival</span><?php endif; ?><?php if (!empty($park['is_featured'])): ?><span class="badge badge-sponsored">Sponsored</span><?php endif; ?></div>
-                <?php if ($park['town_name']): ?><p class="muted"><?= $this->e($stayLabels[$park['stay_type'] ?? 'caravan_park'] ?? 'Place to stay') ?> in <?= $this->e((string) $park['town_name']) ?><?php if ($park['region_name']): ?>, <?= $this->e((string) $park['region_name']) ?><?php endif; ?></p><?php endif; ?>
+                <?php if ($parkLocation !== ''): ?><p class="muted"><?= $this->e($stayLabels[$park['stay_type'] ?? 'caravan_park'] ?? 'Place to stay') ?> in <?= $this->e($parkLocation) ?></p><?php endif; ?>
             </div>
             <?php if ($logo !== null): ?><img src="<?= e($logo) ?>" alt="<?= e_attr((string) $park['name']) ?> logo" style="max-height:90px;border-radius:8px"><?php endif; ?>
         </div>

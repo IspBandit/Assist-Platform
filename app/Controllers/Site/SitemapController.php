@@ -159,6 +159,9 @@ final class SitemapController extends Controller
                 $lines[] = 'Disallow: ' . $path . '?';
                 $lines[] = 'Disallow: ' . $path . '/';
             }
+            // Contact actions redirect to phones, email or external destinations;
+            // they are not content pages and crawler visits pollute attribution.
+            $lines[] = 'Disallow: /go/';
             $lines[] = 'Allow: /';
         } else {
             $lines[] = 'Disallow: /';
