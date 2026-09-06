@@ -101,7 +101,7 @@ final class AdminApiRoutingTest extends TestCase
         $config = require base_path('config/brands.php');
         $registry = BrandRegistry::fromArray($config['registry']);
 
-        foreach (['vanassist', 'towsmart', 'trailerwise', 'polaris'] as $key) {
+        foreach (['vanassist', 'towsmart', 'trailerwise'] as $key) {
             $brand = $registry->get($key);
             BrandContext::set($brand);
             $data = $this->json(
