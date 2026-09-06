@@ -12,6 +12,24 @@ the three-domain Assist Platform.
 - Cron locks live in shared writable storage, never inside immutable releases.
 - Cloudflare proxies public DNS to the VPS.
 
+## Shared-host edge extension
+
+The Assist Caddy container is the sole public listener on host ports 80 and 443.
+A separate product may temporarily share this VPS without becoming an Assist
+application brand by using the reviewed host-only edge extension:
+
+- external vhost drop-ins are mounted from `/opt/shared-public-edge/sites` and
+  imported as `/etc/caddy/sites/*.caddy`;
+- Caddy joins the Docker network named `shared-public-edge`;
+- the separate product exposes only an internal HTTP service on that network and
+  must not publish host ports 80 or 443;
+- the separate product owns its own vhost file, application, credentials,
+  database and runtime data.
+
+Do not place another product's application code or product-specific runtime
+configuration in this repository. Removing its vhost and network attachment must
+leave the three-brand Assist runtime unchanged. See ADR 0041.
+
 ## Safe deployment
 
 1. Review the files and create a BinaryLane snapshot.
