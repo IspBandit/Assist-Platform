@@ -1,0 +1,32 @@
+
+Running 12 tests using 2 workers
+
+
+
+(node:85568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:80272) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/12] [desktop-1440x900] › tests\Acceptance\sale-three-brand.spec.js:25:3 › towsmart: homepage, directory, provider and public health
+[2/12] [desktop-1440x900] › tests\Acceptance\sale-three-brand.spec.js:25:3 › vanassist: homepage, directory, provider and public health
+[3/12] [desktop-1440x900] › tests\Acceptance\sale-three-brand.spec.js:25:3 › trailerwise: homepage, directory, provider and public health
+[4/12] [desktop-1440x900] › tests\Acceptance\sale-three-brand.spec.js:48:1 › TowSmart custom calculation displays results and guidance
+[5/12] [desktop-1440x900] › tests\Acceptance\sale-three-brand.spec.js:63:1 › VanAssist Ask returns a named provider and an actionable profile
+[6/12] [desktop-1440x900] › tests\Acceptance\sale-three-brand.spec.js:73:1 › VanAssist stays and three-brand legal pages remain accessible
+(node:73652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[7/12] [mobile-390x844] › tests\Acceptance\sale-three-brand.spec.js:25:3 › vanassist: homepage, directory, provider and public health
+[8/12] [mobile-390x844] › tests\Acceptance\sale-three-brand.spec.js:25:3 › towsmart: homepage, directory, provider and public health
+
+(node:55100) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+[9/12] [mobile-390x844] › tests\Acceptance\sale-three-brand.spec.js:25:3 › trailerwise: homepage, directory, provider and public health
+[10/12] [mobile-390x844] › tests\Acceptance\sale-three-brand.spec.js:48:1 › TowSmart custom calculation displays results and guidance
+[11/12] [mobile-390x844] › tests\Acceptance\sale-three-brand.spec.js:63:1 › VanAssist Ask returns a named provider and an actionable profile
+[12/12] [mobile-390x844] › tests\Acceptance\sale-three-brand.spec.js:73:1 › VanAssist stays and three-brand legal pages remain accessible
+  12 passed (32.5s)

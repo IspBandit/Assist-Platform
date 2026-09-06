@@ -17,7 +17,7 @@ information, credentials, production dumps or private uploads are included.
   memory-limited temporary container and removes that container/volume on exit.
   No download of production data is required. This is not off-site recovery.
 - `npm-licences.csv`: lock-file package metadata; PHP register is in acquisition/DEPENDENCIES.md.
-- `browser-isolated.log`: 12 passing desktop/mobile public cases in 32.5 seconds,
+- `browser-isolated.txt`: 12 passing desktop/mobile public cases in 32.5 seconds,
   with service workers blocked. `screenshots/` and `screenshots.csv` retain the
   rendered evidence and checksums. This mode does not establish full live acceptance.
 
