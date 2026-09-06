@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -84,6 +84,9 @@ jobs:
 
       - name: Validate Composer metadata
         run: composer validate --strict
+
+      - name: Check service-worker activation preserves forms
+        run: node --test tests/service-worker-activation.test.cjs
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist

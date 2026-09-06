@@ -81,6 +81,10 @@ assistance requests.
 installation instructions; Android may also show the browser install prompt when
 available. After installation the control hides automatically.
 
+The pending sale-readiness update preserves the page you are using when the
+background app worker activates. It removes automatic reloads that could discard
+an unfinished calculator form. This change is pending the reviewed production release.
+
 ## Examples
 
 A TowSmart visitor opens **Check weights**, enters loaded figures and saves the

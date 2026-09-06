@@ -15,15 +15,9 @@ self.addEventListener('activate', function (event) {
     event.waitUntil(caches.keys().then(function (keys) {
         return Promise.all(keys.filter(function (key) { return key !== CACHE_NAME; }).map(function (key) { return caches.delete(key); }));
     }).then(function () {
-        return self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-    }).then(function (clients) {
-        clients.forEach(function (client) {
-            if (client.url && client.url.indexOf(self.location.origin) === 0) {
-                client.navigate(client.url);
-            }
-        });
+        // Take control without reloading pages or discarding in-progress forms.
+        return self.clients.claim();
     }));
-    self.clients.claim();
 });
 
 self.addEventListener('fetch', function (event) {

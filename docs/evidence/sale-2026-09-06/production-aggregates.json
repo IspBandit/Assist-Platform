@@ -1,0 +1,190 @@
+{
+  "captured_at_utc": "2026-09-06T21:13:26+10:00",
+  "counts": {
+    "users": 4,
+    "providers": 14098,
+    "provider_brand_listings": 35693,
+    "towns": 17615,
+    "service_requests": 0,
+    "page_views": 63462,
+    "invoices": 0,
+    "payments": 0,
+    "refunds": 0,
+    "tow_vehicles": 0,
+    "assist_searches": 254
+  },
+  "tasks": [
+    {
+      "task_key": "aggregate_daily_metrics",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 16:47:01",
+      "last_duration_ms": 45
+    },
+    {
+      "task_key": "ai_retention",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "analytics_retention",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 16:37:02",
+      "last_duration_ms": 10
+    },
+    {
+      "task_key": "clean_logs",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 16:27:01",
+      "last_duration_ms": 6
+    },
+    {
+      "task_key": "clean_temp",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 16:17:02",
+      "last_duration_ms": 6
+    },
+    {
+      "task_key": "customer_followups",
+      "last_status": "success",
+      "last_run_at": "2026-09-06 10:47:01",
+      "last_duration_ms": 4
+    },
+    {
+      "task_key": "database_backup",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 16:07:14",
+      "last_duration_ms": 12828
+    },
+    {
+      "task_key": "document_expiry",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 22:27:02",
+      "last_duration_ms": 3
+    },
+    {
+      "task_key": "expire_requests",
+      "last_status": "success",
+      "last_run_at": "2026-09-06 10:37:01",
+      "last_duration_ms": 2
+    },
+    {
+      "task_key": "expire_sessions",
+      "last_status": "success",
+      "last_run_at": "2026-09-06 10:17:01",
+      "last_duration_ms": 6
+    },
+    {
+      "task_key": "import_locality",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "import_osm",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "import_vanassist_provider_pack",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "process_email_queue",
+      "last_status": "success",
+      "last_run_at": "2026-09-06 11:12:01",
+      "last_duration_ms": 4
+    },
+    {
+      "task_key": "process_notifications",
+      "last_status": "success",
+      "last_run_at": "2026-09-06 11:10:01",
+      "last_duration_ms": 4
+    },
+    {
+      "task_key": "process_provider_import_queue",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "provider_followups",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 22:17:02",
+      "last_duration_ms": 16
+    },
+    {
+      "task_key": "refresh_osm",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "regulatory_alerts",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "send_run_reminders",
+      "last_status": "success",
+      "last_run_at": "2026-09-05 22:07:01",
+      "last_duration_ms": 2
+    },
+    {
+      "task_key": "update_match_suggestions",
+      "last_status": "success",
+      "last_run_at": "2026-09-06 10:27:01",
+      "last_duration_ms": 3
+    },
+    {
+      "task_key": "update_run_capacity",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "update_town_demand",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    },
+    {
+      "task_key": "vanassist_daily_performance_email",
+      "last_status": "never",
+      "last_run_at": null,
+      "last_duration_ms": null
+    }
+  ],
+  "brands": [
+    {
+      "id": 1,
+      "name": "VanAssist"
+    },
+    {
+      "id": 2,
+      "name": "TowSmart"
+    },
+    {
+      "id": 3,
+      "name": "TrailerWise"
+    },
+    {
+      "id": 4,
+      "name": "LocalTorque"
+    },
+    {
+      "id": 5,
+      "name": "Polaris"
+    }
+  ],
+  "events_30_days": [
+    {
+      "event_type": "view",
+      "events": 7855
+    }
+  ]
+}

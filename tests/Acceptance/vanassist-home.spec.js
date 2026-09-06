@@ -36,7 +36,7 @@ test('VanAssist homepage keeps the core journey accessible and Ask first', async
   const structuredSearch = page.locator('.hero-search-panel .structured-search-form');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
   await expect(askVanAssist).toBeVisible();
-  await expect(page.getByLabel('Ask VanAssist')).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Ask VanAssist', exact: true })).toBeVisible();
   await expect(structuredSearch).toBeVisible();
   await expect(page.getByLabel('Service category')).toBeVisible();
   await expect(page.getByLabel('Town, suburb or postcode')).toBeVisible();
@@ -113,7 +113,12 @@ test('VanAssist manifest and service worker are reachable', async ({ page, reque
 
   const workerResponse = await request.get('/service-worker.js');
   expect(workerResponse.status()).toBe(200);
-  expect(workerResponse.headers()['content-type']).toContain('application/javascript');
-  expect(workerResponse.headers()['service-worker-allowed']).toBe('/');
+  expect(workerResponse.headers()['content-type']).toMatch(/^(application|text)\/javascript(?:;|$)/);
+  // A root-level worker has root scope without Service-Worker-Allowed.
+  const scope = await page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.register('/service-worker.js');
+    return registration.scope;
+  });
+  expect(scope).toBe(new URL('/', page.url()).href);
   expect(await workerResponse.text()).toContain("self.addEventListener('fetch'");
 });
