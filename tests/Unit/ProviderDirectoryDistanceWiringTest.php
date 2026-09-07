@@ -12,7 +12,7 @@ final class ProviderDirectoryDistanceWiringTest extends TestCase
     {
         $source = $this->source('app/Controllers/Site/ProviderController.php');
 
-        $typed = strpos($source, "if ($location !== '')");
+        $typed = strpos($source, "if (\$location !== '')");
         $gps = strpos($source, '} elseif ($hasCoords) {');
         self::assertIsInt($typed);
         self::assertIsInt($gps);
@@ -28,10 +28,10 @@ final class ProviderDirectoryDistanceWiringTest extends TestCase
         self::assertStringContainsString('DISTANCE_RANK_CANDIDATE_LIMIT', $controller);
         self::assertStringContainsString('hydrateDirectoryDistances', $controller);
         self::assertStringContainsString('Geo::haversineExactKm', $controller);
-        self::assertStringContainsString("['providers' => $result['rows']]", $controller);
+        self::assertStringContainsString("['providers' => \$result['rows']]", $controller);
         self::assertStringContainsString('compareDirectoryDistance', $controller);
         self::assertStringContainsString('Closest measurable provider locations are shown first', $view);
-        self::assertStringContainsString("($p['distance_basis'] ?? '') === 'town_centre'", $view);
+        self::assertStringContainsString("(\$p['distance_basis'] ?? '') === 'town_centre'", $view);
     }
 
     private function source(string $path): string
