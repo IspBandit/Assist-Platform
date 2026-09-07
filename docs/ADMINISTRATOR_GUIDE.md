@@ -19,6 +19,14 @@ required. Credentials are never documented in Git.
 
 ## Access
 
+### Town sitemap conflicts (OPS-012)
+
+Multiple town records can currently share one URL slug. If any active record
+for that slug is marked noindex, the sitemap omits the URL until the conflict is
+resolved. This safeguard does not hide or rewrite the page, change its indexing
+setting, or merge/delete records. Review source evidence and geographic identity
+before resolving duplicates; do not clear noindex merely to remove an alert.
+
 ### Shared-edge legacy CQDiggings links (OPS-012)
 
 CQDiggings is independently deployed, but its public HTTP routing uses the shared

@@ -5,6 +5,19 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Conflicting town URL safeguard (OPS-012)
+
+- Omit a town URL from VanAssist's sitemap if any active record with the same
+  slug is marked noindex. A row-level filter alone allowed conflicting duplicate
+  records to advertise a URL whose public page selected a noindex record.
+- Preserve town records, page content, URL resolution and indexing settings.
+  Inactive duplicates do not suppress eligible pages. Fully indexable duplicate
+  rows still produce only one sitemap URL. No migration or environment change.
+- Read-only production investigation found 46 conflicting slugs, including all
+  nine observed noindex pages. Resolving town identities is separate work.
+- Deploy using the normal immutable Assist release. Rollback restores the prior
+  sitemap query; it does not change town data. CQDiggings source remains untouched.
+
 ### Public provider crawl access (OPS-012)
 
 - Add exact CQDiggings legacy navigation redirects to the shared Caddy edge:
