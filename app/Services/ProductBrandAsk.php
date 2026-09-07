@@ -22,7 +22,7 @@ final class ProductBrandAsk
             'mobile-trailer-services' => ['mobile', 'on site', 'onsite', 'roadside'],
             'trailer-repairs' => ['repair', 'service', 'fault', 'broken', 'maintenance'],
             'roadworthy-inspections' => ['roadworthy', 'inspection', 'certificate', 'certifier', 'compliance'],
-            'tyres-wheels-bearings' => ['tyre', 'tire', 'wheel', 'bearing', 'hub'],
+            'tyres-wheels-bearings' => ['tyre', 'tire', 'wheel', 'bearing', 'bearings', 'hub'],
             'brakes-axles-suspension' => ['brake', 'axle', 'suspension', 'spring'],
             'auto-electrical' => ['electrical', 'wiring', 'light', 'plug', 'battery'],
             'fabrication-engineering' => ['fabrication', 'welding', 'chassis', 'engineering', 'modification'],
