@@ -18,8 +18,8 @@ not part of the active runtime or acquisition scope.
 
 ## Current verified production baseline
 
-- Production release `4d5a4c957df1e556dc0c26f5345880aaad13277b`
-  deployed successfully through GitHub Actions run `34030818368` on 6 September.
+- Production release `e2269bf9d072e5877c32129034029dd43e27f3da`
+  deployed successfully through GitHub Actions run `34068185858` on 7 September.
 - Reusable validation, immutable build/checksum, production backup, release,
   container health, Google Routes provisioning and protected public smoke checks
   all passed for that release.
@@ -27,9 +27,11 @@ not part of the active runtime or acquisition scope.
   regression test protecting open forms from forced navigation.
 - Public release smoke passed VanAssist, TowSmart and TrailerWise routes and
   designated VanAssist Ask/distance/provider-name checks.
-- Later main commit `5618605ac82cbca6a83343c61c336ffa3634b857`
-  (#248) passed CI but is unrelated shared-host edge plumbing and is not required
-  for the current Assist application sale baseline.
+- Main commit `4905b94e87d6081ec13682a71a0c5bbedf22aeeb` (#252) passed
+  push CI but is not yet deployed; it prevents device location from automatically
+  opening TowSmart/TrailerWise provider results. PR #251 remains open with green
+  exact-head CI and adds shared-edge release safety plus a town-sitemap conflict
+  safeguard. Neither is included in the verified production baseline yet.
 
 ## Completed
 

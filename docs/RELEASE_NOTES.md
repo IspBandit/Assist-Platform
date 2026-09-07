@@ -5,6 +5,25 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Sale-candidate operational and ownership evidence (OPS-005)
+
+- Consume provider claim tokens atomically inside the existing claim transaction.
+  The final write now locks and revalidates token, provider and brand scope,
+  rejects already-owned listings and grants the provider role only after the
+  single-use token is safely consumed.
+- Add database integration evidence for claim replay/cross-brand rejection and
+  TowSmart saved-combination owner/brand isolation.
+- Include the immutable release identity in liveness responses and make protected
+  production releases require all six three-brand health/readiness responses to
+  report the exact `GITHUB_SHA`, not merely return HTTP 200.
+- Schedule the previously registered recurring run-capacity, town-demand, AI
+  retention and regulatory-alert tasks in the reviewed production cron file.
+- Expand encrypted off-site snapshots and weekly drills to recover the matching
+  immutable application release, application/infrastructure configuration and
+  public/private media as well as the checksum-verified database. An external
+  bucket and a completed drill remain required before the recovery sale gate can
+  be closed.
+
 ### Public provider crawl access (OPS-012)
 
 - Add exact CQDiggings legacy navigation redirects to the shared Caddy edge:

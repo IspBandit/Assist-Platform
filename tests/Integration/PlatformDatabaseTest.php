@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Integration;
 
+use App\Auth\Auth;
 use App\Core\Database;
 use App\Core\Config;
 use App\Core\Exceptions\AdminApiException;
+use App\Core\Exceptions\HttpException;
 use App\Core\Request;
 use App\Core\Response;
+use App\Controllers\Site\TowSmartController;
 use App\Middleware\RateLimit as RateLimitMiddleware;
 use App\Platform\Brand\BrandContext;
 use App\Platform\Brand\BrandRegistry;
@@ -18,6 +21,7 @@ use App\Services\Mailer;
 use App\Services\LaunchReadinessService;
 use App\Services\InvoiceExportService;
 use App\Services\PlatformBackfill;
+use App\Services\ProviderClaimService;
 use App\Services\RateLimiter;
 use App\Services\RegulatoryAlertService;
 use App\Services\TownCoordinateActivation;
@@ -998,6 +1002,122 @@ final class PlatformDatabaseTest extends TestCase
         } finally {
             Database::query('DELETE FROM invoice_items WHERE invoice_id=?', [$invoiceId]);
             Database::query('DELETE FROM invoices WHERE id=?', [$invoiceId]);
+        }
+    }
+
+    public function testProviderClaimCannotBeReplayedOrConsumedAcrossBrands(): void
+    {
+        $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+        BrandContext::set($registry->get('vanassist'));
+        Database::beginTransaction();
+
+        try {
+            $suffix = bin2hex(random_bytes(6));
+            $firstUser = Database::insert(
+                "INSERT INTO users (name,email,password_hash,status,created_at,updated_at) VALUES ('First claimant',?,'test','active',NOW(),NOW())",
+                ["claim-first-{$suffix}@example.test"]
+            );
+            $secondUser = Database::insert(
+                "INSERT INTO users (name,email,password_hash,status,created_at,updated_at) VALUES ('Second claimant',?,'test','active',NOW(),NOW())",
+                ["claim-second-{$suffix}@example.test"]
+            );
+            $providerId = Database::insert(
+                "INSERT INTO providers (business_name,slug,status,is_unclaimed,created_at,updated_at) VALUES ('Claim isolation test',?,'active',1,NOW(),NOW())",
+                ["claim-isolation-{$suffix}"]
+            );
+            $tokenId = Database::insert(
+                'INSERT INTO provider_claim_tokens (provider_id,brand_id,email,token_hash,expires_at,created_at) VALUES (?,?,?,?,DATE_ADD(NOW(), INTERVAL 1 DAY),NOW())',
+                [$providerId, $registry->get('vanassist')->databaseId(), "claim-first-{$suffix}@example.test", hash('sha256', "claim-{$suffix}")]
+            );
+
+            ProviderClaimService::claim($tokenId, $providerId, $firstUser, 'First claimant');
+            self::assertSame($firstUser, (int) Database::scalar('SELECT user_id FROM providers WHERE id=?', [$providerId]));
+            self::assertSame(1, (int) Database::scalar('SELECT COUNT(*) FROM provider_claim_tokens WHERE id=? AND used_at IS NOT NULL', [$tokenId]));
+
+            try {
+                ProviderClaimService::claim($tokenId, $providerId, $secondUser, 'Second claimant');
+                self::fail('A consumed provider claim token must not transfer the listing to another account.');
+            } catch (\RuntimeException $e) {
+                self::assertStringContainsString('no longer available', $e->getMessage());
+            }
+            self::assertSame($firstUser, (int) Database::scalar('SELECT user_id FROM providers WHERE id=?', [$providerId]));
+
+            $otherProviderId = Database::insert(
+                "INSERT INTO providers (business_name,slug,status,is_unclaimed,created_at,updated_at) VALUES ('Cross-brand claim test',?,'active',1,NOW(),NOW())",
+                ["cross-brand-claim-{$suffix}"]
+            );
+            $otherTokenId = Database::insert(
+                'INSERT INTO provider_claim_tokens (provider_id,brand_id,email,token_hash,expires_at,created_at) VALUES (?,?,?,?,DATE_ADD(NOW(), INTERVAL 1 DAY),NOW())',
+                [$otherProviderId, $registry->get('vanassist')->databaseId(), "claim-second-{$suffix}@example.test", hash('sha256', "cross-brand-{$suffix}")]
+            );
+            BrandContext::set($registry->get('towsmart'));
+
+            try {
+                ProviderClaimService::claim($otherTokenId, $otherProviderId, $secondUser, 'Second claimant');
+                self::fail('A claim token issued by VanAssist must not be accepted on TowSmart.');
+            } catch (\RuntimeException $e) {
+                self::assertStringContainsString('no longer available for this brand', $e->getMessage());
+            }
+            self::assertSame(1, (int) Database::scalar('SELECT is_unclaimed FROM providers WHERE id=?', [$otherProviderId]));
+            self::assertSame(0, (int) Database::scalar('SELECT COUNT(*) FROM provider_claim_tokens WHERE id=? AND used_at IS NOT NULL', [$otherTokenId]));
+        } finally {
+            Database::rollBack();
+            BrandContext::clear();
+        }
+    }
+
+    public function testTowSmartSavedCombinationCannotBeReadAcrossOwnersOrBrands(): void
+    {
+        $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+        BrandContext::set($registry->get('towsmart'));
+        Database::beginTransaction();
+
+        try {
+            $suffix = bin2hex(random_bytes(6));
+            $owner = Database::insert(
+                "INSERT INTO users (name,email,password_hash,status,created_at,updated_at) VALUES ('Combination owner',?,'test','active',NOW(),NOW())",
+                ["combination-owner-{$suffix}@example.test"]
+            );
+            $other = Database::insert(
+                "INSERT INTO users (name,email,password_hash,status,created_at,updated_at) VALUES ('Other owner',?,'test','active',NOW(),NOW())",
+                ["combination-other-{$suffix}@example.test"]
+            );
+            $snapshot = json_encode(['vehicle_gvm' => 3200, 'trailer_atm' => 2500], JSON_THROW_ON_ERROR);
+            $result = json_encode(['status' => 'within_limits', 'checks' => []], JSON_THROW_ON_ERROR);
+            $ownedId = Database::insert(
+                "INSERT INTO towing_combinations (user_id,brand_id,label,input_snapshot,result_snapshot,result_status,created_at) VALUES (?,?,'Owned combination',?,?,'within_limits',NOW())",
+                [$owner, $registry->get('towsmart')->databaseId(), $snapshot, $result]
+            );
+            $otherId = Database::insert(
+                "INSERT INTO towing_combinations (user_id,brand_id,label,input_snapshot,result_snapshot,result_status,created_at) VALUES (?,?,'Other combination',?,?,'within_limits',NOW())",
+                [$other, $registry->get('towsmart')->databaseId(), $snapshot, $result]
+            );
+
+            Auth::instance()->login($owner);
+            $ownedRequest = new Request([], [], ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => "/account/towing-combinations/{$ownedId}"], []);
+            $ownedRequest->setRouteParams(['id' => (string) $ownedId]);
+            self::assertSame(200, (new TowSmartController())->combination($ownedRequest)->status());
+
+            $otherRequest = new Request([], [], ['REQUEST_METHOD' => 'GET', 'REQUEST_URI' => "/account/towing-combinations/{$otherId}"], []);
+            $otherRequest->setRouteParams(['id' => (string) $otherId]);
+            try {
+                (new TowSmartController())->combination($otherRequest);
+                self::fail('Another user must not read a private towing combination by guessed ID.');
+            } catch (HttpException $e) {
+                self::assertSame(404, $e->getStatusCode());
+            }
+
+            BrandContext::set($registry->get('trailerwise'));
+            try {
+                (new TowSmartController())->combination($ownedRequest);
+                self::fail('A saved TowSmart combination must not be exposed from another brand host.');
+            } catch (HttpException $e) {
+                self::assertSame(404, $e->getStatusCode());
+            }
+        } finally {
+            Auth::instance()->logout();
+            Database::rollBack();
+            BrandContext::clear();
         }
     }
 }

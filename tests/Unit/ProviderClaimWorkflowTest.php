@@ -39,4 +39,17 @@ final class ProviderClaimWorkflowTest extends TestCase
         self::assertStringNotContainsString('unsubscribe', strtolower((string) $byKey['provider_claim_request_approved']['html_body']));
         self::assertStringContainsString('does not mark', strtolower((string) $byKey['provider_claim_request_approved']['html_body']));
     }
+
+    public function testFinalClaimWriteIsAtomicSingleUseAndBrandBound(): void
+    {
+        $service = (string) file_get_contents(base_path('app/Services/ProviderClaimService.php'));
+
+        self::assertStringContainsString('inTransaction()', $service);
+        self::assertStringContainsString('FOR UPDATE', $service);
+        self::assertStringContainsString('id = ? AND provider_id = ? AND brand_id = ?', $service);
+        self::assertStringContainsString('used_at IS NULL AND expires_at > NOW()', $service);
+        self::assertStringContainsString('is_unclaimed = 1 AND user_id IS NULL', $service);
+        self::assertStringContainsString('if ($claimed !== 1)', $service);
+        self::assertStringContainsString('if ($consumed !== 1)', $service);
+    }
 }

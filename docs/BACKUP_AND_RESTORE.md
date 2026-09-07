@@ -25,10 +25,19 @@ development environment.
 
 The BinaryLane runtime includes `assist-offsite-backup.sh` and
 `assist-offsite-restore-drill.sh`. They use restic with a private
-S3-compatible bucket. Database, private media, public media and production
-configuration are encrypted before upload. Retention and repository integrity
-are checked automatically, and the newest database is restored into a
-disposable MariaDB container each week without touching production.
+S3-compatible bucket. Each snapshot contains the checksum-protected database
+backups, private media, public media, protected application and infrastructure
+configuration, the complete matching immutable application release and a
+machine-readable release identity. Retention and repository integrity are
+checked automatically.
+
+The weekly drill restores that whole set into a private temporary directory,
+verifies the release identity and required application/configuration/media
+paths, and imports the newest database into a disposable MariaDB 11.4 container
+without touching production. Its status file records the restored release and
+table count. It proves the encrypted recovery set is internally complete; final
+sale acceptance still requires starting the restored application with outbound
+mail/payments/scheduled actions disabled and exercising authenticated journeys.
 
 Copy `infrastructure/binarylane/ops/backup.env.example` to
 `/opt/assist-platform/config/backup.env`, set mode `0600`, and supply the
