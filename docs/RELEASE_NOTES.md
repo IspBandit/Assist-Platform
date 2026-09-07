@@ -7,6 +7,9 @@ may remain as dated files and are linked here rather than copied.
 
 ### Shared public edge release safety (OPS-001 / OPS-012)
 
+- Keep CQDiggings' root canonical redirect and HTML/service-worker cache rules
+  in the versioned edge configuration, so an Assist release cannot remove them
+  until another CQ deployment reapplies a runtime patch.
 - Require a host-owned public-site registry and persistent product vhosts.
   Serialize shared-host releases with one lock. Validate candidate host routes
   before activation, preserve vhost/registry checksums, and check every registered
