@@ -76,7 +76,7 @@ accessibility acceptance remains part of the browser evidence gate.
 | --- | --- | --- | --- |
 | REL-01 | GitHub CI/release | GitHub Actions run `34077589608` passed full reusable validation for deployed SHA `74b18116f...`, including migrations, seeds, integration tests, dependency audit and production dependency build | CLOSED |
 | REL-02 | `/healthz` and `/readyz` | Run `34077589608` exercised all six endpoints; the 7 September reconciliation retained matching `74b18116f...` release identity from each public `/readyz` endpoint | CLOSED |
-| REL-03 | `infrastructure/binarylane/ops/assist-offsite-restore-drill.sh` | Current encrypted off-site snapshot ID, checksum, restore log and recovery measurements | OPEN |
+| REL-03 | `infrastructure/binarylane/ops/assist-offsite-restore-drill.sh` | Independent off-site storage is not configured or included; customer/buyer supplies its destination, credentials, retention and alerts after transfer | BUYER CONFIGURATION |
 | REL-04 | `docs/BACKUP_AND_RESTORE.md` | Restore matching application, database, public/private media and protected configuration; verify logins, brand isolation and critical journeys | OPEN |
 | REL-05 | `docs/OPERATIONS_RUNBOOK.md` | Candidate deployment and rollback rehearsal with before/after SHA and health checks | PARTIAL |
 | MON-01 | Existing health and scheduled-task controls | External uptime/error test event reaches owner-controlled destination; record event and receipt times, acknowledgement and recovery notification | OPEN |
@@ -103,7 +103,7 @@ transferability. The seller/data custodian owns completion and qualified review.
 | Requests, messages and mail queues | Personal fields, recipients, delivery providers, consent/suppression records and retention for queued/sent/failed messages | PARTIAL |
 | Garage, saved combinations and documents | Owner checks; VIN/document exposure; export/deletion behaviour; private storage and backup copies | PARTIAL |
 | Analytics, audit and logs | Identifiers/IP fields, access, retention, anonymisation and operational/legal holds | PARTIAL |
-| Backups | Encrypted storage, key custodian, expiry, restore access and procedure to reapply deletion after recovery | OPEN |
+| Backups | Local-backup handling is disclosed; buyer must define its independent encrypted storage, key custodian, expiry, restore access and deletion-after-recovery procedure | BUYER CONFIGURATION |
 | Providers and stays | Source URL, acquisition date, licence/terms version, attribution, verification class, update method and transfer restrictions | PARTIAL |
 | TowSmart catalogue | Manufacturer/source and model-year evidence, specification provenance, correction/update owner and permitted reuse | PARTIAL |
 | Locations and government datasets | Match each imported source to terms and attribution; reconcile with `../DATA_TRUST_AND_PROVENANCE.md` | PARTIAL |

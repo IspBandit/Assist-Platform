@@ -64,9 +64,10 @@ These are now the material close-out items rather than a general product backlog
 2. **Mobile/accessibility finish** — repeat browser acceptance with live service
    workers enabled, complete authenticated/admin mobile journeys and record basic
    keyboard/focus/contrast evidence or explicit exceptions.
-3. **Independent recovery** — configure encrypted off-site backup storage,
-   create a fresh off-site backup, perform full application/database/media/config
-   restore and rehearse rollback.
+3. **Recovery acceptance** — independent off-site backup storage is not included
+   or configured and is the customer/buyer's post-transfer responsibility. Retain
+   the existing local-backup evidence, complete the transferable restore/rollback
+   rehearsal and disclose the handover requirement.
 4. **Monitoring** — prove external uptime/error and scheduled-task failure alerts
    reach an owner-controlled destination.
 5. **Security ownership** — enrol administrator MFA, rotate credentials through
@@ -91,7 +92,8 @@ The platform must not be described as fully sale-ready until the following are
 evidenced or explicitly accepted/disclosed for the transaction:
 
 1. VanAssist, TowSmart and TrailerWise critical authenticated/public journeys pass.
-2. Independent off-site backup, full restore and rollback evidence is current.
+2. Local backup, full restore and rollback evidence is current, and the buyer
+   accepts responsibility for configuring its own independent off-site destination.
 3. Required credentials/MFA/security ownership actions are completed.
 4. Security/privacy positions match actual production behaviour.
 5. Data provenance and commercial reuse rights are documented for transferred

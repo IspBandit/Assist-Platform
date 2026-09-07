@@ -87,7 +87,8 @@ The principal missing transaction evidence is now:
 - invoice-backed monthly/annual operating costs and renewal dates;
 - domain, hosting, Cloudflare, mail, analytics, monitoring, maps/API and backup
   account ownership/transfer mechanics;
-- independent encrypted off-site backup plus full application/media/config restore
+- explicit buyer acceptance that independent encrypted off-site backup is not
+  configured or included, plus transferable full application/media/config restore
   and rollback evidence;
 - authenticated provider/admin/TowSmart owner-isolation acceptance and final
   live-service-worker browser evidence;

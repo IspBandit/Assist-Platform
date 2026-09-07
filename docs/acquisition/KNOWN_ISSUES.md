@@ -29,8 +29,8 @@ reported that exact release identity, closing the former release-identity gap.
 
 The remaining material blockers are:
 
-- no independent encrypted off-site backup account/configuration has yet been
-  evidenced;
+- no independent encrypted off-site backup account/configuration is included;
+  the customer/buyer must supply and configure this after transfer;
 - the isolated 232-table database restore passed, but full application/media/
   configuration recovery and rollback rehearsal remain open;
 - no enabled MFA enrolments were recorded in the 6 September sale snapshot;
@@ -58,10 +58,12 @@ sign-off is not yet recorded. The authoritative remaining work is tracked in
 ### Automated independent off-site recovery evidence
 
 The deployment workflow creates and verifies a local production database backup,
-and a checksum-verified isolated 232-table restore has passed. The sale candidate
-still requires:
+and a checksum-verified isolated 232-table restore has passed. Independent
+off-site backup is not part of the included operating package. The sale package
+therefore requires:
 
-- automated encrypted independent off-site backup;
+- clear disclosure and buyer acceptance that the buyer supplies its own encrypted
+  off-site destination, credentials, retention policy and alert recipient;
 - a current full application/database/media/config restore rehearsal from the
   transferable recovery set;
 - immutable release rollback evidence; and

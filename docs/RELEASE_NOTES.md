@@ -11,6 +11,8 @@ may remain as dated files and are linked here rather than copied.
   `74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843` and production run `34077589608`.
 - Close the release-identity evidence row after all three public `/readyz`
   endpoints returned that exact release.
+- Record the transaction boundary that independent off-site backup storage is not
+  configured or included and must be supplied by the customer/buyer after transfer.
 - Put public directory trust copy on a stable dark surface so its legibility no
   longer depends on the underlying hero image. No migrations or environment
   changes are introduced.

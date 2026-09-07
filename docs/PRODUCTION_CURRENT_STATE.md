@@ -19,7 +19,8 @@ responses from VanAssist, TowSmart and TrailerWise, each reporting release
 `74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`.
 
 A checksum-verified isolated database restore also passed with 232 tables in
-44 seconds. Independent off-site backup configuration remains absent; the last
+44 seconds. Independent off-site backup configuration remains absent and is a
+customer/buyer post-transfer responsibility rather than an included service; the last
 sale review recorded no enabled MFA enrolments and public-key root SSH access.
 Those remain sale-readiness items rather than reasons to misstate the successful
 application deployment.
@@ -136,10 +137,11 @@ authoritative for unresolved licensing and transfer decisions.
 - A separate isolated restore rehearsal restored 232 tables in 44 seconds.
 - This proves database recoverability, not complete off-site disaster recovery.
 
-Still required for sale-readiness reliability sign-off:
+Recovery position for sale-readiness:
 
-1. configure an independent automated encrypted off-site backup destination;
-2. produce and retain a current off-site snapshot/checksum;
+1. disclose that no independent off-site destination is included or configured;
+2. require the customer/buyer to supply and configure its own encrypted off-site
+   destination, credentials, retention policy and alert recipient after transfer;
 3. restore matching application, database, public/private media and protected
    configuration into an isolated clean environment;
 4. verify critical logins and three-brand journeys after that restore; and
@@ -156,7 +158,8 @@ The application deployment itself is no longer an open blocker. The principal
 remaining gates are:
 
 1. authenticated provider/admin and TowSmart saved-combination acceptance;
-2. independent off-site backup, full restore and rollback rehearsal;
+2. transferable full restore and rollback rehearsal, plus buyer acceptance of
+   responsibility for configuring independent off-site backups;
 3. external monitoring and scheduled-task failure alert evidence;
 4. MFA enrolment, credential rotation and privileged-access review;
 5. dataset/IP provenance and commercial-transfer decisions;
