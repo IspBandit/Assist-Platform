@@ -7,7 +7,6 @@ if (!AiSearchFeature::enabled() || current_brand()->id() !== 'vanassist') {
 }
 ?>
 <aside class="ask-vanassist-home" aria-labelledby="ask-vanassist-home-heading" style="order:2">
-    <div class="ask-vanassist-divider"><span>Start here</span></div>
     <form method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
         <label id="ask-vanassist-home-heading" for="home-ask-q">Ask VanAssist</label>
         <p class="ask-vanassist-home-intro">Tell us what you need in plain English. We can look across providers, stays and traveller facilities.</p>

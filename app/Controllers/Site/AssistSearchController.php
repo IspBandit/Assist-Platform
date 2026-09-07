@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
+use App\Models\Town;
 use App\Platform\AiSearch\Dto\SearchRequest;
 use App\Platform\AiSearch\Outcome\OutcomeComposer;
 use App\Platform\AiSearch\SearchOrchestrator;
@@ -141,13 +142,40 @@ final class AssistSearchController extends Controller
         if (mb_strlen($query) > (int) config('ai_search.max_query_length', 240)) {
             $query = mb_substr($query, 0, (int) config('ai_search.max_query_length', 240));
         }
-        $result = $query !== '' ? (new ProductBrandAsk())->resolve($brand->id(), $query) : null;
+
+        $latRaw = $request->input('lat');
+        $lngRaw = $request->input('lng');
+        $lat = is_numeric($latRaw) ? (float) $latRaw : null;
+        $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
+        $hasCoords = $lat !== null && $lng !== null
+            && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
+        if (!$hasCoords) {
+            $lat = null;
+            $lng = null;
+        }
+
+        $deviceLocation = null;
+        if ($hasCoords) {
+            $town = Town::nearestActive((float) $lat, (float) $lng);
+            if ($town !== null) {
+                $deviceLocation = (string) $town['name'];
+                if (!empty($town['state_abbr'])) {
+                    $deviceLocation .= ', ' . $town['state_abbr'];
+                }
+            }
+        }
+
+        $result = $query !== ''
+            ? (new ProductBrandAsk())->resolve($brand->id(), $query, $deviceLocation)
+            : null;
 
         return $this->view('brands.ask', [
             'title' => 'Ask ' . $brand->name(),
             'metaDescription' => 'Describe the towing or trailer help you need and ' . $brand->name() . ' will route you to the appropriate shared service or guidance.',
             'canonical' => url('ask'),
             'query' => $query,
+            'lat' => $lat,
+            'lng' => $lng,
             'result' => $result,
             'brand' => $brand,
         ]);

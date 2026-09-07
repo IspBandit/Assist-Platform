@@ -5,8 +5,6 @@ const path = require('node:path');
 // Explicit opt-in prevents ordinary local acceptance from hitting production.
 test.skip(process.env.ASSIST_SALE_LIVE !== '1', 'Set ASSIST_SALE_LIVE=1 for authorised live acceptance');
 
-// Isolate the known live worker reload defect while checking other journeys.
-// This mode is partial acceptance, never final deployed-candidate acceptance.
 test.use({ serviceWorkers: process.env.ASSIST_ISOLATE_WORKER === '1' ? 'block' : 'allow' });
 
 async function capture(page, testInfo, name) {
@@ -45,6 +43,18 @@ for (const brand of ['vanassist', 'towsmart', 'trailerwise']) {
   });
 }
 
+for (const brand of ['towsmart', 'trailerwise']) {
+  test(`${brand}: homepage device location fills without opening providers`, async ({ page, context }) => {
+    const origin = `https://${brand}.com.au`;
+    await context.grantPermissions(['geolocation'], { origin });
+    await context.setGeolocation({ latitude: -27.4698, longitude: 153.0251 });
+    await page.goto(origin, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(1200);
+    await expect(page).toHaveURL(new RegExp(`^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/?$`));
+    await expect(page.locator('#home-directory-location')).not.toHaveValue('');
+  });
+}
+
 test('TowSmart custom calculation displays results and guidance', async ({ page }, testInfo) => {
   await page.goto('https://towsmart.com.au/calculator', { waitUntil: 'networkidle' });
   const values = { vehicle_name: 'Acceptance vehicle', vehicle_kerb_mass: '2200', vehicle_gvm: '3200', vehicle_gcm: '6000', vehicle_max_braked_towing: '3000', vehicle_max_towball: '300', trailer_name: 'Acceptance caravan', trailer_tare_mass: '1800', trailer_atm: '2500', trailer_gtm: '2300', trailer_tare_ball_mass: '180', passengers_mass: '150', trailer_cargo_mass: '200' };
@@ -68,6 +78,20 @@ test('VanAssist Ask returns a named provider and an actionable profile', async (
   const profile = page.locator('main a[href*="/providers/"]').first();
   await expect(profile).toBeVisible();
   await capture(page, testInfo, 'vanassist-ask');
+});
+
+test('TowSmart and TrailerWise Ask route reviewed service intents without false near-me towns', async ({ page }) => {
+  await page.goto('https://towsmart.com.au/ask?q=mobile%20weighing%20near%20Toowoomba', { waitUntil: 'networkidle' });
+  await expect(page.locator('main')).toContainText('Search the matching specialist category');
+  await expect(page.locator('main a[href*="category=public-weighing"]')).toBeVisible();
+  await page.goto('https://towsmart.com.au/ask?q=mobile%20weighing%20near%20me', { waitUntil: 'networkidle' });
+  await expect(page.locator('main')).toContainText('Add your current location to continue');
+  await expect(page.locator('main')).not.toContainText('Location: Me');
+
+  await page.goto('https://trailerwise.com.au/ask?q=trailer%20bearings%20near%20Bendigo', { waitUntil: 'networkidle' });
+  await expect(page.locator('main')).toContainText('Search the matching specialist category');
+  await expect(page.locator('main a[href*="category=tyres-wheels-bearings"]')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Browse service categories', exact: true })).toHaveAttribute('href', /\/services$/);
 });
 
 test('VanAssist stays and three-brand legal pages remain accessible', async ({ page }, testInfo) => {

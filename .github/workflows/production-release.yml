@@ -115,6 +115,8 @@ jobs:
           }
           urls=(
             "https://vanassist.com.au/"
+            "https://vanassist.com.au/healthz"
+            "https://vanassist.com.au/readyz"
             "https://vanassist.com.au/providers"
             "https://vanassist.com.au/request-assistance"
             "https://vanassist.com.au/locations/nearest?lat=-27.4698&lng=153.0251"
@@ -122,9 +124,19 @@ jobs:
             "https://vanassist.com.au/register"
             "https://vanassist.com.au/forgot-password"
             "https://towsmart.com.au/"
+            "https://towsmart.com.au/healthz"
+            "https://towsmart.com.au/readyz"
             "https://towsmart.com.au/calculator"
+            "https://towsmart.com.au/providers"
+            "https://towsmart.com.au/services"
+            "https://towsmart.com.au/ask"
             "https://towsmart.com.au/rules"
             "https://trailerwise.com.au/"
+            "https://trailerwise.com.au/healthz"
+            "https://trailerwise.com.au/readyz"
+            "https://trailerwise.com.au/providers"
+            "https://trailerwise.com.au/services"
+            "https://trailerwise.com.au/ask"
             "https://trailerwise.com.au/marketplace"
             "https://trailerwise.com.au/rules"
           )
@@ -173,6 +185,25 @@ jobs:
             --data-urlencode 'q=Battery World Greenslopes' \
             https://vanassist.com.au/ask)"
           grep -qi 'Battery World Greenslopes' <<<"$provider_name" || { echo 'Direct provider-name result missing.'; exit 1; }
+
+          towsmart_ask="$(smoke_curl --fail --silent --show-error --location --max-time 20 --get \
+            --data-urlencode 'q=mobile weighing near Toowoomba' \
+            https://towsmart.com.au/ask)"
+          grep -q 'category=public-weighing' <<<"$towsmart_ask" || { echo 'TowSmart Ask category routing missing.'; exit 1; }
+
+          towsmart_near_me="$(smoke_curl --fail --silent --show-error --location --max-time 20 --get \
+            --data-urlencode 'q=mobile weighing near me' \
+            https://towsmart.com.au/ask)"
+          grep -q 'Add your current location to continue' <<<"$towsmart_near_me" || { echo 'TowSmart near-me safeguard missing.'; exit 1; }
+          if grep -q 'location=Me' <<<"$towsmart_near_me"; then
+            echo 'TowSmart near-me query incorrectly became a literal town.'
+            exit 1
+          fi
+
+          trailerwise_ask="$(smoke_curl --fail --silent --show-error --location --max-time 20 --get \
+            --data-urlencode 'q=trailer bearings near Bendigo' \
+            https://trailerwise.com.au/ask)"
+          grep -q 'category=tyres-wheels-bearings' <<<"$trailerwise_ask" || { echo 'TrailerWise Ask category routing missing.'; exit 1; }
 
           for brand_url in https://towsmart.com.au/ https://trailerwise.com.au/; do
             brand_homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 "$brand_url")"

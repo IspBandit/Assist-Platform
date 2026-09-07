@@ -30,6 +30,22 @@ final class ProductBrandAskTest extends TestCase
         self::assertSame('suspension-payload', (new ProductBrandAsk())->resolve('towsmart', 'suspension specialist near Mackay')['category']);
     }
 
+    public function testNearMeNeverBecomesAFalseTownName(): void
+    {
+        $service = new ProductBrandAsk();
+
+        $missing = $service->resolve('towsmart', 'mobile weighing near me');
+        self::assertSame('location', $missing['kind']);
+        self::assertNull($missing['location']);
+        self::assertStringNotContainsString('location=Me', $missing['url']);
+
+        $resolved = $service->resolve('towsmart', 'mobile weighing near me', 'Brisbane City, QLD');
+        self::assertSame('providers', $resolved['kind']);
+        self::assertSame('public-weighing', $resolved['category']);
+        self::assertSame('Brisbane City, QLD', $resolved['location']);
+        self::assertStringContainsString('location=Brisbane+City%2C+QLD', $resolved['url']);
+    }
+
     public function testTrailerWiseRepresentativeJourneysMapDeterministically(): void
     {
         $service = new ProductBrandAsk();
@@ -43,6 +59,15 @@ final class ProductBrandAskTest extends TestCase
         foreach ($expected as $query => $category) {
             self::assertSame($category, $service->resolve('trailerwise', $query)['category'], $query);
         }
+    }
+
+    public function testTrailerWiseNearMeUsesDeviceLocation(): void
+    {
+        $result = (new ProductBrandAsk())->resolve('trailerwise', 'trailer bearings near current location', 'Gladstone, QLD');
+
+        self::assertSame('providers', $result['kind']);
+        self::assertSame('tyres-wheels-bearings', $result['category']);
+        self::assertSame('Gladstone, QLD', $result['location']);
     }
 
     public function testUnknownIntentDoesNotSubstituteUnrelatedProvider(): void
