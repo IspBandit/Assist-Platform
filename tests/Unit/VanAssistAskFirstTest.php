@@ -21,7 +21,8 @@ final class VanAssistAskFirstTest extends TestCase
         self::assertLessThan($structuredForm, $askInclude);
         self::assertStringContainsString('Browse directly', $home);
         self::assertStringContainsString('Browse VanAssist directly', $home);
-        self::assertStringContainsString('Start here', $ask);
+        self::assertStringNotContainsString('ask-vanassist-divider', $ask);
+        self::assertStringNotContainsString('Start here', $ask);
         self::assertStringContainsString('Tell us what you need in plain English', $ask);
         self::assertStringContainsString('dump point, pet-friendly stay, mobile mechanic, drinking water', $ask);
     }
