@@ -168,6 +168,12 @@ may remain as dated files and are linked here rather than copied.
 - Add one shared service/location finder to the TowSmart and TrailerWise
   homepages using the existing brand-scoped directory, curated categories,
   town suggestions and device-location service.
+- Keep automatic nearest-town resolution on both product-brand homepages, but
+  only fill the location field. Do not submit `/providers` until the user
+  deliberately presses the directory search button.
+- Add regression coverage for both shared homepage location controls. No
+  migrations or environment changes; rollback to the previous behaviour would
+  reintroduce unwanted automatic provider-directory navigation.
 - Keep trust wording visible and preserve the boundary that neither brand owns
   VanAssist stays or assistance requests.
 

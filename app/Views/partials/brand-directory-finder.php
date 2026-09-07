@@ -23,7 +23,7 @@
                 <div id="home-town-suggest" class="town-suggest" role="listbox" hidden></div>
                 <input type="hidden" name="lat" value="">
                 <input type="hidden" name="lng" value="">
-                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline']); ?>
+                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => 'false']); ?>
                 <p class="location-status muted" role="status" aria-live="polite" hidden></p>
             </div>
             <div class="form-group mb-0">
@@ -36,7 +36,7 @@
                 </select>
             </div>
             <div class="directory-search-actions">
-                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary']); ?>
+                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-mobile btn btn-secondary', 'autoSubmit' => 'false']); ?>
                 <button type="submit" class="btn btn-primary"><?= $this->e($submitLabel) ?></button>
             </div>
         </form>
