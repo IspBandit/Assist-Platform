@@ -27,6 +27,13 @@ final class ProductBrandHomepageFinderTest extends TestCase
         self::assertStringContainsString('aria-live="polite"', $source);
     }
 
+    public function testFinderResolvesDeviceLocationWithoutSubmittingDirectory(): void
+    {
+        $source = $this->source('app/Views/partials/brand-directory-finder.php');
+
+        self::assertSame(2, substr_count($source, "'autoSubmit' => 'false'"));
+    }
+
     public function testFinderSubmitsCuratedCategoryIdsAndTrustCopy(): void
     {
         $source = $this->source('app/Views/partials/brand-directory-finder.php');

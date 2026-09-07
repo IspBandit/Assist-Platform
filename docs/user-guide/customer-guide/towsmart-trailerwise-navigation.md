@@ -73,9 +73,11 @@ directory details directly with the business before travel or compliance work.
 Each homepage also has the same focused service/location finder as its public
 directory. Enter a service or business, add a town/suburb/postcode or use the
 device-location control, and optionally choose one of that brand's curated
-categories. Results stay within the current brand; TowSmart does not return
-TrailerWise-only listings and neither finder exposes VanAssist stays or
-assistance requests.
+categories. Device location may fill the nearest town automatically, but it does
+not submit the directory search; results open only after the user deliberately
+presses the finder search button. Results stay within the current brand; TowSmart
+does not return TrailerWise-only listings and neither finder exposes VanAssist
+stays or assistance requests.
 
 **Save TowSmart to your phone** or **Save TrailerWise to your phone** opens
 installation instructions; Android may also show the browser install prompt when
@@ -119,8 +121,8 @@ favicon asset, not the retired platform symbol.
 
 ## Last updated
 
-2026-08-26 (product-brand Ask, TowSmart edit/compare/report, direct TrailerWise
-service journeys and shared mobile/workshop provider matching).
+2026-09-07 (homepage device location fills without automatically opening the
+provider directory; shared TowSmart/TrailerWise finder regression coverage).
 
 ## Owner
 
