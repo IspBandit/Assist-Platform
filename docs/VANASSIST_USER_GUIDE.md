@@ -1,5 +1,13 @@
 # VanAssist user guide
 
+## Town pages and search-engine listings
+
+Some town records currently share a page address but have different
+search-indexing settings. VanAssist leaves those addresses out of its sitemap
+while the conflict remains. This safeguard does not remove the page or change
+its content, town records or existing indexing setting. Sitemap inclusion does
+not guarantee that Google will index a page.
+
 ## Assist Platform product boundary
 
 VanAssist is one of three active Assist Platform products alongside **TowSmart**
