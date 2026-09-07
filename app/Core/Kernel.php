@@ -95,7 +95,13 @@ final class Kernel
     {
         $path = $request->path();
         if ($path === '/healthz') {
-            return Response::json(['status' => 'ok'])
+            $payload = ['status' => 'ok'];
+            $release = trim((string) Config::get('app.release', ''));
+            if ($release !== '') {
+                $payload['release'] = $release;
+            }
+
+            return Response::json($payload)
                 ->withHeader('Cache-Control', 'no-store');
         }
         if ($path === '/readyz') {

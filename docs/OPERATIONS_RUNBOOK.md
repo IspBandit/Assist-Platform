@@ -8,6 +8,9 @@
   storage, recent successful cron runs and no stuck email leases.
 - Review Caddy/application/database logs without copying secrets into tickets.
 - Confirm `/install` remains unavailable.
+- Require both `/healthz` and `/readyz` on all three domains to return the exact
+  selected 40-character release SHA, not only HTTP 200. The protected production
+  workflow performs this identity assertion after every release.
 
 ## Release
 
@@ -50,6 +53,15 @@ Provider-import processing resumes through the root-owned
 release workflow must not run Docker Compose directly as the restricted deploy
 user. Review current queue counts in **Admin → Provider data**; use the
 root-owned cron runner for an authorised server-side diagnostic.
+
+The versioned production schedule also runs session/request expiry, demand and
+run-capacity refresh, matching and follow-ups, database backup, application and
+AI retention, daily aggregation, regulatory alerts, provider/document reminders
+and the VanAssist performance report. Compare `/etc/cron.d/assist-platform` with
+`infrastructure/binarylane/ops/assist-platform.cron` whenever the root-owned
+runtime is provisioned or refreshed. A registered task in `never` state is not a
+failure by itself if it is explicitly manual/disabled, but every recurring task
+listed in the reviewed schedule must produce current success/failure evidence.
 
 VanAssist's daily website performance report runs at 06:15 Australia/Brisbane
 through `vanassist_daily_performance_email`. It reports the preceding calendar

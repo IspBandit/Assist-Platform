@@ -30,6 +30,11 @@ Provider navigation is grouped as **Overview**, **Your listing**, **Trust**, **W
 
 Complete the profile first, then add only services the business actually performs and areas it genuinely serves. Upload evidence under **Documents** and record licences under **Licences**. Claim approval, account control and administrative verification are separate steps; a successful claim does not create a public verification badge.
 
+The secure claim link is single-use and brand-bound. Final acceptance locks and
+revalidates the unused link and unclaimed listing in one database transaction;
+replay, concurrent use, a different provider ID or another brand fails without
+transferring ownership or granting the provider role.
+
 ## Examples
 
 A mobile repair provider can add the relevant service category and towns it serves, then upload current evidence for administrator review.
@@ -63,7 +68,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-24.
+2026-09-07.
 
 ## Owner
 

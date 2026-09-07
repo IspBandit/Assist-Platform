@@ -2,23 +2,23 @@
 
 ## Evidence reconciliation: 7 September 2026
 
-GitHub Actions production release run `34030818368` proves that release
-`4d5a4c957df1e556dc0c26f5345880aaad13277b` was deployed successfully on
-6 September 2026. This supersedes the earlier statement that
-`ccb8fb2c96c85dc1760fca0a407627aef8e6728e` was still current and that the
-service-worker form-preservation fix remained undeployed.
+GitHub Actions production release run `34068185858` proves that release
+`e2269bf9d072e5877c32129034029dd43e27f3da` was deployed successfully on
+7 September 2026. This supersedes the earlier `4d5a4c9...` baseline.
 
-The exact `4d5a4c9...` release passed reusable validation, built an immutable
+The exact `e2269bf...` release passed reusable validation, built an immutable
 archive, passed SHA-256 verification, created and verified the production
 database backup, rebuilt healthy application containers, confirmed that no
 migrations remained, provisioned Google Routes and passed protected public smoke
 checks across VanAssist, TowSmart and TrailerWise.
 
-The later repository commit
-`5618605ac82cbca6a83343c61c336ffa3634b857` (PR #248) passed CI but adds generic
-shared-host edge plumbing for separately deployed products. It has no Assist
-application feature or migration and is not required for the current Assist sale
-baseline. No later production release is recorded in the reviewed Actions runs.
+Main is now `4905b94e87d6081ec13682a71a0c5bbedf22aeeb` after PR #252 fixed
+unwanted TowSmart/TrailerWise homepage location auto-submission. Its exact push
+CI run `34071242316` passed, but no protected production release exists for that
+commit. PR #251 is separately open at `a895c07f819570b56abcd83f3fdd5ed0fab921c8`
+with successful exact-head CI run `34071259999`; it adds shared-edge release
+safety and a conservative conflicting-town sitemap safeguard. Neither change is
+described as live until a protected release proves it.
 
 A checksum-verified isolated database restore also passed with 232 tables in
 44 seconds. Independent off-site backup configuration remains absent; the last
@@ -27,7 +27,7 @@ Those remain sale-readiness items rather than reasons to misstate the successful
 application deployment.
 
 See `acquisition/SALE_REVIEW_2026-09-06.md`,
-`acquisition/EVIDENCE_REGISTER.md` and GitHub Actions run `34030818368` for the
+`acquisition/EVIDENCE_REGISTER.md` and GitHub Actions run `34068185858` for the
 underlying evidence.
 
 ## Deployment
@@ -37,8 +37,8 @@ underlying evidence.
   `trailerwise.com.au`, with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
 - Current verified Assist application release:
-  `4d5a4c957df1e556dc0c26f5345880aaad13277b`.
-- Production release workflow: GitHub Actions run `34030818368`, successful.
+  `e2269bf9d072e5877c32129034029dd43e27f3da`.
+- Production release workflow: GitHub Actions run `34068185858`, successful.
 - The release reported `Nothing to migrate. Database is up to date.`
 - The installer remains locked.
 
@@ -60,7 +60,7 @@ configuration or deployment work.
 
 ## Verified release and live controls
 
-The successful `4d5a4c9...` production release provides the following current
+The successful `e2269bf...` production release provides the following current
 evidence:
 
 - Reusable validation passed service-worker form-preservation regression,
@@ -105,7 +105,7 @@ Earlier verified controls also remain part of the evidence set unless superseded
 
 ## Current data observations
 
-The `4d5a4c9...` release data audit recorded:
+The `e2269bf...` release data audit recorded:
 
 - 17,615 towns, with 110 missing postcode/coordinates;
 - 11,876 active providers;
@@ -128,7 +128,7 @@ authoritative for unresolved licensing and transfer decisions.
 ## Recovery evidence
 
 - A deployment database backup was created and checksum-verified during the
-  successful `4d5a4c9...` production release.
+  successful `e2269bf...` production release.
 - A separate isolated restore rehearsal restored 232 tables in 44 seconds.
 - This proves database recoverability, not complete off-site disaster recovery.
 

@@ -1,5 +1,24 @@
 # Indexing repair evidence (OPS-012)
 
+## Follow-up: conflicting town slugs
+
+After Assist release `e2269bf9d072e5877c32129034029dd43e27f3da`, the live
+sitemap still contained the nine noindex town URLs. Read-only database checks
+found 46 active slugs shared by both indexable and noindex records. The public
+`Town::findActiveBySlug` lookup selected a noindex record for all nine examples.
+There is no static `public/sitemap.xml` overriding the controller.
+
+The first repair filtered individual rows; that is insufficient when different
+rows share the same public URL. Add a correlated exclusion for any active
+same-slug record marked noindex. Preserve the page lookup and all database
+records. This is a conservative sitemap safeguard, not resolution of the
+underlying geographic identity conflicts. Tests cover both insertion orders,
+inactive duplicates, fully indexable duplicates and fully noindex duplicates.
+
+No CQDiggings source or release changes are part of this follow-up. Deploy
+through the protected Assist workflow, then check the live town sitemap URLs;
+do not claim the safeguard is live based on tests alone.
+
 ## CQDiggings shared-edge correction
 
 CQDiggings release `1876d5bcb467e2e999c8efb7779a20f75431b46f` is deployed.

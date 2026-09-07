@@ -30,15 +30,16 @@ integrity.
 ## Current production evidence
 
 The current verified Assist application baseline is production release
-`4d5a4c957df1e556dc0c26f5345880aaad13277b`, deployed successfully through
-GitHub Actions run `34030818368` on 6 September 2026. The release passed reusable
+`e2269bf9d072e5877c32129034029dd43e27f3da`, deployed successfully through
+GitHub Actions run `34068185858` on 7 September 2026. The release passed reusable
 validation, immutable archive/checksum verification, production backup, healthy
 container restart, Google Routes provisioning and protected public smoke checks
 across VanAssist, TowSmart and TrailerWise.
 
-The later main commit `5618605ac82cbca6a83343c61c336ffa3634b857`
-(PR #248) is unrelated shared-host edge plumbing and is not required for the
-current Assist application sale baseline.
+Main `4905b94e87d6081ec13682a71a0c5bbedf22aeeb` and open PR #251 are
+newer than production. Their successful CI does not make their homepage-location,
+shared-edge or town-sitemap safeguards live; retain them as unreleased until a
+protected production run proves the selected exact commit.
 
 ## Buyer review order
 

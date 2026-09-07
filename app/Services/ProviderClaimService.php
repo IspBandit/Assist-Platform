@@ -115,16 +115,39 @@ final class ProviderClaimService
      */
     public static function claim(int $tokenId, int $providerId, int $userId, string $contactName): void
     {
-        Database::query(
+        if (!Database::connection()->inTransaction()) {
+            throw new RuntimeException('Provider claims must be completed inside a database transaction.');
+        }
+
+        $token = Database::selectOne(
+            'SELECT id FROM provider_claim_tokens '
+            . 'WHERE id = ? AND provider_id = ? AND brand_id = ? '
+            . 'AND used_at IS NULL AND expires_at > NOW() FOR UPDATE',
+            [$tokenId, $providerId, current_brand()->databaseId()]
+        );
+        if ($token === null) {
+            throw new RuntimeException('Provider claim link is no longer available for this brand.');
+        }
+
+        $claimed = Database::affecting(
             'UPDATE providers SET user_id = ?, contact_name = COALESCE(NULLIF(contact_name, \'\'), ?), '
             . "is_unclaimed = 0, claimed_at = NOW(), status = 'pending', updated_at = NOW() "
-            . 'WHERE id = ? AND is_unclaimed = 1',
+            . 'WHERE id = ? AND is_unclaimed = 1 AND user_id IS NULL',
             [$userId, $contactName, $providerId]
         );
-        Database::query(
-            'UPDATE provider_claim_tokens SET used_at = NOW() WHERE id = ? AND brand_id = ?',
-            [$tokenId, current_brand()->databaseId()]
+        if ($claimed !== 1) {
+            throw new RuntimeException('Provider listing has already been claimed.');
+        }
+
+        $consumed = Database::affecting(
+            'UPDATE provider_claim_tokens SET used_at = NOW() '
+            . 'WHERE id = ? AND provider_id = ? AND brand_id = ? AND used_at IS NULL',
+            [$tokenId, $providerId, current_brand()->databaseId()]
         );
+        if ($consumed !== 1) {
+            throw new RuntimeException('Provider claim link could not be consumed safely.');
+        }
+
         User::assignRoleBySlug($userId, 'provider');
     }
 

@@ -132,6 +132,18 @@ jobs:
             smoke_curl --fail --silent --show-error --location --max-time 20 --retry 2 --retry-delay 2 \
               --output /dev/null "$url"
           done
+          for brand_url in https://vanassist.com.au https://towsmart.com.au https://trailerwise.com.au; do
+            for endpoint in healthz readyz; do
+              payload="$(smoke_curl --fail --silent --show-error --location --max-time 20 \
+                "$brand_url/$endpoint")"
+              jq -e --arg release "$GITHUB_SHA" \
+                '(.status == "ok" or .status == "ready") and .release == $release' \
+                <<<"$payload" >/dev/null || {
+                  echo "$brand_url/$endpoint did not report release $GITHUB_SHA."
+                  exit 1
+                }
+            done
+          done
           homepage="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/)"
           grep -q '/runtime-assets/css/app.css' <<<"$homepage"
           grep -q '/runtime-assets/js/app.js' <<<"$homepage"

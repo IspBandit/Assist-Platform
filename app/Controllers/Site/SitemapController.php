@@ -74,9 +74,21 @@ final class SitemapController extends Controller
         $this->addRows($urls, "SELECT slug, updated_at FROM content_pages WHERE is_published = 1 AND noindex = 0", 'slug', 0.6);
         $this->addRows($urls, "SELECT slug, updated_at FROM service_categories WHERE is_active = 1", 'services/', 0.7);
         $this->addRows($urls, "SELECT slug, updated_at FROM regions WHERE is_active = 1", 'regions/', 0.6);
-        // Match LocationController's noindex decision. Launch/featured flags
-        // affect presentation, but must not override an explicit noindex flag.
-        $this->addRows($urls, "SELECT slug, updated_at FROM towns WHERE is_active = 1 AND noindex = 0", 'towns/', 0.5);
+        // A slug identifies a URL, not necessarily one town record. Exclude it
+        // if any active duplicate can make LocationController emit noindex.
+        // Do not change record selection, town data or launch/featured settings.
+        $this->addRows(
+            $urls,
+            "SELECT t.slug, t.updated_at FROM towns t
+             WHERE t.is_active = 1 AND t.noindex = 0
+               AND NOT EXISTS (
+                   SELECT 1 FROM towns excluded
+                   WHERE excluded.slug = t.slug AND excluded.is_active = 1
+                     AND excluded.noindex = 1
+               )",
+            'towns/',
+            0.5
+        );
         $this->addRows(
             $urls,
             "SELECT pbl.slug, COALESCE(pbl.updated_at,p.updated_at) AS updated_at

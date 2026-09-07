@@ -20,13 +20,16 @@ the final 6 September corrective release.
 
 The service-worker form-reload defect recorded in that review is **no longer an
 undeployed blocker**. Production release
-`4d5a4c957df1e556dc0c26f5345880aaad13277b` completed successfully in GitHub
-Actions run `34030818368`. The exact release passed the form-preservation
+`e2269bf9d072e5877c32129034029dd43e27f3da` completed successfully in GitHub
+Actions run `34068185858`. The exact release passed the form-preservation
 regression test, immutable archive/checksum checks, production backup, container
 health, Google Routes provisioning and protected public smoke checks across all
 three active brands.
 
 The remaining material blockers are:
+
+- the merged TowSmart/TrailerWise homepage location fix on main and open PR #251
+  are not part of the verified production release yet;
 
 - no independent encrypted off-site backup account/configuration has yet been
   evidenced;
@@ -182,4 +185,3 @@ buyer requirement makes them necessary:
 - bulk marketing/founding-membership campaign tooling;
 - production billing activation; and
 - infrastructure scaling without measured load justification.
-

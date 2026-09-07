@@ -36,9 +36,9 @@ at 1440x900 and 390x844 before the corrective production release. That run used
 live service workers blocked to isolate the then-known activation reload defect;
 therefore it is retained as partial evidence rather than final public acceptance.
 
-Production release `4d5a4c957df1e556dc0c26f5345880aaad13277b` subsequently
+Production release `e2269bf9d072e5877c32129034029dd43e27f3da` subsequently
 deployed the form-preserving service-worker correction successfully in GitHub
-Actions run `34030818368`. The exact release passed the service-worker regression
+Actions run `34068185858`. The exact release passed the service-worker regression
 test and protected public smoke checks for:
 
 - VanAssist home, providers, request assistance, nearest location, login,
@@ -56,7 +56,7 @@ authenticated, GPS-denial, owner-isolation or administrator acceptance rows.
 
 ## Reliability and monitoring
 
-The successful `4d5a4c9...` production run built an immutable release, passed
+The successful `e2269bf...` production run built an immutable release, passed
 archive checksum verification, created and verified the production database
 backup, rebuilt healthy application/database containers, confirmed there were no
 pending migrations, provisioned Google Routes and completed protected public
@@ -74,7 +74,7 @@ contrast still needs measurement before accessibility acceptance.
 
 | ID | Existing basis | Evidence required to close | Status |
 | --- | --- | --- | --- |
-| REL-01 | GitHub CI/release | GitHub Actions run `34030818368` passed full reusable validation for deployed SHA `4d5a4c957...`, including migrations, seeds, integration tests, dependency audit and production dependency build | CLOSED |
+| REL-01 | GitHub CI/release | GitHub Actions run `34068185858` passed full reusable validation for deployed SHA `e2269bf9d...`, including migrations, seeds, integration tests, dependency audit and production dependency build | CLOSED |
 | REL-02 | `/healthz` and `/readyz` | Timestamped status and expected identity for all three deployed hosts, tied to selected sale-candidate SHA | OPEN |
 | REL-03 | `infrastructure/binarylane/ops/assist-offsite-restore-drill.sh` | Current encrypted off-site snapshot ID, checksum, restore log and recovery measurements | OPEN |
 | REL-04 | `docs/BACKUP_AND_RESTORE.md` | Restore matching application, database, public/private media and protected configuration; verify logins, brand isolation and critical journeys | OPEN |
@@ -82,7 +82,7 @@ contrast still needs measurement before accessibility acceptance.
 | MON-01 | Existing health and scheduled-task controls | External uptime/error test event reaches owner-controlled destination; record event and receipt times, acknowledgement and recovery notification | OPEN |
 | MON-02 | Scheduled jobs | Controlled staging job failure and stale-job event produce alerts; demonstrate correct recipient without sending customer mail | OPEN |
 
-REL-05 is partial because a protected immutable deployment of `4d5a4c9...` is
+REL-05 is partial because a protected immutable deployment of `e2269bf...` is
 proven, including the previous-release path and pre-release backup, but an actual
 rollback rehearsal has not been retained.
 
@@ -91,6 +91,15 @@ container and checks that more than 20 tables exist. The 6 September isolated
 rehearsal went further and restored 232 tables in 44 seconds. This remains limited
 database restore evidence. It does not establish a full application/media restore,
 buyer access or agreed recovery-time/recovery-point objectives.
+
+The unreleased OPS-005 technical close-out makes the production workflow reject
+any `/healthz` or `/readyz` response whose release field is not the exact
+`GITHUB_SHA`, across all three hosts. It also expands the encrypted restic set and
+weekly drill to restore the matching immutable application, both protected
+configuration files and public/private media before importing the database. These
+rows remain open until an exact protected production run and an independently
+stored snapshot/drill produce the dated evidence; repository implementation alone
+does not close them.
 
 ## Privacy and data provenance
 
@@ -109,6 +118,13 @@ transferability. The seller/data custodian owns completion and qualified review.
 | Locations and government datasets | Match each imported source to terms and attribution; reconcile with `../DATA_TRUST_AND_PROVENANCE.md` | PARTIAL |
 | Images, logos and marketing assets | Creator/source, licence or assignment, generation provenance where applicable, restrictions and transfer rights | OPEN |
 | Subprocessors/APIs | Actual configured provider, data sent, region, agreement, retention, cost limits and buyer credential replacement | PARTIAL |
+
+Provider-claim ownership enforcement now has integration coverage for atomic
+single-use token consumption, account replay rejection and cross-brand rejection.
+TowSmart saved-combination integration coverage exercises an owned report, a
+second user's guessed ID and a non-TowSmart brand host. This closes the normal
+engineering regression gap; live designated-account/browser acceptance remains
+required for UX-VA-03 and UX-TS-02.
 
 The partial privacy statuses reflect the engineering field inventory now recorded
 in `PRIVACY_REGISTER.md`; seller approval, retention decisions, deletion/export
