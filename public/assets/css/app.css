@@ -1006,7 +1006,7 @@ table.data th, table.table th { background: var(--sand); font-size: .9rem; }
 .directory-hero h1 { max-width: 720px; margin: .55rem 0 .8rem; font-size: clamp(2.4rem, 5vw, 4.4rem); line-height: 1.02; letter-spacing: -.045em; }
 .directory-hero p { max-width: 720px; margin: 0; color: color-mix(in srgb, var(--brand-text) 72%, #fff); font-size: clamp(1rem, 1.6vw, 1.2rem); }
 .directory-trust { display: grid; gap: .65rem; color: #fff; font-size: .9rem; font-weight: 720; text-shadow: 0 1px 3px rgba(0,0,0,.65); }
-.directory-trust span { display: flex; gap: .65rem; align-items: center; }
+.directory-trust span { display: flex; gap: .65rem; align-items: center; width: fit-content; padding: .42rem .7rem; border-radius: 999px; background: rgba(3,31,33,.88); }
 .directory-trust span::before { content: "✓"; display: grid; place-items: center; width: 1.55rem; height: 1.55rem; border-radius: 50%; background: var(--brand-primary); color: #fff; font-size: .72rem; }
 .stay-card h3{display:flex;align-items:center;gap:.55rem;margin:.2rem 0}.stay-card .badge-row{margin-left:auto}.stay-card .actions{margin-top:.4rem}
 .stay-search-fields{display:grid;grid-template-columns:1.35fr repeat(4,minmax(0,1fr));gap:1rem}.stay-card-facilities{margin:.35rem 0;color:var(--color-text,#17212b);font-size:.78rem;line-height:1.4}.facility-suggestion-item,.facility-review-item{display:grid;gap:.75rem;padding:1rem;border:1px solid var(--color-border,#d9e0e5);border-radius:12px;margin-bottom:.8rem}.admin-facility-compare{align-items:start}.facility-review-list article{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:.75rem}

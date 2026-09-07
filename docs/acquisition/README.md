@@ -30,15 +30,11 @@ integrity.
 ## Current production evidence
 
 The current verified Assist application baseline is production release
-`4d5a4c957df1e556dc0c26f5345880aaad13277b`, deployed successfully through
-GitHub Actions run `34030818368` on 6 September 2026. The release passed reusable
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`, deployed successfully through
+GitHub Actions run `34077589608` on 7 September 2026. The release passed reusable
 validation, immutable archive/checksum verification, production backup, healthy
 container restart, Google Routes provisioning and protected public smoke checks
 across VanAssist, TowSmart and TrailerWise.
-
-The later main commit `5618605ac82cbca6a83343c61c336ffa3634b857`
-(PR #248) is unrelated shared-host edge plumbing and is not required for the
-current Assist application sale baseline.
 
 ## Buyer review order
 
@@ -58,12 +54,13 @@ successful corrective production release.
 9. `KNOWN_ISSUES.md` — buyer-facing limitations and remaining gates.
 10. `TRANSFER_REHEARSAL.md` — buyer-controlled build/restore/account-transfer acceptance.
 11. `DEPENDENCIES.md` — locked runtime/development dependencies and declared licences.
-12. `../CURRENT_ARCHITECTURE.md` and `../DATABASE_DICTIONARY.md` — technical architecture/schema.
-13. `../OPERATIONS_RUNBOOK.md` and `../BACKUP_AND_RESTORE.md` — operations and recovery.
-14. `../SECURITY.md` — application/security posture.
-15. `../PRODUCT_AND_FEATURES.md`, `../TOWSMART_CATALOGUE.md` and
+12. `../BUYER_EMAIL_HANDOVER.md` — buyer-owned Graph or SMTP configuration, DNS and acceptance.
+13. `../CURRENT_ARCHITECTURE.md` and `../DATABASE_DICTIONARY.md` — technical architecture/schema.
+14. `../OPERATIONS_RUNBOOK.md` and `../BACKUP_AND_RESTORE.md` — operations and recovery.
+15. `../SECURITY.md` — application/security posture.
+16. `../PRODUCT_AND_FEATURES.md`, `../TOWSMART_CATALOGUE.md` and
     `../VANASSIST_STAYS.md` — implemented product/data capability and limitations.
-16. `../RELEASE_NOTES.md` — change history.
+17. `../RELEASE_NOTES.md` — change history.
 
 ## Registers already created
 
@@ -91,7 +88,8 @@ The principal missing transaction evidence is now:
 - invoice-backed monthly/annual operating costs and renewal dates;
 - domain, hosting, Cloudflare, mail, analytics, monitoring, maps/API and backup
   account ownership/transfer mechanics;
-- independent encrypted off-site backup plus full application/media/config restore
+- explicit buyer acceptance that independent encrypted off-site backup is not
+  configured or included, plus transferable full application/media/config restore
   and rollback evidence;
 - authenticated provider/admin/TowSmart owner-isolation acceptance and final
   live-service-worker browser evidence;

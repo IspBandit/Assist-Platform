@@ -57,6 +57,9 @@ coordinates. New VanAssist links continue to use the current form field names.
 
 Choose a service and location, update the results, then compare the compact list and optional map. Featured results are separated first; organic direct results show verified listings first and then the remaining nearest listings; related services are in their own section. Open the provider profile to confirm its current services and contact details. Provider profiles use a simple heading without a decorative business-name initial or repeated business name in the breadcrumb. Workspace help is shown only inside signed-in account/provider areas, not on public provider pages. Open directions only when safely stopped.
 
+The short directory information labels use white text on a stable dark surface,
+so their legibility does not depend on which part of the hero photo is visible.
+
 A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider road routes use an exact provider point. A provider with only a base locality says **Exact provider distance unavailable (town-centre estimate)** and does not present that locality route as the distance to the business. Stay routes use the stay's own point. Google Maps is attributed when its road distance and estimated time are displayed. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
 
 ## Examples
@@ -183,8 +186,7 @@ can have identical names. Missing location details are not guessed.
 
 ## Last updated
 
-2026-08-24 (Ask outcome explanations, provider-name search, route accuracy,
-compact mobile shell and brand-safe public journey measurement documented).
+2026-09-07 (directory trust-copy contrast surface documented).
 
 ## Owner
 

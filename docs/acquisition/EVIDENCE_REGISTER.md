@@ -36,9 +36,9 @@ at 1440x900 and 390x844 before the corrective production release. That run used
 live service workers blocked to isolate the then-known activation reload defect;
 therefore it is retained as partial evidence rather than final public acceptance.
 
-Production release `4d5a4c957df1e556dc0c26f5345880aaad13277b` subsequently
+Production release `74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843` subsequently
 deployed the form-preserving service-worker correction successfully in GitHub
-Actions run `34030818368`. The exact release passed the service-worker regression
+Actions run `34077589608`. The exact release passed the service-worker regression
 test and protected public smoke checks for:
 
 - VanAssist home, providers, request assistance, nearest location, login,
@@ -56,33 +56,33 @@ authenticated, GPS-denial, owner-isolation or administrator acceptance rows.
 
 ## Reliability and monitoring
 
-The successful `4d5a4c9...` production run built an immutable release, passed
+The successful `74b1811...` production run built an immutable release, passed
 archive checksum verification, created and verified the production database
 backup, rebuilt healthy application/database containers, confirmed there were no
 pending migrations, provisioned Google Routes and completed protected public
 journey checks. The release log explicitly reports the release completed
 successfully.
 
-Earlier 6 September observations also recorded all six public `/healthz` and
-`/readyz` endpoints returning HTTP 200 across VanAssist, TowSmart and TrailerWise,
-but those status-only requests did not retain deployed identity in the evidence
-pack. Therefore REL-02 remains open until a timestamped health/readiness capture is
-tied directly to the selected sale-candidate SHA.
+GitHub Actions run `34077589608` exercised `/healthz` and `/readyz` on all three
+public hosts. At `2026-09-07T03:04Z`, each `/readyz` response
+returned HTTP 200 with `status: ready` and release
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`, matching the workflow SHA.
 
-Desktop directory trust-list text was observed as pale against the light hero;
-contrast still needs measurement before accessibility acceptance.
+Desktop directory trust-list copy now sits on an opaque dark-teal surface with
+white text instead of depending on the underlying hero image. Formal end-to-end
+accessibility acceptance remains part of the browser evidence gate.
 
 | ID | Existing basis | Evidence required to close | Status |
 | --- | --- | --- | --- |
-| REL-01 | GitHub CI/release | GitHub Actions run `34030818368` passed full reusable validation for deployed SHA `4d5a4c957...`, including migrations, seeds, integration tests, dependency audit and production dependency build | CLOSED |
-| REL-02 | `/healthz` and `/readyz` | Timestamped status and expected identity for all three deployed hosts, tied to selected sale-candidate SHA | OPEN |
-| REL-03 | `infrastructure/binarylane/ops/assist-offsite-restore-drill.sh` | Current encrypted off-site snapshot ID, checksum, restore log and recovery measurements | OPEN |
+| REL-01 | GitHub CI/release | GitHub Actions run `34077589608` passed full reusable validation for deployed SHA `74b18116f...`, including migrations, seeds, integration tests, dependency audit and production dependency build | CLOSED |
+| REL-02 | `/healthz` and `/readyz` | Run `34077589608` exercised all six endpoints; the 7 September reconciliation retained matching `74b18116f...` release identity from each public `/readyz` endpoint | CLOSED |
+| REL-03 | `infrastructure/binarylane/ops/assist-offsite-restore-drill.sh` | Independent off-site storage is not configured or included; customer/buyer supplies its destination, credentials, retention and alerts after transfer | BUYER CONFIGURATION |
 | REL-04 | `docs/BACKUP_AND_RESTORE.md` | Restore matching application, database, public/private media and protected configuration; verify logins, brand isolation and critical journeys | OPEN |
 | REL-05 | `docs/OPERATIONS_RUNBOOK.md` | Candidate deployment and rollback rehearsal with before/after SHA and health checks | PARTIAL |
 | MON-01 | Existing health and scheduled-task controls | External uptime/error test event reaches owner-controlled destination; record event and receipt times, acknowledgement and recovery notification | OPEN |
 | MON-02 | Scheduled jobs | Controlled staging job failure and stale-job event produce alerts; demonstrate correct recipient without sending customer mail | OPEN |
 
-REL-05 is partial because a protected immutable deployment of `4d5a4c9...` is
+REL-05 is partial because a protected immutable deployment of `74b1811...` is
 proven, including the previous-release path and pre-release backup, but an actual
 rollback rehearsal has not been retained.
 
@@ -103,7 +103,7 @@ transferability. The seller/data custodian owns completion and qualified review.
 | Requests, messages and mail queues | Personal fields, recipients, delivery providers, consent/suppression records and retention for queued/sent/failed messages | PARTIAL |
 | Garage, saved combinations and documents | Owner checks; VIN/document exposure; export/deletion behaviour; private storage and backup copies | PARTIAL |
 | Analytics, audit and logs | Identifiers/IP fields, access, retention, anonymisation and operational/legal holds | PARTIAL |
-| Backups | Encrypted storage, key custodian, expiry, restore access and procedure to reapply deletion after recovery | OPEN |
+| Backups | Local-backup handling is disclosed; buyer must define its independent encrypted storage, key custodian, expiry, restore access and deletion-after-recovery procedure | BUYER CONFIGURATION |
 | Providers and stays | Source URL, acquisition date, licence/terms version, attribution, verification class, update method and transfer restrictions | PARTIAL |
 | TowSmart catalogue | Manufacturer/source and model-year evidence, specification provenance, correction/update owner and permitted reuse | PARTIAL |
 | Locations and government datasets | Match each imported source to terms and attribution; reconcile with `../DATA_TRUST_AND_PROVENANCE.md` | PARTIAL |

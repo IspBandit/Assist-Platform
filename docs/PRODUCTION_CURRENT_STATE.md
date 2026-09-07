@@ -2,32 +2,31 @@
 
 ## Evidence reconciliation: 7 September 2026
 
-GitHub Actions production release run `34030818368` proves that release
-`4d5a4c957df1e556dc0c26f5345880aaad13277b` was deployed successfully on
-6 September 2026. This supersedes the earlier statement that
-`ccb8fb2c96c85dc1760fca0a407627aef8e6728e` was still current and that the
-service-worker form-preservation fix remained undeployed.
+GitHub Actions production release run `34077589608` proves that release
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843` was deployed successfully on
+7 September 2026. This supersedes the earlier `4d5a4c957...` application
+baseline and incorporates the completed three-brand UX and operational fixes.
 
-The exact `4d5a4c9...` release passed reusable validation, built an immutable
+The exact `74b1811...` release passed reusable validation, built an immutable
 archive, passed SHA-256 verification, created and verified the production
 database backup, rebuilt healthy application containers, confirmed that no
 migrations remained, provisioned Google Routes and passed protected public smoke
 checks across VanAssist, TowSmart and TrailerWise.
 
-The later repository commit
-`5618605ac82cbca6a83343c61c336ffa3634b857` (PR #248) passed CI but adds generic
-shared-host edge plumbing for separately deployed products. It has no Assist
-application feature or migration and is not required for the current Assist sale
-baseline. No later production release is recorded in the reviewed Actions runs.
+The release workflow exercised `/healthz` and `/readyz` on all three public
+brands. At `2026-09-07T03:04Z`, the evidence reconciliation received HTTP 200 readiness
+responses from VanAssist, TowSmart and TrailerWise, each reporting release
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`.
 
 A checksum-verified isolated database restore also passed with 232 tables in
-44 seconds. Independent off-site backup configuration remains absent; the last
+44 seconds. Independent off-site backup configuration remains absent and is a
+customer/buyer post-transfer responsibility rather than an included service; the last
 sale review recorded no enabled MFA enrolments and public-key root SSH access.
 Those remain sale-readiness items rather than reasons to misstate the successful
 application deployment.
 
 See `acquisition/SALE_REVIEW_2026-09-06.md`,
-`acquisition/EVIDENCE_REGISTER.md` and GitHub Actions run `34030818368` for the
+`acquisition/EVIDENCE_REGISTER.md` and GitHub Actions run `34077589608` for the
 underlying evidence.
 
 ## Deployment
@@ -37,8 +36,8 @@ underlying evidence.
   `trailerwise.com.au`, with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
 - Current verified Assist application release:
-  `4d5a4c957df1e556dc0c26f5345880aaad13277b`.
-- Production release workflow: GitHub Actions run `34030818368`, successful.
+  `74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`.
+- Production release workflow: GitHub Actions run `34077589608`, successful.
 - The release reported `Nothing to migrate. Database is up to date.`
 - The installer remains locked.
 
@@ -60,7 +59,7 @@ configuration or deployment work.
 
 ## Verified release and live controls
 
-The successful `4d5a4c9...` production release provides the following current
+The successful `74b1811...` production release provides the following current
 evidence:
 
 - Reusable validation passed service-worker form-preservation regression,
@@ -75,13 +74,19 @@ evidence:
   to production and the protected release endpoint reported configured.
 - Protected smoke checks passed for VanAssist home, providers, request assistance,
   nearest-location, login, registration and password-reset routes.
-- Protected smoke checks passed for TowSmart home, calculator and rules routes.
-- Protected smoke checks passed for TrailerWise home, marketplace and rules routes.
+- Protected smoke checks passed for TowSmart home, health/readiness, calculator,
+  providers, services, Ask and rules routes.
+- Protected smoke checks passed for TrailerWise home, health/readiness, providers,
+  services, Ask, marketplace and rules routes.
 - VanAssist Ask returned Griffiths Creek dump-point evidence for the designated
   test query.
 - VanAssist Ask returned road/straight-line distance output for an auto-electrician
   query near Karratha.
 - Direct provider-name Ask search returned Battery World Greenslopes.
+- TowSmart Ask routed public-weighing near Toowoomba and rejected a literal
+  interpretation of `near me` without device location.
+- TrailerWise Ask routed a bearings query near Bendigo to the tyre/wheel/bearing
+  service category.
 - Brand assets were verified for TowSmart and TrailerWise and public pages did not
   expose the retired platform symbol checked by the release workflow.
 - The Ask question library contained at least 1,000 active questions during the
@@ -105,7 +110,7 @@ Earlier verified controls also remain part of the evidence set unless superseded
 
 ## Current data observations
 
-The `4d5a4c9...` release data audit recorded:
+The production data audit retained for the sale package recorded:
 
 - 17,615 towns, with 110 missing postcode/coordinates;
 - 11,876 active providers;
@@ -128,14 +133,15 @@ authoritative for unresolved licensing and transfer decisions.
 ## Recovery evidence
 
 - A deployment database backup was created and checksum-verified during the
-  successful `4d5a4c9...` production release.
+  successful `74b1811...` production release.
 - A separate isolated restore rehearsal restored 232 tables in 44 seconds.
 - This proves database recoverability, not complete off-site disaster recovery.
 
-Still required for sale-readiness reliability sign-off:
+Recovery position for sale-readiness:
 
-1. configure an independent automated encrypted off-site backup destination;
-2. produce and retain a current off-site snapshot/checksum;
+1. disclose that no independent off-site destination is included or configured;
+2. require the customer/buyer to supply and configure its own encrypted off-site
+   destination, credentials, retention policy and alert recipient after transfer;
 3. restore matching application, database, public/private media and protected
    configuration into an isolated clean environment;
 4. verify critical logins and three-brand journeys after that restore; and
@@ -152,7 +158,8 @@ The application deployment itself is no longer an open blocker. The principal
 remaining gates are:
 
 1. authenticated provider/admin and TowSmart saved-combination acceptance;
-2. independent off-site backup, full restore and rollback rehearsal;
+2. transferable full restore and rollback rehearsal, plus buyer acceptance of
+   responsibility for configuring independent off-site backups;
 3. external monitoring and scheduled-task failure alert evidence;
 4. MFA enrolment, credential rotation and privileged-access review;
 5. dataset/IP provenance and commercial-transfer decisions;
