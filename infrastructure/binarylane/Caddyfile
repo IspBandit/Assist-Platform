@@ -40,6 +40,12 @@
 	import security_headers
 	root * /var/www/cqdiggings
 	encode zstd gzip
+	@cqHtml path *.html /
+	header @cqHtml Cache-Control "no-cache, must-revalidate"
+	@cqServiceWorker path /service-worker.js
+	header @cqServiceWorker Cache-Control "no-cache, no-store, must-revalidate"
+	@cqRootIndex path /index.html
+	redir @cqRootIndex / 301
 	route {
 		# Exact legacy navigation aliases; CQDiggings is served by Caddy, not Apache.
 		redir /occurrences/site-index.html /site-index.html 301

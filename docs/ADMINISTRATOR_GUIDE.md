@@ -19,6 +19,22 @@ required. Credentials are never documented in Git.
 
 ## Access
 
+### Shared-server releases
+
+Releases must check every public site registered on the host, not just Assist's
+three brands. A missing route, failed HTTPS request, wrong product response or
+changed external vhost blocks the release. Operators must not remove registry
+entries or bypass TLS checks to make a deployment pass. Follow
+`SHARED_EDGE_RELEASE_SAFETY.md`; separate products remain independently owned.
+
+### Town sitemap conflicts (OPS-012)
+
+Multiple town records can currently share one URL slug. If any active record
+for that slug is marked noindex, the sitemap omits the URL until the conflict is
+resolved. This safeguard does not hide or rewrite the page, change its indexing
+setting, or merge/delete records. Review source evidence and geographic identity
+before resolving duplicates; do not clear noindex merely to remove an alert.
+
 ### Shared-edge legacy CQDiggings links (OPS-012)
 
 CQDiggings is independently deployed, but its public HTTP routing uses the shared
