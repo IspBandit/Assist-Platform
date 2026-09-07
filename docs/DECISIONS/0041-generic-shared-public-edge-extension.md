@@ -1,6 +1,6 @@
 # ADR 0041: Generic shared public edge extension
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-09-06
 - **Owners:** Assist Platform Enterprise
 - **Backlog item:** OPS-001
@@ -33,6 +33,9 @@ The Assist repository does not contain another product's application code, produ
 - The existing VanAssist, TowSmart, TrailerWise and CQDiggings site definitions are unchanged.
 - Separate products can be attached through an internal Docker network and removable vhost drop-in.
 - The edge now has a deliberately documented host-level extension surface, so only reviewed vhost files may be installed there.
+- A root-owned registry and release guard verify every attached product's HTTPS
+  identity before and after public-edge changes and reject candidate
+  configurations that drop registered hostnames.
 - A separate product must be independently movable to another host without changes to Assist application code or data.
 
 ## Quality Gate impact

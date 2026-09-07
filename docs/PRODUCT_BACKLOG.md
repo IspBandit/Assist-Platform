@@ -92,7 +92,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| OPS-001 | Immutable gated production releases | done | Production release workflow and runbook |
+| OPS-001 | Immutable gated production releases | done | Production release workflow, runbook, and shared-edge registry/guard regression test |
 | OPS-002 | Backup, restore and rollback rehearsal | ready | Fresh machine-readable off-site backup and restore evidence displayed in the launch gate |
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |

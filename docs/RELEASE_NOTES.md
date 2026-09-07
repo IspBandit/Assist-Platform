@@ -5,6 +5,21 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Shared public-edge release guard (OPS-001)
+
+- Add a generic, root-owned guard for releases sharing the production Caddy
+  edge. It checks every host in the host-owned registry for valid HTTPS and its
+  expected product identity.
+- Add snapshot and verification modes that stop a release if another product's
+  vhost or the registry changes, plus candidate validation that rejects a Caddy
+  configuration dropping any registered hostname.
+- Add a narrow bootstrap installer that changes no product vhost and fails
+  closed unless all registered sites are healthy. No migrations, application
+  behaviour, brand configuration, or environment variables change.
+- Rollback removes only
+  `/opt/shared-public-edge/bin/check-shared-public-edge`; existing routes and
+  product data remain untouched.
+
 ### Sale-candidate evidence reconciliation (OPS-005 / COM-005)
 
 - Reconcile the buyer-facing production baseline to deployed release
