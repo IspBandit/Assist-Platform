@@ -91,6 +91,9 @@ jobs:
       - name: Check CQDiggings redirects in the production Caddy engine
         run: node --test tests/cqdiggings-edge.test.cjs
 
+      - name: Check shared public-edge release guard
+        run: node --test tests/shared-edge-guard.test.cjs
+
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
