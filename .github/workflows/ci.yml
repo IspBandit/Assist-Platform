@@ -91,6 +91,11 @@ jobs:
       - name: Check CQDiggings redirects in the production Caddy engine
         run: node --test tests/cqdiggings-edge.test.cjs
 
+      - name: Check shared-host release safety
+        run: |
+          bash -n scripts/release-remote.sh infrastructure/binarylane/ops/check-shared-public-edge.sh
+          node --test tests/shared-edge-guard.test.cjs
+
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 

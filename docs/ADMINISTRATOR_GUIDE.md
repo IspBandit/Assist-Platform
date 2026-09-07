@@ -19,6 +19,14 @@ required. Credentials are never documented in Git.
 
 ## Access
 
+### Shared-server releases
+
+Releases must check every public site registered on the host, not just Assist's
+three brands. A missing route, failed HTTPS request, wrong product response or
+changed external vhost blocks the release. Operators must not remove registry
+entries or bypass TLS checks to make a deployment pass. Follow
+`SHARED_EDGE_RELEASE_SAFETY.md`; separate products remain independently owned.
+
 ### Town sitemap conflicts (OPS-012)
 
 Multiple town records can currently share one URL slug. If any active record

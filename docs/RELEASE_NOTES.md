@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Shared public edge release safety (OPS-001 / OPS-012)
+
+- Require a host-owned public-site registry and persistent product vhosts.
+  Serialize shared-host releases with one lock. Validate candidate host routes
+  before activation, preserve vhost/registry checksums, and check every registered
+  site's HTTPS status and product identity before and after release.
+- A failed cross-site check triggers the existing application/runtime rollback.
+  Rollback also checks all registered sites before removing recovery evidence.
+- Install the exact reviewed guard as `/opt/shared-public-edge/bin/check-shared-public-edge`
+  before releasing. No new application brands, migrations or database changes.
+  See `SHARED_EDGE_RELEASE_SAFETY.md` for host provisioning and incident evidence.
+
 ### Conflicting town URL safeguard (OPS-012)
 
 - Omit a town URL from VanAssist's sitemap if any active record with the same

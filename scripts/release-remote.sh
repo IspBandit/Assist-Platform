@@ -17,6 +17,13 @@ if [[ "$archive" != "$expected" || ! -f "$archive" ]]; then
 fi
 
 cd "$root"
+edge_root=/opt/shared-public-edge
+edge_guard="$edge_root/bin/check-shared-public-edge"
+test -x "$edge_guard" || { echo 'Install the reviewed shared-edge guard before releasing.' >&2; exit 1; }
+exec 9>"$edge_root/release.lock"
+flock -n 9 || { echo 'Another shared-host release is active.' >&2; exit 1; }
+edge_state=$(mktemp -d "$edge_root/.assist-release.XXXXXX")
+"$edge_guard" snapshot "$edge_state"
 ./runtime/ops/assist-backup-now.sh
 
 target="$root/releases/$release"
@@ -36,6 +43,12 @@ if [[ ! -d "$runtime_source/ops" ]]; then
   echo "Reviewed runtime operations directory is missing from the release." >&2
   exit 1
 fi
+cmp -s "$edge_guard" "$runtime_source/ops/check-shared-public-edge.sh" || {
+  echo 'Installed shared-edge guard differs from the reviewed release; install that exact version first.' >&2
+  exit 1
+}
+# Reject lost external hostname routes before changing the running application.
+"$edge_guard" candidate "$runtime_source/Caddyfile"
 
 previous="$(readlink -f "$root/current" || true)"
 previous_app_release="$(sed -n 's/^APP_RELEASE=//p' "$app_env" | tail -n 1)"
@@ -84,6 +97,8 @@ rollback() {
     remove_compose_caddy
     docker compose up -d --build --force-recreate app caddy
   fi
+  "$edge_guard" verify "$edge_state"
+  rm -rf -- "$edge_state"
   rm -rf -- "$runtime_rollback"
 }
 trap rollback ERR
@@ -142,7 +157,9 @@ for url in \
   curl --fail --silent --show-error --retry 6 --retry-delay 5 "$url" >/dev/null
 done
 
+"$edge_guard" verify "$edge_state"
 trap - ERR
+rm -rf -- "$edge_state"
 rm -rf -- "$runtime_rollback"
 rm -f "$archive"
 echo "Released $release successfully. Previous release: ${previous:-none}"
