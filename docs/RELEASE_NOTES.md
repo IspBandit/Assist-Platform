@@ -5,6 +5,24 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Three-brand UX and operational closeout (EXP-005 / OPS-012)
+
+- Remove the redundant VanAssist `Start here` divider while keeping Ask VanAssist
+  as the preferred homepage entry and preserving direct structured search.
+- Keep TowSmart calculator and guidance as the primary product journey and move
+  specialist discovery into a supporting position rather than treating the
+  provider directory as the product centre.
+- Strengthen TowSmart and TrailerWise deterministic Ask routing and location
+  handoff without requiring paid AI or substituting unrelated businesses.
+- Make typed town/suburb/postcode input authoritative over stale device GPS in the
+  shared provider directory, then rank measurable provider locations by road
+  distance when Google Routes is available, with honest fallback labelling.
+- Add live three-brand acceptance for product-brand homepage location behaviour
+  and extend the protected production release smoke gate across health/readiness,
+  key public journeys and brand-scoped discovery.
+- Align the Product Bible with the authoritative three-brand acquisition boundary.
+  No migrations or new environment variables are introduced.
+
 ### Public provider crawl access (OPS-012)
 
 - Add exact CQDiggings legacy navigation redirects to the shared Caddy edge:
