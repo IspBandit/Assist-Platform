@@ -39,6 +39,9 @@ test('production Caddy snippet redirects only the two legacy navigation aliases'
       await new Promise(resolve => setTimeout(resolve, 250));
     }
     assert.ok(ready, 'Isolated Caddy did not become ready');
+    const rootAlias = await fetch(`${origin}/index.html`, { redirect: 'manual', signal: AbortSignal.timeout(5000) });
+    assert.equal(rootAlias.status, 301);
+    assert.equal(rootAlias.headers.get('location'), '/');
     for (const page of ['site-index', 'glossary']) {
       for (const query of ['', '?utm_source=regression']) {
         const response = await fetch(`${origin}/occurrences/${page}.html${query}`, { redirect: 'manual', signal: AbortSignal.timeout(5000) });
@@ -46,6 +49,7 @@ test('production Caddy snippet redirects only the two legacy navigation aliases'
         assert.equal(response.headers.get('location'), `/${page}.html`);
         const target = await fetch(new URL(response.headers.get('location'), origin), { signal: AbortSignal.timeout(5000) });
         assert.equal(target.status, 200);
+        assert.equal(target.headers.get('cache-control'), 'no-cache, must-revalidate');
         assert.equal(await target.text(), page);
       }
     }

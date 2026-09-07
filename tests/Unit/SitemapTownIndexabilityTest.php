@@ -35,6 +35,27 @@ final class SitemapTownIndexabilityTest extends TestCase
                 }
             }
         }
+        // Exercise conflicting URL identities in both insertion orders. An
+        // inactive duplicate cannot be selected by the public town lookup.
+        $duplicates = [
+            'conflict-indexable-first' => [[1, 0, 1, 1], [1, 1, 0, 0]],
+            'conflict-noindex-first' => [[1, 1, 0, 0], [1, 0, 1, 1]],
+            'inactive-noindex-duplicate' => [[1, 0, 0, 0], [0, 1, 1, 1]],
+            'both-indexable' => [[1, 0, 0, 0], [1, 0, 1, 1]],
+            'both-noindex' => [[1, 1, 0, 0], [1, 1, 1, 1]],
+        ];
+        foreach ($duplicates as $slug => $rows) {
+            foreach ($rows as $row) {
+                $insert->execute([$slug, ...$row]);
+            }
+        }
+        $expected += [
+            'conflict-indexable-first' => false,
+            'conflict-noindex-first' => false,
+            'inactive-noindex-duplicate' => true,
+            'both-indexable' => true,
+            'both-noindex' => false,
+        ];
         try {
             Database::setConnection($pdo);
             $brands = require base_path('config/brands.php');
@@ -44,6 +65,7 @@ final class SitemapTownIndexabilityTest extends TestCase
             foreach ($expected as $slug => $included) {
                 $entry = '<loc>' . url('towns/' . $slug) . '</loc>';
                 self::assertSame($included, str_contains($response->content(), $entry), $slug);
+                self::assertSame($included ? 1 : 0, substr_count($response->content(), $entry), 'Unique URL: ' . $slug);
             }
         } finally {
             $connection->setValue(null, $previousConnection);
