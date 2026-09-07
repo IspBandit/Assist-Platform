@@ -18,18 +18,16 @@ not part of the active runtime or acquisition scope.
 
 ## Current verified production baseline
 
-- Production release `4d5a4c957df1e556dc0c26f5345880aaad13277b`
-  deployed successfully through GitHub Actions run `34030818368` on 6 September.
+- Production release `74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`
+  deployed successfully through GitHub Actions run `34077589608` on 7 September.
 - Reusable validation, immutable build/checksum, production backup, release,
   container health, Google Routes provisioning and protected public smoke checks
   all passed for that release.
 - The service-worker form-reload defect is corrected and deployed, with a CI
   regression test protecting open forms from forced navigation.
-- Public release smoke passed VanAssist, TowSmart and TrailerWise routes and
-  designated VanAssist Ask/distance/provider-name checks.
-- Later main commit `5618605ac82cbca6a83343c61c336ffa3634b857`
-  (#248) passed CI but is unrelated shared-host edge plumbing and is not required
-  for the current Assist application sale baseline.
+- Public release smoke passed expanded VanAssist, TowSmart and TrailerWise route,
+  readiness, directory and Ask checks. All three `/readyz` endpoints subsequently
+  returned that exact release identity during the 7 September reconciliation.
 
 ## Completed
 

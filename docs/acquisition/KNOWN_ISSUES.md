@@ -15,16 +15,17 @@ for upgrade/audit integrity are not active product promises.
 
 ### 7 September evidence reconciliation: current blockers
 
-See [the dated review](SALE_REVIEW_2026-09-06.md) for the state observed before
-the final 6 September corrective release.
+See [the dated review](SALE_REVIEW_2026-09-06.md) for the historical state before
+the 7 September sale-candidate release.
 
 The service-worker form-reload defect recorded in that review is **no longer an
 undeployed blocker**. Production release
-`4d5a4c957df1e556dc0c26f5345880aaad13277b` completed successfully in GitHub
-Actions run `34030818368`. The exact release passed the form-preservation
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843` completed successfully in GitHub
+Actions run `34077589608`. The exact release passed the form-preservation
 regression test, immutable archive/checksum checks, production backup, container
 health, Google Routes provisioning and protected public smoke checks across all
-three active brands.
+three active brands. Timestamped `/readyz` responses from all three brands also
+reported that exact release identity, closing the former release-identity gap.
 
 The remaining material blockers are:
 
@@ -132,6 +133,10 @@ Sale sign-off still requires the remaining authenticated journeys and a browser
 pass with live service workers enabled. Do not claim complete E2E coverage or
 WCAG 2.2 AA compliance unless evidence closes those gates.
 
+The previously observed pale desktop directory trust copy has been remediated by
+placing the white copy on a stable dark-teal surface; the broader accessibility
+gate below remains open until the browser evidence is retained.
+
 Required remaining acceptance includes:
 
 - VanAssist claim/approval/account isolation and selected GPS/no-result cases;
@@ -182,4 +187,3 @@ buyer requirement makes them necessary:
 - bulk marketing/founding-membership campaign tooling;
 - production billing activation; and
 - infrastructure scaling without measured load justification.
-

@@ -34,6 +34,14 @@ final class ProviderDirectoryDistanceWiringTest extends TestCase
         self::assertStringContainsString("(\$p['distance_basis'] ?? '') === 'town_centre'", $view);
     }
 
+    public function testDirectoryTrustCopyHasAStableDarkContrastSurface(): void
+    {
+        $css = $this->source('public/assets/css/app.css');
+
+        self::assertStringContainsString('.directory-trust span {', $css);
+        self::assertStringContainsString('background: rgba(3,31,33,.88);', $css);
+    }
+
     private function source(string $path): string
     {
         $source = file_get_contents(dirname(__DIR__, 2) . '/' . $path);
