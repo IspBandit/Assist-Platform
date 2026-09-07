@@ -5,8 +5,11 @@
 $this->extend('layouts.public');
 $pages = (int) ceil(max(1, $total) / $perPage);
 $hasFilters = $search !== '' || $location !== '' || $townId !== null || $categoryId !== null || $serviceModel !== '';
+$distanceRanked = !empty($distanceRanked);
+$usesRoadDistance = !empty($usesRoadDistance);
 $mappedProviders = [];
 if ($hasFilters) foreach ($providers as $p) {
+    if (($p['distance_basis'] ?? '') === 'town_centre') continue;
     $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null;
     if (!is_numeric($pLat)||!is_numeric($pLng)) continue;
     $id='directory-provider-'.(int)$p['id'];
@@ -75,7 +78,11 @@ $qs = static function (array $extra) use ($search, $location, $townId, $category
         <div class="directory-summary">
             <div>
                 <p class="directory-count"><strong><?= number_format($total) ?></strong> <?= $total === 1 ? 'business' : 'businesses' ?><?= $hasFilters ? ' matching your search' : ' in this directory' ?></p>
-                <p class="muted">Direct and verified service matches are shown before featured placement. Always confirm capability, availability and travel area directly.</p>
+                <?php if ($distanceRanked): ?>
+                    <p class="muted">Closest measurable provider locations are shown first<?= $usesRoadDistance ? ' using driving distance where available' : ' using straight-line distance while road routing is unavailable' ?>. Direct and verified service evidence is labelled separately; always confirm capability, availability and travel area directly.</p>
+                <?php else: ?>
+                    <p class="muted">Direct and verified service matches are shown before featured placement. Always confirm capability, availability and travel area directly.</p>
+                <?php endif; ?>
             </div>
             <?php if ($hasFilters): ?><a class="btn btn-ghost btn-sm" href="<?= e(url('providers')) ?>">Clear search</a><?php endif; ?>
         </div>
