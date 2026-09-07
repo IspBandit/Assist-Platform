@@ -14,7 +14,7 @@ final class ProductBrandClaimScopeTest extends TestCase
 
         self::assertStringContainsString('provider_id, brand_id, email', $service);
         self::assertStringContainsString('t.token_hash = ? AND t.brand_id = ?', $service);
-        self::assertStringContainsString('WHERE id = ? AND brand_id = ?', $service);
+        self::assertStringContainsString('WHERE id = ? AND provider_id = ? AND brand_id = ?', $service);
         self::assertStringContainsString('pct.provider_id = p.id AND pct.brand_id = ?', $service);
     }
 
