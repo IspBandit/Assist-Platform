@@ -22,7 +22,7 @@ final class ProductBrandAsk
             'mobile-trailer-services' => ['mobile', 'on site', 'onsite', 'roadside'],
             'trailer-repairs' => ['repair', 'service', 'fault', 'broken', 'maintenance'],
             'roadworthy-inspections' => ['roadworthy', 'inspection', 'certificate', 'certifier', 'compliance'],
-            'tyres-wheels-bearings' => ['tyre', 'tire', 'wheel', 'bearing', 'hub'],
+            'tyres-wheels-bearings' => ['tyre', 'tire', 'wheel', 'bearing', 'bearings', 'hub'],
             'brakes-axles-suspension' => ['brake', 'axle', 'suspension', 'spring'],
             'auto-electrical' => ['electrical', 'wiring', 'light', 'plug', 'battery'],
             'fabrication-engineering' => ['fabrication', 'welding', 'chassis', 'engineering', 'modification'],
@@ -32,17 +32,32 @@ final class ProductBrandAsk
     ];
 
     /** @return array{kind:string,category:?string,location:?string,heading:string,explanation:string,url:string,source:string} */
-    public function resolve(string $brandId, string $query): array
+    public function resolve(string $brandId, string $query, ?string $deviceLocation = null): array
     {
         $normalised = mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $query)));
-        $location = $this->location($normalised);
+        $deviceLocation = $deviceLocation !== null ? trim($deviceLocation) : null;
+        if ($deviceLocation === '') {
+            $deviceLocation = null;
+        }
+
+        if ($this->requestsDeviceLocation($normalised) && $deviceLocation === null) {
+            return [
+                'kind' => 'location', 'category' => null, 'location' => null,
+                'heading' => 'Add your current location to continue',
+                'explanation' => 'This request uses “near me”, but no location has been supplied yet. Use the current-location control, or replace “near me” with a town or suburb.',
+                'url' => url('ask?' . http_build_query(['q' => $query])),
+                'source' => ($brandId === 'towsmart' ? 'TowSmart' : 'TrailerWise') . ' device-location safeguard',
+            ];
+        }
+
+        $location = $this->location($normalised, $deviceLocation);
         $intentText = (string) preg_replace('/\b(?:near|in|around|at)\s+.+$/u', '', $normalised);
 
         if ($brandId === 'towsmart'
             && preg_match('/\b(what is|what does|meaning of|define)\b/u', $intentText) === 1
             && preg_match('/\b(gvm|gcm|atm|gtm|towball|tow ball|payload|tare)\b/u', $intentText) === 1) {
             return [
-                'kind' => 'guidance', 'category' => null, 'location' => $location,
+                'kind' => 'guidance', 'category' => null, 'location' => null,
                 'heading' => 'Read the towing definitions and calculation guide',
                 'explanation' => 'TowSmart matched this to reviewed explanatory content. Confirm ratings for the exact vehicle and trailer before relying on a calculation.',
                 'url' => url('tow-guide'), 'source' => 'TowSmart deterministic education matrix',
@@ -52,7 +67,7 @@ final class ProductBrandAsk
         if ($brandId === 'trailerwise'
             && preg_match('/\b(registration rules|maintenance schedule|ownership guide|pre-trip checklist|pre trip checklist)\b/u', $intentText) === 1) {
             return [
-                'kind' => 'guidance', 'category' => null, 'location' => $location,
+                'kind' => 'guidance', 'category' => null, 'location' => null,
                 'heading' => 'Open trailer ownership and compliance guidance',
                 'explanation' => 'TrailerWise matched this to its current rules and ownership pathway. Check the linked authority for your jurisdiction and trailer before acting.',
                 'url' => url('rules'), 'source' => 'TrailerWise deterministic ownership-content matrix',
@@ -61,7 +76,7 @@ final class ProductBrandAsk
 
         if ($brandId === 'towsmart' && preg_match('/\b(gvm|gcm|atm|gtm|towball|tow ball|payload|weight|mass|overweight|can i tow|safe to tow|capacity)\b/u', $intentText) === 1) {
             return [
-                'kind' => 'calculator', 'category' => null, 'location' => $location,
+                'kind' => 'calculator', 'category' => null, 'location' => null,
                 'heading' => 'Check the exact towing combination',
                 'explanation' => 'TowSmart matched this to its calculation and safety guidance. Enter plate and manufacturer figures for the exact vehicle and trailer; the result is guidance, not certification.',
                 'url' => url('calculator'), 'source' => 'TowSmart deterministic calculation-and-safety matrix',
@@ -104,13 +119,24 @@ final class ProductBrandAsk
         return preg_match('/(^|[^a-z0-9])' . preg_quote($pattern, '/') . '([^a-z0-9]|$)/u', $text) === 1;
     }
 
-    private function location(string $query): ?string
+    private function requestsDeviceLocation(string $query): bool
+    {
+        return preg_match('/\b(?:near|in|around|at)\s+(?:me|my location|current location|here)\b/u', $query) === 1;
+    }
+
+    private function location(string $query, ?string $deviceLocation): ?string
     {
         $matches = [];
         if (preg_match('/\b(?:near|in|around|at)\s+(.+?)\s*\??$/u', $query, $matches) !== 1) {
-            return null;
+            return $deviceLocation;
         }
         $location = trim((string) ($matches[1] ?? ''), " \t\n\r\0\x0B,.-");
-        return $location === '' ? null : mb_convert_case($location, MB_CASE_TITLE, 'UTF-8');
+        if ($location === '') {
+            return $deviceLocation;
+        }
+        if (in_array($location, ['me', 'my location', 'current location', 'here'], true)) {
+            return $deviceLocation;
+        }
+        return mb_convert_case($location, MB_CASE_TITLE, 'UTF-8');
     }
 }

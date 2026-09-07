@@ -37,14 +37,6 @@
     </div>
 </section>
 
-<?php $this->include('partials.brand-directory-finder', [
-    'categories' => $categories,
-    'heading' => 'Find towing specialists near you.',
-    'intro' => 'Search weighing, towbar, brake, suspension, electrical, tyre, training and inspection services by location.',
-    'servicePlaceholder' => 'e.g. mobile weighing or towbar fitting',
-    'submitLabel' => 'Find towing specialists',
-]); ?>
-
 <section class="section product-section" id="understand">
     <div class="container">
         <div class="section-heading"><span class="product-kicker dark">One check, five limits</span><h2>See the pressure points before they become problems.</h2><p>TowSmart compares one loaded combination against the headline ratings that matter most.</p></div>
@@ -86,6 +78,14 @@
     </div>
 </section>
 <?php endif; ?>
+
+<?php $this->include('partials.brand-directory-finder', [
+    'categories' => $categories,
+    'heading' => 'Find towing specialists near you.',
+    'intro' => 'Search weighing, towbar, brake, suspension, electrical, tyre, training and inspection services by location.',
+    'servicePlaceholder' => 'e.g. mobile weighing or towbar fitting',
+    'submitLabel' => 'Find towing specialists',
+]); ?>
 
 <section class="section product-cta"><div class="container"><div><span class="product-kicker dark">Ready before the road</span><h2>Check your towing combination now.</h2><p>It takes only a few minutes when you have the figures ready.</p></div><a class="btn btn-primary btn-lg" href="<?= e(url('calculator')) ?>">Start the calculator</a></div></section>
 
