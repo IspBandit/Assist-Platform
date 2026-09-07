@@ -13,6 +13,9 @@ may remain as dated files and are linked here rather than copied.
   endpoints returned that exact release.
 - Record the transaction boundary that independent off-site backup storage is not
   configured or included and must be supplied by the customer/buyer after transfer.
+- Add a buyer email handover procedure for choosing Microsoft 365 Graph or any
+  compatible authenticated SMTP provider, configuring domain authentication and
+  proving delivery without seller-owned credentials.
 - Put public directory trust copy on a stable dark surface so its legibility no
   longer depends on the underlying hero image. No migrations or environment
   changes are introduced.

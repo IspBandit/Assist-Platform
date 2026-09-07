@@ -54,12 +54,13 @@ successful corrective production release.
 9. `KNOWN_ISSUES.md` — buyer-facing limitations and remaining gates.
 10. `TRANSFER_REHEARSAL.md` — buyer-controlled build/restore/account-transfer acceptance.
 11. `DEPENDENCIES.md` — locked runtime/development dependencies and declared licences.
-12. `../CURRENT_ARCHITECTURE.md` and `../DATABASE_DICTIONARY.md` — technical architecture/schema.
-13. `../OPERATIONS_RUNBOOK.md` and `../BACKUP_AND_RESTORE.md` — operations and recovery.
-14. `../SECURITY.md` — application/security posture.
-15. `../PRODUCT_AND_FEATURES.md`, `../TOWSMART_CATALOGUE.md` and
+12. `../BUYER_EMAIL_HANDOVER.md` — buyer-owned Graph or SMTP configuration, DNS and acceptance.
+13. `../CURRENT_ARCHITECTURE.md` and `../DATABASE_DICTIONARY.md` — technical architecture/schema.
+14. `../OPERATIONS_RUNBOOK.md` and `../BACKUP_AND_RESTORE.md` — operations and recovery.
+15. `../SECURITY.md` — application/security posture.
+16. `../PRODUCT_AND_FEATURES.md`, `../TOWSMART_CATALOGUE.md` and
     `../VANASSIST_STAYS.md` — implemented product/data capability and limitations.
-16. `../RELEASE_NOTES.md` — change history.
+17. `../RELEASE_NOTES.md` — change history.
 
 ## Registers already created
 

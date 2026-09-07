@@ -20,8 +20,8 @@ This is the authoritative orientation page for developers and AI agents.
 9. `docs/DEVELOPER_GUIDE.md`, `docs/CODING_STANDARDS.md`,
    `docs/LOCAL_DEVELOPMENT.md`, `docs/TESTING.md` and `CONTRIBUTING.md`.
 10. For releases, `docs/OPERATIONS_MANUAL.md`, `docs/OPERATIONS_RUNBOOK.md`,
-    `docs/BACKUP_AND_RESTORE.md`, `docs/ENVIRONMENT_CONFIGURATION.md` and
-    `docs/RELEASE_NOTES.md`.
+    `docs/BACKUP_AND_RESTORE.md`, `docs/ENVIRONMENT_CONFIGURATION.md`,
+    `docs/BUYER_EMAIL_HANDOVER.md` and `docs/RELEASE_NOTES.md`.
 11. For product-specific data, use `docs/TOWSMART_CATALOGUE.md` and
     `docs/VANASSIST_STAYS.md`, plus the current TrailerWise product documentation.
     LocalTorque and Polaris documentation is historical only and is not part of

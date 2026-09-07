@@ -120,7 +120,8 @@ This register is complete only when a buyer can:
    from a clean checkout using documented steps;
 3. restore the production database/media into an isolated environment;
 4. deploy the three-brand release to a buyer-controlled host;
-5. configure mail, DNS, monitoring, backups and required APIs using buyer-owned secrets;
+5. configure mail and DNS using `../BUYER_EMAIL_HANDOVER.md`, plus monitoring,
+   backups and required APIs using buyer-owned secrets;
 6. create and revoke administrators without founder assistance;
 7. use Assist RIC with buyer-controlled Admin API credentials without direct
    production-database access; and
