@@ -8,7 +8,7 @@
 
 Ask VanAssist may be enabled when:
 
-1. Migrations through `110` + `097` applied (AI hardening `107`, facilities `108`, DATA-012 `109`/`110`, OSM offline `113`).
+1. Migrations `101`, `102`, `105`–`110`, `113` and `121`–`122` applied.
 2. Feature flags intentional (`assist_ai_search`, optional `assist_ai_datasets`, optional `assist_ai_traveller_facilities`).
 3. Paid AI remains off **or** caps + allowlist + env key are set.
 4. `/ask` rate limit middleware present (20 / hour / IP) with Turnstile unlock when enabled.
@@ -17,6 +17,10 @@ Ask VanAssist may be enabled when:
 7. Structured `/find` verified unchanged.
 8. Knowledge-gap click/contact attribution wired (`?g=` / `/ask/click`).
 9. Offline OSM staging available (`stage-osm-offline-seed.php`); Ask never calls Overpass.
+10. State-qualified and duplicate-town resolution, Australian coordinate bounds,
+    requested radius and brand-scoped facilities pass the national matrix.
+11. Emergency wording displays Triple Zero / move-to-safety guidance without
+    presenting Ask as dispatch, diagnosis or certification.
 
 ### Traveller facilities (DATA-012)
 
@@ -36,6 +40,12 @@ Requires full Platform Quality Gate plus:
 - Cost simulator used to set caps before enable
 - Incident rollback steps rehearsed (`ai_enabled=0`, Ask/facilities flags off)
 - Non-empty active reviewed/verified `traveller_facilities` if facilities flag on
+- Cross-browser rendered acceptance for the primary homepage Ask journey
+- At least 95% intent accuracy, 100% qualified-town correctness, 100% facility
+  provenance, zero invented results and zero cross-brand result leakage
+
+The initial public launch keeps `ai_enabled=0`, `openai_enabled=0` and
+`assist_ai_datasets=0`. Paid AI is a separately gated later enhancement.
 
 ## Explicitly not authorised by AI-7 / DATA-012 alone
 

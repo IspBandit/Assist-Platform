@@ -40,12 +40,14 @@ return static function (Router $router): void {
         $router->post('/availability/remove', 'Provider\ProfileController@removeAvailability');
 
         // Incoming matched requests (Phase 5). Literal routes before {match}.
-        $router->get('/requests', 'Provider\RequestController@incoming', 'provider.requests');
-        $router->get('/requests/image', 'Provider\RequestController@image');
-        $router->get('/requests/{match}', 'Provider\RequestController@show', 'provider.requests.show');
-        $router->post('/requests/{match}/respond', 'Provider\RequestController@respond');
-        // Provider outcome/job-status update (Phase 11 demand analytics).
-        $router->post('/requests/{match}/outcome', 'Provider\RequestController@outcome');
+        $router->group(['middleware' => ['module:requests']], static function (Router $router): void {
+            $router->get('/requests', 'Provider\RequestController@incoming', 'provider.requests');
+            $router->get('/requests/image', 'Provider\RequestController@image');
+            $router->get('/requests/{match}', 'Provider\RequestController@show', 'provider.requests.show');
+            $router->post('/requests/{match}/respond', 'Provider\RequestController@respond');
+            // Provider outcome/job-status update (Phase 11 demand analytics).
+            $router->post('/requests/{match}/outcome', 'Provider\RequestController@outcome');
+        });
 
         // Provider analytics dashboard (Phase 11). Own data only.
         $router->get('/analytics', 'Provider\AnalyticsController@index', 'provider.analytics');
@@ -55,15 +57,17 @@ return static function (Router $router): void {
         $router->post('/growth/campaign', 'Provider\GrowthController@saveCampaign', 'provider.growth.campaign');
 
         // Service runs self-service (Phase 6).
-        $router->get('/runs', 'Provider\RunController@index', 'provider.runs');
-        $router->get('/runs/form', 'Provider\RunController@form', 'provider.runs.form');
-        $router->post('/runs/save', 'Provider\RunController@save');
-        $router->get('/runs/show', 'Provider\RunController@show', 'provider.runs.show');
-        $router->post('/runs/status', 'Provider\RunController@setStatus');
-        $router->post('/runs/town/add', 'Provider\RunController@addTown');
-        $router->post('/runs/town/remove', 'Provider\RunController@removeTown');
-        $router->post('/runs/service/add', 'Provider\RunController@addService');
-        $router->post('/runs/service/remove', 'Provider\RunController@removeService');
+        $router->group(['middleware' => ['module:service_runs']], static function (Router $router): void {
+            $router->get('/runs', 'Provider\RunController@index', 'provider.runs');
+            $router->get('/runs/form', 'Provider\RunController@form', 'provider.runs.form');
+            $router->post('/runs/save', 'Provider\RunController@save');
+            $router->get('/runs/show', 'Provider\RunController@show', 'provider.runs.show');
+            $router->post('/runs/status', 'Provider\RunController@setStatus');
+            $router->post('/runs/town/add', 'Provider\RunController@addTown');
+            $router->post('/runs/town/remove', 'Provider\RunController@removeTown');
+            $router->post('/runs/service/add', 'Provider\RunController@addService');
+            $router->post('/runs/service/remove', 'Provider\RunController@removeService');
+        });
 
         // Billing portal. The controller returns 404 while ENABLE_BILLING=false,
         // so the portal stays hidden during the free launch.

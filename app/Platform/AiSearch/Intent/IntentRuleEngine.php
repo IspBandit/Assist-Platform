@@ -413,7 +413,6 @@ final class IntentRuleEngine
                 '',
                 $place
             );
-            $place = (string) preg_replace('/\s*,?\s*(?:nsw|vic|qld|sa|wa|tas|nt|act)\s*$/ui', '', $place);
             $place = trim((string) preg_replace('/\s+/u', ' ', $place));
             $place = trim($place, " \t\n\r\0\x0B,.-");
             if ($place !== '' && mb_strlen($place) >= 2) {
@@ -432,7 +431,6 @@ final class IntentRuleEngine
             ' ',
             $text
         );
-        $text = (string) preg_replace('/\b(nsw|vic|qld|sa|wa|tas|nt|act)\b/ui', ' ', $text);
         $text = trim((string) preg_replace('/\s+/u', ' ', $text));
         $text = trim($text, " \t\n\r\0\x0B,.-");
         if ($text === '' || mb_strlen($text) < 2) {

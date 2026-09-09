@@ -106,7 +106,13 @@ if ($result !== null) {
 
         <?php if ($result !== null): ?>
             <?php if ($result->messages !== []): ?>
-                <div class="card" style="border-left:4px solid #c9a227;margin-bottom:1rem">
+                <?php
+                $hasEmergencyMessage = count(array_filter(
+                    $result->messages,
+                    static fn (string $message): bool => str_contains($message, 'Triple Zero (000)')
+                )) > 0;
+                ?>
+                <div class="card<?= $hasEmergencyMessage ? ' alert alert-danger' : '' ?>" style="border-left:4px solid #c9a227;margin-bottom:1rem" role="<?= $hasEmergencyMessage ? 'alert' : 'status' ?>">
                     <?php foreach ($result->messages as $message): ?>
                         <p style="margin:0.35rem 0"><?= $this->e($message) ?></p>
                     <?php endforeach; ?>
@@ -211,7 +217,7 @@ if ($result !== null) {
                                 </p>
                             </div>
                             <?php if (!empty($facility['source_url'])): ?>
-                                <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" rel="noopener noreferrer">Source</a>
+                                <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" target="_blank" rel="noopener noreferrer">Source</a>
                             <?php endif; ?>
                         </article>
                     <?php endforeach; ?>

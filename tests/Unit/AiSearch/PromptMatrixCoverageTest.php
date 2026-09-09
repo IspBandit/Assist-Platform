@@ -15,6 +15,8 @@ use App\Platform\AiSearch\Provider\AiCompletionRequest;
 use App\Platform\AiSearch\Provider\AiCompletionResult;
 use App\Platform\AiSearch\Provider\AiProviderInterface;
 use App\Platform\AiSearch\Provider\OpenAiProvider;
+use App\Platform\AiSearch\SearchOrchestrator;
+use App\Platform\AiSearch\Dto\SearchRequest;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
@@ -192,6 +194,105 @@ final class PromptMatrixCoverageTest extends TestCase
         $src = (string) file_get_contents(dirname(__DIR__, 3) . '/app/Platform/AiSearch/SearchOrchestrator.php');
         self::assertStringContainsString('no_results', $src);
         self::assertStringContainsString('No matching listings were found', $src);
+    }
+
+    public function testOrchestratorRejectsMismatchedBrandContext(): void
+    {
+        $response = (new SearchOrchestrator())->handle(new SearchRequest(
+            rawQuery: 'dump point near Batehaven',
+            brandKey: 'trailerwise',
+            brandDatabaseId: 3,
+            latitude: null,
+            longitude: null,
+            radiusKm: null,
+            requestId: 'brand-mismatch',
+        ));
+
+        self::assertSame('brand_mismatch', $response->fallbackReason);
+        self::assertFalse($response->searched);
+        self::assertSame([], $response->providers);
+        self::assertSame([], $response->facilities);
+    }
+
+    public function testSafetyGuidanceCoversImmediateAndRoadsideDanger(): void
+    {
+        $orchestrator = new SearchOrchestrator();
+        $method = new ReflectionMethod($orchestrator, 'safetyMessage');
+        $method->setAccessible(true);
+
+        self::assertStringContainsString(
+            'Triple Zero (000)',
+            (string) $method->invoke($orchestrator, 'I smell gas in my caravan')
+        );
+        self::assertStringContainsString(
+            'out of traffic',
+            (string) $method->invoke($orchestrator, 'we are stranded beside the highway')
+        );
+        self::assertNull($method->invoke($orchestrator, 'caravan park near Roma'));
+    }
+
+    public function testAskCoordinatesAreRestrictedToAustralianBounds(): void
+    {
+        $orchestrator = new SearchOrchestrator();
+        $method = new ReflectionMethod($orchestrator, 'isAustralianCoordinate');
+        $method->setAccessible(true);
+
+        self::assertTrue($method->invoke($orchestrator, -35.28, 149.13));
+        self::assertFalse($method->invoke($orchestrator, 51.50, -0.12));
+        self::assertFalse($method->invoke($orchestrator, -44.7, 167.9));
+        self::assertFalse($method->invoke($orchestrator, -41.2, 174.8));
+    }
+
+    public function testUnresolvedNamedLocationDoesNotSurfaceFacilityHits(): void
+    {
+        $ref = new ReflectionClass(\App\Services\FeatureFlag::class);
+        $cache = $ref->getProperty('cache');
+        $cache->setAccessible(true);
+        $cache->setValue(null, [
+            'assist_ai_search' => true,
+            \App\Platform\AiSearch\Support\TravellerFacilitiesFeature::FLAG => true,
+        ]);
+
+        $calls = 0;
+        $facilities = new class ($calls) implements \App\Platform\AiSearch\Adapters\FacilitySearchPort {
+            public function __construct(private int &$calls)
+            {
+            }
+
+            public function search(
+                Intent $intent,
+                ?array $town = null,
+                ?float $lat = null,
+                ?float $lng = null,
+                ?int $brandId = null,
+            ): array {
+                $this->calls++;
+                return [[
+                    'id' => 1,
+                    'facility_type' => 'public_toilet',
+                    'name' => 'Should not appear',
+                    'distance_km' => 1.0,
+                ]];
+            }
+        };
+
+        try {
+            $response = (new SearchOrchestrator(facilities: $facilities))->handle(new SearchRequest(
+                rawQuery: 'public toilet near ZzNotARealTown999',
+                brandKey: 'vanassist',
+                brandDatabaseId: 1,
+                latitude: null,
+                longitude: null,
+                radiusKm: 25,
+                requestId: 'unresolved-town',
+                channel: 'unit',
+                sessionId: null,
+            ));
+            self::assertSame([], $response->facilities);
+            self::assertSame(0, $calls);
+        } finally {
+            $cache->setValue(null, null);
+        }
     }
 
     /**

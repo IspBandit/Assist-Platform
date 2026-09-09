@@ -45,10 +45,10 @@ final class AssistSearchController extends Controller
         $lngRaw = $request->input('lng');
         $lat = is_numeric($latRaw) ? (float) $latRaw : null;
         $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
-        if ($lat !== null && ($lat < -90 || $lat > 90)) {
+        if ($lat !== null && ($lat < -44.5 || $lat > -9.0)) {
             $lat = null;
         }
-        if ($lng !== null && ($lng < -180 || $lng > 180)) {
+        if ($lng !== null && ($lng < 105.0 || $lng > 159.0)) {
             $lng = null;
         }
 

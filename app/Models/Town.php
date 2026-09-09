@@ -145,6 +145,67 @@ final class Town extends Model
     }
 
     /**
+     * Resolve a small town-name typo only when one candidate is clearly best.
+     * State qualifiers are retained and postcode-like input is never guessed.
+     *
+     * @return array<int,array<string,mixed>>
+     */
+    public static function searchActiveFuzzy(string $query, int $limit = 5): array
+    {
+        $parsed = self::parseSearchQuery($query);
+        $term = trim($parsed['term']);
+        if ($term === '' || preg_match('/\d/', $term) === 1 || mb_strlen($term) < 4) {
+            return [];
+        }
+
+        $stateClause = '';
+        $params = [mb_strtolower(mb_substr($term, 0, 1)), max(2, mb_strlen($term) - 2), mb_strlen($term) + 2];
+        if ($parsed['state'] !== null) {
+            $stateClause = ' AND s.abbreviation = ?';
+            $params[] = $parsed['state'];
+        }
+
+        $rows = Database::select(
+            'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.latitude, t.longitude, '
+            . 't.coordinate_source, t.coordinate_confidence, t.coordinate_reference, '
+            . 'r.name AS region_name, r.slug AS region_slug, s.name AS state_name, s.abbreviation AS state_abbr '
+            . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
+            . 'WHERE t.is_active = 1 AND LOWER(LEFT(t.name, 1)) = ? '
+            . 'AND LENGTH(t.name) BETWEEN ? AND ?' . $stateClause
+            . ' ORDER BY t.is_launch_town DESC, t.is_featured DESC, t.name LIMIT 250',
+            $params
+        );
+
+        $normalised = mb_strtolower($term);
+        $scored = [];
+        foreach ($rows as $row) {
+            $distance = levenshtein($normalised, mb_strtolower((string) $row['name']));
+            if ($distance <= 2) {
+                $row['_fuzzy_distance'] = $distance;
+                $scored[] = $row;
+            }
+        }
+        usort($scored, static fn (array $a, array $b): int =>
+            ((int) $a['_fuzzy_distance'] <=> (int) $b['_fuzzy_distance'])
+            ?: strcmp((string) $a['name'], (string) $b['name'])
+        );
+        if ($scored === []) {
+            return [];
+        }
+
+        $best = (int) $scored[0]['_fuzzy_distance'];
+        $bestRows = array_values(array_filter(
+            $scored,
+            static fn (array $row): bool => (int) $row['_fuzzy_distance'] === $best
+        ));
+        if (count($bestRows) !== 1) {
+            return [];
+        }
+        unset($bestRows[0]['_fuzzy_distance']);
+        return array_slice($bestRows, 0, max(1, min(5, $limit)));
+    }
+
+    /**
      * @return array{term:string,state:?string}
      */
     public static function parseSearchQuery(string $query): array

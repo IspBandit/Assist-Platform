@@ -1,19 +1,21 @@
 # Natural-language search (Ask VanAssist)
 
-**Status:** implemented (AI-1–AI-7); public flag `assist_ai_search` **off** by
-default.  
-**Backlog:** VAN-011 / CORE-012.  
+**Status:** implemented (AI-1–AI-7); prepared as VanAssist's primary
+plain-language journey for the September 2026 release candidate. The
+`assist_ai_search` flag remains off by default and is enabled in production
+only for a release candidate that passes the Platform Quality Gate.
+**Backlog:** VAN-011 / CORE-012.
 **Gate:** [`PHASE_AI0_DESIGN.md`](PHASE_AI0_DESIGN.md),
 [`AI_QUALITY_GATE_EVIDENCE.md`](AI_QUALITY_GATE_EVIDENCE.md).
 
 ## UX rule
 
-Keep existing structured search unchanged:
+Keep existing structured search available as the explicit fallback:
 
 - State / town / category / Near Me / automatic location (`/find`, `/stays`,
   location JSON endpoints).
 
-Add a **separate** interface:
+The VanAssist homepage presents this as the primary search interface:
 
 **Ask VanAssist** — `GET /ask` — “What do you need help finding?”
 
@@ -27,8 +29,9 @@ Examples:
 - Auto electrician within 50 km  
 - Someone who can repair caravan brakes  
 
-NL search must not replace or hide dropdown search. Provider cards reuse the
-existing result partial; stays and facilities use labelled sections on
+NL search must not remove dropdown search. The category/town form remains
+keyboard-accessible behind a clearly labelled disclosure. Provider cards reuse
+the existing result partial; stays and facilities use labelled sections on
 `assist-search.php`.
 
 ## Runtime behaviour
@@ -40,6 +43,15 @@ existing result partial; stays and facilities use labelled sections on
    → aggregate → log → knowledge gaps.  
 4. Flags: `assist_ai_datasets`, `assist_ai_traveller_facilities` independently
    gate external candidates and facilities.
+
+The initial flagship release uses deterministic rules and reviewed canonical
+data with paid AI and pending-dataset answers disabled. State-qualified towns,
+request radius, Australian coordinate bounds, facility brand scope and safe
+source URL schemes are enforced. Ambiguous duplicate town names require a state;
+unique minor town-name typos may be corrected with an explicit message.
+
+Safety-critical wording adds visible emergency guidance. Ask remains a locator,
+not emergency dispatch, diagnosis, engineering approval or legal certification.
 
 ## Behaviour when AI is off / budget exhausted
 

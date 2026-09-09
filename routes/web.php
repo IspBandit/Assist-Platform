@@ -85,7 +85,9 @@ return static function (Router $router): void {
             $router->post('/for-providers/register/confirm-new', 'Site\PageController@confirmNewProviderListing');
             $router->post('/for-providers/register', 'Site\PageController@submitProviderInterest');
         });
-        $router->get('/for-caravan-parks', 'Site\PageController@forCaravanParks', 'for-caravan-parks');
+        $router->group(['middleware' => ['module:parks']], static function (Router $router): void {
+            $router->get('/for-caravan-parks', 'Site\PageController@forCaravanParks', 'for-caravan-parks');
+        });
 
         // FAQ page (Phase 8): grouped FAQs with FAQPage structured data.
         $router->get('/faqs', 'Site\FaqController@index', 'faqs');
@@ -131,30 +133,36 @@ return static function (Router $router): void {
 
         // Caravan park partners (Phase 7): public application and public park pages.
         // The literal /apply route must precede the {slug} catch-all.
-        $router->get('/caravan-parks/apply', 'Site\ParkController@apply', 'caravan-parks.apply');
-        $router->group(['middleware' => ['rate:public.park-application,5,3600,3600', 'turnstile']], static function (Router $router): void {
-            $router->post('/caravan-parks/apply', 'Site\ParkController@applyStore', 'caravan-parks.apply.store');
+        $router->group(['middleware' => ['module:parks']], static function (Router $router): void {
+            $router->get('/caravan-parks/apply', 'Site\ParkController@apply', 'caravan-parks.apply');
+            $router->group(['middleware' => ['rate:public.park-application,5,3600,3600', 'turnstile']], static function (Router $router): void {
+                $router->post('/caravan-parks/apply', 'Site\ParkController@applyStore', 'caravan-parks.apply.store');
+            });
+            $router->get('/caravan-parks/{slug}/claim', 'Site\ParkController@claim', 'caravan-parks.claim');
+            $router->group(['middleware' => ['rate:public.park-claim,5,3600,3600', 'turnstile']], static function (Router $router): void {
+                $router->post('/caravan-parks/{slug}/claim', 'Site\ParkController@claimStore', 'caravan-parks.claim.store');
+            });
+            $router->get('/caravan-parks/{slug}', 'Site\ParkController@show', 'caravan-parks.show');
+            $router->get('/stays', 'Site\ParkController@directory', 'stays');
         });
-        $router->get('/caravan-parks/{slug}/claim', 'Site\ParkController@claim', 'caravan-parks.claim');
-        $router->group(['middleware' => ['rate:public.park-claim,5,3600,3600', 'turnstile']], static function (Router $router): void {
-            $router->post('/caravan-parks/{slug}/claim', 'Site\ParkController@claimStore', 'caravan-parks.claim.store');
-        });
-        $router->get('/caravan-parks/{slug}', 'Site\ParkController@show', 'caravan-parks.show');
-        $router->get('/stays', 'Site\ParkController@directory', 'stays');
 
         // Customer service-request flow (Phase 4).
-        $router->get('/request-assistance', 'Site\RequestController@form', 'request-assistance');
-        $router->group(['middleware' => ['rate:public.assistance-request,10,3600,3600', 'turnstile']], static function (Router $router): void {
-            $router->post('/request-assistance', 'Site\RequestController@submit', 'request-assistance.submit');
+        $router->group(['middleware' => ['module:requests']], static function (Router $router): void {
+            $router->get('/request-assistance', 'Site\RequestController@form', 'request-assistance');
+            $router->group(['middleware' => ['rate:public.assistance-request,10,3600,3600', 'turnstile']], static function (Router $router): void {
+                $router->post('/request-assistance', 'Site\RequestController@submit', 'request-assistance.submit');
+            });
+            $router->get('/request-assistance/submitted', 'Site\RequestController@submitted', 'request-assistance.submitted');
+            $router->get('/request/verify', 'Site\RequestController@verify', 'request.verify');
         });
-        $router->get('/request-assistance/submitted', 'Site\RequestController@submitted', 'request-assistance.submitted');
-        $router->get('/request/verify', 'Site\RequestController@verify', 'request.verify');
 
         // Public service runs and the join-run flow (Phase 6).
-        $router->get('/service-runs', 'Site\RunController@index', 'service-runs');
-        $router->get('/service-runs/{slug}', 'Site\RunController@show', 'service-runs.show');
-        $router->group(['middleware' => ['rate:public.run-join,10,3600,3600', 'turnstile']], static function (Router $router): void {
-            $router->post('/service-runs/{slug}/join', 'Site\RunController@join', 'service-runs.join');
+        $router->group(['middleware' => ['module:service_runs']], static function (Router $router): void {
+            $router->get('/service-runs', 'Site\RunController@index', 'service-runs');
+            $router->get('/service-runs/{slug}', 'Site\RunController@show', 'service-runs.show');
+            $router->group(['middleware' => ['rate:public.run-join,10,3600,3600', 'turnstile']], static function (Router $router): void {
+                $router->post('/service-runs/{slug}/join', 'Site\RunController@join', 'service-runs.join');
+            });
         });
 
         // Homepage "Find a service" search (town/postcode + optional category).
@@ -189,6 +197,8 @@ return static function (Router $router): void {
         ] as $slug) {
             $router->get('/' . $slug, 'Site\PageController@cms');
         }
+        $router->get('/privacy', 'Site\PageController@redirectLegacyLegal', 'legal.privacy.redirect');
+        $router->get('/terms', 'Site\PageController@redirectLegacyLegal', 'legal.terms.redirect');
     });
 
     // Billing gateway webhook. NO CSRF: authenticity comes from signature

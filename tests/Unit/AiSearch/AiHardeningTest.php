@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Tests\Unit\AiSearch;
 
 use App\Platform\AiSearch\Budget\AiCostSimulator;
+use App\Platform\AiSearch\Logging\AssistSearchLogger;
 use App\Platform\AiSearch\Privacy\LocationPrivacy;
 use App\Platform\AiSearch\Retention\AiRetentionService;
 use App\Platform\AiSearch\Support\AiReleaseGate;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 final class AiHardeningTest extends TestCase
 {
@@ -31,6 +33,22 @@ final class AiHardeningTest extends TestCase
         self::assertSame(100, $high['daily_ai_calls']);
         self::assertGreaterThan($low['monthly_aud'], $high['monthly_aud']);
         self::assertSame(0.0, AiCostSimulator::simulate('gpt-4o-mini', 100, 0.0)['daily_aud']);
+    }
+
+    public function testSearchAnalyticsRedactsEmailAndPhoneDetails(): void
+    {
+        $logger = new AssistSearchLogger();
+        $method = new ReflectionMethod($logger, 'redactPersonalData');
+        $method->setAccessible(true);
+        $redacted = (string) $method->invoke(
+            $logger,
+            'Help near Roma, contact traveller@example.com or 0412 345 678'
+        );
+
+        self::assertStringNotContainsString('traveller@example.com', $redacted);
+        self::assertStringNotContainsString('0412 345 678', $redacted);
+        self::assertStringContainsString('[email removed]', $redacted);
+        self::assertStringContainsString('[phone removed]', $redacted);
     }
 
     public function testRetentionWindowsHaveMinimums(): void

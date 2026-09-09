@@ -10,6 +10,8 @@
 $this->extend('layouts.public');
 $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
 $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
+$askEnabled = \App\Platform\AiSearch\Support\AiSearchFeature::enabled()
+    && current_brand()->id() === 'vanassist';
 ?>
 <?php $this->section('content'); ?>
 
@@ -50,6 +52,12 @@ $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
                     <button type="button" data-install-app>Save VanAssist to your phone</button>
                 </div>
                 <div class="search-card unified-search-card">
+                <?php $this->include('partials.ask-vanassist'); ?>
+                <?php if ($askEnabled): ?>
+                <details class="ask-structured-fallback">
+                    <summary>Prefer category and town search?</summary>
+                    <p class="muted">Use the familiar structured search whenever you want to choose the service category yourself.</p>
+                <?php endif; ?>
                 <form class="structured-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -103,7 +111,7 @@ $popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
                         <a class="btn btn-secondary btn-lg" href="<?= e(url('request-assistance')) ?>">I can't find the help I need</a>
                     </div>
                 </form>
-                <?php $this->include('partials.ask-vanassist'); ?>
+                <?php if ($askEnabled): ?></details><?php endif; ?>
                 </div>
             </div>
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 $allBrands = ['all'];
-$updated = '2026-07-30';
+$updated = '2026-09-09';
 
 $guides = [
     ['slug' => 'customer-guide', 'title' => 'Customer Guide', 'summary' => 'Accounts, saved providers, assistance requests, Garage assets and compliance tools.', 'audiences' => ['customer'], 'brands' => $allBrands, 'module' => 'customer', 'order' => 10],
@@ -50,7 +50,10 @@ $common = static fn (
 ];
 
 $articles = [
-    $common('customer-guide', 'finding-nearby-help', 'Finding nearby help', 'Search VanAssist by service and location, compare mapped results and open directions safely.', ['customer'], ['vanassist'], 'search', 5, [], ['/find'], ['customer-guide.requests-and-saved-providers'], ['routes/web.php', 'app/Controllers/Site/SearchController.php', 'app/Views/public/search-results.php', 'public/assets/js/app.js']),
+    $common('customer-guide', 'ask-vanassist', 'Ask VanAssist', 'Describe a traveller need in plain language and review location-aware providers, stays and facilities.', ['customer'], ['vanassist'], 'search', 1, [], ['/ask'], ['customer-guide.finding-nearby-help', 'customer-guide.requests-and-saved-providers'], ['routes/web.php', 'app/Controllers/Site/AssistSearchController.php', 'app/Platform/AiSearch/SearchOrchestrator.php', 'app/Views/public/assist-search.php']),
+    $common('customer-guide', 'finding-nearby-help', 'Finding nearby help', 'Search VanAssist by service and location, compare mapped results and open directions safely.', ['customer'], ['vanassist'], 'search', 5, [], ['/find'], ['customer-guide.ask-vanassist', 'customer-guide.requests-and-saved-providers'], ['routes/web.php', 'app/Controllers/Site/SearchController.php', 'app/Views/public/search-results.php', 'public/assets/js/app.js']),
+    $common('customer-guide', 'towsmart-calculator', 'TowSmart calculator', 'Enter a real vehicle and towable combination, understand margins and save guidance snapshots.', ['customer'], ['towsmart'], 'towing-tools', 6, [], ['/calculator', '/tow-guide', '/checklist', '/account/towing-combinations'], ['customer-guide.account-and-garage'], ['routes/web.php', 'routes/account.php', 'app/Controllers/Site/TowSmartController.php', 'app/Services/TowSmartCalculator.php']),
+    $common('customer-guide', 'trailerwise-marketplace', 'TrailerWise services and marketplace', 'Find trailer specialists first and use the secondary sale/hire marketplace with appropriate checks.', ['customer'], ['trailerwise'], 'trailer-marketplace', 7, [], ['/providers', '/services', '/marketplace', '/trailers/{slug}'], ['customer-guide.account-and-garage'], ['routes/web.php', 'app/Controllers/Site/TrailerWiseController.php', 'app/Views/trailerwise/marketplace.php']),
     $common('customer-guide', 'account-and-garage', 'Account and My Garage', 'Manage private account assets, documents and brand-aware actions.', ['customer'], $allBrands, 'garage', 10, ['authenticated owner'], ['/account', '/account/garage', '/account/compliance'], ['customer-guide.requests-and-saved-providers'], ['routes/account.php', 'app/Controllers/GarageController.php', 'app/Controllers/ComplianceController.php']),
     $common('customer-guide', 'requests-and-saved-providers', 'Requests and saved providers', 'Review owned assistance requests and maintain a saved-provider list.', ['customer'], $allBrands, 'requests', 20, ['authenticated owner'], ['/account/requests', '/account/saved', '/account/providers/save'], ['customer-guide.account-and-garage', 'provider-guide.requests-runs-and-growth'], ['routes/account.php', 'app/Controllers/AccountController.php']),
 

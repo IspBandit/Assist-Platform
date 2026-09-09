@@ -40,7 +40,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
 | VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Admin API claims/corrections shipped (Increment B); end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
-| VAN-011 | AI-assisted natural-language search (intent → location/category) | done | Ask VanAssist `/ask` alongside structured search; flag off by default; CORE-012 |
+| VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Deterministic Ask is live but not yet the primary homepage form; the candidate adds flagship ordering, national correctness, brand isolation and emergency guidance and awaits exact-candidate Quality Gate |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
 | TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
@@ -100,7 +100,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
 | OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, MFA, service-account HTML admin shipped; Option B programme conditional QG; production enable flags await staging rehearsal |
 | OPS-011 | Record lifecycle and Recycle Bin for providers and stays | done | Soft delete, restore, retention, purge permission and audited recycle APIs shipped in CORE-011 Phase 1 |
-| OPS-012 | VanAssist reliability release (QG + DATA-012 coverage + controlled Ask) | in progress | Readiness package landed; production Ask/facilities/paid AI remain off; see `docs/VANASSIST_PRODUCTION_READINESS_PACKAGE.md` |
+| OPS-012 | VanAssist reliability release (QG + DATA-012 coverage + controlled Ask) | in progress | Flagship deterministic Ask candidate and reviewed-facility acceptance implemented; paid AI stays off and the primary-journey deployment awaits exact-candidate Quality Gate |
 
 ## Commercial
 

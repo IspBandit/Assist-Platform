@@ -10,7 +10,10 @@ Authenticated users authorised for a provider record.
 
 ## Permissions
 
-The provider role gate and provider ownership checks apply. Module availability is brand-dependent; a route existing in the repository does not mean every brand enables it.
+The provider role gate and provider ownership checks apply. Module availability
+is brand-dependent. Disabled request and service-run routes fail closed with
+not found and are removed from provider navigation; currently those work
+modules are enabled for VanAssist.
 
 ## Fields
 
@@ -50,7 +53,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-09-09.
 
 ## Owner
 

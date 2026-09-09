@@ -81,6 +81,41 @@ final class TravellerFacilitiesTest extends TestCase
         self::assertSame([], $result['externals']);
     }
 
+    public function testFacilityAdapterRequiresAndFiltersTrustedBrandId(): void
+    {
+        $ref = new ReflectionClass(FeatureFlag::class);
+        $cache = $ref->getProperty('cache');
+        $cache->setAccessible(true);
+        $cache->setValue(null, [TravellerFacilitiesFeature::FLAG => true]);
+
+        $intent = Intent::fromArray([
+            'intent_type' => Intent::TYPE_FACILITY,
+            'provider_category_keys' => [],
+            'stay_type_keys' => [],
+            'facility_type_keys' => ['public_toilet'],
+            'location_text' => null,
+            'use_current_location' => true,
+            'radius_km' => 25,
+            'urgency' => 'normal',
+            'adapter_keys' => ['traveller_facilities'],
+            'confidence' => 0.9,
+            'clarification_required' => false,
+            'clarification_reason' => null,
+        ]);
+
+        self::assertSame([], (new TravellerFacilitySearchAdapter())->search($intent, null, -35.7, 150.2));
+        self::assertSame([], (new TravellerFacilitySearchAdapter())->search($intent, null, null, null, 1));
+        $source = (string) file_get_contents(
+            dirname(__DIR__, 3) . '/app/Platform/AiSearch/Adapters/TravellerFacilitySearchAdapter.php'
+        );
+        self::assertStringContainsString('AND f.brand_id = ?', $source);
+        self::assertStringContainsString('private function nearTypes', $source);
+        self::assertStringContainsString('private function forTown', $source);
+        self::assertSame(2, substr_count($source, 'AND f.brand_id = ?'));
+        self::assertStringNotContainsString('private function forTypes', $source);
+        self::assertStringContainsString('Never fall back to a', $source);
+    }
+
     public function testMigrationDefinesFacilitiesTableNotCaravanParks(): void
     {
         $sql = (string) file_get_contents(dirname(__DIR__, 3) . '/database/migrations/108_assist_traveller_facilities.sql');

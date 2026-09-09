@@ -39,7 +39,14 @@ final class DocumentationCatalog
             return null;
         }
         $article = $this->registry->article($guide, $slug);
-        return $article === null ? null : $article + ['html' => MarkdownRenderer::render((string) $article['markdown'])];
+        if ($article === null) {
+            return null;
+        }
+        $html = MarkdownRenderer::render((string) $article['markdown']);
+        // The page shell owns the single H1; repository articles repeat their
+        // title as Markdown H1 for standalone readability.
+        $html = (string) preg_replace('/^\s*<h1\b[^>]*>.*?<\/h1>\s*/s', '', $html, 1);
+        return $article + ['html' => $html];
     }
 
     /** @param array<string,string> $filters @return list<array<string,mixed>> */

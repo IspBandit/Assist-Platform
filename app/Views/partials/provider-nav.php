@@ -15,6 +15,12 @@ $items = [
     'licences'     => ['Licences', 'provider/licences'],
     'availability' => ['Availability', 'provider/availability'],
 ];
+if (!current_brand()->moduleEnabled('requests')) {
+    unset($items['requests']);
+}
+if (!current_brand()->moduleEnabled('service_runs')) {
+    unset($items['runs']);
+}
 if (current_brand()->id() === 'trailerwise') {
     $items['trailer-listings'] = ['Trailer listings', 'provider/trailer-listings'];
 }

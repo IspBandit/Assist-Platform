@@ -1,6 +1,24 @@
 # Production current state
 
-Last verified: 24 July 2026 (Australia/Brisbane).
+Last read-only verification: 9 September 2026 (Australia/Brisbane).
+
+## 9 September 2026 read-only observation
+
+- All three home, health, readiness, robots and sitemap endpoints returned 200.
+- `/readyz` reported release
+  `88defe040f664d9430471f5a84db3c31e6e9fd29`.
+- VanAssist currently renders the Ask form and deterministic facility results,
+  but category/town search remains the first form in the homepage markup.
+- TowSmart and TrailerWise incorrectly returned 200 for direct
+  `/request-assistance` and `/service-runs` requests despite those modules being
+  disabled. The current release candidate adds server-side module denial; that
+  correction is not live until a gated deployment.
+- This observation used GET requests only. No form, account, flag, data or paid
+  AI action was performed.
+
+The July record below remains historical evidence for its then-current release.
+
+Last full operational verification: 24 July 2026 (Australia/Brisbane).
 
 ## Deployment
 
