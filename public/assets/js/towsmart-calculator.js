@@ -36,6 +36,8 @@
         if (search) {
             search.value = [type === 'trailers' ? item.brand : '', item.name, item.years].filter(Boolean).join(' ');
         }
+        var fields = form.querySelector('[data-spec-fields="' + (type === 'vehicles' ? 'vehicle' : 'trailer') + '"]');
+        if (fields) { fields.hidden = false; }
         var summary = form.querySelector('[data-selected-summary="' + (type === 'vehicles' ? 'vehicle' : 'trailer') + '"]');
         if (summary) {
             var stats = type === 'vehicles'
@@ -88,8 +90,20 @@
             var id = document.getElementById(kind + '_catalogue_id');
             if (id) { id.value = ''; }
             if (search) { search.value = ''; search.focus(); }
+            var fields = form.querySelector('[data-spec-fields="' + kind + '"]');
+            if (fields) { fields.hidden = false; }
+            var summary = form.querySelector('[data-selected-summary="' + kind + '"]');
+            if (summary) { summary.hidden = true; summary.innerHTML = ''; }
             var name = document.getElementById(kind + '_name');
             if (name) { name.focus(); }
+        });
+    });
+
+    form.addEventListener('submit', function () {
+        ['vehicle', 'trailer'].forEach(function (kind) {
+            var name = document.getElementById(kind + '_name');
+            var fields = form.querySelector('[data-spec-fields="' + kind + '"]');
+            if (name && !name.value.trim() && fields) { fields.hidden = false; }
         });
     });
 

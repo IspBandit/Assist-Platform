@@ -28,8 +28,8 @@ $askEnabled = \App\Platform\AiSearch\Support\AiSearchFeature::enabled()
             </div>
 
             <div class="hero-search-panel">
-                <div class="mobile-hero-intro">
-                    <h1>Your travel <strong>companion.</strong></h1>
+                <div class="mobile-hero-intro" aria-hidden="true">
+                    <p class="mobile-hero-title">Your travel <strong>companion.</strong></p>
                     <p>Ask what you need, or browse directly by service and location.</p>
                 </div>
                 <div class="search-card unified-search-card">
@@ -39,7 +39,7 @@ $askEnabled = \App\Platform\AiSearch\Support\AiSearchFeature::enabled()
                     <summary>Prefer category and town search?</summary>
                     <p class="muted">Use the familiar structured search whenever you want to choose the service category yourself.</p>
                 <?php endif; ?>
-                <form class="structured-search-form home-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
+                <form class="structured-search-form home-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         Browse directly

@@ -297,6 +297,9 @@
                 var original = btn.innerHTML;
                 var buttons = form.querySelectorAll('[data-use-location]');
                 buttons.forEach(function (b) {
+                    if (!b.getAttribute('data-label-html')) {
+                        b.setAttribute('data-label-html', b.innerHTML);
+                    }
                     b.disabled = true;
                     if (b !== btn) { b.setAttribute('aria-busy', 'true'); }
                 });
@@ -304,8 +307,24 @@
                 btn.innerHTML = '<span>Locating\u2026</span>';
                 setLocationStatus(form, 'Getting your location\u2026', true);
 
+                var restoreButtons = function (html) {
+                    buttons.forEach(function (b) {
+                        b.disabled = false;
+                        b.removeAttribute('aria-busy');
+                        b.innerHTML = html || b.getAttribute('data-label-html') || original;
+                    });
+                };
+                // Geolocation permission dialogs can stall indefinitely in some
+                // browsers; always recover the control after the API timeout.
+                var locateWatchdog = window.setTimeout(function () {
+                    if (btn.getAttribute('aria-busy') !== 'true') { return; }
+                    restoreButtons(original);
+                    setLocationStatus(form, '', false);
+                }, 16000);
+
                 navigator.geolocation.getCurrentPosition(
                     function (pos) {
+                        window.clearTimeout(locateWatchdog);
                         var lat = pos.coords.latitude.toFixed(6);
                         var lng = pos.coords.longitude.toFixed(6);
                         var url = nearestEndpoint(form) + '?lat=' + encodeURIComponent(lat)
@@ -318,31 +337,20 @@
                                     throw new Error((data && data.error) || 'No town found near you.');
                                 }
                                 if (form.getAttribute('data-location-manual') === '1') {
-                                    buttons.forEach(function (b) {
-                                        b.disabled = false;
-                                        b.removeAttribute('aria-busy');
-                                        b.innerHTML = b.getAttribute('data-label-html') || original;
-                                    });
+                                    restoreButtons(original);
                                     return;
                                 }
                                 applyNearestTown(form, btn, data.town, lat, lng);
                             })
                             .catch(function (e) {
-                                buttons.forEach(function (b) {
-                                    b.disabled = false;
-                                    b.removeAttribute('aria-busy');
-                                    b.innerHTML = original;
-                                });
+                                restoreButtons(original);
                                 setLocationStatus(form, '', false);
                                 window.alert(e.message || 'We could not find a town near your location. Please type a town or postcode.');
                             });
                     },
                     function (err) {
-                        buttons.forEach(function (b) {
-                            b.disabled = false;
-                            b.removeAttribute('aria-busy');
-                            b.innerHTML = original;
-                        });
+                        window.clearTimeout(locateWatchdog);
+                        restoreButtons(original);
                         setLocationStatus(form, '', false);
                         var msg = err && err.code === 1
                             ? 'Location access was blocked. Allow location in your browser settings, or type a town or postcode.'
@@ -675,7 +683,7 @@
                 resultsMap.querySelectorAll('.results-map-pin').forEach(function (candidate) {
                     candidate.classList.toggle('is-active', candidate.getAttribute('data-provider-id') === activeProviderId);
                 });
-                if (!mapSummary) { return; }
+                if (!mapSummary || !provider || !provider.name) { return; }
                 summaryPosition.textContent = 'Result ' + (index + 1);
                 summaryName.textContent = provider.name;
                 summaryLocation.textContent = provider.location || 'Location supplied on provider profile';
@@ -969,9 +977,12 @@
 
             renderResultsMap();
             setResultsView(window.matchMedia('(max-width: 719px)').matches ? 'list' : 'map');
-            document.querySelectorAll('[id^="provider-result-"]').forEach(function (card) {
-                var providerId = card.id.replace('provider-result-', '');
-                var providerIndex = providers.findIndex(function (provider) { return String(provider.id) === providerId; });
+            document.querySelectorAll('[id^="provider-result-"], [id^="assist-result-"]').forEach(function (card) {
+                var providerId = card.id.replace(/^provider-result-/, '').replace(/^assist-result-/, '');
+                var providerIndex = providers.findIndex(function (provider) {
+                    return String(provider.id) === providerId
+                        || String(provider.listId || '') === card.id;
+                });
                 if (providerIndex < 0) { return; }
                 card.addEventListener('focusin', function () { openSummary(providers[providerIndex], providerIndex, false); });
                 card.addEventListener('click', function () { openSummary(providers[providerIndex], providerIndex, false); });

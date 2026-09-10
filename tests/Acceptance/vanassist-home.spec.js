@@ -35,18 +35,26 @@ test('VanAssist homepage keeps the core journey accessible and Ask first', async
   expect(await heroImage.evaluate((image) => image.currentSrc)).toContain(expectedHero);
 
   const isMobile = testInfo.project.name.includes('mobile');
-  const headline = isMobile ? page.locator('.mobile-hero-intro h1') : page.locator('.hero-copy h1');
+  const headline = isMobile ? page.locator('.mobile-hero-intro .mobile-hero-title') : page.locator('.hero-copy h1');
   const askVanAssist = page.locator('.ask-vanassist-home');
   const structuredSearch = page.locator('.hero-search-panel .structured-search-form');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
   await expect(askVanAssist).toBeVisible();
   await expect(page.getByLabel('What do you need help finding?')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Find the right help' })).toBeVisible();
+  await expect(page.locator('details.ask-structured-fallback')).not.toHaveAttribute('open', '');
   await expect(structuredSearch).toBeAttached();
   await expect(page.getByLabel('Service category')).toBeAttached();
   await expect(page.getByLabel('Town, suburb or postcode')).toBeAttached();
   await expectElementStartsInViewport(headline, viewport.height);
   await expectElementStartsInViewport(askVanAssist, viewport.height);
+  // Closed structured fallback must not steal the first viewport on phones.
+  if (isMobile) {
+    const preferCategory = page.locator('details.ask-structured-fallback > summary');
+    await expect(preferCategory).toBeVisible();
+    const preferBox = await preferCategory.boundingBox();
+    expect(preferBox?.y ?? 0).toBeGreaterThan(80);
+  }
 
   const overflow = await page.evaluate(() => ({
     body: document.body.scrollWidth - window.innerWidth,

@@ -16,7 +16,7 @@ if (!AiSearchFeature::enabled() || current_brand()->id() !== 'vanassist') {
         <label for="home-ask-q">What do you need help finding?</label>
         <div class="ask-vanassist-home-row">
             <input type="text" id="home-ask-q" name="q" maxlength="240"
-                placeholder="e.g. My caravan brakes are grinding near Emerald"
+                placeholder="e.g. brakes grinding near Emerald"
                 autocomplete="off" required>
             <button type="submit" class="btn btn-primary btn-lg">Find the right help</button>
         </div>
