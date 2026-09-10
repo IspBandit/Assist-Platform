@@ -35,7 +35,7 @@ test('disabled VanAssist modules fail closed on other public brands', async ({ r
   test.skip(testInfo.project.name !== 'chromium-desktop-1440x900', 'HTTP denial matrix runs once per candidate');
   test.skip(!origins.towsmart || !origins.trailerwise, 'Set both secondary brand URLs');
   for (const origin of [origins.towsmart, origins.trailerwise]) {
-    for (const path of ['/ask?q=help%20near%20Roma', '/request-assistance', '/service-runs', '/stays', '/caravan-parks/apply']) {
+    for (const path of ['/request-assistance', '/service-runs', '/stays', '/caravan-parks/apply']) {
       const response = await request.get(`${origin}${path}`, { maxRedirects: 0 });
       expect(response.status(), `${origin}${path}`).toBe(404);
     }

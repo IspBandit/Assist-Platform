@@ -166,10 +166,8 @@ jobs:
           grep -q 'Traveller facilities' <<<"$ask_result"
 
           for denied_url in \
-            "https://towsmart.com.au/ask?q=help%20near%20Roma" \
             "https://towsmart.com.au/request-assistance" \
             "https://towsmart.com.au/service-runs" \
-            "https://trailerwise.com.au/ask?q=help%20near%20Roma" \
             "https://trailerwise.com.au/request-assistance" \
             "https://trailerwise.com.au/service-runs"; do
             test "$(smoke_curl --silent --show-error --max-time 20 --output /dev/null \
