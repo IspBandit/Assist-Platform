@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixed
+- Production release IndexNow notify uses the authorised smoke User-Agent,
+  batches sitemap URLs under the IndexNow 10,000-URL limit, and continues on
+  IndexNow failure so SEO notify cannot fail a healthy deploy.
+
 ### Added
 - **Flagship deterministic Ask VanAssist** — primary homepage plain-language
   search, explicit structured-search fallback, emergency guidance and reviewed
