@@ -26,9 +26,12 @@ Submit an Ask question from the homepage, open trusted service shortcuts, choose
 
 1. Prefer Ask VanAssist when you can describe the need in everyday language.
 2. Use direct shortcuts when you already know the journey type.
-3. Use Browse directly when you want to choose a service category and town, suburb or postcode yourself.
+3. Open Prefer category and town search? only when you want the structured
+   category and town form; that form stays collapsed until you open it.
 
-The same hierarchy applies on phones. Ask is intentionally shown before the shortcut boxes and structured category/location form, while those direct paths remain available without requiring Ask.
+The same hierarchy applies on phones. Ask is intentionally shown before the
+shortcut boxes, and the structured category/location form remains tucked behind
+Prefer category and town search? so it does not crowd the first screen.
 
 ## Examples
 
@@ -41,6 +44,7 @@ The same hierarchy applies on phones. Ask is intentionally shown before the shor
 - Expecting Ask to replace `/find`, Places to stay, service directories or assistance requests.
 - Treating Ask as a general-purpose assistant instead of a discovery layer over VanAssist data.
 - Assuming denied location permission blocks the homepage; typed places and Browse directly remain available.
+- Looking for the structured category/town fields before opening Prefer category and town search?.
 
 ## Related pages
 
@@ -58,7 +62,7 @@ See **Ask VanAssist** for the full Ask journey and **Finding nearby help** for d
 
 ## Last updated
 
-9 September 2026.
+10 September 2026.
 
 ## Owner
 
