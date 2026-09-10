@@ -48,6 +48,17 @@ final class PageController extends Controller
         ]);
     }
 
+    /** Keep short legal URLs working when older links or configs used /privacy or /terms. */
+    public function redirectLegacyLegal(Request $request): Response
+    {
+        $path = trim($request->path(), '/');
+        return $this->redirect(match ($path) {
+            'privacy' => 'privacy-policy',
+            'terms' => 'terms-of-use',
+            default => '/',
+        }, 301);
+    }
+
     private function brandPageTitle(string $slug): string
     {
         return match ($slug) {

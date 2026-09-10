@@ -98,9 +98,8 @@ the resolved Assist brand (`key`, `name`, `status`, `url` and enabled
 `modules`). Resource modes also reflect that brand: provider or stay resources
 are reported as `unavailable` when the selected brand does not support them.
 Management clients must verify this identity before displaying live data so a
-misconfigured endpoint cannot mix records between VanAssist, TowSmart,
-TrailerWise, LocalTorque or Polaris.
-
+misconfigured endpoint cannot mix records between VanAssist, TowSmart and
+TrailerWise.
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.

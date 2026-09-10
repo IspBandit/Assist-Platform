@@ -951,8 +951,12 @@ final class PlatformDatabaseTest extends TestCase
     {
         $result = TownCoordinateActivation::afterMigrations();
 
-        self::assertArrayHasKey('updated', $result);
-        self::assertGreaterThan(1000, (int) $result['updated']);
+        if (($result['skipped'] ?? false) === true) {
+            self::assertSame('town coordinate pack is current', $result['note'] ?? null);
+        } else {
+            self::assertArrayHasKey('updated', $result);
+            self::assertGreaterThan(1000, (int) $result['updated']);
+        }
         self::assertSame('authoritative', Database::scalar(
             "SELECT coordinate_confidence FROM towns t JOIN states s ON s.id=t.state_id WHERE s.abbreviation='ACT' AND t.slug='o-connor'"
         ));

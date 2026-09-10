@@ -5,6 +5,22 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Flagship deterministic Ask and three-brand correctness
+
+- Promoted Ask VanAssist to the primary homepage search candidate while keeping
+  category/town search as an accessible fallback.
+- Preserved state qualifiers, honoured explicit radii, added safe unique typo
+  correction and duplicate-town clarification, and restricted GPS searches to
+  Australian bounds.
+- Enforced VanAssist brand identity through the orchestrator and brand-scoped
+  reviewed traveller facilities; unsafe source URL schemes are discarded.
+- Added emergency guidance for fire, gas, brake, medical and roadside danger.
+- Added national question/location matrices, cross-browser acceptance coverage
+  and server-side module denial for requests, service runs and parks on brands
+  where those modules are disabled.
+- Paid AI and pending dataset answers remain disabled for the initial launch.
+  Deployment of the flagship ordering and wrong-host corrections requires the
+  exact candidate's full Quality Gate and controlled release evidence.
 ### Shared public-edge release guard (OPS-001)
 
 - Add a generic, root-owned guard for releases sharing the production Caddy

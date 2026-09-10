@@ -22,9 +22,14 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
      * @param array<string,mixed>|null $town
      * @return list<array<string,mixed>>
      */
-    public function search(Intent $intent, ?array $town = null, ?float $lat = null, ?float $lng = null): array
-    {
-        if (!TravellerFacilitiesFeature::enabled()) {
+    public function search(
+        Intent $intent,
+        ?array $town = null,
+        ?float $lat = null,
+        ?float $lng = null,
+        ?int $brandId = null,
+    ): array {
+        if (!TravellerFacilitiesFeature::enabled() || $brandId === null || $brandId <= 0) {
             return [];
         }
         $types = $intent->facilityTypeKeys;
@@ -34,14 +39,19 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
 
         $radius = $intent->radiusKm ?? (int) config('ai_search.default_radius_km', 25);
         $hasOrigin = $lat !== null && $lng !== null;
+        if (!$hasOrigin && ($town === null || !isset($town['id']))) {
+            return [];
+        }
 
         try {
             if ($hasOrigin) {
-                $rows = $this->nearTypes($types, (float) $lat, (float) $lng, $radius);
+                $rows = $this->nearTypes($types, (float) $lat, (float) $lng, $radius, $brandId);
             } elseif ($town !== null && isset($town['id'])) {
-                $rows = $this->forTown($types, (int) $town['id']);
+                $rows = $this->forTown($types, (int) $town['id'], $brandId);
             } else {
-                $rows = $this->forTypes($types);
+                // Named or coordinate origin is mandatory. Never fall back to a
+                // nationwide facility dump when location resolution failed.
+                return [];
             }
         } catch (Throwable) {
             return [];
@@ -76,7 +86,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
      * @param list<string> $types
      * @return list<array<string,mixed>>
      */
-    private function nearTypes(array $types, float $latitude, float $longitude, int $radiusKm): array
+    private function nearTypes(array $types, float $latitude, float $longitude, int $radiusKm, int $brandId): array
     {
         $radiusKm = max(1, min(500, $radiusKm));
         $placeholders = implode(',', array_fill(0, count($types), '?'));
@@ -98,6 +108,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
                 LEFT JOIN states s ON s.id = f.state_id
                 WHERE f.deleted_at IS NULL AND f.status = \'active\'
                   AND f.verification_status IN (\'reviewed\', \'verified\')
+                  AND f.brand_id = ?
                   AND f.facility_type IN (' . $placeholders . ')
                   AND f.latitude IS NOT NULL AND f.longitude IS NOT NULL
                   AND f.latitude BETWEEN ? AND ?
@@ -107,7 +118,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
                 LIMIT 120';
 
         $params = array_merge(
-            [$latitude, $longitude, $latitude],
+            [$latitude, $longitude, $latitude, $brandId],
             $types,
             [$latitude - $latDelta, $latitude + $latDelta, $longitude - $lngDelta, $longitude + $lngDelta, $radiusKm]
         );
@@ -119,7 +130,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
      * @param list<string> $types
      * @return list<array<string,mixed>>
      */
-    private function forTown(array $types, int $townId): array
+    private function forTown(array $types, int $townId, int $brandId): array
     {
         $placeholders = implode(',', array_fill(0, count($types), '?'));
         return Database::select(
@@ -133,6 +144,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
              LEFT JOIN states s ON s.id = f.state_id
              WHERE f.deleted_at IS NULL AND f.status = \'active\'
                AND f.verification_status IN (\'reviewed\', \'verified\')
+               AND f.brand_id = ?
                AND f.facility_type IN (' . $placeholders . ')
                AND (
                     f.town_id = ?
@@ -144,32 +156,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
                )
              ORDER BY f.name
              LIMIT 120',
-            array_merge($types, [$townId, $townId])
-        );
-    }
-
-    /**
-     * @param list<string> $types
-     * @return list<array<string,mixed>>
-     */
-    private function forTypes(array $types): array
-    {
-        $placeholders = implode(',', array_fill(0, count($types), '?'));
-        return Database::select(
-            'SELECT f.id, f.facility_type, f.name, f.slug, f.latitude, f.longitude, f.formatted_address,
-                    f.locality, f.operating_status, f.opening_hours, f.source_key, f.source_record_id,
-                    f.source_licence, f.source_attribution, f.source_url, f.confidence, f.verification_status,
-                    t.name AS town_name, s.abbreviation AS state_abbr,
-                    f.latitude AS town_lat, f.longitude AS town_lng
-             FROM traveller_facilities f
-             LEFT JOIN towns t ON t.id = f.town_id
-             LEFT JOIN states s ON s.id = f.state_id
-             WHERE f.deleted_at IS NULL AND f.status = \'active\'
-               AND f.verification_status IN (\'reviewed\', \'verified\')
-               AND f.facility_type IN (' . $placeholders . ')
-             ORDER BY f.name
-             LIMIT 80',
-            $types
+            array_merge([$brandId], $types, [$townId, $townId])
         );
     }
 
@@ -208,7 +195,7 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
             'operating_status' => $row['operating_status'] ?? null,
             'opening_hours' => $row['opening_hours'] ?? null,
             'distance_km' => isset($row['distance_km']) ? (float) $row['distance_km'] : null,
-            'source_url' => $row['source_url'] ?? null,
+            'source_url' => $this->safeHttpUrl($row['source_url'] ?? null),
         ];
 
         return ResultProvenance::annotate(
@@ -220,5 +207,15 @@ final class TravellerFacilitySearchAdapter implements FacilitySearchPort
             isset($row['source_attribution']) ? (string) $row['source_attribution'] : null,
             $confidence
         );
+    }
+
+    private function safeHttpUrl(mixed $value): ?string
+    {
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+        $url = trim($value);
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        return in_array($scheme, ['http', 'https'], true) ? $url : null;
     }
 }

@@ -83,7 +83,9 @@ $headerPlatformContext = array_key_exists('header_platform_context', $headerBran
                 <?php else: ?>
                     <li class="nav-auth"><a href="<?= e(url('login')) ?>">Sign in</a></li>
                 <?php endif; ?>
+                <?php if (current_brand()->moduleEnabled('requests')): ?>
                 <li><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a></li>
+                <?php endif; ?>
                 <?php endif; ?>
             </ul>
         </nav>

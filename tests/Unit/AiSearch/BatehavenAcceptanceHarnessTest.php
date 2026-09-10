@@ -37,8 +37,20 @@ final class BatehavenAcceptanceHarnessTest extends TestCase
         ]);
 
         $facilities = new class implements FacilitySearchPort {
-            public function search(Intent $intent, ?array $town = null, ?float $lat = null, ?float $lng = null): array
-            {
+            /** @var list<array{0:?array<string,mixed>,1:?float,2:?float,3:?int}> */
+            public array $calls = [];
+
+            public function search(
+                Intent $intent,
+                ?array $town = null,
+                ?float $lat = null,
+                ?float $lng = null,
+                ?int $brandId = null,
+            ): array {
+                $this->calls[] = [$town, $lat, $lng, $brandId];
+                if ($brandId !== 1) {
+                    return [];
+                }
                 if (!in_array('public_toilet', $intent->facilityTypeKeys, true)
                     || !in_array('dump_point', $intent->facilityTypeKeys, true)) {
                     return [];
@@ -89,12 +101,21 @@ final class BatehavenAcceptanceHarnessTest extends TestCase
         ));
 
         self::assertNotSame('ai', $response->intent->source);
+        self::assertSame(50, $response->intent->radiusKm);
         self::assertContains('public_toilet', $response->intent->facilityTypeKeys);
         self::assertContains('dump_point', $response->intent->facilityTypeKeys);
         self::assertCount(2, $response->facilities);
+        self::assertSame([], $response->providers);
+        self::assertSame([], $response->stays);
+        self::assertSame([], $response->externals);
+        self::assertNotEmpty($facilities->calls);
+        self::assertSame(1, $facilities->calls[0][3]);
         $types = array_map(static fn (array $f): string => (string) ($f['facility_type'] ?? ''), $response->facilities);
         self::assertContains('public_toilet', $types);
         self::assertContains('dump_point', $types);
+        foreach ($response->facilities as $facility) {
+            self::assertLessThanOrEqual(50.0, (float) ($facility['distance_km'] ?? 999));
+        }
         foreach ($response->stays as $stay) {
             self::assertNotSame('public_toilet', $stay['facility_type'] ?? null);
             self::assertNotSame('dump_point', $stay['facility_type'] ?? null);

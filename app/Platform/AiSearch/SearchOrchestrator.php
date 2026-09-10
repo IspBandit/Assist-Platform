@@ -59,7 +59,7 @@ final class SearchOrchestrator
     private RoadDistanceService $roadDistances;
     private PublicResultWindow $resultWindow;
     private AskQuestionLibrary $questionLibrary;
-    /** @var (\Closure(SearchRequest,Intent):array{0:?array<string,mixed>,1:?float,2:?float,3:string})|null */
+    /** @var (\Closure(SearchRequest,Intent):array{0:?array<string,mixed>,1:?float,2:?float,3:string,4?:?string})|null */
     private ?\Closure $locationResolver;
 
     public function __construct(
@@ -109,6 +109,31 @@ final class SearchOrchestrator
         $raw = trim($request->rawQuery);
         $messages = [];
         $fallback = '';
+
+        $vanAssistDatabaseId = (int) config('brands.registry.vanassist.database_id', 1);
+        if (
+            $request->brandKey !== 'vanassist'
+            || $request->brandDatabaseId !== $vanAssistDatabaseId
+        ) {
+            $intent = new Intent(
+                intentType: Intent::TYPE_UNKNOWN,
+                providerCategoryKeys: [],
+                stayTypeKeys: [],
+                facilityTypeKeys: [],
+                locationText: null,
+                useCurrentLocation: false,
+                radiusKm: null,
+                urgency: 'normal',
+                adapterKeys: [],
+                confidence: 0.0,
+                clarificationRequired: true,
+                clarificationReason: 'Ask VanAssist is only available within VanAssist.',
+                source: 'none',
+            );
+            return new SearchResponse($intent, [], [], null, null, null, 'brand_mismatch', [
+                (string) $intent->clarificationReason,
+            ], null, false);
+        }
 
         if ($raw === '' || mb_strlen($raw) > $maxLen) {
             $intent = new Intent(
@@ -284,6 +309,17 @@ final class SearchOrchestrator
             }
         }
 
+        if ($request->radiusKm !== null) {
+            $intent = Intent::fromArray(array_merge($intent->toArray(), [
+                'radius_km' => max(1, min(500, $request->radiusKm)),
+            ]), $intent->source);
+        }
+
+        $safetyMessage = $this->safetyMessage($raw);
+        if ($safetyMessage !== null) {
+            $messages[] = $safetyMessage;
+        }
+
         if ($intent->clarificationRequired && $intent->clarificationReason !== null) {
             $messages[] = $intent->clarificationReason;
         }
@@ -335,9 +371,14 @@ final class SearchOrchestrator
             );
         }
 
-        [$town, $originLat, $originLng, $precision] = $this->locationResolver !== null
+        $resolved = $this->locationResolver !== null
             ? ($this->locationResolver)($request, $intent)
             : $this->resolveLocation($request, $intent);
+        [$town, $originLat, $originLng, $precision] = $resolved;
+        $locationMessage = $resolved[4] ?? null;
+        if ($locationMessage !== null) {
+            $messages[] = $locationMessage;
+        }
 
         $directProviderNameWithoutLocation = $providerNameRows !== []
             && ($intent->locationText === null || trim($intent->locationText) === '')
@@ -395,11 +436,19 @@ final class SearchOrchestrator
             $messages[] = 'Showing the matching provider by name. Use your location or add a place if you also need road distance.';
         }
 
+        $locationBlocked = in_array($precision, ['ambiguous', 'none'], true)
+            && (
+                ($intent->locationText !== null && $intent->locationText !== '')
+                || $intent->useCurrentLocation
+                || $request->latitude !== null
+                || $request->longitude !== null
+            );
+
         $adapters = $this->router->adaptersFor($intent);
         $providerRows = [];
         $stayRows = [];
 
-        if (in_array('providers', $adapters, true)) {
+        if (!$locationBlocked && in_array('providers', $adapters, true)) {
             try {
                 $providerRows = $providerNameQuery !== null
                     ? $providerNameRows
@@ -431,7 +480,7 @@ final class SearchOrchestrator
                 $providerRows = [];
             }
         }
-        if (in_array('stays', $adapters, true)) {
+        if (!$locationBlocked && in_array('stays', $adapters, true)) {
             try {
                 $stayRows = $this->stays->search($intent, $town, $originLat, $originLng);
             } catch (\Throwable) {
@@ -443,9 +492,15 @@ final class SearchOrchestrator
         }
 
         $facilityRows = [];
-        if (in_array('traveller_facilities', $adapters, true)) {
+        if (!$locationBlocked && in_array('traveller_facilities', $adapters, true)) {
             try {
-                $facilityRows = $this->facilities->search($intent, $town, $originLat, $originLng);
+                $facilityRows = $this->facilities->search(
+                    $intent,
+                    $town,
+                    $originLat,
+                    $originLng,
+                    $request->brandDatabaseId
+                );
             } catch (\Throwable) {
                 $facilityRows = [];
             }
@@ -457,7 +512,7 @@ final class SearchOrchestrator
         $adapters = $this->router->withDatasetAugment($adapters, $localPreview, DatasetSearchFeature::enabled());
 
         $datasetRows = [];
-        if (in_array('datasets', $adapters, true)) {
+        if (!$locationBlocked && in_array('datasets', $adapters, true)) {
             try {
                 $datasetRows = $this->datasets->search(
                     $intent,
@@ -701,32 +756,65 @@ final class SearchOrchestrator
     }
 
     /**
-     * @return array{0:?array<string,mixed>,1:?float,2:?float,3:string}
+     * @return array{0:?array<string,mixed>,1:?float,2:?float,3:string,4:?string}
      */
     private function resolveLocation(SearchRequest $request, Intent $intent): array
     {
         $lat = $request->latitude;
         $lng = $request->longitude;
         $hasCoords = $lat !== null && $lng !== null
-            && $lat >= -90 && $lat <= 90
-            && $lng >= -180 && $lng <= 180;
+            && $this->isAustralianCoordinate($lat, $lng);
 
         try {
             if ($intent->useCurrentLocation && $hasCoords) {
                 $town = Town::nearestActive($lat, $lng);
-                return [$town, $lat, $lng, 'gps_short'];
+                return [$town, $lat, $lng, 'gps_short', null];
             }
 
             if ($intent->locationText !== null && $intent->locationText !== '') {
                 $matches = Town::searchActive($intent->locationText, 5);
+                $parsed = Town::parseSearchQuery($intent->locationText);
+                if ($parsed['state'] === null && count($matches) > 1) {
+                    $exactNameMatches = array_values(array_filter(
+                        $matches,
+                        static fn (array $match): bool =>
+                            mb_strtolower((string) ($match['name'] ?? '')) === mb_strtolower($parsed['term'])
+                    ));
+                    if (count($exactNameMatches) > 1) {
+                        $states = array_values(array_unique(array_map(
+                            static fn (array $match): string => (string) ($match['state_abbr'] ?? ''),
+                            $exactNameMatches
+                        )));
+                        return [
+                            null,
+                            null,
+                            null,
+                            'ambiguous',
+                            'More than one Australian place is named ' . $parsed['term']
+                                . '. Add the state, for example ' . $parsed['term'] . ' '
+                                . implode(' or ' . $parsed['term'] . ' ', array_filter($states)) . '.',
+                        ];
+                    }
+                }
+                $corrected = false;
                 if ($matches === []) {
-                    $matches = Town::searchActiveFuzzy($intent->locationText, 5);
+                    $matches = Town::searchActiveFuzzy($intent->locationText, 1);
+                    $corrected = $matches !== [];
                 }
                 $town = $matches[0] ?? null;
                 if ($town !== null) {
                     $tLat = isset($town['latitude']) ? (float) $town['latitude'] : null;
                     $tLng = isset($town['longitude']) ? (float) $town['longitude'] : null;
-                    return [$town, $tLat, $tLng, 'town'];
+                    return [
+                        $town,
+                        $tLat,
+                        $tLng,
+                        $corrected ? 'town_corrected' : 'town',
+                        $corrected
+                            ? 'Interpreted “' . $intent->locationText . '” as '
+                                . (string) $town['name'] . ', ' . (string) ($town['state_abbr'] ?? '') . '.'
+                            : null,
+                    ];
                 }
 
                 $landmark = CaravanPark::resolvePublicLandmark($intent->locationText);
@@ -746,32 +834,66 @@ final class SearchOrchestrator
                             'longitude' => $landmarkLng,
                             'location_reference_type' => 'stay',
                         ];
-                        return [$origin, $landmarkLat, $landmarkLng, 'stay_landmark'];
+                        return [$origin, $landmarkLat, $landmarkLng, 'stay_landmark', null];
                     }
                 }
 
                 // Typed location always wins over device coordinates. If it
                 // cannot be resolved, fail closed rather than silently search
                 // around a stale phone location or across Australia.
-                return [null, null, null, 'none'];
+                return [
+                    null,
+                    null,
+                    null,
+                    'none',
+                    'That Australian town, suburb or postcode could not be resolved. Check the spelling or add the state.',
+                ];
             }
 
             if ($hasCoords) {
                 $town = Town::nearestActive($lat, $lng);
-                return [$town, $lat, $lng, 'gps_short'];
+                return [$town, $lat, $lng, 'gps_short', null];
             }
         } catch (\Throwable) {
             // An explicit typed location must never fall back to unrelated
             // device coordinates when lookup infrastructure fails.
             if ($intent->locationText !== null && $intent->locationText !== '') {
-                return [null, null, null, 'none'];
+                return [
+                    null,
+                    null,
+                    null,
+                    'none',
+                    'That Australian town, suburb or postcode could not be resolved. Check the spelling or add the state.',
+                ];
             }
             if ($hasCoords) {
-                return [null, $lat, $lng, 'gps_short'];
+                return [null, $lat, $lng, 'gps_short', null];
             }
-            return [null, null, null, 'none'];
+            return [null, null, null, 'none', 'Location lookup is temporarily unavailable. Try again shortly.'];
         }
 
-        return [null, null, null, 'none'];
+        if (($lat !== null || $lng !== null) && !$hasCoords) {
+            return [null, null, null, 'none', 'Use a location within Australia or enter an Australian town or postcode.'];
+        }
+        return [null, null, null, 'none', null];
+    }
+
+    private function isAustralianCoordinate(float $lat, float $lng): bool
+    {
+        // Mainland Australia, Tasmania, nearby islands used by travellers.
+        // Cap longitude below New Zealand so NZ GPS cannot resolve as Tasmania.
+        return $lat >= -44.5 && $lat <= -9.0 && $lng >= 105.0 && $lng <= 159.0;
+    }
+
+    private function safetyMessage(string $query): ?string
+    {
+        $normalised = mb_strtolower($query);
+        if (preg_match('/\b(fire|on fire|smoke|gas leak|smell gas|brakes? failed|no brakes?|medical emergency|unconscious|severe bleeding)\b/u', $normalised) === 1) {
+            return 'If anyone is in immediate danger, move to a safe place and call Triple Zero (000). Do not drive or continue using unsafe equipment. VanAssist results are directory guidance, not emergency dispatch or technical diagnosis.';
+        }
+        if (preg_match('/\b(stranded|broken down|bogged|roadside emergency)\b/u', $normalised) === 1) {
+            return 'Move people and vehicles out of traffic if it is safe to do so. Call Triple Zero (000) for immediate danger. Confirm availability and capability directly with any listed provider.';
+        }
+        return null;
     }
 }

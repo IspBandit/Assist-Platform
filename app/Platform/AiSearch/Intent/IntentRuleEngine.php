@@ -499,11 +499,6 @@ final class IntentRuleEngine
                 '',
                 $place
             );
-            $place = (string) preg_replace(
-                '/(?:,\s*|\s+)(?:nsw|vic|qld|sa|wa|tas|nt|act)\s*$/ui',
-                '',
-                $place
-            );
             $place = trim((string) preg_replace('/\s+/u', ' ', $place));
             $place = trim($place, " \t\n\r\0\x0B,.-");
             if ($place !== '' && mb_strlen($place) >= 2) {
@@ -520,11 +515,6 @@ final class IntentRuleEngine
         $text = (string) preg_replace(
             '/\b(near|in|around|at|for|the|a|an|me|please|find|someone who can|repair|repairer|and|or|with|within|km|of)\b/u',
             ' ',
-            $text
-        );
-        $text = (string) preg_replace(
-            '/(?:,\s*|\s+)(?:nsw|vic|qld|sa|wa|tas|nt|act)\s*$/ui',
-            '',
             $text
         );
         $text = trim((string) preg_replace('/\s+/u', ' ', $text));

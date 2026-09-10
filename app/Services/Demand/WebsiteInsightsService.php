@@ -198,7 +198,7 @@ final class WebsiteInsightsService
             '/for-providers/register' => 'Provider registration',
             '/how-it-works' => 'How it works',
             '/faqs' => 'Frequently asked questions',
-            '/privacy' => 'Privacy policy',
+            '/privacy-policy' => 'Privacy policy',
             '/terms' => 'Terms of use',
             '/disclaimer' => 'Important disclaimer',
         ];

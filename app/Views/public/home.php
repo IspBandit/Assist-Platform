@@ -4,6 +4,9 @@
 /** @var array<string,array<int,array<string,mixed>>> $categoryGroups */
 $this->extend('layouts.public');
 $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
+$popularCategories = $popularCategories ?? array_slice($categories ?? [], 0, 8);
+$askEnabled = \App\Platform\AiSearch\Support\AiSearchFeature::enabled()
+    && current_brand()->id() === 'vanassist';
 ?>
 <?php $this->section('content'); ?>
 
@@ -31,7 +34,12 @@ $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
                 </div>
                 <div class="search-card unified-search-card">
                 <?php $this->include('partials.ask-vanassist'); ?>
-                <form class="structured-search-form home-search-form" style="order:4" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
+                <?php if ($askEnabled): ?>
+                <details class="ask-structured-fallback">
+                    <summary>Prefer category and town search?</summary>
+                    <p class="muted">Use the familiar structured search whenever you want to choose the service category yourself.</p>
+                <?php endif; ?>
+                <form class="structured-search-form home-search-form" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location>
                     <div class="search-head">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         Browse directly
@@ -71,6 +79,7 @@ $categoryGroups = $categoryGroups ?? ['Services' => ($categories ?? [])];
                         <a href="<?= e(url('request-assistance')) ?>">Request assistance</a>
                     </p>
                 </form>
+                <?php if ($askEnabled): ?></details><?php endif; ?>
                 </div>
             </div>
 

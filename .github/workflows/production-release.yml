@@ -153,10 +153,28 @@ jobs:
           grep -q '/runtime-assets/img/vanassist-coastal-hero-desktop-v1.webp' <<<"$homepage"
           grep -q '/runtime-assets/img/vanassist-coastal-hero-mobile-v1.webp' <<<"$homepage"
           grep -q '/runtime-assets/brands/vanassist/favicon.svg' <<<"$homepage"
+          ask_line="$(grep -n -m1 'What do you need help finding?' <<<"$homepage" | cut -d: -f1)"
+          fallback_line="$(grep -n -m1 'Prefer category and town search?' <<<"$homepage" | cut -d: -f1)"
+          [[ -n "$ask_line" && -n "$fallback_line" && "$ask_line" -lt "$fallback_line" ]]
           if grep -q 'symbol-v2.svg\|class="brand-mark"' <<<"$homepage"; then
             echo "Public VanAssist identity unexpectedly contains a retired platform symbol."
             exit 1
           fi
+
+          ask_result="$(smoke_curl --fail --silent --show-error --location --max-time 20 \
+            'https://vanassist.com.au/ask?q=public%20toilets%20near%20Batehaven%20NSW')"
+          grep -q 'Traveller facilities' <<<"$ask_result"
+
+          for denied_url in \
+            "https://towsmart.com.au/ask?q=help%20near%20Roma" \
+            "https://towsmart.com.au/request-assistance" \
+            "https://towsmart.com.au/service-runs" \
+            "https://trailerwise.com.au/ask?q=help%20near%20Roma" \
+            "https://trailerwise.com.au/request-assistance" \
+            "https://trailerwise.com.au/service-runs"; do
+            test "$(smoke_curl --silent --show-error --max-time 20 --output /dev/null \
+              --write-out '%{http_code}' "$denied_url")" = "404"
+          done
 
           manifest="$(smoke_curl --fail --silent --show-error --location --max-time 20 https://vanassist.com.au/manifest.webmanifest)"
           grep -q '"short_name": "VanAssist"' <<<"$manifest"
@@ -222,6 +240,22 @@ jobs:
             --output /dev/null https://vanassist.com.au/runtime-assets/img/vanassist-hero-desktop.webp
           smoke_curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
+      - name: Notify IndexNow after successful release
+        shell: bash
+        run: |
+          set -euo pipefail
+          host="vanassist.com.au"
+          key="0cc3cd247c8746b593e6684d9410bc77"
+          key_location="https://${host}/${key}.txt"
+          test "$(curl --fail --silent --show-error --location --max-time 20 "$key_location" | tr -d '\r\n')" = "$key"
+          sitemap="$(curl --fail --silent --show-error --location --max-time 30 "https://${host}/sitemap.xml")"
+          mapfile -t urls < <(printf '%s' "$sitemap" | sed -n 's:.*<loc>\([^<]*\)</loc>.*:\1:p')
+          test "${#urls[@]}" -gt 0
+          payload="$(printf '%s\n' "${urls[@]}" | jq -R . | jq -s --arg host "$host" --arg key "$key" --arg keyLocation "$key_location" '{host:$host,key:$key,keyLocation:$keyLocation,urlList:.}')"
+          curl --fail --silent --show-error --max-time 30 \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            --data "$payload" https://api.indexnow.org/indexnow
+          echo "Submitted ${#urls[@]} canonical VanAssist URLs to IndexNow." >> "$GITHUB_STEP_SUMMARY"
       - name: Record safeguarded provider processing
         run: |
           {

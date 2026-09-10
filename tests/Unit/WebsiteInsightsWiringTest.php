@@ -40,8 +40,8 @@ final class WebsiteInsightsWiringTest extends TestCase
 
         self::assertStringContainsString('name="q"', $partial);
         self::assertStringContainsString("action=\"<?= e(url('ask')) ?>\"", $partial);
-        self::assertStringContainsString('We can look across providers, stays and traveller facilities.', $partial);
-        self::assertStringContainsString('Try: dump point, pet-friendly stay, mobile mechanic, drinking water', $partial);
+        self::assertStringContainsString('Reviewed providers, stays and traveller facilities', $partial);
+        self::assertStringContainsString('Find the right help', $partial);
         self::assertStringNotContainsString('ask-vanassist-teaser', $partial);
     }
 

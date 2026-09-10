@@ -42,8 +42,8 @@ final class AssistSearchLogger
                     $request->sessionId,
                     $request->requestId,
                     $request->channel,
-                    mb_substr($request->rawQuery, 0, 500),
-                    mb_substr($normalisedQuery, 0, 500),
+                    mb_substr($this->redactPersonalData($request->rawQuery), 0, 500),
+                    mb_substr($this->redactPersonalData($normalisedQuery), 0, 500),
                     json_encode($intent->toArray(), JSON_THROW_ON_ERROR),
                     $intent->source,
                     $intent->confidence,
@@ -61,5 +61,20 @@ final class AssistSearchLogger
         } catch (Throwable) {
             return null;
         }
+    }
+
+    private function redactPersonalData(string $query): string
+    {
+        $query = (string) preg_replace(
+            '/\b[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}\b/iu',
+            '[email removed]',
+            $query
+        );
+        $query = (string) preg_replace(
+            '/(?<!\d)(?:\+?61[\s.-]?)?(?:0?4\d{2}|0?[2378])(?:[\s.-]?\d){6,8}(?!\d)/',
+            '[phone removed]',
+            $query
+        );
+        return $query;
     }
 }

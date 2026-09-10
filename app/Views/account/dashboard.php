@@ -9,6 +9,7 @@ $this->extend('layouts.public');
         <?php if (empty($user['email_verified_at'])): ?>
             <div class="alert alert-info">Please verify your email address. Check your inbox for the verification link.</div>
         <?php endif; ?>
+        <?php if (current_brand()->moduleEnabled('requests')): ?>
         <div class="card">
             <div class="btn-row" style="justify-content:space-between;align-items:center">
                 <h2 style="margin:0">My requests</h2>
@@ -35,10 +36,13 @@ $this->extend('layouts.public');
                 <a href="<?= e(url('account/requests')) ?>">View all requests</a>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
         <div class="grid grid-3">
             <a class="card account-card-link" href="<?= e(url('account/garage')) ?>"><h3>My Garage</h3><p class="muted">Vehicles, towables and private compliance documents shared across Assist.</p></a>
             <a class="card account-card-link" href="<?= e(url('account/compliance')) ?>"><h3>Compliance centre</h3><p class="muted">Saved official-source pathways, consented alerts and relevant specialist handoffs.</p></a>
+            <?php if (current_brand()->moduleEnabled('service_runs')): ?>
             <div class="card"><h3>Joined runs</h3><p class="muted">Service runs you have joined will appear here.</p></div>
+            <?php endif; ?>
             <div class="card"><h3>Profile & security</h3><p class="muted">Manage your details, communication preferences and password.</p></div>
         </div>
     </div>

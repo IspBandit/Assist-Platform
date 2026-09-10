@@ -2,10 +2,14 @@ const { test, expect } = require('@playwright/test');
 const path = require('node:path');
 
 async function expectElementStartsInViewport(locator, viewportHeight) {
-  const box = await locator.boundingBox();
-  expect(box, 'element has a rendered bounding box').not.toBeNull();
-  expect(box.y, 'element starts below the top edge').toBeGreaterThanOrEqual(0);
-  expect(box.y, 'element starts in the first viewport').toBeLessThan(viewportHeight);
+  const box = await locator.evaluate((element) => {
+    const rect = element.getBoundingClientRect();
+    return { top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height };
+  });
+  expect(box.width, 'element has a rendered width').toBeGreaterThan(0);
+  expect(box.height, 'element has a rendered height').toBeGreaterThan(0);
+  expect(box.top, 'element starts below the top edge').toBeGreaterThanOrEqual(0);
+  expect(box.top, 'element starts in the first viewport').toBeLessThan(viewportHeight);
 }
 
 test('VanAssist homepage keeps the core journey accessible and Ask first', async ({ page }, testInfo) => {
@@ -25,21 +29,22 @@ test('VanAssist homepage keeps the core journey accessible and Ask first', async
   await expect(heroImage).toBeVisible();
   await expect(heroImage).toHaveJSProperty('complete', true);
   expect(await heroImage.evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
-  const expectedHero = testInfo.project.name.startsWith('mobile')
+  const expectedHero = testInfo.project.name.includes('mobile')
     ? 'vanassist-coastal-hero-mobile-v1.webp'
     : 'vanassist-coastal-hero-desktop-v1.webp';
   expect(await heroImage.evaluate((image) => image.currentSrc)).toContain(expectedHero);
 
-  const isMobile = testInfo.project.name.startsWith('mobile');
+  const isMobile = testInfo.project.name.includes('mobile');
   const headline = isMobile ? page.locator('.mobile-hero-intro h1') : page.locator('.hero-copy h1');
   const askVanAssist = page.locator('.ask-vanassist-home');
   const structuredSearch = page.locator('.hero-search-panel .structured-search-form');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
   await expect(askVanAssist).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Ask VanAssist', exact: true })).toBeVisible();
-  await expect(structuredSearch).toBeVisible();
-  await expect(page.getByLabel('Service category')).toBeVisible();
-  await expect(page.getByLabel('Town, suburb or postcode')).toBeVisible();
+  await expect(page.getByLabel('What do you need help finding?')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Find the right help' })).toBeVisible();
+  await expect(structuredSearch).toBeAttached();
+  await expect(page.getByLabel('Service category')).toBeAttached();
+  await expect(page.getByLabel('Town, suburb or postcode')).toBeAttached();
   await expectElementStartsInViewport(headline, viewport.height);
   await expectElementStartsInViewport(askVanAssist, viewport.height);
 
@@ -65,24 +70,33 @@ test('VanAssist homepage keeps the core journey accessible and Ask first', async
     expect(topGap, 'mobile header-to-hero gap in pixels').toBeGreaterThanOrEqual(-1);
     expect(topGap, 'mobile header-to-hero gap in pixels').toBeLessThanOrEqual(64);
 
+    const primarySearchButton = page.getByRole('button', { name: 'Find the right help' });
+    await expect(primarySearchButton).toBeVisible();
+    const primarySearchBox = await primarySearchButton.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return { bottom: rect.bottom, width: rect.width, height: rect.height };
+    });
+    expect(primarySearchBox.width, 'mobile primary submit has a rendered width').toBeGreaterThan(0);
+    expect(primarySearchBox.height, 'mobile primary submit has a rendered height').toBeGreaterThan(0);
+    expect(
+      primarySearchBox.bottom,
+      'mobile primary submit is fully visible in the first viewport',
+    ).toBeLessThanOrEqual(viewport.height);
+
     const askBox = await askVanAssist.boundingBox();
     const quickActionsBox = await quickActions.boundingBox();
-    const structuredBox = await structuredSearch.boundingBox();
     expect(askBox, 'Ask VanAssist has a rendered box').not.toBeNull();
     expect(quickActionsBox, 'mobile quick actions have a rendered box').not.toBeNull();
-    expect(structuredBox, 'structured browse search has a rendered box').not.toBeNull();
     expect(
       quickActionsBox.y,
       'direct quick actions follow Ask VanAssist on phone',
     ).toBeGreaterThanOrEqual(askBox.y + askBox.height - 1);
-    expect(
-      structuredBox.y,
-      'structured browse search follows the quick direct journeys on phone',
-    ).toBeGreaterThanOrEqual(quickActionsBox.y + quickActionsBox.height - 1);
   }
 
-  const installButton = page.locator('.install-app-button[data-install-app]');
+  const installButton = page.locator('[data-install-app]:visible').first();
   await expect(installButton).toBeVisible();
+  await expect(installButton).toContainText(isMobile ? 'Save VanAssist to your phone' : 'Save VanAssist before you go');
+  await expectElementStartsInViewport(installButton, viewport.height);
 
   if (process.env.PLAYWRIGHT_SCREENSHOT_DIR) {
     const screenshotPath = path.join(

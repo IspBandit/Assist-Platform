@@ -26,7 +26,7 @@ test('public documentation is responsive, searchable and audience-safe', async (
   expect(await resultCards.count()).toBeGreaterThan(0);
   const firstCard = await resultCards.first().boundingBox();
   expect(firstCard).not.toBeNull();
-  if (testInfo.project.name.startsWith('mobile')) {
+  if (testInfo.project.name.includes('mobile')) {
     expect(firstCard.width, 'mobile result card uses the single-column width').toBeGreaterThan(300);
     for (const control of await page.locator('.docs-search input, .docs-search select, .docs-search button').all()) {
       const box = await control.boundingBox();

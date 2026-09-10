@@ -53,6 +53,26 @@ final class DatasetRoutingTest extends TestCase
         self::assertSame(0.85, $card['assist_confidence']);
     }
 
+    public function testCandidateSourceWebsiteRejectsUnsafeSchemes(): void
+    {
+        $adapter = new DatasetSearchAdapter();
+        $unsafe = $adapter->mapCandidateRow([
+            'id' => 43,
+            'business_name' => 'Unsafe candidate',
+            'website' => 'javascript:alert(1)',
+        ]);
+        $safe = $adapter->mapCandidateRow([
+            'id' => 44,
+            'business_name' => 'Safe candidate',
+            'website' => 'https://example.gov.au/facility',
+        ]);
+
+        self::assertNotNull($unsafe);
+        self::assertNull($unsafe['website']);
+        self::assertNotNull($safe);
+        self::assertSame('https://example.gov.au/facility', $safe['website']);
+    }
+
     public function testAggregatorDedupesExternalsAgainstCanonicalProviders(): void
     {
         $agg = new ResultAggregator();

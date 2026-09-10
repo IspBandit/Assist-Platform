@@ -51,8 +51,13 @@ Required coverage includes:
 
 ### End-to-end
 
-E2E coverage is not yet implemented. It must exercise a real Apache-compatible
-staging environment and disposable mail/storage/database dependencies.
+Playwright acceptance coverage is implemented under `tests/Acceptance` for
+representative public documentation, VanAssist homepage/Ask, three-brand route
+health, TowSmart calculator, TrailerWise marketplace and wrong-brand denial.
+The maintained matrix uses Chromium desktop/mobile/tablet plus Firefox desktop
+and WebKit mobile. Authenticated and external-service journeys still require an
+Apache-compatible staging environment with disposable mail/storage/database
+dependencies.
 
 Critical journeys:
 

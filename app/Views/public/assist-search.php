@@ -120,8 +120,14 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
         <?php if ($result === null): ?><p class="muted" style="margin:0 0 1.5rem">Try: public toilets near me · LPG refill near Batemans Bay · mobile caravan repairer near Emerald</p><?php endif; ?>
 
         <?php if ($result !== null): ?>
-            <?php if ($hasResults && $result->messages !== []): ?>
-                <div class="card" style="border-left:4px solid #c9a227;margin-bottom:1rem">
+            <?php if ($result->messages !== []): ?>
+                <?php
+                $hasEmergencyMessage = count(array_filter(
+                    $result->messages,
+                    static fn (string $message): bool => str_contains($message, 'Triple Zero (000)')
+                )) > 0;
+                ?>
+                <div class="card<?= $hasEmergencyMessage ? ' alert alert-danger' : '' ?>" style="border-left:4px solid #c9a227;margin-bottom:1rem" role="<?= $hasEmergencyMessage ? 'alert' : 'status' ?>">
                     <?php foreach ($result->messages as $message): ?>
                         <p style="margin:0.35rem 0"><?= $this->e($message) ?></p>
                     <?php endforeach; ?>
@@ -246,7 +252,7 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                                 </p>
                             </div>
                             <?php if (!empty($facility['source_url'])): ?>
-                                <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" rel="noopener noreferrer">Source</a>
+                                <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" target="_blank" rel="noopener noreferrer">Source</a>
                             <?php endif; ?>
                         </article>
                         <?php $fitReasons = $outcome['result_reasons'][$facilityKey] ?? []; ?>

@@ -214,9 +214,17 @@ final class IntentRuleEngineTest extends TestCase
         self::assertContains('public_toilet', $intent->facilityTypeKeys);
         self::assertContains('dump_point', $intent->facilityTypeKeys);
         self::assertContains('traveller_facilities', $intent->adapterKeys);
-        self::assertSame('Batehaven', $intent->locationText);
+        self::assertSame('Batehaven, Nsw', $intent->locationText);
         self::assertNotSame(Intent::TYPE_STAY, $intent->intentType);
         self::assertNotContains('caravan_park', $intent->stayTypeKeys);
+    }
+
+    public function testLocationPreservesStateQualifierForDuplicateTownResolution(): void
+    {
+        $intent = $this->engine->interpret('mobile caravan repair near Springfield QLD');
+
+        self::assertSame('Springfield Qld', $intent->locationText);
+        self::assertContains('general-caravan-repairs', $intent->providerCategoryKeys);
     }
 
     public function testLocationStopsBeforeTrailingCaravanContext(): void

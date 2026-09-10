@@ -89,7 +89,7 @@ final class DatasetSearchAdapter
             'business_name' => $name,
             'formatted_address' => $row['formatted_address'] ?? null,
             'phone' => $row['phone'] ?? null,
-            'website' => $row['website'] ?? null,
+            'website' => $this->safeHttpUrl($row['website'] ?? null),
             'latitude' => isset($row['latitude']) && is_numeric($row['latitude']) ? (float) $row['latitude'] : null,
             'longitude' => isset($row['longitude']) && is_numeric($row['longitude']) ? (float) $row['longitude'] : null,
             'duplicate_provider_id' => isset($row['duplicate_provider_id']) ? (int) $row['duplicate_provider_id'] : null,
@@ -197,5 +197,15 @@ final class DatasetSearchAdapter
         }
 
         return ((float) ($card['assist_confidence'] ?? 0)) >= 0.7 ? $card : null;
+    }
+
+    private function safeHttpUrl(mixed $value): ?string
+    {
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+        $url = trim($value);
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+        return in_array($scheme, ['http', 'https'], true) ? $url : null;
     }
 }

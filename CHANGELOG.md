@@ -3,6 +3,26 @@
 ## Unreleased
 
 ### Added
+- **Flagship deterministic Ask VanAssist** — primary homepage plain-language
+  search, explicit structured-search fallback, emergency guidance and reviewed
+  provider/stay/facility result boundaries with paid AI disabled.
+- **National Ask correctness and three-brand browser coverage** — state-qualified
+  and typo-aware location matrices, requested-radius and brand-isolation tests,
+  Chromium/Firefox/WebKit acceptance, and critical public route audits.
+- **Brand module route enforcement** — disabled parks, assistance-request and
+  service-run routes now fail closed on TowSmart and TrailerWise, including
+  authenticated account/provider surfaces and navigation.
+- **Town and provider coordinate gap-fill** — expanded `database/seeds/town_details.json`
+  with SEQ/CQ hub suburbs (Agnes Water, Beenleigh, Caloundra, Loganholme,
+  Maroochydore, Mount Morgan, Noosa Heads, Redcliffe, Southport, Strathpine,
+  and others) plus Bluff and Emu Park from the QLD gazetteer pack.
+- **`tools/enrich-seed-coordinates.js`** — backfills missing postcodes and
+  town-centre coordinates in offline QLD coverage seed packs from
+  `town_details.json` / `towns_national.json`, with alias and name inference
+  for legacy rows missing a `town` field.
+- **`NationalImportSeeder` provider coordinate backfill** — unclaimed providers
+  without a sourced address point now inherit their base town centre on import
+  so map search and distance ranking work until a precise point is confirmed.
 - **TowSmart and TrailerWise shell parity** — footer-action CTA, richer footer
   columns, primary header CTA and save-to-phone install with brand-scoped
   manifests for TowSmart and TrailerWise.
@@ -121,6 +141,9 @@
 All notable changes to VanAssist are documented here.
 
 ### Changed
+- **QLD coverage seed packs** — provider coordinates backfilled from town centres;
+  publishable rows are fully mappable; remaining gaps are statewide listings or
+  scraped rows without locatable town evidence.
 - **Compact, routed public results** — Ask, provider/category search and stays
   now start at 20 results with an explicit expansion to 40, bounding Google
   Routes usage and preventing oversized mobile lists during fallback.
@@ -129,8 +152,7 @@ All notable changes to VanAssist are documented here.
   absent, unknown and vague water evidence remains excluded.
 - **Operational data quality** — Admin API/RIC overview now exposes provider
   contact/exact-coordinate and stay facility/freshness coverage; health reports
-  non-secret Google Routes credential state.
-- **Natural stay requests** — Ask VanAssist now recognises ordinary wording
+  non-secret Google Routes credential state.- **Natural stay requests** — Ask VanAssist now recognises ordinary wording
   such as “somewhere to stay free near Emerald” without requiring paid AI,
   and free-camp searches include stays explicitly priced as free.
 - **Traveller question coverage** — deterministic Ask handling now covers a

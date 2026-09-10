@@ -10,7 +10,11 @@ Signed-in customers who have submitted requests or want to return to a provider 
 
 ## Permissions
 
-Authentication and customer ownership are required for request detail, images and outcomes. Saving a provider changes only the signed-in user's saved list.
+Authentication and customer ownership are required for request detail, images
+and outcomes. Assistance requests are available only on brands whose registry
+enables the `requests` module (currently VanAssist); a direct request URL on
+another brand returns not found. Saving a provider changes only the signed-in
+user's saved list.
 
 ## Fields
 
@@ -50,7 +54,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-09-09.
 
 ## Owner
 

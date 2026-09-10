@@ -5,10 +5,9 @@ state-changing browser routes use CSRF protection.
 
 | Surface | Prefix/examples | Gate |
 |---|---|---|
-| Public | `/`, `/providers`, `/find`, `/ask` (Ask VanAssist; flag `assist_ai_search`), `/services`, `/regions`, `/request-assistance` | Brand/module checks plus rate limits on abuse-prone submissions |
+| Public | `/`, `/providers`, `/find`, `/ask` (Ask VanAssist; flag `assist_ai_search`), `/services`, `/regions`, `/request-assistance` | Brand/module checks plus rate limits on abuse-prone submissions; Ask is VanAssist-only |
 | Public stay facilities | `GET/POST /caravan-parks/{slug}/suggest-facility` | VanAssist active stay; CSRF, rate limit and Turnstile; creates pending evidence only |
-| TowSmart | `/calculator`, `/account/towing-combinations`, `/account/towing-combinations/{id}` | TowSmart host/module; saved snapshot read/delete requires authenticated user and matching owner + brand |
-| TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
+| TowSmart | `/calculator`, `/account/towing-combinations`, `/account/towing-combinations/{id}` | TowSmart host/module; saved snapshot read/delete requires authenticated user and matching owner + brand || TrailerWise | `/marketplace`, `/trailers/{slug}` | TrailerWise host/module; current listing model only |
 | Authentication | `/login`, `/register`, reset/verification/logout | Guest/auth state, CSRF and rate limiting |
 | Customer account | `/account/*` | `auth`; controllers must enforce user ownership and brand scope |
 | Provider portal | `/provider/*` | `auth` plus provider/administrator/super-administrator role; controllers enforce provider ownership |
@@ -54,6 +53,11 @@ event metadata.
 
 Adding a route requires appropriate middleware, controller ownership checks,
 brand isolation tests and an update here when it creates a new surface.
+
+`module:parks`, `module:requests` and `module:service_runs` fail with 404 when
+the trusted host brand disables the corresponding module. This applies to
+public, customer, provider and park routes; hiding navigation alone is not the
+security control.
 
 ## Provider email campaign recipients
 

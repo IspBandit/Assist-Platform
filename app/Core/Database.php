@@ -38,6 +38,14 @@ final class Database
     private static function connect(): PDO
     {
         $cfg = Config::get('database');
+        if (!is_array($cfg)) {
+            throw new RuntimeException('Database configuration is unavailable.');
+        }
+        foreach (['host', 'port', 'name', 'charset', 'user', 'password', 'options'] as $key) {
+            if (!array_key_exists($key, $cfg)) {
+                throw new RuntimeException('Database configuration is incomplete.');
+            }
+        }
         $dsn = sprintf(
             'mysql:host=%s;port=%d;dbname=%s;charset=%s',
             $cfg['host'],

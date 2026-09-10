@@ -7,7 +7,7 @@ use App\Core\Router;
 return static function (Router $router): void {
     $router->group([
         'prefix'     => '/park',
-        'middleware' => ['headers', 'csrf', 'auth', 'role:caravan-park-partner,administrator,super-administrator'],
+        'middleware' => ['headers', 'csrf', 'auth', 'module:parks', 'role:caravan-park-partner,administrator,super-administrator'],
     ], static function (Router $router): void {
         $router->get('', 'ParkController@dashboard', 'park');
 

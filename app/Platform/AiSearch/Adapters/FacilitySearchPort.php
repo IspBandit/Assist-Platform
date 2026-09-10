@@ -12,5 +12,11 @@ interface FacilitySearchPort
      * @param array<string,mixed>|null $town
      * @return list<array<string,mixed>>
      */
-    public function search(Intent $intent, ?array $town = null, ?float $lat = null, ?float $lng = null): array;
+    public function search(
+        Intent $intent,
+        ?array $town = null,
+        ?float $lat = null,
+        ?float $lng = null,
+        ?int $brandId = null,
+    ): array;
 }
