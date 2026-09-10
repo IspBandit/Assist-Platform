@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Production IndexNow notify hardening (OPS-001)
+
+- Production release IndexNow notify now fetches the key and sitemap with the
+  same smoke User-Agent used by journey checks (so bot controls do not 403 the
+  step), submits the sitemap in batches of at most 5,000 URLs (IndexNow limit
+  is 10,000), and continues on IndexNow failure so a healthy deploy is not
+  marked red by best-effort SEO notify.
+
 ### Browser visual UX audit fixes (UX-001)
 
 - VanAssist mobile home keeps the Ask search card intact instead of flattening it

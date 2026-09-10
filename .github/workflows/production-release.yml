@@ -239,21 +239,53 @@ jobs:
           smoke_curl --fail --silent --show-error --location --max-time 20 \
             --output /dev/null https://vanassist.com.au/runtime-assets/img/provider-workshop.webp
       - name: Notify IndexNow after successful release
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
+          # IndexNow is best-effort SEO notify after a healthy release. Failures
+          # must not turn a green deploy red: public bot controls reject bare
+          # curl, and IndexNow accepts at most 10,000 URLs per request.
           host="vanassist.com.au"
           key="0cc3cd247c8746b593e6684d9410bc77"
           key_location="https://${host}/${key}.txt"
-          test "$(curl --fail --silent --show-error --location --max-time 20 "$key_location" | tr -d '\r\n')" = "$key"
-          sitemap="$(curl --fail --silent --show-error --location --max-time 30 "https://${host}/sitemap.xml")"
+          batch_size=5000
+          smoke_user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 AssistPlatform-Production-Smoke/1.0"
+          indexnow_curl() {
+            curl --fail --silent --show-error --location --max-time "$1" \
+              --user-agent "$smoke_user_agent" -H 'X-Assist-Synthetic: 1' "${@:2}"
+          }
+          test "$(indexnow_curl 20 "$key_location" | tr -d '\r\n')" = "$key"
+          sitemap="$(indexnow_curl 60 "https://${host}/sitemap.xml")"
           mapfile -t urls < <(printf '%s' "$sitemap" | sed -n 's:.*<loc>\([^<]*\)</loc>.*:\1:p')
           test "${#urls[@]}" -gt 0
-          payload="$(printf '%s\n' "${urls[@]}" | jq -R . | jq -s --arg host "$host" --arg key "$key" --arg keyLocation "$key_location" '{host:$host,key:$key,keyLocation:$keyLocation,urlList:.}')"
-          curl --fail --silent --show-error --max-time 30 \
-            -H 'Content-Type: application/json; charset=utf-8' \
-            --data "$payload" https://api.indexnow.org/indexnow
-          echo "Submitted ${#urls[@]} canonical VanAssist URLs to IndexNow." >> "$GITHUB_STEP_SUMMARY"
+          submitted=0
+          batch_num=0
+          total="${#urls[@]}"
+          while (( submitted < total )); do
+            batch_num=$((batch_num + 1))
+            batch=( "${urls[@]:submitted:batch_size}" )
+            payload="$(printf '%s\n' "${batch[@]}" | jq -R . | jq -s --arg host "$host" --arg key "$key" --arg keyLocation "$key_location" '{host:$host,key:$key,keyLocation:$keyLocation,urlList:.}')"
+            http_code="$(curl --silent --show-error --max-time 60 \
+              --user-agent "$smoke_user_agent" \
+              -H 'Content-Type: application/json; charset=utf-8' \
+              --data "$payload" \
+              -o /tmp/indexnow-response.txt \
+              -w '%{http_code}' \
+              https://api.indexnow.org/indexnow)"
+            case "$http_code" in
+              200|202)
+                echo "IndexNow batch ${batch_num}: HTTP ${http_code} for ${#batch[@]} URLs."
+                ;;
+              *)
+                echo "IndexNow batch ${batch_num} failed with HTTP ${http_code}:" >&2
+                cat /tmp/indexnow-response.txt >&2 || true
+                exit 1
+                ;;
+            esac
+            submitted=$((submitted + ${#batch[@]}))
+          done
+          echo "Submitted ${total} canonical VanAssist URLs to IndexNow in ${batch_num} batch(es)." >> "$GITHUB_STEP_SUMMARY"
       - name: Record safeguarded provider processing
         run: |
           {
