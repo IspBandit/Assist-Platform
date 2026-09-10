@@ -190,12 +190,17 @@ final class WebsiteInsightsWiringTest extends TestCase
     public function testHomeSearchUsesLocationFirstButManualPlaceWins(): void
     {
         $home = (string) file_get_contents(base_path('app/Views/public/home.php'));
+        $providers = (string) file_get_contents(base_path('app/Views/public/providers-index.php'));
         $script = (string) file_get_contents(base_path('public/assets/js/app.js'));
 
-        self::assertStringContainsString('data-auto-location', $home);
+        // Ask-first homepage keeps structured browse collapsed, so it must not
+        // auto-locate into a hidden form. Directory/find journeys still do.
+        self::assertStringNotContainsString('data-auto-location', $home);
+        self::assertStringContainsString('data-auto-location', $providers);
         self::assertStringContainsString("'autoSubmit' => 'false'", $home);
         self::assertStringContainsString("form.setAttribute('data-location-manual', '1')", $script);
         self::assertStringContainsString("form.getAttribute('data-location-manual') !== '1'", $script);
+        self::assertStringContainsString('locateWatchdog', $script);
     }
 
     public function testTownSuggestionsAnchorToTheLocationInput(): void

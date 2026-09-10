@@ -33,7 +33,7 @@ $number = static function (string $name, string $label, string $help, string $va
                 <button class="btn btn-ghost" type="button" data-custom-entry="vehicle">My vehicle is not listed</button>
             </div>
             <div class="selected-spec" data-selected-summary="vehicle" hidden></div>
-            <div class="spec-grid" data-spec-fields="vehicle">
+            <div class="spec-grid" data-spec-fields="vehicle"<?= $field('vehicle_name') === '' && $field('vehicle_catalogue_id') === '' ? ' hidden' : '' ?>>
                 <div class="form-group span-2"><label for="vehicle_name">Vehicle description</label><input id="vehicle_name" name="vehicle_name" required value="<?= e_attr($field('vehicle_name')) ?>" placeholder="Make, model, variant and year"></div>
                 <?= $number('vehicle_kerb_mass', 'Kerb mass (kg)', 'Vehicle in standard condition; confirm whether fuel is included.') ?>
                 <?= $number('vehicle_gvm', 'GVM (kg)', 'Maximum permitted loaded vehicle mass.') ?>
@@ -55,7 +55,7 @@ $number = static function (string $name, string $label, string $help, string $va
                 <button class="btn btn-ghost" type="button" data-custom-entry="trailer">My caravan or trailer is not listed</button>
             </div>
             <div class="selected-spec" data-selected-summary="trailer" hidden></div>
-            <div class="spec-grid" data-spec-fields="trailer">
+            <div class="spec-grid" data-spec-fields="trailer"<?= $field('trailer_name') === '' && $field('trailer_catalogue_id') === '' ? ' hidden' : '' ?>>
                 <div class="form-group span-2"><label for="trailer_name">Trailer description</label><input id="trailer_name" name="trailer_name" required value="<?= e_attr($field('trailer_name')) ?>" placeholder="Brand, model, type and year"></div>
                 <div class="form-group"><label for="trailer_type">Type</label><select id="trailer_type" name="trailer_type"><?php foreach (['Caravan','Camper','Hybrid','Boat trailer','Horse float','Utility trailer','Other'] as $option): ?><option <?= $field('trailer_type', 'Caravan') === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?></select></div>
                 <div class="form-group"><label for="trailer_axle_config">Axles</label><select id="trailer_axle_config" name="trailer_axle_config"><?php foreach (['Single','Dual','Tri-axle'] as $option): ?><option <?= $field('trailer_axle_config', 'Single') === $option ? 'selected' : '' ?>><?= e($option) ?></option><?php endforeach; ?></select></div>
