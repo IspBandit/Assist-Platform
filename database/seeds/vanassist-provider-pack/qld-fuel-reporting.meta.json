@@ -1,0 +1,9 @@
+{
+  "source": "https://www.data.qld.gov.au/dataset/fuel-price-reporting-2026/resource/82409c67-6333-4dce-a8f0-569735b45139",
+  "licence": "CC BY 4.0",
+  "official_sites": 1753,
+  "replacement_policy": "Current official QLD feed replaces unclaimed QLD fuel seeds",
+  "contact_enrichments_retained": 2,
+  "towns": 762,
+  "emerald_sites": 8
+}

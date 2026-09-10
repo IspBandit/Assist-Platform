@@ -50,6 +50,7 @@ final class ActivityTracker
         // Search / impressions
         'provider_search_completed', 'provider_impression', 'provider_profile_viewed',
         'no_provider_found', 'search_radius_expanded', 'nearby_provider_selected',
+        'stay_search_completed', 'no_stay_found',
         // Contact actions
         'provider_phone_clicked', 'provider_email_clicked', 'provider_website_clicked',
         'provider_directions_clicked', 'provider_message_started', 'provider_request_sent',
@@ -151,7 +152,7 @@ final class ActivityTracker
     public static function excluded(): bool
     {
         try {
-            if (TrackingSession::isBot()) {
+            if (TrafficQuality::excludesCurrentRequest()) {
                 return true;
             }
             $auth = Auth::instance();

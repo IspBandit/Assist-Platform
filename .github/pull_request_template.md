@@ -9,7 +9,6 @@ ADR: <!-- required for material architectural decisions; otherwise N/A -->
 - [ ] VanAssist
 - [ ] TowSmart
 - [ ] TrailerWise
-- [ ] LocalTorque
 - [ ] Shared platform/infrastructure
 
 ## Platform Quality Gate

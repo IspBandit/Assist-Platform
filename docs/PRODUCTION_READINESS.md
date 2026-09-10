@@ -1,9 +1,10 @@
 # Production Readiness
 
 > Historical release-gate assessment. For the verified live state as at
-> 22 July 2026, use `PRODUCTION_CURRENT_STATE.md`. Open gates below remain useful
-> requirements, but statements that the production environment was unverified
-> have been superseded by the production-state record.
+> 13 August 2026, use `PRODUCTION_CURRENT_STATE.md`. Open gates below remain useful
+> requirements; production VanAssist now runs Ask, Admin API and traveller
+> facilities (release `6a3f09d`) while formal commercial launch approval is
+> still required.
 
 ## Current verdict
 

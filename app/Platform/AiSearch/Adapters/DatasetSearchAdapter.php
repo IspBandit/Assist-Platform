@@ -172,7 +172,7 @@ final class DatasetSearchAdapter
         $hasCoords = is_numeric($cLat) && is_numeric($cLng);
 
         if ($lat !== null && $lng !== null && $hasCoords) {
-            $distance = Geo::haversineKm($lat, $lng, (float) $cLat, (float) $cLng);
+            $distance = Geo::haversineExactKm($lat, $lng, (float) $cLat, (float) $cLng);
             if ($distance > $radiusKm) {
                 return null;
             }

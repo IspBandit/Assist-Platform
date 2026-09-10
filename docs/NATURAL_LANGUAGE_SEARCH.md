@@ -1,10 +1,12 @@
 # Natural-language search (Ask VanAssist)
 
-**Status:** implemented (AI-1–AI-7); prepared as VanAssist's primary
-plain-language journey for the September 2026 release candidate. The
-`assist_ai_search` flag remains off by default and is enabled in production
-only for a release candidate that passes the Platform Quality Gate.
-**Backlog:** VAN-011 / CORE-012.
+**Status:** implemented (AI-1–AI-7). New installs seed `assist_ai_search` **off**;
+production VanAssist has Ask **enabled** (release `6a3f09d`, verified 13 Aug 2026).
+The September 2026 release candidate promotes Ask as VanAssist's primary
+plain-language homepage journey while keeping structured search as the explicit
+fallback. Deployment of that homepage ordering still requires the candidate's
+Platform Quality Gate evidence.
+**Backlog:** VAN-011 / CORE-012.  
 **Gate:** [`PHASE_AI0_DESIGN.md`](PHASE_AI0_DESIGN.md),
 [`AI_QUALITY_GATE_EVIDENCE.md`](AI_QUALITY_GATE_EVIDENCE.md).
 
@@ -43,6 +45,25 @@ the existing result partial; stays and facilities use labelled sections on
    → aggregate → log → knowledge gaps.  
 4. Flags: `assist_ai_datasets`, `assist_ai_traveller_facilities` independently
    gate external candidates and facilities.
+5. When an origin and radius are resolved, the aggregator applies a final
+   fail-closed radius invariant to every adapter result. Cards without a
+   measurable location, or beyond the unrounded boundary, are not returned.
+6. When Google Routes is configured, the geographically safe candidate set is
+   enriched in one deduplicated route matrix. Road kilometres become the final
+   boundary and sort value; drive time is displayed as an estimate. A named
+   location that cannot be resolved returns no national fallback results.
+7. Public Ask results start with a compact 20-card window. **Show up to 40
+   results** is explicit; the same bound limits each route matrix and prevents a
+   routing outage from exposing an unbounded national list.
+8. Reviewed stay-facility evidence is searched alongside standalone traveller
+   facilities. It remains attached to the stay and retains its source and
+   precedence; it is not copied into the standalone facility table. Confirmed
+   absent, unknown or vague water claims are never presented as available.
+
+The Routes credential is resolved from the root environment first, then the
+encrypted `google_routes` connector, then the encrypted `google_places`
+connector. Health exposes only whether routing is configured and which safe
+credential source was selected; it never returns the key.
 
 The initial flagship release uses deterministic rules and reviewed canonical
 data with paid AI and pending-dataset answers disabled. State-qualified towns,
@@ -62,3 +83,13 @@ calls. User sees clarification or category-search CTA.
 ## Brand
 
 First surface: VanAssist. Orchestrator remains shared for future brands.
+
+Ask uses the device's current GPS coordinates whenever the question does not
+name a location. The browser may require the traveller to grant location
+permission. A town, suburb, postcode, campground or other supported landmark
+written in the question always overrides device coordinates; an unresolved
+typed location never falls back to stale GPS or an Australia-wide result set.
+Ask also accepts a provider's business name directly. Exact and partial name
+matches use only active, search-visible listings in the selected brand. When a
+location or radius applies, the named provider must still fall inside it;
+business-name lookup never falls back to an Australia-wide alphabetical list.

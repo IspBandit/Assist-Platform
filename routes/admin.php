@@ -45,6 +45,9 @@ return static function (Router $router): void {
         $router->get('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@facilityReview', 'admin.data-sources.facilities.review');
         $router->post('/data-sources/facilities/review', 'Admin\GovernmentDatasetsController@reviewFacility', 'admin.data-sources.facilities.review.post');
         $router->get('/qld-coverage', 'Admin\QldCoverageController@index', 'admin.qld-coverage');
+        $router->get('/facility-contributions', 'Admin\FacilityContributionsController@index', 'admin.facility-contributions');
+        $router->get('/facility-contributions/show', 'Admin\FacilityContributionsController@show', 'admin.facility-contributions.show');
+        $router->post('/facility-contributions/moderate', 'Admin\FacilityContributionsController@moderate', 'admin.facility-contributions.moderate');
 
         // Platform intelligence derived from canonical provider, demand and
         // optional population sources. Recommendations feed Data Sources.
@@ -52,6 +55,8 @@ return static function (Router $router): void {
         $router->post('/data-intelligence/tasks', 'Admin\DataIntelligenceController@createTask', 'admin.data-intelligence.tasks');
         $router->post('/data-intelligence/tasks/status', 'Admin\DataIntelligenceController@updateTask', 'admin.data-intelligence.tasks.status');
         $router->get('/trust-growth', 'Admin\TrustGrowthController@index', 'admin.trust-growth');
+        $router->get('/growth-trust', 'Admin\GrowthTrustController@index', 'admin.growth-trust');
+        $router->post('/growth-trust/publish-town', 'Admin\GrowthTrustController@publishTown', 'admin.growth-trust.publish-town');
         $router->post('/trust-growth/check-sources', 'Admin\TrustGrowthController@checkSources', 'admin.trust-growth.check-sources');
         $router->post('/trust-growth/source', 'Admin\TrustGrowthController@reviewSource', 'admin.trust-growth.source');
         $router->post('/trust-growth/credential', 'Admin\TrustGrowthController@reviewCredential', 'admin.trust-growth.credential');
@@ -118,23 +123,10 @@ return static function (Router $router): void {
         $router->post('/providers/licence/verify', 'Admin\ProvidersController@verifyLicence');
         $router->post('/providers/send-claim-invite', 'Admin\ProvidersController@sendClaimInvite');
         $router->post('/providers/bulk-claim-invites', 'Admin\ProvidersController@bulkClaimInvites');
+        $router->post('/providers/review-claim-request', 'Admin\ProvidersController@reviewClaimRequest');
         $router->get('/trailer-listings', 'Admin\TrailerListingsController@index', 'admin.trailer-listings');
         $router->post('/trailer-listings/status', 'Admin\TrailerListingsController@status', 'admin.trailer-listings.status');
 
-        $router->get('/polaris', 'Admin\PolarisAdminController@index', 'admin.polaris');
-        $router->get('/polaris/manufacturers', 'Admin\PolarisAdminController@manufacturers', 'admin.polaris.manufacturers');
-        $router->get('/polaris/models', 'Admin\PolarisAdminController@models', 'admin.polaris.models');
-        $router->post('/polaris/models/lifecycle', 'Admin\PolarisAdminController@setModelLifecycle', 'admin.polaris.models.lifecycle');
-        $router->get('/polaris/recycle-bin', 'Admin\PolarisAdminController@recycleBin', 'admin.polaris.recycle-bin');
-        $router->get('/polaris/review-queue', 'Admin\PolarisAdminController@reviewQueue', 'admin.polaris.review-queue');
-        $router->post('/polaris/review-queue/draft', 'Admin\PolarisAdminController@reviewDraft', 'admin.polaris.review-draft');
-        $router->post('/polaris/review-queue/claim', 'Admin\PolarisAdminController@reviewClaim', 'admin.polaris.review-claim');
-        $router->get('/polaris/imports', 'Admin\PolarisAdminController@imports', 'admin.polaris.imports');
-        $router->post('/polaris/imports/upload', 'Admin\PolarisAdminController@uploadImport', 'admin.polaris.imports.upload');
-        $router->post('/polaris/manufacturers/merge', 'Admin\PolarisAdminController@mergeManufacturers', 'admin.polaris.manufacturers.merge');
-        $router->post('/polaris/review-queue/dealer', 'Admin\PolarisAdminController@reviewDealerClaim', 'admin.polaris.review-dealer');
-        $router->get('/polaris/settings', 'Admin\PolarisAdminController@settings', 'admin.polaris.settings');
-        $router->get('/polaris/{section}', 'Admin\PolarisAdminController@placeholder', 'admin.polaris.section');
         $router->get('/providers/duplicates', 'Admin\ProvidersController@duplicates', 'admin.providers.duplicates');
         $router->get('/recycle-bin', 'Admin\RecycleBinController@index', 'admin.recycle-bin');
         $router->post('/recycle-bin/restore', 'Admin\RecycleBinController@restore', 'admin.recycle-bin.restore');

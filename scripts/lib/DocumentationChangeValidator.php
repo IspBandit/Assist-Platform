@@ -46,7 +46,7 @@ final class DocumentationChangeValidator
         'public' => [
             'label' => 'public or customer interface',
             'patterns' => [
-                '#^app/Views/(public|account|auth|brands|documentation|errors|localtorque|partials|towsmart|trailerwise)/#i',
+                '#^app/Views/(public|account|auth|brands|documentation|errors|regulatory|partials|towsmart|trailerwise)/#i',
                 '#^app/Views/layouts/(?!admin\.php$)#i',
                 '#^app/Controllers/(Site|Account|Auth)/#i',
                 '#^routes/(web|account|auth)\.php$#i',
@@ -60,7 +60,6 @@ final class DocumentationChangeValidator
                 'docs/VANASSIST_USER_GUIDE.md',
                 'docs/TOWSMART_USER_GUIDE.md',
                 'docs/TRAILERWISE_USER_GUIDE.md',
-                'docs/LOCALTORQUE_USER_GUIDE.md',
                 'docs/user-guide/customer-guide/',
             ],
         ],

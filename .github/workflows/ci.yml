@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
@@ -76,7 +76,7 @@ jobs:
           --head-ref "${{ github.event.pull_request.head.sha }}"
 
       - name: Cache Composer downloads
-        uses: actions/cache@v4
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.composer/cache/files
           key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
@@ -84,6 +84,15 @@ jobs:
 
       - name: Validate Composer metadata
         run: composer validate --strict
+
+      - name: Check service-worker activation preserves forms
+        run: node --test tests/service-worker-activation.test.cjs
+
+      - name: Check CQDiggings redirects in the production Caddy engine
+        run: node --test tests/cqdiggings-edge.test.cjs
+
+      - name: Check shared public-edge release guard
+        run: node --test tests/shared-edge-guard.test.cjs
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -108,9 +117,9 @@ jobs:
       - name: Validate seeds
         run: php scripts/seed.php
 
-      - name: Validate authoritative LocalTorque provider pack
+      - name: Validate authoritative VanAssist provider pack
         run: |
-          php scripts/seed.php --localtorque
+          php scripts/seed.php --provider-pack
           php scripts/data-quality-audit.php --strict
 
       - name: Validate encrypted database secrets

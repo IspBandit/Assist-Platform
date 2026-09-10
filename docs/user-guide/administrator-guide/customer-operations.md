@@ -27,6 +27,7 @@ Customers require `customers.manage`; requests require `requests.manage`; matchi
 - **Matching:** **Match**, open **Full request**, **Add**, **Add & invite**, update match status, and **Release contact** when offered.
 - **Service runs:** **New run**, **Open**, pagination, save/edit the run, set status with a note, add/remove services and stops, update registration status, unlink requests, and open matched candidates.
 - **Places to stay:** **Open**, **Review discovered stays** only when its VanAssist/platform-role conditions pass, **View public page**, **Edit**, approve/reject a claim, set status, download a document and update a service-day request. Discovery review offers upload/stage/process controls and per-candidate **Create private draft**, **Link existing**, **Hold** / **Restore**, and **Reject**.
+- **Facility contributions:** review current resolved facts beside each user suggestion. Approve, edit-and-approve, partially approve, reject or mark duplicate. Approval publishes a source-linked claim through the shared service; rejection does not change public facility data.
 
 ## Workflows
 

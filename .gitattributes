@@ -4,3 +4,4 @@
 **/.htaccess text eol=lf
 infrastructure/binarylane/*.sh text eol=lf
 infrastructure/binarylane/ops/*.sh text eol=lf
+*.sh text eol=lf

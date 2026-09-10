@@ -87,6 +87,9 @@ node tools/qld-places-gap-fill.js --dry-run
 # 2) Spend budget; write discovery candidates under storage/imports (not production DB)
 node tools/qld-places-gap-fill.js --write
 
+# Remaining Queensland hubs, using the balance of the same cumulative budget
+node tools/qld-places-gap-fill.js --scope rest-qld --budget-aud 27.50 --write
+
 # 3) Shape existing publishable pack into review-queue files (no DB)
 php scripts/qld-coverage-import-dry-run.php --batch brisbane-moreton-bay
 php scripts/qld-coverage-import-dry-run.php --batch central-queensland
@@ -98,6 +101,12 @@ php scripts/qld-coverage-import-dry-run.php --batch central-queensland --apply
 
 Then open **Admin → Import review** and process candidates. Places-provenance
 rows stay held until you confirm an independent source or claim.
+
+The `rest-qld` scope covers 63 additional regional hubs across Darling Downs,
+Wide Bay, Mackay–Whitsunday, Townsville/North Queensland, Cairns/Far North and
+Gulf/Cape/remote Queensland. It excludes the original SEQ/Central Queensland
+hubs and stops at the supplied request budget even if some planned searches
+remain.
 
 ## After you have the key
 

@@ -1,0 +1,291 @@
+{
+  "version": 1,
+  "purpose": "VanAssist provider taxonomy — automotive businesses Australia-wide",
+  "brands": ["vanassist", "towsmart", "trailerwise"],
+  "groups": [
+    {
+      "id": "mechanical-repairs",
+      "name": "Mechanical Repairs",
+      "categories": [
+        {"id": "general-mechanic", "name": "General Mechanics", "vanassist": ["mechanical"], "brands": ["vanassist"], "osm": [{"shop": "car_repair"}], "name_keywords": ["mechanic", "auto service", "car service", "automotive repair"], "places_queries": ["mechanic", "car repair", "auto service"]},
+        {"id": "mobile-mechanic", "name": "Mobile Mechanics", "vanassist": ["mechanical"], "brands": ["vanassist"], "osm": [], "name_keywords": ["mobile mechanic", "mobile diesel"], "places_queries": ["mobile mechanic"]},
+        {"id": "european-specialist", "name": "European Specialists", "brands": [], "name_keywords": ["european specialist", "bmw specialist", "mercedes specialist", "audi specialist", "volkswagen specialist"], "places_queries": ["european car specialist"]},
+        {"id": "japanese-specialist", "name": "Japanese Specialists", "brands": [], "name_keywords": ["japanese specialist", "toyota specialist", "subaru specialist", "nissan specialist", "honda specialist"], "places_queries": ["japanese car specialist"]},
+        {"id": "korean-specialist", "name": "Korean Specialists", "brands": [], "name_keywords": ["korean specialist", "hyundai specialist", "kia specialist"], "places_queries": ["korean car specialist"]},
+        {"id": "american-specialist", "name": "American Specialists", "brands": [], "name_keywords": ["american specialist", "ford specialist", "chevy specialist", "muscle car"], "places_queries": ["american car specialist"]},
+        {"id": "classic-car-specialist", "name": "Classic Car Specialists", "brands": [], "name_keywords": ["classic car", "vintage car", "restoration"], "places_queries": ["classic car restoration"]},
+        {"id": "performance-workshop", "name": "Performance Workshops", "brands": [], "name_keywords": ["performance workshop", "tuning workshop", "race shop"], "places_queries": ["performance car workshop"]},
+        {"id": "diesel-specialist", "name": "Diesel Specialists", "brands": ["vanassist"], "name_keywords": ["diesel specialist", "diesel mechanic", "common rail"], "places_queries": ["diesel mechanic"]},
+        {"id": "heavy-diesel", "name": "Heavy Diesel Workshops", "brands": [], "osm": [{"service:vehicle:truck_repair": "yes"}], "name_keywords": ["heavy diesel", "truck diesel"], "places_queries": ["heavy diesel mechanic", "truck mechanic"]},
+        {"id": "truck-mechanic", "name": "Truck Mechanics", "brands": [], "osm": [{"service:vehicle:truck_repair": "yes"}], "name_keywords": ["truck mechanic", "truck service"], "places_queries": ["truck mechanic"]},
+        {"id": "fleet-maintenance", "name": "Fleet Maintenance", "brands": [], "name_keywords": ["fleet maintenance", "fleet service"], "places_queries": ["fleet maintenance"]}
+      ]
+    },
+    {
+      "id": "electrical",
+      "name": "Electrical",
+      "categories": [
+        {"id": "auto-electrician", "name": "Auto Electricians", "vanassist": ["autoelec"], "brands": ["vanassist"], "osm": [{"service:vehicle:electrical": "yes"}], "name_keywords": ["auto electrician", "auto electrical", "12 volt", "12v"], "places_queries": ["auto electrician"]},
+        {"id": "ecu-specialist", "name": "ECU Specialists", "brands": [], "name_keywords": ["ecu specialist", "ecu repair", "ecu reman"], "places_queries": ["ecu repair"]},
+        {"id": "battery-specialist", "name": "Battery Specialists", "brands": ["vanassist"], "name_keywords": ["battery specialist", "battery world", "car battery"], "places_queries": ["car battery shop"]},
+        {"id": "starter-alternator", "name": "Starter & Alternator Specialists", "brands": [], "name_keywords": ["starter motor", "alternator"], "places_queries": ["starter motor repair", "alternator repair"]},
+        {"id": "wiring-specialist", "name": "Wiring Specialists", "brands": [], "name_keywords": ["auto wiring", "vehicle wiring"], "places_queries": ["auto wiring"]},
+        {"id": "lighting-installer", "name": "Lighting Installers", "brands": ["vanassist"], "name_keywords": ["driving lights", "led light bar", "vehicle lighting"], "places_queries": ["driving light installation"]},
+        {"id": "dual-battery-installer", "name": "Dual Battery Installers", "vanassist": ["autoelec"], "brands": ["vanassist"], "name_keywords": ["dual battery", "aux battery", "second battery"], "places_queries": ["dual battery installation"]},
+        {"id": "vehicle-solar-installer", "name": "Solar Installers (Vehicle)", "vanassist": ["autoelec", "caravan"], "brands": ["vanassist"], "name_keywords": ["caravan solar", "vehicle solar", "12v solar"], "places_queries": ["caravan solar installation"]}
+      ]
+    },
+    {
+      "id": "engine",
+      "name": "Engine",
+      "categories": [
+        {"id": "engine-rebuilder", "name": "Engine Rebuilders", "brands": [], "name_keywords": ["engine rebuild", "engine reconditioning", "machine shop"], "places_queries": ["engine reconditioning"]},
+        {"id": "cylinder-head", "name": "Cylinder Head Specialists", "brands": [], "name_keywords": ["cylinder head"], "places_queries": ["cylinder head specialist"]},
+        {"id": "turbo-specialist", "name": "Turbo Specialists", "brands": [], "name_keywords": ["turbo specialist", "turbocharger"], "places_queries": ["turbocharger repair"]},
+        {"id": "supercharger-specialist", "name": "Supercharger Specialists", "brands": [], "name_keywords": ["supercharger"], "places_queries": ["supercharger specialist"]},
+        {"id": "injector-specialist", "name": "Injector Specialists", "brands": [], "name_keywords": ["injector specialist", "fuel injector"], "places_queries": ["fuel injector repair"]},
+        {"id": "fuel-system", "name": "Fuel System Specialists", "brands": [], "name_keywords": ["fuel system", "fuel pump"], "places_queries": ["fuel system specialist"]},
+        {"id": "cooling-specialist", "name": "Cooling Specialists", "brands": [], "name_keywords": ["cooling system", "radiator"], "places_queries": ["radiator specialist"]},
+        {"id": "radiator-shop", "name": "Radiator Shops", "brands": [], "name_keywords": ["radiator"], "places_queries": ["radiator repair"]}
+      ]
+    },
+    {
+      "id": "transmission",
+      "name": "Transmission",
+      "categories": [
+        {"id": "auto-transmission", "name": "Automatic Transmission Specialists", "brands": [], "name_keywords": ["automatic transmission", "auto transmission"], "places_queries": ["automatic transmission specialist"]},
+        {"id": "manual-transmission", "name": "Manual Transmission Specialists", "brands": [], "name_keywords": ["manual transmission", "gearbox"], "places_queries": ["gearbox specialist"]},
+        {"id": "differential", "name": "Differential Specialists", "brands": [], "name_keywords": ["differential specialist", "diff specialist"], "places_queries": ["differential repair"]},
+        {"id": "clutch-specialist", "name": "Clutch Specialists", "brands": [], "name_keywords": ["clutch specialist"], "places_queries": ["clutch specialist"]},
+        {"id": "driveline", "name": "Driveline Specialists", "brands": [], "name_keywords": ["driveline", "driveshaft"], "places_queries": ["driveshaft repair"]},
+        {"id": "cv-joint", "name": "CV Joint Specialists", "brands": [], "name_keywords": ["cv joint", "cv boots"], "places_queries": ["cv joint repair"]}
+      ]
+    },
+    {
+      "id": "suspension-steering",
+      "name": "Suspension & Steering",
+      "categories": [
+        {"id": "suspension-specialist", "name": "Suspension Specialists", "brands": ["vanassist"], "name_keywords": ["suspension specialist", "suspension workshop"], "places_queries": ["suspension specialist"]},
+        {"id": "lift-kit", "name": "Lift Kit Installers", "brands": ["vanassist"], "name_keywords": ["lift kit", "suspension lift"], "places_queries": ["lift kit installation"]},
+        {"id": "lowering-specialist", "name": "Lowering Specialists", "brands": [], "name_keywords": ["lowering springs", "vehicle lowering"], "places_queries": ["car lowering"]},
+        {"id": "steering-repairs", "name": "Steering Repairs", "brands": [], "name_keywords": ["steering repair", "power steering", "rack and pinion"], "places_queries": ["steering repair"]},
+        {"id": "wheel-alignment", "name": "Wheel Alignment", "brands": [], "name_keywords": ["wheel alignment", "tyre alignment"], "places_queries": ["wheel alignment"]},
+        {"id": "shock-absorber", "name": "Shock Absorber Specialists", "brands": [], "name_keywords": ["shock absorber", "strut"], "places_queries": ["shock absorber replacement"]}
+      ]
+    },
+    {
+      "id": "wheels-tyres",
+      "name": "Wheels & Tyres",
+      "categories": [
+        {"id": "tyre-shop", "name": "Tyre Shops", "vanassist": ["mechanical"], "brands": ["vanassist"], "osm": [{"shop": "tyres"}], "name_keywords": ["tyres", "tyre shop", "tyrepower", "bob jane", "jax tyres"], "places_queries": ["tyre shop"]},
+        {"id": "mobile-tyre", "name": "Mobile Tyre Repair", "brands": ["vanassist"], "name_keywords": ["mobile tyre", "tyre repair mobile"], "places_queries": ["mobile tyre repair"]},
+        {"id": "wheel-balancing", "name": "Wheel Balancing", "brands": [], "name_keywords": ["wheel balancing"], "places_queries": ["wheel balancing"]},
+        {"id": "alloy-wheel-repair", "name": "Alloy Wheel Repairs", "brands": [], "name_keywords": ["alloy wheel repair", "mag repair"], "places_queries": ["alloy wheel repair"]},
+        {"id": "offroad-tyres", "name": "Off-road Tyres", "brands": ["vanassist"], "name_keywords": ["offroad tyre", "4x4 tyre", "mud tyre"], "places_queries": ["4x4 tyres"]}
+      ]
+    },
+    {
+      "id": "brakes",
+      "name": "Brakes",
+      "categories": [
+        {"id": "brake-specialist", "name": "Brake Specialists", "brands": [], "osm": [{"service:vehicle:brakes": "yes"}], "name_keywords": ["brake specialist", "brake shop"], "places_queries": ["brake specialist"]},
+        {"id": "abs-repairs", "name": "ABS Repairs", "brands": [], "name_keywords": ["abs repair", "abs specialist"], "places_queries": ["ABS repair"]},
+        {"id": "brake-machining", "name": "Brake Machining", "brands": [], "name_keywords": ["brake machining", "disc machining", "drum machining"], "places_queries": ["brake disc machining"]}
+      ]
+    },
+    {
+      "id": "body-repairs",
+      "name": "Body Repairs",
+      "categories": [
+        {"id": "panel-beater", "name": "Panel Beaters", "brands": [], "osm": [{"shop": "car_repair", "car_repair": "bodywork"}], "name_keywords": ["panel beater", "panel beating"], "places_queries": ["panel beater"]},
+        {"id": "paint-shop", "name": "Paint Shops", "brands": [], "name_keywords": ["spray painter", "auto paint", "car paint"], "places_queries": ["car paint shop"]},
+        {"id": "smash-repairs", "name": "Smash Repairs", "brands": [], "name_keywords": ["smash repair", "collision repair"], "places_queries": ["smash repairs"]},
+        {"id": "dent-removal", "name": "Dent Removal", "brands": [], "name_keywords": ["dent removal", "paintless dent", "pdr"], "places_queries": ["paintless dent removal"]},
+        {"id": "hail-repair", "name": "Hail Repair", "brands": [], "name_keywords": ["hail repair", "hail damage"], "places_queries": ["hail repair"]},
+        {"id": "rust-repairs", "name": "Rust Repairs", "brands": [], "name_keywords": ["rust repair", "rust proofing"], "places_queries": ["car rust repair"]},
+        {"id": "chassis-straightening", "name": "Chassis Straightening", "brands": [], "name_keywords": ["chassis straightening", "frame straightening"], "places_queries": ["chassis straightening"]}
+      ]
+    },
+    {
+      "id": "glass",
+      "name": "Glass",
+      "categories": [
+        {"id": "windscreen", "name": "Windscreens", "brands": [], "name_keywords": ["windscreen", "windshield", "autoglass"], "places_queries": ["windscreen replacement"]},
+        {"id": "side-rear-glass", "name": "Side & Rear Glass", "brands": [], "name_keywords": ["car glass", "door glass"], "places_queries": ["car glass repair"]},
+        {"id": "chip-repair", "name": "Chip Repairs", "brands": [], "name_keywords": ["windscreen chip", "chip repair"], "places_queries": ["windscreen chip repair"]},
+        {"id": "window-tinting", "name": "Tinting", "brands": [], "name_keywords": ["window tint", "car tinting"], "places_queries": ["car window tinting"]}
+      ]
+    },
+    {
+      "id": "air-conditioning",
+      "name": "Air Conditioning",
+      "categories": [
+        {"id": "auto-aircon", "name": "Automotive Air Conditioning", "vanassist": ["caravan"], "brands": ["vanassist"], "osm": [{"service:vehicle:air_conditioning": "yes"}], "name_keywords": ["auto air conditioning", "car aircon", "vehicle aircon"], "places_queries": ["car air conditioning"]},
+        {"id": "vehicle-refrigeration", "name": "Refrigeration Specialists", "brands": ["vanassist"], "name_keywords": ["caravan fridge", "rv fridge", "vehicle refrigeration"], "places_queries": ["caravan fridge repair"]}
+      ]
+    },
+    {
+      "id": "exhaust",
+      "name": "Exhaust",
+      "categories": [
+        {"id": "exhaust-shop", "name": "Exhaust Shops", "brands": [], "name_keywords": ["exhaust", "muffler"], "places_queries": ["exhaust shop"]},
+        {"id": "muffler-shop", "name": "Muffler Shops", "brands": [], "name_keywords": ["muffler"], "places_queries": ["muffler shop"]},
+        {"id": "custom-exhaust", "name": "Custom Exhaust Fabrication", "brands": [], "name_keywords": ["custom exhaust", "performance exhaust"], "places_queries": ["custom exhaust"]}
+      ]
+    },
+    {
+      "id": "fabrication",
+      "name": "Fabrication",
+      "categories": [
+        {"id": "general-fabricator", "name": "General Fabricators", "vanassist": ["trailer"], "brands": ["vanassist", "towsmart", "trailerwise"], "osm": [{"craft": "metal_construction"}, {"craft": "welder"}], "name_keywords": ["fabricator", "fabrication", "mobile weld"], "places_queries": ["metal fabricator", "welding shop"]},
+        {"id": "aluminium-welding", "name": "Aluminium Welding", "brands": ["trailerwise"], "name_keywords": ["aluminium welding", "aluminum welding"], "places_queries": ["aluminium welding"]},
+        {"id": "steel-fabrication", "name": "Steel Fabrication", "brands": ["trailerwise"], "name_keywords": ["steel fabrication"], "places_queries": ["steel fabrication"]},
+        {"id": "stainless-fabrication", "name": "Stainless Fabrication", "brands": [], "name_keywords": ["stainless fabrication", "stainless steel welding"], "places_queries": ["stainless steel fabrication"]},
+        {"id": "chassis-fabrication", "name": "Chassis Fabrication", "brands": ["trailerwise"], "name_keywords": ["chassis fabrication"], "places_queries": ["chassis fabrication"]},
+        {"id": "custom-fabrication", "name": "Custom Fabrication", "brands": ["vanassist", "trailerwise"], "name_keywords": ["custom fabrication", "custom metalwork"], "places_queries": ["custom fabrication"]}
+      ]
+    },
+    {
+      "id": "caravan-rv",
+      "name": "Caravan & RV",
+      "categories": [
+        {"id": "caravan-repairs", "name": "Caravan Repairs", "vanassist": ["caravan"], "brands": ["vanassist"], "osm": [{"shop": "caravan"}, {"craft": "caravan"}, {"service:vehicle:caravan_repair": "yes"}], "name_keywords": ["caravan repair", "caravan service"], "places_queries": ["caravan repair"]},
+        {"id": "camper-trailer-repairs", "name": "Camper Trailer Repairs", "vanassist": ["caravan"], "brands": ["vanassist", "trailerwise"], "name_keywords": ["camper trailer"], "places_queries": ["camper trailer repair"]},
+        {"id": "rv-repairs", "name": "RV Repairs", "vanassist": ["caravan"], "brands": ["vanassist"], "osm": [{"service:vehicle:motorhome_repair": "yes"}], "name_keywords": ["rv repair", "recreational vehicle"], "places_queries": ["RV repair"]},
+        {"id": "motorhome-repairs", "name": "Motorhome Repairs", "vanassist": ["caravan"], "brands": ["vanassist"], "name_keywords": ["motorhome"], "places_queries": ["motorhome repair"]},
+        {"id": "awning-repairs", "name": "Awning Repairs", "vanassist": ["caravan"], "brands": ["vanassist"], "name_keywords": ["awning repair", "caravan awning"], "places_queries": ["caravan awning repair"]},
+        {"id": "water-system-repairs", "name": "Water System Repairs", "vanassist": ["caravan", "plumber"], "brands": ["vanassist"], "name_keywords": ["caravan plumbing", "water system"], "places_queries": ["caravan plumbing"]},
+        {"id": "gas-certification", "name": "Gas Certification", "vanassist": ["gasfitter"], "brands": ["vanassist"], "osm": [{"shop": "gas"}], "name_keywords": ["gas certification", "gas fitter", "lpg"], "places_queries": ["caravan gas certification"]}
+      ]
+    },
+    {
+      "id": "trailer",
+      "name": "Trailer",
+      "categories": [
+        {"id": "trailer-repairs", "name": "Trailer Repairs", "vanassist": ["trailer"], "brands": ["trailerwise", "towsmart"], "osm": [{"shop": "trailer"}], "name_keywords": ["trailer repair", "trailer service"], "places_queries": ["trailer repair"]},
+        {"id": "trailer-fabrication", "name": "Trailer Fabrication", "vanassist": ["trailer"], "brands": ["trailerwise", "towsmart"], "name_keywords": ["trailer fabrication", "custom trailer", "trailer builder"], "places_queries": ["trailer manufacturer", "custom trailer"]},
+        {"id": "trailer-electrical", "name": "Trailer Electrical", "vanassist": ["trailer", "autoelec"], "brands": ["trailerwise"], "name_keywords": ["trailer electrical", "trailer lights"], "places_queries": ["trailer electrical"]},
+        {"id": "trailer-suspension", "name": "Trailer Suspension", "vanassist": ["trailer"], "brands": ["trailerwise"], "name_keywords": ["trailer suspension"], "places_queries": ["trailer suspension"]},
+        {"id": "trailer-brakes", "name": "Trailer Brakes", "vanassist": ["trailer"], "brands": ["trailerwise", "towsmart"], "name_keywords": ["trailer brakes", "electric brakes"], "places_queries": ["trailer brake repair"]},
+        {"id": "trailer-bearings", "name": "Trailer Bearings", "vanassist": ["trailer"], "brands": ["trailerwise"], "name_keywords": ["trailer bearings", "brake and bearing"], "places_queries": ["trailer bearing repack"]}
+      ]
+    },
+    {
+      "id": "fourwd",
+      "name": "4WD",
+      "categories": [
+        {"id": "bullbar-installation", "name": "Bullbar Installation", "brands": ["vanassist"], "name_keywords": ["bullbar", "bull bar"], "places_queries": ["bullbar installation"]},
+        {"id": "canopy-installation", "name": "Canopy Installation", "brands": [], "name_keywords": ["ute canopy", "canopy fitment"], "places_queries": ["ute canopy"]},
+        {"id": "roof-rack-installation", "name": "Roof Rack Installation", "brands": ["vanassist"], "name_keywords": ["roof rack", "roof bars"], "places_queries": ["roof rack installation"]},
+        {"id": "recovery-gear", "name": "Recovery Gear Installation", "brands": ["vanassist"], "name_keywords": ["recovery gear", "recovery points"], "places_queries": ["4wd recovery gear"]},
+        {"id": "winch-installation", "name": "Winch Installation", "brands": ["vanassist"], "name_keywords": ["winch installation", "winch fitment"], "places_queries": ["winch installation"]},
+        {"id": "snorkel-installation", "name": "Snorkel Installation", "brands": ["vanassist"], "name_keywords": ["snorkel"], "places_queries": ["snorkel installation"]}
+      ]
+    },
+    {
+      "id": "accessories",
+      "name": "Accessories",
+      "categories": [
+        {"id": "towbar-installation", "name": "Towbar Installation", "brands": ["towsmart", "vanassist"], "name_keywords": ["towbar", "tow bar", "tow hitch"], "places_queries": ["towbar fitting"]},
+        {"id": "brake-controller", "name": "Electric Brake Controllers", "brands": ["towsmart", "trailerwise"], "name_keywords": ["brake controller", "electric brake controller"], "places_queries": ["electric brake controller"]},
+        {"id": "uhf-installation", "name": "UHF Installation", "brands": ["vanassist"], "name_keywords": ["uhf", "cb radio"], "places_queries": ["UHF radio installation"]},
+        {"id": "dash-camera", "name": "Dash Cameras", "brands": [], "name_keywords": ["dash cam", "dashcam"], "places_queries": ["dash camera installation"]},
+        {"id": "reverse-camera", "name": "Reverse Cameras", "brands": ["towsmart"], "name_keywords": ["reverse camera", "backup camera"], "places_queries": ["reverse camera installation"]},
+        {"id": "gps-installation", "name": "GPS Installation", "brands": [], "name_keywords": ["gps installation", "fleet gps"], "places_queries": ["GPS installation"]}
+      ]
+    },
+    {
+      "id": "inspections",
+      "name": "Vehicle Inspections",
+      "categories": [
+        {"id": "roadworthy", "name": "Roadworthy Certificates", "vanassist": ["roadworthy"], "brands": ["vanassist"], "osm": [{"amenity": "vehicle_inspection"}], "name_keywords": ["roadworthy", "rwc", "safety certificate"], "places_queries": ["roadworthy certificate"]},
+        {"id": "pink-slip", "name": "Pink Slips", "vanassist": ["roadworthy"], "brands": [], "name_keywords": ["pink slip"], "places_queries": ["pink slip"]},
+        {"id": "blue-slip", "name": "Blue Slips (NSW)", "vanassist": ["roadworthy"], "brands": [], "name_keywords": ["blue slip"], "places_queries": ["blue slip NSW"]},
+        {"id": "prepurchase-inspection", "name": "Pre-purchase Inspections", "brands": [], "name_keywords": ["pre-purchase inspection", "prepurchase", "ppi"], "places_queries": ["pre purchase car inspection"]},
+        {"id": "vehicle-inspection", "name": "Vehicle Inspections", "brands": [], "name_keywords": ["vehicle inspection"], "places_queries": ["vehicle inspection"]},
+        {"id": "fleet-inspection", "name": "Fleet Inspections", "brands": [], "name_keywords": ["fleet inspection"], "places_queries": ["fleet vehicle inspection"]}
+      ]
+    },
+    {
+      "id": "locksmiths",
+      "name": "Locksmiths",
+      "categories": [
+        {"id": "auto-locksmith", "name": "Automotive Locksmiths", "brands": [], "name_keywords": ["auto locksmith", "car locksmith", "automotive locksmith"], "places_queries": ["automotive locksmith"]},
+        {"id": "key-coding", "name": "Key Coding", "brands": [], "name_keywords": ["key coding", "car key programming"], "places_queries": ["car key coding"]},
+        {"id": "immobiliser", "name": "Immobiliser Programming", "brands": [], "name_keywords": ["immobiliser", "immobilizer"], "places_queries": ["immobiliser programming"]}
+      ]
+    },
+    {
+      "id": "marine",
+      "name": "Marine",
+      "categories": [
+        {"id": "marine-mechanic", "name": "Marine Mechanics", "brands": [], "name_keywords": ["marine mechanic", "boat mechanic"], "places_queries": ["marine mechanic"]},
+        {"id": "outboard-specialist", "name": "Outboard Specialists", "brands": [], "name_keywords": ["outboard", "outboard motor"], "places_queries": ["outboard motor repair"]},
+        {"id": "trailer-boat-repairs", "name": "Trailer Boat Repairs", "brands": ["trailerwise"], "name_keywords": ["boat trailer", "trailer boat"], "places_queries": ["boat trailer repair"]}
+      ]
+    },
+    {
+      "id": "motorcycle",
+      "name": "Motorcycle",
+      "categories": [
+        {"id": "motorcycle-workshop", "name": "Motorcycle Workshops", "brands": [], "osm": [{"shop": "motorcycle"}], "name_keywords": ["motorcycle workshop", "bike mechanic", "motorbike"], "places_queries": ["motorcycle mechanic"]},
+        {"id": "motorcycle-tyres", "name": "Motorcycle Tyres", "brands": [], "name_keywords": ["motorcycle tyre", "bike tyre"], "places_queries": ["motorcycle tyres"]},
+        {"id": "motorcycle-suspension", "name": "Motorcycle Suspension", "brands": [], "name_keywords": ["motorcycle suspension"], "places_queries": ["motorcycle suspension"]},
+        {"id": "motorcycle-dyno", "name": "Dyno Tuners (Motorcycle)", "brands": [], "name_keywords": ["motorcycle dyno", "bike dyno"], "places_queries": ["motorcycle dyno"]}
+      ]
+    },
+    {
+      "id": "agricultural",
+      "name": "Agricultural",
+      "categories": [
+        {"id": "tractor-repairs", "name": "Tractor Repairs", "brands": [], "name_keywords": ["tractor repair", "tractor mechanic"], "places_queries": ["tractor repair"]},
+        {"id": "ag-machinery", "name": "Agricultural Machinery", "brands": [], "name_keywords": ["agricultural machinery", "farm machinery"], "places_queries": ["agricultural machinery repair"]},
+        {"id": "irrigation-pumps", "name": "Irrigation Pumps", "brands": [], "name_keywords": ["irrigation pump"], "places_queries": ["irrigation pump repair"]},
+        {"id": "diesel-pumps", "name": "Diesel Pumps", "brands": [], "name_keywords": ["diesel pump"], "places_queries": ["diesel pump repair"]}
+      ]
+    },
+    {
+      "id": "heavy-industry",
+      "name": "Heavy Industry",
+      "categories": [
+        {"id": "earthmoving-repairs", "name": "Earthmoving Repairs", "brands": [], "name_keywords": ["earthmoving repair", "plant repair"], "places_queries": ["earthmoving repairs"]},
+        {"id": "mining-equipment", "name": "Mining Equipment", "brands": [], "name_keywords": ["mining equipment repair"], "places_queries": ["mining equipment repair"]},
+        {"id": "excavator-repairs", "name": "Excavator Repairs", "brands": [], "name_keywords": ["excavator repair"], "places_queries": ["excavator repair"]},
+        {"id": "crane-repairs", "name": "Crane Repairs", "brands": [], "name_keywords": ["crane repair"], "places_queries": ["crane repair"]}
+      ]
+    },
+    {
+      "id": "specialist-services",
+      "name": "Specialist Services",
+      "categories": [
+        {"id": "dyno-tuner", "name": "Dyno Tuners", "brands": [], "name_keywords": ["dyno", "dyno tune"], "places_queries": ["dyno tuning"]},
+        {"id": "ecu-mapping", "name": "ECU Mapping", "brands": [], "name_keywords": ["ecu mapping", "ecu tune", "remap"], "places_queries": ["ECU remapping"]},
+        {"id": "race-preparation", "name": "Race Preparation", "brands": [], "name_keywords": ["race preparation", "motorsport prep"], "places_queries": ["race car preparation"]},
+        {"id": "motorsport-fabrication", "name": "Motorsport Fabrication", "brands": [], "name_keywords": ["motorsport fabrication", "roll cage"], "places_queries": ["motorsport fabrication"]},
+        {"id": "engineering-certification", "name": "Engineering Certification", "brands": [], "name_keywords": ["engineering certification", "vsb", "compliance engineer"], "places_queries": ["vehicle engineering certification"]},
+        {"id": "vehicle-modifications", "name": "Vehicle Modifications", "brands": [], "name_keywords": ["vehicle modification", "custom build"], "places_queries": ["vehicle modifications"]},
+        {"id": "compliance-engineering", "name": "Compliance Engineering", "brands": [], "name_keywords": ["compliance engineering", "adr compliance"], "places_queries": ["ADR compliance engineer"]}
+      ]
+    },
+    {
+      "id": "fuel-and-energy",
+      "name": "Fuel & Energy",
+      "categories": [
+        {"id": "fuel-station", "name": "Fuel Stations", "brands": ["vanassist"], "osm": [{"amenity": "fuel"}], "name_keywords": ["petrol station", "service station", "fuel station", "servo"], "places_queries": ["petrol station", "service station"]},
+        {"id": "ev-charging", "name": "EV Charging", "brands": ["vanassist"], "osm": [{"amenity": "charging_station"}], "name_keywords": ["ev charging", "electric vehicle charger", "tesla supercharger"], "places_queries": ["EV charging station"]}
+      ]
+    },
+    {
+      "id": "emergency",
+      "name": "Emergency Services",
+      "categories": [
+        {"id": "battery-replacement", "name": "Battery Replacement", "brands": ["vanassist"], "name_keywords": ["battery replacement", "mobile battery"], "places_queries": ["mobile car battery replacement"]},
+        {"id": "mobile-diagnostics", "name": "Mobile Diagnostics", "brands": ["vanassist"], "name_keywords": ["mobile diagnostics", "mobile scan"], "places_queries": ["mobile car diagnostics"]},
+        {"id": "mobile-repairs", "name": "Mobile Repairs", "vanassist": ["mechanical"], "brands": ["vanassist"], "name_keywords": ["mobile repairs", "mobile auto"], "places_queries": ["mobile auto repair"]},
+        {"id": "fuel-delivery", "name": "Fuel Delivery", "brands": ["vanassist"], "name_keywords": ["fuel delivery", "emergency fuel"], "places_queries": ["emergency fuel delivery"]},
+        {"id": "jump-starts", "name": "Jump Starts", "vanassist": ["roadside"], "brands": ["vanassist"], "name_keywords": ["jump start", "battery jump"], "places_queries": ["jump start service"]},
+        {"id": "roadside-assistance", "name": "Roadside Assistance", "vanassist": ["roadside"], "brands": ["vanassist"], "name_keywords": ["roadside assist", "roadside rescue"], "places_queries": ["roadside assistance"]}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+{
+  "type": "FeatureCollection",
+  "name": "CQDiggings Clermont desktop field validation points",
+  "properties": {
+    "status": "research planning only",
+    "target_count": 15,
+    "warning": "Not a dig-here layer. Recheck current tenure and conditions before travel."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.5846455,
+          -22.6485403
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-01",
+        "target_name": "Black Ridge contact-proximity pocket",
+        "target_priority": "1",
+        "confidence": "moderate-high",
+        "edge_clearance_m_approx": 22,
+        "nearby_named_drainage": [],
+        "field_task": "Inspect permitted surface float and shallow residual material across the mapped contact. Record quartz, ironstone and alteration before any small test.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.4977318,
+          -22.734546
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-02",
+        "target_name": "Four Mile East Hurley corridor margin",
+        "target_priority": "2",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 170,
+        "nearby_named_drainage": [
+          "Hurley Creek"
+        ],
+        "field_task": "Confirm mapped geology and surface material, then make a small controlled test only if every access gate remains clear.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.4306217,
+          -22.6771386
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-03",
+        "target_name": "Birimgan West fault-contact target",
+        "target_priority": "2",
+        "confidence": "moderate-high",
+        "edge_clearance_m_approx": 100,
+        "nearby_named_drainage": [
+          "Leahy Creek"
+        ],
+        "field_task": "Inspect permitted surface float and shallow residual material across the mapped contact. Record quartz, ironstone and alteration before any small test.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.498094,
+          -22.715506
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-04",
+        "target_name": "Birimgan East recorded alluvial mine sector",
+        "target_priority": "1",
+        "confidence": "high historical; moderate residual prospectivity",
+        "edge_clearance_m_approx": 250,
+        "nearby_named_drainage": [],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.5021274,
+          -22.7067176
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-05",
+        "target_name": "Birimgan East fault-contact target",
+        "target_priority": "2",
+        "confidence": "moderate-high",
+        "edge_clearance_m_approx": 100,
+        "nearby_named_drainage": [
+          "Scurvy Creek"
+        ],
+        "field_task": "Inspect permitted surface float and shallow residual material across the mapped contact. Record quartz, ironstone and alteration before any small test.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.4310274,
+          -22.7484967
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-06",
+        "target_name": "Four Mile West high-level wash targets",
+        "target_priority": "4",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 132,
+        "nearby_named_drainage": [
+          "Rolf Creek",
+          "Wait-A-While"
+        ],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.5847108,
+          -22.7659472
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-07",
+        "target_name": "Bathampton open young-alluvium target",
+        "target_priority": "5",
+        "confidence": "moderate-high regional; moderate local",
+        "edge_clearance_m_approx": 85,
+        "nearby_named_drainage": [
+          "Bath Creek",
+          "Sandy Creek"
+        ],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.5825002,
+          -22.7677104
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-08",
+        "target_name": "Bathampton Suttor Formation reconnaissance target",
+        "target_priority": "8",
+        "confidence": "low-moderate",
+        "edge_clearance_m_approx": 168,
+        "nearby_named_drainage": [],
+        "field_task": "Confirm mapped geology and surface material, then make a small controlled test only if every access gate remains clear.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.5215076,
+          -22.7515531
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-09",
+        "target_name": "Flat Diggings Permian margin and high-level wash",
+        "target_priority": "7",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 100,
+        "nearby_named_drainage": [
+          "Bath Creek",
+          "Hurley Creek"
+        ],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.4736159,
+          -22.6468142
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-10",
+        "target_name": "Brigalow field-site 13803 alluvial-gold sector",
+        "target_priority": "1",
+        "confidence": "high",
+        "edge_clearance_m_approx": 133,
+        "nearby_named_drainage": [
+          "Brigalow Creek"
+        ],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.5171969,
+          -22.6030366
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-11",
+        "target_name": "McMasters northern observed older-wash sectors",
+        "target_priority": "2",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 224,
+        "nearby_named_drainage": [],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.6624252,
+          -22.8787906
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-12",
+        "target_name": "McDonald Flat conservative high-level-alluvium target",
+        "target_priority": "1",
+        "confidence": "moderate-high",
+        "edge_clearance_m_approx": 175,
+        "nearby_named_drainage": [
+          "McDonald Gully"
+        ],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.6529422,
+          -22.8802516
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-13",
+        "target_name": "McDonald Flat conservative young-alluvium target",
+        "target_priority": "2",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 132,
+        "nearby_named_drainage": [
+          "McDonald Gully"
+        ],
+        "field_task": "Inspect permitted residual wash or terrace material away from the active channel. Run small, repeatable tests across a short transect.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.6310117,
+          -22.8006043
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-14",
+        "target_name": "Museum Reserve observed quartz-gravel sectors",
+        "target_priority": "1",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 115,
+        "nearby_named_drainage": [
+          "Two Mile Creek",
+          "Wolfang Creek"
+        ],
+        "field_task": "Confirm mapped geology and surface material, then make a small controlled test only if every access gate remains clear.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          147.6394623,
+          -22.8413402
+        ]
+      },
+      "properties": {
+        "validation_id": "CLV-15",
+        "target_name": "Town Reserve worked quartz-gravel sectors",
+        "target_priority": "1",
+        "confidence": "moderate",
+        "edge_clearance_m_approx": 152,
+        "nearby_named_drainage": [],
+        "field_task": "Confirm mapped geology and surface material, then make a small controlled test only if every access gate remains clear.",
+        "legal_gate": "Desktop validation point only. Confirm the current GPA boundary, live tenure, posted signs, closures, hazards and exact-ground conditions on the day. Move or abandon the point if any gate fails.",
+        "method_note": "Coarse interior point selected by a 45 by 45 polygon grid to maximise distance from the target edge. It is not a gold coordinate or access guarantee.",
+        "generated": "2026-08-26"
+      }
+    }
+  ]
+}
+

@@ -31,7 +31,6 @@ final class OutreachHubController extends Controller
             'vanassist' => 'nearby caravan and RV services, fuel, EV charging and caravan-friendly places to stay across Australia',
             'towsmart' => 'practical towing calculations, safety guidance and towing specialists',
             'trailerwise' => 'trailer ownership guidance, relevant services and trailer listings',
-            'localtorque' => 'automotive specialists, modification and roadworthy rules, motorsport information and local services',
             default => 'useful local services and practical information',
         };
         $launchCampaign = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $brandName) ?? 'assist') . '-free-launch';

@@ -9,6 +9,7 @@
 /** @var bool $locationNotFound */
 /** @var array<int,array<string,mixed>> $matches */
 /** @var array<int,array<string,mixed>> $possible */
+/** @var bool $usedRegionalPool */
 /** @var string $requestUrl */
 /** @var int|null $searchId */
 /** @var array<int,array<string,mixed>> $categories */
@@ -23,9 +24,12 @@
 /** @var string|int|null $distanceSelection */
 /** @var bool $hasOrigin */
 /** @var string|null $originLabel */
+/** @var bool $hasMore */
+/** @var string|null $showMoreUrl */
 $this->extend('layouts.public');
 $featuredMatches = array_values(array_filter($matches, static fn (array $provider): bool => !empty($provider['is_featured'])));
 $organicMatches = array_values(array_filter($matches, static fn (array $provider): bool => empty($provider['is_featured'])));
+$usesRoadDistance = \App\Services\RoadDistance\RoadDistanceService::groupsUseRoadDistance(['matches' => $matches, 'possible' => $possible]);
 $allResults = array_values(array_merge($featuredMatches, $organicMatches, $possible));
 $stayDistance = in_array((int) ($maxDistance ?? 0), \App\Helpers\Geo::STAY_DISTANCE_OPTIONS, true) ? (int) $maxDistance : 150;
 $stayUrl = url('stays?' . http_build_query(array_filter([
@@ -78,10 +82,14 @@ foreach ($mappedResults as $index => $mappedProvider) {
             <?php if (($distanceScope ?? '') === 'town' && $town !== null): ?>
                 <p class="muted" style="margin:0 0 .5rem">Showing providers in and serving <strong><?= $this->e((string) $town['name']) ?><?= !empty($town['state_abbr']) ? ', ' . $this->e((string) $town['state_abbr']) : '' ?></strong>, sorted by distance from <strong><?= $this->e((string) $originLabel) ?></strong>.</p>
             <?php else: ?>
-                <p class="muted" style="margin:0 0 .5rem">Sorted by approximate distance from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (within ' . (int) $maxDistance . ' km)' : '' ?>.</p>
+                <p class="muted" style="margin:0 0 .5rem">Sorted by <?= $usesRoadDistance ? 'driving distance' : 'straight-line distance' ?> from <strong><?= $this->e((string) $originLabel) ?></strong><?= !empty($maxDistance) ? ' (strictly within ' . (int) $maxDistance . ' km)' : '' ?>. Providers without an exact pin are labelled and do not show a provider road distance.</p>
             <?php endif; ?>
         <?php endif; ?>
         </header>
+
+        <?php if (\App\Platform\AiSearch\Support\AiSearchFeature::enabled()): ?>
+            <p class="muted" style="margin:0 0 1rem">Prefer plain language? <a href="<?= e(url('ask')) ?>">Try Ask VanAssist</a> for providers, stays and traveller facilities.</p>
+        <?php endif; ?>
 
         <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location style="margin:1rem 0 1.5rem">
             <div class="grid grid-2 home-search-primary">
@@ -204,7 +212,9 @@ foreach ($mappedResults as $index => $mappedProvider) {
 
         <?php if ($possible !== []): ?>
             <h2 style="margin-top:1.5rem">Businesses that may offer this service<?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?></h2>
-            <p class="muted result-section-note">Related trades may help, but are not confirmed for this exact service.</p>
+            <p class="muted result-section-note"><?= !empty($usedRegionalPool)
+                ? 'No exact or related category matched. These providers service the area but are not confirmed for this job—check before travelling.'
+                : 'Related trades may help, but are not confirmed for this exact service.' ?></p>
             <div class="provider-card-grid provider-result-list">
                 <?php foreach ($possible as $p): ?>
                     <?php $this->include('partials.provider-result-card', ['p' => $p, 'isPossible' => true, 'compact' => true, 'searchId' => $searchId, 'resultCardId' => 'provider-result-' . (int) $p['id'], 'mapResultNumber' => $mapResultNumbers[(int) $p['id']] ?? 0]); ?>
@@ -212,6 +222,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
             </div>
         <?php endif; ?>
         </div>
+        <?php if ($hasMore && $showMoreUrl !== null): ?><p class="results-show-more"><a class="btn btn-secondary" href="<?= e($showMoreUrl) ?>">Show up to 40 providers</a></p><?php endif; ?>
 
         <?php if (!empty($nearbyRuns)): ?>
             <h2 style="margin-top:1.5rem">Service runs near you</h2>
@@ -279,7 +290,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
         <section class="result-guidance" aria-labelledby="result-guidance-heading">
             <h2 id="result-guidance-heading">Understanding these results</h2>
             <?php if (!empty($hasOrigin) && ($matches !== [] || $possible !== [])): ?>
-                <p>Distances are approximate straight-line estimates to each provider's base town, not driving distance. Mobile-service providers travel to customers; a base-town pin is not necessarily a workshop destination.</p>
+                <p><?= $usesRoadDistance ? 'Road distances and estimated drive times are supplied by Google Maps.' : 'Distances are straight-line estimates while road routing is unavailable.' ?> A precise provider pin is used where available; otherwise the result is labelled as a town-centre destination. Mobile-service providers travel to customers.</p>
             <?php endif; ?>
             <p>Direct matches explicitly list the selected service. Related-service results work in an adjacent trade and require confirmation. Unclaimed listings come from public sources; confirm current services and contact details before relying on them.</p>
             <?php $this->include('partials.listing-accuracy-notice'); ?>

@@ -16,6 +16,17 @@ final class ProviderClaimService
 {
     public static function sendClaimInvite(int $providerId, string $email, ?int $adminId = null): string
     {
+        return self::queueClaimInvite($providerId, $email, $adminId, false);
+    }
+
+    /** Queue the secure next step after an administrator approves an inbound claim request. */
+    public static function sendApprovedClaimInvite(int $providerId, string $email, ?int $adminId = null): string
+    {
+        return self::queueClaimInvite($providerId, $email, $adminId, true);
+    }
+
+    private static function queueClaimInvite(int $providerId, string $email, ?int $adminId, bool $approvedInboundRequest): string
+    {
         $provider = Database::selectOne(
             'SELECT p.id, p.business_name, p.email, p.contact_name, p.slug, p.is_unclaimed,p.marketing_opt_in, '
             . 'tw.name AS town_name, tw.is_launch_town, s.abbreviation AS state_abbr '
@@ -28,7 +39,7 @@ final class ProviderClaimService
         if ($provider === null || empty($provider['is_unclaimed'])) {
             throw new RuntimeException('Provider is not an unclaimed listing.');
         }
-        if (empty($provider['marketing_opt_in'])) {
+        if (!$approvedInboundRequest && empty($provider['marketing_opt_in'])) {
             throw new RuntimeException('Documented promotional-email consent is required before sending a claim invite.');
         }
 
@@ -44,9 +55,9 @@ final class ProviderClaimService
         $days = (int) config('security.provider_invite_expiry_days', 14);
 
         Database::query(
-            'INSERT INTO provider_claim_tokens (provider_id, email, token_hash, expires_at, created_by, created_at) '
-            . 'VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), ?, NOW())',
-            [$providerId, $email, hash('sha256', $token), $days, $adminId]
+            'INSERT INTO provider_claim_tokens (provider_id, brand_id, email, token_hash, expires_at, created_by, created_at) '
+            . 'VALUES (?, ?, ?, ?, DATE_ADD(NOW(), INTERVAL ? DAY), ?, NOW())',
+            [$providerId, current_brand()->databaseId(), $email, hash('sha256', $token), $days, $adminId]
         );
 
         $url = url('provider/claim/' . $token);
@@ -59,7 +70,8 @@ final class ProviderClaimService
         );
         $serviceNames = array_map(static fn (array $row): string => (string) $row['name'], $services);
 
-        $queued = EmailQueue::queueTemplate('provider_claim_invite', $email, (string) $provider['business_name'], [
+        $template = $approvedInboundRequest ? 'provider_claim_request_approved' : 'provider_claim_invite';
+        $queued = EmailQueue::queueTemplate($template, $email, (string) $provider['business_name'], [
             'business_name'        => (string) $provider['business_name'],
             'greeting'             => self::greeting($provider),
             'town_line'            => self::townLine($provider),
@@ -71,7 +83,7 @@ final class ProviderClaimService
             'founding_offer_line'  => '',
             'founding_offer_text'  => '',
             'unsubscribe_url'      => EmailSuppression::unsubscribeUrl($email),
-        ], null, 'marketing');
+        ], null, $approvedInboundRequest ? 'transactional' : 'marketing');
         if (!$queued) {
             Database::query('DELETE FROM provider_claim_tokens WHERE token_hash=? AND used_at IS NULL', [hash('sha256', $token)]);
             throw new RuntimeException('The recipient has unsubscribed or is suppressed from email delivery.');
@@ -92,8 +104,8 @@ final class ProviderClaimService
             . 'FROM provider_claim_tokens t '
             . 'INNER JOIN providers p ON p.id = t.provider_id '
             . 'LEFT JOIN towns tw ON tw.id = p.base_town_id '
-            . 'WHERE t.token_hash = ? AND t.used_at IS NULL AND t.expires_at > NOW() AND p.is_unclaimed = 1 AND p.deleted_at IS NULL',
-            [hash('sha256', $token)]
+            . 'WHERE t.token_hash = ? AND t.brand_id = ? AND t.used_at IS NULL AND t.expires_at > NOW() AND p.is_unclaimed = 1 AND p.deleted_at IS NULL',
+            [hash('sha256', $token), current_brand()->databaseId()]
         );
         return $row ?: null;
     }
@@ -110,8 +122,8 @@ final class ProviderClaimService
             [$userId, $contactName, $providerId]
         );
         Database::query(
-            'UPDATE provider_claim_tokens SET used_at = NOW() WHERE id = ?',
-            [$tokenId]
+            'UPDATE provider_claim_tokens SET used_at = NOW() WHERE id = ? AND brand_id = ?',
+            [$tokenId, current_brand()->databaseId()]
         );
         User::assignRoleBySlug($userId, 'provider');
     }
@@ -272,7 +284,8 @@ final class ProviderClaimService
         if ($eligibleOnly) {
             $where[] = "p.email IS NOT NULL AND TRIM(p.email) != ''";
             $where[] = 'p.marketing_opt_in=1';
-            $where[] = 'NOT EXISTS (SELECT 1 FROM provider_claim_tokens pct WHERE pct.provider_id = p.id AND pct.used_at IS NULL AND pct.expires_at > NOW())';
+            $where[] = 'NOT EXISTS (SELECT 1 FROM provider_claim_tokens pct WHERE pct.provider_id = p.id AND pct.brand_id = ? AND pct.used_at IS NULL AND pct.expires_at > NOW())';
+            $params[] = current_brand()->databaseId();
         }
 
         return [' WHERE ' . implode(' AND ', $where), $params, $joins];

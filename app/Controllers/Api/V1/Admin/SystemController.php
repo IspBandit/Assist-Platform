@@ -6,11 +6,14 @@ namespace App\Controllers\Api\V1\Admin;
 
 use App\Core\Config;
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
 use App\Services\Api\AdminApiEnvelope;
 use App\Services\Api\AdminApiBrandScope;
 use App\Services\Api\AdminApiScopes;
+use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
+use Throwable;
 
 /**
  * System endpoints for the versioned Admin API.
@@ -19,10 +22,34 @@ final class SystemController extends Controller
 {
     public function health(Request $request): Response
     {
+        $routes = (new GoogleRoutesCredentialResolver())->status();
+        try {
+            $askQuestionCount = (int) Database::scalar(
+                'SELECT COUNT(*) FROM ask_question_library WHERE is_active = 1'
+            );
+        } catch (Throwable) {
+            $askQuestionCount = 0;
+        }
         return AdminApiEnvelope::data([
             'status' => 'ok',
             'service' => 'assist-platform-admin-api',
             'api_version' => 'v1',
+            'integrations' => [
+                'road_distance' => [
+                    'provider' => 'google_routes',
+                    'configured' => $routes['configured'],
+                    'credential_source' => $routes['source'],
+                    'persistent_cache' => false,
+                    'request_deduplication' => true,
+                    'cache_policy' => 'google_route_distance_and_duration_not_persisted',
+                    'policy_basis' => 'Google Maps Platform service-specific terms',
+                    'town_centre_routing' => false,
+                ],
+                'ask_question_library' => [
+                    'configured' => $askQuestionCount >= 1000,
+                    'active_questions' => $askQuestionCount,
+                ],
+            ],
         ]);
     }
 

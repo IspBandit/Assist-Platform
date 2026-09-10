@@ -14,10 +14,9 @@ final class GrowthController extends Controller
 {
     /** @var array<string,array<string,string>> */
     private const CAPABILITIES = [
-        'vanassist' => ['mobile-rv-repair' => 'Mobile RV repair', 'roadworthy-inspection' => 'Roadworthy inspection', 'roadside-recovery' => 'Roadside recovery'],
+        'vanassist' => ['mobile-rv-repair' => 'Mobile RV repair', 'roadworthy-inspection' => 'Roadworthy inspection', 'roadside-recovery' => 'Roadside recovery', 'licensed-roadworthy-inspection' => 'Licensed roadworthy inspection', 'approved-vehicle-engineer' => 'Approved vehicle engineering', 'motorcycle-inspection' => 'Motorcycle inspection', 'heavy-vehicle-inspection' => 'Heavy vehicle inspection', 'street-rod-certification' => 'Street rod certification'],
         'towsmart' => ['mobile-weighing' => 'Mobile weighing', 'towing-training' => 'Towing training', 'hitch-installation' => 'Towbar and hitch installation', 'towing-inspection' => 'Towing combination inspection'],
         'trailerwise' => ['trailer-inspection' => 'Trailer inspection', 'trailer-repair' => 'Trailer repair', 'fabrication-engineering' => 'Fabrication and engineering'],
-        'localtorque' => ['licensed-roadworthy-inspection' => 'Licensed roadworthy inspection', 'approved-vehicle-engineer' => 'Approved vehicle engineering', 'motorcycle-inspection' => 'Motorcycle inspection', 'heavy-vehicle-inspection' => 'Heavy vehicle inspection', 'street-rod-certification' => 'Street rod certification'],
     ];
 
     public function index(Request $request): Response

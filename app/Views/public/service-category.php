@@ -13,10 +13,13 @@
 /** @var string|null $distanceScope */
 /** @var string|int|null $distanceSelection */
 /** @var bool $hasOrigin */
+/** @var bool $hasMore */
+/** @var string|null $showMoreUrl */
 $this->extend('layouts.public');
 $inArea = $selectedTown !== null ? (' in ' . (string) $selectedTown['name']) : '';
 $mappedProviders=[];
 foreach (array_merge($matches,$possible) as $p) { $pLat=$p['latitude']??$p['town_lat']??null; $pLng=$p['longitude']??$p['town_lng']??null; if(!is_numeric($pLat)||!is_numeric($pLng))continue; $id='service-provider-'.(int)$p['id']; $mappedProviders[]=['id'=>$id,'listId'=>$id,'number'=>count($mappedProviders)+1,'name'=>(string)$p['business_name'],'location'=>trim((string)($p['town_name']??'').(!empty($p['state_abbr'])?', '.$p['state_abbr']:'')),'lat'=>(float)$pLat,'lng'=>(float)$pLng,'profile'=>url('providers/'.$p['slug']),'directions'=>'','destination'=>'','featured'=>!empty($p['is_featured']),'possible'=>in_array($p,$possible,true)]; }
+$usesRoadDistance = \App\Services\RoadDistance\RoadDistanceService::groupsUseRoadDistance(['matches' => $matches, 'possible' => $possible]);
 ?>
 <?php $this->section('content'); ?>
 <section class="section">
@@ -83,7 +86,7 @@ foreach (array_merge($matches,$possible) as $p) { $pLat=$p['latitude']??$p['town
         </form>
 
         <?php if ($selectedTown !== null && ($matches !== [] || $possible !== [])): ?>
-            <p class="muted" style="font-size:.9rem;margin:.25rem 0 0">Sorted by approximate distance from <?= $this->e((string) $selectedTown['name']) ?><?= !empty($maxDistance) ? ' (within ' . (int) $maxDistance . ' km)' : '' ?>. Distances are to each provider's base town. <span class="badge badge-confirmed">&#128666; Mobile service</span> providers travel to you.</p>
+            <p class="muted" style="font-size:.9rem;margin:.25rem 0 0">Sorted by <?= $usesRoadDistance ? 'driving distance' : 'straight-line distance' ?> from <?= $this->e((string) $selectedTown['name']) ?><?= !empty($maxDistance) ? ' (strictly within ' . (int) $maxDistance . ' km)' : '' ?>.<?= $usesRoadDistance ? ' Road distances and times supplied by Google Maps.' : '' ?> Town-centre destinations are labelled. <span class="badge badge-confirmed">&#128666; Mobile service</span> providers travel to you.</p>
         <?php endif; ?>
         <?php $serviceOrigin=is_numeric($lat??null)&&is_numeric($lng??null)?['lat'=>(float)$lat,'lng'=>(float)$lng]:null; $this->include('partials/results-map',['mapItems'=>$mappedProviders,'mapOrigin'=>$serviceOrigin,'mapTitle'=>count($mappedProviders).' located '.$category['name'].' results']); ?>
 
@@ -105,6 +108,8 @@ foreach (array_merge($matches,$possible) as $p) { $pLat=$p['latitude']??$p['town
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <?php if ($hasMore && $showMoreUrl !== null): ?><p class="results-show-more"><a class="btn btn-secondary" href="<?= e($showMoreUrl) ?>">Show up to 40 providers</a></p><?php endif; ?>
 
         <?php if ($matches === [] && $possible === []): ?>
             <div class="card">

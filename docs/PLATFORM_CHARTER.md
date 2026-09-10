@@ -30,7 +30,7 @@ Each brand must remain immediately understandable and focused:
 - VanAssist: stays, travel support and caravan/RV services.
 - TowSmart: towing intelligence, matching, weights, safety and guidance.
 - TrailerWise: trailer businesses, services, parts and ownership.
-- LocalTorque: automotive workshops and specialists.
+LocalTorque and Polaris are retired and excluded from the active product and sale.
 
 Cross-brand recommendations must be relevant, transparent and non-confusing.
 

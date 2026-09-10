@@ -174,7 +174,7 @@ single-brand and do not currently carry immutable brand attribution.
 
 ## Existing brand state
 
-VanAssist, TowSmart and TrailerWise are active configurations served by the shared hostname-aware runtime. LocalTorque is the fourth configured brand and remains private on `localtorque.test` until its production domain and launch controls are supplied. Shared providers use brand-specific listings and category assignments; brand-aware email, SEO, roles and feature gates prevent public presentation from falling back silently to another brand.
+VanAssist, TowSmart and TrailerWise are the active configurations served by the shared hostname-aware runtime. LocalTorque and Polaris are retired and excluded from the active product boundary; they are retained only as historical/audit context. Shared providers use brand-specific listings and category assignments; brand-aware email, SEO, roles and feature gates prevent public presentation from falling back silently to another brand.
 
 ## Living documentation
 

@@ -1,10 +1,33 @@
 # Administrator guide
 
+## Active brands and provider imports
+
+The active registry and administration navigation contain VanAssist, TowSmart
+and TrailerWise only. Polaris catalogue administration and manufacturer/dealer
+portals have been removed. Historical records remain for audit and upgrades;
+do not recreate retired brand entries or enable old permissions as products.
+
+LocalTorque is retired and no longer appears in the brand switcher, social
+studio, outreach controls or production checks. Its former provider corpus is
+managed as the **VanAssist provider pack**. Use the
+`import_vanassist_provider_pack` maintenance task; the old LocalTorque task and
+progress settings are removed by migration 136.
+
 The same platform administrator identity can administer all three brands. Browser
 sessions are scoped per domain, so signing in separately on each domain may be
 required. Credentials are never documented in Git.
 
 ## Access
+
+### Shared-edge legacy CQDiggings links (OPS-012)
+
+CQDiggings is independently deployed, but its public HTTP routing uses the shared
+Caddy edge. Its two legacy `/occurrences/site-index.html` and
+`/occurrences/glossary.html` aliases redirect permanently to the root-level pages.
+Maintain these rules in `infrastructure/binarylane/Caddyfile`, not `.htaccess`.
+Release edge changes through the immutable Assist workflow and confirm both
+301 responses and HTTP 200 destinations. Rollback restores the prior edge rules.
+These routes do not add CQDiggings to the three-brand Assist product boundary.
 
 Use `/login`, then `/admin` on the applicable brand domain. Use a named human
 account for normal work. Reserve emergency accounts for recovery only. Enable MFA

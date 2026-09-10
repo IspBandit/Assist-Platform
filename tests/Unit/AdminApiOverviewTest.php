@@ -78,6 +78,9 @@ final class AdminApiOverviewTest extends TestCase
         self::assertTrue($payload['queues']['corrections_pending']['available']);
         self::assertTrue($payload['ai']['available']);
         self::assertTrue($payload['datasets']['available']);
+        self::assertTrue($payload['data_quality']['available']);
+        self::assertSame(0, $payload['data_quality']['providers']['total']);
+        self::assertSame(0, $payload['data_quality']['stays']['total']);
         self::assertIsArray($payload['attention']);
         self::assertIsArray($payload['warnings']);
         self::assertArrayHasKey('website', $payload['labels']);

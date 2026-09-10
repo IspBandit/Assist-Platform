@@ -1,0 +1,149 @@
+{
+    "analytics_30d": [
+        {
+            "brand_id": 1,
+            "event_name": "category_viewed",
+            "events": 99
+        },
+        {
+            "brand_id": 1,
+            "event_name": "no_provider_found",
+            "events": 68
+        },
+        {
+            "brand_id": 1,
+            "event_name": "provider_directions_clicked",
+            "events": 469
+        },
+        {
+            "brand_id": 1,
+            "event_name": "provider_email_clicked",
+            "events": 2
+        },
+        {
+            "brand_id": 1,
+            "event_name": "provider_phone_clicked",
+            "events": 324
+        },
+        {
+            "brand_id": 1,
+            "event_name": "provider_profile_viewed",
+            "events": 440
+        },
+        {
+            "brand_id": 1,
+            "event_name": "provider_search_completed",
+            "events": 123
+        },
+        {
+            "brand_id": 1,
+            "event_name": "provider_website_clicked",
+            "events": 25
+        },
+        {
+            "brand_id": 1,
+            "event_name": "stay_search_completed",
+            "events": 4
+        },
+        {
+            "brand_id": 2,
+            "event_name": "category_viewed",
+            "events": 37
+        },
+        {
+            "brand_id": 2,
+            "event_name": "no_provider_found",
+            "events": 7
+        },
+        {
+            "brand_id": 2,
+            "event_name": "provider_directions_clicked",
+            "events": 226
+        },
+        {
+            "brand_id": 2,
+            "event_name": "provider_email_clicked",
+            "events": 47
+        },
+        {
+            "brand_id": 2,
+            "event_name": "provider_phone_clicked",
+            "events": 157
+        },
+        {
+            "brand_id": 2,
+            "event_name": "provider_profile_viewed",
+            "events": 429
+        },
+        {
+            "brand_id": 2,
+            "event_name": "provider_search_completed",
+            "events": 53
+        },
+        {
+            "brand_id": 2,
+            "event_name": "provider_website_clicked",
+            "events": 119
+        },
+        {
+            "brand_id": 3,
+            "event_name": "category_viewed",
+            "events": 14
+        },
+        {
+            "brand_id": 3,
+            "event_name": "provider_directions_clicked",
+            "events": 96
+        },
+        {
+            "brand_id": 3,
+            "event_name": "provider_email_clicked",
+            "events": 29
+        },
+        {
+            "brand_id": 3,
+            "event_name": "provider_phone_clicked",
+            "events": 64
+        },
+        {
+            "brand_id": 3,
+            "event_name": "provider_profile_viewed",
+            "events": 162
+        },
+        {
+            "brand_id": 3,
+            "event_name": "provider_search_completed",
+            "events": 31
+        },
+        {
+            "brand_id": 3,
+            "event_name": "provider_website_clicked",
+            "events": 44
+        }
+    ],
+    "brand_listings": [
+        {
+            "brand_id": 1,
+            "listings": 7939
+        },
+        {
+            "brand_id": 2,
+            "listings": 7000
+        },
+        {
+            "brand_id": 3,
+            "listings": 6947
+        },
+        {
+            "brand_id": 4,
+            "listings": 13807
+        }
+    ],
+    "mfa_enrolled_users": 0,
+    "counts": {
+        "caravan_parks": 10551,
+        "towing_combinations": 0,
+        "provider_claim_tokens": 5,
+        "caravan_park_claims": 0
+    }
+}

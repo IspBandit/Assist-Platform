@@ -29,6 +29,11 @@ final class AdminApiOverviewService
         $queues = $this->queueCounts($brandId);
         $ai = $this->aiSummary($request);
         $datasets = $this->datasetSyncSummary();
+        $dataQuality = $this->dataQualitySummary(
+            $brandId,
+            $brand->moduleEnabled('providers'),
+            $brand->moduleEnabled('parks'),
+        );
 
         return [
             'generated_at' => gmdate('c'),
@@ -52,6 +57,7 @@ final class AdminApiOverviewService
             'queues' => $queues,
             'ai' => $ai,
             'datasets' => $datasets,
+            'data_quality' => $dataQuality,
             'attention' => $this->attentionItems($queues, $website),
             'warnings' => $this->warnings($website),
             'labels' => [
@@ -409,6 +415,78 @@ final class AdminApiOverviewService
                 'last_checked_at' => null,
             ];
         }
+    }
+
+    /** @return array<string,mixed> */
+    private function dataQualitySummary(int $brandId, bool $providersEnabled, bool $staysEnabled): array
+    {
+        $empty = [
+            'available' => true,
+            'providers' => [
+                'total' => 0,
+                'with_contact' => 0,
+                'with_exact_coordinates' => 0,
+                'with_category' => 0,
+                'stale' => 0,
+            ],
+            'stays' => [
+                'total' => 0,
+                'with_coordinates' => 0,
+                'with_facility_evidence' => 0,
+                'with_positive_facility_evidence' => 0,
+                'stale_facility_evidence' => 0,
+            ],
+        ];
+        if (!$this->databaseConfigured()) {
+            return $empty;
+        }
+
+        try {
+            if ($providersEnabled && Database::tableExists('provider_brand_listings')) {
+                $row = Database::selectOne(
+                    'SELECT COUNT(*) AS total, '
+                    . "SUM(CASE WHEN (p.show_public_phone=1 AND NULLIF(TRIM(COALESCE(p.public_phone,'')),'') IS NOT NULL) "
+                    . "OR NULLIF(TRIM(COALESCE(p.website,'')),'') IS NOT NULL THEN 1 ELSE 0 END) AS with_contact, "
+                    . 'SUM(CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 1 ELSE 0 END) AS with_exact_coordinates, '
+                    . 'SUM(CASE WHEN EXISTS (SELECT 1 FROM provider_brand_category_assignments a WHERE a.listing_id=l.id) THEN 1 ELSE 0 END) AS with_category, '
+                    . "SUM(CASE WHEN COALESCE(p.updated_at,p.created_at) < DATE_SUB(NOW(),INTERVAL 18 MONTH) THEN 1 ELSE 0 END) AS stale "
+                    . 'FROM provider_brand_listings l JOIN providers p ON p.id=l.provider_id '
+                    . "WHERE l.brand_id=? AND l.status='active' AND l.search_visible=1 AND l.deleted_at IS NULL "
+                    . "AND p.status='active' AND p.deleted_at IS NULL",
+                    [$brandId]
+                ) ?? [];
+                foreach (array_keys($empty['providers']) as $key) {
+                    $empty['providers'][$key] = (int) ($row[$key] ?? 0);
+                }
+            }
+
+            if ($staysEnabled && Database::tableExists('caravan_parks')) {
+                $claimsAvailable = Database::tableExists('stay_facility_claims');
+                $claimSelects = $claimsAvailable
+                    ? 'SUM(CASE WHEN EXISTS (SELECT 1 FROM stay_facility_claims c WHERE c.park_id=cp.id AND c.superseded_at IS NULL) THEN 1 ELSE 0 END) AS with_facility_evidence, '
+                        . "SUM(CASE WHEN EXISTS (SELECT 1 FROM stay_facility_claims c WHERE c.park_id=cp.id AND c.superseded_at IS NULL AND c.facility_status IN ('yes','conditional')) THEN 1 ELSE 0 END) AS with_positive_facility_evidence, "
+                        . 'COUNT(DISTINCT CASE WHEN c_stale.id IS NOT NULL THEN cp.id END) AS stale_facility_evidence '
+                    : '0 AS with_facility_evidence, 0 AS with_positive_facility_evidence, 0 AS stale_facility_evidence ';
+                $staleJoin = $claimsAvailable
+                    ? 'LEFT JOIN stay_facility_claims c_stale ON c_stale.park_id=cp.id AND c_stale.superseded_at IS NULL '
+                        . 'AND COALESCE(c_stale.last_seen_at,c_stale.verified_at,c_stale.updated_at)<DATE_SUB(NOW(),INTERVAL 18 MONTH) '
+                    : '';
+                $row = Database::selectOne(
+                    'SELECT COUNT(DISTINCT cp.id) AS total, '
+                    . 'COUNT(DISTINCT CASE WHEN cp.latitude IS NOT NULL AND cp.longitude IS NOT NULL THEN cp.id END) AS with_coordinates, '
+                    . $claimSelects
+                    . 'FROM caravan_parks cp ' . $staleJoin
+                    . "WHERE cp.status='active' AND cp.public_page_enabled=1 AND cp.deleted_at IS NULL"
+                ) ?? [];
+                foreach (array_keys($empty['stays']) as $key) {
+                    $empty['stays'][$key] = (int) ($row[$key] ?? 0);
+                }
+            }
+        } catch (Throwable) {
+            return array_merge($empty, ['available' => false]);
+        }
+
+        return $empty;
     }
 
     /**

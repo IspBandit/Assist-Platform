@@ -11,6 +11,13 @@ required application backup.
 - Release SHA and migration inventory.
 - At least one independent off-server copy with documented retention.
 
+The administrator **Generate backup now** action and the `database_backup`
+scheduled task create a local logical archive plus a `.sha256` manifest. The
+formal launch gate accepts that local evidence only when the task succeeded in
+the last 36 hours, the named archive and manifest still exist, and the checksum
+verifies. This local archive is a release safeguard; it does not replace the
+independent encrypted copy or restore rehearsal below.
+
 Never commit backups or copy production personal data into an unprotected local
 development environment.
 

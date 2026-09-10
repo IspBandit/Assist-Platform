@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Config;
 use App\Core\Database;
 use Throwable;
 
@@ -51,6 +52,9 @@ final class FeatureFlag
             return;
         }
         self::$cache = [];
+        if (!is_array(Config::get('database'))) {
+            return;
+        }
         try {
             foreach (Database::select('SELECT flag_key, is_enabled FROM feature_flags') as $row) {
                 self::$cache[(string) $row['flag_key']] = (bool) $row['is_enabled'];

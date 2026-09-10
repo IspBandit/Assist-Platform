@@ -23,6 +23,58 @@
 - **`NationalImportSeeder` provider coordinate backfill** — unclaimed providers
   without a sourced address point now inherit their base town centre on import
   so map search and distance ranking work until a precise point is confirmed.
+- **TowSmart and TrailerWise shell parity** — footer-action CTA, richer footer
+  columns, primary header CTA and save-to-phone install with brand-scoped
+  manifests for TowSmart and TrailerWise.
+
+### Documentation and VanAssist navigation (Aug 2026 production alignment)
+
+- Reconciled `PROJECT_STATUS.md`, `PRODUCTION_CURRENT_STATE.md`, SearchGap, Ask,
+  Quality Gate and API boundary docs with verified production posture: release
+  `6a3f09d`, Admin API enabled, Ask and traveller facilities live on VanAssist.
+- Added **Ask VanAssist** to VanAssist primary header navigation, footer Find
+  links and category-search cross-link when `assist_ai_search` is enabled.
+
+### Fixed
+- Ask now supports direct provider business-name searches without weakening
+  brand, GPS, explicit-location or radius boundaries.
+- Ask now acquires device GPS automatically for requests with no location in
+  the question, while an explicit typed location remains authoritative.
+- Protected production releases now install the validated Google Routes secret
+  into the encrypted connector vault before road-distance smoke tests.
+- Search release checks identify missing Griffiths evidence and missing road
+  distance output explicitly instead of failing with an unlabelled grep error.
+
+### Added
+- **Stay duplicate consolidation** — migration `129` merges all high-confidence
+  stay duplicates that share a normalised name and state within 2 km, preserving
+  relationships, facility provenance and an audit record. Source aliases stop
+  later OSM refreshes recreating merged public pages; uncertain matches remain
+  separate for human review.
+  The production scan uses indexed temporary identity tables. The signed
+  migration command contains a one-time, checksum-bound retry for the
+  interrupted original migration. It may terminate only that old checksum's
+  named-lock owner after five minutes; every other dirty migration remains blocked.
+- **Assist RIC third-wave + gap-fill dataset keys** — migrations
+  `125_ric_third_wave_facility_import_datasets.sql` and
+  `126_ric_gap_fill_facility_import_datasets.sql` register remaining Ready-pack
+  `dataset_key`s (HealthDirect, VIC/QLD/TAS/ACT packs, NMI weighbridges,
+  OpenChargeMap, NPWS, etc.) so `/facility-imports` no longer returns
+  "Unknown government dataset_key".
+- **Assist RIC facility auto-publish (ADR 0034)** — `POST /facility-imports`
+  stages then publishes Assist RIC government packs into `traveller_facilities`.
+  `POST /facility-imports/publish-pending` drains the existing Assist RIC pending
+  queue in bounded batches (`imports:write`). Other connectors stay review-first.
+- **Assist RIC missing ready-pack keys** — migration
+  `127_ric_missing_ready_facility_import_datasets.sql` inserts
+  `nsw_rest_areas`, `nsw_ev_charging_locations`, `sa_rest_areas_state_maintained`,
+  `wa_major_rest_areas`, `nsw_boat_ramps`, and `gold_coast_caravan_parks`
+  (migration 124 only tried to enable rows that did not exist). Required before
+  Assist RIC can upload those packs via `/facility-imports`.
+- **Assist RIC facility package upload** — `POST /api/v1/admin/facility-imports`
+  (`imports:write`) stages Assist RIC facility packages (auto-publish added in
+  ADR 0034). Migration `124_ric_ready_facility_import_datasets.sql`
+  registers missing RIC ready dataset keys. Documented in `docs/LIVE_API.md`.
 - **Admin API brand identity** — `/capabilities` now reports the verified host
   brand, status and enabled modules so RIC can switch safely across every Assist
   brand and hide resources that the selected brand does not use.
@@ -92,7 +144,15 @@ All notable changes to VanAssist are documented here.
 - **QLD coverage seed packs** — provider coordinates backfilled from town centres;
   publishable rows are fully mappable; remaining gaps are statewide listings or
   scraped rows without locatable town evidence.
-- **Natural stay requests** — Ask VanAssist now recognises ordinary wording
+- **Compact, routed public results** — Ask, provider/category search and stays
+  now start at 20 results with an explicit expansion to 40, bounding Google
+  Routes usage and preventing oversized mobile lists during fallback.
+- **Stay facilities in Ask** — approved, source-ranked facility evidence remains
+  owned by its stay but is now searchable as a traveller facility. Confirmed
+  absent, unknown and vague water evidence remains excluded.
+- **Operational data quality** — Admin API/RIC overview now exposes provider
+  contact/exact-coordinate and stay facility/freshness coverage; health reports
+  non-secret Google Routes credential state.- **Natural stay requests** — Ask VanAssist now recognises ordinary wording
   such as “somewhere to stay free near Emerald” without requiring paid AI,
   and free-camp searches include stays explicitly priced as free.
 - **Traveller question coverage** — deterministic Ask handling now covers a

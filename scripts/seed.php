@@ -10,7 +10,8 @@ declare(strict_types=1);
  *   php scripts/seed.php --towns      # national towns/suburbs only
  *   php scripts/seed.php --osm        # OpenStreetMap businesses (loops until done)
  *   php scripts/seed.php --locality   # locality research matrix (loops until done)
- *   php scripts/seed.php --localtorque # authoritative LocalTorque MDM pack (loops until done)
+ *   php scripts/seed.php --provider-pack # authoritative VanAssist provider pack (loops until done)
+ *   php scripts/seed.php --ask-library # deterministic Ask question library only
  *   php scripts/seed.php --providers  # towns + national + osm + locality + feature cities
  */
 if (PHP_SAPI !== 'cli') {
@@ -24,6 +25,7 @@ require BASE_PATH . '/bootstrap/autoload.php';
 use App\Core\Config;
 use App\Helpers\Env;
 use App\Services\DemoSeeder;
+use App\Services\AskQuestionLibrarySeeder;
 use App\Services\MajorCityCoverageService;
 use App\Services\NationalImportSeeder;
 use App\Services\ProviderImportRunner;
@@ -52,6 +54,12 @@ $progress = static function (array $r): void {
 try {
     $runner = new ProviderImportRunner();
 
+    if (in_array('--ask-library', $arguments, true)) {
+        $count = (new AskQuestionLibrarySeeder())->seed();
+        echo "Ask question library: {$count} active catalogue entries applied.\n";
+        exit($count >= AskQuestionLibrarySeeder::MINIMUM_QUESTIONS ? 0 : 1);
+    }
+
     if (in_array('--national', $arguments, true)) {
         $summary = (new NationalImportSeeder())->seed();
         echo 'National import: ' . json_encode($summary) . "\n";
@@ -78,10 +86,10 @@ try {
         exit(isset($summary['error']) ? 1 : 0);
     }
 
-    if (in_array('--localtorque', $arguments, true)) {
-        echo "LocalTorque provider-pack import (to completion)…\n";
-        $summary = $runner->runLocalTorqueToCompletion($progress);
-        echo 'LocalTorque: ' . json_encode($summary) . "\n";
+    if (in_array('--provider-pack', $arguments, true)) {
+        echo "VanAssist provider-pack import (to completion)…\n";
+        $summary = $runner->runProviderPackToCompletion($progress);
+        echo 'Provider pack: ' . json_encode($summary) . "\n";
         exit(isset($summary['error']) ? 1 : 0);
     }
 

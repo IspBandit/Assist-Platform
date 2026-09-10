@@ -3,6 +3,30 @@
 `database/migrations/` is the authoritative field-level schema. This document is
 a domain map, not a substitute for reading the relevant ordered migration.
 
+## Stay facility evidence and contributions (migration 128)
+
+Migration 129 adds `caravan_park_source_aliases`, which maps an imported source
+identity to its canonical stay after a duplicate merge. Automatic cleanup is
+restricted to records with the same normalised name and state whose coordinates
+are within 2 km. The higher-trust record survives; linked operational records
+and facility claims move to it, while the absorbed source row is soft-deleted
+and retained for provenance. Ambiguous matches are not automatically merged.
+
+Migration 130 performs the forward-only residual pass. It catches exact-name
+records within 2 km even when imported state assignment differs, repeated
+`(source_type, external_id)` identities, and an exact-name lower-trust record in
+the same state (or with one state absent) when the authority survivor lacks
+coordinates and its authority address repeats the full name. It preserves any
+missing survivor coordinates, locality and address before moving relationships,
+records an audit event and soft-deletes the absorbed row. It contains no
+place-specific slug or ID rule.
+
+- `stay_facility_claims`: current and historical facility-level evidence for a canonical `caravan_parks` row, including status/value, source, confidence, specificity and verification timestamps. `superseded_at` retires a claim without deleting it.
+- `facility_contributions`: public submission envelope and moderation lifecycle. Contact fields are optional and never public.
+- `facility_contribution_items`: before/suggested values and per-item moderation result, linked to any approved claim.
+- `facility_contribution_confirmations`: deduplicated independent confirmations of an existing pending report.
+- `facility_moderation_actions`: immutable human decision history with old/new values and notes.
+
 | Domain | Principal tables | Ownership/scope |
 |---|---|---|
 | Identity | `users`, `roles`, `permissions`, `user_roles`, sessions, reset/verification/consent/history tables | User/global with explicit role and brand participation extensions |

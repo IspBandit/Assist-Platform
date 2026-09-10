@@ -34,6 +34,24 @@ Before editing, recognise that CMS and email-template changes affect their globa
 
 ## Examples
 
+When indexing is enabled, public `/providers` listings and `/provider-terms`
+remain crawlable. Robots rules exclude only the private `/admin`, `/account`,
+`/provider`, `/park`, `/install` and `/billing` routes, their query strings and
+their descendants. These rules do not replace authentication. Turning indexing
+off still disallows the whole site. After a release, inspect the generated
+robots file and the affected URLs in Search Console; Google must recrawl before
+its exclusion reports can update.
+
+Town pages marked `noindex` are excluded from VanAssist's sitemap, including
+featured and launch towns. These presentation flags do not approve a page for
+indexing. Publish a town for search only through the existing content review.
+
+Contact tracking routes under `/go/` are excluded from crawling. Their phone,
+email and directions redirects remain available to people. These action URLs
+are not intended search results. Stay pages use recorded town, region and state
+in their visible location and default SEO text; custom SEO text remains intact.
+Do not merge same-name stays solely because Google selected another canonical.
+
 An editor updates a global FAQ and checks every affected public rendering. A mail administrator changes a global template, previews it in the intended brand context and sends a test to an internal address before campaign use.
 
 ## Common mistakes
@@ -60,7 +78,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-09-07.
 
 ## Owner
 

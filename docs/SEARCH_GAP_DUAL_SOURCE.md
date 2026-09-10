@@ -2,15 +2,17 @@
 
 **Backlog:** DATA-013, CORE-011, DATA-011  
 **Status:** dual-source wired on unified tree (`AdminApiSearchGapService` +
-`SearchGapDualSource`); production Ask / facilities / datasets / paid AI and
-`ADMIN_API_ENABLED` remain **off**  
+`SearchGapDualSource`); **production VanAssist (Aug 2026):** Admin API enabled,
+Ask and traveller facilities enabled; **paid AI / dataset routing flags remain off**  
 **Decision:** Prefer a single inventoried endpoint
 `GET /api/v1/admin/search-gaps` that unions `provider_searches` zeros and
 `knowledge_gaps`, distinguished by `meta.source` — **do not** invent a second
 Admin API path or expand locked Phase 1 OpenAPI schemas beyond optional
 description text.
 
-Production Ask / facilities / datasets / paid AI flags stay **off**.
+Production **paid AI / assist_ai_datasets** flags remain **off**. Ask VanAssist and
+traveller facilities are **on** on production VanAssist as of release `6a3f09d`
+(see `docs/PRODUCTION_CURRENT_STATE.md`). New environments still default flags off.
 
 ---
 

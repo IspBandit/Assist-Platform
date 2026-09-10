@@ -19,8 +19,8 @@ final class ProviderImportRunner
     public const SETTING_OSM_FP = 'import_osm_fp';
     public const SETTING_LOCALITY_OFFSET = 'import_locality_offset';
     public const SETTING_LOCALITY_FP = 'import_locality_fp';
-    public const SETTING_LOCALTORQUE_OFFSET = 'import_localtorque_offset';
-    public const SETTING_LOCALTORQUE_FP = 'import_localtorque_fp';
+    public const SETTING_PROVIDER_PACK_OFFSET = 'import_provider_pack_offset';
+    public const SETTING_PROVIDER_PACK_FP = 'import_provider_pack_fp';
 
     /**
      * @return array{
@@ -63,9 +63,9 @@ final class ProviderImportRunner
     }
 
     /** @return array<string,mixed> */
-    public function runLocalTorquePass(int $offset = 0, float $seconds = 18.0, int $batchSize = 250): array
+    public function runProviderPackPass(int $offset = 0, float $seconds = 18.0, int $batchSize = 250): array
     {
-        return $this->runPass('localtorque', $offset, $seconds, $batchSize);
+        return $this->runPass('provider-pack', $offset, $seconds, $batchSize);
     }
 
     /**
@@ -89,9 +89,9 @@ final class ProviderImportRunner
     }
 
     /** @param callable(array):void|null $onProgress @return array<string,mixed> */
-    public function runLocalTorqueToCompletion(?callable $onProgress = null, float $passSeconds = 45.0): array
+    public function runProviderPackToCompletion(?callable $onProgress = null, float $passSeconds = 45.0): array
     {
-        return $this->runToCompletion('localtorque', $onProgress, $passSeconds);
+        return $this->runToCompletion('provider-pack', $onProgress, $passSeconds);
     }
 
     /**
@@ -114,9 +114,9 @@ final class ProviderImportRunner
     }
 
     /** @return array<string,mixed> */
-    public function cronLocalTorque(float $seconds = 45.0): array
+    public function cronProviderPack(float $seconds = 45.0): array
     {
-        return $this->cronPass('localtorque', $seconds, 250);
+        return $this->cronPass('provider-pack', $seconds, 250);
     }
 
     /** @return array<string,mixed> */
@@ -150,9 +150,9 @@ final class ProviderImportRunner
         return hash('sha256', (string) filesize($covFile) . ':' . (string) filemtime($covFile));
     }
 
-    public function localTorqueFingerprint(): string
+    public function providerPackFingerprint(): string
     {
-        return LocalTorquePackSeeder::fingerprint();
+        return VanAssistProviderPackSeeder::fingerprint();
     }
 
     /**
@@ -171,7 +171,7 @@ final class ProviderImportRunner
     private function runPass(string $kind, int $offset, float $seconds, int $batchSize): array
     {
         $seeder = new NationalImportSeeder();
-        $localTorqueSeeder = new LocalTorquePackSeeder();
+        $providerPackSeeder = new VanAssistProviderPackSeeder();
         $providers = 0;
         $enriched = 0;
         $towns = 0;
@@ -186,7 +186,7 @@ final class ProviderImportRunner
                 $r = match ($kind) {
                     'osm' => $seeder->seedOsm($next, $batchSize),
                     'locality' => $seeder->seedLocality($next, $batchSize),
-                    'localtorque' => $localTorqueSeeder->seedBatch($next, $batchSize),
+                    'provider-pack' => $providerPackSeeder->seedBatch($next, $batchSize),
                     default => throw new \InvalidArgumentException('Unknown provider import kind: ' . $kind),
                 };
                 if (isset($r['error'])) {
@@ -261,7 +261,7 @@ final class ProviderImportRunner
             $r = match ($kind) {
                 'osm' => $this->runOsmPass($offset, $passSeconds),
                 'locality' => $this->runLocalityPass($offset, $passSeconds),
-                'localtorque' => $this->runLocalTorquePass($offset, $passSeconds),
+                'provider-pack' => $this->runProviderPackPass($offset, $passSeconds),
                 default => throw new \InvalidArgumentException('Unknown provider import kind: ' . $kind),
             };
             if (isset($r['error'])) {
@@ -318,7 +318,7 @@ final class ProviderImportRunner
         $r = match ($kind) {
             'osm' => $this->runOsmPass($offset, $seconds, $batchSize),
             'locality' => $this->runLocalityPass($offset, $seconds, $batchSize),
-            'localtorque' => $this->runLocalTorquePass($offset, $seconds, $batchSize),
+            'provider-pack' => $this->runProviderPackPass($offset, $seconds, $batchSize),
             default => throw new \InvalidArgumentException('Unknown provider import kind: ' . $kind),
         };
 
@@ -361,7 +361,7 @@ final class ProviderImportRunner
         return match ($kind) {
             'osm' => [self::SETTING_OSM_FP, self::SETTING_OSM_OFFSET, $this->osmFingerprint()],
             'locality' => [self::SETTING_LOCALITY_FP, self::SETTING_LOCALITY_OFFSET, $this->localityFingerprint()],
-            'localtorque' => [self::SETTING_LOCALTORQUE_FP, self::SETTING_LOCALTORQUE_OFFSET, $this->localTorqueFingerprint()],
+            'provider-pack' => [self::SETTING_PROVIDER_PACK_FP, self::SETTING_PROVIDER_PACK_OFFSET, $this->providerPackFingerprint()],
             default => throw new \InvalidArgumentException('Unknown provider import kind: ' . $kind),
         };
     }

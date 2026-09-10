@@ -109,7 +109,7 @@ final class Provider extends Model
      *
      * @return array{rows:array<int,array<string,mixed>>,total:int}
      */
-    public static function publicDirectory(?int $townId, ?int $categoryId, string $search, int $limit, int $offset): array
+    public static function publicDirectory(?int $townId, ?int $categoryId, string $search, int $limit, int $offset, string $serviceModel = ''): array
     {
         $where = ["p.status = 'active'", 'p.deleted_at IS NULL'];
         $params = [];
@@ -127,14 +127,20 @@ final class Provider extends Model
             $where[] = 'p.business_name LIKE ?';
             $params[] = '%' . $search . '%';
         }
+        if (in_array($serviceModel, ['mobile', 'workshop'], true)) {
+            $where[] = 'p.service_model IN (?, \'both\')';
+            $params[] = $serviceModel;
+        }
         $clause = ' WHERE ' . implode(' AND ', $where);
 
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $join . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.description, p.service_model, '
             . 'p.is_verified, p.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
+            . ($categoryId !== null ? ', ps.is_inferred AS category_match_inferred ' : '')
             . 'FROM providers p ' . $join . $clause
-            . ' ORDER BY p.is_featured DESC, p.is_verified DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
+            . ' ORDER BY ' . ($categoryId !== null ? 'ps.is_inferred ASC, ' : '')
+            . 'p.is_verified DESC, p.is_featured DESC, p.business_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
         );
 
@@ -142,7 +148,7 @@ final class Provider extends Model
     }
 
     /** @return array{rows:array<int,array<string,mixed>>,total:int} */
-    public static function brandDirectory(int $brandId, ?int $townId, ?int $categoryId, string $search, int $limit, int $offset): array
+    public static function brandDirectory(int $brandId, ?int $townId, ?int $categoryId, string $search, int $limit, int $offset, string $serviceModel = ''): array
     {
         $where = ["pbl.status = 'active'", 'pbl.search_visible = 1', 'pbl.deleted_at IS NULL', "p.status = 'active'", 'p.deleted_at IS NULL', 'pbl.brand_id = ?'];
         $params = [$brandId];
@@ -160,25 +166,75 @@ final class Provider extends Model
             $like = '%' . $search . '%';
             array_push($params, $like, $like, $like);
         }
+        if (in_array($serviceModel, ['mobile', 'workshop'], true)) {
+            $where[] = 'p.service_model IN (?, \'both\')';
+            $params[] = $serviceModel;
+        }
         $clause = ' WHERE ' . implode(' AND ', $where);
         $total = (int) Database::scalar('SELECT COUNT(DISTINCT p.id) FROM providers p ' . $joins . $clause, $params);
         $rows = Database::select(
             'SELECT DISTINCT p.id, pbl.slug, pbl.display_name AS business_name, p.description, p.service_model, '
             . 'pbl.is_verified, pbl.is_featured, p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.street_address, t.name AS town_name, s.abbreviation AS state_abbr '
+            . ($categoryId !== null ? ', pbca.is_verified AS category_match_verified, pbca.assignment_source AS category_match_source ' : '')
             . 'FROM providers p ' . $joins . $clause
-            . ' ORDER BY pbl.is_featured DESC, pbl.is_verified DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
+            . ' ORDER BY ' . ($categoryId !== null ? 'pbca.is_verified DESC, ' : '')
+            . 'pbl.is_verified DESC, pbl.is_featured DESC, pbl.display_name LIMIT ' . $limit . ' OFFSET ' . $offset,
             $params
         );
         return ['rows' => $rows, 'total' => $total];
     }
 
+    /**
+     * Direct public business-name matches for Ask. Description and contact
+     * fields are deliberately excluded so free text cannot broaden the match.
+     *
+     * @return list<array<string,mixed>>
+     */
+    public static function byNameForBrand(int $brandId, string $name, int $limit = 40): array
+    {
+        $name = trim($name);
+        if ($brandId < 1 || $name === '') {
+            return [];
+        }
+        $limit = max(1, min(40, $limit));
+        $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $name);
+        $contains = '%' . $escaped . '%';
+        $prefix = $escaped . '%';
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
+
+        return Database::select(
+            'SELECT p.id, pbl.slug, COALESCE(NULLIF(pbl.display_name,\'\'), p.business_name) AS business_name, '
+            . 'p.service_model, pbl.is_verified, pbl.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
+            . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, '
+            . 't.name AS town_name, t.slug AS town_slug, ' . $latitudeSql . ' AS town_lat, '
+            . $longitudeSql . ' AS town_lng, '
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, "
+            . 's.abbreviation AS state_abbr, '
+            . 'CASE WHEN LOWER(TRIM(COALESCE(NULLIF(pbl.display_name,\'\'), p.business_name))) = LOWER(?) THEN 0 '
+            . 'WHEN LOWER(COALESCE(NULLIF(pbl.display_name,\'\'), p.business_name)) LIKE LOWER(?) ESCAPE \'\\\\\' THEN 1 ELSE 2 END AS name_match_rank '
+            . 'FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id '
+            . 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id '
+            . "WHERE pbl.brand_id = ? AND pbl.status = 'active' AND pbl.search_visible = 1 "
+            . "AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL "
+            . 'AND (pbl.display_name LIKE ? ESCAPE \'\\\\\' OR p.business_name LIKE ? ESCAPE \'\\\\\') '
+            . 'ORDER BY name_match_rank, pbl.is_verified DESC, pbl.is_featured DESC, business_name '
+            . 'LIMIT ' . $limit,
+            [$name, $prefix, $brandId, $contains, $contains]
+        );
+    }
+
     /** @return array<string,mixed>|null */
     public static function findPublicBrandBySlug(int $brandId, string $slug): ?array
     {
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
+
         return Database::selectOne(
             'SELECT p.*, pbl.slug AS brand_slug, pbl.display_name AS brand_display_name, pbl.is_verified AS brand_verified, '
             . 'pbl.is_featured AS brand_featured, pbl.seo_title AS brand_seo_title, pbl.seo_description AS brand_seo_description, '
-            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
+            . 't.name AS town_name, t.slug AS town_slug, t.primary_postcode AS town_postcode, '
+            . $latitudeSql . ' AS town_lat, ' . $longitudeSql . ' AS town_lng, '
             . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
             . 'FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id '
             . 'LEFT JOIN towns t ON t.id = p.base_town_id LEFT JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = p.region_id '
@@ -202,9 +258,13 @@ final class Provider extends Model
     /** @return array<string,mixed>|null Active provider profile by slug. */
     public static function findPublicBySlug(string $slug): ?array
     {
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
+
         return Database::selectOne(
             'SELECT p.*, t.name AS town_name, t.slug AS town_slug, '
-            . 't.primary_postcode AS town_postcode, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, '
+            . 't.primary_postcode AS town_postcode, ' . $latitudeSql . ' AS town_lat, '
+            . $longitudeSql . ' AS town_lng, '
             . 's.abbreviation AS state_abbr, r.name AS region_name, r.slug AS region_slug '
             . 'FROM providers p LEFT JOIN towns t ON t.id = p.base_town_id '
             . 'LEFT JOIN states s ON s.id = t.state_id '
@@ -234,6 +294,8 @@ final class Provider extends Model
      */
     public static function forCategory(int $categoryId, ?int $townId = null, ?int $regionId = null, int $limit = 60): array
     {
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
         $where = ['ps.category_id = ?', "p.status = 'active'", 'p.deleted_at IS NULL'];
         $params = [$categoryId];
         if ($townId !== null && $townId > 0) {
@@ -248,8 +310,9 @@ final class Provider extends Model
         return Database::select(
             'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
-            . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
-            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, "
+            . 't.name AS town_name, t.slug AS town_slug, ' . $latitudeSql . ' AS town_lat, '
+            . $longitudeSql . ' AS town_lng, '
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, "
             . 's.abbreviation AS state_abbr '
             . 'FROM provider_services ps '
             . 'JOIN providers p ON p.id = ps.provider_id '
@@ -276,6 +339,8 @@ final class Provider extends Model
         int $radiusKm,
         int $limit = 120,
     ): array {
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
         $radiusKm = max(1, min(500, $radiusKm));
         $limit = max(1, min(500, $limit));
         $latDelta = $radiusKm / 111.32;
@@ -285,17 +350,18 @@ final class Provider extends Model
         return Database::select(
             'SELECT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.street_address, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.source_note, p.source_url, ps.is_inferred, '
-            . "t.name AS town_name, t.slug AS town_slug, COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) AS town_lat, "
-            . "COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) AS town_lng, s.abbreviation AS state_abbr, "
+            . 't.name AS town_name, t.slug AS town_slug, ' . $latitudeSql . ' AS town_lat, '
+            . $longitudeSql . ' AS town_lng, '
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, s.abbreviation AS state_abbr, "
             . '(6371 * ACOS(LEAST(1, GREATEST(-1, COS(RADIANS(?)) '
-            . "* COS(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))) "
-            . "* COS(RADIANS(COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END)) - RADIANS(?)) "
-            . "+ SIN(RADIANS(?)) * SIN(RADIANS(COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END))))))) AS distance_km "
+            . '* COS(RADIANS(' . $latitudeSql . ')) '
+            . '* COS(RADIANS(' . $longitudeSql . ') - RADIANS(?)) '
+            . '+ SIN(RADIANS(?)) * SIN(RADIANS(' . $latitudeSql . ')))))) AS distance_km '
             . 'FROM provider_services ps JOIN providers p ON p.id=ps.provider_id '
             . 'LEFT JOIN towns t ON t.id=p.base_town_id LEFT JOIN states s ON s.id=t.state_id '
             . "WHERE ps.category_id=? AND p.status='active' AND p.deleted_at IS NULL "
-            . "AND COALESCE(p.latitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.latitude END) BETWEEN ? AND ? "
-            . "AND COALESCE(p.longitude,CASE WHEN t.coordinate_confidence <> 'unverified' THEN t.longitude END) BETWEEN ? AND ? "
+            . 'AND ' . $latitudeSql . ' BETWEEN ? AND ? '
+            . 'AND ' . $longitudeSql . ' BETWEEN ? AND ? '
             . 'HAVING distance_km <= ? '
             . 'ORDER BY ps.is_inferred ASC, distance_km ASC, p.is_featured DESC, p.is_verified DESC, p.business_name '
             . 'LIMIT ' . $limit,
@@ -321,6 +387,8 @@ final class Provider extends Model
      */
     public static function inTown(int $townId, ?int $regionId = null, int $limit = 90): array
     {
+        $latitudeSql = self::publicCoordinateSql('latitude');
+        $longitudeSql = self::publicCoordinateSql('longitude');
         $hasRegion = $regionId !== null && $regionId > 0;
         $covers = ProviderCoverage::sqlServesTown();
         $params = array_merge(
@@ -336,7 +404,7 @@ final class Provider extends Model
         return Database::select(
             'SELECT DISTINCT p.id, p.business_name, p.slug, p.service_model, p.is_verified, p.is_featured, p.public_phone, p.show_public_phone, '
             . 'p.is_founding_provider, p.is_unclaimed, p.coverage_confidence, p.description, p.street_address, '
-            . 't.name AS town_name, COALESCE(p.latitude,t.latitude) AS town_lat, COALESCE(p.longitude,t.longitude) AS town_lng, s.abbreviation AS state_abbr, '
+            . 't.name AS town_name, ' . $latitudeSql . ' AS town_lat, ' . $longitudeSql . " AS town_lng, CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' ELSE 'town_centre' END AS distance_basis, s.abbreviation AS state_abbr, "
             . 'CASE WHEN ' . $covers . ' THEN 0 '
             . "WHEN p.service_model IN ('mobile','both') THEN 1 ELSE 2 END AS relevance "
             . 'FROM providers p '
@@ -454,5 +522,20 @@ final class Provider extends Model
             . 'WHERE a.provider_id = ? ORDER BY a.area_type',
             [$providerId]
         );
+    }
+
+    /**
+     * Public maps and distance filters must use a complete coordinate pair.
+     * A partial provider point must fall back to a trusted town centre as a
+     * pair; mixing one provider axis with one town axis creates a false point.
+     */
+    private static function publicCoordinateSql(string $axis): string
+    {
+        if (!in_array($axis, ['latitude', 'longitude'], true)) {
+            throw new \InvalidArgumentException('Unsupported coordinate axis.');
+        }
+
+        return "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN p.{$axis} "
+            . "WHEN t.coordinate_confidence IN ('authoritative','statistical') THEN t.{$axis} END";
     }
 }

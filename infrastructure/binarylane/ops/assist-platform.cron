@@ -13,6 +13,7 @@
 27 2 * * * root /usr/local/sbin/assist-cron clean_logs >> /var/log/assist-platform/cron.log 2>&1
 37 2 * * * root /usr/local/sbin/assist-cron analytics_retention >> /var/log/assist-platform/cron.log 2>&1
 47 2 * * * root /usr/local/sbin/assist-cron aggregate_daily_metrics >> /var/log/assist-platform/cron.log 2>&1
+15 6 * * * root /usr/local/sbin/assist-cron vanassist_daily_performance_email >> /var/log/assist-platform/cron.log 2>&1
 7 8 * * * root /usr/local/sbin/assist-cron send_run_reminders >> /var/log/assist-platform/cron.log 2>&1
 17 8 * * * root /usr/local/sbin/assist-cron provider_followups >> /var/log/assist-platform/cron.log 2>&1
 27 8 * * * root /usr/local/sbin/assist-cron document_expiry >> /var/log/assist-platform/cron.log 2>&1

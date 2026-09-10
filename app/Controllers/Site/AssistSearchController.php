@@ -8,12 +8,18 @@ use App\Core\Controller;
 use App\Core\Request;
 use App\Core\Response;
 use App\Core\Session;
+use App\Models\Town;
 use App\Platform\AiSearch\Dto\SearchRequest;
+use App\Platform\AiSearch\Outcome\OutcomeComposer;
 use App\Platform\AiSearch\SearchOrchestrator;
 use App\Platform\AiSearch\Support\AiSearchFeature;
+use App\Platform\AiSearch\Support\OutcomeFeature;
 use App\Platform\Brand\BrandContext;
 use App\Services\Demand\TrackingSession;
+use App\Services\Demand\TrafficQuality;
 use App\Services\RateLimiter;
+use App\Services\Search\PublicResultWindow;
+use App\Services\ProductBrandAsk;
 
 /**
  * Ask VanAssist — parallel NL search entry (Phase AI-1).
@@ -25,6 +31,10 @@ final class AssistSearchController extends Controller
     {
         $this->guard();
 
+        if (in_array(current_brand()->id(), ['towsmart', 'trailerwise'], true)) {
+            return $this->productBrandForm($request);
+        }
+
         // Honeypot: bots filling hidden website field get an empty form response.
         if (trim((string) $request->input('website', '')) !== '') {
             return $this->view('public.assist-search', [
@@ -35,8 +45,10 @@ final class AssistSearchController extends Controller
                 'lat' => null,
                 'lng' => null,
                 'result' => null,
+                'outcome' => null,
                 'structuredFindUrl' => url('find'),
                 'staysUrl' => url('stays'),
+                'needsDeviceLocation' => false,
             ]);
         }
 
@@ -53,12 +65,13 @@ final class AssistSearchController extends Controller
         }
 
         $result = null;
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
         if ($q !== '') {
             $brand = current_brand();
             $orchestrator = new SearchOrchestrator();
             $sessionId = null;
             try {
-                $sessionId = TrackingSession::id();
+                $sessionId = TrafficQuality::excludesCurrentRequest() ? null : TrackingSession::id();
             } catch (\Throwable) {
                 $sessionId = null;
             }
@@ -73,8 +86,16 @@ final class AssistSearchController extends Controller
                 requestId: bin2hex(random_bytes(8)),
                 channel: 'ask_vanassist',
                 sessionId: $sessionId,
+                resultLimit: $resultLimit,
             ));
         }
+
+        $needsDeviceLocation = $q !== ''
+            && $result !== null
+            && $lat === null
+            && $lng === null
+            && ($result->intent->locationText === null || $result->intent->locationText === '');
+        $outcome = $result !== null && OutcomeFeature::enabled() ? (new OutcomeComposer())->compose($result) : null;
 
         return $this->view('public.assist-search', [
             'title' => 'Ask VanAssist',
@@ -84,8 +105,11 @@ final class AssistSearchController extends Controller
             'lat' => $lat,
             'lng' => $lng,
             'result' => $result,
+            'outcome' => $outcome,
             'structuredFindUrl' => url('find'),
             'staysUrl' => url('stays'),
+            'resultLimit' => $resultLimit,
+            'needsDeviceLocation' => $needsDeviceLocation,
         ]);
     }
 
@@ -103,11 +127,57 @@ final class AssistSearchController extends Controller
 
     private function guard(): void
     {
-        if (current_brand()->id() !== 'vanassist') {
+        if (!in_array(current_brand()->id(), ['vanassist', 'towsmart', 'trailerwise'], true)) {
             $this->abort(404, 'Page not found.');
         }
         if (!AiSearchFeature::enabled()) {
             $this->abort(404, 'Page not found.');
         }
+    }
+
+    private function productBrandForm(Request $request): Response
+    {
+        $brand = current_brand();
+        $query = trim((string) $request->input('q', ''));
+        if (mb_strlen($query) > (int) config('ai_search.max_query_length', 240)) {
+            $query = mb_substr($query, 0, (int) config('ai_search.max_query_length', 240));
+        }
+
+        $latRaw = $request->input('lat');
+        $lngRaw = $request->input('lng');
+        $lat = is_numeric($latRaw) ? (float) $latRaw : null;
+        $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
+        $hasCoords = $lat !== null && $lng !== null
+            && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
+        if (!$hasCoords) {
+            $lat = null;
+            $lng = null;
+        }
+
+        $deviceLocation = null;
+        if ($hasCoords) {
+            $town = Town::nearestActive((float) $lat, (float) $lng);
+            if ($town !== null) {
+                $deviceLocation = (string) $town['name'];
+                if (!empty($town['state_abbr'])) {
+                    $deviceLocation .= ', ' . $town['state_abbr'];
+                }
+            }
+        }
+
+        $result = $query !== ''
+            ? (new ProductBrandAsk())->resolve($brand->id(), $query, $deviceLocation)
+            : null;
+
+        return $this->view('brands.ask', [
+            'title' => 'Ask ' . $brand->name(),
+            'metaDescription' => 'Describe the towing or trailer help you need and ' . $brand->name() . ' will route you to the appropriate shared service or guidance.',
+            'canonical' => url('ask'),
+            'query' => $query,
+            'lat' => $lat,
+            'lng' => $lng,
+            'result' => $result,
+            'brand' => $brand,
+        ]);
     }
 }

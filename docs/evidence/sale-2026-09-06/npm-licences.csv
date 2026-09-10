@@ -1,0 +1,5 @@
+"package","version","licence"
+"node_modules/@playwright/test","1.62.0","Apache-2.0"
+"node_modules/fsevents","2.3.2","MIT"
+"node_modules/playwright","1.62.0","Apache-2.0"
+"node_modules/playwright-core","1.62.0","Apache-2.0"

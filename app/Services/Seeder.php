@@ -44,6 +44,7 @@ final class Seeder
         ProviderCampaignDrafts::prepareForBrand(1);
         $this->seedSettings();
         $this->seedFeatureFlags();
+        (new AskQuestionLibrarySeeder())->seed();
         $this->seedScheduledTasks();
         $this->seedEmailTemplates();
         $this->seedContent();

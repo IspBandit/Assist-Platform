@@ -12,7 +12,12 @@ use App\Helpers\Geo;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
+use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Services\Demand\DemandRecorder;
+use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\ProviderFallbackCategories;
+use App\Services\Search\PublicResultWindow;
+use App\Services\Search\StructuredSearchDestination;
 
 /**
  * Handles the homepage "Find a service" search: a free-text town/postcode plus
@@ -23,13 +28,17 @@ final class SearchController extends Controller
 {
     public function find(Request $request): Response
     {
-        if (current_brand()->id() === 'polaris' && current_brand()->moduleEnabled('rv_catalogue')) {
-            return (new PolarisController())->find($request);
+        if (in_array(current_brand()->id(), ['towsmart', 'trailerwise'], true)) {
+            return (new ProviderController())->index($request);
         }
 
         $location = trim((string) $request->input('location', ''));
+        if ($location === '') {
+            $location = trim((string) $request->input('text', ''));
+        }
         $categorySlug = trim((string) $request->input('category', ''));
         $timeframe = trim((string) $request->input('timeframe', ''));
+        $resultLimit = PublicResultWindow::requested($request->input('limit'));
 
         // Optional device GPS coordinates ("Use my location"). Only used when no
         // town/postcode was typed.
@@ -39,21 +48,39 @@ final class SearchController extends Controller
         $lng = is_numeric($lngRaw) ? (float) $lngRaw : null;
         $hasCoords = $lat !== null && $lng !== null && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
 
+        if (current_brand()->id() === 'vanassist') {
+            $destination = StructuredSearchDestination::path(
+                $categorySlug,
+                $location,
+                $hasCoords ? $lat : null,
+                $hasCoords ? $lng : null,
+                AiSearchFeature::enabled(),
+            );
+            if ($destination !== null) {
+                return $this->redirect($destination);
+            }
+        }
+
         $category = $categorySlug !== '' ? ServiceCategory::findActiveBySlug($categorySlug) : null;
         $categoryId = $category !== null ? (int) $category['id'] : null;
 
         $usedLocation = false;
         $alternatives = [];
-        // When lat/lng are present (device GPS), they take precedence over a typed
-        // town string — the label we fill may be "Gladstone, QLD" which does not
-        // match the towns.name column verbatim.
-        if ($hasCoords) {
-            $town = Town::nearestActive($lat, $lng);
-            $usedLocation = $town !== null;
-        } elseif ($location !== '') {
+        // A location the user typed always wins over hidden/stale device
+        // coordinates. GPS is used only when the location field is empty.
+        if ($location !== '') {
             $townMatches = Town::searchActive($location);
+            if ($townMatches === []) {
+                $townMatches = Town::searchActiveFuzzy($location);
+            }
             $town = $townMatches[0] ?? null;
             $alternatives = array_slice($townMatches, 1, 5);
+            $hasCoords = false;
+            $lat = null;
+            $lng = null;
+        } elseif ($hasCoords) {
+            $town = Town::nearestActive($lat, $lng);
+            $usedLocation = $town !== null;
         } else {
             $town = null;
         }
@@ -76,6 +103,7 @@ final class SearchController extends Controller
 
         $matches = [];
         $possible = [];
+        $usedRegionalPool = false;
 
         if ($town !== null) {
             $townId = (int) $town['id'];
@@ -104,11 +132,60 @@ final class SearchController extends Controller
             }
         }
 
+        $exactMatchCount = count($matches) + count($possible);
+        $relatedCategorySlugs = ProviderFallbackCategories::related([$categorySlug]);
+        if ($categoryId !== null && $exactMatchCount === 0 && $relatedCategorySlugs !== []
+            && ($town !== null || $location === '')) {
+            $fallbackRows = [];
+            foreach ($relatedCategorySlugs as $relatedSlug) {
+                $relatedCategory = ServiceCategory::findActiveBySlug($relatedSlug);
+                if ($relatedCategory === null) {
+                    continue;
+                }
+                $rows = $town !== null
+                    ? ($distanceFilter['scope'] === 'km' && $hasOrigin
+                        ? Provider::forCategoryNear((int) $relatedCategory['id'], (float) $originLat, (float) $originLng, (int) $distanceFilter['km'])
+                        : Provider::forCategory((int) $relatedCategory['id'], (int) $town['id']))
+                    : Provider::forCategory((int) $relatedCategory['id']);
+                foreach ($rows as $row) {
+                    $providerId = (int) ($row['id'] ?? 0);
+                    if ($providerId <= 0 || isset($fallbackRows[$providerId])) {
+                        continue;
+                    }
+                    $row['is_inferred'] = 1;
+                    $row['search_fallback'] = 'related_category';
+                    $fallbackRows[$providerId] = $row;
+                }
+            }
+            $possible = array_values($fallbackRows);
+
+        }
+
         if ($hasOrigin) {
             $townIdForFilter = $town !== null ? (int) $town['id'] : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townIdForFilter);
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
+            $routed = (new RoadDistanceService())->enrichGroups(
+                ['matches' => $matches, 'possible' => $possible],
+                $originLat,
+                $originLng,
+                $maxDistance,
+            );
+            $matches = $routed['matches'];
+            $possible = $routed['possible'];
+        } else {
+            $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
+            $matches = $resultWindow['groups']['matches'];
+            $possible = $resultWindow['groups']['possible'];
         }
+
+        $usedNearbyFallback = $exactMatchCount === 0 && array_filter(
+            $possible,
+            static fn (array $row): bool => isset($row['search_fallback'])
+        ) !== [];
 
         // Paid visibility is kept in an explicitly labelled block. Organic
         // direct results rank verified listings first, then nearest distance;
@@ -130,6 +207,8 @@ final class SearchController extends Controller
                 'postcode'     => preg_match('/^\d{3,4}$/', $location) === 1 ? $location : null,
                 'category_id'  => $categoryId,
                 'result_count' => count($shown),
+                'exact_match_count' => $exactMatchCount,
+                'used_nearby_fallback' => $usedNearbyFallback,
             ]);
             DemandRecorder::recordImpressions($searchId, $shown, $categoryId);
         }
@@ -190,6 +269,7 @@ final class SearchController extends Controller
             'locationNotFound' => $locationNotFound,
             'matches'          => $matches,
             'possible'         => $possible,
+            'usedRegionalPool' => $usedRegionalPool,
             'requestUrl'       => $requestUrl,
             'searchId'         => $searchId,
             'categories'       => $categories,
@@ -197,6 +277,16 @@ final class SearchController extends Controller
             'lat'              => $hasCoords ? $lat : null,
             'lng'              => $hasCoords ? $lng : null,
             'nearbyRuns'       => $nearbyRuns,
+            'hasMore'          => $resultWindow['has_more'],
+            'showMoreUrl'      => $resultWindow['has_more'] ? url('find?' . http_build_query(array_filter([
+                'location' => $location,
+                'category' => $categorySlug,
+                'timeframe' => $timeframe,
+                'max_distance' => $request->input('max_distance'),
+                'lat' => $hasCoords ? $lat : null,
+                'lng' => $hasCoords ? $lng : null,
+                'limit' => 40,
+            ], static fn (mixed $value): bool => $value !== null && $value !== ''))) : null,
         ]);
     }
 

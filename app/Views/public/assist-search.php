@@ -4,9 +4,12 @@
 /** @var float|null $lat */
 /** @var float|null $lng */
 /** @var \App\Platform\AiSearch\Dto\SearchResponse|null $result */
+/** @var array<string,mixed>|null $outcome */
 /** @var string $structuredFindUrl */
 /** @var string $staysUrl */
+/** @var int $resultLimit */
 $this->extend('layouts.public');
+$hasResults = $result !== null && ($result->providers !== [] || $result->stays !== [] || $result->facilities !== [] || $result->externals !== []);
 $mappedResults = [];
 $mapNumbers = [];
 if ($result !== null) {
@@ -69,6 +72,12 @@ if ($result !== null) {
         );
     }
 }
+$usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceService::groupsUseRoadDistance([
+    'providers' => $result->providers,
+    'stays' => $result->stays,
+    'facilities' => $result->facilities,
+    'externals' => $result->externals,
+]);
 ?>
 <?php $this->section('head'); ?>
 <?php if ($mappedResults !== []): ?><link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin><?php endif; ?>
@@ -78,11 +87,12 @@ if ($result !== null) {
     <div class="container">
         <header class="interior-visual-heading interior-visual-heading--ask">
         <span class="directory-eyebrow">Ask VanAssist</span>
-        <h1>What do you need help finding?</h1>
-        <p class="lead" style="max-width:40rem">Describe what you need in plain language. Category and town search remain available if you prefer them.</p>
+        <h1><?= $result === null ? 'What do you need help finding?' : 'Search results' ?></h1>
+        <?php if ($result === null): ?><p class="lead" style="max-width:40rem">Describe what you need and where you need it.</p><?php endif; ?>
         </header>
 
-        <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" style="margin:1.25rem 0 1.5rem">
+        <?php if ($result !== null): ?><details class="ask-refine"><summary>Change this search</summary><?php endif; ?>
+        <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>"<?= $query === '' || !empty($needsDeviceLocation) ? ' data-auto-location' : '' ?> data-ask-location-priority="typed-over-gps" style="margin:1.25rem 0 1.5rem">
             <div class="form-group mb-0 location-field">
                 <label for="ask-q">Your request</label>
                 <input type="text" id="ask-q" name="q" value="<?= e_attr($query) ?>" maxlength="240" placeholder="e.g. Dump point near Batehaven" autocomplete="off" required>
@@ -92,7 +102,7 @@ if ($result !== null) {
                     <label for="ask-website">Website</label>
                     <input type="text" id="ask-website" name="website" value="" tabindex="-1" autocomplete="off">
                 </div>
-                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => 'false']); ?>
+                <?php $this->include('partials.use-location-btn', ['class' => 'use-location-inline', 'autoSubmit' => !empty($needsDeviceLocation) ? 'true' : 'false']); ?>
                 <p class="location-status muted" role="status" aria-live="polite" hidden></p>
             </div>
             <div class="search-submit-row" style="margin-top:1rem">
@@ -101,8 +111,13 @@ if ($result !== null) {
                 <a class="btn btn-secondary btn-lg" href="<?= e($structuredFindUrl) ?>">Use category search</a>
             </div>
         </form>
+        <?php if ($result !== null): ?></details><?php endif; ?>
 
-        <p class="muted" style="margin:0 0 1.5rem">Examples: public toilets near me · LPG refill near Batemans Bay · mobile caravan repairer near Emerald · caravan park nearby · auto electrician within 50 km</p>
+        <?php if (!empty($needsDeviceLocation)): ?>
+            <p class="muted" role="status">This request has no place in the question, so VanAssist is using your device location. Allow location access when your browser asks.</p>
+        <?php endif; ?>
+
+        <?php if ($result === null): ?><p class="muted" style="margin:0 0 1.5rem">Try: public toilets near me · LPG refill near Batemans Bay · mobile caravan repairer near Emerald</p><?php endif; ?>
 
         <?php if ($result !== null): ?>
             <?php if ($result->messages !== []): ?>
@@ -119,19 +134,37 @@ if ($result !== null) {
                 </div>
             <?php endif; ?>
 
+            <?php if ($outcome !== null): ?>
+                <section class="ask-outcome" aria-labelledby="ask-outcome-heading">
+                    <div class="ask-outcome__understanding">
+                        <span class="directory-eyebrow">What I understood</span>
+                        <h2 id="ask-outcome-heading"><?= $this->e((string) $outcome['understood']['need']) ?></h2>
+                        <dl class="ask-outcome__facts">
+                            <div><dt>Location</dt><dd><?= $this->e((string) $outcome['understood']['location']) ?></dd></div>
+                            <div><dt>Search area</dt><dd><?= $this->e((string) $outcome['understood']['radius']) ?></dd></div>
+                            <div><dt>Distance method</dt><dd><?= $this->e((string) $outcome['distance']['label']) ?></dd></div>
+                            <?php if (!empty($outcome['understood']['urgency'])): ?><div><dt>Urgency</dt><dd><?= $this->e((string) $outcome['understood']['urgency']) ?></dd></div><?php endif; ?>
+                        </dl>
+                        <p class="ask-outcome__distance"><?= $this->e((string) $outcome['distance']['detail']) ?></p>
+                    </div>
+                    <aside class="ask-outcome__next ask-outcome__next--<?= e_attr((string) $outcome['next_action']['tone']) ?>">
+                        <span class="directory-eyebrow">Safest next action</span>
+                        <h2><?= $this->e((string) $outcome['next_action']['heading']) ?></h2>
+                        <p><?= $this->e((string) $outcome['next_action']['body']) ?></p>
+                        <?php if (!empty($outcome['next_action']['url']) && !empty($outcome['next_action']['label'])): ?><a class="text-link" href="<?= e((string) $outcome['next_action']['url']) ?>"><?= $this->e((string) $outcome['next_action']['label']) ?></a><?php endif; ?>
+                    </aside>
+                </section>
+            <?php endif; ?>
+
             <?php if ($result->town !== null): ?>
-                <p class="muted">Interpreted near <strong><?= $this->e((string) $result->town['name']) ?><?= !empty($result->town['state_abbr']) ? ', ' . $this->e((string) $result->town['state_abbr']) : '' ?></strong>
-                    <?php if ($result->intent->radiusKm !== null): ?> · within <?= (int) $result->intent->radiusKm ?> km<?php endif; ?>
-                    · confidence <?= number_format($result->intent->confidence * 100, 0) ?>%</p>
+                <p class="ask-result-context"><strong><?= $this->e((string) $result->town['name']) ?><?= !empty($result->town['state_abbr']) ? ', ' . $this->e((string) $result->town['state_abbr']) : '' ?></strong>
+                    <?php if ($result->intent->radiusKm !== null): ?><span>Within <?= (int) $result->intent->radiusKm ?> km</span><?php endif; ?>
+                    <?php if ($usesRoadDistance): ?><span>Nearest first by driving distance</span><?php endif; ?></p>
             <?php endif; ?>
 
             <?php if ($mappedResults !== []): ?>
-                <section class="results-map-shell" data-results-view-shell data-active-view="list" aria-labelledby="results-map-heading">
+                <section class="results-map-shell" data-results-view-shell data-active-view="list" aria-label="Choose list or map results">
                     <div class="results-view-switch" role="group" aria-label="Choose results view"><button type="button" data-results-view="list" aria-pressed="true">List</button><button type="button" data-results-view="map" aria-pressed="false">Map</button></div>
-                    <div class="results-map-heading">
-                        <div><span class="directory-eyebrow">Map and list</span><h2 id="results-map-heading"><?= count($mappedResults) ?> located <?= count($mappedResults) === 1 ? 'result' : 'results' ?></h2></div>
-                        <p>Tap a numbered pin to match it with the same number in the results list.</p>
-                    </div>
                     <div class="results-map" data-results-map hidden aria-label="Map of results returned by Ask VanAssist">
                         <div class="results-map-canvas" data-results-map-canvas tabindex="0" aria-label="Interactive results map. Drag to move, pinch or use the controls to zoom."></div>
                         <div class="results-map-controls" role="group" aria-label="Map controls"><button type="button" data-results-map-zoom-in aria-label="Zoom in">+</button><button type="button" data-results-map-zoom-out aria-label="Zoom out">&minus;</button><button type="button" data-results-map-fit>Fit results</button></div>
@@ -165,9 +198,8 @@ if ($result !== null) {
                         $compact = true;
                         $this->include('partials.provider-result-card', compact('p', 'isPossible', 'searchId', 'gapId', 'resultCardId', 'mapResultNumber', 'compact'));
                         ?>
-                        <?php if (!empty($p['assist_provenance_label'])): ?>
-                            <p class="muted" style="margin:-0.5rem 0 1rem 0;font-size:0.85rem"><?= $this->e((string) $p['assist_provenance_label']) ?></p>
-                        <?php endif; ?>
+                        <?php $fitReasons = $outcome['result_reasons'][$providerKey] ?? []; ?>
+                        <?php if ($fitReasons !== []): ?><details class="ask-fit-reasons"><summary>Why this fits</summary><ul><?php foreach ($fitReasons as $reason): ?><li><?= $this->e((string) $reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -191,10 +223,12 @@ if ($result !== null) {
                             <p class="muted" style="margin:0">
                                 <?= $this->e((string) ($stay['stay_type'] ?? '')) ?>
                                 <?php if (!empty($stay['town_name'])): ?> · <?= $this->e((string) $stay['town_name']) ?><?php endif; ?>
-                                <?php if (isset($stay['distance_km']) && $stay['distance_km'] !== null): ?> · <?= max(1, (int) $stay['distance_km']) ?> km straight-line<?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($stay); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                                 <?php if (!empty($stay['assist_provenance_label'])): ?> · <?= $this->e((string) $stay['assist_provenance_label']) ?><?php endif; ?>
                             </p>
                         </article>
+                        <?php $fitReasons = $outcome['result_reasons'][$stayKey] ?? []; ?>
+                        <?php if ($fitReasons !== []): ?><details class="ask-fit-reasons"><summary>Why this fits</summary><ul><?php foreach ($fitReasons as $reason): ?><li><?= $this->e((string) $reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
                     <?php endforeach; ?>
                 </div>
                 <p style="margin-top:0.75rem"><a href="<?= e($staysUrl) ?>">Open full stays search</a></p>
@@ -207,12 +241,13 @@ if ($result !== null) {
                         <?php $facilityKey = 'facility-' . (int) ($facility['id'] ?? 0); $facilityMapNumber = $mapNumbers[$facilityKey] ?? 0; ?>
                         <article id="assist-result-<?= e_attr($facilityKey) ?>" class="facility-result-row" tabindex="-1">
                             <div class="facility-result-main">
-                                <h3><?php if ($facilityMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $facilityMapNumber ?>" aria-label="Map pin <?= $facilityMapNumber ?>"></span><?php endif; ?><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></h3>
+                                <h3><?php if ($facilityMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $facilityMapNumber ?>" aria-label="Map pin <?= $facilityMapNumber ?>"></span><?php endif; ?><?php if (!empty($facility['profile_url'])): ?><a href="<?= e((string) $facility['profile_url']) ?>"><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?></a><?php else: ?><?= $this->e((string) ($facility['name'] ?? $facility['business_name'] ?? 'Facility')) ?><?php endif; ?></h3>
                                 <p class="muted">
                                 <?= $this->e(str_replace('_', ' ', (string) ($facility['facility_type'] ?? ''))) ?>
                                 <?php if (!empty($facility['town_name'])): ?> · <?= $this->e((string) $facility['town_name']) ?><?php endif; ?>
                                 <?php if (!empty($facility['formatted_address'])): ?> · <?= $this->e((string) $facility['formatted_address']) ?><?php endif; ?>
-                                <?php if (isset($facility['distance_km']) && $facility['distance_km'] !== null): ?> · <?= max(1, (int) $facility['distance_km']) ?> km straight-line<?php endif; ?>
+                                <?php if (!empty($facility['facility_display'])): ?> · <?= $this->e((string) $facility['facility_display']) ?><?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($facility); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                                 <?php if (!empty($facility['assist_provenance_label'])): ?> · <?= $this->e((string) $facility['assist_provenance_label']) ?><?php endif; ?>
                                 </p>
                             </div>
@@ -220,6 +255,8 @@ if ($result !== null) {
                                 <a class="facility-result-action" href="<?= e((string) $facility['source_url']) ?>" target="_blank" rel="noopener noreferrer">Source</a>
                             <?php endif; ?>
                         </article>
+                        <?php $fitReasons = $outcome['result_reasons'][$facilityKey] ?? []; ?>
+                        <?php if ($fitReasons !== []): ?><details class="ask-fit-reasons"><summary>Why this fits</summary><ul><?php foreach ($fitReasons as $reason): ?><li><?= $this->e((string) $reason) ?></li><?php endforeach; ?></ul></details><?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
@@ -235,7 +272,7 @@ if ($result !== null) {
                                 <?= $this->e((string) ($ext['assist_provenance_label'] ?? 'Pending review')) ?>
                                 <?php if (!empty($ext['connector_name'])): ?> · <?= $this->e((string) $ext['connector_name']) ?><?php endif; ?>
                                 <?php if (!empty($ext['formatted_address'])): ?> · <?= $this->e((string) $ext['formatted_address']) ?><?php endif; ?>
-                                <?php if (isset($ext['distance_km']) && $ext['distance_km'] !== null): ?> · <?= max(1, (int) $ext['distance_km']) ?> km straight-line<?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($ext); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                             </p>
                             <?php if (!empty($ext['website'])): ?>
                                 <p style="margin:0.35rem 0 0"><a href="<?= e((string) $ext['website']) ?>" rel="noopener noreferrer">Source website</a></p>
@@ -246,11 +283,17 @@ if ($result !== null) {
             <?php endif; ?>
 
             <?php if ($result->searched && $result->providers === [] && $result->stays === [] && $result->facilities === [] && $result->externals === []): ?>
-                <div class="card" style="margin-top:1rem">
-                    <p style="margin:0">No listings matched this Ask VanAssist search yet. <a href="<?= e($structuredFindUrl) ?>">Try category search</a> or <a href="<?= e(url('request-assistance')) ?>">request assistance</a>.</p>
+                <div class="card ask-no-results" style="margin-top:1rem">
+                    <h2 class="h3">No matching service found nearby</h2>
+                    <p>VanAssist did not find a listed provider for this service. It will not substitute unrelated businesses.</p>
+                    <div class="btn-row"><a class="btn btn-secondary" href="<?= e($structuredFindUrl) ?>">Try a wider search</a><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a></div>
                 </div>
             <?php endif; ?>
             </div>
+            <?php if ($result->hasMore): ?>
+                <?php $moreUrl = url('ask?' . http_build_query(array_filter(['q' => $query, 'lat' => $lat, 'lng' => $lng, 'limit' => 40], static fn ($value): bool => $value !== null && $value !== ''))); ?>
+                <p class="results-show-more"><a class="btn btn-secondary" href="<?= e($moreUrl) ?>">Show up to 40 results</a></p>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </section>

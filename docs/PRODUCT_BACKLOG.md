@@ -38,26 +38,26 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
-| VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Admin API claims/corrections shipped (Increment B); end-to-end acceptance remains |
+| VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Inbound claim review, secure acceptance and evidence-backed verification are wired; production end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
 | VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Deterministic Ask is live but not yet the primary homepage form; the candidate adds flagship ordering, national correctness, brand isolation and emergency guidance and awaits exact-candidate Quality Gate |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
-| TOW-002 | Rich saved combination edit/compare/report workflow | ready | Owner-isolation and calculation snapshot tests |
+| TOW-002 | Rich saved combination edit/compare/report workflow | done | Owner/brand isolation, recalculated snapshots, three-way comparison, private printable report and safety-boundary tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |
 | TRL-002 | Trailer ownership and compliance content system | done | Shared Garage, trailer source/jurisdiction guide, freshness alerts and specialist handoff pass |
-| LOC-001 | LocalTorque first-class private brand foundation | done | Private render, categories, sitemap and enrichment report |
-| LOC-002 | LocalTorque national coverage, claims and search readiness | in progress | Coverage report, duplicate review and claim acceptance |
-| LOC-003 | LocalTorque production launch | blocked | Domain purchase, DNS, email, legal and launch acceptance |
-| LOC-004 | LocalTorque complete motorsport rule, venue and calendar discovery | in progress | Explicit national discipline taxonomy, official rule layers, verified venue websites/calendars, source freshness and mobile journey acceptance |
-| POL-001 | Polaris foundation: brand, docs, homepage, catalogue schema, browse/detail/find shell, admin nav | in progress | Private vertical slice; master prompt not complete — `docs/polaris/IMPLEMENTATION_STATUS.md` |
-| POL-002 | Polaris catalogue browse completeness (filters, provenance UI, SEO) | in progress | Filters/sort + provenance + year selector + a11y + demo volume (`119`); FULLTEXT open |
-| POL-003 | Guided matching and transparent recommendation engine | in progress | Find stages + MatchScorer + prefs UI + Find hydration from saved prefs |
-| POL-004 | TowSmart compatibility service boundary for Polaris | in progress | `TowCompatibilityService` + `/tow-match` UX |
-| POL-005 | Multi-model comparison experience | in progress | Compare/share + account history + saved browse searches (alerts not delivered) |
-| POL-006 | Draft-first data acquisition and extraction review | in progress | CSV/JSON/XLSX + brochure text extract flags; AI import still off |
-| POL-007 | Manufacturer portal (claim-first) | in progress | Claim + edits + analytics views/saves + data-quality checklist |
-| POL-008 | VanAssist provider surfacing on Polaris pages | in progress | Related services + dealer mailto/website handoff (`120`) |
-| POL-009 | Polaris production hardening and public launch | blocked | Domain, Quality Gate, real catalogue; see `docs/polaris/RELEASE_CRITERIA.md` |
+| LOC-001 | Retire LocalTorque and transfer useful provider data to VanAssist | done | Runtime, routes and assets removed; canonical providers retained through VanAssist-owned pack |
+| LOC-002 | Retired | done | Superseded by VAN-011 and DATA-001 |
+| LOC-003 | Retired | done | No domain or production launch |
+| LOC-004 | Retired | done | Public motorsport surface removed |
+| POL-001 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-002 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-003 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-004 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-005 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-006 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-007 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-008 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
+| POL-009 | Retired; excluded from active product and sale | done | Historical implementation evidence retained; no further launch work |
 
 ## Data
 
@@ -74,7 +74,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-009 | Regulatory change alerts and freshness control centre | done | Subscriber scope/consent, reviewer queue, source-health dashboard, notification audit and changed-source fail-closed acceptance |
 | DATA-010 | Australian motorsport authority, discipline, venue and calendar catalogue | in progress | All taxonomy families mapped to official rule and venue sources; calendar/source monitoring and representative jurisdiction acceptance |
 | DATA-011 | Assist RIC live Admin API synchronisation | done | RIC live client, package mapper, validate-only submit, search-gaps pull and sync status shipped; staging rehearsal is operational (not a code gap) |
-| DATA-011A | National Dataset Catalogue (RIC acquisition SoR) | done | Extends `government_datasets` (`117`); portals/themes seeded; Admin API/HTML fields; ADR 0033; no auto-publish; no new importers |
+| DATA-011A | National Dataset Catalogue (RIC acquisition SoR) | done | Extends `government_datasets` (`117`); portals/themes seeded; Admin API/HTML fields; ADR 0033; Assist RIC facility packs auto-publish per ADR 0034 |
 | DATA-012 | Government dataset catalogue and import connectors | done | Migrations `109`/`110` + Admin API `/datasets`; CKAN/ArcGIS/CSV/GeoJSON; admin catalogue + review; demo fixtures (disabled) |
 | DATA-013 | Search gap and knowledge growth engine | done | AI-4 tables + admin/CSV + SearchGap JSON export + `SearchGapDualSource`; dual-source wire into `GET /search-gaps` on unify branch |
 | DATA-014 | Canonical entity and source provenance model | ready | Stable entity IDs, source links, field-level provenance where practical; extends DATA-001 |
@@ -92,11 +92,11 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| OPS-001 | Immutable gated production releases | done | Production release workflow and runbook |
+| OPS-001 | Immutable gated production releases | done | Production release workflow, runbook, and shared-edge registry/guard regression test |
 | OPS-002 | Backup, restore and rollback rehearsal | ready | Fresh machine-readable off-site backup and restore evidence displayed in the launch gate |
 | OPS-003 | Monitoring for app, DB, storage, mail and scheduled work | in progress | Health dashboard and alert verification |
 | OPS-004 | Full Platform Quality Gate for release candidates | ready | Four-pillar live evidence panel plus signed gate record linked to release |
-| OPS-005 | Sale-readiness operational/data room index | later | Architecture, licences, data provenance, runbooks and metrics indexed |
+| OPS-005 | Sale-readiness operational/data room index | in progress | Architecture, licences, data provenance, runbooks and metrics indexed |
 | OPS-006 | Living user, administrator and API documentation stays synchronized with product behaviour | in progress | Scope-matched guide and release-note updates enforced in pull requests and CI; complete current customer/provider guides and release history remain |
 | OPS-010 | Admin API security, service accounts and cost controls | in progress | Tokens, scopes, MFA, service-account HTML admin shipped; Option B programme conditional QG; production enable flags await staging rehearsal |
 | OPS-011 | Record lifecycle and Recycle Bin for providers and stays | done | Soft delete, restore, retention, purge permission and audited recycle APIs shipped in CORE-011 Phase 1 |
@@ -110,7 +110,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
-| COM-005 | Sale-readiness product, licence, data and operating package | later | Indexed due-diligence pack and transfer rehearsal |
+| COM-005 | Sale-readiness product, licence, data and operating package | in progress | Indexed due-diligence pack and transfer rehearsal |
 | COM-006 | Verified provider capability credentials | done | Private evidence, expiry, reviewer audit, public labels and explicit no-endorsement controls |
 | COM-007 | Provider campaign relevance and performance workspace | done | Self-service local/context targeting, transparent sponsorship, daily/total budgets, click/contact attribution and organic separation |
 

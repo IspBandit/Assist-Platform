@@ -128,10 +128,11 @@ final class AdminApiFacilityWriteService
         }
 
         $updates[] = 'updated_at = NOW()';
-        $params[] = $id;
+        array_push($params, $id, AdminApiBrandScope::brandId());
 
         Database::query(
-            'UPDATE traveller_facilities SET ' . implode(', ', $updates) . ' WHERE id = ? AND deleted_at IS NULL',
+            'UPDATE traveller_facilities SET ' . implode(', ', $updates)
+            . ' WHERE id = ? AND deleted_at IS NULL AND (brand_id = ? OR brand_id IS NULL)',
             $params
         );
 
@@ -180,8 +181,9 @@ final class AdminApiFacilityWriteService
         $now = date('Y-m-d H:i:s');
 
         Database::query(
-            'UPDATE traveller_facilities SET deleted_at = ?, updated_at = NOW() WHERE id = ? AND deleted_at IS NULL',
-            [$now, $id]
+            'UPDATE traveller_facilities SET deleted_at = ?, updated_at = NOW() '
+            . 'WHERE id = ? AND deleted_at IS NULL AND (brand_id = ? OR brand_id IS NULL)',
+            [$now, $id, AdminApiBrandScope::brandId()]
         );
 
         AdminApiAudit::record('facility.deleted', 'traveller_facility', $id, $before, ['reason' => $reason], $request);
@@ -210,10 +212,11 @@ final class AdminApiFacilityWriteService
         }
 
         $sets[] = 'updated_at = NOW()';
-        $params[] = $id;
+        array_push($params, $id, AdminApiBrandScope::brandId());
 
         Database::query(
-            'UPDATE traveller_facilities SET ' . implode(', ', $sets) . ' WHERE id = ? AND deleted_at IS NULL',
+            'UPDATE traveller_facilities SET ' . implode(', ', $sets)
+            . ' WHERE id = ? AND deleted_at IS NULL AND (brand_id = ? OR brand_id IS NULL)',
             $params
         );
 

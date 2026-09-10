@@ -16,8 +16,6 @@ final class BrandAssetTest extends TestCase
             'VanAssist' => ['vanassist'],
             'TowSmart' => ['towsmart'],
             'TrailerWise' => ['trailerwise'],
-            'LocalTorque' => ['localtorque'],
-            'Polaris' => ['polaris'],
         ];
     }
 

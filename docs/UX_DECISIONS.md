@@ -108,6 +108,18 @@ server-rendered text, uses no new image or script dependency, has visible focus,
 **Evidence:** VanAssistPublicUxTest, PHP syntax, static analysis and responsive
 CSS inspection.
 
+## 2026-08-13 — VanAssist homepage drops default provider grid
+
+**Context:** VAN-002/EXP-001. The homepage **Service providers by location**
+module duplicated the hero search and showed a launch-town provider grid
+(Bundaberg by default) before the visitor chose a place. Below-the-fold panels
+also repeated stays, categories, assistance and provider sign-up. **Decision:**
+remove the provider grid and duplicate panels. Keep one hero with the primary
+search form, four intent shortcuts and optional Ask. Link to advanced search,
+assistance and provider registration from the footer or muted helper links.
+Retain `/locations/nearby-providers` for possible future use but remove homepage
+JS wiring. **Evidence:** `BrandViewTest`, `VanAssistPublicUxTest`.
+
 ## 2026-07-27 — Authority-first rules and separated provider sponsorship
 
 **Context:** DATA-008. Readers need official vehicle rules while relevant local
@@ -302,13 +314,73 @@ reference onto either desktop or mobile. **Decision:** the public header uses th
 transparent road wordmark and exact “FIND. CONNECT. GET ASSISTED.” descriptor.
 The homepage uses separate lightweight coastal-road crops, a navy/cobalt live
 headline, roadline, save-to-phone action, search console and four concise
-capability cues. Teal/green hero washes, cartoon vehicle artwork and baked-in
-interface mock-ups are rejected. **Accessibility and performance:** copy and
-controls remain live HTML, the image is decorative, focus states remain visible,
-the primary action meets contrast requirements, reduced motion is preserved and
-the page has no horizontal overflow at 1440 × 900 or 390 × 844. **Evidence:**
-Playwright image-selection, first-viewport, PWA-header and install-dialog checks,
-plus reviewed desktop and mobile screenshots.
+capability cues. On phones, the four direct journeys precede the optional Ask
+field and fit within the initial 390 x 844 screen; copy and form spacing compact
+without changing the desktop composition. Teal/green hero washes, cartoon
+vehicle artwork and baked-in interface mock-ups are rejected. **Accessibility
+and performance:** copy and controls remain live HTML, the image is decorative,
+focus states remain visible, the primary action meets contrast requirements,
+reduced motion is preserved and the page has no horizontal overflow at 1440 ×
+900 or 390 × 844. **Evidence:** Playwright image-selection, first-viewport,
+PWA-header and install-dialog checks, plus reviewed desktop and mobile
+screenshots.
+
+## 2026-08-16 — VanAssist mobile keeps core journeys in the first viewport
+
+**Context:** the mobile homepage and result pages had excessive vertical space,
+large cards and a footer that repeated low-priority content, pushing quick actions
+below several screens. **Decision:** at phone widths, place the four quick search
+capabilities before the structured form and optional Ask panel; reduce search
+hero and result-card spacing; show only essential VanAssist footer links; and use
+the compressed responsive wordmark and hero assets. Desktop structure and all
+core journeys remain available. **Accessibility:** controls retain touch target
+size and visible focus, content order remains logical, hidden footer content is
+duplicative rather than unique, and no horizontal overflow is introduced.
+**Evidence:** mobile/desktop rendered review plus `VanAssistInstallTest` and public
+UX regression coverage.
+
+## 2026-08-13 — Ask VanAssist in primary navigation when enabled
+
+**Context:** Ask was live at `/ask` but discoverable only via the homepage search
+panel; header and footer omitted it. **Decision:** when `assist_ai_search` is on
+for VanAssist, show **Ask VanAssist** in the primary header (after Places to stay),
+footer Find links and a category-search cross-link. Homepage Ask field order on
+mobile is unchanged (four capability cues, then search console, then optional Ask).
+**Evidence:** live production verification Aug 2026; `VanAssistPublicUxTest`.
+
+## 2026-08-13 — TowSmart and TrailerWise use brand-scoped service categories
+
+**Context:** EXP-001/005. `/services` still rendered VanAssist caravan categories
+on TowSmart and TrailerWise, breaking footer navigation and misleading visitors.
+Homepage service tiles were static or unlinked. **Decision:** reuse the shared
+`brand_provider_categories` directory for TowSmart, TrailerWise and LocalTorque
+through one `brands.service-categories` view. Homepages link into category detail
+and provider search; sitemaps and header navigation expose the same journeys.
+VanAssist caravan taxonomy and Ask/search UX remain VanAssist-only. **Evidence:**
+`BrandServiceCategoriesTest`, `DirectoryPresentationTest`.
+
+## 2026-08-13 — Curated TowSmart and TrailerWise categories stay public-facing
+
+**Context:** EXP-001/005. LocalTorque taxonomy seeding added import-only
+`brand_provider_categories` rows to TowSmart and TrailerWise and could overwrite
+curated public copy on duplicate keys. **Decision:** keep import taxonomy for
+classification, but expose only curated categories (`sort_order < 100`) on public
+`/services`, homepage tiles, provider filters and sitemaps. Restore curated copy
+via migration 130 and prevent future seeder overwrites when `sort_order < 100`.
+**Evidence:** `BrandProviderCategoryTest`, migration 130.
+
+## 2026-08-13 — TowSmart and TrailerWise share VanAssist shell polish
+
+**Context:** EXP-001/005. TowSmart and TrailerWise homepages already used the
+approved product-hero pattern, but the shared header, footer and install shell
+lagged VanAssist: no footer-action CTA bar, generic Explore columns only, no
+primary nav button and no save-to-phone control. **Decision:** extend the same
+platform shell treatment to TowSmart and TrailerWise without copying VanAssist's
+traveller search UX. Each brand keeps its own primary journeys in the header
+CTA, footer-action bar, footer link columns, scoped install manifest and
+home-screen instructions. Manifests are generated per brand from the typed
+registry; the service worker caches versioned public assets only. **Evidence:**
+`ProductBrandShellTest`, `AssetControllerTest`, `VanAssistInstallTest`.
 
 ## 2026-07-30 — Large provider queues automate only safe decisions
 

@@ -37,6 +37,7 @@ final class CronRunner
             'regulatory_alerts'         => static fn () => (new RegulatoryAlertService())->queueReviewedChanges(),
             // Demand analytics (Phase 11). No-op unless the demand_analytics flag is on.
             'aggregate_daily_metrics'  => fn () => $this->aggregateDailyMetrics(),
+            'vanassist_daily_performance_email' => static fn () => (new \App\Services\Demand\VanAssistDailyPerformanceReport())->queuePreviousDay(),
             'customer_followups'       => fn () => $this->customerFollowups(),
             'analytics_retention'      => fn () => $this->analyticsRetention(),
             'ai_retention'             => static fn () => (new \App\Platform\AiSearch\Retention\AiRetentionService())->purge(),
@@ -46,7 +47,7 @@ final class CronRunner
             'refresh_osm'              => fn () => $this->refreshOsm(),
             'import_osm'               => static fn () => (new ProviderImportRunner())->cronOsm(45.0),
             'import_locality'          => static fn () => (new ProviderImportRunner())->cronLocality(45.0),
-            'import_localtorque_pack'  => static fn () => (new ProviderImportRunner())->cronLocalTorque(45.0),
+            'import_vanassist_provider_pack'  => static fn () => (new ProviderImportRunner())->cronProviderPack(45.0),
             'process_provider_import_queue' => static fn () => (new ProviderImportQueueWorker())->run(45.0),
         ];
     }

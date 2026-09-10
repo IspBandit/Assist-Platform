@@ -2,7 +2,8 @@
   "name": "assist-platform-browser-acceptance",
   "private": true,
   "scripts": {
-    "test:acceptance": "playwright test"
+    "test:acceptance": "playwright test",
+    "test:quality-baseline": "playwright test tests/Acceptance/vanassist-quality-baseline.spec.js"
   },
   "devDependencies": {
     "@playwright/test": "1.62.0"

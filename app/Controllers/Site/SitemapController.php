@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Models\BrandProviderCategory;
 use App\Services\Settings;
 use Throwable;
 
@@ -23,33 +24,59 @@ final class SitemapController extends Controller
     {
         $urls = [];
         if (current_brand()->id() === 'towsmart') {
-            $urls = [['loc' => url(''), 'lastmod' => null, 'priority' => 1.0], ['loc' => url('calculator'), 'lastmod' => null, 'priority' => 0.9], ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9]];
-            return $this->response($urls);
-        }
-        if (current_brand()->id() === 'trailerwise') {
-            $urls = [['loc' => url(''), 'lastmod' => null, 'priority' => 1.0], ['loc' => url('marketplace'), 'lastmod' => null, 'priority' => 0.9], ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9]];
-            $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = 3 AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.8);
-            return $this->response($urls);
-        }
-        if (current_brand()->id() === 'localtorque') {
+            $brand = current_brand();
             $urls = [
                 ['loc' => url(''), 'lastmod' => null, 'priority' => 1.0],
+                ['loc' => url('calculator'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('tow-guide'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('checklist'), 'lastmod' => null, 'priority' => 0.8],
                 ['loc' => url('providers'), 'lastmod' => null, 'priority' => 0.9],
                 ['loc' => url('services'), 'lastmod' => null, 'priority' => 0.8],
                 ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
                 ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
             ];
-            $this->addRows($urls, "SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE brand_id = 4 AND is_active = 1", 'category/', 0.7);
-            $this->addRows($urls, "SELECT slug, updated_at FROM provider_brand_listings WHERE brand_id = 4 AND status = 'active' AND search_visible = 1 AND deleted_at IS NULL", 'business/', 0.8);
+            $this->addBrandTrustPages($urls);
+            $this->addRows(
+                $urls,
+                'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId()),
+                'services/',
+                0.7,
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            );
+            $this->addBrandProviders($urls, $brand->databaseId());
+            return $this->response($urls);
+        }
+        if (current_brand()->id() === 'trailerwise') {
+            $brand = current_brand();
+            $urls = [
+                ['loc' => url(''), 'lastmod' => null, 'priority' => 1.0],
+                ['loc' => url('providers'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('services'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('marketplace'), 'lastmod' => null, 'priority' => 0.8],
+                ['loc' => url('rules'), 'lastmod' => null, 'priority' => 0.9],
+                ['loc' => url('for-providers'), 'lastmod' => null, 'priority' => 0.6],
+            ];
+            $this->addBrandTrustPages($urls);
+            $this->addRows(
+                $urls,
+                'SELECT category_key AS slug, updated_at FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId()),
+                'services/',
+                0.7,
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            );
+            $this->addBrandProviders($urls, $brand->databaseId());
+            $this->addRows($urls, "SELECT slug, updated_at FROM trailer_listings WHERE brand_id = ? AND status = 'active' AND deleted_at IS NULL", 'trailers/', 0.7, [$brand->databaseId()]);
             return $this->response($urls);
         }
         $this->addStatic($urls);
         $this->addRows($urls, "SELECT slug, updated_at FROM content_pages WHERE is_published = 1 AND noindex = 0", 'slug', 0.6);
         $this->addRows($urls, "SELECT slug, updated_at FROM service_categories WHERE is_active = 1", 'services/', 0.7);
         $this->addRows($urls, "SELECT slug, updated_at FROM regions WHERE is_active = 1", 'regions/', 0.6);
-        // Only surface curated/indexable towns in the sitemap; the bulk national
-        // locality import is noindex by default and would otherwise flood it.
-        $this->addRows($urls, "SELECT slug, updated_at FROM towns WHERE is_active = 1 AND (noindex = 0 OR is_launch_town = 1 OR is_featured = 1)", 'towns/', 0.5);
+        // Match LocationController's noindex decision. Launch/featured flags
+        // affect presentation, but must not override an explicit noindex flag.
+        $this->addRows($urls, "SELECT slug, updated_at FROM towns WHERE is_active = 1 AND noindex = 0", 'towns/', 0.5);
         $this->addRows(
             $urls,
             "SELECT pbl.slug, COALESCE(pbl.updated_at,p.updated_at) AS updated_at
@@ -78,6 +105,30 @@ final class SitemapController extends Controller
     }
 
     /** @param array<int,array<string,mixed>> $urls */
+    private function addBrandTrustPages(array &$urls): void
+    {
+        foreach (['about', 'contact', 'privacy-policy', 'terms-of-use', 'disclaimer', 'safety-information', 'complaints-process', 'accessibility-statement'] as $path) {
+            $urls[] = ['loc' => url($path), 'lastmod' => null, 'priority' => 0.4];
+        }
+    }
+
+    /** @param array<int,array<string,mixed>> $urls */
+    private function addBrandProviders(array &$urls, int $brandId): void
+    {
+        $this->addRows(
+            $urls,
+            "SELECT pbl.slug, COALESCE(pbl.updated_at,p.updated_at) AS updated_at
+             FROM provider_brand_listings pbl
+             INNER JOIN providers p ON p.id=pbl.provider_id
+             WHERE pbl.brand_id=? AND pbl.status='active' AND pbl.search_visible=1
+               AND pbl.deleted_at IS NULL AND p.status='active' AND p.deleted_at IS NULL",
+            'providers/',
+            0.8,
+            [$brandId]
+        );
+    }
+
+    /** @param array<int,array<string,mixed>> $urls */
     private function response(array $urls): Response
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
@@ -102,8 +153,15 @@ final class SitemapController extends Controller
         $lines = ['User-agent: *'];
         if ($allowIndex) {
             foreach (['/admin', '/account', '/provider', '/park', '/install', '/billing'] as $path) {
-                $lines[] = 'Disallow: ' . $path;
+                // Match the private route, its query strings and descendants,
+                // without blocking public siblings such as /providers or /provider-terms.
+                $lines[] = 'Disallow: ' . $path . '$';
+                $lines[] = 'Disallow: ' . $path . '?';
+                $lines[] = 'Disallow: ' . $path . '/';
             }
+            // Contact actions redirect to phones, email or external destinations;
+            // they are not content pages and crawler visits pollute attribution.
+            $lines[] = 'Disallow: /go/';
             $lines[] = 'Allow: /';
         } else {
             $lines[] = 'Disallow: /';

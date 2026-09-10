@@ -307,7 +307,7 @@ final class QldCoverageImportDryRunService
             'latitude' => $provider['latitude'] ?? null,
             'longitude' => $provider['longitude'] ?? null,
             'confidence' => min(100, max(0, (int) ($provider['confidence'] ?? 0))),
-            'brand_keys' => array_values(array_map('strval', $provider['brand_visibility'] ?? ['localtorque'])),
+            'brand_keys' => array_values(array_map('strval', $provider['brand_visibility'] ?? ['vanassist'])),
             'category_slugs' => array_values(array_map('strval', $provider['category_slugs'] ?? [])),
             'batch_id' => $batchId,
             'claimed_status' => (string) ($provider['claimed_status'] ?? 'unclaimed'),

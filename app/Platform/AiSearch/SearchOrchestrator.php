@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Platform\AiSearch;
 
+use App\Models\CaravanPark;
 use App\Models\Town;
 use App\Platform\AiSearch\Adapters\DatasetSearchAdapter;
 use App\Platform\AiSearch\Adapters\FacilitySearchPort;
 use App\Platform\AiSearch\Adapters\ProviderSearchAdapter;
+use App\Platform\AiSearch\Adapters\ProviderNameSearchAdapter;
 use App\Platform\AiSearch\Adapters\StaySearchAdapter;
 use App\Platform\AiSearch\Adapters\TravellerFacilitySearchAdapter;
 use App\Platform\AiSearch\Aggregate\ResultAggregator;
@@ -23,11 +25,16 @@ use App\Platform\AiSearch\Intent\IntentInterpreter;
 use App\Platform\AiSearch\Intent\IntentNormaliser;
 use App\Platform\AiSearch\Intent\IntentRuleEngine;
 use App\Platform\AiSearch\Intent\IntentSchemaValidator;
+use App\Platform\AiSearch\Knowledge\AskQuestionLibrary;
+use App\Platform\AiSearch\Knowledge\AskQuestionCatalog;
 use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Platform\AiSearch\Logging\AssistSearchLogger;
 use App\Platform\AiSearch\Routing\SearchRouter;
 use App\Platform\AiSearch\Support\DatasetSearchFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
+use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\ProviderFallbackCategories;
+use App\Services\Search\PublicResultWindow;
 
 /**
  * Shared Assist AI Orchestrator — Phase AI-6 (traveller facilities + dataset routing).
@@ -38,6 +45,7 @@ final class SearchOrchestrator
     private IntentRuleEngine $rules;
     private SearchRouter $router;
     private ProviderSearchAdapter $providers;
+    private ProviderNameSearchAdapter $providerNames;
     private StaySearchAdapter $stays;
     private FacilitySearchPort $facilities;
     private DatasetSearchAdapter $datasets;
@@ -48,11 +56,17 @@ final class SearchOrchestrator
     private AIUsageService $usage;
     private IntentInterpreter $interpreter;
     private KnowledgeGapService $gaps;
+    private RoadDistanceService $roadDistances;
+    private PublicResultWindow $resultWindow;
+    private AskQuestionLibrary $questionLibrary;
+    /** @var (\Closure(SearchRequest,Intent):array{0:?array<string,mixed>,1:?float,2:?float,3:string,4?:?string})|null */
+    private ?\Closure $locationResolver;
 
     public function __construct(
         ?IntentRuleEngine $rules = null,
         ?SearchRouter $router = null,
         ?ProviderSearchAdapter $providers = null,
+        ?ProviderNameSearchAdapter $providerNames = null,
         ?StaySearchAdapter $stays = null,
         ?FacilitySearchPort $facilities = null,
         ?DatasetSearchAdapter $datasets = null,
@@ -63,10 +77,15 @@ final class SearchOrchestrator
         ?AIUsageService $usage = null,
         ?IntentInterpreter $interpreter = null,
         ?KnowledgeGapService $gaps = null,
+        ?RoadDistanceService $roadDistances = null,
+        ?PublicResultWindow $resultWindow = null,
+        ?\Closure $locationResolver = null,
+        ?AskQuestionLibrary $questionLibrary = null,
     ) {
         $this->rules = $rules ?? new IntentRuleEngine();
         $this->router = $router ?? new SearchRouter();
         $this->providers = $providers ?? new ProviderSearchAdapter();
+        $this->providerNames = $providerNames ?? new ProviderNameSearchAdapter();
         $this->stays = $stays ?? new StaySearchAdapter();
         $this->facilities = $facilities ?? new TravellerFacilitySearchAdapter();
         $this->datasets = $datasets ?? new DatasetSearchAdapter();
@@ -77,6 +96,10 @@ final class SearchOrchestrator
         $this->usage = $usage ?? new AIUsageService();
         $this->interpreter = $interpreter ?? new IntentInterpreter();
         $this->gaps = $gaps ?? new KnowledgeGapService();
+        $this->roadDistances = $roadDistances ?? new RoadDistanceService();
+        $this->resultWindow = $resultWindow ?? new PublicResultWindow();
+        $this->locationResolver = $locationResolver;
+        $this->questionLibrary = $questionLibrary ?? new AskQuestionLibrary();
     }
 
     public function handle(SearchRequest $request): SearchResponse
@@ -150,19 +173,64 @@ final class SearchOrchestrator
         }
 
         $meta = IntentNormaliser::analyse($raw);
-        $cacheKey = $this->intentCache->buildKey($request->brandKey, $meta['normalised']);
-        $cached = $this->intentCache->get($cacheKey);
-        $fromCache = $cached !== null;
+        $cacheQuestion = AskQuestionCatalog::normalize($raw);
+        $cacheKey = $this->intentCache->buildKey($request->brandKey, $cacheQuestion);
+        $libraryIntent = $this->questionLibrary->find($raw);
+        $cached = $libraryIntent === null ? $this->intentCache->get($cacheKey) : null;
+        $fromCache = $cached !== null || $libraryIntent !== null;
 
-        if ($fromCache) {
+        if ($libraryIntent !== null) {
+            $intent = $libraryIntent;
+        } elseif ($cached !== null) {
             $intent = $cached;
         } else {
             $intent = $this->rules->interpret($raw);
             $validated = IntentSchemaValidator::validate($intent);
             $intent = $validated['intent'];
             if ($intent->intentType !== Intent::TYPE_UNKNOWN) {
-                $this->intentCache->put($cacheKey, $request->brandKey, $meta['normalised'], $intent);
+                $this->intentCache->put($cacheKey, $request->brandKey, $cacheQuestion, $intent);
             }
+        }
+
+        $providerNameQuery = null;
+        $providerNameRows = [];
+        try {
+            $candidateProviderName = $this->providerNames->candidate($raw, $intent->locationText);
+            $candidateProviderRows = $candidateProviderName !== null
+                ? $this->providerNames->search($candidateProviderName, $request->brandDatabaseId)
+                : [];
+            $exactProviderRows = $this->providerNames->exactMatches($candidateProviderRows);
+            // Exact public business names outrank service keywords contained in
+            // that name. Partial names are accepted only for an otherwise
+            // unknown query, so “battery near me” remains a category search.
+            if ($exactProviderRows !== []) {
+                $providerNameQuery = $candidateProviderName;
+                $providerNameRows = $exactProviderRows;
+            } elseif ($intent->intentType === Intent::TYPE_UNKNOWN && $candidateProviderRows !== []) {
+                $providerNameQuery = $candidateProviderName;
+                $providerNameRows = $candidateProviderRows;
+            }
+        } catch (\Throwable) {
+            $providerNameQuery = null;
+            $providerNameRows = [];
+        }
+        if ($providerNameRows !== []) {
+                $providerLocationText = $this->providerNames->explicitLocationText($raw, $intent->locationText);
+                $intent = new Intent(
+                    intentType: Intent::TYPE_PROVIDER,
+                    providerCategoryKeys: [],
+                    stayTypeKeys: [],
+                    facilityTypeKeys: [],
+                    locationText: $providerLocationText,
+                    useCurrentLocation: $intent->useCurrentLocation,
+                    radiusKm: $intent->radiusKm,
+                    urgency: $intent->urgency,
+                    adapterKeys: ['providers'],
+                    confidence: 0.95,
+                    clarificationRequired: false,
+                    clarificationReason: null,
+                    source: 'provider_name',
+                );
         }
 
         $minConfidence = (float) config('ai_search.min_confidence', 0.55);
@@ -212,19 +280,19 @@ final class SearchOrchestrator
                     $modelVersion = is_string($ai['model']) ? $ai['model'] : null;
                     $aiCacheKey = $this->intentCache->buildKey(
                         $request->brandKey,
-                        $meta['normalised'],
+                        $cacheQuestion,
                         'en-AU',
                         $modelVersion
                     );
                     $this->intentCache->put(
                         $aiCacheKey,
                         $request->brandKey,
-                        $meta['normalised'],
+                        $cacheQuestion,
                         $intent,
                         'en-AU',
                         $modelVersion
                     );
-                    $this->intentCache->put($cacheKey, $request->brandKey, $meta['normalised'], $intent, 'en-AU', $modelVersion);
+                    $this->intentCache->put($cacheKey, $request->brandKey, $cacheQuestion, $intent, 'en-AU', $modelVersion);
                 } else {
                     $fallback = 'ai_failed';
                     if ($intent->clarificationReason === null) {
@@ -303,13 +371,69 @@ final class SearchOrchestrator
             );
         }
 
-        [$town, $originLat, $originLng, $precision, $locationMessage] = $this->resolveLocation($request, $intent);
+        $resolved = $this->locationResolver !== null
+            ? ($this->locationResolver)($request, $intent)
+            : $this->resolveLocation($request, $intent);
+        [$town, $originLat, $originLng, $precision] = $resolved;
+        $locationMessage = $resolved[4] ?? null;
         if ($locationMessage !== null) {
             $messages[] = $locationMessage;
         }
 
-        if ($intent->useCurrentLocation && ($originLat === null || $originLng === null) && $town === null) {
-            $messages[] = 'Location permission is needed for “near me” searches, or add a town name.';
+        $directProviderNameWithoutLocation = $providerNameRows !== []
+            && ($intent->locationText === null || trim($intent->locationText) === '')
+            && $request->latitude === null
+            && $request->longitude === null;
+        if (($originLat === null || $originLng === null) && !$directProviderNameWithoutLocation) {
+            $fallback = $intent->locationText !== null && $intent->locationText !== ''
+                ? 'location_unresolved'
+                : 'location_required';
+            $messages[] = $fallback === 'location_unresolved'
+                ? 'We could not identify “' . $intent->locationText . '”. Check the spelling, add a state, or use your current location.'
+                : 'Add a town, suburb or postcode, or use your current location.';
+            $id = $this->logger->log(
+                $request,
+                $meta['normalised'],
+                $intent,
+                0,
+                0,
+                $fallback,
+                null,
+                'none',
+                ['messages' => array_values(array_unique($messages)), 'results' => []]
+            );
+            $this->recordResolveUsage($request, $intent, $fromCache, $budgetEval['state'], $fallback, $id, $started);
+            $gapId = $this->gaps->observe(
+                $request,
+                $meta['normalised'],
+                $intent,
+                0,
+                0,
+                null,
+                'none',
+                $id,
+                $aiUsed
+            );
+
+            return new SearchResponse(
+                intent: $intent,
+                providers: [],
+                stays: [],
+                town: null,
+                originLat: null,
+                originLng: null,
+                fallbackReason: $fallback,
+                messages: array_values(array_unique($messages)),
+                assistSearchId: $id,
+                searched: true,
+                externals: [],
+                facilities: [],
+                knowledgeGapId: $gapId,
+            );
+        }
+        if ($directProviderNameWithoutLocation) {
+            $precision = 'provider_name';
+            $messages[] = 'Showing the matching provider by name. Use your location or add a place if you also need road distance.';
         }
 
         $locationBlocked = in_array($precision, ['ambiguous', 'none'], true)
@@ -326,12 +450,28 @@ final class SearchOrchestrator
 
         if (!$locationBlocked && in_array('providers', $adapters, true)) {
             try {
-                $providerRows = $this->providers->search($intent, $town, $originLat, $originLng);
-                if ($providerRows === [] && $intent->providerCategoryKeys !== []) {
+                $providerRows = $providerNameQuery !== null
+                    ? $providerNameRows
+                    : $this->providers->search($intent, $town, $originLat, $originLng);
+                if ($providerRows === [] && $providerNameQuery === null) {
+                    $expandedIntent = $this->expandedExactProviderIntent($intent, $meta, $originLat, $originLng);
+                    if ($expandedIntent !== null) {
+                        $originalRadius = (int) ($intent->radiusKm ?? config('ai_search.default_radius_km', 25));
+                        $providerRows = $this->providers->search($expandedIntent, $town, $originLat, $originLng);
+                        if ($providerRows !== []) {
+                            $intent = $expandedIntent;
+                            $fallback = $fallback !== '' ? $fallback : 'expanded_exact_radius';
+                            $messages[] = 'No matching provider was found within ' . $originalRadius
+                                . ' km. Showing the nearest matching providers in a wider area.';
+                        }
+                    }
+                }
+                if ($providerRows === [] && $this->shouldUseProviderFallback($intent)) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {
                         $providerRows = $this->providers->search($relatedIntent, $town, $originLat, $originLng);
                         if ($providerRows !== []) {
+                            $fallback = $fallback !== '' ? $fallback : 'related_provider_fallback';
                             $messages[] = 'No exact specialist matched nearby. Showing related providers—confirm they handle your issue before travelling.';
                         }
                     }
@@ -386,11 +526,23 @@ final class SearchOrchestrator
             }
         }
 
+        $radiusKm = $this->effectiveRadiusKm($intent, $adapters);
         $aggregated = $this->aggregator->aggregate(
             $providerRows,
             $stayRows,
             $datasetRows,
-            $facilityRows
+            $facilityRows,
+            $originLat,
+            $originLng,
+            $radiusKm,
+        );
+        $window = $this->resultWindow->apply($aggregated, $request->resultLimit);
+        $aggregated = $window['groups'];
+        $aggregated = $this->roadDistances->enrichGroups(
+            $aggregated,
+            $originLat,
+            $originLng,
+            $radiusKm,
         );
         $localCount = count($aggregated['providers']) + count($aggregated['stays']) + count($aggregated['facilities']);
         $externalCount = count($aggregated['externals']);
@@ -449,6 +601,9 @@ final class SearchOrchestrator
             externals: $aggregated['externals'],
             facilities: $aggregated['facilities'],
             knowledgeGapId: $gapId,
+            hasMore: $window['has_more'],
+            resultLimit: $request->resultLimit,
+            totalCandidates: $window['total'],
         );
     }
 
@@ -479,25 +634,10 @@ final class SearchOrchestrator
 
     private function relatedProviderFallbackIntent(Intent $intent): ?Intent
     {
-        if (array_intersect(
-            $intent->providerCategoryKeys,
-            ['general-caravan-repairs', 'mobile-mechanics', 'mechanical-repairs']
-        ) !== []) {
+        $alreadyTried = array_values(array_unique($intent->providerCategoryKeys));
+        $categories = ProviderFallbackCategories::related($alreadyTried);
+        if ($categories === []) {
             return null;
-        }
-
-        $electrical = ['12-volt-electrical', '240-volt-electrical', 'solar-and-batteries',
-            'dc-dc-charging', 'inverters', 'refrigeration', 'air-conditioning',
-            'starlink-and-communications', 'auto-electrical-and-batteries'];
-        $vehicle = ['brakes-and-bearings', 'suspension', 'tyres-and-wheels',
-            'diesel-mechanics', 'towing-and-vehicle-recovery', '4wd-and-remote-area-recovery'];
-
-        if (array_intersect($intent->providerCategoryKeys, $electrical) !== []) {
-            $categories = ['general-caravan-repairs', 'auto-electrical-and-batteries'];
-        } elseif (array_intersect($intent->providerCategoryKeys, $vehicle) !== []) {
-            $categories = ['mobile-mechanics', 'mechanical-repairs', 'roadside-assistance'];
-        } else {
-            $categories = ['general-caravan-repairs', 'mobile-mechanics'];
         }
 
         return new Intent(
@@ -515,6 +655,73 @@ final class SearchOrchestrator
             clarificationReason: null,
             source: 'related_provider_fallback',
         );
+    }
+
+    /**
+     * Specialist services are often regional. If the user did not set a
+     * distance, retry the same categories over a wider area before considering
+     * any related category. Explicit distance limits are always respected.
+     *
+     * @param array<string,mixed> $normalisedMeta
+     */
+    private function expandedExactProviderIntent(
+        Intent $intent,
+        array $normalisedMeta,
+        ?float $originLat,
+        ?float $originLng,
+    ): ?Intent {
+        if ($intent->intentType !== Intent::TYPE_PROVIDER
+            || $intent->providerCategoryKeys === []
+            || (!$this->shouldUseProviderFallback($intent)
+                && !in_array('general-caravan-repairs', $intent->providerCategoryKeys, true))
+            || $originLat === null
+            || $originLng === null
+            || ($normalisedMeta['radius_km'] ?? null) !== null) {
+            return null;
+        }
+
+        $currentRadius = (int) ($intent->radiusKm ?? config('ai_search.default_radius_km', 25));
+        $expandedRadius = max($currentRadius, (int) config('ai_search.specialist_radius_km', 150));
+        if ($expandedRadius <= $currentRadius) {
+            return null;
+        }
+
+        return new Intent(
+            intentType: $intent->intentType,
+            providerCategoryKeys: $intent->providerCategoryKeys,
+            stayTypeKeys: $intent->stayTypeKeys,
+            facilityTypeKeys: $intent->facilityTypeKeys,
+            locationText: $intent->locationText,
+            useCurrentLocation: $intent->useCurrentLocation,
+            radiusKm: min(500, $expandedRadius),
+            urgency: $intent->urgency,
+            adapterKeys: $intent->adapterKeys,
+            confidence: $intent->confidence,
+            clarificationRequired: $intent->clarificationRequired,
+            clarificationReason: $intent->clarificationReason,
+            source: 'expanded_exact_radius',
+        );
+    }
+
+    private function shouldUseProviderFallback(Intent $intent): bool
+    {
+        return $intent->intentType === Intent::TYPE_PROVIDER
+            && $intent->providerCategoryKeys !== []
+            && $intent->stayTypeKeys === []
+            && $intent->facilityTypeKeys === []
+            && ProviderFallbackCategories::related($intent->providerCategoryKeys) !== [];
+    }
+
+    /** @param list<string> $adapters */
+    private function effectiveRadiusKm(Intent $intent, array $adapters): int
+    {
+        if ($intent->radiusKm !== null) {
+            return max(1, min(500, $intent->radiusKm));
+        }
+
+        return in_array('stays', $adapters, true)
+            ? \App\Helpers\Geo::DEFAULT_STAY_DISTANCE_KM
+            : max(1, min(500, (int) config('ai_search.default_radius_km', 25)));
     }
 
     private function recordResolveUsage(
@@ -609,6 +816,31 @@ final class SearchOrchestrator
                             : null,
                     ];
                 }
+
+                $landmark = CaravanPark::resolvePublicLandmark($intent->locationText);
+                if ($landmark !== null) {
+                    $landmarkLat = is_numeric($landmark['latitude'] ?? null) ? (float) $landmark['latitude'] : null;
+                    $landmarkLng = is_numeric($landmark['longitude'] ?? null) ? (float) $landmark['longitude'] : null;
+                    if ($landmarkLat !== null && $landmarkLng !== null) {
+                        $origin = [
+                            'id' => (int) ($landmark['town_id'] ?? 0),
+                            'name' => (string) ($landmark['name'] ?? $intent->locationText),
+                            'slug' => (string) ($landmark['slug'] ?? ''),
+                            'region_id' => $landmark['region_id'] ?? null,
+                            'state_id' => $landmark['state_id'] ?? null,
+                            'state_name' => $landmark['state_name'] ?? null,
+                            'state_abbr' => $landmark['state_abbr'] ?? null,
+                            'latitude' => $landmarkLat,
+                            'longitude' => $landmarkLng,
+                            'location_reference_type' => 'stay',
+                        ];
+                        return [$origin, $landmarkLat, $landmarkLng, 'stay_landmark', null];
+                    }
+                }
+
+                // Typed location always wins over device coordinates. If it
+                // cannot be resolved, fail closed rather than silently search
+                // around a stale phone location or across Australia.
                 return [
                     null,
                     null,
@@ -623,7 +855,17 @@ final class SearchOrchestrator
                 return [$town, $lat, $lng, 'gps_short', null];
             }
         } catch (\Throwable) {
-            // Town lookup must not abort Ask — fall through to coords / none.
+            // An explicit typed location must never fall back to unrelated
+            // device coordinates when lookup infrastructure fails.
+            if ($intent->locationText !== null && $intent->locationText !== '') {
+                return [
+                    null,
+                    null,
+                    null,
+                    'none',
+                    'That Australian town, suburb or postcode could not be resolved. Check the spelling or add the state.',
+                ];
+            }
             if ($hasCoords) {
                 return [null, $lat, $lng, 'gps_short', null];
             }

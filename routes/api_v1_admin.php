@@ -174,6 +174,9 @@ return static function (\App\Core\Router $router): void {
                 $router->post('/imports/{id}/publish', 'Api\\V1\\Admin\\ImportController@publish', 'api.v1.admin.imports.publish');
                 $router->post('/imports/{id}/cancel', 'Api\\V1\\Admin\\ImportController@cancel', 'api.v1.admin.imports.cancel');
                 $router->post('/imports/{id}/retry', 'Api\\V1\\Admin\\ImportController@retry', 'api.v1.admin.imports.retry');
+                // Assist RIC facility packages → stage + trusted auto-publish (ADR 0034).
+                $router->post('/facility-imports/publish-pending', 'Api\\V1\\Admin\\FacilityImportController@publishPending', 'api.v1.admin.facility_imports.publish_pending');
+                $router->post('/facility-imports', 'Api\\V1\\Admin\\FacilityImportController@store', 'api.v1.admin.facility_imports.store');
             });
 
             $router->group([
@@ -311,7 +314,15 @@ return static function (\App\Core\Router $router): void {
                 'middleware' => ['admin_api_scope:facilities:read'],
             ], static function (\App\Core\Router $router): void {
                 $router->get('/facilities', 'Api\\V1\\Admin\\FacilityController@index', 'api.v1.admin.facilities.index');
+                $router->get('/facility-contributions', 'Api\\V1\\Admin\\FacilityContributionController@index', 'api.v1.admin.facility_contributions.index');
+                $router->get('/facility-contributions/{id}', 'Api\\V1\\Admin\\FacilityContributionController@show', 'api.v1.admin.facility_contributions.show');
                 $router->get('/facilities/{id}', 'Api\\V1\\Admin\\FacilityController@show', 'api.v1.admin.facilities.show');
+            });
+
+            $router->group([
+                'middleware' => ['admin_api_scope:facilities:write', 'admin_api_human'],
+            ], static function (\App\Core\Router $router): void {
+                $router->post('/facility-contributions/{id}/{action}', 'Api\\V1\\Admin\\FacilityContributionController@moderate', 'api.v1.admin.facility_contributions.moderate');
             });
 
             $router->group([

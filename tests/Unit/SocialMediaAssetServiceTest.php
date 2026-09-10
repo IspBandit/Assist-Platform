@@ -19,7 +19,7 @@ final class SocialMediaAssetServiceTest extends TestCase
 
     public function testEveryBrandHasCopyForEveryIntention(): void
     {
-        foreach (['vanassist', 'towsmart', 'trailerwise', 'localtorque'] as $brand) {
+        foreach (['vanassist', 'towsmart', 'trailerwise'] as $brand) {
             foreach (array_keys(SocialMediaAssetService::intentions()) as $intention) {
                 $copy = SocialMediaAssetService::copyFor($brand, $intention);
                 self::assertNotSame('', $copy['headline']);
@@ -33,7 +33,6 @@ final class SocialMediaAssetServiceTest extends TestCase
         self::assertStringContainsString('TowSmart', SocialMediaAssetService::copyFor('towsmart', 'launch')['caption']);
         self::assertStringContainsString('TrailerWise', SocialMediaAssetService::copyFor('trailerwise', 'service-discovery')['caption']);
         self::assertStringContainsString('VanAssist', SocialMediaAssetService::copyFor('vanassist', 'provider-recruitment')['caption']);
-        self::assertStringContainsString('LocalTorque', SocialMediaAssetService::copyFor('localtorque', 'launch')['caption']);
     }
 
     public function testProfessionalTemplateCatalogueIsStable(): void

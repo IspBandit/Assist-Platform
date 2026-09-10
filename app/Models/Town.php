@@ -166,7 +166,7 @@ final class Town extends Model
         }
 
         $rows = Database::select(
-            'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.latitude, t.longitude, '
+            'SELECT t.id, t.name, t.slug, t.primary_postcode, t.region_id, t.state_id, t.latitude, t.longitude, '
             . 't.coordinate_source, t.coordinate_confidence, t.coordinate_reference, '
             . 'r.name AS region_name, r.slug AS region_slug, s.name AS state_name, s.abbreviation AS state_abbr '
             . 'FROM towns t JOIN states s ON s.id = t.state_id LEFT JOIN regions r ON r.id = t.region_id '
@@ -203,6 +203,25 @@ final class Town extends Model
         }
         unset($bestRows[0]['_fuzzy_distance']);
         return array_slice($bestRows, 0, max(1, min(5, $limit)));
+    }
+
+    public static function localityMatchScore(string $query, string $candidate): float
+    {
+        $normalise = static function (string $value): string {
+            $value = mb_strtolower(trim($value));
+            $value = (string) preg_replace('/[^a-z0-9]+/u', ' ', $value);
+            return trim((string) preg_replace('/\s+/u', ' ', $value));
+        };
+        $query = $normalise($query);
+        $candidate = $normalise($candidate);
+        if ($query === '' || $candidate === '') {
+            return 0.0;
+        }
+        if ($query === $candidate) {
+            return 1.0;
+        }
+        $length = max(strlen($query), strlen($candidate));
+        return $length > 0 ? max(0.0, 1.0 - (levenshtein($query, $candidate) / $length)) : 0.0;
     }
 
     /**

@@ -16,7 +16,9 @@ is granted:
 - `GET /api/v1/admin/overview` — operational dashboard (API health/release,
   genuine website visitors with bot/unknown page views labelled separately,
   searches, no-result searches, provider contacts, scope-gated review queues,
-  AI cost when `ai:read`, dataset sync timestamps when `datasets:read`).
+  AI cost when `ai:read`, dataset sync timestamps when `datasets:read`). The
+  `data_quality` object also reports provider contact/coordinate/category/stale
+  coverage and stay coordinate/facility-evidence/stale-evidence coverage.
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   reusing `WebsiteInsightsService`; `filtered_bot_page_views` is never mixed
   into visitor totals.
@@ -53,13 +55,17 @@ Assist RIC Data Review browses existing Admin API review queues:
 pagination), plus import-candidate queues
 `GET /facility-import-candidates` and `GET /provider-import-candidates`
 (`import_candidates:read`; separate from `GET /imports` RIC package jobs).
-Facility import-candidate approve/reject (including bulk-approve/bulk-reject)
-is available on human Admin API sessions (`import_candidates:review`); provider
-import-candidate approve/reject/merge is also human-only Admin API (same
-scope; hold/confirm stay website admin). Service accounts stay read-only and
-cannot hold that scope. Draft approve, duplicate merge and recycle purge remain
-human-session / website-admin actions. Stale/missing quality queues remain
-PHP-admin only.
+Assist RIC stages and auto-publishes trusted government facility packs with
+`POST /api/v1/admin/facility-imports` and can flush backlog via
+`POST /api/v1/admin/facility-imports/publish-pending` (`imports:write`,
+ADR 0034). Facility import-candidate approve/reject (including
+bulk-approve/bulk-reject) remains for human Admin API sessions
+(`import_candidates:review`) when non-RIC review is needed; provider
+import-candidate approve/reject/merge is human-only Admin API (same
+scope; hold/confirm stay website admin). Service accounts stay read-only on
+review and cannot hold that scope. Draft approve, duplicate merge and recycle
+purge remain human-session / website-admin actions. Stale/missing quality
+queues remain PHP-admin only.
 Default RIC service scopes include `recycle_bin:restore` (list/restore) but
 not `recycle_bin:purge`.
 
@@ -77,14 +83,23 @@ rollups (summary includes nested `budget`), `GET /feature-flags`
 cap mutation, or import/publish controls from the Operations page. Dangerous
 production toggles stay in website admin with owner workflows.
 
+The health response includes `integrations.road_distance` with `provider`,
+`configured`, `credential_source`, `persistent_cache`, `request_deduplication`
+and `cache_policy`, plus `policy_basis` and `town_centre_routing`. It reports
+configuration state only and never returns a credential. Google Routes
+distance/duration content is not persisted; request-local duplicate suppression
+avoids repeated destinations in a matrix. Town-centre fallback coordinates are
+not routed or presented as exact provider distances.
+`integrations.ask_question_library` reports whether at least 1,000 active
+versioned questions are ready and gives the non-sensitive active count.
+
 `GET /api/v1/admin/capabilities` is host scoped. Its `brand` object identifies
 the resolved Assist brand (`key`, `name`, `status`, `url` and enabled
 `modules`). Resource modes also reflect that brand: provider or stay resources
 are reported as `unavailable` when the selected brand does not support them.
 Management clients must verify this identity before displaying live data so a
-misconfigured endpoint cannot mix records between VanAssist, TowSmart,
-TrailerWise, LocalTorque or Polaris.
-
+misconfigured endpoint cannot mix records between VanAssist, TowSmart and
+TrailerWise.
 ## Authentication and authorization
 
 - Browser endpoints retain secure host-only sessions and CSRF protection.

@@ -10,7 +10,7 @@ final class QueenslandFuelPackTest extends TestCase
 {
     public function testEmeraldHasEightCurrentOfficialFuelSites(): void
     {
-        $path = dirname(__DIR__, 2) . '/database/seeds/localtorque/providers-publishable.json';
+        $path = dirname(__DIR__, 2) . '/database/seeds/vanassist-provider-pack/providers-publishable.json';
         $providers = json_decode((string) file_get_contents($path), true, 512, JSON_THROW_ON_ERROR);
         $emerald = array_values(array_filter($providers, static fn (array $provider): bool =>
             ($provider['state'] ?? null) === 'QLD'

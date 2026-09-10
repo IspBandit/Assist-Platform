@@ -28,7 +28,7 @@ final class ComplianceGuide
     ];
 
     /** @return array{jurisdiction:string,vehicle:string,intention:string,kind:string}|null */
-    public static function selections(string $jurisdiction, string $vehicle, string $intention, string $brandId = 'localtorque'): ?array
+    public static function selections(string $jurisdiction, string $vehicle, string $intention, string $brandId = 'platform'): ?array
     {
         if (!isset(self::JURISDICTIONS[$jurisdiction], self::VEHICLES[$vehicle], self::INTENTIONS[$intention])
             || !isset(RegulatoryTaxonomy::vehiclesForBrand($brandId)[$vehicle])) {

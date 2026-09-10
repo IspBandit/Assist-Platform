@@ -51,11 +51,53 @@ release workflow must not run Docker Compose directly as the restricted deploy
 user. Review current queue counts in **Admin → Provider data**; use the
 root-owned cron runner for an authorised server-side diagnostic.
 
+VanAssist's daily website performance report runs at 06:15 Australia/Brisbane
+through `vanassist_daily_performance_email`. It reports the preceding calendar
+day to `support@vanassist.com.au`, then the existing two-minute email worker
+delivers it through Microsoft Graph. The task checks its date-specific queue key
+before inserting, so a retry reports `already_queued` and does not duplicate the
+email. Confirm both the task's `success` state and the matching email-queue row;
+an HTTP health check alone does not prove delivery. To suspend the report,
+remove or comment only that cron entry. To recover a missed day, run the task
+once before the next calendar day; never hand-insert a queue copy.
+
 The workflow cannot run from a pull request or feature branch. A human must type
 `DEPLOY`, approve the protected environment and allow the complete reusable CI
 workflow to pass before upload. The remote release script verifies the archive,
 takes a backup, uses an immutable commit directory, applies forward migrations,
 checks all live brands and restores the previous symlink on application failure.
+Before uploading, the workflow also compares the installed root-owned release
+command with the reviewed `scripts/release-remote.sh` in the exact release. A
+hash mismatch stops before production changes; install the reviewed command as
+root, verify its hash and retry rather than bypassing this drift check.
+
+The root-owned release command also refreshes bootstrap-managed Compose,
+Dockerfile, PHP, Caddy and operations scripts from the reviewed immutable
+release before rebuilding containers. It keeps the preceding runtime files for
+the duration of deployment and restores them with the prior application
+symlink if any migration, data audit or health check fails. This prevents a
+merged infrastructure change from remaining stranded in GitHub while the
+application code appears current.
+
+### CQDiggings release ownership
+
+Assist's release workflow no longer asserts CQDiggings research counts or worker
+versions. Those checks belong to the CQDiggings release at its nominated SHA.
+Shared proxy configuration remains owned here and must still be checked when changed.
+Called CI has a workflow-specific concurrency key so standalone CI cannot cancel
+the validation job within a production release.
+
+Service-worker activation must preserve open forms and navigation; release changes
+must not force-reload active browser tabs. Retest first-visit and existing-browser
+journeys after deployment. See acquisition/SALE_REVIEW_2026-09-06.md for current
+recovery evidence and unresolved off-site/full-application restore gates.
+
+CQDiggings investigations, maps, service-worker assets and research data are
+released only from the CQDiggings repository into `/opt/cqdiggings/current`.
+Assist Platform owns the shared reverse proxy and runtime community-data mounts,
+but must not overlay CQDiggings product files. After either product is released,
+use cache-busting requests to confirm investigation pages and assets resolve from
+the nominated CQDiggings release. See superseded ADR 0038 for the retired bridge.
 
 ## Rollback
 
@@ -97,4 +139,3 @@ packages. Never open production MariaDB from RIC or importers (ADR 0018).
 Record timestamps, release, affected brand/routes, request IDs, symptoms,
 containment, commands/actions, data impact, recovery and follow-up. Redact secrets
 and personal information.
-

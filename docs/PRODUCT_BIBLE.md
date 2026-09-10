@@ -13,8 +13,13 @@ the Enterprise Specification take precedence.
 Assist Platform Enterprise is one Australian multi-brand discovery, knowledge
 and provider-membership platform. It owns the reusable operating system—identity,
 business records, locations, search, reviews, memberships, content, media,
-communications, analytics and administration. VanAssist, TowSmart, TrailerWise
-and LocalTorque are focused public brands running on that platform.
+communications, analytics and administration. The active saleable product serves
+exactly three public brands: **VanAssist, TowSmart and TrailerWise**.
+
+LocalTorque and Polaris are retired/excluded product experiments. Historical
+migrations, ADRs and evidence may remain where required for upgrade or audit
+integrity, but neither is an active product, sale asset, runtime dependency or
+implied future brand.
 
 The platform is designed to be operated and, if required, transferred as one
 commercial asset. A brand is not a copied website or an independent database.
@@ -93,26 +98,6 @@ remain trailer products; places to stay remain VanAssist data.
 **Primary journeys:** find a trailer business; find parts or repairs; understand
 maintenance/compliance; research trailer types and ownership decisions.
 
-### LocalTorque
-
-**Purpose:** become the canonical Australian automotive workshop and specialist
-directory used by the wider portfolio.
-
-**Owns:** mechanics, mobile mechanics, auto electricians, diesel, tyres, brakes,
-suspension, driveline, fabrication, inspections, body, glass, accessories, 4WD,
-fleet, motorcycle, marine and agricultural automotive specialists. Categories
-are data-driven and a business may hold several.
-
-**Does not become:** a duplicate roadside, parks, trailer or towing-knowledge
-product. It supplies relevant business records to those contexts.
-
-**Primary journeys:** search by service and location; use Near Me; compare claimed
-and verified listings; claim a listing; manage business locations and categories.
-
-LocalTorque remains private until its domain, DNS, sender identity, legal pages
-and launch quality gate are complete. No public availability claim may be made
-before those prerequisites are verified.
-
 ## Shared product model
 
 ### Canonical business, contextual listing
@@ -154,7 +139,6 @@ tools express each brand.
 - VanAssist is calm, useful, regional and reassuring.
 - TowSmart is precise, educational and explicit about assumptions and limits.
 - TrailerWise is practical, capable and ownership-focused.
-- LocalTorque is direct, credible and trade-aware.
 
 Copy avoids fake urgency, unsupported leadership claims, invented counts,
 guaranteed leads and implied verification. Safety information distinguishes
@@ -207,4 +191,3 @@ A brand is launch-ready only when its domain and canonical routing, legal pages,
 sender identity, data-quality report, critical journeys, SEO controls, analytics,
 monitoring, backup/rollback and Platform Quality Gate are complete. A populated
 homepage or a successful build alone is not launch readiness.
-

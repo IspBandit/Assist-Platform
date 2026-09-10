@@ -17,13 +17,16 @@ Public lookup endpoints use the current verified host and brand context plus any
 route-level rate limits or module checks. Browser mutations retain sessions and
 CSRF.
 
+Facility-scoped clients can read `GET /facility-contributions` and `GET /facility-contributions/{id}` only when the selected workspace enables stays. Human Admin API sessions with `facilities:write` can post an explicit moderation action to `/facility-contributions/{id}/{action}`. Service accounts cannot approve community evidence because the route also requires `admin_api_human`. Facility list, detail and mutation queries expose records assigned to the selected brand plus explicitly shared records; another brand's record returns a non-enumerating `404` even when its ID is known.
+
 The versioned Admin API (`/api/v1/admin`) is a separate, token-authenticated
-management surface for Assist RIC and service accounts. It is disabled by
-default (`ADMIN_API_ENABLED=false`), brand-scoped, audited, and least-privilege
-by scope. Human sessions support optional TOTP MFA (`ADMIN_API_MFA_REQUIRED`,
-default false). It is not a public partner API and must not be enabled in
-production until Platform Quality Gate evidence is recorded. See
-`docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md` and ADRs 0018–0020.
+management surface for Assist RIC and service accounts. It is **disabled by
+default in new environments** (`ADMIN_API_ENABLED=false`), brand-scoped, audited,
+and least-privilege by scope. **Production VanAssist enables Admin API** for Assist
+RIC facility imports (verified Aug 2026). Human sessions support optional TOTP MFA
+(`ADMIN_API_MFA_REQUIRED`, default false). It is not a public partner API. See
+`docs/LIVE_API.md`, `docs/PHASE1_ADMIN_API_DESIGN.md`, `docs/PRODUCTION_CURRENT_STATE.md`
+and ADRs 0018–0020.
 
 No general public token-authenticated `/api/v1` product for third parties exists
 yet.
@@ -92,12 +95,19 @@ versioned `/api/v1` contract with tests and an accepted architecture decision.
 Neither route is a promise of long-term third-party compatibility.
 
 `GET /api/v1/admin/health` and `GET /api/v1/admin/capabilities` are the Admin API
-probe endpoints when the feature flag is on.
+probe endpoints when the feature flag is on. Health exposes safe road-distance
+readiness under `integrations.road_distance` (provider, configured state,
+credential source, persistent-cache state and town-centre-routing state) without
+exposing the credential. It also exposes only the non-sensitive active Ask
+question-library count and readiness state.
 
 `GET /api/v1/admin/overview` returns the RIC operational rollup (range query
 `7d`/`30d`/`90d`/`fy`/`pfy`/`custom`). `GET /api/v1/admin/website-insights`
 returns detailed traffic and demand figures; genuine visitors exclude
-bot/unknown page views and filtered bot views are labelled separately.
+bot/unknown page views and filtered bot views are labelled separately. The
+overview `data_quality` section summarises usable contact and coordinate
+coverage, stale providers, and stay facility-evidence freshness for the active
+brand.
 
 ## Common mistakes
 
@@ -128,7 +138,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-04 (Increment I ops failed queues + categories/locations taxonomy).
+2026-08-12 (road-distance readiness and directory data-quality summaries).
 
 ## Owner
 
@@ -150,3 +160,4 @@ Assist Platform product and engineering.
 | 2026-08-04 | Documented Option B Increment H.3: human-only facility import-candidate bulk-approve/bulk-reject (`import_candidates:review`). |
 | 2026-08-04 | Documented Option B Increment H.4: human-only provider import-candidate merge (`import_candidates:review`); hold/confirm/auto-link remain website admin. |
 | 2026-08-04 | Documented Increment I: `ops:read` failed email/scheduled-task lists; `categories:read` / `locations:read` taxonomy; stale/missing quality deferred. |
+| 2026-08-11 | Clarified traveller-facility list/detail/write scope parity and limited facility-contribution review to stays-enabled workspaces. |

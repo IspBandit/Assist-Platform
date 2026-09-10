@@ -14,6 +14,13 @@ See [ADR 0018](DECISIONS/0018-admin-api-no-direct-db.md) for Admin API as the on
 See [ADR 0019](DECISIONS/0019-stays-vs-traveller-facilities.md) for stays versus narrowly scoped traveller facilities.
 See [ADR 0020](DECISIONS/0020-ric-as-management-client.md) for Assist RIC as the initial local management client.
 See [ADR 0033](DECISIONS/0033-ric-national-dataset-acquisition.md) for RIC as the national dataset acquisition engine.
+See [ADR 0034](DECISIONS/0034-assist-ric-facility-auto-publish.md) for Assist RIC government facility pack auto-publish.
+See [ADR 0035](DECISIONS/0035-stay-facility-evidence-and-moderation.md) for source-resolved stay facilities and moderated community evidence.
+See [ADR 0036](DECISIONS/0036-google-routes-road-distance.md) for Google Routes road-distance filtering across VanAssist discovery.
+See [ADR 0037](DECISIONS/0037-policy-safe-route-accuracy.md) for policy-safe route handling and truthful town-centre fallbacks.
+See [ADR 0038](DECISIONS/0038-cqdiggings-reviewed-release-overlay.md) for the bounded, checksummed CQDiggings cross-repository release overlay.
+See [ADR 0039](DECISIONS/0039-retire-localtorque-transfer-provider-pack.md) for retiring LocalTorque while retaining canonical provider evidence under VanAssist ownership.
+See [ADR 0040](DECISIONS/0040-product-brand-deterministic-ask-and-claim-scope.md) for product-brand deterministic Ask routing and brand-bound provider claim tokens.
 
 ADRs preserve decisions that materially affect platform structure, security,
 data ownership, brand boundaries, commercial operation or deployment.
@@ -84,6 +91,12 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0032: Stays vs narrowly scoped traveller facilities (AI elaboration; aligns with 0019).
 - 0033: RIC is the national dataset acquisition engine; Platform `government_datasets`
   is the catalogue SoR (DATA-011A).
+- 0035: source-resolved stay facility evidence and human-moderated community contributions (proposed).
+- 0036: Google Routes road-distance filtering and drive-time enrichment for VanAssist public search (accepted).
+- 0037: policy-safe Google route accuracy and truthful town-centre provider fallbacks (accepted).
+- 0038: reviewed CQDiggings release files are mounted as a bounded, checksummed production overlay (accepted).
+- 0039: LocalTorque is retired; canonical provider evidence moves to the VanAssist provider pack (accepted).
+- 0040: TowSmart and TrailerWise use deterministic brand-intent routing, while provider claim tokens are enforced within their issuing brand (proposed).
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;

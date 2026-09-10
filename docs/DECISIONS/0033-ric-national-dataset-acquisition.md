@@ -28,15 +28,17 @@ import stack would violate reuse rules and ADR 0018/0020.
    import mapping (`settings_json`), and status.
 5. Complete the catalogue (schema + initial national rows) before writing
    additional dataset-specific importers.
-6. Auto-update flags on catalogue rows authorise RIC scheduling only; they do
-   **not** enable automatic production publish.
+6. Auto-update flags on catalogue rows authorise RIC scheduling. Assist RIC
+   facility-package publish behaviour is governed by **ADR 0034** (trusted
+   automatic for `assist_ric_package` only); other connectors stay review-first.
 
 ## Alternatives considered
 
 - New `dataset_catalogue` table: rejected (duplicates DATA-012).
 - Platform-only scheduled importers bypassing RIC: rejected (programme requires
   RIC as acquisition engine).
-- Auto-publish trusted portals: rejected (review-first; ADR 0026/0029/0032).
+- Auto-publish trusted portals: originally rejected; **amended by ADR 0034** for
+  Assist RIC facility packages only.
 
 ## Consequences
 
@@ -49,4 +51,5 @@ import stack would violate reuse rules and ADR 0018/0020.
 
 - Architecture: reuse of `government_datasets` + RIC acquisition.
 - Engineering: forward migration; contract/tests for catalogue fields.
-- Business: no production auto-publish; staging enablement still OPS-010.
+- Business: Assist RIC facility packs use trusted automatic publish (ADR 0034);
+  other government sync stays review-first; staging enablement still OPS-010.

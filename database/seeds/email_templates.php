@@ -127,6 +127,34 @@ return [
             . "This link expires in {{expiry_days}} days. If this is not your business, you can ignore this email.\n\nUnsubscribe: {{unsubscribe_url}}",
     ],
     [
+        'template_key' => 'provider_claim_request_approved',
+        'name'    => 'Approved provider claim request',
+        'subject' => '{{business_name}} — your VanAssist claim request is approved',
+        'html_body' => $wrap(
+            'Continue your listing claim',
+            '<p>Hi {{greeting}},</p>'
+            . '<p>We reviewed your request to claim <strong>{{business_name}}</strong>. You can now create or connect your provider account and review the listing details.</p>'
+            . '<p><a href="{{action_url}}" style="background:#0f6e6e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;display:inline-block">Continue secure claim</a></p>'
+            . '<p style="font-size:.9rem">If the button does not work, copy this link into your browser:<br><a href="{{action_url}}">{{action_url}}</a></p>'
+            . '<p style="font-size:.85rem;color:#8a8f94">This link expires in {{expiry_days}} days and was sent because you requested control of this listing. Claim approval does not mark the business or its services as independently verified.</p>'
+        ),
+        'text_body' => "Hi {{greeting}},\n\nWe reviewed your request to claim {{business_name}}. Continue the secure claim here:\n{{action_url}}\n\nThis link expires in {{expiry_days}} days. Claim approval does not mark the business or its services as independently verified.",
+    ],
+    [
+        'template_key' => 'provider_claim_evidence_requested',
+        'name'    => 'Provider claim evidence requested',
+        'subject' => 'More information needed for your {{business_name}} claim',
+        'html_body' => $wrap('More claim evidence needed', '<p>We are reviewing your request to claim <strong>{{business_name}}</strong>, but need more information before granting account access.</p><p>{{review_notes}}</p><p>Please reply to this email with the requested evidence. No listing control has been granted.</p>'),
+        'text_body' => "We are reviewing your request to claim {{business_name}}, but need more information before granting account access.\n\n{{review_notes}}\n\nPlease reply with the requested evidence. No listing control has been granted.",
+    ],
+    [
+        'template_key' => 'provider_claim_request_rejected',
+        'name'    => 'Provider claim request rejected',
+        'subject' => 'Update on your {{business_name}} claim request',
+        'html_body' => $wrap('Claim request update', '<p>We could not approve your request to claim <strong>{{business_name}}</strong>.</p><p>{{review_notes}}</p><p>No listing control was granted. Reply to this email if you believe this decision used incomplete information.</p>'),
+        'text_body' => "We could not approve your request to claim {{business_name}}.\n\n{{review_notes}}\n\nNo listing control was granted. Reply if you believe this decision used incomplete information.",
+    ],
+    [
         'template_key' => 'provider_invitation',
         'name'    => 'Provider invitation',
         'subject' => 'You are invited to join {{brand_name}}',

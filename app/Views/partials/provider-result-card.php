@@ -4,7 +4,7 @@ $isPossible = !empty($isPossible);
 $model = (string) ($p['service_model'] ?? '');
 $isMobile = in_array($model, ['mobile', 'both'], true);
 $name = (string) ($p['business_name'] ?? 'Business');
-$profilePath = current_brand()->id() === 'localtorque' ? 'business/' : 'providers/';
+$profilePath = 'providers/';
 $location = trim((string) ($p['town_name'] ?? ''));
 if ($location !== '' && !empty($p['state_abbr'])) { $location .= ', ' . $p['state_abbr']; }
 $description = trim((string) ($p['description'] ?? ''));
@@ -37,11 +37,12 @@ $canCall = $hasListedPhone && !empty($p['show_public_phone']);
                 <?php if ($mapResultNumber > 0): ?><span class="provider-map-reference" data-number="<?= $mapResultNumber ?>" aria-label="Map pin <?= $mapResultNumber ?>"></span><?php endif; ?>
                 <span class="provider-card-title"><?= e($name) ?></span>
             </span>
-            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php if (isset($p['distance_km']) && $p['distance_km'] !== null): ?> · <?= max(1, (int) $p['distance_km']) ?> km straight-line<?php endif; ?></span><?php endif; ?>
+            <?php if ($location !== ''): ?><span class="provider-location"><?= e($location) ?><?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($p); ?><?php if ($distanceLabel !== ''): ?> · <?= e($distanceLabel) ?><?php endif; ?></span><?php endif; ?>
         </span>
         <span class="provider-card-arrow" aria-hidden="true">→</span>
     </a>
     <div class="provider-card-badges">
+        <?php if (!empty($p['category_match_verified'])): ?><span class="badge badge-verified">Verified for this service</span><?php elseif (isset($p['category_match_inferred']) && empty($p['category_match_inferred'])): ?><span class="badge badge-confirmed">Direct service match</span><?php endif; ?>
         <?php if ($compact && $isPossible): ?><span class="badge badge-neutral">Related service — confirm fit</span><?php endif; ?>
         <?php if (!empty($p['is_verified'])): ?><span class="badge badge-verified">Verified business</span><?php endif; ?>
         <?php if (str_contains((string) ($p['source_note'] ?? ''), 'qld-fuel-reporting')): ?><span class="badge badge-neutral">Queensland Government source</span><?php endif; ?>

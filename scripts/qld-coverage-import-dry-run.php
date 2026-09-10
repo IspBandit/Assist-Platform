@@ -101,7 +101,7 @@ if ($apply) {
     }
 
     try {
-        $brandKey = 'localtorque';
+        $brandKey = 'vanassist';
         $brandId = (int) Database::scalar('SELECT id FROM brands WHERE brand_key=? OR slug=?', [$brandKey, $brandKey]);
         if ($brandId < 1) {
             $brandId = (int) Database::scalar("SELECT id FROM brands ORDER BY id LIMIT 1");

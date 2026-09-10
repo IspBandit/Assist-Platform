@@ -11,7 +11,6 @@ return [
             'vanassist' => ['page_id' => Env::get('FACEBOOK_VANASSIST_PAGE_ID', ''), 'access_token' => Env::get('FACEBOOK_VANASSIST_PAGE_ACCESS_TOKEN', '')],
             'towsmart' => ['page_id' => Env::get('FACEBOOK_TOWSMART_PAGE_ID', ''), 'access_token' => Env::get('FACEBOOK_TOWSMART_PAGE_ACCESS_TOKEN', '')],
             'trailerwise' => ['page_id' => Env::get('FACEBOOK_TRAILERWISE_PAGE_ID', ''), 'access_token' => Env::get('FACEBOOK_TRAILERWISE_PAGE_ACCESS_TOKEN', '')],
-            'localtorque' => ['page_id' => Env::get('FACEBOOK_LOCALTORQUE_PAGE_ID', ''), 'access_token' => Env::get('FACEBOOK_LOCALTORQUE_PAGE_ACCESS_TOKEN', '')],
         ],
     ],
 ];

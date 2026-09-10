@@ -6,6 +6,11 @@ by default.
 
 ## Enable Ask VanAssist (no paid AI)
 
+The optional Stage 1 explanation is controlled by `assist_ai_outcomes`. It shows
+the interpreted need/location/radius, evidence-backed fit reasons, honest
+distance method and safest next action. Disabling it restores the prior Ask
+presentation without changing search or ranking.
+
 1. Apply migrations `085`–`094`.  
 2. Enable feature flag `assist_ai_search` via `/admin/ai-search` or Feature flags.  
 3. Confirm `/ask` responds on VanAssist; `/find` unchanged.  

@@ -1,0 +1,2592 @@
+{
+  "generatedAt": "2026-08-22T11:30:52.054Z",
+  "disclaimer": "Source rows and layer definitions overlap and are not unique sites, discoveries or prospectivity predictions.",
+  "passes": [
+    {
+      "pass": 2,
+      "title": "Early statewide gold, gem and water evidence",
+      "summary": "Foundational statewide records that established the first systematic evidence index.",
+      "categories": [
+        "gold",
+        "gems",
+        "water"
+      ],
+      "counts": {
+        "minocc_total": 21378,
+        "minocc_gold_gem": 9579,
+        "minocc_unassigned_to_lga": 20,
+        "operating_mine": 747,
+        "care_and_maintenance": 105,
+        "historical_workings": 15317,
+        "mineral_occurrence": 5209,
+        "order_9_watercourses": 3315,
+        "lgas": 78,
+        "lga_batches_complete": 78
+      },
+      "displayCounts": {
+        "Minocc Total": 21378,
+        "Historical Workings": 15317,
+        "Minocc Gold Gem": 9579,
+        "Mineral Occurrence": 5209
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-2/qld-lga-coverage-ledger.geojson",
+          "url": "data/historical-research/systematic-qld-pass-2/qld-lga-coverage-ledger.geojson",
+          "size": 354355,
+          "sizeLabel": "346 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-2/qld-lga-research-batches.json",
+          "url": "data/historical-research/systematic-qld-pass-2/qld-lga-research-batches.json",
+          "size": 81226,
+          "sizeLabel": "79 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-2/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-2/run-manifest.json",
+          "size": 1351,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-2/statewide-major-watercourses.geojson",
+          "url": "data/historical-research/systematic-qld-pass-2/statewide-major-watercourses.geojson",
+          "size": 2020332,
+          "sizeLabel": "1.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-2/statewide-minocc-gold-gems.geojson",
+          "url": "data/historical-research/systematic-qld-pass-2/statewide-minocc-gold-gems.geojson",
+          "size": 13160441,
+          "sizeLabel": "12.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-2/statewide-minocc.geojson",
+          "url": "data/historical-research/systematic-qld-pass-2/statewide-minocc.geojson",
+          "size": 29322277,
+          "sizeLabel": "28.0 MB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-2/run-manifest.json",
+      "searchText": "early statewide gold, gem and water evidence foundational statewide records that established the first systematic evidence index. gold gems water minocc_total minocc_gold_gem minocc_unassigned_to_lga operating_mine care_and_maintenance historical_workings mineral_occurrence order_9_watercourses lgas lga_batches_complete data/historical-research/systematic-qld-pass-2/qld-lga-coverage-ledger.geojson data/historical-research/systematic-qld-pass-2/qld-lga-research-batches.json data/historical-research/systematic-qld-pass-2/run-manifest.json data/historical-research/systematic-qld-pass-2/statewide-major-watercourses.geojson data/historical-research/systematic-qld-pass-2/statewide-minocc-gold-gems.geojson data/historical-research/systematic-qld-pass-2/statewide-minocc.geojson"
+    },
+    {
+      "pass": 3,
+      "title": "Mines, reports and historical maps",
+      "summary": "Cross-references mine records, reports and mapped historical sources.",
+      "categories": [
+        "mines",
+        "reports",
+        "history"
+      ],
+      "counts": {
+        "abandoned_mine_features": 23611,
+        "abandoned_mine_unassigned_to_lga": 8407,
+        "historical_report_leads": 5072,
+        "historical_report_unassigned_to_lga": 21,
+        "structural_framework_features": 84,
+        "historical_cadastral_maps": 8020,
+        "historical_cadastral_resources": 57,
+        "lgas": 78,
+        "lga_batches_complete": 78
+      },
+      "displayCounts": {
+        "Abandoned Mine Features": 23611,
+        "Abandoned Mine Unassigned To Lga": 8407,
+        "Historical Cadastral Maps": 8020,
+        "Historical Report Leads": 5072
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/historical-cadastral-map-catalogue.geojson",
+          "url": "data/historical-research/systematic-qld-pass-3/historical-cadastral-map-catalogue.geojson",
+          "size": 11599595,
+          "sizeLabel": "11.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/historical-report-fishing.geojson",
+          "url": "data/historical-research/systematic-qld-pass-3/historical-report-fishing.geojson",
+          "size": 7584460,
+          "sizeLabel": "7.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/qld-lga-fishing-ledger.geojson",
+          "url": "data/historical-research/systematic-qld-pass-3/qld-lga-fishing-ledger.geojson",
+          "size": 335943,
+          "sizeLabel": "328 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-3/run-manifest.json",
+          "size": 1394,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/source-coverage-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-3/source-coverage-manifest.json",
+          "size": 2574,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/statewide-abandoned-mine-features.geojson",
+          "url": "data/historical-research/systematic-qld-pass-3/statewide-abandoned-mine-features.geojson",
+          "size": 25179066,
+          "sizeLabel": "24.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-3/statewide-structural-framework.geojson",
+          "url": "data/historical-research/systematic-qld-pass-3/statewide-structural-framework.geojson",
+          "size": 269588,
+          "sizeLabel": "263 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-3/run-manifest.json",
+      "searchText": "mines, reports and historical maps cross-references mine records, reports and mapped historical sources. mines reports history abandoned_mine_features abandoned_mine_unassigned_to_lga historical_report_leads historical_report_unassigned_to_lga structural_framework_features historical_cadastral_maps historical_cadastral_resources lgas lga_batches_complete data/historical-research/systematic-qld-pass-3/historical-cadastral-map-catalogue.geojson data/historical-research/systematic-qld-pass-3/historical-report-fishing.geojson data/historical-research/systematic-qld-pass-3/qld-lga-fishing-ledger.geojson data/historical-research/systematic-qld-pass-3/run-manifest.json data/historical-research/systematic-qld-pass-3/source-coverage-manifest.json data/historical-research/systematic-qld-pass-3/statewide-abandoned-mine-features.geojson data/historical-research/systematic-qld-pass-3/statewide-structural-framework.geojson"
+    },
+    {
+      "pass": 4,
+      "title": "OCR historical text recovery",
+      "summary": "Machine-readable text recovered from scanned historical material.",
+      "categories": [
+        "OCR",
+        "history",
+        "reports"
+      ],
+      "counts": {
+        "selected_ocr_terms": 24,
+        "source_unique_reports_across_selected_terms": 43484,
+        "pass_3_report_leads": 5072,
+        "report_leads_with_ocr_matches": 1801,
+        "lgas_with_priority_report": 60,
+        "priority_packages_queried": 60,
+        "package_resources_catalogued": 675,
+        "preferred_resources_access_denied": 60
+      },
+      "displayCounts": {
+        "Source Unique Reports Across Selected Terms": 43484,
+        "Pass 3 Report Leads": 5072,
+        "Report Leads With Ocr Matches": 1801,
+        "Package Resources Catalogued": 675
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-4/ocr-term-report-index.json",
+          "url": "data/historical-research/systematic-qld-pass-4/ocr-term-report-index.json",
+          "size": 52533,
+          "sizeLabel": "51 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-4/qld-lga-report-priority.json",
+          "url": "data/historical-research/systematic-qld-pass-4/qld-lga-report-priority.json",
+          "size": 29931,
+          "sizeLabel": "29 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-4/report-resource-recovery-queue.json",
+          "url": "data/historical-research/systematic-qld-pass-4/report-resource-recovery-queue.json",
+          "size": 352684,
+          "sizeLabel": "344 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-4/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-4/run-manifest.json",
+          "size": 1223,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-4/statewide-report-ocr-enrichment.geojson",
+          "url": "data/historical-research/systematic-qld-pass-4/statewide-report-ocr-enrichment.geojson",
+          "size": 2024595,
+          "sizeLabel": "1.9 MB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-4/run-manifest.json",
+      "searchText": "ocr historical text recovery machine-readable text recovered from scanned historical material. ocr history reports selected_ocr_terms source_unique_reports_across_selected_terms pass_3_report_leads report_leads_with_ocr_matches lgas_with_priority_report priority_packages_queried package_resources_catalogued preferred_resources_access_denied data/historical-research/systematic-qld-pass-4/ocr-term-report-index.json data/historical-research/systematic-qld-pass-4/qld-lga-report-priority.json data/historical-research/systematic-qld-pass-4/report-resource-recovery-queue.json data/historical-research/systematic-qld-pass-4/run-manifest.json data/historical-research/systematic-qld-pass-4/statewide-report-ocr-enrichment.geojson"
+    },
+    {
+      "pass": 5,
+      "title": "Historical leases and tenure",
+      "summary": "Lease, tenure and administrative evidence for tracing old workings and names.",
+      "categories": [
+        "tenure",
+        "history"
+      ],
+      "counts": {
+        "historical_mineral_lease_records": 27865,
+        "lease_records_with_unique_official_coordinate": 22709,
+        "lease_records_withheld_ambiguous_or_unresolved": 5156,
+        "distinct_lease_localities": 170,
+        "mining_themed_place_name_clues": 158,
+        "place_name_clue_lgas": 42,
+        "geocoded_lease_lgas": 44,
+        "deduplicated_archive_pages_queued_for_ocr": 10743,
+        "sample_ocr_labels": 157
+      },
+      "displayCounts": {
+        "Historical Mineral Lease Records": 27865,
+        "Lease Records With Unique Official Coordinate": 22709,
+        "Deduplicated Archive Pages Queued For Ocr": 10743,
+        "Lease Records Withheld Ambiguous Or Unresolved": 5156
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-5/lease-locality-resolution-ledger.json",
+          "url": "data/historical-research/systematic-qld-pass-5/lease-locality-resolution-ledger.json",
+          "size": 84360,
+          "sizeLabel": "82 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-5/lease-volume-ocr-queue.json",
+          "url": "data/historical-research/systematic-qld-pass-5/lease-volume-ocr-queue.json",
+          "size": 5668257,
+          "sizeLabel": "5.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-5/mining-themed-place-names.geojson",
+          "url": "data/historical-research/systematic-qld-pass-5/mining-themed-place-names.geojson",
+          "size": 119397,
+          "sizeLabel": "117 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-5/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-5/run-manifest.json",
+          "size": 1383,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-5/source-snapshots.json",
+          "url": "data/historical-research/systematic-qld-pass-5/source-snapshots.json",
+          "size": 1282,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-5/statewide-historical-mineral-leases.geojson",
+          "url": "data/historical-research/systematic-qld-pass-5/statewide-historical-mineral-leases.geojson",
+          "size": 27420360,
+          "sizeLabel": "26.2 MB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-5/run-manifest.json",
+      "searchText": "historical leases and tenure lease, tenure and administrative evidence for tracing old workings and names. tenure history historical_mineral_lease_records lease_records_with_unique_official_coordinate lease_records_withheld_ambiguous_or_unresolved distinct_lease_localities mining_themed_place_name_clues place_name_clue_lgas geocoded_lease_lgas deduplicated_archive_pages_queued_for_ocr sample_ocr_labels data/historical-research/systematic-qld-pass-5/lease-locality-resolution-ledger.json data/historical-research/systematic-qld-pass-5/lease-volume-ocr-queue.json data/historical-research/systematic-qld-pass-5/mining-themed-place-names.geojson data/historical-research/systematic-qld-pass-5/run-manifest.json data/historical-research/systematic-qld-pass-5/source-snapshots.json data/historical-research/systematic-qld-pass-5/statewide-historical-mineral-leases.geojson"
+    },
+    {
+      "pass": 6,
+      "title": "Historical map catalogue",
+      "summary": "Indexed historical map sources and their research coverage.",
+      "categories": [
+        "maps",
+        "history"
+      ],
+      "counts": {
+        "historical_topographic_csv_resources": 14,
+        "historical_topographic_source_rows": 1578,
+        "historical_topographic_map_records": 1575,
+        "map_sheets_overlapping_verified_lease_points": 218,
+        "distinct_historical_lease_records_with_map_context": 11632,
+        "lga_topographic_priorities": 41,
+        "archive_pages_with_topographic_context": 8104
+      },
+      "displayCounts": {
+        "Distinct Historical Lease Records With Map Context": 11632,
+        "Archive Pages With Topographic Context": 8104,
+        "Historical Topographic Source Rows": 1578,
+        "Historical Topographic Map Records": 1575
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-6/archive-page-topographic-crosswalk.json",
+          "url": "data/historical-research/systematic-qld-pass-6/archive-page-topographic-crosswalk.json",
+          "size": 8914166,
+          "sizeLabel": "8.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-6/historical-topographic-map-catalogue.geojson",
+          "url": "data/historical-research/systematic-qld-pass-6/historical-topographic-map-catalogue.geojson",
+          "size": 2949037,
+          "sizeLabel": "2.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-6/lease-topographic-sheet-crosswalk.geojson",
+          "url": "data/historical-research/systematic-qld-pass-6/lease-topographic-sheet-crosswalk.geojson",
+          "size": 1856065,
+          "sizeLabel": "1.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-6/qld-lga-topographic-research-priority.json",
+          "url": "data/historical-research/systematic-qld-pass-6/qld-lga-topographic-research-priority.json",
+          "size": 32690,
+          "sizeLabel": "32 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-6/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-6/run-manifest.json",
+          "size": 1171,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-6/source-snapshot-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-6/source-snapshot-manifest.json",
+          "size": 5770,
+          "sizeLabel": "6 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-6/run-manifest.json",
+      "searchText": "historical map catalogue indexed historical map sources and their research coverage. maps history historical_topographic_csv_resources historical_topographic_source_rows historical_topographic_map_records map_sheets_overlapping_verified_lease_points distinct_historical_lease_records_with_map_context lga_topographic_priorities archive_pages_with_topographic_context data/historical-research/systematic-qld-pass-6/archive-page-topographic-crosswalk.json data/historical-research/systematic-qld-pass-6/historical-topographic-map-catalogue.geojson data/historical-research/systematic-qld-pass-6/lease-topographic-sheet-crosswalk.geojson data/historical-research/systematic-qld-pass-6/qld-lga-topographic-research-priority.json data/historical-research/systematic-qld-pass-6/run-manifest.json data/historical-research/systematic-qld-pass-6/source-snapshot-manifest.json"
+    },
+    {
+      "pass": 7,
+      "title": "Historical mining records",
+      "summary": "Additional government and archival mining records gathered statewide.",
+      "categories": [
+        "mining",
+        "history",
+        "reports"
+      ],
+      "counts": {
+        "gympie_mining_claim_records": 17604,
+        "palmer_river_miners_right_records": 29270,
+        "mining_equity_file_leads": 56,
+        "deduplicated_archive_register_ocr_targets": 1412,
+        "ocr_targets_ready_with_confirmed_pdf_page": 593,
+        "ocr_targets_requiring_page_alignment": 819,
+        "exact_historical_name_crosslinks": 1204,
+        "mining_register_research_area_records": 5,
+        "mining_register_research_area_points": 4,
+        "historical_hydrographic_chart_leads": 4793
+      },
+      "displayCounts": {
+        "Palmer River Miners Right Records": 29270,
+        "Gympie Mining Claim Records": 17604,
+        "Historical Hydrographic Chart Leads": 4793,
+        "Deduplicated Archive Register Ocr Targets": 1412
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/archive-register-ocr-queue.json",
+          "url": "data/historical-research/systematic-qld-pass-7/archive-register-ocr-queue.json",
+          "size": 2474774,
+          "sizeLabel": "2.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/gympie-mining-claims-1868-1901.json",
+          "url": "data/historical-research/systematic-qld-pass-7/gympie-mining-claims-1868-1901.json",
+          "size": 14214475,
+          "sizeLabel": "13.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/historical-hydrographic-chart-leads.json",
+          "url": "data/historical-research/systematic-qld-pass-7/historical-hydrographic-chart-leads.json",
+          "size": 3305817,
+          "sizeLabel": "3.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/historical-name-crosswalk.json",
+          "url": "data/historical-research/systematic-qld-pass-7/historical-name-crosswalk.json",
+          "size": 1007789,
+          "sizeLabel": "984 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/mining-equity-files-1857-1899.json",
+          "url": "data/historical-research/systematic-qld-pass-7/mining-equity-files-1857-1899.json",
+          "size": 35297,
+          "sizeLabel": "34 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/mining-register-research-areas.geojson",
+          "url": "data/historical-research/systematic-qld-pass-7/mining-register-research-areas.geojson",
+          "size": 3184,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/palmer-river-miners-rights-1874-1880.json",
+          "url": "data/historical-research/systematic-qld-pass-7/palmer-river-miners-rights-1874-1880.json",
+          "size": 22695875,
+          "sizeLabel": "21.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-7/run-manifest.json",
+          "size": 1407,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-7/source-snapshot-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-7/source-snapshot-manifest.json",
+          "size": 2335,
+          "sizeLabel": "2 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-7/run-manifest.json",
+      "searchText": "historical mining records additional government and archival mining records gathered statewide. mining history reports gympie_mining_claim_records palmer_river_miners_right_records mining_equity_file_leads deduplicated_archive_register_ocr_targets ocr_targets_ready_with_confirmed_pdf_page ocr_targets_requiring_page_alignment exact_historical_name_crosslinks mining_register_research_area_records mining_register_research_area_points historical_hydrographic_chart_leads data/historical-research/systematic-qld-pass-7/archive-register-ocr-queue.json data/historical-research/systematic-qld-pass-7/gympie-mining-claims-1868-1901.json data/historical-research/systematic-qld-pass-7/historical-hydrographic-chart-leads.json data/historical-research/systematic-qld-pass-7/historical-name-crosswalk.json data/historical-research/systematic-qld-pass-7/mining-equity-files-1857-1899.json data/historical-research/systematic-qld-pass-7/mining-register-research-areas.geojson data/historical-research/systematic-qld-pass-7/palmer-river-miners-rights-1874-1880.json data/historical-research/systematic-qld-pass-7/run-manifest.json data/historical-research/systematic-qld-pass-7/source-snapshot-manifest.json"
+    },
+    {
+      "pass": 8,
+      "title": "Permits and administrative evidence",
+      "summary": "Permit and administrative records that provide location and activity context.",
+      "categories": [
+        "permits",
+        "tenure"
+      ],
+      "counts": {
+        "historical_exploration_and_development_permits": 17071,
+        "historical_mining_claim_and_lease_extents": 15355,
+        "historical_mining_lease_points": 51469,
+        "historical_mineral_freehold_points": 2940,
+        "total_core_historical_permit_records": 86835,
+        "explicit_gold_gem_priority_records": 27421,
+        "ancillary_catalogue_records": 5966,
+        "excluded_non_mineral_records": 5
+      },
+      "displayCounts": {
+        "Total Core Historical Permit Records": 86835,
+        "Historical Mining Lease Points": 51469,
+        "Explicit Gold Gem Priority Records": 27421,
+        "Historical Exploration And Development Permits": 17071
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/commodity-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-8/commodity-summary.json",
+          "size": 63983,
+          "sizeLabel": "62 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/historical-exploration-development-permits.geojson",
+          "url": "data/historical-research/systematic-qld-pass-8/historical-exploration-development-permits.geojson",
+          "size": 25933439,
+          "sizeLabel": "24.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/historical-gold-gem-priority-index.geojson",
+          "url": "data/historical-research/systematic-qld-pass-8/historical-gold-gem-priority-index.geojson",
+          "size": 20129121,
+          "sizeLabel": "19.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/historical-mineral-freehold-points.geojson",
+          "url": "data/historical-research/systematic-qld-pass-8/historical-mineral-freehold-points.geojson",
+          "size": 2507385,
+          "sizeLabel": "2.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/historical-mining-claim-lease-extents.geojson",
+          "url": "data/historical-research/systematic-qld-pass-8/historical-mining-claim-lease-extents.geojson",
+          "size": 18750692,
+          "sizeLabel": "17.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/historical-mining-lease-points.geojson",
+          "url": "data/historical-research/systematic-qld-pass-8/historical-mining-lease-points.geojson",
+          "size": 48910068,
+          "sizeLabel": "46.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-8/run-manifest.json",
+          "size": 1518,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-8/source-layer-coverage.json",
+          "url": "data/historical-research/systematic-qld-pass-8/source-layer-coverage.json",
+          "size": 8782,
+          "sizeLabel": "9 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-8/run-manifest.json",
+      "searchText": "permits and administrative evidence permit and administrative records that provide location and activity context. permits tenure historical_exploration_and_development_permits historical_mining_claim_and_lease_extents historical_mining_lease_points historical_mineral_freehold_points total_core_historical_permit_records explicit_gold_gem_priority_records ancillary_catalogue_records excluded_non_mineral_records data/historical-research/systematic-qld-pass-8/commodity-summary.json data/historical-research/systematic-qld-pass-8/historical-exploration-development-permits.geojson data/historical-research/systematic-qld-pass-8/historical-gold-gem-priority-index.geojson data/historical-research/systematic-qld-pass-8/historical-mineral-freehold-points.geojson data/historical-research/systematic-qld-pass-8/historical-mining-claim-lease-extents.geojson data/historical-research/systematic-qld-pass-8/historical-mining-lease-points.geojson data/historical-research/systematic-qld-pass-8/run-manifest.json data/historical-research/systematic-qld-pass-8/source-layer-coverage.json"
+    },
+    {
+      "pass": 9,
+      "title": "Production and incident evidence",
+      "summary": "Production, activity and incident records useful for historical cross-checking.",
+      "categories": [
+        "production",
+        "history"
+      ],
+      "counts": {
+        "mining_accident_records": 8903,
+        "accident_records_with_source_coordinates": 8553,
+        "shared_coordinate_clusters": 770,
+        "exact_accident_permit_name_matches": 516,
+        "structured_production_records": 1474,
+        "structured_production_financial_years": 15,
+        "historical_production_pdf_reports": 21,
+        "historical_production_pdf_pages": 230,
+        "pdf_pages_with_extractable_text": 226,
+        "pdf_pages_requiring_ocr": 4,
+        "pdf_pages_with_explicit_gold_or_gem_terms": 193
+      },
+      "displayCounts": {
+        "Mining Accident Records": 8903,
+        "Accident Records With Source Coordinates": 8553,
+        "Structured Production Records": 1474,
+        "Shared Coordinate Clusters": 770
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/accident-historical-permit-name-crosswalk.json",
+          "url": "data/historical-research/systematic-qld-pass-9/accident-historical-permit-name-crosswalk.json",
+          "size": 466381,
+          "sizeLabel": "455 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/annual-mineral-production-structured.json",
+          "url": "data/historical-research/systematic-qld-pass-9/annual-mineral-production-structured.json",
+          "size": 1035306,
+          "sizeLabel": "1011 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/historical-production-report-page-index.json",
+          "url": "data/historical-research/systematic-qld-pass-9/historical-production-report-page-index.json",
+          "size": 153971,
+          "sizeLabel": "150 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/mining-accident-location-clusters.geojson",
+          "url": "data/historical-research/systematic-qld-pass-9/mining-accident-location-clusters.geojson",
+          "size": 718109,
+          "sizeLabel": "701 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/qld-mining-accidents-1882-1945.geojson",
+          "url": "data/historical-research/systematic-qld-pass-9/qld-mining-accidents-1882-1945.geojson",
+          "size": 10883555,
+          "sizeLabel": "10.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-9/run-manifest.json",
+          "size": 1527,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-9/source-snapshot-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-9/source-snapshot-manifest.json",
+          "size": 2093,
+          "sizeLabel": "2 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-9/run-manifest.json",
+      "searchText": "production and incident evidence production, activity and incident records useful for historical cross-checking. production history mining_accident_records accident_records_with_source_coordinates shared_coordinate_clusters exact_accident_permit_name_matches structured_production_records structured_production_financial_years historical_production_pdf_reports historical_production_pdf_pages pdf_pages_with_extractable_text pdf_pages_requiring_ocr pdf_pages_with_explicit_gold_or_gem_terms data/historical-research/systematic-qld-pass-9/accident-historical-permit-name-crosswalk.json data/historical-research/systematic-qld-pass-9/annual-mineral-production-structured.json data/historical-research/systematic-qld-pass-9/historical-production-report-page-index.json data/historical-research/systematic-qld-pass-9/mining-accident-location-clusters.geojson data/historical-research/systematic-qld-pass-9/qld-mining-accidents-1882-1945.geojson data/historical-research/systematic-qld-pass-9/run-manifest.json data/historical-research/systematic-qld-pass-9/source-snapshot-manifest.json"
+    },
+    {
+      "pass": 10,
+      "title": "Field observations and occurrences",
+      "summary": "Statewide observations and occurrence records prepared for comparison.",
+      "categories": [
+        "occurrences",
+        "field data"
+      ],
+      "counts": {
+        "total_geological_observation_records": 331479,
+        "field_site_records": 184927,
+        "primary_structure_records": 59265,
+        "tectonic_structure_records": 33293,
+        "fossil_site_records": 7851,
+        "isotopic_dating_records": 1900,
+        "other_structural_measurement_records": 44243,
+        "mineralisation_gold_gem_index_records": 1662,
+        "compressed_snapshot_bytes": 15201467,
+        "uncompressed_snapshot_bytes": 330456185
+      },
+      "displayCounts": {
+        "Uncompressed Snapshot Bytes": 330456185,
+        "Compressed Snapshot Bytes": 15201467,
+        "Total Geological Observation Records": 331479,
+        "Field Site Records": 184927
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-10/mineralisation-gold-gem-observation-index.geojson",
+          "url": "data/historical-research/systematic-qld-pass-10/mineralisation-gold-gem-observation-index.geojson",
+          "size": 1560619,
+          "sizeLabel": "1.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-10/observation-type-and-sheet-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-10/observation-type-and-sheet-summary.json",
+          "size": 79421,
+          "sizeLabel": "78 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-10/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-10/run-manifest.json",
+          "size": 3360,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-10/source-layer-coverage.json",
+          "url": "data/historical-research/systematic-qld-pass-10/source-layer-coverage.json",
+          "size": 2403,
+          "sizeLabel": "2 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-10/run-manifest.json",
+      "searchText": "field observations and occurrences statewide observations and occurrence records prepared for comparison. occurrences field data total_geological_observation_records field_site_records primary_structure_records tectonic_structure_records fossil_site_records isotopic_dating_records other_structural_measurement_records mineralisation_gold_gem_index_records compressed_snapshot_bytes uncompressed_snapshot_bytes data/historical-research/systematic-qld-pass-10/mineralisation-gold-gem-observation-index.geojson data/historical-research/systematic-qld-pass-10/observation-type-and-sheet-summary.json data/historical-research/systematic-qld-pass-10/run-manifest.json data/historical-research/systematic-qld-pass-10/source-layer-coverage.json"
+    },
+    {
+      "pass": 11,
+      "title": "Boreholes and subsurface evidence",
+      "summary": "Borehole and related subsurface records for geological context.",
+      "categories": [
+        "boreholes",
+        "geology"
+      ],
+      "counts": {
+        "mineral_borehole_records": 15599,
+        "boreholes_with_qdex_data_links": 15599,
+        "boreholes_with_held_core_cuttings_or_sidewall": 3296,
+        "linked_borehole_research_records": 15599,
+        "exact_historical_permit_number_crosslinks": 603,
+        "crosslinked_borehole_records": 14343,
+        "geochemistry_resources_catalogued": 18,
+        "geochemistry_2024_resources_catalogued": 7,
+        "blocked_geochemistry_download_probes": 2
+      },
+      "displayCounts": {
+        "Mineral Borehole Records": 15599,
+        "Boreholes With Qdex Data Links": 15599,
+        "Linked Borehole Research Records": 15599,
+        "Crosslinked Borehole Records": 14343
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-11/borehole-core-report-data-index.json",
+          "url": "data/historical-research/systematic-qld-pass-11/borehole-core-report-data-index.json",
+          "size": 8125455,
+          "sizeLabel": "7.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-11/geochemistry-source-acquisition-audit.json",
+          "url": "data/historical-research/systematic-qld-pass-11/geochemistry-source-acquisition-audit.json",
+          "size": 7884,
+          "sizeLabel": "8 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-11/historical-permit-borehole-crosswalk.json",
+          "url": "data/historical-research/systematic-qld-pass-11/historical-permit-borehole-crosswalk.json",
+          "size": 707377,
+          "sizeLabel": "691 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-11/qld-mineral-boreholes.geojson",
+          "url": "data/historical-research/systematic-qld-pass-11/qld-mineral-boreholes.geojson",
+          "size": 18941646,
+          "sizeLabel": "18.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-11/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-11/run-manifest.json",
+          "size": 1369,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-11/source-layer-and-borehole-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-11/source-layer-and-borehole-summary.json",
+          "size": 3936,
+          "sizeLabel": "4 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-11/run-manifest.json",
+      "searchText": "boreholes and subsurface evidence borehole and related subsurface records for geological context. boreholes geology mineral_borehole_records boreholes_with_qdex_data_links boreholes_with_held_core_cuttings_or_sidewall linked_borehole_research_records exact_historical_permit_number_crosslinks crosslinked_borehole_records geochemistry_resources_catalogued geochemistry_2024_resources_catalogued blocked_geochemistry_download_probes data/historical-research/systematic-qld-pass-11/borehole-core-report-data-index.json data/historical-research/systematic-qld-pass-11/geochemistry-source-acquisition-audit.json data/historical-research/systematic-qld-pass-11/historical-permit-borehole-crosswalk.json data/historical-research/systematic-qld-pass-11/qld-mineral-boreholes.geojson data/historical-research/systematic-qld-pass-11/run-manifest.json data/historical-research/systematic-qld-pass-11/source-layer-and-borehole-summary.json"
+    },
+    {
+      "pass": 12,
+      "title": "Geochemistry evidence",
+      "summary": "Statewide geochemical samples and analytical context.",
+      "categories": [
+        "geochemistry",
+        "samples"
+      ],
+      "counts": {
+        "retained_sample_rows": 2625974,
+        "located_sample_rows": 2625974,
+        "gold_assay_observations": 2797220,
+        "negative_source_value_observations": 928836,
+        "unambiguous_method_observations": 3611,
+        "uncatalogued_method_observations": 2793609,
+        "excluded_error_parameter_rows": 18598,
+        "orphan_gold_parameter_observations": 43,
+        "density_grid_cells": 4154,
+        "used_method_lookup_keys": 46162,
+        "drillhole_collars_catalogued": 144777
+      },
+      "displayCounts": {
+        "Gold Assay Observations": 2797220,
+        "Uncatalogued Method Observations": 2793609,
+        "Retained Sample Rows": 2625974,
+        "Located Sample Rows": 2625974
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-12/gold-assay-method-index.json",
+          "url": "data/historical-research/systematic-qld-pass-12/gold-assay-method-index.json",
+          "size": 7736968,
+          "sizeLabel": "7.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-12/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-12/run-manifest.json",
+          "size": 3948,
+          "sizeLabel": "4 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-12/source-table-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-12/source-table-summary.json",
+          "size": 2165,
+          "sizeLabel": "2 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-12/statewide-gold-sample-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-12/statewide-gold-sample-density-grid.geojson",
+          "size": 2105848,
+          "sizeLabel": "2.0 MB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-12/run-manifest.json",
+      "searchText": "geochemistry evidence statewide geochemical samples and analytical context. geochemistry samples retained_sample_rows located_sample_rows gold_assay_observations negative_source_value_observations unambiguous_method_observations uncatalogued_method_observations excluded_error_parameter_rows orphan_gold_parameter_observations density_grid_cells used_method_lookup_keys drillhole_collars_catalogued data/historical-research/systematic-qld-pass-12/gold-assay-method-index.json data/historical-research/systematic-qld-pass-12/run-manifest.json data/historical-research/systematic-qld-pass-12/source-table-summary.json data/historical-research/systematic-qld-pass-12/statewide-gold-sample-density-grid.geojson"
+    },
+    {
+      "pass": 13,
+      "title": "Drilling, rocks and mineral occurrences",
+      "summary": "Drillholes, rock samples and mineral occurrence evidence, with a statewide density view.",
+      "categories": [
+        "drilling",
+        "geology",
+        "occurrences"
+      ],
+      "counts": {
+        "drill_evidence_records": 40684,
+        "surface_rock_evidence_records": 32524,
+        "archival_mineral_occurrence_records": 4385,
+        "current_minocc_crosswalk_candidates": 1391,
+        "density_grid_cells": 2202,
+        "code_interpretation_audit_records": 13,
+        "located_drill_records": 40684,
+        "located_surface_rock_records": 32524,
+        "located_archival_occurrences": 4385
+      },
+      "displayCounts": {
+        "Drill Evidence Records": 40684,
+        "Located Drill Records": 40684,
+        "Surface Rock Evidence Records": 32524,
+        "Located Surface Rock Records": 32524
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/archival-gold-reef-mineral-occurrences.geojson",
+          "url": "data/historical-research/systematic-qld-pass-13/archival-gold-reef-mineral-occurrences.geojson",
+          "size": 5535706,
+          "sizeLabel": "5.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/archival-to-current-minocc-crosswalk.json",
+          "url": "data/historical-research/systematic-qld-pass-13/archival-to-current-minocc-crosswalk.json",
+          "size": 476692,
+          "sizeLabel": "466 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/code-interpretation-audit.json",
+          "url": "data/historical-research/systematic-qld-pass-13/code-interpretation-audit.json",
+          "size": 3283,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/historical-drill-gold-reef-vein-evidence.geojson",
+          "url": "data/historical-research/systematic-qld-pass-13/historical-drill-gold-reef-vein-evidence.geojson",
+          "size": 45485145,
+          "sizeLabel": "43.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-13/run-manifest.json",
+          "size": 2453,
+          "sizeLabel": "2 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/statewide-gold-reef-evidence-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-13/statewide-gold-reef-evidence-density-grid.geojson",
+          "size": 1304486,
+          "sizeLabel": "1.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-13/surface-rock-gold-reef-vein-evidence.geojson",
+          "url": "data/historical-research/systematic-qld-pass-13/surface-rock-gold-reef-vein-evidence.geojson",
+          "size": 32995873,
+          "sizeLabel": "31.5 MB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-13-context",
+          "label": "Gold and reef evidence",
+          "description": "Relative density of statewide gold and reef evidence.",
+          "file": "statewide-gold-reef-evidence-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-13/statewide-gold-reef-evidence-density-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-13/run-manifest.json",
+      "searchText": "drilling, rocks and mineral occurrences drillholes, rock samples and mineral occurrence evidence, with a statewide density view. drilling geology occurrences drill_evidence_records surface_rock_evidence_records archival_mineral_occurrence_records current_minocc_crosswalk_candidates density_grid_cells code_interpretation_audit_records located_drill_records located_surface_rock_records located_archival_occurrences data/historical-research/systematic-qld-pass-13/archival-gold-reef-mineral-occurrences.geojson data/historical-research/systematic-qld-pass-13/archival-to-current-minocc-crosswalk.json data/historical-research/systematic-qld-pass-13/code-interpretation-audit.json data/historical-research/systematic-qld-pass-13/historical-drill-gold-reef-vein-evidence.geojson data/historical-research/systematic-qld-pass-13/run-manifest.json data/historical-research/systematic-qld-pass-13/statewide-gold-reef-evidence-density-grid.geojson data/historical-research/systematic-qld-pass-13/surface-rock-gold-reef-vein-evidence.geojson"
+    },
+    {
+      "pass": 14,
+      "title": "Drainage and watercourse context",
+      "summary": "Mapped drainage evidence for following current and historical water pathways.",
+      "categories": [
+        "drainage",
+        "water",
+        "terrain"
+      ],
+      "counts": {
+        "higher_order_watercourse_records": 80004,
+        "stream_order_7_records": 49080,
+        "stream_order_8_records": 27609,
+        "stream_order_9_records": 3315,
+        "water_act_watercourse_records": 9296,
+        "water_act_drainage_feature_index_records": 46373,
+        "evidence_hydrography_context_cells": 4248,
+        "drainage_index_records_missing_representative_point": 2,
+        "context_cells_with_higher_order_watercourses": 620,
+        "context_cells_with_water_act_watercourses": 2195,
+        "context_cells_with_water_act_drainage_features": 899
+      },
+      "displayCounts": {
+        "Higher Order Watercourse Records": 80004,
+        "Stream Order 7 Records": 49080,
+        "Water Act Drainage Feature Index Records": 46373,
+        "Stream Order 8 Records": 27609
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-14/evidence-hydrography-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-14/evidence-hydrography-context-grid.geojson",
+          "size": 2310490,
+          "sizeLabel": "2.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-14/higher-order-watercourse-network.geojson",
+          "url": "data/historical-research/systematic-qld-pass-14/higher-order-watercourse-network.geojson",
+          "size": 73051771,
+          "sizeLabel": "69.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-14/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-14/run-manifest.json",
+          "size": 1372,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-14/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-14/source-layer-summary.json",
+          "size": 3582,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-14/water-act-drainage-feature-index.geojson",
+          "url": "data/historical-research/systematic-qld-pass-14/water-act-drainage-feature-index.geojson",
+          "size": 63679831,
+          "sizeLabel": "60.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-14/water-act-watercourses.geojson",
+          "url": "data/historical-research/systematic-qld-pass-14/water-act-watercourses.geojson",
+          "size": 18059548,
+          "sizeLabel": "17.2 MB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-14/run-manifest.json",
+      "searchText": "drainage and watercourse context mapped drainage evidence for following current and historical water pathways. drainage water terrain higher_order_watercourse_records stream_order_7_records stream_order_8_records stream_order_9_records water_act_watercourse_records water_act_drainage_feature_index_records evidence_hydrography_context_cells drainage_index_records_missing_representative_point context_cells_with_higher_order_watercourses context_cells_with_water_act_watercourses context_cells_with_water_act_drainage_features data/historical-research/systematic-qld-pass-14/evidence-hydrography-context-grid.geojson data/historical-research/systematic-qld-pass-14/higher-order-watercourse-network.geojson data/historical-research/systematic-qld-pass-14/run-manifest.json data/historical-research/systematic-qld-pass-14/source-layer-summary.json data/historical-research/systematic-qld-pass-14/water-act-drainage-feature-index.geojson data/historical-research/systematic-qld-pass-14/water-act-watercourses.geojson"
+    },
+    {
+      "pass": 15,
+      "title": "Geological structures",
+      "summary": "Structural geological records supporting fault, fold and trend research.",
+      "categories": [
+        "structures",
+        "geology"
+      ],
+      "counts": {
+        "detailed_fault_or_shear_zone_records": 179981,
+        "detailed_dyke_vein_or_sill_records": 69276,
+        "quartz_mentioning_structural_line_records": 7334,
+        "quartz_mentioning_fault_or_shear_records": 787,
+        "quartz_mentioning_dyke_vein_or_sill_records": 6547,
+        "structural_evidence_context_cells": 6868,
+        "context_cells_with_structures_and_historical_evidence": 2006
+      },
+      "displayCounts": {
+        "Detailed Fault Or Shear Zone Records": 179981,
+        "Detailed Dyke Vein Or Sill Records": 69276,
+        "Quartz Mentioning Structural Line Records": 7334,
+        "Structural Evidence Context Cells": 6868
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-15/classification-summary.json",
+          "size": 13997,
+          "sizeLabel": "14 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/detailed-dykes-veins-and-sills.geojson",
+          "url": "data/historical-research/systematic-qld-pass-15/detailed-dykes-veins-and-sills.geojson",
+          "size": 71686604,
+          "sizeLabel": "68.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/detailed-faults-and-shear-zones-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-15/detailed-faults-and-shear-zones-part-1.geojson",
+          "size": 92546358,
+          "sizeLabel": "88.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/detailed-faults-and-shear-zones-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-15/detailed-faults-and-shear-zones-part-2.geojson",
+          "size": 91905519,
+          "sizeLabel": "87.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/quartz-bearing-structural-lines.geojson",
+          "url": "data/historical-research/systematic-qld-pass-15/quartz-bearing-structural-lines.geojson",
+          "size": 7608072,
+          "sizeLabel": "7.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-15/run-manifest.json",
+          "size": 1444,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-15/source-layer-summary.json",
+          "size": 2775,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-15/structural-evidence-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-15/structural-evidence-context-grid.geojson",
+          "size": 4223213,
+          "sizeLabel": "4.0 MB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-15/run-manifest.json",
+      "searchText": "geological structures structural geological records supporting fault, fold and trend research. structures geology detailed_fault_or_shear_zone_records detailed_dyke_vein_or_sill_records quartz_mentioning_structural_line_records quartz_mentioning_fault_or_shear_records quartz_mentioning_dyke_vein_or_sill_records structural_evidence_context_cells context_cells_with_structures_and_historical_evidence data/historical-research/systematic-qld-pass-15/classification-summary.json data/historical-research/systematic-qld-pass-15/detailed-dykes-veins-and-sills.geojson data/historical-research/systematic-qld-pass-15/detailed-faults-and-shear-zones-part-1.geojson data/historical-research/systematic-qld-pass-15/detailed-faults-and-shear-zones-part-2.geojson data/historical-research/systematic-qld-pass-15/quartz-bearing-structural-lines.geojson data/historical-research/systematic-qld-pass-15/run-manifest.json data/historical-research/systematic-qld-pass-15/source-layer-summary.json data/historical-research/systematic-qld-pass-15/structural-evidence-context-grid.geojson"
+    },
+    {
+      "pass": 16,
+      "title": "Mapped geological features",
+      "summary": "Additional mapped features normalised for statewide research.",
+      "categories": [
+        "geology",
+        "mapping"
+      ],
+      "counts": {
+        "folds_records": 7981,
+        "marker_beds_records": 4251,
+        "lineaments_records": 67265,
+        "joints_fractures_records": 57920,
+        "volcanic_features_records": 41,
+        "other_natural_features_records": 51716,
+        "other_features_records": 20526,
+        "published_detailed_feature_records": 209700,
+        "mineral_context_keyword_index_records": 199,
+        "remaining_structural_evidence_context_cells": 9110,
+        "context_cells_with_structures_and_historical_evidence": 1825
+      },
+      "displayCounts": {
+        "Published Detailed Feature Records": 209700,
+        "Lineaments Records": 67265,
+        "Joints Fractures Records": 57920,
+        "Other Natural Features Records": 51716
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-16/classification-summary.json",
+          "size": 11424,
+          "sizeLabel": "11 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-folds.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-folds.geojson",
+          "size": 8008485,
+          "sizeLabel": "7.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-joints-and-fractures-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-joints-and-fractures-part-1.geojson",
+          "size": 38869598,
+          "sizeLabel": "37.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-joints-and-fractures-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-joints-and-fractures-part-2.geojson",
+          "size": 17152157,
+          "sizeLabel": "16.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-lineaments-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-lineaments-part-1.geojson",
+          "size": 38152533,
+          "sizeLabel": "36.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-lineaments-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-lineaments-part-2.geojson",
+          "size": 25976523,
+          "sizeLabel": "24.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-marker-beds-and-bands.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-marker-beds-and-bands.geojson",
+          "size": 4165217,
+          "sizeLabel": "4.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-other-features.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-other-features.geojson",
+          "size": 24405102,
+          "sizeLabel": "23.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-other-natural-features-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-other-natural-features-part-1.geojson",
+          "size": 40570989,
+          "sizeLabel": "38.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-other-natural-features-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-other-natural-features-part-2.geojson",
+          "size": 12013625,
+          "sizeLabel": "11.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/detailed-volcanic-features.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/detailed-volcanic-features.geojson",
+          "size": 41646,
+          "sizeLabel": "41 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/mineral-context-keyword-feature-index.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/mineral-context-keyword-feature-index.geojson",
+          "size": 209075,
+          "sizeLabel": "204 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/remaining-structural-evidence-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-16/remaining-structural-evidence-context-grid.geojson",
+          "size": 5317837,
+          "sizeLabel": "5.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-16/run-manifest.json",
+          "size": 3022,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-16/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-16/source-layer-summary.json",
+          "size": 6956,
+          "sizeLabel": "7 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-16/run-manifest.json",
+      "searchText": "mapped geological features additional mapped features normalised for statewide research. geology mapping folds_records marker_beds_records lineaments_records joints_fractures_records volcanic_features_records other_natural_features_records other_features_records published_detailed_feature_records mineral_context_keyword_index_records remaining_structural_evidence_context_cells context_cells_with_structures_and_historical_evidence data/historical-research/systematic-qld-pass-16/classification-summary.json data/historical-research/systematic-qld-pass-16/detailed-folds.geojson data/historical-research/systematic-qld-pass-16/detailed-joints-and-fractures-part-1.geojson data/historical-research/systematic-qld-pass-16/detailed-joints-and-fractures-part-2.geojson data/historical-research/systematic-qld-pass-16/detailed-lineaments-part-1.geojson data/historical-research/systematic-qld-pass-16/detailed-lineaments-part-2.geojson data/historical-research/systematic-qld-pass-16/detailed-marker-beds-and-bands.geojson data/historical-research/systematic-qld-pass-16/detailed-other-features.geojson data/historical-research/systematic-qld-pass-16/detailed-other-natural-features-part-1.geojson data/historical-research/systematic-qld-pass-16/detailed-other-natural-features-part-2.geojson data/historical-research/systematic-qld-pass-16/detailed-volcanic-features.geojson data/historical-research/systematic-qld-pass-16/mineral-context-keyword-feature-index.geojson data/historical-research/systematic-qld-pass-16/remaining-structural-evidence-context-grid.geojson data/historical-research/systematic-qld-pass-16/run-manifest.json data/historical-research/systematic-qld-pass-16/source-layer-summary.json"
+    },
+    {
+      "pass": 17,
+      "title": "Boundaries and geological trends",
+      "summary": "Boundary and trend evidence compared with the historical record.",
+      "categories": [
+        "structures",
+        "geology",
+        "history"
+      ],
+      "counts": {
+        "geological_boundary_index_records": 430808,
+        "trend_or_dip_records": 155364,
+        "published_source_records": 586172,
+        "boundary_trend_context_cells": 16179,
+        "context_cells_with_structures_and_historical_evidence": 2201
+      },
+      "displayCounts": {
+        "Published Source Records": 586172,
+        "Geological Boundary Index Records": 430808,
+        "Trend Or Dip Records": 155364,
+        "Boundary Trend Context Cells": 16179
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/boundary-trend-historical-evidence-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/boundary-trend-historical-evidence-context-grid.geojson",
+          "size": 9105882,
+          "sizeLabel": "8.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-17/classification-summary.json",
+          "size": 19519,
+          "sizeLabel": "19 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-1.geojson",
+          "size": 31668279,
+          "sizeLabel": "30.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-10.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-10.geojson",
+          "size": 31340270,
+          "sizeLabel": "29.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-11.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-11.geojson",
+          "size": 32025552,
+          "sizeLabel": "30.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-12.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-12.geojson",
+          "size": 31932728,
+          "sizeLabel": "30.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-13.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-13.geojson",
+          "size": 31881526,
+          "sizeLabel": "30.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-14.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-14.geojson",
+          "size": 31774428,
+          "sizeLabel": "30.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-15.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-15.geojson",
+          "size": 11435785,
+          "sizeLabel": "10.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-2.geojson",
+          "size": 32009486,
+          "sizeLabel": "30.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-3.geojson",
+          "size": 31751844,
+          "sizeLabel": "30.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-4.geojson",
+          "size": 31080263,
+          "sizeLabel": "29.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-5.geojson",
+          "size": 31792463,
+          "sizeLabel": "30.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-6.geojson",
+          "size": 31377031,
+          "sizeLabel": "29.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-7.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-7.geojson",
+          "size": 32311026,
+          "sizeLabel": "30.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-8.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-8.geojson",
+          "size": 31908200,
+          "sizeLabel": "30.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-9.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-9.geojson",
+          "size": 30957205,
+          "sizeLabel": "29.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-1.geojson",
+          "size": 29956543,
+          "sizeLabel": "28.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-2.geojson",
+          "size": 29460766,
+          "sizeLabel": "28.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-3.geojson",
+          "size": 29854595,
+          "sizeLabel": "28.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-4.geojson",
+          "size": 29337036,
+          "sizeLabel": "28.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-5.geojson",
+          "size": 29581930,
+          "sizeLabel": "28.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-6.geojson",
+          "size": 5410615,
+          "sizeLabel": "5.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-17/run-manifest.json",
+          "size": 3812,
+          "sizeLabel": "4 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-17/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-17/source-layer-summary.json",
+          "size": 1203,
+          "sizeLabel": "1 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-17-context",
+          "label": "Boundaries, trends and history",
+          "description": "Mapped boundaries and trends overlapping historical evidence.",
+          "file": "boundary-trend-historical-evidence-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-17/boundary-trend-historical-evidence-context-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-17/run-manifest.json",
+      "searchText": "boundaries and geological trends boundary and trend evidence compared with the historical record. structures geology history geological_boundary_index_records trend_or_dip_records published_source_records boundary_trend_context_cells context_cells_with_structures_and_historical_evidence data/historical-research/systematic-qld-pass-17/boundary-trend-historical-evidence-context-grid.geojson data/historical-research/systematic-qld-pass-17/classification-summary.json data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-1.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-10.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-11.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-12.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-13.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-14.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-15.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-2.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-3.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-4.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-5.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-6.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-7.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-8.geojson data/historical-research/systematic-qld-pass-17/detailed-geological-boundary-index-part-9.geojson data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-1.geojson data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-2.geojson data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-3.geojson data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-4.geojson data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-5.geojson data/historical-research/systematic-qld-pass-17/detailed-trends-and-dips-part-6.geojson data/historical-research/systematic-qld-pass-17/run-manifest.json data/historical-research/systematic-qld-pass-17/source-layer-summary.json"
+    },
+    {
+      "pass": 18,
+      "title": "Field sites and geological observations",
+      "summary": "Field-site and observation evidence for local geological context.",
+      "categories": [
+        "field data",
+        "geology"
+      ],
+      "counts": {
+        "field_site_records": 184927,
+        "surface_geology_index_records": 315050,
+        "solid_geology_index_records": 208333,
+        "dataset_extent_records": 2,
+        "published_source_records": 708312,
+        "mineral_context_field_site_records": 2005,
+        "detailed_geology_context_cells": 16834,
+        "context_cells_with_geology_and_historical_evidence": 2202
+      },
+      "displayCounts": {
+        "Published Source Records": 708312,
+        "Surface Geology Index Records": 315050,
+        "Solid Geology Index Records": 208333,
+        "Field Site Records": 184927
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-18/classification-summary.json",
+          "size": 13547,
+          "sizeLabel": "13 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-1.geojson",
+          "size": 24143099,
+          "sizeLabel": "23.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-10.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-10.geojson",
+          "size": 5882034,
+          "sizeLabel": "5.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-2.geojson",
+          "size": 24408374,
+          "sizeLabel": "23.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-3.geojson",
+          "size": 24102063,
+          "sizeLabel": "23.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-4.geojson",
+          "size": 24242442,
+          "sizeLabel": "23.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-5.geojson",
+          "size": 24089935,
+          "sizeLabel": "23.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-6.geojson",
+          "size": 23929221,
+          "sizeLabel": "22.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-7.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-7.geojson",
+          "size": 24015168,
+          "sizeLabel": "22.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-8.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-8.geojson",
+          "size": 24354748,
+          "sizeLabel": "23.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-9.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-9.geojson",
+          "size": 23764095,
+          "sizeLabel": "22.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-geology-dataset-extents.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-geology-dataset-extents.geojson",
+          "size": 2978,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-geology-historical-evidence-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-geology-historical-evidence-context-grid.geojson",
+          "size": 10878756,
+          "sizeLabel": "10.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-1.geojson",
+          "size": 26224754,
+          "sizeLabel": "25.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-10.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-10.geojson",
+          "size": 26156356,
+          "sizeLabel": "24.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-11.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-11.geojson",
+          "size": 10894966,
+          "sizeLabel": "10.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-2.geojson",
+          "size": 26166642,
+          "sizeLabel": "25.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-3.geojson",
+          "size": 26189321,
+          "sizeLabel": "25.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-4.geojson",
+          "size": 26380216,
+          "sizeLabel": "25.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-5.geojson",
+          "size": 26147226,
+          "sizeLabel": "24.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-6.geojson",
+          "size": 26542952,
+          "sizeLabel": "25.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-7.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-7.geojson",
+          "size": 26362492,
+          "sizeLabel": "25.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-8.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-8.geojson",
+          "size": 26427820,
+          "sizeLabel": "25.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-9.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-9.geojson",
+          "size": 26308445,
+          "sizeLabel": "25.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-1.geojson",
+          "size": 25768315,
+          "sizeLabel": "24.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-10.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-10.geojson",
+          "size": 26105995,
+          "sizeLabel": "24.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-11.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-11.geojson",
+          "size": 25858745,
+          "sizeLabel": "24.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-12.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-12.geojson",
+          "size": 26098572,
+          "sizeLabel": "24.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-13.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-13.geojson",
+          "size": 25422397,
+          "sizeLabel": "24.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-14.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-14.geojson",
+          "size": 25656083,
+          "sizeLabel": "24.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-15.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-15.geojson",
+          "size": 25422304,
+          "sizeLabel": "24.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-16.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-16.geojson",
+          "size": 19318585,
+          "sizeLabel": "18.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-2.geojson",
+          "size": 25710998,
+          "sizeLabel": "24.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-3.geojson",
+          "size": 25821121,
+          "sizeLabel": "24.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-4.geojson",
+          "size": 25656157,
+          "sizeLabel": "24.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-5.geojson",
+          "size": 25532422,
+          "sizeLabel": "24.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-6.geojson",
+          "size": 25816266,
+          "sizeLabel": "24.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-7.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-7.geojson",
+          "size": 25398189,
+          "sizeLabel": "24.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-8.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-8.geojson",
+          "size": 25760045,
+          "sizeLabel": "24.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-9.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-9.geojson",
+          "size": 25798083,
+          "sizeLabel": "24.6 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/mineral-context-field-site-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-18/mineral-context-field-site-index-part-1.geojson",
+          "size": 1362008,
+          "sizeLabel": "1.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-18/run-manifest.json",
+          "size": 5396,
+          "sizeLabel": "5 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-18/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-18/source-layer-summary.json",
+          "size": 3479,
+          "sizeLabel": "3 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-18/run-manifest.json",
+      "searchText": "field sites and geological observations field-site and observation evidence for local geological context. field data geology field_site_records surface_geology_index_records solid_geology_index_records dataset_extent_records published_source_records mineral_context_field_site_records detailed_geology_context_cells context_cells_with_geology_and_historical_evidence data/historical-research/systematic-qld-pass-18/classification-summary.json data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-1.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-10.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-2.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-3.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-4.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-5.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-6.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-7.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-8.geojson data/historical-research/systematic-qld-pass-18/detailed-field-sites-part-9.geojson data/historical-research/systematic-qld-pass-18/detailed-geology-dataset-extents.geojson data/historical-research/systematic-qld-pass-18/detailed-geology-historical-evidence-context-grid.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-1.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-10.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-11.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-2.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-3.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-4.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-5.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-6.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-7.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-8.geojson data/historical-research/systematic-qld-pass-18/detailed-solid-geology-index-part-9.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-1.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-10.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-11.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-12.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-13.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-14.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-15.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-16.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-2.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-3.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-4.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-5.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-6.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-7.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-8.geojson data/historical-research/systematic-qld-pass-18/detailed-surface-geology-index-part-9.geojson data/historical-research/systematic-qld-pass-18/mineral-context-field-site-index-part-1.geojson data/historical-research/systematic-qld-pass-18/run-manifest.json data/historical-research/systematic-qld-pass-18/source-layer-summary.json"
+    },
+    {
+      "pass": 19,
+      "title": "Survey and report framework",
+      "summary": "Survey frameworks and report coverage compared with known historical evidence.",
+      "categories": [
+        "surveys",
+        "reports",
+        "history"
+      ],
+      "counts": {
+        "structural_framework_records": 84,
+        "geophysical_survey_location_records": 23476,
+        "report_index_records": 100374,
+        "published_source_records": 123934,
+        "survey_report_framework_context_cells": 18162,
+        "context_cells_with_new_context_and_historical_evidence": 2200
+      },
+      "displayCounts": {
+        "Published Source Records": 123934,
+        "Report Index Records": 100374,
+        "Geophysical Survey Location Records": 23476,
+        "Survey Report Framework Context Cells": 18162
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-19/classification-summary.json",
+          "size": 5040,
+          "sizeLabel": "5 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/geophysical-survey-locations.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/geophysical-survey-locations.geojson",
+          "size": 33871312,
+          "sizeLabel": "32.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/report-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/report-index-part-1.geojson",
+          "size": 28015853,
+          "sizeLabel": "26.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/report-index-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/report-index-part-2.geojson",
+          "size": 28480694,
+          "sizeLabel": "27.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/report-index-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/report-index-part-3.geojson",
+          "size": 28162556,
+          "sizeLabel": "26.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/report-index-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/report-index-part-4.geojson",
+          "size": 28081523,
+          "sizeLabel": "26.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/report-index-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/report-index-part-5.geojson",
+          "size": 28266122,
+          "sizeLabel": "27.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/report-index-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/report-index-part-6.geojson",
+          "size": 537934,
+          "sizeLabel": "525 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-19/run-manifest.json",
+          "size": 1678,
+          "sizeLabel": "2 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-19/source-layer-summary.json",
+          "size": 4702,
+          "sizeLabel": "5 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/structural-framework.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/structural-framework.geojson",
+          "size": 271962,
+          "sizeLabel": "266 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-19/survey-report-framework-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/survey-report-framework-historical-context-grid.geojson",
+          "size": 12028915,
+          "sizeLabel": "11.5 MB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-19-context",
+          "label": "Survey and report coverage",
+          "description": "Survey and report cells with historical context.",
+          "file": "survey-report-framework-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-19/survey-report-framework-historical-context-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-19/run-manifest.json",
+      "searchText": "survey and report framework survey frameworks and report coverage compared with known historical evidence. surveys reports history structural_framework_records geophysical_survey_location_records report_index_records published_source_records survey_report_framework_context_cells context_cells_with_new_context_and_historical_evidence data/historical-research/systematic-qld-pass-19/classification-summary.json data/historical-research/systematic-qld-pass-19/geophysical-survey-locations.geojson data/historical-research/systematic-qld-pass-19/report-index-part-1.geojson data/historical-research/systematic-qld-pass-19/report-index-part-2.geojson data/historical-research/systematic-qld-pass-19/report-index-part-3.geojson data/historical-research/systematic-qld-pass-19/report-index-part-4.geojson data/historical-research/systematic-qld-pass-19/report-index-part-5.geojson data/historical-research/systematic-qld-pass-19/report-index-part-6.geojson data/historical-research/systematic-qld-pass-19/run-manifest.json data/historical-research/systematic-qld-pass-19/source-layer-summary.json data/historical-research/systematic-qld-pass-19/structural-framework.geojson data/historical-research/systematic-qld-pass-19/survey-report-framework-historical-context-grid.geojson"
+    },
+    {
+      "pass": 20,
+      "title": "Soils, erosion and geophysical surveys",
+      "summary": "Soil, erosion, radiometric, seismic and geophysical survey context.",
+      "categories": [
+        "soil",
+        "geophysics",
+        "terrain"
+      ],
+      "counts": {
+        "soils_77_records": 2544,
+        "soils_101_records": 131140,
+        "soils_153_records": 137320,
+        "soils_3051_records": 7473,
+        "soils_3505_records": 874,
+        "soils_3510_records": 1693,
+        "geophysics_8_records": 276,
+        "geophysics_9_records": 291416,
+        "geophysics_12_records": 3129,
+        "published_source_records": 575865,
+        "environmental_geophysics_context_cells": 15983,
+        "context_cells_with_new_context_and_historical_evidence": 2198
+      },
+      "displayCounts": {
+        "Published Source Records": 575865,
+        "Geophysics 9 Records": 291416,
+        "Soils 153 Records": 137320,
+        "Soils 101 Records": 131140
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-20/classification-summary.json",
+          "size": 42437,
+          "sizeLabel": "41 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-base-stations-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-base-stations-part-1.geojson",
+          "size": 252750,
+          "sizeLabel": "247 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-1.geojson",
+          "size": 26604876,
+          "sizeLabel": "25.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-10.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-10.geojson",
+          "size": 19067876,
+          "sizeLabel": "18.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-2.geojson",
+          "size": 26591707,
+          "sizeLabel": "25.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-3.geojson",
+          "size": 26619137,
+          "sizeLabel": "25.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-4.geojson",
+          "size": 26675589,
+          "sizeLabel": "25.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-5.geojson",
+          "size": 26720735,
+          "sizeLabel": "25.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-6.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-6.geojson",
+          "size": 26736839,
+          "sizeLabel": "25.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-7.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-7.geojson",
+          "size": 26711782,
+          "sizeLabel": "25.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-8.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-8.geojson",
+          "size": 26691396,
+          "sizeLabel": "25.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-9.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-9.geojson",
+          "size": 26716124,
+          "sizeLabel": "25.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/gully-erosion-sites-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/gully-erosion-sites-part-1.geojson",
+          "size": 9814066,
+          "sizeLabel": "9.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/historical-mapped-gully-lines-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/historical-mapped-gully-lines-part-1.geojson",
+          "size": 1482283,
+          "sizeLabel": "1.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/historical-mapped-landslips-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/historical-mapped-landslips-part-1.geojson",
+          "size": 700745,
+          "sizeLabel": "684 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/magnetotelluric-stations-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/magnetotelluric-stations-part-1.geojson",
+          "size": 2944992,
+          "sizeLabel": "2.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/natural-flowlines-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/natural-flowlines-part-1.geojson",
+          "size": 2245345,
+          "sizeLabel": "2.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-20/run-manifest.json",
+          "size": 5324,
+          "sizeLabel": "5 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-erosion-geophysics-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-erosion-geophysics-historical-context-grid.geojson",
+          "size": 10138214,
+          "sizeLabel": "9.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-1.geojson",
+          "size": 45187378,
+          "sizeLabel": "43.1 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-2.geojson",
+          "size": 45630468,
+          "sizeLabel": "43.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-3.geojson",
+          "size": 45886967,
+          "sizeLabel": "43.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-4.geojson",
+          "size": 46335305,
+          "sizeLabel": "44.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-5.geojson",
+          "size": 27588404,
+          "sizeLabel": "26.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-1.geojson",
+          "size": 37011019,
+          "sizeLabel": "35.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-2.geojson",
+          "size": 37578678,
+          "sizeLabel": "35.8 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-3.geojson",
+          "size": 37418312,
+          "sizeLabel": "35.7 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-4.geojson",
+          "size": 37676481,
+          "sizeLabel": "35.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-5.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-5.geojson",
+          "size": 13916576,
+          "sizeLabel": "13.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-20/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-20/source-layer-summary.json",
+          "size": 6334,
+          "sizeLabel": "6 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-20-context",
+          "label": "Soil, erosion and geophysics",
+          "description": "Soil, erosion and geophysical survey cells with historical overlap.",
+          "file": "soil-erosion-geophysics-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-20/soil-erosion-geophysics-historical-context-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-20/run-manifest.json",
+      "searchText": "soils, erosion and geophysical surveys soil, erosion, radiometric, seismic and geophysical survey context. soil geophysics terrain soils_77_records soils_101_records soils_153_records soils_3051_records soils_3505_records soils_3510_records geophysics_8_records geophysics_9_records geophysics_12_records published_source_records environmental_geophysics_context_cells context_cells_with_new_context_and_historical_evidence data/historical-research/systematic-qld-pass-20/classification-summary.json data/historical-research/systematic-qld-pass-20/gravity-base-stations-part-1.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-1.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-10.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-2.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-3.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-4.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-5.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-6.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-7.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-8.geojson data/historical-research/systematic-qld-pass-20/gravity-data-stations-part-9.geojson data/historical-research/systematic-qld-pass-20/gully-erosion-sites-part-1.geojson data/historical-research/systematic-qld-pass-20/historical-mapped-gully-lines-part-1.geojson data/historical-research/systematic-qld-pass-20/historical-mapped-landslips-part-1.geojson data/historical-research/systematic-qld-pass-20/magnetotelluric-stations-part-1.geojson data/historical-research/systematic-qld-pass-20/natural-flowlines-part-1.geojson data/historical-research/systematic-qld-pass-20/run-manifest.json data/historical-research/systematic-qld-pass-20/soil-erosion-geophysics-historical-context-grid.geojson data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-1.geojson data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-2.geojson data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-3.geojson data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-4.geojson data/historical-research/systematic-qld-pass-20/soil-land-resource-polygon-index-part-5.geojson data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-1.geojson data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-2.geojson data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-3.geojson data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-4.geojson data/historical-research/systematic-qld-pass-20/soil-observation-sites-part-5.geojson data/historical-research/systematic-qld-pass-20/source-layer-summary.json"
+    },
+    {
+      "pass": 21,
+      "title": "State geology and geophysical imagery",
+      "summary": "State-scale boundaries, faults, folds, surface geology and six official imagery layers.",
+      "categories": [
+        "geology",
+        "structures",
+        "geophysics"
+      ],
+      "counts": {
+        "state_geological_boundary_records": 18832,
+        "state_fault_records": 1549,
+        "state_fold_records": 378,
+        "state_natural_cartographic_feature_records": 279,
+        "state_surface_geology_index_records": 9471,
+        "geophysical_imagery_layers": 6,
+        "published_source_records": 30515,
+        "state_geology_context_cells": 14047,
+        "context_cells_with_state_geology_and_historical_evidence": 2135
+      },
+      "displayCounts": {
+        "Published Source Records": 30515,
+        "State Geological Boundary Records": 18832,
+        "State Geology Context Cells": 14047,
+        "State Surface Geology Index Records": 9471
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-21/classification-summary.json",
+          "size": 1047,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/geophysical-imagery-catalog.json",
+          "url": "data/historical-research/systematic-qld-pass-21/geophysical-imagery-catalog.json",
+          "size": 9655,
+          "sizeLabel": "9 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/geophysical-imagery-extents.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/geophysical-imagery-extents.geojson",
+          "size": 9429,
+          "sizeLabel": "9 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-21/run-manifest.json",
+          "size": 2441,
+          "sizeLabel": "2 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-21/source-layer-summary.json",
+          "size": 2015,
+          "sizeLabel": "2 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/state-faults.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-faults.geojson",
+          "size": 1495689,
+          "sizeLabel": "1.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/state-folds.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-folds.geojson",
+          "size": 376806,
+          "sizeLabel": "368 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/state-geological-boundaries.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-geological-boundaries.geojson",
+          "size": 23328198,
+          "sizeLabel": "22.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/state-geology-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-geology-historical-context-grid.geojson",
+          "size": 7549889,
+          "sizeLabel": "7.2 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/state-natural-cartographic-features.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-natural-cartographic-features.geojson",
+          "size": 447707,
+          "sizeLabel": "437 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-21/state-surface-geology-index.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-surface-geology-index.geojson",
+          "size": 11686761,
+          "sizeLabel": "11.1 MB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-21-context",
+          "label": "State geology and history",
+          "description": "State geology cells compared with historical evidence.",
+          "file": "state-geology-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-21/state-geology-historical-context-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-21/run-manifest.json",
+      "searchText": "state geology and geophysical imagery state-scale boundaries, faults, folds, surface geology and six official imagery layers. geology structures geophysics state_geological_boundary_records state_fault_records state_fold_records state_natural_cartographic_feature_records state_surface_geology_index_records geophysical_imagery_layers published_source_records state_geology_context_cells context_cells_with_state_geology_and_historical_evidence data/historical-research/systematic-qld-pass-21/classification-summary.json data/historical-research/systematic-qld-pass-21/geophysical-imagery-catalog.json data/historical-research/systematic-qld-pass-21/geophysical-imagery-extents.geojson data/historical-research/systematic-qld-pass-21/run-manifest.json data/historical-research/systematic-qld-pass-21/source-layer-summary.json data/historical-research/systematic-qld-pass-21/state-faults.geojson data/historical-research/systematic-qld-pass-21/state-folds.geojson data/historical-research/systematic-qld-pass-21/state-geological-boundaries.geojson data/historical-research/systematic-qld-pass-21/state-geology-historical-context-grid.geojson data/historical-research/systematic-qld-pass-21/state-natural-cartographic-features.geojson data/historical-research/systematic-qld-pass-21/state-surface-geology-index.geojson"
+    },
+    {
+      "pass": 22,
+      "title": "Regional geological projects",
+      "summary": "Detailed structure and geology indexes from fourteen regional mapping projects.",
+      "categories": [
+        "regional geology",
+        "structures",
+        "mapping"
+      ],
+      "counts": {
+        "regional_project_extent_records": 14,
+        "regional_structure_records": 100709,
+        "regional_geology_unit_index_records": 34019,
+        "published_source_records": 134742,
+        "regional_geology_context_cells": 14522,
+        "context_cells_with_regional_geology_and_historical_evidence": 2065
+      },
+      "displayCounts": {
+        "Published Source Records": 134742,
+        "Regional Structure Records": 100709,
+        "Regional Geology Unit Index Records": 34019,
+        "Regional Geology Context Cells": 14522
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/classification-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-22/classification-summary.json",
+          "size": 5286,
+          "sizeLabel": "5 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-1.geojson",
+          "size": 44022642,
+          "sizeLabel": "42.0 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-2.geojson",
+          "size": 46018390,
+          "sizeLabel": "43.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-3.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-3.geojson",
+          "size": 46452679,
+          "sizeLabel": "44.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-4.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-4.geojson",
+          "size": 16685611,
+          "sizeLabel": "15.9 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geology-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geology-historical-context-grid.geojson",
+          "size": 8862573,
+          "sizeLabel": "8.5 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geology-project-extents-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geology-project-extents-part-1.geojson",
+          "size": 16439,
+          "sizeLabel": "16 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geology-unit-index-part-1.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geology-unit-index-part-1.geojson",
+          "size": 42276226,
+          "sizeLabel": "40.3 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/regional-geology-unit-index-part-2.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geology-unit-index-part-2.geojson",
+          "size": 5617770,
+          "sizeLabel": "5.4 MB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-22/run-manifest.json",
+          "size": 2979,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-22/source-layer-summary.json",
+          "url": "data/historical-research/systematic-qld-pass-22/source-layer-summary.json",
+          "size": 23779,
+          "sizeLabel": "23 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-22-context",
+          "label": "Regional geology and history",
+          "description": "Regional geology cells compared with historical evidence.",
+          "file": "regional-geology-historical-context-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-22/regional-geology-historical-context-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-22/run-manifest.json",
+      "searchText": "regional geological projects detailed structure and geology indexes from fourteen regional mapping projects. regional geology structures mapping regional_project_extent_records regional_structure_records regional_geology_unit_index_records published_source_records regional_geology_context_cells context_cells_with_regional_geology_and_historical_evidence data/historical-research/systematic-qld-pass-22/classification-summary.json data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-1.geojson data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-2.geojson data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-3.geojson data/historical-research/systematic-qld-pass-22/regional-geological-structures-part-4.geojson data/historical-research/systematic-qld-pass-22/regional-geology-historical-context-grid.geojson data/historical-research/systematic-qld-pass-22/regional-geology-project-extents-part-1.geojson data/historical-research/systematic-qld-pass-22/regional-geology-unit-index-part-1.geojson data/historical-research/systematic-qld-pass-22/regional-geology-unit-index-part-2.geojson data/historical-research/systematic-qld-pass-22/run-manifest.json data/historical-research/systematic-qld-pass-22/source-layer-summary.json"
+    },
+    {
+      "pass": 23,
+      "title": "Mining heritage register",
+      "summary": "Named Queensland mining heritage places, register history and precise official address matches.",
+      "categories": [
+        "mining heritage",
+        "history",
+        "archives"
+      ],
+      "counts": {
+        "heritage_register_places": 1797,
+        "mining_related_heritage_records": 201,
+        "precise_address_geocoded_map_points": 56,
+        "density_grid_cells": 25,
+        "geocode_lower_precision_match_not_mapped": 135,
+        "geocode_precise_official_address_match": 56,
+        "geocode_no_geocoder_match": 3,
+        "geocode_not_geocoded_insufficient_address": 7
+      },
+      "displayCounts": {
+        "Heritage Register Places": 1797,
+        "Mining Related Heritage Records": 201,
+        "Geocode Lower Precision Match Not Mapped": 135,
+        "Precise Address Geocoded Map Points": 56
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-23/mining-heritage-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-23/mining-heritage-density-grid.geojson",
+          "size": 16435,
+          "sizeLabel": "16 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-23/mining-heritage-map-points.geojson",
+          "url": "data/historical-research/systematic-qld-pass-23/mining-heritage-map-points.geojson",
+          "size": 309738,
+          "sizeLabel": "302 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-23/mining-heritage-register.json",
+          "url": "data/historical-research/systematic-qld-pass-23/mining-heritage-register.json",
+          "size": 1035161,
+          "sizeLabel": "1011 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-23/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-23/run-manifest.json",
+          "size": 1334,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-23/source-snapshot.json",
+          "url": "data/historical-research/systematic-qld-pass-23/source-snapshot.json",
+          "size": 692,
+          "sizeLabel": "1 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-23-context",
+          "label": "Mining heritage places",
+          "description": "Relative density of precisely address-matched mining heritage register places.",
+          "file": "mining-heritage-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-23/mining-heritage-density-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-23/run-manifest.json",
+      "searchText": "mining heritage register named queensland mining heritage places, register history and precise official address matches. mining heritage history archives heritage_register_places mining_related_heritage_records precise_address_geocoded_map_points density_grid_cells geocode_lower_precision_match_not_mapped geocode_precise_official_address_match geocode_no_geocoder_match geocode_not_geocoded_insufficient_address data/historical-research/systematic-qld-pass-23/mining-heritage-density-grid.geojson data/historical-research/systematic-qld-pass-23/mining-heritage-map-points.geojson data/historical-research/systematic-qld-pass-23/mining-heritage-register.json data/historical-research/systematic-qld-pass-23/run-manifest.json data/historical-research/systematic-qld-pass-23/source-snapshot.json"
+    },
+    {
+      "pass": 24,
+      "title": "Queensland Parliament mining papers",
+      "summary": "Gold, gem, geological and substantive mining-paper leads from every historical tabled-paper register.",
+      "categories": [
+        "gold",
+        "gems",
+        "reports",
+        "history"
+      ],
+      "counts": {
+        "official_parliaments_harvested": 57,
+        "official_register_files_harvested": 58,
+        "official_register_pages": 5389,
+        "selected_mining_document_leads": 670,
+        "gold_document_leads": 419,
+        "gem_document_leads": 99,
+        "geological_report_leads": 52,
+        "mining_report_leads": 100,
+        "official_reference_candidates": 400,
+        "title_place_map_points": 632,
+        "density_grid_cells": 175
+      },
+      "displayCounts": {
+        "Official Register Pages": 5389,
+        "Selected Mining Document Leads": 670,
+        "Title Place Map Points": 632,
+        "Gold Document Leads": 419
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-24/parliament-document-retrieval-queue.json",
+          "url": "data/historical-research/systematic-qld-pass-24/parliament-document-retrieval-queue.json",
+          "size": 303271,
+          "sizeLabel": "296 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-24/parliament-mining-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-24/parliament-mining-density-grid.geojson",
+          "size": 77760,
+          "sizeLabel": "76 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-24/parliament-mining-paper-register.json",
+          "url": "data/historical-research/systematic-qld-pass-24/parliament-mining-paper-register.json",
+          "size": 1046251,
+          "sizeLabel": "1022 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-24/parliament-mining-place-points.geojson",
+          "url": "data/historical-research/systematic-qld-pass-24/parliament-mining-place-points.geojson",
+          "size": 708027,
+          "sizeLabel": "691 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-24/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-24/run-manifest.json",
+          "size": 1867,
+          "sizeLabel": "2 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-24/source-snapshot.json",
+          "url": "data/historical-research/systematic-qld-pass-24/source-snapshot.json",
+          "size": 15307,
+          "sizeLabel": "15 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-24-context",
+          "label": "Parliament mining-paper place mentions",
+          "description": "Relative density of exact Queensland place names in selected Parliament mining-paper titles.",
+          "file": "parliament-mining-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-24/parliament-mining-density-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-24/run-manifest.json",
+      "searchText": "queensland parliament mining papers gold, gem, geological and substantive mining-paper leads from every historical tabled-paper register. gold gems reports history official_parliaments_harvested official_register_files_harvested official_register_pages selected_mining_document_leads gold_document_leads gem_document_leads geological_report_leads mining_report_leads official_reference_candidates title_place_map_points density_grid_cells data/historical-research/systematic-qld-pass-24/parliament-document-retrieval-queue.json data/historical-research/systematic-qld-pass-24/parliament-mining-density-grid.geojson data/historical-research/systematic-qld-pass-24/parliament-mining-paper-register.json data/historical-research/systematic-qld-pass-24/parliament-mining-place-points.geojson data/historical-research/systematic-qld-pass-24/run-manifest.json data/historical-research/systematic-qld-pass-24/source-snapshot.json"
+    },
+    {
+      "pass": 25,
+      "title": "Retrieved Parliament mining papers",
+      "summary": "Verified official PDFs with page-level mineral-term and OCR discovery indexes.",
+      "categories": [
+        "gold",
+        "gems",
+        "reports",
+        "OCR"
+      ],
+      "counts": {
+        "retrieval_targets": 40,
+        "official_pdfs_retrieved": 10,
+        "retrieval_failures": 30,
+        "official_pdf_pages": 347,
+        "searchable_text_documents": 10,
+        "page_term_index_records": 277,
+        "ocr_queue_pages": 18,
+        "retrieved_document_title_place_points": 15,
+        "density_grid_cells": 8
+      },
+      "displayCounts": {
+        "Official Pdf Pages": 347,
+        "Page Term Index Records": 277,
+        "Retrieval Targets": 40,
+        "Retrieval Failures": 30
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/parliament-ocr-queue.json",
+          "url": "data/historical-research/systematic-qld-pass-25/parliament-ocr-queue.json",
+          "size": 6377,
+          "sizeLabel": "6 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/parliament-page-term-index.json",
+          "url": "data/historical-research/systematic-qld-pass-25/parliament-page-term-index.json",
+          "size": 161110,
+          "sizeLabel": "157 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-density-grid.geojson",
+          "size": 2899,
+          "sizeLabel": "3 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-index.json",
+          "url": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-index.json",
+          "size": 50355,
+          "sizeLabel": "49 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-title-place-points.geojson",
+          "url": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-title-place-points.geojson",
+          "size": 12511,
+          "sizeLabel": "12 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-25/run-manifest.json",
+          "size": 1441,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-25/source-snapshot.json",
+          "url": "data/historical-research/systematic-qld-pass-25/source-snapshot.json",
+          "size": 3716,
+          "sizeLabel": "4 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-25-context",
+          "label": "Retrieved Parliament mining papers",
+          "description": "Relative density of title-place references for retrieved official Parliament mining papers.",
+          "file": "retrieved-parliament-document-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-density-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-25/run-manifest.json",
+      "searchText": "retrieved parliament mining papers verified official pdfs with page-level mineral-term and ocr discovery indexes. gold gems reports ocr retrieval_targets official_pdfs_retrieved retrieval_failures official_pdf_pages searchable_text_documents page_term_index_records ocr_queue_pages retrieved_document_title_place_points density_grid_cells data/historical-research/systematic-qld-pass-25/parliament-ocr-queue.json data/historical-research/systematic-qld-pass-25/parliament-page-term-index.json data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-density-grid.geojson data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-index.json data/historical-research/systematic-qld-pass-25/retrieved-parliament-document-title-place-points.geojson data/historical-research/systematic-qld-pass-25/run-manifest.json data/historical-research/systematic-qld-pass-25/source-snapshot.json"
+    },
+    {
+      "pass": 26,
+      "title": "Parliament page OCR and reference recovery",
+      "summary": "Measured OCR recovery for image-only Parliament pages and bounded retries of unresolved official references.",
+      "categories": [
+        "gold",
+        "gems",
+        "reports",
+        "OCR",
+        "recovery"
+      ],
+      "counts": {
+        "queued_pages_processed": 18,
+        "ocr_pages_with_text": 14,
+        "ocr_low_text_pages": 4,
+        "ocr_pages_with_mineral_terms": 6,
+        "official_references_retried": 30,
+        "official_references_still_unresolved": 30
+      },
+      "displayCounts": {
+        "Official References Retried": 30,
+        "Official References Still Unresolved": 30,
+        "Queued Pages Processed": 18,
+        "Ocr Pages With Text": 14
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-26/parliament-ocr-mineral-term-index.json",
+          "url": "data/historical-research/systematic-qld-pass-26/parliament-ocr-mineral-term-index.json",
+          "size": 4148,
+          "sizeLabel": "4 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-26/parliament-ocr-quality-index.json",
+          "url": "data/historical-research/systematic-qld-pass-26/parliament-ocr-quality-index.json",
+          "size": 11145,
+          "sizeLabel": "11 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-26/parliament-reference-recovery-index.json",
+          "url": "data/historical-research/systematic-qld-pass-26/parliament-reference-recovery-index.json",
+          "size": 16587,
+          "sizeLabel": "16 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-26/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-26/run-manifest.json",
+          "size": 1092,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-26/source-snapshot.json",
+          "url": "data/historical-research/systematic-qld-pass-26/source-snapshot.json",
+          "size": 509,
+          "sizeLabel": "1 KB"
+        }
+      ],
+      "mapLayers": [],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-26/run-manifest.json",
+      "searchText": "parliament page ocr and reference recovery measured ocr recovery for image-only parliament pages and bounded retries of unresolved official references. gold gems reports ocr recovery queued_pages_processed ocr_pages_with_text ocr_low_text_pages ocr_pages_with_mineral_terms official_references_retried official_references_still_unresolved data/historical-research/systematic-qld-pass-26/parliament-ocr-mineral-term-index.json data/historical-research/systematic-qld-pass-26/parliament-ocr-quality-index.json data/historical-research/systematic-qld-pass-26/parliament-reference-recovery-index.json data/historical-research/systematic-qld-pass-26/run-manifest.json data/historical-research/systematic-qld-pass-26/source-snapshot.json"
+    },
+    {
+      "pass": 27,
+      "title": "Page-cited Parliament place references",
+      "summary": "Exact official Queensland places named on retrieved Parliament pages, with page citations and ambiguity exclusions.",
+      "categories": [
+        "reports",
+        "history",
+        "places",
+        "citations"
+      ],
+      "counts": {
+        "official_gazetteer_rows_read": 37224,
+        "retrieved_documents_processed": 10,
+        "document_pages_processed": 347,
+        "page_place_matches": 977,
+        "ambiguous_place_phrases_excluded": 66,
+        "unique_document_place_points": 360,
+        "density_grid_cells": 151,
+        "ocr_recovered_pages_included": 14
+      },
+      "displayCounts": {
+        "Official Gazetteer Rows Read": 37224,
+        "Page Place Matches": 977,
+        "Unique Document Place Points": 360,
+        "Document Pages Processed": 347
+      },
+      "files": [
+        {
+          "path": "data/historical-research/systematic-qld-pass-27/parliament-document-place-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-27/parliament-document-place-density-grid.geojson",
+          "size": 37604,
+          "sizeLabel": "37 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-27/parliament-document-place-points.geojson",
+          "url": "data/historical-research/systematic-qld-pass-27/parliament-document-place-points.geojson",
+          "size": 318529,
+          "sizeLabel": "311 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-27/parliament-page-place-index.json",
+          "url": "data/historical-research/systematic-qld-pass-27/parliament-page-place-index.json",
+          "size": 720920,
+          "sizeLabel": "704 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-27/run-manifest.json",
+          "url": "data/historical-research/systematic-qld-pass-27/run-manifest.json",
+          "size": 1188,
+          "sizeLabel": "1 KB"
+        },
+        {
+          "path": "data/historical-research/systematic-qld-pass-27/source-snapshot.json",
+          "url": "data/historical-research/systematic-qld-pass-27/source-snapshot.json",
+          "size": 590,
+          "sizeLabel": "1 KB"
+        }
+      ],
+      "mapLayers": [
+        {
+          "id": "pass-27-context",
+          "label": "Page-cited Parliament place references",
+          "description": "Relative density of exact official place references cited on retrieved Parliament document pages; not mineral occurrences.",
+          "file": "parliament-document-place-density-grid.geojson",
+          "url": "data/historical-research/systematic-qld-pass-27/parliament-document-place-density-grid.geojson",
+          "gradient": {
+            "1": "#8e2e20",
+            "0.2": "#2d7898",
+            "0.55": "#d2a12b"
+          }
+        }
+      ],
+      "manifestUrl": "data/historical-research/systematic-qld-pass-27/run-manifest.json",
+      "searchText": "page-cited parliament place references exact official queensland places named on retrieved parliament pages, with page citations and ambiguity exclusions. reports history places citations official_gazetteer_rows_read retrieved_documents_processed document_pages_processed page_place_matches ambiguous_place_phrases_excluded unique_document_place_points density_grid_cells ocr_recovered_pages_included data/historical-research/systematic-qld-pass-27/parliament-document-place-density-grid.geojson data/historical-research/systematic-qld-pass-27/parliament-document-place-points.geojson data/historical-research/systematic-qld-pass-27/parliament-page-place-index.json data/historical-research/systematic-qld-pass-27/run-manifest.json data/historical-research/systematic-qld-pass-27/source-snapshot.json"
+    }
+  ],
+  "imageryLayers": [
+    {
+      "id": "magnetic-tmi",
+      "layerId": 0,
+      "label": "Total magnetic intensity",
+      "shortGuide": "Magnetic variation",
+      "guide": "Colour differences show changes in the magnetic response of rocks. They can help trace rock units and structures, but do not directly show gold.",
+      "serviceUrl": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeophysicalImagery/MapServer"
+    },
+    {
+      "id": "magnetic-rtp",
+      "layerId": 10,
+      "label": "Reduced-to-pole magnetics",
+      "shortGuide": "Magnetic bodies repositioned",
+      "guide": "Processing shifts magnetic anomalies closer to their likely source, making geological patterns easier to compare.",
+      "serviceUrl": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeophysicalImagery/MapServer"
+    },
+    {
+      "id": "magnetic-rtp-1vd",
+      "layerId": 20,
+      "label": "Magnetic first vertical derivative",
+      "shortGuide": "Sharper magnetic edges",
+      "guide": "This emphasises rapid magnetic changes and can sharpen contacts, faults and shallow structures. Strong colour does not mean mineralisation.",
+      "serviceUrl": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeophysicalImagery/MapServer"
+    },
+    {
+      "id": "radiometric",
+      "layerId": 30,
+      "label": "Radiometric imagery",
+      "shortGuide": "Potassium, thorium and uranium",
+      "guide": "Red represents relatively higher potassium, green higher thorium and blue higher uranium. Mixed colours show combinations. Surface cover, moisture and land disturbance can affect the response.",
+      "serviceUrl": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeophysicalImagery/MapServer"
+    },
+    {
+      "id": "gravity",
+      "layerId": 40,
+      "label": "Bouguer gravity",
+      "shortGuide": "Subsurface density variation",
+      "guide": "Colour changes indicate relative rock-density differences at depth and can reveal broad basins, intrusions and structures.",
+      "serviceUrl": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeophysicalImagery/MapServer"
+    },
+    {
+      "id": "seismic-c-horizon",
+      "layerId": 50,
+      "label": "Seismic C horizon",
+      "shortGuide": "Mapped subsurface horizon",
+      "guide": "Colours represent the mapped seismic horizon values supplied by the official service. Use this for broad subsurface context, not as a commodity indicator.",
+      "serviceUrl": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeophysicalImagery/MapServer"
+    }
+  ]
+}
+

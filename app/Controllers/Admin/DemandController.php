@@ -102,10 +102,11 @@ final class DemandController extends Controller
             case 'providers':
                 $rows = array_map(static fn ($r) => [
                     $r['provider_id'], $r['label'], $r['impressions'], $r['profile_views'], $r['contacts'],
+                    $r['impression_to_profile_rate'], $r['profile_to_contact_rate'],
                 ], WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to)['providers']);
                 return CsvExport::download(
                     "provider-interest_{$from}_{$to}.csv",
-                    ['Provider ID', 'Business', 'Result appearances', 'Profile views', 'Contact actions'],
+                    ['Provider ID', 'Business', 'Result appearances', 'Profile views', 'Contact actions', 'Appearance to profile %', 'Profile to contact %'],
                     $rows
                 );
 

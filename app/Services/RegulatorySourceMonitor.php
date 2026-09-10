@@ -43,7 +43,7 @@ final class RegulatorySourceMonitor
 
         try {
             $headers = [
-                'User-Agent: LocalTorque-Regulatory-Monitor/1.0 (+official-source-integrity)',
+                'User-Agent: VanAssist-Regulatory-Monitor/1.0 (+official-source-integrity)',
                 'Accept: application/pdf,text/html,application/xhtml+xml;q=0.9,*/*;q=0.5',
             ];
             if (!empty($document['source_etag'])) {

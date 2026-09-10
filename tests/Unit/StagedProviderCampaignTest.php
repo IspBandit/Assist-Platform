@@ -91,8 +91,8 @@ final class StagedProviderCampaignTest extends TestCase
         self::assertStringNotContainsString('NotificationService::queueStage', $runner);
         self::assertStringNotContainsString('NotificationService::queueStage', $seeder);
 
-        $localTorque = $this->source('app/Services/LocalTorquePackSeeder.php');
-        self::assertStringContainsString('ImportProvenance::sourceUrl($record)', $localTorque);
+        $providerPack = $this->source('app/Services/VanAssistProviderPackSeeder.php');
+        self::assertStringContainsString('ImportProvenance::sourceUrl($record)', $providerPack);
     }
 
     public function testPaidStayDiscoveryIsReviewOnlyAndAuthorityGated(): void

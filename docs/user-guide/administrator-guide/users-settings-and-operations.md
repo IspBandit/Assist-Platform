@@ -1,5 +1,18 @@
 # Users, settings and operations
 
+## CQDiggings detector-setting moderation storage
+
+CQDiggings keeps submitted detector settings and their unapproved photos in private shared directories outside immutable releases. The public web server cannot read those directories. Only the approved JSON index and administrator-approved photo copies are mounted into the public file server.
+
+Before enabling the CQDiggings detector-setting submission page, confirm these shared paths exist and are writable by the CQDiggings PHP container:
+
+- `shared/analytics/_detector-settings`
+- `shared/analytics/_detector-setting-uploads`
+- `shared/data/community-detector-settings.json`
+- `shared/assets/community-detector-settings`
+
+An administrator reviews each report and each photo separately in CQDiggings administration. Rejecting a report keeps it private. Removing approval from a photo removes its public copy when the approved index is rebuilt. Back up all four shared paths with the other CQDiggings runtime data before a release or storage migration.
+
 ## Purpose
 
 Manage global users and assigned roles, inspect the global audit trail, change mostly global settings, and use tightly restricted backup or maintenance tools.
@@ -26,7 +39,10 @@ User management requires `users.manage`; export additionally requires `users.exp
 - **Users:** **Filter**, **Export CSV**, **New user**, **Manage**, pagination, **Edit**, **Save changes** or **Create user**, **Suspend**, **Reactivate**, **Send password reset** and **Delete user** where the controller permits them.
 - **Audit log:** **Filter**, **Export CSV**, **Previous** and **Next**.
 - **Settings:** **Save settings** and the separate destructive **Remove all demo data** action.
-- **Backups:** **Generate backup now**, **Download** and **Delete**.
+- **Backups:** **Generate backup now**, **Download** and **Delete**. A successful
+  local backup includes a SHA-256 manifest. Launch evidence requires a verified
+  archive no more than 36 hours old; local storage alone is not an independent
+  off-site backup or a restore rehearsal.
 - **Maintenance:** **Apply database updates**, **Import all Australian towns**, **Promote major cities in search**, **Populate Pages & Blocks**, **Populate missing email templates**, **Sync claim invite from seed**, **Refresh providers (auto)** and **Run national import / backfill matches**. Repeated recovery buttons invoke the same named operations; they do not create additional capabilities.
 
 ## Workflows

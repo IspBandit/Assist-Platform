@@ -13,7 +13,7 @@ use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
  */
 final class IntentRuleEngine
 {
-    public const VERSION = 'intent_rules_v3';
+    public const VERSION = 'intent_rules_v8';
 
     /**
      * @var list<array{
@@ -30,7 +30,7 @@ final class IntentRuleEngine
     private const RULES = [
         [
             'id' => 'R02',
-            'patterns' => ['dump point', 'dump points', 'sanitary dump', 'cassette dump', 'sullage'],
+            'patterns' => ['dump point', 'dump points', 'dump station', 'sanitary dump', 'cassette dump', 'cassette disposal', 'toilet dump', 'black water dump', 'black water disposal', 'grey water dump', 'gray water dump', 'portable toilet waste disposal', 'empty a portable toilet', 'empty toilet', 'sullage'],
             'intent_type' => Intent::TYPE_FACILITY,
             'provider_category_keys' => ['dump-points'],
             'facility_type_keys' => ['dump_point'],
@@ -40,7 +40,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R03',
-            'patterns' => ['drinking water', 'potable water', 'water refill', 'tank water', 'fill my water tanks', 'fill water tank', 'fresh water tap'],
+            'patterns' => ['drinking water', 'potable water', 'untreated water', 'non potable water', 'treat before drinking', 'water refill', 'water fill', 'tank fill', 'tank water', 'fill my water tanks', 'fill water tank', 'fresh water tap'],
             'intent_type' => Intent::TYPE_FACILITY,
             'provider_category_keys' => ['potable-water-refill'],
             'facility_type_keys' => ['drinking_water'],
@@ -80,7 +80,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R05A',
-            'patterns' => ['somewhere to stay', 'place to stay', 'places to stay', 'where can i stay', 'need a stay', 'overnight stay', 'stay tonight', 'sleep overnight'],
+            'patterns' => ['somewhere to stay', 'place to stay', 'places to stay', 'where can i stay', 'where to stay', 'where do i stay', 'where should i stay', 'where can we stay', 'anywhere to stay', 'accommodation', 'overnight', 'need a stay', 'overnight stay', 'stay tonight', 'sleep overnight'],
             'intent_type' => Intent::TYPE_STAY,
             'provider_category_keys' => [],
             'facility_type_keys' => [],
@@ -100,7 +100,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R07',
-            'patterns' => ['campground', 'camping ground', 'camp site', 'campsite'],
+            'patterns' => ['campground', 'camping ground', 'camp site', 'campsite', 'camping', 'somewhere to camp', 'need somewhere to camp', 'anywhere to camp'],
             'intent_type' => Intent::TYPE_STAY,
             'provider_category_keys' => [],
             'facility_type_keys' => [],
@@ -120,7 +120,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R09',
-            'patterns' => ['mobile caravan repair', 'mobile rv repair', 'mobile caravan repairer'],
+            'patterns' => ['mobile caravan repair', 'mobile rv repair', 'mobile caravan repairer', 'caravan repairs', 'caravan repairer', 'find a caravan repairer'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['general-caravan-repairs', 'mobile-mechanics'],
             'facility_type_keys' => [],
@@ -150,7 +150,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R12',
-            'patterns' => ['tow truck', 'vehicle recovery', 'towing', 'tow'],
+            'patterns' => ['tow truck', 'vehicle recovery', 'towing'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['towing-and-vehicle-recovery'],
             'facility_type_keys' => [],
@@ -180,7 +180,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R14',
-            'patterns' => ['mobile mechanic', 'mechanic'],
+            'patterns' => ['mobile mechanic', 'mechanic', 'looking for a mechanic', 'where to get a mechanic'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['mobile-mechanics', 'mechanical-repairs'],
             'facility_type_keys' => [],
@@ -200,7 +200,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R17',
-            'patterns' => ['petrol', 'servo', 'fuel stop', 'fuel'],
+            'patterns' => ['petrol', 'servo', 'fuel stop', 'fuel', 'petrol station'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['fuel-and-travel-stops'],
             'facility_type_keys' => ['fuel'],
@@ -210,7 +210,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R18',
-            'patterns' => ['weighbridge', 'weigh bridge', 'weigh my caravan', 'caravan weighing'],
+            'patterns' => ['weighbridge', 'weigh bridge', 'weigh my caravan', 'caravan weighing', 'where to weigh'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['weighbridges-and-mobile-weighing'],
             'facility_type_keys' => ['weighbridge'],
@@ -220,7 +220,7 @@ final class IntentRuleEngine
         ],
         [
             'id' => 'R19',
-            'patterns' => ['roadside assistance', 'breakdown'],
+            'patterns' => ['roadside assistance', 'roadside help', 'breakdown'],
             'intent_type' => Intent::TYPE_PROVIDER,
             'provider_category_keys' => ['roadside-assistance'],
             'facility_type_keys' => [],
@@ -245,7 +245,7 @@ final class IntentRuleEngine
         ['id'=>'R34','patterns'=>['starlink','starlink not working','satellite','uhf','communications'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['starlink-and-communications'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
         ['id'=>'R35','patterns'=>['insurance repair','insurance repairs','insurance repairer','insurance claim'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['insurance-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R36','patterns'=>['pre trip inspection','pre-trip inspection','before my trip'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['pre-trip-inspection','general-servicing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
-        ['id'=>'R37','patterns'=>['general service','caravan service','routine service'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['general-servicing'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
+        ['id'=>'R37','patterns'=>['general service','caravan service','routine service','service my car','car service','car servicing','servicing my car','get my car serviced','service my vehicle','service my caravan','service my van','service my motorhome','logbook service','log book service','vehicle service','motorhome service','rv service','4wd service','needs a service'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['general-servicing','mechanical-repairs','mobile-mechanics','general-caravan-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.88],
         ['id'=>'R38','patterns'=>['roadworthy','safety certificate'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['roadworthy-inspection'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.9],
         ['id'=>'R39','patterns'=>['groceries','supermarket','travel supplies'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['groceries-and-travel-supplies'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
         ['id'=>'R40','patterns'=>['emergency accommodation','motel tonight','hotel tonight'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['emergency-accommodation'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.85],
@@ -272,29 +272,54 @@ final class IntentRuleEngine
         ['id'=>'R60','patterns'=>['boat ramp','launch my boat'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['boat_ramp'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.88],
         ['id'=>'R61','patterns'=>['picnic area','public bbq','barbecue area'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['picnic_area','barbecue'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.84],
         ['id'=>'R62','patterns'=>['rubbish disposal','waste disposal','public bins'],'intent_type'=>Intent::TYPE_FACILITY,'provider_category_keys'=>[],'facility_type_keys'=>['waste_disposal'],'stay_type_keys'=>[],'adapter_keys'=>['traveller_facilities'],'confidence'=>0.86],
+        ['id'=>'R63','patterns'=>['need help','looking for help','find help'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['general-caravan-repairs','unsure-which-service-is-needed'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.58],
+        ['id'=>'R64','patterns'=>['where do i find','where can i get','looking for a','find a'],'intent_type'=>Intent::TYPE_PROVIDER,'provider_category_keys'=>['unsure-which-service-is-needed','general-caravan-repairs'],'facility_type_keys'=>[],'stay_type_keys'=>[],'adapter_keys'=>['providers'],'confidence'=>0.55],
     ];
+
+    /** @return list<string> */
+    public static function questionPatterns(): array
+    {
+        $patterns = [];
+        foreach (self::RULES as $rule) {
+            foreach ($rule['patterns'] as $pattern) {
+                $patterns[] = (string) $pattern;
+            }
+        }
+        return array_values(array_unique($patterns));
+    }
 
     public function interpret(string $rawQuery): Intent
     {
         $meta = IntentNormaliser::analyse($rawQuery);
         $haystack = $meta['remainder'];
+        // IntentNormaliser removes the numeric radius for cache stability. For
+        // "within N km of PLACE", retain that connector here so the rule
+        // engine can keep PLACE out of the requested service terms.
+        if (preg_match('/\bwithin\s+\d{1,3}\s*(?:km|kilometres|kilometers)\s+of\s+/ui', $rawQuery) === 1) {
+            $haystack = mb_strtolower(trim((string) preg_replace('/\s+/u', ' ', $rawQuery)));
+        }
+        // The final explicit location clause describes the search origin, not
+        // another requested service. Without this split, a request such as
+        // "dump point near Griffiths camping ground" also matched the
+        // campground rule and produced an unrelated mixed intent.
+        $intentText = $this->intentSearchText($haystack);
         // Matching haystack also keeps US tire spelling variants.
-        $matchText = str_replace(['tyre', 'tyres'], ['tire', 'tires'], $haystack);
-        $matchText = $haystack . ' ' . $matchText;
+        $matchText = str_replace(['tyre', 'tyres'], ['tire', 'tires'], $intentText);
+        $matchText = $intentText . ' ' . $matchText;
 
         $hits = [];
         foreach (self::RULES as $rule) {
             foreach ($rule['patterns'] as $pattern) {
                 $patternNorm = mb_strtolower($pattern);
-                if ($this->containsPhrase($matchText, $patternNorm) || $this->containsPhrase($haystack, $patternNorm)) {
+                if ($this->containsPhrase($matchText, $patternNorm) || $this->containsPhrase($intentText, $patternNorm)) {
                     $hits[$rule['id']] = $rule;
                     break;
                 }
             }
         }
 
-        if ($hits === [] && preg_match('/\b(caravan|motorhome|rv|camper|trailer|tow vehicle)\b/u', $haystack) === 1
-            && preg_match('/\b(broken|break|failed|failure|fault|problem|issue|noise|grinding|leak|damaged|not work|not working|help|repair|fix)\b/u', $haystack) === 1) {
+        if ($hits === [] && preg_match('/\b(caravan|motorhome|rv|camper|trailer|tow vehicle|van)\b/u', $intentText) === 1
+            && preg_match('/\b(broken|break|failed|failure|fault|problem|issue|noise|grinding|leak|damaged|not work|not working|help|repair|fix|service)\b/u', $intentText) === 1) {
             $hits['RFALLBACK'] = [
                 'id' => 'RFALLBACK', 'patterns' => [], 'intent_type' => Intent::TYPE_PROVIDER,
                 'provider_category_keys' => ['general-caravan-repairs', 'unsure-which-service-is-needed'],
@@ -303,10 +328,28 @@ final class IntentRuleEngine
             ];
         }
 
-        // A caravan toilet fault is a repair job, not a request for a public
-        // amenity. Prefer the specific repair rule over the generic word.
+        // Prefer a specific repair rule over generic travel-help wording.
         if (isset($hits['R28'])) {
             unset($hits['R01']);
+        }
+        if (isset($hits['R09']) || isset($hits['RFALLBACK'])) {
+            unset($hits['R63'], $hits['R64']);
+        }
+        foreach (['R02', 'R03', 'R04', 'R05', 'R05A', 'R06', 'R07', 'R08'] as $specificStayOrFacilityRule) {
+            if (isset($hits[$specificStayOrFacilityRule])) {
+                unset($hits['R64']);
+            }
+        }
+
+        // "help near {town}" strips to bare "help" — route only when a place is present.
+        if ($hits === [] && preg_match('/^\s*help\s*$/ui', $intentText) === 1
+            && trim($this->extractLocationText($haystack, [])) !== '') {
+            $hits['R63'] = [
+                'id' => 'R63', 'patterns' => ['help'], 'intent_type' => Intent::TYPE_PROVIDER,
+                'provider_category_keys' => ['general-caravan-repairs', 'unsure-which-service-is-needed'],
+                'facility_type_keys' => [], 'stay_type_keys' => [], 'adapter_keys' => ['providers'],
+                'confidence' => 0.58,
+            ];
         }
 
         if ($hits === []) {
@@ -385,6 +428,33 @@ final class IntentRuleEngine
         );
     }
 
+    private function intentSearchText(string $text): string
+    {
+        $radiusMarker = [];
+        if (preg_match(
+            '/\bwithin\s+\d{1,3}\s*(?:km|kilometres|kilometers)\s+of\s+/ui',
+            $text,
+            $radiusMarker,
+            PREG_OFFSET_CAPTURE
+        ) === 1) {
+            $before = trim(mb_substr($text, 0, (int) $radiusMarker[0][1]));
+            if ($before !== '') {
+                return $before;
+            }
+        }
+
+        $markers = [];
+        if (preg_match_all('/\b(?:near|in|around|at)\s+/ui', $text, $markers, PREG_OFFSET_CAPTURE) === 0) {
+            return $text;
+        }
+
+        $last = $markers[0][count($markers[0]) - 1];
+        $before = trim(mb_substr($text, 0, (int) $last[1]));
+        $after = trim(mb_substr($text, (int) $last[1] + mb_strlen((string) $last[0])));
+
+        return $before !== '' && $after !== '' ? $before : $text;
+    }
+
     private function containsPhrase(string $haystack, string $needle): bool
     {
         if ($needle === '') {
@@ -400,6 +470,22 @@ final class IntentRuleEngine
      */
     private function extractLocationText(string $remainder, array $patterns): ?string
     {
+        // Radius-first wording is common in trip planning: "within 50 km of
+        // Griffiths Creek". Treat everything after "of" as the place, not as
+        // part of the requested facility or service.
+        $radiusLocation = [];
+        if (preg_match(
+            '/\bwithin\s+\d{1,3}\s*(?:km|kilometres|kilometers)\s+of\s+(.+?)\s*\??$/ui',
+            $remainder,
+            $radiusLocation
+        ) === 1) {
+            $place = trim((string) ($radiusLocation[1] ?? ''), " \t\n\r\0\x0B,.-");
+            $place = trim((string) preg_replace('/\s+/u', ' ', $place));
+            if ($place !== '' && mb_strlen($place) >= 2) {
+                return mb_convert_case($place, MB_CASE_TITLE, 'UTF-8');
+            }
+        }
+
         // Prefer the final explicit "near/in/around/at <place>". Using the
         // final marker avoids treating "in my caravan near Emerald" as a town.
         $markers = [];

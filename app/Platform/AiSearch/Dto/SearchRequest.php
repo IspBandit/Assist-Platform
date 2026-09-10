@@ -19,6 +19,7 @@ final class SearchRequest
         public readonly string $requestId,
         public readonly string $channel = 'ask_vanassist',
         public readonly ?int $sessionId = null,
+        public readonly int $resultLimit = 20,
     ) {
     }
 }

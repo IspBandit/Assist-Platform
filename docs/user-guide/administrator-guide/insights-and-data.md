@@ -14,7 +14,7 @@ Website insights requires `demand.view`, with CSV export separately requiring `d
 
 ## Fields
 
-- **Website insights:** Period, From and To filters. Summary values are Visitors, Page views/pages per visitor, Provider searches/no-results, Provider profiles opened, Contact actions and Confirmed provider uses. **What the numbers say** shows search success, search-to-contact interest and the latest recorded page/funnel activity so an operator can confirm tracking is alive. Daily website pulse, Services wanted, Visitor actions, Provider interest, Most viewed pages, Visitor sources, Devices, demand locations and coverage gaps remain available. Provider interest shows Provider, Result appearances, Profile views and Contact actions; Funnel shows Stage, Count and percentage from previous.
+- **Website insights:** Period, From and To filters. Summary values are Visitors, Returning visitors, Page views/pages per visitor, Provider searches/no-results, Provider profiles opened, Contact actions and Confirmed provider uses. The identity note separates new, previously seen and multi-day visitors. **What the numbers say** shows retention, search success, exact category misses, searches rescued with clearly labelled alternatives, search-to-contact interest and the latest recorded page/funnel activity so an operator can confirm tracking is alive. Coverage gaps remain listed when a related or regional fallback rescued the customer journey, so recruitment demand is not hidden; the table separates Exact misses from Rescued searches. Daily website pulse, Services wanted, Visitor actions, Provider interest, Most viewed pages, Visitor sources, Devices and demand locations remain available. Provider interest shows Provider, Result appearances, Profile views and Contact actions; Funnel shows Stage, Count and percentage from previous. Staff, recognised bots, synthetic checks and same-brand requests that did not retain the first-party session cookie are excluded from these commercial figures.
 - **Data Intelligence:** State and Category filters; summary shows Active providers, Verification coverage/verified count, Critical opportunities and Population-backed rows. The national heat map includes a recognisable Australia outline, state/territory boundaries and labels, plus keyboard-focusable town/category opportunity points and a score legend. Import quality shows Candidates, Awaiting review, Approved, Merged, Rejected and Possible duplicates. Opportunities show Priority, Location, Category, Providers, Verified %, Population, Per 10k, Score and Action; the action queue shows Priority, Title and Rationale.
 - **Trust, rules & growth:** Public sources, Fail-closed review, Checks overdue, 7-day failures and Alert subscribers; source rows show status, Title, Authority and Last checked; capability evidence shows Provider, Capability, Jurisdiction, filename/status and Review note; campaign review shows Campaign, advertiser, Brand, daily/total budgets, target count, destination and Approved CPC; alert audit shows Created, Source, Recipient, Status and Reason.
 - **Data Sources:** connector cards show status, usage/limit, cost, credential hint, New API key, Daily request limit, Daily AUD budget and Enable. Gap finder fields are Connector, mapped Category/query and Location. Schedule fields are Name, Connector, Mapping, Location, Frequency and Enabled. Mappings show Platform category, Connector query and Active; coverage shows Category, Active and Verified; jobs show Source, Query, Status and Found; schedules show name, frequency and enabled/paused. Import review shows Pending total, Ready for automatic processing, Need evidence or a decision, and recorded blocking reasons. Import-review fields are enumerated in **Providers and directory**.
@@ -31,6 +31,24 @@ Website insights requires `demand.view`, with CSV export separately requiring `d
 ## Workflows
 
 Start with a selected-brand insight, create a task where follow-up is justified, then hand an import opportunity to Data Sources. Treat Trust, rules & growth as global despite the workspace header. Keep connector credentials in the encrypted settings workflow. Review candidate provenance and duplicate signals before promotion.
+
+For VanAssist, the same aggregate Website Insights data is emailed daily to
+`support@vanassist.com.au` for the preceding Brisbane calendar day. The email is
+an operational summary, not a replacement for the date filters and exports on
+this page. Technical paths (including admin, API, health checks and static
+assets) and explicitly identified synthetic monitoring are excluded from public
+traffic totals. The email includes repeated no-result searches as an enrichment
+queue; it never auto-publishes invented providers or facilities. A low/no-traffic
+warning can indicate genuine low use or a tracking problem; check the latest
+page-view time and scheduled-task state before drawing conclusions.
+
+Open **Insights → Growth & trust** in the VanAssist workspace to operate the
+coverage improvement loop. The page separates facility candidates from
+published/searchable records, ranks unresolved search demand, shows claim and
+verification workload, links provider-value reporting and identifies noindex
+towns that have enough live local evidence for human SEO review. Publishing a
+town requires SEO permission, reviewed public copy and at least three live local
+providers, stays or facilities; the action is audited.
 
 ## Examples
 
@@ -61,7 +79,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30 (recognisable national/state coverage map, server-owned provider processing and explicit queue reasons).
+2026-08-24 (returning-user reporting and traffic-quality filtering).
 
 ## Owner
 

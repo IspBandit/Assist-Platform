@@ -86,6 +86,22 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString("provider.profile", $script);
     }
 
+    public function testAskResultsUseAConciseMobileDecisionFlow(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $view = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $css = (string) file_get_contents($root . '/public/assets/css/app.css');
+
+        self::assertStringContainsString('<summary>Change this search</summary>', $view);
+        self::assertStringContainsString('No matching service found nearby', $view);
+        self::assertStringContainsString('It will not substitute unrelated businesses.', $view);
+        self::assertStringContainsString('Nearest first by driving distance', $view);
+        self::assertStringNotContainsString('· confidence', $view);
+        self::assertStringNotContainsString('<p class="provider-result-provenance"', $view);
+        self::assertStringContainsString('@media(max-width:719px){.interior-visual-heading--ask', $css);
+        self::assertStringContainsString('.ask-no-results .btn-row{display:grid;grid-template-columns:1fr}', $css);
+    }
+
     public function testProviderCollectionsUseConciseRowsAcrossPublicViews(): void
     {
         $root = dirname(__DIR__, 2);
@@ -121,7 +137,7 @@ final class VanAssistMobileSearchTest extends TestCase
 
         $stays = (string) file_get_contents($root . '/app/Views/public/stays.php');
         self::assertStringContainsString('provider-card-grid stay-grid', $stays);
-        self::assertStringContainsString('provider-card--compact stay-card', $stays);
+        self::assertStringContainsString('class="provider-card stay-card"', $stays);
     }
 
     public function testEveryPublicDiscoveryJourneyCanInheritDeviceLocation(): void
@@ -131,10 +147,15 @@ final class VanAssistMobileSearchTest extends TestCase
         $home = (string) file_get_contents($root . '/app/Views/public/home.php');
         $services = (string) file_get_contents($root . '/app/Views/public/services-index.php');
 
-        foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php'] as $view) {
+        foreach (['search-results.php', 'providers-index.php', 'service-category.php', 'stays.php', 'request-form.php', 'assist-search.php'] as $view) {
             self::assertStringContainsString('data-auto-location', (string) file_get_contents($root . '/app/Views/public/' . $view), $view);
         }
-        self::assertGreaterThanOrEqual(4, substr_count($home, 'data-location-link'));
+        $ask = (string) file_get_contents($root . '/app/Views/public/assist-search.php');
+        $askController = (string) file_get_contents($root . '/app/Controllers/Site/AssistSearchController.php');
+        self::assertStringContainsString('data-ask-location-priority="typed-over-gps"', $ask);
+        self::assertStringContainsString('needsDeviceLocation', $askController);
+        self::assertStringContainsString('result->intent->locationText', $askController);
+        self::assertGreaterThanOrEqual(3, substr_count($home, 'data-location-link'));
         self::assertGreaterThanOrEqual(5, substr_count($services, 'data-location-link'));
         self::assertStringContainsString("sessionStorage.setItem('va-current-location'", $script);
         self::assertStringContainsString("document.querySelectorAll('a[data-location-link]')", $script);
@@ -152,5 +173,24 @@ final class VanAssistMobileSearchTest extends TestCase
         self::assertStringContainsString('$originLat = $gpsLat ??', $category);
         self::assertStringContainsString('if ($gpsLat !== null && $gpsLng !== null)', $category);
         self::assertStringContainsString('Device coordinates are the accurate origin', $parks);
+    }
+
+    public function testStayResultsHavePhoneFirstCompactFacilitiesAndActions(): void
+    {
+        $root=dirname(__DIR__,2);
+        $view=(string)file_get_contents($root.'/app/Views/public/stays.php');
+        $css=(string)file_get_contents($root.'/public/assets/css/app.css');
+        self::assertStringContainsString('stay-card-facilities',$view);
+        self::assertStringContainsString('stay-card-content',$view);
+        self::assertStringContainsString('stay-card-actions',$view);
+        self::assertStringNotContainsString('provider-card--compact stay-card',$view);
+        self::assertStringContainsString('.stay-grid .stay-card{display:grid;grid-template-columns:minmax(0,1fr) 72px',$css);
+        self::assertStringContainsString('.stay-card-actions{display:flex!important;flex-direction:column',$css);
+        self::assertStringContainsString('width:72px;min-width:0;min-height:44px',$css);
+        self::assertStringContainsString('text-overflow:ellipsis;white-space:nowrap',$css);
+        self::assertStringContainsString('.stay-search-fields{grid-template-columns:1fr}',$css);
+        self::assertStringContainsString('data-mobile-stay-filter-toggle',$view);
+        self::assertStringContainsString('.stay-search-fields .form-group:not(.location-field){display:none}',$css);
+        self::assertStringContainsString("toggle.setAttribute('aria-expanded'",(string)file_get_contents($root.'/public/assets/js/app.js'));
     }
 }

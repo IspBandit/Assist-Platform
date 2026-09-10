@@ -27,7 +27,7 @@ final class RegulatoryLibraryController extends Controller
     public function index(Request $request): Response
     {
         $brand = current_brand();
-        if (!in_array($brand->id(), ['vanassist', 'localtorque', 'towsmart', 'trailerwise'], true)) {
+        if (!in_array($brand->id(), ['vanassist', 'towsmart', 'trailerwise'], true)) {
             $this->abort(404, 'Rules library not found.');
         }
         $vehicles = RegulatoryTaxonomy::vehiclesForBrand($brand->id());
@@ -52,11 +52,11 @@ final class RegulatoryLibraryController extends Controller
         $sponsors = new RegulatorySponsor();
         $selectedTown = $sponsors->town($filters['town']);
         $page = $this->pageCopy($brand->id(), $brand->name(), $filters['vehicle']);
-        $heroAsset = $brand->id() === 'localtorque' && in_array($filters['vehicle'], self::VISUAL_VEHICLES, true)
+        $heroAsset = in_array($filters['vehicle'], self::VISUAL_VEHICLES, true)
             ? 'rules-' . $filters['vehicle'] . '-hero'
             : 'rules-hero';
 
-        return $this->view('localtorque.regulatory-library', [
+        return $this->view('regulatory.library', [
             'title' => $page['title'],
             'metaDescription' => $page['metaDescription'],
             'canonical' => url('rules'),
@@ -102,7 +102,7 @@ final class RegulatoryLibraryController extends Controller
             }
         }
 
-        return $this->view('localtorque.guided-rules', [
+        return $this->view('regulatory.guided-rules', [
             'title' => 'Guided compliance check — ' . current_brand()->name(),
             'selection' => $selection,
             'documents' => $documents,

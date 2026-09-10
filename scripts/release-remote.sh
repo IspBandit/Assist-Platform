@@ -25,10 +25,27 @@ if [[ ! -d "$target" ]]; then
   tar --extract --gzip --file "$archive" --directory "$target" --no-same-owner
 fi
 
+runtime_source="$target/infrastructure/binarylane"
+for required in docker-compose.yml Dockerfile Caddyfile php.ini firewall.sh; do
+  if [[ ! -f "$runtime_source/$required" ]]; then
+    echo "Reviewed runtime file is missing from the release: $required" >&2
+    exit 1
+  fi
+done
+if [[ ! -d "$runtime_source/ops" ]]; then
+  echo "Reviewed runtime operations directory is missing from the release." >&2
+  exit 1
+fi
+
 previous="$(readlink -f "$root/current" || true)"
 previous_app_release="$(sed -n 's/^APP_RELEASE=//p' "$app_env" | tail -n 1)"
-ln -sfn "$target" "$root/current.next"
-mv -Tf "$root/current.next" "$root/current"
+runtime_rollback="$root/runtime-rollback-$release"
+install -d -o root -g root -m 0700 "$runtime_rollback/ops"
+cp -a "$root/docker-compose.yml" "$runtime_rollback/docker-compose.yml"
+for file in Dockerfile Caddyfile php.ini firewall.sh; do
+  cp -a "$root/runtime/$file" "$runtime_rollback/$file"
+done
+cp -a "$root/runtime/ops/." "$runtime_rollback/ops/"
 
 set_app_release() {
   local value="$1"
@@ -38,24 +55,84 @@ set_app_release() {
     printf '\nAPP_RELEASE=%s\n' "$value" >> "$app_env"
   fi
 }
-set_app_release "$release"
+
+remove_compose_caddy() {
+  local ids=()
+  mapfile -t ids < <(docker ps -aq \
+    --filter 'label=com.docker.compose.project=assist-platform' \
+    --filter 'label=com.docker.compose.service=caddy')
+  if (( ${#ids[@]} > 0 )); then
+    docker rm -f "${ids[@]}"
+  fi
+}
 
 rollback() {
+  trap - ERR
+  install -o root -g root -m 0640 "$runtime_rollback/docker-compose.yml" "$root/docker-compose.yml"
+  install -o root -g root -m 0640 "$runtime_rollback/Dockerfile" "$root/runtime/Dockerfile"
+  install -o root -g root -m 0640 "$runtime_rollback/Caddyfile" "$root/runtime/Caddyfile"
+  install -o root -g root -m 0640 "$runtime_rollback/php.ini" "$root/runtime/php.ini"
+  install -o root -g root -m 0750 "$runtime_rollback/firewall.sh" "$root/runtime/firewall.sh"
+  find "$root/runtime/ops" -maxdepth 1 -type f -name '*.sh' -delete
+  find "$runtime_rollback/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$root/runtime/ops/" \;
   if [[ -n "$previous" && -d "$previous" ]]; then
     if [[ -n "$previous_app_release" ]]; then
       set_app_release "$previous_app_release"
     fi
     ln -sfn "$previous" "$root/current.next"
     mv -Tf "$root/current.next" "$root/current"
+    remove_compose_caddy
     docker compose up -d --build --force-recreate app caddy
   fi
+  rm -rf -- "$runtime_rollback"
 }
 trap rollback ERR
 
+# Runtime and Compose configuration are bootstrap-installed outside the current
+# symlink. Refresh them from this reviewed immutable release before building so
+# infrastructure changes cannot remain silently stranded in GitHub.
+install -o root -g root -m 0640 "$runtime_source/docker-compose.yml" "$root/docker-compose.yml"
+install -o root -g root -m 0640 "$runtime_source/Dockerfile" "$root/runtime/Dockerfile"
+install -o root -g root -m 0640 "$runtime_source/Caddyfile" "$root/runtime/Caddyfile"
+install -o root -g root -m 0640 "$runtime_source/php.ini" "$root/runtime/php.ini"
+install -o root -g root -m 0750 "$runtime_source/firewall.sh" "$root/runtime/firewall.sh"
+find "$root/runtime/ops" -maxdepth 1 -type f -name '*.sh' -delete
+find "$runtime_source/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$root/runtime/ops/" \;
+
+ln -sfn "$target" "$root/current.next"
+mv -Tf "$root/current.next" "$root/current"
+set_app_release "$release"
+
+# CQDiggings community detector reports are runtime data, not release files.
+# Prepare the bind sources before Caddy reads the reviewed Compose file.
+cq_root="/opt/cqdiggings"
+install -d -o 82 -g 82 -m 0750 \
+  "$cq_root/shared/analytics/_detector-settings" \
+  "$cq_root/shared/analytics/_detector-setting-uploads"
+install -d -o 82 -g 82 -m 0755 \
+  "$cq_root/shared/assets" \
+  "$cq_root/shared/assets/community-detector-settings" \
+  "$cq_root/shared/assets/marketplace" \
+  "$cq_root/shared/data"
+if [[ ! -f "$cq_root/shared/data/community-detector-settings.json" ]]; then
+  printf '{"schema_version":1,"updated":null,"records":[]}\n' > "$cq_root/shared/data/community-detector-settings.json"
+fi
+chown 82:82 "$cq_root/shared/data/community-detector-settings.json"
+chmod 0644 "$cq_root/shared/data/community-detector-settings.json"
+find "$cq_root/shared/assets/community-detector-settings" "$cq_root/shared/assets/marketplace" -type d -exec chmod 0755 {} + 2>/dev/null || true
+find "$cq_root/shared/assets/community-detector-settings" "$cq_root/shared/assets/marketplace" -type f -exec chmod 0644 {} + 2>/dev/null || true
+for public_json in community-contributions.json marketplace-listings.json; do
+  if [[ -f "$cq_root/shared/data/$public_json" ]]; then
+    chmod 0644 "$cq_root/shared/data/$public_json"
+  fi
+done
+
 docker compose config -q
+remove_compose_caddy
 docker compose up -d --build --force-recreate app caddy
 docker compose exec -T app php scripts/migrate.php
-docker compose exec -T app php scripts/seed.php --localtorque
+docker compose exec -T app php scripts/seed.php --ask-library
+docker compose exec -T app php scripts/seed.php --provider-pack
 docker compose exec -T app php scripts/data-quality-audit.php --strict
 
 for url in \
@@ -66,5 +143,6 @@ for url in \
 done
 
 trap - ERR
+rm -rf -- "$runtime_rollback"
 rm -f "$archive"
 echo "Released $release successfully. Previous release: ${previous:-none}"

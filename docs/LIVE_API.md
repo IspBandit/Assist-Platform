@@ -44,6 +44,14 @@ RIC everyday management (analytics rollup) adds:
   `facilities:read`); AI cost summary when `ai:read`; dataset sync timestamps when
   `datasets:read`. Attention items for backlog; warnings only for genuine load
   failures.
+- `/health` includes a non-secret `integrations.road_distance` block reporting
+  whether Google Routes is configured, which credential source was selected and
+  that persistent route-result caching and town-centre routing are disabled. It
+  also reports the active Ask question-library count and whether the required
+  1,000-question baseline is ready.
+- `/overview` also returns `data_quality` counts for useful provider contact and
+  exact-coordinate coverage, plus stay coordinate, facility-evidence and stale-
+  evidence coverage. RIC uses these counts to make enrichment gaps actionable.
 - `GET /api/v1/admin/website-insights` — full brand website insights document
   (`analytics:read`), reusing `WebsiteInsightsService`. Bot/unknown page views
   returned separately as `filtered_bot_page_views`.
@@ -89,6 +97,11 @@ facilities/claims/corrections reads:
 - Read-only by default in Assist RIC; approve/reject mutations require human
   Admin API sessions (`claims:write` / `corrections:write`) and remain available
   in the website admin as backup.
+- Facility list, detail and mutation paths apply the same selected-brand scope:
+  a client can access records assigned to its workspace plus explicitly shared
+  (`brand_id IS NULL`) facilities, but cannot retrieve or mutate another
+  brand's record by guessing its ID. Stay-facility contribution review is
+  available only for a workspace with the stays module enabled.
 - Categories: `GET /categories` (`categories:read`) — brand-scoped
   `brand_provider_categories` (not legacy `service_categories`); default active
   only; optional `active=all|0|1` and `q`
@@ -205,6 +218,11 @@ Increment 7 (drafts + imports) adds:
 - `GET/POST /api/v1/admin/drafts`, `GET/PATCH /drafts/{id}` — RIC draft queue (`drafts:read` / `drafts:write`)
 - `POST /api/v1/admin/drafts/{id}/approve|reject` — human-elevated (`drafts:approve`)
 - `POST /api/v1/admin/imports` — checksummed package ingest (`imports:write`, `Idempotency-Key`)
+- `POST /api/v1/admin/facility-imports` — Assist RIC facility package ingest
+  (`imports:write`, `Idempotency-Key`); stages then **auto-publishes** Assist
+  RIC government packs into `traveller_facilities` (ADR 0034)
+- `POST /api/v1/admin/facility-imports/publish-pending` — drain pending Assist
+  RIC facility candidates in bounded batches (`imports:write`; ADR 0034)
 - `GET /api/v1/admin/imports/{id}`, `POST .../validate`, `POST .../stage` — validation and draft staging
 
 Increment 8 (audit + search gaps) adds:

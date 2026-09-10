@@ -9,7 +9,7 @@ use App\Core\Logger;
 
 /**
  * Creates compressed database backups in /storage/backups and applies
- * retention. Prefers mysqldump when available; otherwise falls back to a
+ * retention. Prefers the MariaDB dump client when available; otherwise falls back to a
  * PHP-based SQL export suitable for shared hosting.
  */
 final class Backup
@@ -25,25 +25,45 @@ final class Backup
         $stamp = date('Ymd_His');
         $file = $dir . '/db_' . $stamp . '.sql';
 
-        $usedMysqldump = $this->mysqldump($cfg, $file);
-        if (!$usedMysqldump) {
+        $usedNativeDump = $this->nativeDump($cfg, $file);
+        if (!$usedNativeDump) {
             $this->phpDump($file);
         }
 
-        // Compress if gzip is available.
-        if (function_exists('gzopen') && is_file($file)) {
-            $this->gzipFile($file);
-            @unlink($file);
-            $file .= '.gz';
+        if (!is_file($file) || filesize($file) === 0) {
+            throw new \RuntimeException('Database backup did not produce a non-empty SQL file.');
         }
+
+        // Compress if gzip is available.
+        if (function_exists('gzopen')) {
+            $compressed = $this->gzipFile($file);
+            if ($compressed) {
+                if (!unlink($file)) {
+                    @unlink($file . '.gz');
+                    throw new \RuntimeException('Database backup was compressed but the source SQL file could not be removed.');
+                }
+                $file .= '.gz';
+            }
+        }
+
+        @chmod($file, 0600);
+        $hash = hash_file('sha256', $file);
+        if (!is_string($hash) || $hash === '') {
+            throw new \RuntimeException('Database backup checksum could not be calculated.');
+        }
+        $manifest = $file . '.sha256';
+        if (file_put_contents($manifest, $hash . '  ' . basename($file) . PHP_EOL, LOCK_EX) === false) {
+            throw new \RuntimeException('Database backup checksum manifest could not be written.');
+        }
+        @chmod($manifest, 0600);
 
         $this->applyRetention($dir);
 
-        Logger::info('Database backup created.', ['file' => basename($file), 'mysqldump' => $usedMysqldump], 'backup');
-        return ['file' => basename($file), 'method' => $usedMysqldump ? 'mysqldump' : 'php'];
+        Logger::info('Database backup created.', ['file' => basename($file), 'native_dump' => $usedNativeDump], 'backup');
+        return ['file' => basename($file), 'method' => $usedNativeDump ? 'mariadb-dump' : 'php'];
     }
 
-    private function mysqldump(array $cfg, string $file): bool
+    private function nativeDump(array $cfg, string $file): bool
     {
         if (!function_exists('exec')) {
             return false;
@@ -74,7 +94,7 @@ final class Backup
             }
 
             $cmd = sprintf(
-                'mysqldump --defaults-extra-file=%s --no-tablespaces %s > %s 2>/dev/null',
+                'mariadb-dump --defaults-extra-file=%s --single-transaction --routines --triggers %s > %s 2>/dev/null',
                 escapeshellarg($credentialFile),
                 escapeshellarg((string) $cfg['name']),
                 escapeshellarg($file)
@@ -100,7 +120,7 @@ final class Backup
         $pdo = Database::connection();
         $fh = fopen($file, 'w');
         if ($fh === false) {
-            return;
+            throw new \RuntimeException('Unable to create the database backup file.');
         }
         fwrite($fh, "-- VanAssist PHP backup " . date('c') . "\nSET FOREIGN_KEY_CHECKS=0;\n");
 
@@ -128,27 +148,45 @@ final class Backup
         fclose($fh);
     }
 
-    private function gzipFile(string $file): void
+    private function gzipFile(string $file): bool
     {
         $in = fopen($file, 'rb');
         $out = gzopen($file . '.gz', 'wb9');
         if ($in === false || $out === false) {
-            return;
+            if (is_resource($in)) {
+                fclose($in);
+            }
+            if ($out !== false) {
+                gzclose($out);
+            }
+            @unlink($file . '.gz');
+            return false;
         }
         while (!feof($in)) {
-            gzwrite($out, (string) fread($in, 1 << 18));
+            $chunk = fread($in, 1 << 18);
+            if ($chunk === false || gzwrite($out, $chunk) === false) {
+                fclose($in);
+                gzclose($out);
+                @unlink($file . '.gz');
+                return false;
+            }
         }
         fclose($in);
         gzclose($out);
+        return is_file($file . '.gz') && filesize($file . '.gz') > 0;
     }
 
     private function applyRetention(string $dir): void
     {
         $keepDaily = (int) config('backups.retention.daily', 7);
-        $files = glob($dir . '/db_*.sql*') ?: [];
+        $files = array_values(array_filter(
+            glob($dir . '/db_*.sql*') ?: [],
+            static fn (string $path): bool => !str_ends_with($path, '.sha256')
+        ));
         rsort($files);
         foreach (array_slice($files, $keepDaily) as $old) {
             @unlink($old);
+            @unlink($old . '.sha256');
         }
     }
 }

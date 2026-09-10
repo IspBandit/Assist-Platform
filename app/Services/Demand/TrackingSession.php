@@ -31,6 +31,7 @@ final class TrackingSession
 
     private static ?int $sessionId = null;
     private static bool $resolved = false;
+    private static ?bool $requestHadValidCookie = null;
 
     /**
      * Return the current tracking_sessions.id, creating the session row and
@@ -44,6 +45,7 @@ final class TrackingSession
         self::$resolved = true;
 
         try {
+            self::requestHadValidCookie();
             $token = self::resolveToken();
             if ($token === null) {
                 return null;
@@ -124,6 +126,28 @@ final class TrackingSession
     public static function isBot(): bool
     {
         return BotTraffic::isBot(self::userAgent());
+    }
+
+    /** Whether the incoming request, before any response cookie, carried va_sid. */
+    public static function requestHadValidCookie(): bool
+    {
+        if (self::$requestHadValidCookie !== null) {
+            return self::$requestHadValidCookie;
+        }
+
+        $raw = (string) ($_SERVER['HTTP_COOKIE'] ?? '');
+        if ($raw !== '') {
+            self::$requestHadValidCookie = preg_match(
+                '/(?:^|;\s*)' . preg_quote(self::COOKIE, '/') . '=([a-f0-9]{40})(?:;|$)/',
+                $raw
+            ) === 1;
+            return self::$requestHadValidCookie;
+        }
+
+        $existing = $_COOKIE[self::COOKIE] ?? null;
+        self::$requestHadValidCookie = is_string($existing)
+            && preg_match('/^[a-f0-9]{40}$/', $existing) === 1;
+        return self::$requestHadValidCookie;
     }
 
     public static function referralSource(): ?string

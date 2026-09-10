@@ -6,6 +6,7 @@ namespace Tests\Integration;
 
 use App\Core\Database;
 use App\Core\Config;
+use App\Core\Exceptions\AdminApiException;
 use App\Core\Request;
 use App\Core\Response;
 use App\Middleware\RateLimit as RateLimitMiddleware;
@@ -23,8 +24,16 @@ use App\Services\TownCoordinateActivation;
 use App\Services\CampaignMetrics;
 use App\Services\DataSourceService;
 use App\Services\NationalRouteImportService;
+use App\Services\VanAssistGrowthService;
 use App\Models\GarageAsset;
 use App\Models\Provider;
+use App\Services\Api\AdminApiFacilityService;
+use App\Platform\AiSearch\Adapters\StayFacilitySearchBridge;
+use App\Services\RoadDistance\GoogleRoutesCredentialProvisioner;
+use App\Services\RoadDistance\GoogleRoutesCredentialResolver;
+use App\Platform\AiSearch\Adapters\ProviderNameSearchAdapter;
+use App\Platform\AiSearch\Dto\SearchRequest;
+use App\Platform\AiSearch\SearchOrchestrator;
 use PHPUnit\Framework\TestCase;
 
 final class PlatformDatabaseTest extends TestCase
@@ -47,7 +56,18 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(0, $missingChecksums);
     }
 
-    public function testAuthoritativeLocalTorquePackIsImportedWithSafeRouting(): void
+    public function testVanAssistGrowthDashboardQueriesFreshDatabase(): void
+    {
+        $brandId = (int) Database::scalar("SELECT id FROM brands WHERE brand_key='vanassist'");
+        $report = (new VanAssistGrowthService())->dashboard($brandId);
+        self::assertArrayHasKey('facility_summary', $report);
+        self::assertArrayHasKey('search_priorities', $report);
+        self::assertArrayHasKey('provider_trust', $report);
+        self::assertArrayHasKey('seo_candidates', $report);
+        self::assertGreaterThanOrEqual(0, (int) $report['facility_summary']['published']);
+    }
+
+    public function testAuthoritativeVanAssistProviderPackIsImportedWithSafeRouting(): void
     {
         self::assertTrue(Database::tableExists('provider_source_records'));
         self::assertSame(9730, (int) Database::scalar('SELECT COUNT(*) FROM provider_source_records'));
@@ -69,19 +89,17 @@ final class PlatformDatabaseTest extends TestCase
             . 'AND good.publishable=1 AND good.needs_review=0)'
         ));
         self::assertSame(0, (int) Database::scalar(
-            'SELECT COUNT(DISTINCT psr.id) FROM provider_source_records psr '
-            . 'JOIN providers p ON p.id=psr.provider_id JOIN towns t ON t.id=p.base_town_id '
+            'SELECT COUNT(DISTINCT p.id) FROM providers p JOIN towns t ON t.id=p.base_town_id '
             . 'JOIN provider_brand_listings l ON l.provider_id=p.id '
             . "WHERE p.is_unclaimed=1 AND p.status='active' AND l.status='active' AND l.search_visible=1 "
-            . 'AND psr.publishable=1 AND psr.needs_review=0 '
-            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lat')) IN ('INTEGER','DOUBLE') "
-            . "AND JSON_TYPE(JSON_EXTRACT(psr.payload_json,'$.lng')) IN ('INTEGER','DOUBLE') "
+            . 'AND p.deleted_at IS NULL AND l.deleted_at IS NULL '
+            . 'AND p.latitude IS NOT NULL AND p.longitude IS NOT NULL '
             . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL '
             . 'AND (6371 * ACOS(LEAST(1,GREATEST(-1, '
-            . "COS(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . 'COS(RADIANS(p.latitude)) '
             . '* COS(RADIANS(t.latitude)) '
-            . "* COS(RADIANS(t.longitude)-RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lng')) AS DECIMAL(10,6)))) "
-            . "+ SIN(RADIANS(CAST(JSON_UNQUOTE(JSON_EXTRACT(psr.payload_json,'$.lat')) AS DECIMAL(10,6)))) "
+            . '* COS(RADIANS(t.longitude)-RADIANS(p.longitude)) '
+            . '+ SIN(RADIANS(p.latitude)) '
             . '* SIN(RADIANS(t.latitude)))))) > 150'
         ), 'Public source coordinates must not contradict the displayed Australian town by more than 150 km.');
 
@@ -91,6 +109,112 @@ final class PlatformDatabaseTest extends TestCase
         $nearGladstone = Provider::forCategoryNear($fuelCategoryId, -23.842, 151.255, 150);
         self::assertNotEmpty($nearGladstone);
         self::assertLessThanOrEqual(150.0, (float) $nearGladstone[0]['distance_km']);
+    }
+
+    public function testProviderRadiusSearchNeverBuildsAHybridCoordinate(): void
+    {
+        $row = Database::selectOne(
+            'SELECT p.id, ps.category_id, t.latitude, t.longitude '
+            . 'FROM providers p JOIN provider_services ps ON ps.provider_id=p.id '
+            . 'JOIN towns t ON t.id=p.base_town_id '
+            . "WHERE p.status='active' AND p.deleted_at IS NULL "
+            . "AND t.coordinate_confidence IN ('authoritative','statistical') "
+            . 'AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL LIMIT 1'
+        );
+        self::assertNotNull($row);
+
+        Database::beginTransaction();
+        try {
+            Database::query('UPDATE providers SET latitude=0,longitude=NULL WHERE id=?', [(int) $row['id']]);
+            $matches = Provider::forCategoryNear(
+                (int) $row['category_id'],
+                (float) $row['latitude'],
+                (float) $row['longitude'],
+                25,
+                500,
+            );
+            $match = null;
+            foreach ($matches as $candidate) {
+                if ((int) $candidate['id'] === (int) $row['id']) {
+                    $match = $candidate;
+                    break;
+                }
+            }
+
+            self::assertNotNull($match, 'A partial provider point must fall back to its trusted town centre.');
+            self::assertSame('town_centre', $match['distance_basis']);
+            self::assertEqualsWithDelta((float) $row['latitude'], (float) $match['town_lat'], 0.0000001);
+            self::assertEqualsWithDelta((float) $row['longitude'], (float) $match['town_lng'], 0.0000001);
+        } finally {
+            Database::rollBack();
+        }
+    }
+
+    public function testTravellerFacilityDetailHonoursSelectedBrandScope(): void
+    {
+        $registry = BrandRegistry::fromArray((array) Config::get('brands.registry', []));
+        BrandContext::set($registry->get('vanassist'));
+        $otherBrandId = (int) Database::scalar("SELECT id FROM brands WHERE brand_key='towsmart'");
+
+        Database::beginTransaction();
+        try {
+            $slug = 'scope-test-' . bin2hex(random_bytes(6));
+            $otherId = Database::insert(
+                'INSERT INTO traveller_facilities (facility_type,name,slug,verification_status,status,confidence,brand_id,created_at,updated_at) '
+                . "VALUES ('dump_point','Other brand facility',?,'verified','active',100,?,NOW(),NOW())",
+                [$slug, $otherBrandId]
+            );
+
+            try {
+                (new AdminApiFacilityService())->show($otherId);
+                self::fail('A facility from another brand must not be readable by guessed ID.');
+            } catch (AdminApiException $e) {
+                self::assertSame(404, $e->getStatusCode());
+            }
+
+            $sharedId = Database::insert(
+                'INSERT INTO traveller_facilities (facility_type,name,slug,verification_status,status,confidence,brand_id,created_at,updated_at) '
+                . "VALUES ('dump_point','Shared facility',?,'verified','active',100,NULL,NOW(),NOW())",
+                [$slug . '-shared']
+            );
+            self::assertSame((string) $sharedId, (new AdminApiFacilityService())->show($sharedId)['id']);
+        } finally {
+            Database::rollBack();
+            BrandContext::clear();
+        }
+    }
+
+    public function testApprovedStayFacilityEvidenceAppearsInAskWithinRadius(): void
+    {
+        $stateId = (int) Database::scalar("SELECT id FROM states WHERE abbreviation='QLD' LIMIT 1");
+        self::assertGreaterThan(0, $stateId);
+
+        Database::beginTransaction();
+        try {
+            $slug = 'ask-stay-facility-' . bin2hex(random_bytes(5));
+            $parkId = Database::insert(
+                'INSERT INTO caravan_parks '
+                . '(name,slug,state_id,latitude,longitude,public_page_enabled,status,stay_type,price_type,created_at,updated_at) '
+                . "VALUES ('Griffiths Creek test camping area',?,?, -24.35,151.10,1,'active','national_park','unknown',NOW(),NOW())",
+                [$slug, $stateId]
+            );
+            Database::insert(
+                'INSERT INTO stay_facility_claims '
+                . '(park_id,facility_type,facility_status,facility_value,details,source_type,source_name,source_confidence,source_specificity,verified_at,last_seen_at,created_at,updated_at) '
+                . "VALUES (?,'dump_point','yes','portable_toilet_waste_disposal','Portable waste disposal is available.','government','Queensland Parks',100,'facility',NOW(),NOW(),NOW(),NOW())",
+                [$parkId]
+            );
+
+            $results = (new StayFacilitySearchBridge())->search(['dump_point'], -24.35, 151.10, 25);
+            $result = array_values(array_filter($results, static fn (array $row): bool => (int) ($row['stay_id'] ?? 0) === $parkId));
+
+            self::assertCount(1, $result);
+            self::assertSame('dump_point', $result[0]['facility_type']);
+            self::assertSame('yes', $result[0]['facility_status']);
+            self::assertLessThanOrEqual(25.0, (float) $result[0]['distance_km']);
+        } finally {
+            Database::rollBack();
+        }
     }
 
     public function testLaunchGateProducesAllFourEvidenceGroups(): void
@@ -105,6 +229,13 @@ final class PlatformDatabaseTest extends TestCase
             self::assertNotEmpty($group['checks']);
             self::assertContains($group['status'], ['pass', 'warning', 'fail']);
         }
+        $coordinateCheck = array_values(array_filter(
+            $readiness['groups']['data_trust']['checks'],
+            static fn (array $check): bool => $check['label'] === 'Provider coordinates agree with displayed towns'
+        ));
+        self::assertCount(1, $coordinateCheck);
+        self::assertSame('pass', $coordinateCheck[0]['status']);
+        self::assertSame('0 unresolved public conflicts', $coordinateCheck[0]['detail']);
     }
 
     public function testPlatformBrandsAndBackfillIntegrity(): void
@@ -112,7 +243,8 @@ final class PlatformDatabaseTest extends TestCase
         $brands = Database::select('SELECT id, brand_key, status FROM brands ORDER BY id');
         self::assertSame(['vanassist', 'towsmart', 'trailerwise', 'localtorque', 'polaris'], array_column($brands, 'brand_key'));
         self::assertSame('active', $brands[0]['status']);
-        self::assertSame('private', $brands[4]['status']);
+        self::assertSame('disabled', $brands[3]['status']);
+        self::assertSame('disabled', $brands[4]['status']);
 
         foreach ((new PlatformBackfill())->validate() as $check) {
             self::assertTrue($check['valid'], "Backfill count {$check['actual']} did not match {$check['expected']}");
@@ -160,6 +292,96 @@ final class PlatformDatabaseTest extends TestCase
         self::assertSame(5,(int)Database::scalar(
             "SELECT COUNT(*) FROM brand_provider_categories WHERE brand_id=1 AND category_key IN ('caravan-gas-appliances','trailer-brakes-suspension','mobile-diesel-mechanics','fuel-travel-stops','ev-charging')"
         ));
+    }
+
+    public function testProtectedRoutesCredentialIsEncryptedAndResolvable(): void
+    {
+        $apiKey = 'AIza' . str_repeat('R', 35);
+        $release = str_repeat('a', 40);
+        $nonceHash = str_repeat('b', 64);
+        try {
+            $provisioner = new GoogleRoutesCredentialProvisioner();
+            $provisioner->provisionForRelease($apiKey, $release, $nonceHash);
+
+            $stored = (string) Database::scalar(
+                "SELECT cr.encrypted_value
+                 FROM data_source_credentials cr
+                 JOIN data_source_connectors c ON c.id = cr.connector_id
+                 WHERE c.connector_key = 'google_routes' AND cr.credential_key = 'api_key'"
+            );
+            self::assertStringStartsWith('enc:v1:', $stored);
+            self::assertStringNotContainsString($apiKey, $stored);
+            self::assertSame(
+                ['key' => $apiKey, 'source' => 'encrypted_google_routes_connector'],
+                (new GoogleRoutesCredentialResolver())->resolve()
+            );
+            $settings = json_decode((string) Database::scalar(
+                "SELECT settings_json FROM data_source_connectors WHERE connector_key = 'google_routes'"
+            ), true);
+            self::assertSame($release, $settings['bootstrap_release'] ?? null);
+            self::assertSame($nonceHash, $settings['bootstrap_nonce_hash'] ?? null);
+
+            try {
+                $provisioner->provisionForRelease($apiKey, $release, $nonceHash);
+                self::fail('A consumed release credential envelope was accepted twice.');
+            } catch (\RuntimeException $error) {
+                self::assertStringContainsString('already been consumed', $error->getMessage());
+            }
+        } finally {
+            Database::query(
+                "DELETE cr FROM data_source_credentials cr
+                 JOIN data_source_connectors c ON c.id = cr.connector_id
+                 WHERE c.connector_key = 'google_routes'"
+            );
+            Database::query("DELETE FROM data_source_connectors WHERE connector_key = 'google_routes'");
+        }
+    }
+
+    public function testAskCanFindAProviderDirectlyByBusinessNameWithinBrandScope(): void
+    {
+        $expected = Database::selectOne(
+            "SELECT COALESCE(NULLIF(pbl.display_name,''), p.business_name) AS name
+             FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id
+             WHERE pbl.brand_id = 1 AND pbl.status = 'active' AND pbl.search_visible = 1
+               AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL
+             ORDER BY pbl.id LIMIT 1"
+        );
+        self::assertNotNull($expected);
+
+        $rows = (new ProviderNameSearchAdapter())->search((string) $expected['name'], 1);
+        self::assertNotEmpty($rows);
+        self::assertSame((string) $expected['name'], (string) $rows[0]['business_name']);
+        self::assertTrue((bool) $rows[0]['assist_name_match']);
+    }
+
+    public function testAskReturnsAnExactProviderNameWithoutForcingALocation(): void
+    {
+        $expected = Database::selectOne(
+            "SELECT COALESCE(NULLIF(pbl.display_name,''), p.business_name) AS name
+             FROM provider_brand_listings pbl JOIN providers p ON p.id = pbl.provider_id
+             WHERE pbl.brand_id = 1 AND pbl.status = 'active' AND pbl.search_visible = 1
+               AND pbl.deleted_at IS NULL AND p.status = 'active' AND p.deleted_at IS NULL
+             ORDER BY CHAR_LENGTH(COALESCE(NULLIF(pbl.display_name,''), p.business_name)) DESC, pbl.id
+             LIMIT 1"
+        );
+        self::assertNotNull($expected);
+
+        $response = (new SearchOrchestrator())->handle(new SearchRequest(
+            rawQuery: (string) $expected['name'],
+            brandKey: 'vanassist',
+            brandDatabaseId: 1,
+            latitude: null,
+            longitude: null,
+            radiusKm: null,
+            requestId: 'integration-provider-name-no-location',
+            channel: 'acceptance',
+        ));
+
+        self::assertNotEmpty($response->providers);
+        self::assertSame((string) $expected['name'], (string) $response->providers[0]['business_name']);
+        self::assertSame('provider_name', $response->intent->source);
+        self::assertNull($response->originLat);
+        self::assertNull($response->originLng);
     }
 
     public function testNationalRouteCandidateRequiresIndependentEvidenceBeforeApproval(): void

@@ -20,7 +20,7 @@ const path = require("path");
 const ROOT = path.join(__dirname, "..");
 const OUT_DIR = path.join(ROOT, "storage", "imports", "qld-coverage");
 
-const HUBS = [
+const SEQ_CQ_HUBS = [
   // SEQ
   { town: "Brisbane", region: "seq", lat: -27.4698, lng: 153.0251 },
   { town: "Ipswich", region: "seq", lat: -27.6144, lng: 152.7609 },
@@ -47,6 +47,42 @@ const HUBS = [
   { town: "Blackwater", region: "cq", lat: -23.581, lng: 148.879 },
   { town: "Mount Morgan", region: "fitzroy", lat: -23.645, lng: 150.389 },
 ];
+
+// Remaining Queensland hubs selected from the committed national town seed.
+// These deliberately avoid the SEQ/Central Queensland hubs above so a second
+// run does not pay for the same town/query pairs twice.
+const REST_QLD_HUB_NAMES = [
+  "Toowoomba", "Dalby", "Chinchilla", "Warwick", "Stanthorpe",
+  "Goondiwindi", "Roma", "St George", "Charleville", "Cunnamulla",
+  "Beaudesert", "Boonah", "Gatton", "Laidley",
+  "Bundaberg", "Hervey Bay", "Maryborough", "Gympie", "Kingaroy",
+  "Nanango", "Childers", "Gin Gin", "Gayndah", "Mundubbera", "Murgon",
+  "Mackay", "Sarina", "Moranbah", "Dysart", "Clermont", "Bowen",
+  "Airlie Beach", "Proserpine", "Collinsville",
+  "Townsville", "Ayr", "Home Hill", "Charters Towers", "Ingham",
+  "Cardwell", "Richmond", "Hughenden", "Mount Isa", "Cloncurry",
+  "Cairns", "Atherton", "Mareeba", "Innisfail", "Tully", "Mossman",
+  "Port Douglas", "Cooktown", "Weipa", "Kuranda",
+  "Normanton", "Karumba", "Longreach", "Winton", "Barcaldine", "Blackall",
+  "Bamaga", "Burketown", "Doomadgee",
+];
+
+function restQueenslandHubs() {
+  const seedPath = path.join(ROOT, "database", "seeds", "towns_national.json");
+  const seed = JSON.parse(fs.readFileSync(seedPath, "utf8"));
+  const qldTowns = new Map(
+    seed.towns
+      .filter((town) => town.state === "QLD")
+      .map((town) => [String(town.name).toLowerCase(), town])
+  );
+  return REST_QLD_HUB_NAMES.map((name) => {
+    const town = qldTowns.get(name.toLowerCase());
+    if (!town || !Number.isFinite(town.lat) || !Number.isFinite(town.lng)) {
+      throw new Error(`Missing Queensland coordinates for hub: ${name}`);
+    }
+    return { town: name, region: town.region, lat: town.lat, lng: town.lng };
+  });
+}
 
 const QUERIES = [
   { q: "caravan repairs", cats: ["caravan-repairs"] },
@@ -144,13 +180,19 @@ async function main() {
   const dryRun = !flag("--write");
   const key = arg("--key", process.env.GOOGLE_PLACES_API_KEY || "");
   const maxRequests = Math.max(1, Math.floor(budgetAud / AUD_PER_REQUEST));
+  const scope = arg("--scope", "seq-cq");
+  if (!['seq-cq', 'rest-qld'].includes(scope)) {
+    throw new Error('--scope must be seq-cq or rest-qld');
+  }
+  const hubs = scope === "rest-qld" ? restQueenslandHubs() : SEQ_CQ_HUBS;
 
-  const planned = HUBS.length * QUERIES.length;
+  const planned = hubs.length * QUERIES.length;
   console.log(
     JSON.stringify(
       {
         mode: dryRun ? "dry-run" : "write",
-        hubs: HUBS.length,
+        scope,
+        hubs: hubs.length,
         queries: QUERIES.length,
         planned_requests: planned,
         budget_aud: budgetAud,
@@ -180,7 +222,7 @@ async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const outPath = path.join(
     OUT_DIR,
-    `places-gap-fill-seq-cq-${new Date().toISOString().slice(0, 10)}.jsonl`
+    `places-gap-fill-${scope}-${new Date().toISOString().slice(0, 10)}.jsonl`
   );
   const seen = new Set();
   let requests = 0;
@@ -188,7 +230,7 @@ async function main() {
   let estimatedAud = 0;
   const fh = dryRun ? null : fs.createWriteStream(outPath, { flags: "w" });
 
-  outer: for (const hub of HUBS) {
+  outer: for (const hub of hubs) {
     for (const query of QUERIES) {
       if (requests >= maxRequests) {
         console.log(`Hard stop at ${requests} requests (budget cap).`);
@@ -226,6 +268,7 @@ async function main() {
   if (fh) fh.end();
   const summary = {
     mode: dryRun ? "dry-run-executed" : "write",
+    scope,
     requests,
     estimated_aud: estimatedAud,
     unique_places: seen.size,
@@ -237,7 +280,7 @@ async function main() {
     retention_note:
       "Place IDs may be retained as discovery provenance. Full Places content needs independent retention before permanent master publish.",
   };
-  const summaryPath = path.join(OUT_DIR, "places-gap-fill-summary.json");
+  const summaryPath = path.join(OUT_DIR, `places-gap-fill-${scope}-summary.json`);
   fs.writeFileSync(summaryPath, JSON.stringify(summary, null, 2));
   console.log(JSON.stringify(summary, null, 2));
 }

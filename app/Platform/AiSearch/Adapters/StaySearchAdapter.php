@@ -27,14 +27,18 @@ final class StaySearchAdapter
 
         $radius = $intent->radiusKm ?? Geo::DEFAULT_STAY_DISTANCE_KM;
         $types = $intent->stayTypeKeys !== [] ? $intent->stayTypeKeys : [null];
+        $requiredFacilities = array_values(array_unique(array_map(
+            static fn(string $type): string => $type === 'drinking_water' ? 'water' : ($type === 'public_toilet' ? 'toilets' : $type),
+            $intent->facilityTypeKeys
+        )));
         $merged = [];
 
         foreach ($types as $stayType) {
-            $rows = CaravanPark::searchStays($townId, $lat, $lng, $stayType, null, $radius);
+            $rows = CaravanPark::searchStays($townId, $lat, $lng, $stayType, null, $radius, 60, $requiredFacilities);
             // Natural requests for a free camp should include records classified
             // by either their stay type or their explicit free price.
             if ($stayType === 'free_camp') {
-                $rows = array_merge($rows, CaravanPark::searchStays($townId, $lat, $lng, null, 'free', $radius));
+                $rows = array_merge($rows, CaravanPark::searchStays($townId, $lat, $lng, null, 'free', $radius, 60, $requiredFacilities));
             }
             foreach ($rows as $row) {
                 $id = (int) ($row['id'] ?? 0);

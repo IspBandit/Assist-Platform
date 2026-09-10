@@ -8,19 +8,27 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Helpers\Geo;
+use App\Models\BrandProviderCategory;
 use App\Models\Provider;
 use App\Models\Town;
 use App\Platform\AiSearch\Knowledge\KnowledgeGapService;
 use App\Services\Demand\DemandRecorder;
 use App\Services\DirectoryPresentation;
 use App\Services\FoundingGraphicService;
+use App\Services\RoadDistance\RoadDistanceService;
 use App\Services\SeoSchema;
 
 final class ProviderController extends Controller
 {
+    private const DISTANCE_RANK_CANDIDATE_LIMIT = 2500;
+
     public function index(Request $request): Response
     {
         $search = trim((string) $request->input('q', ''));
+        if ($search === '') {
+            $search = trim((string) $request->input('text', ''));
+        }
         $page = max(1, (int) $request->input('page', 1));
         $perPage = 18;
         $townId = (int) $request->input('town') ?: null;
@@ -32,8 +40,17 @@ final class ProviderController extends Controller
         $hasCoords = $lat !== null && $lng !== null
             && $lat >= -90 && $lat <= 90 && $lng >= -180 && $lng <= 180;
         $resolvedTown = null;
-        if ($hasCoords) {
-            $gpsTown = Town::nearestActive($lat, $lng);
+
+        // A typed location always wins over hidden/stale device coordinates.
+        if ($location !== '') {
+            $townMatches = Town::searchActive($location);
+            $resolvedTown = $townMatches[0] ?? null;
+            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
+            $hasCoords = false;
+            $lat = null;
+            $lng = null;
+        } elseif ($hasCoords) {
+            $gpsTown = Town::nearestActive((float) $lat, (float) $lng);
             $resolvedTown = $gpsTown;
             $townId = isset($gpsTown['id']) ? (int) $gpsTown['id'] : null;
             if ($gpsTown !== null) {
@@ -42,23 +59,67 @@ final class ProviderController extends Controller
                     $location .= ', ' . $gpsTown['state_abbr'];
                 }
             }
-        } elseif ($location !== '') {
-            $townMatches = Town::searchActive($location);
-            $resolvedTown = $townMatches[0] ?? null;
-            $townId = isset($townMatches[0]['id']) ? (int) $townMatches[0]['id'] : null;
         }
         $locationFound = ($location === '' && !$hasCoords) || $townId !== null;
-        $categoryId = (int) $request->input('category') ?: null;
         $brand = current_brand();
         $brandScoped = $brand->id() !== 'vanassist';
+        $categoryInput = trim((string) $request->input('category', ''));
+        $categoryId = ctype_digit($categoryInput) && (int) $categoryInput > 0
+            ? (int) $categoryInput
+            : null;
+        if ($brandScoped && $categoryId === null && $categoryInput !== '') {
+            $categoryId = $this->brandCategoryId($brand->databaseId(), $categoryInput);
+        }
+        $serviceModel = trim((string) $request->input('service_model', ''));
+        if (!in_array($serviceModel, ['mobile', 'workshop'], true)) {
+            $serviceModel = '';
+        }
 
         $result = !$locationFound
             ? ['rows' => [], 'total' => 0]
             : ($brandScoped
-                ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage)
-                : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage));
+                ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, $perPage, ($page - 1) * $perPage, $serviceModel)
+                : Provider::publicDirectory($townId, $categoryId, $search, $perPage, ($page - 1) * $perPage, $serviceModel));
+
+        $originLat = $hasCoords ? $lat : (is_numeric($resolvedTown['latitude'] ?? null) ? (float) $resolvedTown['latitude'] : null);
+        $originLng = $hasCoords ? $lng : (is_numeric($resolvedTown['longitude'] ?? null) ? (float) $resolvedTown['longitude'] : null);
+        $distanceRanked = false;
+        if ($locationFound && $originLat !== null && $originLng !== null && (int) $result['total'] > 0) {
+            $total = (int) $result['total'];
+            if ($total <= self::DISTANCE_RANK_CANDIDATE_LIMIT) {
+                $candidateResult = $brandScoped
+                    ? Provider::brandDirectory($brand->databaseId(), $townId, $categoryId, $search, max(1, $total), 0, $serviceModel)
+                    : Provider::publicDirectory($townId, $categoryId, $search, max(1, $total), 0, $serviceModel);
+                $candidateRows = $this->hydrateDirectoryDistances($candidateResult['rows'], $originLat, $originLng);
+                usort($candidateRows, [$this, 'compareDirectoryDistance']);
+                $result['rows'] = array_slice($candidateRows, ($page - 1) * $perPage, $perPage);
+                $distanceRanked = true;
+            } else {
+                // Keep the existing server ordering for unusually broad pools rather
+                // than claiming a complete nearest-first ordering from a truncated set.
+                $result['rows'] = $this->hydrateDirectoryDistances($result['rows'], $originLat, $originLng);
+            }
+
+            if ($result['rows'] !== []) {
+                $routed = (new RoadDistanceService())->enrichGroups(
+                    ['providers' => $result['rows']],
+                    $originLat,
+                    $originLng,
+                );
+                $result['rows'] = $routed['providers'];
+                if ($distanceRanked) {
+                    usort($result['rows'], [$this, 'compareDirectoryDistance']);
+                }
+            }
+        }
+
         $categories = $brandScoped
-            ? Database::select('SELECT id, name FROM brand_provider_categories WHERE brand_id = ? AND is_active = 1 ORDER BY sort_order, name', [$brand->databaseId()])
+            ? Database::select(
+                'SELECT id, name FROM brand_provider_categories WHERE '
+                . BrandProviderCategory::publicDirectorySql($brand->databaseId())
+                . ' ORDER BY sort_order, name',
+                BrandProviderCategory::publicDirectoryParams($brand->databaseId())
+            )
             : Database::select('SELECT id, name FROM service_categories WHERE is_active = 1 ORDER BY name');
 
         // Treat a filtered directory browse as a search on every brand. This is
@@ -69,6 +130,7 @@ final class ProviderController extends Controller
                 'region_id' => $resolvedTown['region_id'] ?? null,
                 'state_id' => $resolvedTown['state_id'] ?? null,
                 'category_id' => $categoryId,
+                'service_type' => $serviceModel !== '' ? $serviceModel : 'either',
                 'result_count' => (int) $result['total'],
             ]);
             DemandRecorder::recordImpressions($searchId, $result['rows'], $categoryId);
@@ -89,10 +151,107 @@ final class ProviderController extends Controller
             'locationFound' => $locationFound,
             'townId' => $townId,
             'categoryId' => $categoryId,
+            'categoryKey' => $categoryInput,
+            'serviceModel' => $serviceModel,
             'categories' => $categories,
             'brand' => $brand,
             'directoryCopy' => DirectoryPresentation::copyFor($brand->id()),
+            'distanceRanked' => $distanceRanked,
+            'usesRoadDistance' => RoadDistanceService::groupsUseRoadDistance(['providers' => $result['rows']]),
         ]);
+    }
+
+    /** @param array<int,array<string,mixed>> $rows @return array<int,array<string,mixed>> */
+    private function hydrateDirectoryDistances(array $rows, float $originLat, float $originLng): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map(
+            static fn (array $row): int => (int) ($row['id'] ?? 0),
+            $rows
+        ))));
+        if ($ids === []) {
+            return $rows;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $coordinates = Database::select(
+            "SELECT p.id, "
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN p.latitude WHEN t.coordinate_confidence IN ('authoritative','statistical') THEN t.latitude END AS latitude, "
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN p.longitude WHEN t.coordinate_confidence IN ('authoritative','statistical') THEN t.longitude END AS longitude, "
+            . "CASE WHEN p.latitude IS NOT NULL AND p.longitude IS NOT NULL THEN 'provider_point' WHEN t.coordinate_confidence IN ('authoritative','statistical') AND t.latitude IS NOT NULL AND t.longitude IS NOT NULL THEN 'town_centre' ELSE 'unknown' END AS distance_basis "
+            . "FROM providers p LEFT JOIN towns t ON t.id = p.base_town_id WHERE p.id IN ({$placeholders})",
+            $ids
+        );
+        $byId = [];
+        foreach ($coordinates as $coordinate) {
+            $byId[(int) $coordinate['id']] = $coordinate;
+        }
+
+        foreach ($rows as &$row) {
+            $coordinate = $byId[(int) ($row['id'] ?? 0)] ?? null;
+            if ($coordinate === null) {
+                continue;
+            }
+            $row['latitude'] = $coordinate['latitude'];
+            $row['longitude'] = $coordinate['longitude'];
+            $row['distance_basis'] = $coordinate['distance_basis'];
+            if (($coordinate['distance_basis'] ?? '') === 'provider_point'
+                && is_numeric($coordinate['latitude'] ?? null)
+                && is_numeric($coordinate['longitude'] ?? null)) {
+                $row['distance_km'] = round(Geo::haversineExactKm(
+                    $originLat,
+                    $originLng,
+                    (float) $coordinate['latitude'],
+                    (float) $coordinate['longitude']
+                ), 1);
+                $row['distance_metric'] = 'straight_line';
+            }
+        }
+        unset($row);
+
+        return $rows;
+    }
+
+    /** @param array<string,mixed> $a @param array<string,mixed> $b */
+    private function compareDirectoryDistance(array $a, array $b): int
+    {
+        $aDistance = is_numeric($a['distance_km'] ?? null) ? (float) $a['distance_km'] : INF;
+        $bDistance = is_numeric($b['distance_km'] ?? null) ? (float) $b['distance_km'] : INF;
+        $distance = $aDistance <=> $bDistance;
+        if ($distance !== 0) {
+            return $distance;
+        }
+
+        $aCategory = isset($a['category_match_verified'])
+            ? (empty($a['category_match_verified']) ? 1 : 0)
+            : (isset($a['category_match_inferred']) && !empty($a['category_match_inferred']) ? 1 : 0);
+        $bCategory = isset($b['category_match_verified'])
+            ? (empty($b['category_match_verified']) ? 1 : 0)
+            : (isset($b['category_match_inferred']) && !empty($b['category_match_inferred']) ? 1 : 0);
+        if ($aCategory !== $bCategory) {
+            return $aCategory <=> $bCategory;
+        }
+
+        $verified = ((int) ($b['is_verified'] ?? 0)) <=> ((int) ($a['is_verified'] ?? 0));
+        if ($verified !== 0) {
+            return $verified;
+        }
+        $featured = ((int) ($b['is_featured'] ?? 0)) <=> ((int) ($a['is_featured'] ?? 0));
+        if ($featured !== 0) {
+            return $featured;
+        }
+        return strcmp((string) ($a['business_name'] ?? ''), (string) ($b['business_name'] ?? ''));
+    }
+
+    private function brandCategoryId(int $brandId, string $categoryKey): ?int
+    {
+        $category = Database::selectOne(
+            'SELECT id FROM brand_provider_categories WHERE '
+            . BrandProviderCategory::publicDirectorySql($brandId)
+            . ' AND category_key = ?',
+            [...BrandProviderCategory::publicDirectoryParams($brandId), $categoryKey]
+        );
+
+        return $category !== null ? (int) $category['id'] : null;
     }
 
     public function show(Request $request): Response
@@ -126,7 +285,7 @@ final class ProviderController extends Controller
             );
         }
         $publicSlug = (string) ($provider['brand_slug'] ?? $provider['slug']);
-        $profilePath = $brand->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug;
+        $profilePath = 'providers/' . $publicSlug;
 
         return $this->view('public.provider-profile', [
             'title' => ($provider['brand_seo_title'] ?? $provider['seo_title'] ?? null) ?: ($provider['business_name'] . ' — ' . $brand->name()),
@@ -166,7 +325,7 @@ final class ProviderController extends Controller
             '@context' => 'https://schema.org',
             '@type' => 'LocalBusiness',
             'name' => (string) ($provider['brand_display_name'] ?? $provider['business_name']),
-            'url' => url(current_brand()->id() === 'localtorque' ? 'business/' . $publicSlug : 'providers/' . $publicSlug),
+            'url' => url('providers/' . $publicSlug),
         ];
         if (!empty($provider['description'])) { $data['description'] = mb_substr(strip_tags((string) $provider['description']), 0, 300); }
         if (!empty($provider['show_public_phone']) && !empty($provider['public_phone'])) { $data['telephone'] = (string) $provider['public_phone']; }

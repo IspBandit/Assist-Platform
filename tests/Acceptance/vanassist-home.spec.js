@@ -12,7 +12,7 @@ async function expectElementStartsInViewport(locator, viewportHeight) {
   expect(box.top, 'element starts in the first viewport').toBeLessThan(viewportHeight);
 }
 
-test('VanAssist homepage keeps the core journey in the first viewport', async ({ page }, testInfo) => {
+test('VanAssist homepage keeps the core journey accessible and Ask first', async ({ page }, testInfo) => {
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
 
@@ -36,18 +36,17 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
 
   const isMobile = testInfo.project.name.includes('mobile');
   const headline = isMobile ? page.locator('.mobile-hero-intro h1') : page.locator('.hero-copy h1');
-  const search = page.locator('.hero-search-panel .search-card');
+  const askVanAssist = page.locator('.ask-vanassist-home');
+  const structuredSearch = page.locator('.hero-search-panel .structured-search-form');
   await expect(headline).toContainText(/Your travel\s+companion\./i);
-  await expect(search).toBeVisible();
-  if (process.env.PLAYWRIGHT_EXPECT_ASK) {
-    await expect(page.getByLabel('What do you need help finding?')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Find the right help' })).toBeVisible();
-  } else {
-    await expect(page.getByLabel('Service category')).toBeVisible();
-    await expect(page.getByLabel('Town, suburb or postcode')).toBeVisible();
-  }
+  await expect(askVanAssist).toBeVisible();
+  await expect(page.getByLabel('What do you need help finding?')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Find the right help' })).toBeVisible();
+  await expect(structuredSearch).toBeAttached();
+  await expect(page.getByLabel('Service category')).toBeAttached();
+  await expect(page.getByLabel('Town, suburb or postcode')).toBeAttached();
   await expectElementStartsInViewport(headline, viewport.height);
-  await expectElementStartsInViewport(search, viewport.height);
+  await expectElementStartsInViewport(askVanAssist, viewport.height);
 
   const overflow = await page.evaluate(() => ({
     body: document.body.scrollWidth - window.innerWidth,
@@ -55,6 +54,10 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
   }));
   expect(overflow.body, 'body horizontal overflow in pixels').toBeLessThanOrEqual(1);
   expect(overflow.document, 'document horizontal overflow in pixels').toBeLessThanOrEqual(1);
+
+  const quickActions = page.getByRole('navigation', { name: 'Browse VanAssist directly' });
+  await expect(quickActions).toBeVisible();
+  await expect(quickActions.getByRole('link')).toHaveCount(4);
 
   if (isMobile) {
     const topGap = await page.evaluate(() => {
@@ -67,9 +70,7 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
     expect(topGap, 'mobile header-to-hero gap in pixels').toBeGreaterThanOrEqual(-1);
     expect(topGap, 'mobile header-to-hero gap in pixels').toBeLessThanOrEqual(64);
 
-    const primarySearchButton = process.env.PLAYWRIGHT_EXPECT_ASK
-      ? page.getByRole('button', { name: 'Find the right help' })
-      : page.getByRole('button', { name: 'Show nearby help' });
+    const primarySearchButton = page.getByRole('button', { name: 'Find the right help' });
     await expect(primarySearchButton).toBeVisible();
     const primarySearchBox = await primarySearchButton.evaluate((element) => {
       const rect = element.getBoundingClientRect();
@@ -81,7 +82,15 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
       primarySearchBox.bottom,
       'mobile primary submit is fully visible in the first viewport',
     ).toBeLessThanOrEqual(viewport.height);
-    await expect(page.getByRole('navigation', { name: 'Find VanAssist help' }).getByRole('link', { name: /Places to stay/i })).toBeVisible();
+
+    const askBox = await askVanAssist.boundingBox();
+    const quickActionsBox = await quickActions.boundingBox();
+    expect(askBox, 'Ask VanAssist has a rendered box').not.toBeNull();
+    expect(quickActionsBox, 'mobile quick actions have a rendered box').not.toBeNull();
+    expect(
+      quickActionsBox.y,
+      'direct quick actions follow Ask VanAssist on phone',
+    ).toBeGreaterThanOrEqual(askBox.y + askBox.height - 1);
   }
 
   const installButton = page.locator('[data-install-app]:visible').first();
@@ -97,6 +106,7 @@ test('VanAssist homepage keeps the core journey in the first viewport', async ({
     await page.screenshot({ path: screenshotPath });
   }
 
+  await installButton.scrollIntoViewIfNeeded();
   await installButton.click();
   await expect(page.getByRole('dialog', { name: /Save VanAssist to your phone/i })).toBeVisible();
 });
@@ -117,7 +127,12 @@ test('VanAssist manifest and service worker are reachable', async ({ page, reque
 
   const workerResponse = await request.get('/service-worker.js');
   expect(workerResponse.status()).toBe(200);
-  expect(workerResponse.headers()['content-type']).toContain('application/javascript');
-  expect(workerResponse.headers()['service-worker-allowed']).toBe('/');
+  expect(workerResponse.headers()['content-type']).toMatch(/^(application|text)\/javascript(?:;|$)/);
+  // A root-level worker has root scope without Service-Worker-Allowed.
+  const scope = await page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.register('/service-worker.js');
+    return registration.scope;
+  });
+  expect(scope).toBe(new URL('/', page.url()).href);
   expect(await workerResponse.text()).toContain("self.addEventListener('fetch'");
 });

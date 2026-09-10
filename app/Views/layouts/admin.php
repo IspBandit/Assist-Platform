@@ -42,20 +42,6 @@ if ($directory !== []) {
     $nav['Directory'] = $directory;
 }
 
-$polarisNav = [];
-if ($adminBrand->moduleEnabled('rv_catalogue') && $permitted('polaris.manage')) {
-    $polarisNav[] = ['Overview', '/admin/polaris'];
-    $polarisNav[] = ['Manufacturers', '/admin/polaris/manufacturers'];
-    $polarisNav[] = ['Models', '/admin/polaris/models'];
-    $polarisNav[] = ['Imports', '/admin/polaris/imports'];
-    $polarisNav[] = ['Review queue', '/admin/polaris/review-queue'];
-    $polarisNav[] = ['Recycle bin', '/admin/polaris/recycle-bin'];
-    $polarisNav[] = ['Settings', '/admin/polaris/settings'];
-}
-if ($polarisNav !== []) {
-    $nav['Polaris'] = $polarisNav;
-}
-
 $customerOperations = [];
 if ($adminBrand->moduleEnabled('requests') && $permitted('customers.manage')) {
     $customerOperations[] = ['Customers', '/admin/customers'];
@@ -71,6 +57,7 @@ if ($adminBrand->moduleEnabled('service_runs') && $permitted('runs.manage')) {
 }
 if ($adminBrand->moduleEnabled('parks') && $permitted('parks.manage')) {
     $customerOperations[] = ['Places to stay', '/admin/parks'];
+    $customerOperations[] = ['Facility contributions', '/admin/facility-contributions'];
     if ($platformAdmin && $adminBrand->id() === 'vanassist') {
         $customerOperations[] = ['Stay discovery review', '/admin/parks/import'];
     }
@@ -104,6 +91,9 @@ if ($permitted('data_intelligence.view')) {
 if ($permitted('demand.view')) {
     $insights[] = ['Website insights', '/admin/demand'];
     $insights[] = ['Knowledge gaps', '/admin/ai-search/gaps'];
+    if ($adminBrand->id() === 'vanassist') {
+        $insights[] = ['Growth & trust', '/admin/growth-trust'];
+    }
 }
 if ($insights !== []) {
     $nav['Insights'] = $insights;

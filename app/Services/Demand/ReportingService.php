@@ -69,34 +69,37 @@ final class ReportingService
     {
         [$start, $end] = self::bounds($from, $to);
         $brandId = current_brand()->databaseId();
+        $eligible = TrafficQuality::eligibleSessionSql('ts');
 
         $impressions = (int) Database::scalar(
             'SELECT COUNT(*) FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id '
-            . 'WHERE r.provider_id = ? AND s.brand_id = ? AND s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
+            . 'JOIN tracking_sessions ts ON ts.id=s.session_id '
+            . "WHERE r.provider_id = ? AND s.brand_id = ? AND s.is_excluded = 0 AND {$eligible} AND s.created_at BETWEEN ? AND ?",
             [$providerId, $brandId, $start, $end]
         );
         $uniqueImpressions = (int) Database::scalar(
             'SELECT COUNT(DISTINCT s.session_id) FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id '
-            . 'WHERE r.provider_id = ? AND s.brand_id = ? AND s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
+            . 'JOIN tracking_sessions ts ON ts.id=s.session_id '
+            . "WHERE r.provider_id = ? AND s.brand_id = ? AND s.is_excluded = 0 AND {$eligible} AND s.created_at BETWEEN ? AND ?",
             [$providerId, $brandId, $start, $end]
         );
 
         $profileViews = (int) Database::scalar(
-            "SELECT COUNT(*) FROM analytics_events WHERE event_name = 'provider_profile_viewed' "
-            . 'AND provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
+            "SELECT COUNT(*) FROM analytics_events ae JOIN tracking_sessions ts ON ts.id=ae.session_id WHERE ae.event_name = 'provider_profile_viewed' "
+            . "AND ae.provider_id = ? AND ae.brand_id = ? AND ae.is_excluded = 0 AND {$eligible} AND ae.created_at BETWEEN ? AND ?",
             [$providerId, $brandId, $start, $end]
         );
         $uniqueProfileViews = (int) Database::scalar(
-            "SELECT COUNT(DISTINCT session_id) FROM analytics_events WHERE event_name = 'provider_profile_viewed' "
-            . 'AND provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ?',
+            "SELECT COUNT(DISTINCT ae.session_id) FROM analytics_events ae JOIN tracking_sessions ts ON ts.id=ae.session_id WHERE ae.event_name = 'provider_profile_viewed' "
+            . "AND ae.provider_id = ? AND ae.brand_id = ? AND ae.is_excluded = 0 AND {$eligible} AND ae.created_at BETWEEN ? AND ?",
             [$providerId, $brandId, $start, $end]
         );
 
         $clicks = ['phone' => 0, 'email' => 0, 'website' => 0, 'directions' => 0, 'message' => 0,
             'assistance_request' => 0, 'quote_request' => 0, 'booking_request' => 0];
         foreach (Database::select(
-            'SELECT action_type, COUNT(*) c FROM provider_contact_actions '
-            . 'WHERE provider_id = ? AND brand_id = ? AND is_excluded = 0 AND created_at BETWEEN ? AND ? GROUP BY action_type',
+            'SELECT pca.action_type, COUNT(*) c FROM provider_contact_actions pca JOIN tracking_sessions ts ON ts.id=pca.session_id '
+            . "WHERE pca.provider_id = ? AND pca.brand_id = ? AND pca.is_excluded = 0 AND {$eligible} AND pca.created_at BETWEEN ? AND ? GROUP BY pca.action_type",
             [$providerId, $brandId, $start, $end]
         ) as $row) {
             $clicks[(string) $row['action_type']] = (int) $row['c'];
@@ -193,19 +196,20 @@ final class ReportingService
     public static function platformOverview(string $from, string $to): array
     {
         [$start, $end] = self::bounds($from, $to);
+        $eligible = TrafficQuality::eligibleSessionSql('ts');
 
         $needs = (int) Database::scalar(
             'SELECT COUNT(*) FROM service_requests WHERE is_demo = 0 AND is_spam = 0 AND deleted_at IS NULL AND created_at BETWEEN ? AND ?',
             [$start, $end]
         );
-        $searches = (int) Database::scalar('SELECT COUNT(*) FROM provider_searches WHERE is_excluded = 0 AND created_at BETWEEN ? AND ?', [$start, $end]);
-        $noResult = (int) Database::scalar('SELECT COUNT(*) FROM provider_searches WHERE is_excluded = 0 AND result_count = 0 AND created_at BETWEEN ? AND ?', [$start, $end]);
+        $searches = (int) Database::scalar("SELECT COUNT(*) FROM provider_searches s JOIN tracking_sessions ts ON ts.id=s.session_id WHERE s.is_excluded = 0 AND {$eligible} AND s.created_at BETWEEN ? AND ?", [$start, $end]);
+        $noResult = (int) Database::scalar("SELECT COUNT(*) FROM provider_searches s JOIN tracking_sessions ts ON ts.id=s.session_id WHERE s.is_excluded = 0 AND {$eligible} AND s.result_count = 0 AND s.created_at BETWEEN ? AND ?", [$start, $end]);
         $impressions = (int) Database::scalar(
-            'SELECT COUNT(*) FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id WHERE s.is_excluded = 0 AND s.created_at BETWEEN ? AND ?',
+            "SELECT COUNT(*) FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id JOIN tracking_sessions ts ON ts.id=s.session_id WHERE s.is_excluded = 0 AND {$eligible} AND s.created_at BETWEEN ? AND ?",
             [$start, $end]
         );
-        $profileViews = (int) Database::scalar("SELECT COUNT(*) FROM analytics_events WHERE event_name = 'provider_profile_viewed' AND is_excluded = 0 AND created_at BETWEEN ? AND ?", [$start, $end]);
-        $contacts = (int) Database::scalar('SELECT COUNT(*) FROM provider_contact_actions WHERE is_excluded = 0 AND created_at BETWEEN ? AND ?', [$start, $end]);
+        $profileViews = (int) Database::scalar("SELECT COUNT(*) FROM analytics_events ae JOIN tracking_sessions ts ON ts.id=ae.session_id WHERE ae.event_name = 'provider_profile_viewed' AND ae.is_excluded = 0 AND {$eligible} AND ae.created_at BETWEEN ? AND ?", [$start, $end]);
+        $contacts = (int) Database::scalar("SELECT COUNT(*) FROM provider_contact_actions pca JOIN tracking_sessions ts ON ts.id=pca.session_id WHERE pca.is_excluded = 0 AND {$eligible} AND pca.created_at BETWEEN ? AND ?", [$start, $end]);
 
         $o = Database::selectOne(
             'SELECT '
@@ -311,18 +315,20 @@ final class ReportingService
     public static function providerPerformance(string $from, string $to, int $limit = 100): array
     {
         [$start, $end] = self::bounds($from, $to);
+        $eligible = TrafficQuality::eligibleSessionSql('ts');
 
         $impressions = self::keyedCounts(
             'SELECT r.provider_id AS k, COUNT(*) AS c FROM provider_search_results r JOIN provider_searches s ON s.id = r.search_id '
-            . 'WHERE s.is_excluded = 0 AND s.created_at BETWEEN ? AND ? GROUP BY r.provider_id',
+            . 'JOIN tracking_sessions ts ON ts.id=s.session_id '
+            . "WHERE s.is_excluded = 0 AND {$eligible} AND s.created_at BETWEEN ? AND ? GROUP BY r.provider_id",
             [$start, $end]
         );
         $views = self::keyedCounts(
-            "SELECT provider_id AS k, COUNT(*) AS c FROM analytics_events WHERE event_name = 'provider_profile_viewed' AND is_excluded = 0 AND provider_id IS NOT NULL AND created_at BETWEEN ? AND ? GROUP BY provider_id",
+            "SELECT ae.provider_id AS k, COUNT(*) AS c FROM analytics_events ae JOIN tracking_sessions ts ON ts.id=ae.session_id WHERE ae.event_name = 'provider_profile_viewed' AND ae.is_excluded = 0 AND {$eligible} AND ae.provider_id IS NOT NULL AND ae.created_at BETWEEN ? AND ? GROUP BY ae.provider_id",
             [$start, $end]
         );
         $contacts = self::keyedCounts(
-            'SELECT provider_id AS k, COUNT(*) AS c FROM provider_contact_actions WHERE is_excluded = 0 AND created_at BETWEEN ? AND ? GROUP BY provider_id',
+            "SELECT pca.provider_id AS k, COUNT(*) AS c FROM provider_contact_actions pca JOIN tracking_sessions ts ON ts.id=pca.session_id WHERE pca.is_excluded = 0 AND {$eligible} AND pca.created_at BETWEEN ? AND ? GROUP BY pca.provider_id",
             [$start, $end]
         );
 
@@ -375,11 +381,12 @@ final class ReportingService
     public static function coverageGaps(string $from, string $to): array
     {
         [$start, $end] = self::bounds($from, $to);
+        $eligible = TrafficQuality::eligibleSessionSql('ts');
 
         $zeroResult = Database::select(
             'SELECT COALESCE(t.name, "—") AS town, COALESCE(c.name, "Any") AS category, COUNT(*) AS c '
-            . 'FROM provider_searches s LEFT JOIN towns t ON t.id = s.town_id LEFT JOIN service_categories c ON c.id = s.category_id '
-            . 'WHERE s.is_excluded = 0 AND s.result_count = 0 AND s.created_at BETWEEN ? AND ? '
+            . 'FROM provider_searches s JOIN tracking_sessions ts ON ts.id=s.session_id LEFT JOIN towns t ON t.id = s.town_id LEFT JOIN service_categories c ON c.id = s.category_id '
+            . "WHERE s.is_excluded = 0 AND {$eligible} AND s.result_count = 0 AND s.created_at BETWEEN ? AND ? "
             . 'GROUP BY s.town_id, s.category_id ORDER BY c DESC LIMIT 50',
             [$start, $end]
         );

@@ -90,12 +90,14 @@ final class AdminApiFacilityService
             throw new AdminApiException(404, 'not_found', 'Facility not found.');
         }
 
+        $brandId = AdminApiBrandScope::brandId();
         $row = Database::selectOne(
             'SELECT tf.*, s.abbreviation AS state_abbr, s.name AS state_name '
             . 'FROM traveller_facilities tf '
             . 'LEFT JOIN states s ON s.id = tf.state_id '
-            . 'WHERE tf.id = ? AND tf.deleted_at IS NULL',
-            [$id]
+            . 'WHERE tf.id = ? AND tf.deleted_at IS NULL '
+            . 'AND (tf.brand_id = ? OR tf.brand_id IS NULL)',
+            [$id, $brandId]
         );
 
         if ($row === null) {

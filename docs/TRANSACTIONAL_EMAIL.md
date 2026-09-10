@@ -4,6 +4,12 @@ The queue supports SMTP and Microsoft 365 Graph transports. Production launch
 uses `MAIL_DRIVER=graph` after the Microsoft Entra application, Exchange
 Application RBAC mailbox scope and certificate credential have been configured.
 
+The VanAssist daily website performance summary is an internal transactional
+report sent to `support@vanassist.com.au`. It uses the same queue, immutable
+VanAssist `brand_id` and Graph transport as other platform mail. Its
+date-specific template key prevents duplicate queueing; it does not call PHP
+`mail()` or introduce a separate mailing path.
+
 Required production settings:
 
 - `MICROSOFT_GRAPH_TENANT_ID`

@@ -7,6 +7,8 @@ namespace App\Services;
 use App\Core\Database;
 use App\Core\Request;
 use App\Core\Response;
+use App\Services\Demand\PublicPageViewPolicy;
+use App\Services\Demand\TrafficQuality;
 use App\Services\Demand\TrackingSession;
 use Throwable;
 
@@ -17,8 +19,6 @@ use Throwable;
  */
 final class Analytics
 {
-    private const SKIP_PREFIXES = ['/admin', '/install', '/account', '/provider', '/park', '/billing', '/assets', '/uploads'];
-
     public static function record(Request $request, Response $response): void
     {
         try {
@@ -28,7 +28,7 @@ final class Analytics
             if ((string) Settings::get('analytics_enabled', '0') !== '1') {
                 return;
             }
-            if (TrackingSession::isBot()) {
+            if (TrafficQuality::excludesCurrentRequest()) {
                 return;
             }
             if (auth()->check() && auth()->hasAnyRole('super-administrator', 'administrator', 'platform-administrator', 'brand-administrator', 'moderator', 'marketing', 'support')) {
@@ -36,12 +36,12 @@ final class Analytics
             }
 
             $path = '/' . ltrim($request->path(), '/');
-            foreach (self::SKIP_PREFIXES as $prefix) {
-                if ($path === $prefix || str_starts_with($path, $prefix . '/')) {
-                    return;
-                }
+            if (!PublicPageViewPolicy::includes($path)) {
+                return;
             }
-            if (in_array($path, ['/sitemap.xml', '/robots.txt', '/favicon.ico'], true)) {
+
+            $sessionId = TrackingSession::id();
+            if ($sessionId === null) {
                 return;
             }
 
@@ -49,7 +49,7 @@ final class Analytics
             Database::query(
                 'INSERT INTO page_views (brand_id, session_id, user_id, route, event_type, referrer_source, device_type, created_at) '
                 . 'VALUES (?, ?, ?, ?, ?, ?, ?, NOW())',
-                [current_brand()->databaseId(), TrackingSession::id(), $user !== null ? (int) $user['id'] : null,
+                [current_brand()->databaseId(), $sessionId, $user !== null ? (int) $user['id'] : null,
                     substr($path, 0, 190), 'view', self::referrerSource(), TrackingSession::deviceType()]
             );
         } catch (Throwable) {

@@ -30,6 +30,9 @@ final class SearchResponse
         public readonly array $externals = [],
         public readonly array $facilities = [],
         public readonly ?int $knowledgeGapId = null,
+        public readonly bool $hasMore = false,
+        public readonly int $resultLimit = 20,
+        public readonly int $totalCandidates = 0,
     ) {
     }
 

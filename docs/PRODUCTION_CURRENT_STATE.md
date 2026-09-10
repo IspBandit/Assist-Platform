@@ -1,14 +1,44 @@
 # Production current state
 
-Last read-only verification: 9 September 2026 (Australia/Brisbane).
+## Evidence reconciliation: 7 September 2026
 
-## 9 September 2026 read-only observation
+GitHub Actions production release run `34077589608` proves that release
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843` was deployed successfully on
+7 September 2026. This supersedes the earlier `4d5a4c957...` application
+baseline and incorporates the completed three-brand UX and operational fixes.
+
+The exact `74b1811...` release passed reusable validation, built an immutable
+archive, passed SHA-256 verification, created and verified the production
+database backup, rebuilt healthy application containers, confirmed that no
+migrations remained, provisioned Google Routes and passed protected public smoke
+checks across VanAssist, TowSmart and TrailerWise.
+
+The release workflow exercised `/healthz` and `/readyz` on all three public
+brands. At `2026-09-07T03:04Z`, the evidence reconciliation received HTTP 200 readiness
+responses from VanAssist, TowSmart and TrailerWise, each reporting release
+`74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`.
+
+A checksum-verified isolated database restore also passed with 232 tables in
+44 seconds. Independent off-site backup configuration remains absent and is a
+customer/buyer post-transfer responsibility rather than an included service; the last
+sale review recorded no enabled MFA enrolments and public-key root SSH access.
+Those remain sale-readiness items rather than reasons to misstate the successful
+application deployment.
+
+See `acquisition/SALE_REVIEW_2026-09-06.md`,
+`acquisition/EVIDENCE_REGISTER.md` and GitHub Actions run `34077589608` for the
+underlying evidence.
+
+## 9 September 2026 read-only observation (pre-flagship candidate)
+
+Last read-only verification: 9 September 2026 (Australia/Brisbane).
 
 - All three home, health, readiness, robots and sitemap endpoints returned 200.
 - `/readyz` reported release
   `88defe040f664d9430471f5a84db3c31e6e9fd29`.
 - VanAssist currently renders the Ask form and deterministic facility results,
-  but category/town search remains the first form in the homepage markup.
+  but category/town search remains the first form in the homepage markup on the
+  observed live release. The flagship candidate promotes Ask first.
 - TowSmart and TrailerWise incorrectly returned 200 for direct
   `/request-assistance` and `/service-runs` requests despite those modules being
   disabled. The current release candidate adds server-side module denial; that
@@ -18,97 +48,156 @@ Last read-only verification: 9 September 2026 (Australia/Brisbane).
 
 The July record below remains historical evidence for its then-current release.
 
-Last full operational verification: 24 July 2026 (Australia/Brisbane).
-
 ## Deployment
 
 - Host: BinaryLane Ubuntu 24.04 VPS in Brisbane.
-- Public domains: `vanassist.com.au`, `towsmart.com.au`, `trailerwise.com.au`
-  with matching `www` hosts through Cloudflare.
+- Public acquisition-scope domains: `vanassist.com.au`, `towsmart.com.au`,
+  `trailerwise.com.au`, with matching `www` hosts through Cloudflare.
 - Runtime: Docker Compose, PHP 8.3-FPM, MariaDB 11.4 and Caddy 2.
-- Production code commit: `14f818c082fcde30c7a823ba3f116cd9d97650a0`.
-- Release directory: `/opt/assist-platform/releases/14f818c082fcde30c7a823ba3f116cd9d97650a0`.
-- The deployed Social Studio service file was verified against the GitHub copy
-  with SHA-256 `9754dbaf184f256e36f2d139e4f61bef27e751f4e918509fc5740d6c32fd14d1`.
-- All migrations through `045_membership_entitlements.sql` are applied; the
-  installer remains locked.
+- Current verified Assist application release:
+  `74b18116f19f0a5ba1b8a651cdf9cf4ad4b74843`.
+- Production release workflow: GitHub Actions run `34077589608`, successful.
+- The release reported `Nothing to migrate. Database is up to date.`
+- The installer remains locked.
 
 Do not put server passwords, application keys, database credentials or SMTP
 credentials in this file or Git.
 
-## Verified live controls
+## Active saleable brands
 
-- All three `/healthz` and `/readyz` endpoints returned 200.
-- All three `/readyz` endpoints reported release
-  `14f818c082fcde30c7a823ba3f116cd9d97650a0` after protected production
-  workflow run `30064747345` completed successfully.
-- Production deployment uses the restricted `assistdeploy` SSH account,
-  pinned host keys and a root-owned release command. Remote root login and
-  password authentication are disabled.
+The active product and acquisition boundary is exactly:
+
+1. VanAssist
+2. TowSmart
+3. TrailerWise
+
+LocalTorque and Polaris are retired/excluded. Historical database rows,
+migrations, ADRs and audit material may remain for upgrade and due-diligence
+integrity. They are not active sale brands and must not be re-enabled by future
+configuration or deployment work.
+
+## Verified release and live controls
+
+The successful `74b1811...` production release provides the following current
+evidence:
+
+- Reusable validation passed service-worker form-preservation regression,
+  Composer validation, PHP syntax, PHPStan/static analysis, unit tests, fresh
+  migrations, seeds, provider-pack validation, database integration tests,
+  dependency audit and production dependency build.
+- The immutable release archive passed checksum verification before installation.
+- The release created and verified production backup
+  `backups/database/assist-20260906T214622.sql.gz` before switching releases.
+- MariaDB and application containers returned healthy and Caddy restarted.
+- Google Routes credentials were tested against the route-matrix API, provisioned
+  to production and the protected release endpoint reported configured.
+- Protected smoke checks passed for VanAssist home, providers, request assistance,
+  nearest-location, login, registration and password-reset routes.
+- Protected smoke checks passed for TowSmart home, health/readiness, calculator,
+  providers, services, Ask and rules routes.
+- Protected smoke checks passed for TrailerWise home, health/readiness, providers,
+  services, Ask, marketplace and rules routes.
+- VanAssist Ask returned Griffiths Creek dump-point evidence for the designated
+  test query.
+- VanAssist Ask returned road/straight-line distance output for an auto-electrician
+  query near Karratha.
+- Direct provider-name Ask search returned Battery World Greenslopes.
+- TowSmart Ask routed public-weighing near Toowoomba and rejected a literal
+  interpretation of `near me` without device location.
+- TrailerWise Ask routed a bearings query near Bendigo to the tyre/wheel/bearing
+  service category.
+- Brand assets were verified for TowSmart and TrailerWise and public pages did not
+  expose the retired platform symbol checked by the release workflow.
+- The Ask question library contained at least 1,000 active questions during the
+  protected release check; the deployment log recorded 1,550 active catalogue
+  entries applied.
+- The provider-pack release processing completed 9,730 source records and the
+  data audit reported no provider-brand duplicates or orphan provider services.
+
+Earlier verified controls also remain part of the evidence set unless superseded:
+
+- Admin API responds on production and validates configured authentication.
 - `/install` returned 403.
 - UFW, Fail2ban, unattended upgrades and a five-minute container health monitor
-  were active.
-- Scheduled application jobs were installed and manual notification, cleanup and
-  database-backup runs succeeded after writable lock storage was corrected.
-- Brand-specific canonical URLs, robots and sitemaps were verified.
-- VanAssist, TowSmart and TrailerWise homepages, contact pages, provider
-  directories and mobile hero artwork returned 200. TowSmart's calculator and
-  TrailerWise's secondary marketplace also returned 200.
-- TowSmart contains 199 tow-vehicle reference records and 3,769 caravan,
-  camper, hybrid and trailer records. Its current-vehicle pass now includes
-  separate 2025/2026 Prado 250 grades, Kia Tasman, BYD Shark 6, JAC T9,
-  LDV Terron 9, GWM Cannon Alpha and all 20 current Mazda BT-50
-  configurations with source metadata on new data.
-- The calculator clears every mapped field before applying a selected catalogue
-  record, preventing an unavailable value from being inherited from the
-  previously selected vehicle.
-- Public support addresses resolve to `support@vanassist.com.au`,
-  `support@towsmart.com.au` and `support@trailerwise.com.au` respectively.
-- Production contains 7,304 providers, 20,272 brand listings and 54,133
-  brand-category assignments. Imported evidence remains
-  explicitly unverified until a business is verified.
-- LocalTorque is installed as a private fourth brand with 40 data-driven automotive categories, 6,760 relevant brand listings and 26,677 category assignments. Its private homepage, directory, category, sitemap and robots responses passed direct application checks. It has no public production domain and is not publicly launched.
-- VanAssist contains 8,457 community-sourced Australian stay listings across all
-  states and territories: caravan parks, campgrounds and 853 identified free
-  stays. Council/authority and operator verification use distinct evidence-based
-  labels. Town/GPS search and operator claims are live.
-- Social Studio contains 33 reviewable/downloadable draft assets for each brand
-  (99 total), covering Instagram and Facebook posts, stories, profiles and
-  covers across five campaign intentions. The latest nine launch assets use the
-  corrected responsive wide-cover layout and have been visually reviewed.
-- A post-import database backup from 23 July was downloaded off-server, passed
-  SHA-256 verification and restored into an isolated MariaDB database with 136
-  tables, 7,304 providers, 8,457 stays and 17,615 towns. The test database was
-  removed after validation.
-- A super-administrator login reached `/admin` successfully.
-- GitHub CI passed for the production commit.
-- A rendered acceptance pass covered 72 public pages and 70 authenticated
-  provider pages across desktop and mobile viewports with no HTTP failures,
-  broken images, horizontal overflow, browser errors or cross-brand email
-  mismatches. See `RENDERED_ACCEPTANCE_2026-07-22.md`.
+  were active at the production review.
+- Brand-specific canonical URLs, robots and sitemaps were verified for VanAssist,
+  TowSmart and TrailerWise.
+- A super-administrator login reached `/admin` successfully in prior acceptance.
+- Microsoft Graph sender health was healthy and all three application-path brand
+  mailbox probes were sent successfully. Application-side sending is proven;
+  recipient mailbox receipt remains a separate acceptance item.
 
-## Current launch posture
+## Current data observations
 
-The environment is viewable in `provider-onboarding` mode. Search indexing is
-disabled. This is not the same as full commercial/public launch approval.
+The production data audit retained for the sale package recorded:
 
-Before full indexed launch:
+- 17,615 towns, with 110 missing postcode/coordinates;
+- 11,876 active providers;
+- 3,528 unclaimed providers missing source metadata;
+- 290 providers missing a brand listing;
+- 59 duplicate-name/town provider candidates;
+- 10,224 active VanAssist stay/park records with no missing source field in that
+  audit and 288 duplicate-name/state candidates;
+- 199 TowSmart vehicle references, 163 with missing source URL;
+- 3,769 TowSmart towable references, all with missing source URL in that audit,
+  plus 5 invalid-weight and 86 duplicate-identity candidates;
+- VanAssist provider-pack source records: 9,989 total, 7,579 public and 2,410 held
+  for review, with no required-source-licence omissions reported for that pack and
+  no review rows publicly visible.
 
-1. Correct Microsoft Graph brand attribution so recipients see the appropriate
-   VanAssist, TowSmart or TrailerWise support address rather than the shared
-   operations mailbox; then repeat external delivery acceptance.
-2. Supply an independent automated S3-compatible repository (for example
-   Cloudflare R2) and credentials. A manual off-server restore drill has passed;
-   scheduled off-site replication is not active without these credentials.
-3. Rotate previously exposed temporary server and application administrator
-   passwords through their owner-controlled consoles.
-4. Complete owner acceptance of content, providers and critical journeys.
+These are engineering/data-audit counts, not claims that every underlying record
+has commercially transferable rights. The acquisition provenance register remains
+authoritative for unresolved licensing and transfer decisions.
 
-## Known product limitations
+## Recovery evidence
 
-See `PRODUCT_AND_FEATURES.md`. TowSmart remains an MVP whose calculations are
-general guidance, and provider records still require progressive owner/business
-verification. TrailerWise is now service-first; trailer sales remain a clearly
-secondary module. Never infer commercial launch completion from an HTTP 200
-response.
+- A deployment database backup was created and checksum-verified during the
+  successful `74b1811...` production release.
+- A separate isolated restore rehearsal restored 232 tables in 44 seconds.
+- This proves database recoverability, not complete off-site disaster recovery.
 
+Recovery position for sale-readiness:
+
+1. disclose that no independent off-site destination is included or configured;
+2. require the customer/buyer to supply and configure its own encrypted off-site
+   destination, credentials, retention policy and alert recipient after transfer;
+3. restore matching application, database, public/private media and protected
+   configuration into an isolated clean environment;
+4. verify critical logins and three-brand journeys after that restore; and
+5. rehearse immutable rollback with before/after release identities and health
+   checks.
+
+## Current sale-readiness posture
+
+The platform is production-backed and in a **sale-readiness release cycle**. Do
+not describe it as fully sale-ready until `docs/SALE_READINESS.md` is satisfied or
+remaining exceptions are explicitly disclosed and accepted for the transaction.
+
+The application deployment itself is no longer an open blocker. The principal
+remaining gates are:
+
+1. authenticated provider/admin and TowSmart saved-combination acceptance;
+2. transferable full restore and rollback rehearsal, plus buyer acceptance of
+   responsibility for configuring independent off-site backups;
+3. external monitoring and scheduled-task failure alert evidence;
+4. MFA enrolment, credential rotation and privileged-access review;
+5. dataset/IP provenance and commercial-transfer decisions;
+6. invoice-backed operating costs and account/domain transfer records;
+7. privacy retention/export/deletion/subprocessor approval;
+8. Assist RIC inclusion/licensing decision;
+9. buyer-style clean-host transfer rehearsal; and
+10. final immutable sale-candidate tag/checksum bound to the completed quality
+    gate evidence.
+
+## Known product limitations requiring disclosure or close-out
+
+- TowSmart calculations are general guidance, not certification or legal advice.
+- Provider records require progressive owner/business verification.
+- TrailerWise is service-first; trailer sales remain a secondary module.
+- Formal independent off-site backup/full restore evidence is not yet complete.
+- Production charging must not be claimed unless enabled and evidenced; billing
+  activation is not required to sell the current software/data asset.
+- Accessibility/compliance claims must match current evidence rather than roadmap
+  intent.
+- Data counts do not imply unrestricted commercial transfer rights; unresolved
+  sources must be reconciled, quarantined or excluded.

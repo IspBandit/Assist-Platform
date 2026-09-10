@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="CQDiggings investigation of tenure-screened gold prospecting targets across Clermont's twelve general permission areas, with evidence, exclusions, drainage and field reasoning." />
+    <title>Where can you legally look for gold near Clermont? | CQDiggings</title>
+    <link rel="canonical" href="https://cqdiggings.com.au/clermont-gold-investigation.html" />
+    <link rel="stylesheet" href="assets/vendor/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="styles.css?v=20260825dense2" />
+    <link rel="stylesheet" href="brand.css" />
+    <link rel="stylesheet" href="mobile.css" />
+    <link rel="stylesheet" href="clermont-gold-investigation.css?v=20260826b" />
+    <link rel="icon" href="assets/cqdiggings-favicon.png" />
+    <link rel="manifest" href="manifest.webmanifest?v=20260825home" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html"><img class="brandmark brand-logo" src="assets/cqdiggings-logo.png" alt="" /><span>CQDiggings<small>Clermont legal-ground investigation</small></span></a>
+      <nav data-research-nav></nav>
+    </header>
+    <main>
+      <section class="page-intro investigation-hero">
+        <p class="eyebrow dark">Completed field investigation</p>
+        <h1>Where could a prospector legally look for gold near Clermont?</h1>
+        <p class="lede">We started with twelve General Permission Areas, then removed current mining claims, leases and applications, tested what remained against geology, old workings, reported gold, older wash and drainage. The result is a map of ground worth checking, plus the ground that should stay firmly on the other side of the line.</p>
+        <div class="actions">
+          <a class="button primary" href="#investigation-map">Open the target map</a>
+          <a class="button ghost" href="map.html?commodity=Gold&amp;lat=-22.75&amp;lng=147.56&amp;z=11">Open Research Map</a>
+          <a class="button ghost" href="old-diggings-map.html?region=clermont-blair-athol&amp;lat=-22.75&amp;lng=147.56&amp;z=11">Open Field Map</a>
+        </div>
+        <div class="investigation-warning"><strong>This is not a permission slip.</strong> A fossicking licence, the current GPA conditions, same-day tenure checks, signs, gates and closures still apply. Gold, regrettably, has declined to complete the paperwork.</div>
+      </section>
+
+      <nav class="investigation-nav" aria-label="On this page">
+        <a href="#answer">The answer</a><a href="#method">How we tested it</a><a href="#investigation-map">Map</a><a href="#ranked-ground">Ranked ground</a><a href="#field-use">Field use</a><a href="#records">Records and sources</a>
+      </nav>
+
+      <section class="section" id="answer">
+        <div class="section-head"><div><p class="eyebrow dark">Short answer</p><h2>Yes, there is prospectable ground. No, the whole GPA is not necessarily it.</h2></div></div>
+        <div class="fact-strip">
+          <article><strong>12</strong><span>Clermont GPAs checked</span></article>
+          <article><strong>24</strong><span>target and exclusion polygons</span></article>
+          <article><strong>15</strong><span>ranked prospecting sectors</span></article>
+          <article><strong>20</strong><span>research passes completed</span></article>
+        </div>
+        <p>The strongest currently mapped shallow lead is the Birimgan East sector around a government-recorded alluvial gold mine and recent workings. Brigalow is next because field site 13803 explicitly records alluvial gold in a creek exposure. Black Ridge follows because a small open pocket sits nearest the proven Permian conglomerate system.</p>
+        <p>McDonald Flat remains useful, but only in fragments. Three current gold lease applications occupy most of its GPA. The two old-mine observations are inside that excluded ground, so the public layer shows only alluvial remnants outside the applications, with an additional 50 metre research setback.</p>
+      </section>
+
+      <section class="section method-section" id="method">
+        <div class="section-head"><div><p class="eyebrow dark">Investigation process</p><h2>How a broad gold story became a field map.</h2></div><p>Each stage could reject, downgrade or narrow a target. A promising name was not enough.</p></div>
+        <div class="method-flow" role="list">
+          <article role="listitem"><span>1</span><h3>Start with evidence</h3><p>Historical production, Queensland field sites, old workings, geological reports and official GPA maps.</p></article>
+          <article role="listitem"><span>2</span><h3>Rebuild the legal footprint</h3><p>Intersect the official GPA with current ML and MC applications and grants. Excluded means excluded.</p></article>
+          <article role="listitem"><span>3</span><h3>Test the gold model</h3><p>Young alluvium, high-level wash, basal Permian conglomerate, metamorphic contacts, faults and recorded quartz gravel.</p></article>
+          <article role="listitem"><span>4</span><h3>Check drainage</h3><p>Use named creeks and gullies to understand transport and reworking. A creek is not a conveyor belt with a delivery docket.</p></article>
+          <article role="listitem"><span>5</span><h3>Publish only the surviving polygon</h3><p>Targets, exclusions and drainage remain separate. Rectangular search boxes never become access boundaries.</p></article>
+        </div>
+      </section>
+
+      <section class="map-section" id="investigation-map">
+        <div class="map-copy">
+          <p class="eyebrow dark">Interactive investigation map</p>
+          <h2>Potentially accessible gold ground, with the awkward bits left in.</h2>
+          <p>Gold and orange polygons are evidence-ranked targets. Purple polygons are current tenure exclusions. Blue lines are official watercourses within one kilometre of a target. White-centred dots are desktop field-validation points, not tiny invitations to abandon judgement.</p>
+          <div class="map-controls" role="group" aria-label="Map layers">
+            <label><input id="showTargets" type="checkbox" checked /> Prospectivity targets</label>
+            <label><input id="showExclusions" type="checkbox" checked /> Current tenure exclusions</label>
+            <label><input id="showDrainage" type="checkbox" checked /> Drainage context</label>
+            <label><input id="showValidation" type="checkbox" checked /> Validation points</label>
+            <label><input id="showSatellite" type="checkbox" /> Satellite background</label>
+          </div>
+          <div class="map-legend"><span class="target-key"></span>Target <span class="exclusion-key"></span>Excluded tenure <span class="drainage-key"></span>Watercourse <span class="validation-key"></span>Validation point</div>
+          <p class="small-note">Tap a polygon for its evidence, confidence, area, nearby named drainage and legal warning.</p>
+        </div>
+        <div id="clermontInvestigationMap" aria-label="Interactive map of Clermont prospectivity targets and current tenure exclusions"></div>
+      </section>
+
+      <section class="section" id="ranked-ground">
+        <div class="section-head"><div><p class="eyebrow dark">Field priority</p><h2>The ground that survived the process.</h2></div><p>Ranked by direct gold evidence, target geometry and access confidence. Not by how exciting the name sounds after two beers.</p></div>
+        <div class="priority-table-wrap"><table class="priority-table"><thead><tr><th>Rank</th><th>Sector</th><th>Why it remains</th><th>Field caution</th></tr></thead><tbody>
+          <tr><td>1</td><td>Birimgan East recorded alluvial-mine sector</td><td>Government-recorded alluvial gold mine and recent workings inside open GPA ground.</td><td>Stay inside the clipped polygon and recheck surrounding applications.</td></tr>
+          <tr><td>2</td><td>Brigalow field-site 13803 sector</td><td>The government abstract explicitly records alluvial gold beside Brigalow Creek.</td><td>Target shallow permitted margins, not the creek gully.</td></tr>
+          <tr><td>3</td><td>Black Ridge contact pocket</td><td>Closest open ground to the historically productive Permian conglomerate system.</td><td>The productive conglomerate itself is largely lease covered.</td></tr>
+          <tr><td>4</td><td>Birimgan West fault-contact target</td><td>Permian cover, metamorphic basement and mapped structure coincide near Leahy Creek.</td><td>Geological target, not a recorded modern recovery.</td></tr>
+          <tr><td>5</td><td>Birimgan East fault-contact target</td><td>Mapped contact and structure, supported by a conglomerate-over-phyllite costean.</td><td>Keep clear of the many internal tenure exclusions.</td></tr>
+          <tr><td>6</td><td>McDonald Flat high-level alluvium</td><td>Documented historical and late twentieth-century alluvial production, with suitable older wash.</td><td>Most of the GPA is application ground. Use the conservative clipped fragments only.</td></tr>
+          <tr><td>7</td><td>Town Reserve worked quartz gravel</td><td>Official worked areas, numerous pits, quartz gravel and pebble conglomerate.</td><td>Urban infrastructure and the caravan park are not prospecting accessories.</td></tr>
+          <tr><td>8</td><td>Bathampton young alluvium</td><td>Historical output and documented alluvial mining during the 1980s and early 1990s.</td><td>Historic deep ground was wet and silting. This is a shallow-margin target.</td></tr>
+          <tr><td>9</td><td>McDonald Flat young alluvium</td><td>Open reworked alluvium within a proven gold locality.</td><td>No digging in active gullies or stream-bank toes.</td></tr>
+          <tr><td>10</td><td>Four Mile East Hurley margins</td><td>Strong correlation with Hurley's Four-mile Rush and a historically payable deep lead.</td><td>The old lead was deep. Search erosional windows and shallow dispersion, not imaginary shafts.</td></tr>
+          <tr><td>11</td><td>McMasters northern older wash</td><td>Mapped high-level wash plus observed gravel and several types of conglomerate.</td><td>No direct gold occurrence was recorded at those observations.</td></tr>
+          <tr><td>12</td><td>Museum Reserve quartz-gravel sectors</td><td>Observed quartz gravel over phyllite within mapped high-level alluvium.</td><td>Respect the museum, roads, facilities and signed access.</td></tr>
+          <tr><td>13</td><td>Flat Diggings Permian margin</td><td>Correct basin-margin geology and a small high-level-wash remnant.</td><td>No direct gold observation yet.</td></tr>
+          <tr><td>14</td><td>Four Mile West high-level wash</td><td>Older dissected wash near Rolf Creek and Wait-A-While.</td><td>Appropriate geology, but recovery evidence is missing.</td></tr>
+          <tr><td>15</td><td>Bathampton Suttor remnants</td><td>Possible older fluvial sandstone and conglomeratic cover.</td><td>Lowest-confidence retained target.</td></tr>
+        </tbody></table></div>
+      </section>
+
+      <section class="section field-section" id="field-use">
+        <div class="section-head"><div><p class="eyebrow dark">Using it in the field</p><h2>The six checks before the detector leaves the vehicle.</h2></div></div>
+        <ol class="field-checks">
+          <li><strong>Licence:</strong> carry a current Queensland fossicking licence.</li>
+          <li><strong>Tenure:</strong> check the exact point in GeoResGlobe on the day.</li>
+          <li><strong>Boundary:</strong> confirm you are inside the official GPA and inside the target polygon.</li>
+          <li><strong>Ground:</strong> stay out of claims, leases, applications, signed exclusions and closed tracks.</li>
+          <li><strong>Infrastructure:</strong> keep clear of buildings, roads, utilities, water facilities, gates and stock infrastructure.</li>
+          <li><strong>Method:</strong> use permitted hand tools and detectors, refill holes, and do not excavate gullies or stream-bank toes.</li>
+        </ol>
+        <div class="investigation-warning"><strong>The coloured polygon is a research conclusion, not a survey peg.</strong> GPS error, data currency and on-ground signs can all matter. When the map and the sign disagree, the sign wins and the detector gets a short rest.</div>
+      </section>
+
+      <section class="section" id="records">
+        <div class="section-head"><div><p class="eyebrow dark">Reasoning and records</p><h2>What the conclusions are built from.</h2></div></div>
+        <div class="records source-grid">
+          <article class="record"><h3>Complete investigation dossier</h3><p>The full twenty-pass working record, including rejected leads, corrections, historical grades, legal screening, geological reasoning and the evidence that did not survive into a target polygon.</p><a href="research/queensland-high-grade-gold-investigation.md" target="_blank">Read or download the complete dossier</a></article>
+          <article class="record"><h3>Queensland gold occurrence register</h3><p>8,666 Queensland Government gold records with names, coordinates, location accuracy, record type, locality and permanent source links. A mine dot is evidence of a record, not evidence that the gate is open.</p><a href="data/queensland-gold-occurrences.json" target="_blank">Open the complete occurrence register</a></article>
+          <article class="record"><h3>Historical gold evidence layers</h3><p>757 historical source points and 433 alluvial-evidence features, retaining provenance, spatial precision, confidence and explicit limitations.</p><a href="data/historical-research/gold/historical-gold-sources.geojson" target="_blank">Open source points</a> · <a href="data/historical-research/gold/historical-alluvial-evidence.geojson" target="_blank">Open alluvial evidence</a></article>
+          <article class="record"><h3>Production, assays and report matches</h3><p>193 Central Queensland production and assay records, plus 41 occurrence-to-report matches. The report matches remain machine-assisted leads until a human checks the original report, because computers also enjoy an occasional confident guess.</p><a href="data/production-assay-register.json" target="_blank">Open production register</a> · <a href="data/occurrence-report-matches.json" target="_blank">Open report matches</a></article>
+          <article class="record"><h3>Research data catalogue</h3><p>The platform catalogue records 26 research passes and the supporting layers used across CQDiggings, including material broader than the Clermont field decision.</p><a href="data/historical-research/research-data-catalog.json" target="_blank">Open the research catalogue</a></article>
+          <article class="record"><h3>Current access geometry</h3><p>Queensland General Permission Area boundaries plus live mining claim and mining lease application and grant layers.</p><a href="https://georesglobe.information.qld.gov.au/" target="_blank" rel="noopener">Open GeoResGlobe</a></article>
+          <article class="record"><h3>Detailed geology</h3><p>Queensland 1:25,000 surface geology, faults, lineaments and field-site observations.</p><a href="https://spatial-gis.information.qld.gov.au/arcgis/rest/services/GeoscientificInformation/GeologyDetailed/MapServer" target="_blank" rel="noopener">Open the geology service</a></article>
+          <article class="record"><h3>Drainage</h3><p>Queensland watercourse lines, clipped to one kilometre around the retained targets.</p><a href="https://spatial-gis.information.qld.gov.au/arcgis/rest/services/InlandWaters/WaterCoursesAndBodies/MapServer/33" target="_blank" rel="noopener">Open the watercourse layer</a></article>
+          <article class="record"><h3>Historical production</h3><p>Trove mining reports, warden returns, Queensland field summaries and historical Clermont geological accounts.</p><a href="https://trove.nla.gov.au/" target="_blank" rel="noopener">Search Trove</a></article>
+          <article class="record"><h3>Official Clermont conditions</h3><p>Current government maps, licence requirements and special conditions for the Clermont GPAs.</p><a href="https://www.qld.gov.au/recreation/activities/areas-facilities/fossicking/fossicking-areas-in-queensland/central-gold" target="_blank" rel="noopener">Open official Clermont guidance</a></article>
+          <article class="record"><h3>Machine-readable layer</h3><p>The exact target and exclusion polygons used by this page and both CQDiggings maps.</p><a href="data/clermont-legal-gold-prospectivity.geojson" download>Download GeoJSON</a></article>
+          <article class="record"><h3>Field-validation points</h3><p>Fifteen desktop test locations with field tasks, approximate edge clearance and legal stop conditions.</p><a href="data/clermont-field-validation-points.geojson" download>Download validation GeoJSON</a></article>
+        </div>
+      </section>
+
+      <section class="legal"><div><p class="eyebrow">Final word</p><h2>Potentially legal. Geologically plausible. Still not guaranteed.</h2></div><div class="legal-copy"><p>The layer identifies ground that passed this investigation's evidence and tenure screens at the stated extraction date. It does not promise access, gold or a peaceful relationship with every rock in Clermont.</p><a class="button primary" href="access.html">Run the access workflow</a></div></section>
+    </main>
+    <script src="assets/vendor/leaflet/leaflet.js"></script>
+    <script src="clermont-gold-investigation.js?v=20260826b"></script>
+    <script src="site-nav.js?v=20260825ux3"></script>
+    <script defer src="analytics.js?v=20260816z4"></script>
+  </body>
+</html>

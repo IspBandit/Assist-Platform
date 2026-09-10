@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Core\Database;
+use App\Platform\Brand\BrandRegistry;
 use RuntimeException;
 
 /**
@@ -20,10 +21,11 @@ final class ProviderImportQueueWorker
     public function run(float $seconds = 45.0): array
     {
         $deadline = microtime(true) + max(5.0, min(240.0, $seconds));
-        $brandId = (int) Database::scalar("SELECT id FROM brands WHERE slug='vanassist' LIMIT 1");
-        if ($brandId < 1) {
+        $brand = BrandRegistry::fromArray((array) config('brands.registry', []))->find('vanassist');
+        if ($brand === null) {
             throw new RuntimeException('VanAssist brand is not configured.');
         }
+        $brandId = $brand->databaseId();
 
         $screened = 0;
         $screenedNew = 0;

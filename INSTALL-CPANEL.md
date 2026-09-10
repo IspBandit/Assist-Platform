@@ -106,6 +106,7 @@ often `/usr/local/bin/php` or an `ea-php81` path). Each task self-locks.
 | Daily 02:40 | `php /home/CPANEL_USERNAME/vanassist/cron/run.php update_town_demand` |
 | Daily 03:00 | `php /home/CPANEL_USERNAME/vanassist/cron/run.php database_backup` |
 | Daily 03:30 | `php /home/CPANEL_USERNAME/vanassist/cron/run.php clean_temp` |
+| Daily 06:15 | `php /home/CPANEL_USERNAME/vanassist/cron/run.php vanassist_daily_performance_email` |
 | Weekly Mon 04:20 | `php /home/CPANEL_USERNAME/vanassist/cron/run.php clean_logs` |
 | Every 15 min | `php /home/CPANEL_USERNAME/vanassist/cron/run.php import_osm` |
 | Every 15 min | `php /home/CPANEL_USERNAME/vanassist/cron/run.php import_locality` |

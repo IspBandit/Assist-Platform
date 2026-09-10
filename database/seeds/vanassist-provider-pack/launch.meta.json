@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-07-27T16:48:04.437Z",
+  "corpus": 24973,
+  "publishable": 8485,
+  "review_queue": 5000,
+  "publishable_by_state": {
+    "unknown": 312,
+    "QLD": 2167,
+    "NSW": 1825,
+    "VIC": 1592,
+    "SA": 840,
+    "WA": 1123,
+    "NT": 186,
+    "TAS": 373,
+    "ACT": 67
+  }
+}

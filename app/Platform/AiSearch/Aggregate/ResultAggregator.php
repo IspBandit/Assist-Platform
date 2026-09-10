@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Platform\AiSearch\Aggregate;
 
+use App\Helpers\Geo;
 use App\Platform\AiSearch\Provenance\ResultProvenance;
 
 /**
@@ -23,8 +24,20 @@ final class ResultAggregator
      *   facilities:list<array<string,mixed>>
      * }
      */
-    public function aggregate(array $providers, array $stays, array $externals = [], array $facilities = []): array
+    public function aggregate(
+        array $providers,
+        array $stays,
+        array $externals = [],
+        array $facilities = [],
+        ?float $originLat = null,
+        ?float $originLng = null,
+        ?int $radiusKm = null,
+    ): array
     {
+        $providers = $this->withinSelectedRadius($providers, $originLat, $originLng, $radiusKm);
+        $stays = $this->withinSelectedRadius($stays, $originLat, $originLng, $radiusKm);
+        $externals = $this->withinSelectedRadius($externals, $originLat, $originLng, $radiusKm);
+        $facilities = $this->withinSelectedRadius($facilities, $originLat, $originLng, $radiusKm);
         $byId = [];
         foreach ($providers as $row) {
             $id = (int) ($row['id'] ?? 0);
@@ -148,5 +161,46 @@ final class ResultAggregator
             $row['assist_provenance_label'] = ResultProvenance::label((string) $row['assist_origin']);
         }
         return $row;
+    }
+
+    /**
+     * Final cross-adapter safety invariant: when a radius and origin were
+     * selected, no card without a measurable in-radius location is returned.
+     *
+     * @param list<array<string,mixed>> $rows
+     * @return list<array<string,mixed>>
+     */
+    private function withinSelectedRadius(
+        array $rows,
+        ?float $originLat,
+        ?float $originLng,
+        ?int $radiusKm,
+    ): array {
+        if ($originLat === null || $originLng === null || $radiusKm === null) {
+            return $rows;
+        }
+
+        $radiusKm = max(1, min(500, $radiusKm));
+        $filtered = [];
+        foreach ($rows as $row) {
+            $targetLat = $row['latitude'] ?? $row['town_lat'] ?? null;
+            $targetLng = $row['longitude'] ?? $row['town_lng'] ?? null;
+            if (is_numeric($targetLat) && is_numeric($targetLng)) {
+                // Recompute from the card coordinate so an adapter's rounded
+                // display value cannot weaken the selected boundary.
+                $distance = Geo::haversineExactKm($originLat, $originLng, (float) $targetLat, (float) $targetLng);
+                $row['distance_km'] = $distance;
+            } else {
+                $distance = isset($row['distance_km']) && is_numeric($row['distance_km'])
+                    ? (float) $row['distance_km']
+                    : null;
+            }
+            if ($distance === null || $distance > $radiusKm) {
+                continue;
+            }
+            $filtered[] = $row;
+        }
+
+        return $filtered;
     }
 }
