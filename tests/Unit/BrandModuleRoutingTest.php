@@ -6,8 +6,8 @@ namespace Tests\Unit;
 
 use App\Core\Request;
 use App\Middleware\RequireBrandModule;
-use App\Platform\Brand\Brand;
 use App\Platform\Brand\BrandContext;
+use App\Platform\Brand\BrandRegistry;
 use PHPUnit\Framework\TestCase;
 
 final class BrandModuleRoutingTest extends TestCase
@@ -52,36 +52,18 @@ final class BrandModuleRoutingTest extends TestCase
 
     public function testRequireBrandModuleDeniesDisabledRequestsAtRuntime(): void
     {
-        $brand = Brand::fromArray('towsmart', [
-            'database_id' => 2,
-            'name' => 'TowSmart',
-            'legal_name' => 'TowSmart',
-            'short_name' => 'TowSmart',
-            'status' => 'active',
-            'url' => 'https://towsmart.test',
-            'domains' => ['primary' => 'towsmart.test'],
-            'assets' => [],
-            'theme' => [],
-            'metadata' => [],
-            'contact' => [],
-            'legal' => [],
-            'navigation' => [],
-            'footer' => [],
-            'features' => [],
-            'modules' => [
-                'requests' => false,
-                'service_runs' => false,
-                'parks' => false,
-            ],
-            'analytics' => [],
-            'search' => [],
-            'storage_namespace' => 'towsmart',
-        ]);
+        $config = require dirname(__DIR__, 2) . '/config/brands.php';
+        $brand = BrandRegistry::fromArray($config['registry'])->get('towsmart');
+        self::assertFalse($brand->moduleEnabled('requests'));
         BrandContext::set($brand);
 
         $middleware = new RequireBrandModule('requests');
+        $request = new Request([], [], [
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/request-assistance',
+        ], []);
         try {
-            $middleware->handle(new Request('GET', '/request-assistance'), static fn () => 'ok');
+            $middleware->handle($request, static fn () => 'ok');
             self::fail('Disabled module middleware must throw HttpException.');
         } catch (\App\Core\Exceptions\HttpException $exception) {
             self::assertSame(404, $exception->getStatusCode());
