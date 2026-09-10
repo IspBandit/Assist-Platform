@@ -9,7 +9,6 @@
             <directory>tests/Unit</directory>
             <directory>tests/Unit/AiSearch</directory>
             <directory>tests/Unit/DataSources</directory>
-            <directory>tests/Unit/Polaris</directory>
         </testsuite>
         <testsuite name="Integration">
             <directory>tests/Integration</directory>

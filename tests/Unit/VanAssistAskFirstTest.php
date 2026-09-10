@@ -23,8 +23,9 @@ final class VanAssistAskFirstTest extends TestCase
         self::assertStringContainsString('Browse VanAssist directly', $home);
         self::assertStringNotContainsString('ask-vanassist-divider', $ask);
         self::assertStringNotContainsString('Start here', $ask);
-        self::assertStringContainsString('Tell us what you need in plain English', $ask);
-        self::assertStringContainsString('dump point, pet-friendly stay, mobile mechanic, drinking water', $ask);
+        self::assertStringContainsString('Tell us what has happened or what you need', $ask);
+        self::assertStringContainsString('Find the right help', $ask);
+        self::assertStringContainsString('What do you need help finding?', $ask);
     }
 
     public function testAskFirstHierarchyPreservesStructuredSearchAndLocationControls(): void
