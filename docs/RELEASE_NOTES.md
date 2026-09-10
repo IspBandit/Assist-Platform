@@ -5,6 +5,17 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Installed-app install CTA guard (EXP-005)
+
+- Hide the shared **Save ... to your phone** footer action and install dialog when
+  VanAssist, TowSmart or TrailerWise is already running in an installed display
+  mode (`standalone`, `fullscreen` or `minimal-ui`).
+- Add a server-rendered CSS guard as a fallback to the existing JavaScript
+  standalone detection so an older cached application script cannot keep showing
+  an install prompt inside an already-installed home-screen app.
+- No migrations, environment variables or data changes. Rollback removes only
+  the installed-display CSS guard and restores the previous redundant prompt.
+
 ### Flagship deterministic Ask and three-brand correctness
 
 - Promoted Ask VanAssist to the primary homepage search candidate while keeping
