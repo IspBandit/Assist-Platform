@@ -17,6 +17,16 @@ $installLabel = match ($footerBrandId) {
     default => 'Save VanAssist to your phone',
 };
 ?>
+<?php if ($supportsInstall): ?>
+<style>
+@media (display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui) {
+    [data-install-app],
+    [data-install-dialog] {
+        display: none !important;
+    }
+}
+</style>
+<?php endif; ?>
 <footer class="site-footer">
     <?php if ($footerBrandId === 'vanassist'): ?>
         <div class="footer-action"><div class="container"><div><span>Not sure where to begin?</span><strong>Start with your location and the help you need.</strong></div><a class="btn btn-light" href="<?= e(url('find')) ?>">Find nearby help</a></div></div>
