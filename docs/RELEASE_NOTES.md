@@ -13,6 +13,19 @@ may remain as dated files and are linked here rather than copied.
   is 10,000), and continues on IndexNow failure so a healthy deploy is not
   marked red by best-effort SEO notify.
 
+### Browser visual UX audit fixes (UX-001)
+
+- VanAssist mobile home keeps the Ask search card intact instead of flattening it
+  with `display:contents`, which had leaked “Prefer category and town search?”
+  under the header and broke the closed structured-search disclosure.
+- Ask homepage placeholder shortened so it is not clipped; mobile duplicate H1
+  replaced with a decorative title while the real H1 stays available to AT.
+- Location “Locating…” controls recover after a watchdog timeout when geolocation
+  stalls; homepage structured search no longer auto-locates while collapsed.
+- TowSmart calculator keeps custom-entry fields collapsed until a catalogue pick
+  or “not listed” action.
+- Results map summary only opens for named results and follows Ask facility cards.
+
 ### Flagship deterministic Ask and three-brand correctness
 
 - Promoted Ask VanAssist to the primary homepage search candidate while keeping

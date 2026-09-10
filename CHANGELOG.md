@@ -41,6 +41,12 @@
   links and category-search cross-link when `assist_ai_search` is enabled.
 
 ### Fixed
+- VanAssist mobile Ask-first home no longer leaks the structured-search summary
+  under the header; closed `<details>` content stays hidden; Ask placeholder
+  no longer clips; location buttons recover if geolocation stalls.
+- TowSmart calculator progressive disclosure for custom vehicle/trailer entry.
+- Ask/results map summary opens only for named pins and list cards, including
+  facility result cards.
 - Ask now supports direct provider business-name searches without weakening
   brand, GPS, explicit-location or radius boundaries.
 - Ask now acquires device GPS automatically for requests with no location in
