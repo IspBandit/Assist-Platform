@@ -148,6 +148,15 @@ Ask returns no providers rather than silently falling back to national results.
 Heavy repeated use may show a branded pause/security page; the normal category
 search remains available while Ask is paused.
 
+## Home-screen installation
+
+The footer can offer **Save VanAssist to your phone** when VanAssist is being
+used in a normal browser tab. Once VanAssist is opened from an installed home-
+screen app, that install action and its instructions are hidden. The installed-
+display guard is rendered with the page as well as checked by JavaScript, so an
+older cached script cannot leave the redundant install prompt visible inside the
+installed app.
+
 ## Related pages
 
 Use **Places to stay** for caravan-friendly stops, the service directory to browse all categories, **Ask** when natural-language search is offered, or **Request assistance** when the right listing is not available.
@@ -186,7 +195,7 @@ can have identical names. Missing location details are not guessed.
 
 ## Last updated
 
-2026-09-07 (directory trust-copy contrast surface documented).
+2026-09-10 (installed home-screen app no longer shows the redundant save/install control).
 
 ## Owner
 
