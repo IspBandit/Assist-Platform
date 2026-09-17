@@ -1,0 +1,19 @@
+{
+  "source_key": "industry_big4_holiday_guide_2026",
+  "source_url": "https://www.big4.com.au/search",
+  "extraction_method": "web_scraping_selenium",
+  "scraped_at": "2026-09-17",
+  "total_parks": 21,
+  "parks_with_coordinates": 0,
+  "parks_with_phone": 21,
+  "parks_with_email": 0,
+  "parks_by_state": {
+    "QLD": 4,
+    "NSW": 5,
+    "SA": 2,
+    "VIC": 6,
+    "TAS": 1,
+    "WA": 2,
+    "NT": 1
+  }
+}
