@@ -1,0 +1,67 @@
+name: Places rescue production bootstrap
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type APPLY-PLACES-RESCUE to provision Places and bootstrap a hub category on production
+        required: true
+      town:
+        description: Hub town name
+        required: false
+        default: Charters Towers
+      category:
+        description: Service category slug
+        required: false
+        default: refrigeration
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-places-rescue
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    if: github.event.inputs.confirm == 'APPLY-PLACES-RESCUE' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 20
+    steps:
+      - name: Configure verified SSH host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+
+      - name: Run root-scoped Places rescue helper
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          TOWN: ${{ github.event.inputs.town }}
+          CATEGORY: ${{ github.event.inputs.category }}
+        run: |
+          set -euo pipefail
+          town="${TOWN:-Charters Towers}"
+          category="${CATEGORY:-refrigeration}"
+          # Requires one-time host install of
+          # /usr/local/sbin/assist-platform-places-rescue with NOPASSWD sudo
+          # (see docs/PLACES_RESCUE_BOOTSTRAP.md).
+          ssh "$VPS_USER@$VPS_HOST" \
+            "sudo -n /usr/local/sbin/assist-platform-places-rescue --town=$(printf %q "$town") --category=$(printf %q "$category")" \
+            | tee /tmp/places-rescue-output.txt
+          {
+            echo '## Places rescue production bootstrap'
+            echo
+            echo "Town: \`$town\`"
+            echo "Category: \`$category\`"
+            echo
+            echo '```text'
+            tail -n 80 /tmp/places-rescue-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -44,10 +44,12 @@ may remain as dated files and are linked here rather than copied.
   Mechanical and peers).
 - Migration `139` activates Charters Towers unclaimed listings that were stuck
   as pending/draft after import (Ask requires `providers.status='active'`).
+- Provider pack refresh no longer demotes already-active measurable unclaimed
+  listings back to pending (that was undoing migration 139 on release).
 - `scripts/provision-google-places.php` loads `GOOGLE_PLACES_API_KEY` into the
-  encrypted connector vault and can enable `provider_places_rescue`. Bootstrap
-  auto-provisions the connector when the vault is empty, and falls back to the
-  process environment key when `APP_KEY` cannot encrypt secrets.
+  encrypted connector vault and can enable `provider_places_rescue`.
+- Root helper `assist-platform-places-rescue` and workflow **Places rescue
+  production bootstrap** for authorised hub applies.
 - National hub bootstrap script:
   `scripts/places-rescue-bootstrap.php` / `docs/PLACES_RESCUE_BOOTSTRAP.md`.
 - Production enablement requires Places API key, connector budget, Quality Gate

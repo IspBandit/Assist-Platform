@@ -40,6 +40,25 @@ php scripts/places-rescue-bootstrap.php --apply --town="Charters Towers" --categ
 php scripts/places-rescue-bootstrap.php --apply --limit-towns=24
 ```
 
+## Host install (one-time, as root)
+
+```sh
+install -o root -g root -m 0755 \
+  /opt/assist-platform/current/infrastructure/binarylane/ops/assist-places-rescue.sh \
+  /usr/local/sbin/assist-platform-places-rescue
+# Add a NOPASSWD sudoers drop-in for the deploy user, matching the release helper:
+#   deploy ALL=(root) NOPASSWD: /usr/local/sbin/assist-platform-places-rescue
+```
+
+Then either:
+
+```sh
+sudo -n /usr/local/sbin/assist-platform-places-rescue --town="Charters Towers" --category=refrigeration
+```
+
+or dispatch the GitHub Action **Places rescue production bootstrap** with
+`APPLY-PLACES-RESCUE`.
+
 ## Cost control
 
 Each town × category issues one Places Text Search. Start with a single town
