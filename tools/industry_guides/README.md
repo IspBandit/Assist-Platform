@@ -19,19 +19,20 @@ The import pipeline guarantees idempotency:
 - Cross-source duplicates are detected and linked for review
 - See `docs/data/VANASSIST_DEDUPLICATION.md`
 
-## Available PDFs
+## Available Sources
 
-| Source | Format | Path | Status |
+| Source | Method | Script | Status |
 | --- | --- | --- | --- |
-| BIG4 Holiday Guide 2026 | PDF | `industry/big4-holiday-guide-2026.pdf` | Archived, ready |
-| Drive Queensland 2026 | PDF | `regional-guides/drive-queensland-guide-2026.pdf` | Archived, ready |
-| Barcoo Visitor Guide | PDF | `regional-guides/barcoo-visitor-guide.pdf` | Archived, ready |
-| NSW CCIA Holiday Guide | PDF | `industry/nsw-ccia-holiday-guide-2026.pdf` | Awaiting archive |
-| WA Caravan Guide | PDF | — | Awaiting archive |
-| Caravan Tasmania | PDF | — | Awaiting archive |
-| SA Guide | PDF | — | Awaiting archive |
-| NT Guide | PDF | — | Awaiting archive |
-| VIC Guide | PDF | — | Awaiting archive |
+| **BIG4 Holiday Guide 2026** | Web Scraper | `scrape_big4_web.py` | ✅ Ready (needs selector adjustment) |
+| **CMCA Dump Points** | Web Scraper | `scrape_cmca_dump_points.py` | ✅ Ready (check if public) |
+| **NT Gov Campgrounds** | Web Scraper | `scrape_nt_gov_campgrounds.py` | ✅ Ready |
+| **Drive Queensland 2026** | PDF Extractor | `extract_drive_qld_2026.py` | ✅ Template ready |
+| **Barcoo Visitor Guide** | PDF Extractor | `extract_barcoo_guide.py` | ✅ Template ready |
+| NSW CCIA Holiday Guide | PDF Extractor | Needs creation | ⏳ Awaiting PDF archive |
+| WA Caravan Guide | PDF Extractor | Needs creation | ⏳ Awaiting PDF archive |
+| Caravan Tasmania | PDF Extractor | Needs creation | ⏳ Awaiting PDF archive |
+| SA Guide | PDF Extractor | Needs creation | ⏳ Awaiting PDF archive |
+| VIC Guide | PDF Extractor | Needs creation | ⏳ Awaiting PDF archive |
 
 ## Extraction Priority
 
