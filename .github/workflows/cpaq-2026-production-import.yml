@@ -1,0 +1,64 @@
+name: CPAQ 2026 production import
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type APPLY-CPAQ-2026 to import authorised CPAQ seeds on production
+        required: true
+      batch_size:
+        description: Records per committed batch
+        required: false
+        default: "25"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-cpaq-2026-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: github.event.inputs.confirm == 'APPLY-CPAQ-2026' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 45
+    steps:
+      - name: Checkout batch helper
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Configure verified SSH host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+
+      - name: Upload and run batched CPAQ import
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          BATCH_SIZE: ${{ github.event.inputs.batch_size }}
+        run: |
+          set -euo pipefail
+          batch_size="${BATCH_SIZE:-25}"
+          remote_script="/opt/assist-platform/shared/storage/imports/cpaq-2026-batch-apply.php"
+          ssh "$VPS_USER@$VPS_HOST" "install -d -m 0775 /opt/assist-platform/shared/storage/imports"
+          scp -q scripts/cpaq-2026-batch-apply.php "$VPS_USER@$VPS_HOST:$remote_script"
+          ssh "$VPS_USER@$VPS_HOST" "set -euo pipefail
+            cd /opt/assist-platform
+            docker compose exec -T app php storage/imports/cpaq-2026-batch-apply.php --batch-size=$batch_size
+          " | tee /tmp/cpaq-import-output.txt
+          {
+            echo '## CPAQ 2026 production import'
+            echo
+            echo '```json'
+            tail -n 80 /tmp/cpaq-import-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
