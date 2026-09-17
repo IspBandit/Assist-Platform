@@ -48,12 +48,13 @@ jobs:
         run: |
           set -euo pipefail
           batch_size="${BATCH_SIZE:-25}"
-          remote_script="/opt/assist-platform/shared/storage/imports/cpaq-2026-batch-apply.php"
-          ssh "$VPS_USER@$VPS_HOST" "install -d -m 0775 /opt/assist-platform/shared/storage/imports"
-          scp -q scripts/cpaq-2026-batch-apply.php "$VPS_USER@$VPS_HOST:$remote_script"
+          remote_tmp="/tmp/cpaq-2026-batch-apply.$$.php"
+          scp -q scripts/cpaq-2026-batch-apply.php "$VPS_USER@$VPS_HOST:$remote_tmp"
           ssh "$VPS_USER@$VPS_HOST" "set -euo pipefail
             cd /opt/assist-platform
-            docker compose exec -T app php storage/imports/cpaq-2026-batch-apply.php --batch-size=$batch_size
+            docker compose cp '$remote_tmp' app:/tmp/cpaq-2026-batch-apply.php
+            rm -f '$remote_tmp'
+            docker compose exec -T app php /tmp/cpaq-2026-batch-apply.php --batch-size=$batch_size
           " | tee /tmp/cpaq-import-output.txt
           {
             echo '## CPAQ 2026 production import'
