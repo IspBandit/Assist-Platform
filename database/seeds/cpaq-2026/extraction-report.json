@@ -1,0 +1,400 @@
+{
+  "source_file": "D:\\Works _in_progress\\Assist-Platform\\storage\\imports\\cpaq-2026-directory.pdf",
+  "source_name": "CPAQ Explore Queensland Caravan Parks Directory 2026",
+  "source_organisation": "Caravan Parks Association of Queensland Ltd",
+  "source_year": 2026,
+  "authorised_import": true,
+  "pdf_pages": 116,
+  "parks_by_name_index": 295,
+  "parks_by_location_index": 292,
+  "parks_detail_cards_matched": 297,
+  "parks_total_merged": 319,
+  "parks_tourist_with_detail": 295,
+  "parks_missing_detail": [],
+  "parks_residential_only_added": 24,
+  "parks_pure_residential": 16,
+  "parks_without_website": 35,
+  "parks_without_address": 3,
+  "parks_without_phone": 9,
+  "residential_extracted": 132,
+  "trade_extracted": 211,
+  "trade_from_matrix": 211,
+  "trade_from_sidebar": 0,
+  "trade_multi_category": 103,
+  "trade_without_categories": 1,
+  "trade_without_website": 0,
+  "feature_frequency": [
+    [
+      "Camp Kitchen",
+      181
+    ],
+    [
+      "Swimming Pool",
+      144
+    ],
+    [
+      "Pet Friendly",
+      120
+    ],
+    [
+      "Pets on Application",
+      115
+    ],
+    [
+      "Clean Amenities",
+      94
+    ],
+    [
+      "Barbeques",
+      90
+    ],
+    [
+      "Dump Point",
+      80
+    ],
+    [
+      "Air-conditioned Cabins",
+      76
+    ],
+    [
+      "Free WiFi Available",
+      73
+    ],
+    [
+      "Laundry",
+      68
+    ],
+    [
+      "No Pets",
+      60
+    ],
+    [
+      "Close to Town",
+      59
+    ],
+    [
+      "Drive Through Sites",
+      49
+    ],
+    [
+      "Large Sites",
+      42
+    ],
+    [
+      "Café/Restaurant",
+      38
+    ],
+    [
+      "Camping Ground",
+      37
+    ],
+    [
+      "RV & Motorhome Sites",
+      36
+    ],
+    [
+      "AC Ensuite Cabins",
+      34
+    ],
+    [
+      "Disabled Amenities",
+      31
+    ],
+    [
+      "Boat Ramp (close to)",
+      31
+    ],
+    [
+      "Camp Fire",
+      29
+    ],
+    [
+      "Playground",
+      29
+    ],
+    [
+      "Beachfront",
+      26
+    ],
+    [
+      "WiFi Available",
+      26
+    ],
+    [
+      "Kiosk",
+      25
+    ],
+    [
+      "Close to Beach",
+      24
+    ],
+    [
+      "Self-contained Accom",
+      23
+    ],
+    [
+      "Weekly Rates",
+      21
+    ],
+    [
+      "Assistance onto Sites",
+      17
+    ],
+    [
+      "Accessible Cabins",
+      17
+    ],
+    [
+      "Ensuite Cabins",
+      16
+    ],
+    [
+      "Gas Available",
+      15
+    ],
+    [
+      "Water Park",
+      15
+    ],
+    [
+      "Tour Bookings",
+      14
+    ],
+    [
+      "Close to National Parks",
+      14
+    ],
+    [
+      "EFTPOS",
+      14
+    ],
+    [
+      "Absolute Beachfront",
+      13
+    ],
+    [
+      "Near Public Boat Ramp",
+      12
+    ],
+    [
+      "Modern Amenities",
+      12
+    ],
+    [
+      "Defibrillator On-site",
+      11
+    ],
+    [
+      "Mini Golf",
+      11
+    ],
+    [
+      "Ensuite Sites",
+      11
+    ],
+    [
+      "Tourist Information",
+      10
+    ],
+    [
+      "Mobile Reception",
+      10
+    ],
+    [
+      "Bouncing Pillow",
+      10
+    ],
+    [
+      "Hot Showers",
+      10
+    ],
+    [
+      "Kids Activities",
+      9
+    ],
+    [
+      "Games Room",
+      9
+    ],
+    [
+      "Convenience Store",
+      8
+    ],
+    [
+      "TV/Recreation Room",
+      8
+    ]
+  ],
+  "attribute_frequency": [
+    [
+      "pets_allowed",
+      235
+    ],
+    [
+      "camp_kitchen",
+      192
+    ],
+    [
+      "cabins_or_accommodation",
+      184
+    ],
+    [
+      "pool",
+      152
+    ],
+    [
+      "wifi",
+      105
+    ],
+    [
+      "dump_point",
+      83
+    ],
+    [
+      "waterfront_or_beach",
+      73
+    ],
+    [
+      "powered_sites",
+      60
+    ],
+    [
+      "boat_ramp",
+      49
+    ],
+    [
+      "accessible",
+      47
+    ],
+    [
+      "camping_ground",
+      42
+    ],
+    [
+      "rv_motorhome_sites",
+      42
+    ],
+    [
+      "unpowered_sites",
+      24
+    ],
+    [
+      "tourist_information",
+      10
+    ]
+  ],
+  "trade_category_frequency": [
+    [
+      "Accessories",
+      88
+    ],
+    [
+      "Caravan Sales",
+      77
+    ],
+    [
+      "Service & Repair",
+      37
+    ],
+    [
+      "Camper Trailer Sales",
+      34
+    ],
+    [
+      "Hybrid Sales",
+      32
+    ],
+    [
+      "Refrigeration",
+      26
+    ],
+    [
+      "Annexe & Awnings",
+      24
+    ],
+    [
+      "Engineering",
+      24
+    ],
+    [
+      "Safety Certificate",
+      21
+    ],
+    [
+      "Vehicle Modification",
+      21
+    ],
+    [
+      "Gas",
+      20
+    ],
+    [
+      "Towing",
+      17
+    ],
+    [
+      "Solar Products",
+      15
+    ],
+    [
+      "Motorhome / Campervan Sales",
+      14
+    ],
+    [
+      "Weight",
+      7
+    ],
+    [
+      "Slide-on Sales",
+      5
+    ],
+    [
+      "Communications",
+      5
+    ],
+    [
+      "Tents",
+      3
+    ],
+    [
+      "Hire",
+      3
+    ],
+    [
+      "Insurance",
+      3
+    ],
+    [
+      "Driver Instruction or Training",
+      3
+    ],
+    [
+      "Conversions",
+      2
+    ],
+    [
+      "Fifth Wheeler Sales",
+      1
+    ],
+    [
+      "Finance",
+      1
+    ]
+  ],
+  "regions": [
+    "Brisbane",
+    "Bundaberg / Southern Great Barrier Reef",
+    "Cairns & Tropical North",
+    "Capricorn Coast / Southern Great Barrier Reef",
+    "Fraser Coast",
+    "Gladstone / Southern Great Barrier Reef",
+    "Gold Coast",
+    "Mackay",
+    "Outback Queensland",
+    "Queensland Country",
+    "Sunshine Coast",
+    "Townsville / North Queensland",
+    "Travelling Interstate",
+    "Whitsundays"
+  ]
+}

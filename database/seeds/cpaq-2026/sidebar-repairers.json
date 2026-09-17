@@ -1,0 +1,482 @@
+[
+  {
+    "external_id": "cpaq-2026-carafix-gold-coast-0755715018-sidebar-78cba38451",
+    "name": "Carafix",
+    "region_section": "Gold Coast",
+    "suburb": null,
+    "phone": "0755715018",
+    "website": "https://carafix.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 13,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-hitch-campers-gold-coast-0480292400-sidebar-d09d9957ff",
+    "name": "Hitch Campers",
+    "region_section": "Gold Coast",
+    "suburb": null,
+    "phone": "0480292400",
+    "website": "https://hitchcampers.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 13,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-barefoot-caravans-supermarine-intl-gold-coast-0432149890-sidebar-5a6abac4f7",
+    "name": "Barefoot Caravans (Supermarine Intl)",
+    "region_section": "Gold Coast",
+    "suburb": null,
+    "phone": "0432149890",
+    "website": "https://barefoot-caravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 13,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-fixtech-gold-coast-0755301099-sidebar-a0cfc28243",
+    "name": "Fixtech",
+    "region_section": "Gold Coast",
+    "suburb": null,
+    "phone": "0755301099",
+    "website": "https://fixtech.com",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 13,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-bushwakka-4x4-campers-australia-gold-coast-0755157912-sidebar-ec89e408e9",
+    "name": "Bushwakka 4X4 Campers Australia",
+    "region_section": "Gold Coast",
+    "suburb": null,
+    "phone": "0755157912",
+    "website": "https://bushwakka.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 13,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-east-coast-rvs-drive-group-claims-gold-coast-0755282900-sidebar-5685ceef8d",
+    "name": "East Coast Rvs - Drive Group Claims",
+    "region_section": "Gold Coast",
+    "suburb": null,
+    "phone": "0755282900",
+    "website": "https://eastcoastrvs.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 13,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-caravan-fix-sunshine-coast-1300826349-sidebar-9dbda9f9e2",
+    "name": "Caravan Fix",
+    "region_section": "Sunshine Coast",
+    "suburb": null,
+    "phone": "1300826349",
+    "website": "https://caravanfix.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 25,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-aussie-escape-caravan-repair-and-service-brisbane-0732057738-sidebar-529cedf0a9",
+    "name": "Aussie Escape Caravan Repair & Service",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "0732057738",
+    "website": "https://aussieescapecaravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-mainevent-rv-centres-brisbane-1300624383-sidebar-0071a8ccd5",
+    "name": "Mainevent Rv Centres",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "1300624383",
+    "website": "https://maineventrv.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-titan-caravans-australia-brisbane-0732164555-sidebar-e05fc4aed7",
+    "name": "Titan Caravans Australia",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "0732164555",
+    "website": "https://titancaravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-mach1-caravan-and-rv-solutions-brisbane-0754952146-sidebar-6439e199a2",
+    "name": "Mach1 Caravan And Rv Solutions",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "0754952146",
+    "website": "https://mach1caravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-capalaba-caravan-repairs-brisbane-0738232322-sidebar-1928de97eb",
+    "name": "Capalaba Caravan Repairs",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "0738232322",
+    "website": "https://capalabacaravanrepairs.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-titanium-caravans-dealership-group-brisbane-0394086999-sidebar-b308d81f56",
+    "name": "Titanium Caravans Dealership Group",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "0394086999",
+    "website": "https://titaniumcaravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-accurate-caravans-brisbane-0733751666-sidebar-8c74cb99df",
+    "name": "Accurate Caravans",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "0733751666",
+    "website": "https://accuratecaravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-lakestar-rv-qld-and-lpt-caravans-brisbane-brisbane-1800371074-sidebar-a18694105f",
+    "name": "Lakestar Rv Qld & Lpt Caravans Brisbane",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "1800371074",
+    "website": "https://lakestarrvqld.com",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-captain-rv-brisbane-1300783318-sidebar-550a7874cf",
+    "name": "Captain Rv",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "1300783318",
+    "website": "https://starvision.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 19,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-southeast-fibreglass-service-sunshine-coast-0754431036-sidebar-c7928b8337",
+    "name": "Southeast Fibreglass Service",
+    "region_section": "Sunshine Coast",
+    "suburb": null,
+    "phone": "0754431036",
+    "website": "https://southeastfibreglass.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 25,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-suncoast-caravan-service-sunshine-coast-0754431036-sidebar-90bd75b834",
+    "name": "Suncoast Caravan Service",
+    "region_section": "Sunshine Coast",
+    "suburb": null,
+    "phone": "0754431036",
+    "website": "https://suncoastcaravanservice.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 25,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-caravan-repair-centre-sunshine-coast-0754912560-sidebar-d047db0524",
+    "name": "Caravan Repair Centre",
+    "region_section": "Sunshine Coast",
+    "suburb": null,
+    "phone": "0754912560",
+    "website": "https://caravanrepaircentre.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 25,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-your-caravan-man-sunshine-coast-0413007955-sidebar-656ad0984b",
+    "name": "Your Caravan Man",
+    "region_section": "Sunshine Coast",
+    "suburb": null,
+    "phone": "0413007955",
+    "website": "https://yourcaravanman.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 25,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-gk-s-rv-kingaroy-queensland-country-0408007216-sidebar-ef9d4543b2",
+    "name": "Gk’S Rv (Kingaroy)",
+    "region_section": "Queensland Country",
+    "suburb": null,
+    "phone": "0408007216",
+    "website": "https://gksrv.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 33,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-rv-service-centre-qld-toowoomba-queensland-country-0746330845-sidebar-93d04b7c71",
+    "name": "Rv Service Centre Qld (Toowoomba)",
+    "region_section": "Queensland Country",
+    "suburb": null,
+    "phone": "0746330845",
+    "website": "https://rvservicecentre.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 33,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-jayco-bundaberg-bundaberg-southern-great-barrier-reef-0741524877-sidebar-7ddad52321",
+    "name": "Jayco Bundaberg",
+    "region_section": "Bundaberg / Southern Great Barrier Reef",
+    "suburb": null,
+    "phone": "0741524877",
+    "website": "https://jaycobundaberg.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 49,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-takalvans-bundaberg-southern-great-barrier-reef-0741511621-sidebar-79d12236c0",
+    "name": "Takalvans",
+    "region_section": "Bundaberg / Southern Great Barrier Reef",
+    "suburb": null,
+    "phone": "0741511621",
+    "website": "https://takalvans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 49,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-bundaberg-rv-centre-searles-rv-centre-bundaberg-southern-great-barrier-reef-0741-3ca71dd257",
+    "name": "Bundaberg Rv Centre / Searles Rv Centre",
+    "region_section": "Bundaberg / Southern Great Barrier Reef",
+    "suburb": null,
+    "phone": "0741513000",
+    "website": "https://searlesrvcentre.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 49,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-caravan-fix-gracemere-capricorn-coast-southern-great-barrier-reef-1300826349-sid-4941ca9b63",
+    "name": "Caravan Fix (Gracemere)",
+    "region_section": "Capricorn Coast / Southern Great Barrier Reef",
+    "suburb": null,
+    "phone": "1300826349",
+    "website": "https://caravanfix.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 60,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-capricorn-caravan-centre-north-rockhampton-capricorn-coast-southern-great-barrie-ee57f6dd0d",
+    "name": "Capricorn Caravan Centre (North Rockhampton)",
+    "region_section": "Capricorn Coast / Southern Great Barrier Reef",
+    "suburb": null,
+    "phone": "0749274826",
+    "website": "https://capricorncaravancentre.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 60,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-jayco-mackay-bakers-creek-mackay-0749421292-sidebar-3d3aa4053e",
+    "name": "Jayco Mackay (Bakers Creek)",
+    "region_section": "Mackay",
+    "suburb": null,
+    "phone": "0749421292",
+    "website": "https://jaycomackay.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 65,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-tullmack-paget-mackay-0749523274-sidebar-8083af2de5",
+    "name": "Tullmack (Paget)",
+    "region_section": "Mackay",
+    "suburb": null,
+    "phone": "0749523274",
+    "website": "https://tullmackcaravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 65,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  },
+  {
+    "external_id": "cpaq-2026-jayco-townsville-townsville-north-queensland-0747799759-sidebar-517cc1e02f",
+    "name": "Jayco Townsville",
+    "region_section": "Townsville / North Queensland",
+    "suburb": null,
+    "phone": "0747799759",
+    "website": "https://jaycotownsville.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 74,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": "Regional Caravan & RV Repairers sidebar"
+  }
+]

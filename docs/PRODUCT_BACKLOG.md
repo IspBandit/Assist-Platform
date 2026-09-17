@@ -37,7 +37,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
+| VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance; CPAQ 2026 park import path (`docs/CPAQ_2026_IMPORT.md`) |
 | VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Inbound claim review, secure acceptance and evidence-backed verification are wired; production end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
 | VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Radius ladder + Places rescue (ADR 0042) landed behind `provider_places_rescue`; production Places enablement and flagship QG remain |
@@ -63,7 +63,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 
 | ID | Outcome | Status | Exit evidence |
 | --- | --- | --- | --- |
-| DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls |
+| DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls; CPAQ 2026 authorised import CLI |
 | DATA-002 | Duplicate detection and merge with audit preservation | done | Admin API check/dry_run/merge/not-duplicate/defer + merge-history; soft-delete absorbed provider; human-only `duplicates:merge`; HTML list-only (`/admin/providers/duplicates`); workflow unit tests |
 | DATA-003 | Cross-brand recommendation policies | ready | Relevance rules, labelled origin and analytics |
 | DATA-004 | Brand-scoped website, provider-interest and coverage-gap reporting | in progress | Shared first-party event scope, admin website-insights summary, zero-result/provider-interest reporting and daily support email implemented; host cron install now ships with releases; production acceptance remains |
