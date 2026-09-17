@@ -167,9 +167,40 @@ Before importing to production:
 4. **Test import locally:** Run against local database first
 5. **Review duplicates:** Check candidate queue for cross-source matches
 
+## Helper Tools
+
+### Geocoding
+Add coordinates to extracted records that don't have them:
+```bash
+python tools/industry_guides/geocode_facilities.py database/seeds/industry_big4_2026/parks.json
+```
+
+Uses Nominatim (OpenStreetMap) with 1 req/sec rate limit. Large datasets take time.
+
+### Validation
+Validate extraction quality before import:
+```bash
+python tools/industry_guides/validate_extraction.py database/seeds/industry_big4_2026/parks.json
+```
+
+Checks:
+- Required fields present
+- Data types correct
+- Coordinates in valid range (Australia)
+- External IDs unique
+- Contact details well-formed
+- Ready for import
+
+### Import
+Once validated, import via:
+```bash
+php scripts/import-industry-guide.php {dataset_key} --apply
+```
+
 ## Related Documentation
 
 - `docs/CPAQ_2026_IMPORT.md` — Full example of PDF extraction → import
 - `docs/data/VANASSIST_INDUSTRY_SOURCE_PERMISSIONS.md` — Permission details
 - `docs/data/VANASSIST_DEDUPLICATION.md` — Import safety guarantees
+- `docs/data/VANASSIST_EXTRACTION_STATUS.md` — Implementation tracking
 - `tools/cpaq/extract_cpaq_directory.py` — Reference extractor implementation
