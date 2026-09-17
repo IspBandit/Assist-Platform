@@ -9,6 +9,7 @@ use App\Helpers\Geo;
 use App\Models\ServiceCategory;
 use App\Platform\AiSearch\Provenance\ResultProvenance;
 use App\Platform\AiSearch\Support\PlacesRescueFeature;
+use App\Platform\DataSources\ConnectorInterface;
 use App\Platform\DataSources\ConnectorRegistry;
 use App\Platform\DataSources\Connectors\GooglePlacesConnector;
 use App\Services\SecretCipher;
@@ -23,7 +24,7 @@ final class ZeroResultProviderRescueService
     public function __construct(
         private readonly ?ConnectorRegistry $registry = null,
         private readonly ?PlacesUnclaimedPublisher $publisher = null,
-        private readonly ?GooglePlacesConnector $connector = null,
+        private readonly ?ConnectorInterface $connector = null,
     ) {
     }
 

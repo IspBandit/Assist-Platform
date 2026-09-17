@@ -455,7 +455,12 @@ final class SearchOrchestrator
                 if ($providerNameQuery !== null) {
                     $providerRows = $providerNameRows;
                 } else {
-                    $withMeta = $this->providers->searchWithMeta($intent, $town, $originLat, $originLng);
+                    $userLockedRadius = ($meta['normalised']['radius_km'] ?? null) !== null
+                        || $request->radiusKm !== null;
+                    $providerIntent = $userLockedRadius
+                        ? $intent
+                        : $this->intentWithoutLockedRadius($intent);
+                    $withMeta = $this->providers->searchWithMeta($providerIntent, $town, $originLat, $originLng);
                     $providerRows = $withMeta['rows'];
                     if ($withMeta['expanded'] && $withMeta['message'] !== null) {
                         $fallback = $fallback !== '' ? $fallback : 'expanded_exact_radius';
@@ -482,7 +487,12 @@ final class SearchOrchestrator
                 if ($providerRows === [] && $this->shouldUseProviderFallback($intent)) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {
-                        $relatedMeta = $this->providers->searchWithMeta($relatedIntent, $town, $originLat, $originLng);
+                        $userLockedRadius = ($meta['normalised']['radius_km'] ?? null) !== null
+                            || $request->radiusKm !== null;
+                        $relatedForSearch = $userLockedRadius
+                            ? $relatedIntent
+                            : $this->intentWithoutLockedRadius($relatedIntent);
+                        $relatedMeta = $this->providers->searchWithMeta($relatedForSearch, $town, $originLat, $originLng);
                         $providerRows = $relatedMeta['rows'];
                         if ($providerRows !== []) {
                             $fallback = $fallback !== '' ? $fallback : 'related_provider_fallback';
@@ -728,13 +738,33 @@ final class SearchOrchestrator
             facilityTypeKeys: [],
             locationText: $intent->locationText,
             useCurrentLocation: $intent->useCurrentLocation,
-            radiusKm: $intent->radiusKm ?? (ProviderSearchRadiusLadder::stepsKm()[count(ProviderSearchRadiusLadder::stepsKm()) - 1] ?? 300),
+            radiusKm: max(50, (int) ($intent->radiusKm ?? 25)),
             urgency: $intent->urgency,
             adapterKeys: ['providers'],
             confidence: min(0.6, $intent->confidence),
             clarificationRequired: false,
             clarificationReason: null,
             source: 'related_provider_fallback',
+        );
+    }
+
+    /** Clear a default/engine radius so the shared ladder can expand specialists. */
+    private function intentWithoutLockedRadius(Intent $intent): Intent
+    {
+        return new Intent(
+            intentType: $intent->intentType,
+            providerCategoryKeys: $intent->providerCategoryKeys,
+            stayTypeKeys: $intent->stayTypeKeys,
+            facilityTypeKeys: $intent->facilityTypeKeys,
+            locationText: $intent->locationText,
+            useCurrentLocation: $intent->useCurrentLocation,
+            radiusKm: null,
+            urgency: $intent->urgency,
+            adapterKeys: $intent->adapterKeys,
+            confidence: $intent->confidence,
+            clarificationRequired: $intent->clarificationRequired,
+            clarificationReason: $intent->clarificationReason,
+            source: $intent->source,
         );
     }
 

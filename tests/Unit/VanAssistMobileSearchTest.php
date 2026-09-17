@@ -94,7 +94,7 @@ final class VanAssistMobileSearchTest extends TestCase
 
         self::assertStringContainsString('<summary>Change this search</summary>', $view);
         self::assertStringContainsString('No matching service found nearby', $view);
-        self::assertStringContainsString('It will not substitute unrelated businesses.', $view);
+        self::assertStringContainsString('Register a request so we can grow coverage for this area', $view);
         self::assertStringContainsString('Nearest first by driving distance', $view);
         self::assertStringNotContainsString('· confidence', $view);
         self::assertStringNotContainsString('<p class="provider-result-provenance"', $view);
