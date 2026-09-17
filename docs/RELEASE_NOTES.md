@@ -5,6 +5,20 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist national traveller-data source archive (DATA-012 / DATA-011A / VAN-001)
+
+- Added Platform-side immutable source vault under `data/sources/vanassist/`
+  with machine registry (`registry/sources.json`), SHA256 checksums, and human
+  register `docs/data/VANASSIST_DATA_SOURCE_REGISTER.md`.
+- Repeatable sync: `tools/vanassist_sources/sync_archive.py` (prefers Assist RIC
+  raw packs; refreshes Toilet Map via CKAN and QLD ArcGIS live downloads).
+- GREEN government packs archived locally; AMBER industry/regional PDFs archived
+  without production import; OSM registered as `YELLOW_SPECIAL_LICENCE` (not
+  mixed into proprietary DB); National Formal Rest Areas remain
+  `UNKNOWN_LICENCE` / not imported.
+- CLI to stage archived GREEN facilities via existing
+  `GovernmentDatasetService`: `scripts/import-archived-green-facilities.php`.
+
 ### CPAQ 2026 authorised directory import (DATA-001 / VAN-001)
 
 - Added idempotent CPAQ 2026 import service and CLI
@@ -15,18 +29,16 @@ may remain as dated files and are linked here rather than copied.
   unclaimed providers with VanAssist listings and mapped services. Dry-run by
   default; `--apply` commits. See `docs/CPAQ_2026_IMPORT.md`.
 
-### Daily performance email schedule install (DATA-004 / OPS-003)
+### Daily performance email delivery (DATA-004 / OPS-003)
 
-- Production releases now install `/usr/local/sbin/assist-cron` and
-  `/etc/cron.d/assist-platform` from the reviewed commit so
-  `vanassist_daily_performance_email` (06:15 Brisbane → `support@vanassist.com.au`)
-  cannot remain registered in the database while missing from the live crontab.
-- Each successful release also runs that task once (idempotent) then drains
-  `process_email_queue`, so a missed day is recovered without a hand-inserted
-  queue row.
-- The existing two-minute `process_email_queue` worker also attempts the same
-  idempotent queue, so reports resume even before the host crontab is refreshed.
-- Bootstrap installs the same schedule on a fresh host.
+- The daily VanAssist website performance report
+  (`vanassist_daily_performance_email`, 06:15 Brisbane →
+  `support@vanassist.com.au`) now also queues idempotently from the existing
+  two-minute `process_email_queue` worker, so a missing host crontab line cannot
+  silently strand the report after application code is current.
+- Bootstrap installs `/etc/cron.d/assist-platform` and `/usr/local/sbin/assist-cron`
+  on a fresh host. Existing hosts can install the same reviewed files as root;
+  see `docs/OPERATIONS_RUNBOOK.md`.
 
 ### Provider discovery rescue (VAN-011 / DATA-013 / ADR 0042)
 

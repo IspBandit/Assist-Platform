@@ -110,6 +110,18 @@ or enable + Fetch (row-capped) for review batches. Approved candidates publish
 into `traveller_facilities` (never `caravan_parks`). `trusted_automatic` is not
 enabled from this UI. HTTP connectors use SSRF host/IP guards.
 
+### National source archive (Platform vault)
+
+Assist RIC remains the production acquisition engine (ADR 0033). The Platform
+also keeps an immutable source vault and provenance register:
+
+- Vault: `data/sources/vanassist/` (large binaries gitignored)
+- Machine register: `data/sources/vanassist/registry/sources.json`
+- Human register: `docs/data/VANASSIST_DATA_SOURCE_REGISTER.md`
+- Sync: `python tools/vanassist_sources/sync_archive.py`
+- Stage archived GREEN packs: `php scripts/import-archived-green-facilities.php`
+- Authorised CPAQ import: `docs/CPAQ_2026_IMPORT.md`
+
 ## Scheduled work
 
 Run `php scripts/run-data-source-schedules.php` from the trusted scheduler. It

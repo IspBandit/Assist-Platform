@@ -70,3 +70,7 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+/data/sources/vanassist/sa/checksum.sha256
+/data/sources/vanassist/**/checksum.sha256
+/data/sources/vanassist/**/metadata.json
