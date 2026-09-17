@@ -165,6 +165,7 @@ final class PlacesUnclaimedPublisher
             . 'website=COALESCE(NULLIF(website,\'\'), ?), '
             . 'street_address=COALESCE(NULLIF(street_address,\'\'), ?), '
             . 'latitude=COALESCE(latitude, ?), longitude=COALESCE(longitude, ?), '
+            . "status=CASE WHEN status IN ('pending','draft') THEN 'active' ELSE status END, "
             . 'updated_at=NOW() WHERE id=? AND is_unclaimed=1 AND deleted_at IS NULL',
             [
                 $phone !== '' ? $phone : null,
@@ -196,6 +197,12 @@ final class PlacesUnclaimedPublisher
             [$brandId, $providerId]
         );
         if ($existing !== null) {
+            Database::query(
+                "UPDATE provider_brand_listings SET status='active', search_visible=1, updated_at=NOW() "
+                . "WHERE id=? AND status IN ('draft','pending')",
+                [(int) $existing['id']]
+            );
+
             return;
         }
         $slug = $this->uniqueBrandSlug($brandId, $name);

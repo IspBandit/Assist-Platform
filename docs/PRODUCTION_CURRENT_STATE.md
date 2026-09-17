@@ -1,5 +1,22 @@
 # Production current state
 
+## 18 September 2026 — Charters Towers Ask fridge coverage (local applied; production pending deploy)
+
+Local repair for the documented Charters Towers fridge-repair zero-result failure:
+
+- Migrations `138`–`139` authorise Charters Towers town-centre coordinates, backfill
+  unclaimed provider points, and activate pending Charters unclaimed listings.
+- Google Places connector activated; `provider_places_rescue` enabled locally.
+  Focused Charters Towers refrigeration bootstrap merged Dealz on Deane under
+  refrigeration. Ask now returns Dealz (+ regional refrigeration) for
+  “fridge repair near charter towers”.
+- `GOOGLE_PLACES_API_KEY` is present in local `.env`; vault encryption requires a
+  valid `APP_KEY` (empty on this machine), so rescue uses the env-key fallback.
+
+Production still requires an authorised release of this branch plus host
+migration, Places vault provision (production has `APP_KEY`), flag enablement and
+Charters bootstrap — code merge alone does not change live Ask results.
+
 ## 17 September 2026 — provider discovery rescue (code landed, flag off)
 
 Code on this tree adds the regional radius ladder for category searches and

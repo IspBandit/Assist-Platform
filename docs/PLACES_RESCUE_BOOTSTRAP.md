@@ -13,9 +13,12 @@ labelled unclaimed public-source listings — never auto-verified.
 
 ## Prerequisites
 
-1. Google Places connector active in Admin → Data Sources with API key, daily
-   quota and AUD budget.
-2. Migration `136_provider_places_rescue_flag.sql` applied.
+1. `GOOGLE_PLACES_API_KEY` in `.env` (or Admin → Data Sources vault), with daily
+   quota and AUD budget. Prefer:
+   `php scripts/provision-google-places.php --enable-rescue`
+2. Migrations `136_provider_places_rescue_flag.sql`,
+   `138_charters_and_provider_town_coordinates.sql` and
+   `139_activate_charters_unclaimed_listings.sql` applied.
 3. Feature flag `provider_places_rescue` enabled only after Quality Gate and
    budget alert are in place.
 4. Local or staging database — do not point this machine at production without
@@ -24,6 +27,9 @@ labelled unclaimed public-source listings — never auto-verified.
 ## Commands
 
 ```powershell
+# Load .env Places key into the connector vault and enable the rescue flag
+php scripts/provision-google-places.php --enable-rescue
+
 # Preview hubs/categories (no Places calls)
 php scripts/places-rescue-bootstrap.php --dry-run
 
