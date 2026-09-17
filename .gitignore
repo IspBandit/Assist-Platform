@@ -47,3 +47,6 @@ Thumbs.db
 *.log
 .idea/
 .vscode/
+
+/data/sources/vanassist/**/*.html
+/data/sources/vanassist/**/*.txt
