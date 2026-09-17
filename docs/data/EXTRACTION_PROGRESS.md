@@ -7,7 +7,7 @@
 
 | Source | Method | Status | Progress | Next Action |
 | --- | --- | --- | --- | --- |
-| **BIG4 Parks** | Web | 🤖 **Scraping now** | Browser agent active | Await completion → geocode → validate → import |
+| **BIG4 Parks** | Web | 🤖 **Scraping now** | 21/312 parks (6.7%) - Full scrape in progress | Await completion → geocode → validate → import |
 | **CMCA Dump Points** | Web | 🟡 Queued | Awaiting BIG4 completion | Test if publicly accessible |
 | **NT Gov Campgrounds** | Web | 🟡 Queued | Awaiting testing | Run scraper |
 | **Drive QLD** | PDF | ⚪ Ready | Template complete | Obtain PDF archive |
