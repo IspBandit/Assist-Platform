@@ -50,11 +50,15 @@ jobs:
           batch_size="${BATCH_SIZE:-25}"
           remote_tmp="/tmp/cpaq-2026-batch-apply.$$.php"
           scp -q scripts/cpaq-2026-batch-apply.php "$VPS_USER@$VPS_HOST:$remote_tmp"
+          # Prefer docker CLI against the running app container. The host
+          # docker-compose.yml is root:0640 and the deploy user cannot read it,
+          # so `docker compose` is unavailable without a passworded sudo.
           ssh "$VPS_USER@$VPS_HOST" "set -euo pipefail
-            cd /opt/assist-platform
-            sudo docker compose cp '$remote_tmp' app:/tmp/cpaq-2026-batch-apply.php
+            app_container=\"\$(docker ps --format '{{.Names}}' | grep -E 'assist-platform.*app' | head -n 1)\"
+            test -n \"\$app_container\"
+            docker cp '$remote_tmp' \"\$app_container\":/tmp/cpaq-2026-batch-apply.php
             rm -f '$remote_tmp'
-            sudo docker compose exec -T app php /tmp/cpaq-2026-batch-apply.php --batch-size=$batch_size
+            docker exec -i \"\$app_container\" php /tmp/cpaq-2026-batch-apply.php --batch-size=$batch_size
           " | tee /tmp/cpaq-import-output.txt
           {
             echo '## CPAQ 2026 production import'
