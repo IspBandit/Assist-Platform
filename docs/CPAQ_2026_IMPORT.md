@@ -36,6 +36,19 @@ php scripts/import-cpaq-2026.php --parks-only
 php scripts/import-cpaq-2026.php --trade-only --apply
 ```
 
+For large applies (local Docker or production), prefer batched commits so a
+dropped MariaDB connection cannot abort a multi-minute run:
+
+```bash
+php scripts/cpaq-2026-batch-apply.php
+php scripts/cpaq-2026-batch-apply.php --batch-size=25
+```
+
+Production apply (after the importer is live on the active release) can be
+triggered with the GitHub Actions workflow `CPAQ 2026 production import`
+(`APPLY-CPAQ-2026`). That workflow uploads the batch helper over SSH and runs
+it inside the production app container against the release seed JSON.
+
 Implementation: `App\Services\Cpaq2026ImportService`.
 
 ### Parks → `caravan_parks`

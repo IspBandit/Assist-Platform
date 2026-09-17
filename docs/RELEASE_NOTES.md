@@ -14,6 +14,9 @@ may remain as dated files and are linked here rather than copied.
 - Parks land in `caravan_parks` with `stay_facility_claims`; trade businesses in
   unclaimed providers with VanAssist listings and mapped services. Dry-run by
   default; `--apply` commits. See `docs/CPAQ_2026_IMPORT.md`.
+- Batched apply helper (`scripts/cpaq-2026-batch-apply.php`) and GitHub Actions
+  workflow `CPAQ 2026 production import` for safe production apply without a
+  single long transaction.
 
 ### Daily performance email delivery (DATA-004 / OPS-003)
 
