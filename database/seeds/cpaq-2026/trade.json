@@ -1,0 +1,3649 @@
+[
+  {
+    "external_id": "cpaq-2026-4wd-supacentre-1800883964-brisbane-f152d4b10e",
+    "name": "4WD Supacentre",
+    "region_section": "Brisbane",
+    "suburb": null,
+    "phone": "1800883964",
+    "website": "https://4wdsupacentre.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Camper Trailer Sales",
+      "Communications",
+      "Gas",
+      "Refrigeration",
+      "Slide-on Sales",
+      "Solar Products",
+      "Tents",
+      "Towing",
+      "Weight"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-aav4x4-australian-adventure-vehicles-and-4x4-brendale-0732050380-brisbane-f3c312e960",
+    "name": "AAV4x4 Australian Adventure Vehicles & 4x4",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0732050380",
+    "website": "https://aav4x4.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-arb-4x4-accessories-nundah-0732663255-brisbane-6020b0957d",
+    "name": "ARB 4x4 Accessories",
+    "region_section": "Brisbane",
+    "suburb": "Nundah",
+    "phone": "0732663255",
+    "website": "https://arb.com.au",
+    "categories": [
+      "Accessories",
+      "Vehicle Modification"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-accurate-caravans-oxley-0733751666-brisbane-c0e4112ecd",
+    "name": "Accurate Caravans",
+    "region_section": "Brisbane",
+    "suburb": "Oxley",
+    "phone": "0733751666",
+    "website": "https://accuratecaravans.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-adventure-caravan-centre-slacks-creek-0738065554-brisbane-52bcd94f4b",
+    "name": "Adventure Caravan Centre",
+    "region_section": "Brisbane",
+    "suburb": "Slacks Creek",
+    "phone": "0738065554",
+    "website": "https://adventurecaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-airbag-man-brendale-0738896556-brisbane-a92b14a585",
+    "name": "Airbag Man",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0738896556",
+    "website": "https://airbagman.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-all-brand-caravan-services-sandgate-0738692969-brisbane-33240affac",
+    "name": "All Brand Caravan Services",
+    "region_section": "Brisbane",
+    "suburb": "Sandgate",
+    "phone": "0738692969",
+    "website": "https://allbrandcs.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Communications",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing",
+      "Vehicle Modification",
+      "Weight"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-apollo-motorhome-holidays-northgate-0732659200-brisbane-a83df1b93f",
+    "name": "Apollo Motorhome Holidays",
+    "region_section": "Brisbane",
+    "suburb": "Northgate",
+    "phone": "0732659200",
+    "website": "https://apollocamper.com",
+    "categories": [
+      "Hire"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-apollo-rv-sales-northgate-0732659200-brisbane-8a0cef34f2",
+    "name": "Apollo RV Sales",
+    "region_section": "Brisbane",
+    "suburb": "Northgate",
+    "phone": "0732659200",
+    "website": "https://apollorvsales.com.au",
+    "categories": [
+      "Caravan Sales",
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-arctic-campers-caboolture-1300792806-brisbane-0bf9ee15cc",
+    "name": "Arctic Campers",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "1300792806",
+    "website": "https://arcticcampers.com.au",
+    "categories": [
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-aussie-escape-caravan-repair-and-service-brendale-0732057738-brisbane-6aa00eb349",
+    "name": "Aussie Escape Caravan Repair & Service",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0732057738",
+    "website": "https://aussieescapecaravans.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing",
+      "Weight"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-aussie-roadrunner-rvs-loganlea-0738054406-brisbane-825ccb3374",
+    "name": "Aussie Roadrunner RVs",
+    "region_section": "Brisbane",
+    "suburb": "Loganlea",
+    "phone": "0738054406",
+    "website": "https://aussieroadrunner.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-aussie-traveller-clontarf-1300663868-brisbane-39ac3eb0af",
+    "name": "Aussie Traveller",
+    "region_section": "Brisbane",
+    "suburb": "Clontarf",
+    "phone": "1300663868",
+    "website": "https://aussietraveller.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Communications",
+      "Refrigeration",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-austbrokers-comsure-fortitude-valley-0732701500-brisbane-e4d60be86c",
+    "name": "Austbrokers Comsure",
+    "region_section": "Brisbane",
+    "suburb": "Fortitude Valley",
+    "phone": "0732701500",
+    "website": "https://abcomsure.com.au",
+    "categories": [
+      "Insurance"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-austrack-campers-caboolture-0754983888-brisbane-d9612f3751",
+    "name": "Austrack Campers",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754983888",
+    "website": "https://austrackcampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-big-red-caravan-parts-tanah-merah-0400500015-brisbane-e8a88f5cca",
+    "name": "Big Red Caravan Parts",
+    "region_section": "Brisbane",
+    "suburb": "Tanah Merah",
+    "phone": "0400500015",
+    "website": "https://bigredcaravanparts.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Communications",
+      "Gas",
+      "Refrigeration",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-brisbane-camperland-tingalpa-0739175555-brisbane-4dbcd7d3e9",
+    "name": "Brisbane Camperland",
+    "region_section": "Brisbane",
+    "suburb": "Tingalpa",
+    "phone": "0739175555",
+    "website": "https://brisbanecamperland.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Fifth Wheeler Sales",
+      "Motorhome / Campervan Sales",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-brisbane-caravan-sales-rembrandt-burpengary-0383891850-brisbane-119d67caee",
+    "name": "Brisbane Caravan Sales - Rembrandt",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0383891850",
+    "website": "https://rembrandtcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-brisbane-caravan-warehouse-brendale-0731328097-brisbane-fd3696303f",
+    "name": "Brisbane Caravan Warehouse",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0731328097",
+    "website": "https://brisbanecaravanwarehouse.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-brisbane-rvs-burpengary-0738883273-brisbane-909a6cd028",
+    "name": "Brisbane RVs",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0738883273",
+    "website": "https://brisbanervs.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-bruder-x-pty-ltd-richlands-0731728838-brisbane-be8ac29a59",
+    "name": "Bruder X Pty Ltd",
+    "region_section": "Brisbane",
+    "suburb": "Richlands",
+    "phone": "0731728838",
+    "website": "https://bruderx.com",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-camec-archerfield-0737109000-brisbane-44d4877e05",
+    "name": "Camec",
+    "region_section": "Brisbane",
+    "suburb": "Archerfield",
+    "phone": "0737109000",
+    "website": "https://camec.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Solar Products"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-capalaba-caravan-repairs-capalaba-0738232322-brisbane-1e18549171",
+    "name": "Capalaba Caravan Repairs",
+    "region_section": "Brisbane",
+    "suburb": "Capalaba",
+    "phone": "0738232322",
+    "website": "https://capalabacaravanrepairs.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-captain-rv-rocklea-1300783318-brisbane-047f0a6207",
+    "name": "Captain RV",
+    "region_section": "Brisbane",
+    "suburb": "Rocklea",
+    "phone": "1300783318",
+    "website": "https://starvision.com.au",
+    "categories": [
+      "Accessories",
+      "Camper Trailer Sales",
+      "Hybrid Sales",
+      "Service & Repair"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-repairs-and-service-underwood-0738417383-brisbane-179a10ce00",
+    "name": "Caravan Repairs & Service",
+    "region_section": "Brisbane",
+    "suburb": "Underwood",
+    "phone": "0738417383",
+    "website": "https://caravanrepairsandservice.com.au",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-towing-tuition-cornubia-0400769680-brisbane-41e4fdeb6b",
+    "name": "Caravan Towing Tuition",
+    "region_section": "Brisbane",
+    "suburb": "Cornubia",
+    "phone": "0400769680",
+    "website": "https://caravantowingtuition.com.au",
+    "categories": [
+      "Driver Instruction or Training"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-city-caravans-queensland-loganholme-0738011477-brisbane-84f887e555",
+    "name": "City Caravans Queensland",
+    "region_section": "Brisbane",
+    "suburb": "Loganholme",
+    "phone": "0738011477",
+    "website": "https://citycaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-coast-to-coast-rv-services-meadowbrook-0738057117-brisbane-e89b19ef35",
+    "name": "Coast to Coast RV Services",
+    "region_section": "Brisbane",
+    "suburb": "Meadowbrook",
+    "phone": "0738057117",
+    "website": "https://coastrv.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-comfort-caravans-clontarf-0732840902-brisbane-325fe3f041",
+    "name": "Comfort Caravans",
+    "region_section": "Brisbane",
+    "suburb": "Clontarf",
+    "phone": "0732840902",
+    "website": "https://comfortcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-condamine-campers-logan-village-0418761161-brisbane-77312ff6c8",
+    "name": "Condamine Campers",
+    "region_section": "Brisbane",
+    "suburb": "Logan Village",
+    "phone": "0418761161",
+    "website": "https://condaminecampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-conqueror-4x4-banyo-1300859897-brisbane-855cd5af1a",
+    "name": "Conqueror 4x4",
+    "region_section": "Brisbane",
+    "suburb": "Banyo",
+    "phone": "1300859897",
+    "website": "https://conqueroroffroad.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-credit-one-finance-eight-mile-plains-0734207030-brisbane-0fa2886f0d",
+    "name": "Credit One Finance",
+    "region_section": "Brisbane",
+    "suburb": "Eight Mile Plains",
+    "phone": "0734207030",
+    "website": "https://creditone.com.au",
+    "categories": [
+      "Finance"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-cruise-oz-loganholme-0738062627-brisbane-3d0315bebd",
+    "name": "Cruise Oz",
+    "region_section": "Brisbane",
+    "suburb": "Loganholme",
+    "phone": "0738062627",
+    "website": "https://cruiseoz.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales"
+    ],
+    "source_page": 98,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-cruisemaster-geebung-0736243800-brisbane-3543161749",
+    "name": "Cruisemaster",
+    "region_section": "Brisbane",
+    "suburb": "Geebung",
+    "phone": "0736243800",
+    "website": "https://cruisemaster.com.au",
+    "categories": [
+      "Accessories",
+      "Engineering",
+      "Towing"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-cub-campers-qld-burpengary-0730498951-brisbane-62d330547d",
+    "name": "Cub Campers QLD",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0730498951",
+    "website": "https://cubcampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-custom-lithium-brendale-0735194220-brisbane-253fdce199",
+    "name": "Custom Lithium",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0735194220",
+    "website": "https://customlithium.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-dmw-manufacturing-drayton-0746302369-brisbane-8a491ad5d9",
+    "name": "DMW Manufacturing",
+    "region_section": "Brisbane",
+    "suburb": "Drayton",
+    "phone": "0746302369",
+    "website": "https://dmw.com.au",
+    "categories": [
+      "Engineering"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-dream-lighting-led-browns-plains-0731038686-brisbane-4c75adac13",
+    "name": "Dream Lighting LED",
+    "region_section": "Brisbane",
+    "suburb": "Browns Plains",
+    "phone": "0731038686",
+    "website": "https://dreamlighting.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-dunn-and-watson-tingalpa-0730776699-brisbane-5d2cbf5464",
+    "name": "Dunn & Watson",
+    "region_section": "Brisbane",
+    "suburb": "Tingalpa",
+    "phone": "0730776699",
+    "website": "https://dunnandwatson.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-ezytrail-camper-trailers-caboolture-0754005814-brisbane-08dd168992",
+    "name": "EZYTrail Camper Trailers",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754005814",
+    "website": "https://ezytrail.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-engel-distribution-carole-park-1300302653-brisbane-0d1909d06d",
+    "name": "Engel Distribution",
+    "region_section": "Brisbane",
+    "suburb": "Carole Park",
+    "phone": "1300302653",
+    "website": "https://engelaustralia.com.au",
+    "categories": [
+      "Accessories",
+      "Refrigeration"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-explorer-4wd-motorhomes-clontarf-1800841972-brisbane-ca5cd23b73",
+    "name": "Explorer 4WD Motorhomes",
+    "region_section": "Brisbane",
+    "suburb": "Clontarf",
+    "phone": "1800841972",
+    "website": "https://explorermotorhomes.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-explorer-rv-brendale-0418193847-brisbane-11970238c6",
+    "name": "Explorer RV",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0418193847",
+    "website": "https://explorerrv.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales",
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-fair-dinkum-caravans-north-lakes-0738881846-brisbane-248c504fdb",
+    "name": "Fair Dinkum Caravans",
+    "region_section": "Brisbane",
+    "suburb": "North Lakes",
+    "phone": "0738881846",
+    "website": "https://fairdinkumcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-glendale-homes-caboolture-0754951266-brisbane-fc2f3df9cd",
+    "name": "Glendale Homes",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754951266",
+    "website": "https://glendalehomes.com.au",
+    "categories": [],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-golf-super-centre-burpengary-east-0738880700-brisbane-572f995bb4",
+    "name": "Golf Super Centre",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary East",
+    "phone": "0738880700",
+    "website": "https://golfsupercentre.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-great-annexe-co-brendale-1800612672-brisbane-3752ab41ca",
+    "name": "Great Annexe Co",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "1800612672",
+    "website": "https://rvwarehouse.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-green-rv-tanah-merah-0731803000-brisbane-534ec89e4b",
+    "name": "Green RV",
+    "region_section": "Brisbane",
+    "suburb": "Tanah Merah",
+    "phone": "0731803000",
+    "website": "https://greenrv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-guardian-campers-and-rv-centre-caboolture-1300788222-brisbane-6575d7ec68",
+    "name": "Guardian Campers & RV Centre",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "1300788222",
+    "website": "https://gcrv.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 99,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-gympie-road-caravan-centre-boondall-0738654488-brisbane-c921e44098",
+    "name": "Gympie Road Caravan Centre",
+    "region_section": "Brisbane",
+    "suburb": "Boondall",
+    "phone": "0738654488",
+    "website": "https://gympieroadcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-hema-maps-eight-mile-plains-0733400000-brisbane-2f1ed09f0e",
+    "name": "Hema Maps",
+    "region_section": "Brisbane",
+    "suburb": "Eight Mile Plains",
+    "phone": "0733400000",
+    "website": "https://hemamaps.com.au",
+    "categories": [
+      "Accessories",
+      "Communications"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-jb-caravans-brisbane-burpengary-east-0754323929-brisbane-90b921cfdf",
+    "name": "JB Caravans Brisbane",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary East",
+    "phone": "0754323929",
+    "website": "https://jbcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-kedron-caravans-brendale-0738813383-brisbane-60120a6090",
+    "name": "Kedron Caravans",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0738813383",
+    "website": "https://kedroncaravans.com",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-kratzmann-caravans-and-motorhomes-burpengary-0738882755-brisbane-2bee61b0d1",
+    "name": "Kratzmann Caravans & Motorhomes",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0738882755",
+    "website": "https://kratzmann.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-lakestar-rv-qld-and-lpt-caravans-brisbane-redcliffe-1800371074-brisbane-71980efd9a",
+    "name": "Lakestar RV Qld & LPT Caravans Brisbane",
+    "region_section": "Brisbane",
+    "suburb": "Redcliffe",
+    "phone": "1800371074",
+    "website": "https://lakestarrvqld.com",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-lawrence-rv-burpengary-east-0730633798-brisbane-6b04c068c8",
+    "name": "Lawrence RV",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary East",
+    "phone": "0730633798",
+    "website": "https://lawrencerv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-lifestyle-camper-trailers-slacks-creek-0732088350-brisbane-8afed8ed15",
+    "name": "Lifestyle Camper Trailers",
+    "region_section": "Brisbane",
+    "suburb": "Slacks Creek",
+    "phone": "0732088350",
+    "website": "https://lifestylecampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mdc-camper-trailers-and-offroad-caravans-coopers-plains-1300494494-brisbane-2462d10dbb",
+    "name": "MDC Camper Trailers & Offroad Caravans",
+    "region_section": "Brisbane",
+    "suburb": "Coopers Plains",
+    "phone": "1300494494",
+    "website": "https://marketdirect.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hire"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mw-toolbox-and-trailer-centre-coopers-plains-0738751066-brisbane-97382ab1d7",
+    "name": "MW Toolbox & Trailer Centre",
+    "region_section": "Brisbane",
+    "suburb": "Coopers Plains",
+    "phone": "0738751066",
+    "website": "https://mwtoolboxqld.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mach1-caravan-and-rv-solutions-caboolture-0754952146-brisbane-b71c99fc30",
+    "name": "Mach1 Caravan and RV Solutions",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754952146",
+    "website": "https://mach1caravans.com.au",
+    "categories": [
+      "Accessories",
+      "Engineering",
+      "Service & Repair"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mainevent-rv-centres-buderim-1300624383-brisbane-1556508834",
+    "name": "Mainevent RV Centres",
+    "region_section": "Brisbane",
+    "suburb": "Buderim",
+    "phone": "1300624383",
+    "website": "https://maineventrv.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mainevent-rv-centres-loganholme-1300624383-brisbane-e315e2ad56",
+    "name": "Mainevent RV Centres",
+    "region_section": "Brisbane",
+    "suburb": "Loganholme",
+    "phone": "1300624383",
+    "website": "https://maineventrv.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-majestic-caravans-qld-caboolture-0754991002-brisbane-41d043c3c2",
+    "name": "Majestic Caravans Qld",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754991002",
+    "website": "https://majesticcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-marine-and-rv-systems-geebung-0732657755-brisbane-e2ab5902a1",
+    "name": "Marine & RV Systems",
+    "region_section": "Brisbane",
+    "suburb": "Geebung",
+    "phone": "0732657755",
+    "website": "https://msamako.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mars-campers-rocklea-1300667868-brisbane-09d6708351",
+    "name": "Mars Campers",
+    "region_section": "Brisbane",
+    "suburb": "Rocklea",
+    "phone": "1300667868",
+    "website": "https://marscampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mccormacks-4wd-sandgate-0732693294-brisbane-35c63bb352",
+    "name": "McCormacks 4WD",
+    "region_section": "Brisbane",
+    "suburb": "Sandgate",
+    "phone": "0732693294",
+    "website": "https://mccormacks4wd.com.au",
+    "categories": [
+      "Accessories",
+      "Conversions",
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-modcon-rv-capalaba-0732452807-brisbane-376c60e4c0",
+    "name": "ModCon RV",
+    "region_section": "Brisbane",
+    "suburb": "Capalaba",
+    "phone": "0732452807",
+    "website": "https://modcon.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 100,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-moreton-bay-rv-manufacturing-pty-ltd-north-lakes-0417422130-brisbane-6eb3bd9cbe",
+    "name": "Moreton Bay RV Manufacturing Pty Ltd",
+    "region_section": "Brisbane",
+    "suburb": "North Lakes",
+    "phone": "0417422130",
+    "website": "https://moretonbayrv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-newstyle-direct-fairfield-0394891177-brisbane-278e4dbe78",
+    "name": "Newstyle Direct",
+    "region_section": "Brisbane",
+    "suburb": "Fairfield",
+    "phone": "0394891177",
+    "website": "https://newstyledirect.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-nomadic-off-road-campers-caboolture-1300696672-brisbane-0335464ca2",
+    "name": "Nomadic Off-Road Campers",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "1300696672",
+    "website": "https://nomadiccampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-not-just-canvas-d-aguilar-0412832361-brisbane-f4f3a1f5ce",
+    "name": "Not Just Canvas",
+    "region_section": "Brisbane",
+    "suburb": "D’Aguilar",
+    "phone": "0412832361",
+    "website": "https://notjustcanvas.com.au",
+    "categories": [
+      "Annexe & Awnings"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-okajaro-engineering-eatons-hill-0408112604-brisbane-01c3fcc60d",
+    "name": "Okajaro Engineering",
+    "region_section": "Brisbane",
+    "suburb": "Eatons Hill",
+    "phone": "0408112604",
+    "website": "https://okajaro.com.au",
+    "categories": [
+      "Engineering"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-on-back-campers-underwood-0410806666-brisbane-1617022bf4",
+    "name": "On Back Campers",
+    "region_section": "Brisbane",
+    "suburb": "Underwood",
+    "phone": "0410806666",
+    "website": "https://onbackcampers.com.au",
+    "categories": [
+      "Slide-on Sales"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-parkside-towbars-arrow-towbars-brendale-0736308181-brisbane-a1a2217d2b",
+    "name": "Parkside Towbars (Arrow Towbars)",
+    "region_section": "Brisbane",
+    "suburb": "Brendale",
+    "phone": "0736308181",
+    "website": "https://arrowtowbars.com.au",
+    "categories": [
+      "Towing"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-browns-plains-browns-plains-0733902688-brisbane-49bfa777ce",
+    "name": "Pedders Suspension & Brakes - Browns Plains",
+    "region_section": "Brisbane",
+    "suburb": "Browns Plains",
+    "phone": "0733902688",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-caboolture-caboolture-0754989333-brisbane-0878f350d6",
+    "name": "Pedders Suspension & Brakes - Caboolture",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754989333",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-capalaba-capalaba-0733902688-brisbane-6916911177",
+    "name": "Pedders Suspension & Brakes - Capalaba",
+    "region_section": "Brisbane",
+    "suburb": "Capalaba",
+    "phone": "0733902688",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-enoggera-enoggera-0739151417-brisbane-7c33503be8",
+    "name": "Pedders Suspension & Brakes - Enoggera",
+    "region_section": "Brisbane",
+    "suburb": "Enoggera",
+    "phone": "0739151417",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-head-office-lawnton-0738811755-brisbane-7fb42e4f45",
+    "name": "Pedders Suspension & Brakes - Head Office",
+    "region_section": "Brisbane",
+    "suburb": "Lawnton",
+    "phone": "0738811755",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-ipswich-ipswich-0732021211-brisbane-f5d8a08646",
+    "name": "Pedders Suspension & Brakes - Ipswich",
+    "region_section": "Brisbane",
+    "suburb": "Ipswich",
+    "phone": "0732021211",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-lawnton-lawnton-0738811755-brisbane-8cd6bbac82",
+    "name": "Pedders Suspension & Brakes - Lawnton",
+    "region_section": "Brisbane",
+    "suburb": "Lawnton",
+    "phone": "0738811755",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-moorooka-moorooka-0738924334-brisbane-6962baf2af",
+    "name": "Pedders Suspension & Brakes - Moorooka",
+    "region_section": "Brisbane",
+    "suburb": "Moorooka",
+    "phone": "0738924334",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-slacks-creek-slacks-creek-0738082073-brisbane-f67e76475f",
+    "name": "Pedders Suspension & Brakes - Slacks Creek",
+    "region_section": "Brisbane",
+    "suburb": "Slacks Creek",
+    "phone": "0738082073",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 101,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-purpleline-opus-campers-burpengary-0428266384-brisbane-daa59ee06b",
+    "name": "Purpleline Opus Campers",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0428266384",
+    "website": "https://opuscamper.com.au",
+    "categories": [
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-rv-sales-qld-parkinson-1300147555-brisbane-30378179be",
+    "name": "RV Sales Qld",
+    "region_section": "Brisbane",
+    "suburb": "Parkinson",
+    "phone": "1300147555",
+    "website": "https://rvsalesqld.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-rendle-holdings-chambers-flat-0459137951-brisbane-c78abdfd72",
+    "name": "Rendle Holdings",
+    "region_section": "Brisbane",
+    "suburb": "Chambers Flat",
+    "phone": "0459137951",
+    "website": "https://rsqaccessories.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-reverse-mate-redcliffe-0730920647-brisbane-2b54439a4f",
+    "name": "Reverse Mate",
+    "region_section": "Brisbane",
+    "suburb": "Redcliffe",
+    "phone": "0730920647",
+    "website": "https://reversemate.com",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-revolution-power-australia-mansfield-1300303498-brisbane-3d1ee88271",
+    "name": "Revolution Power Australia",
+    "region_section": "Brisbane",
+    "suburb": "Mansfield",
+    "phone": "1300303498",
+    "website": "https://revolutionpoweraustralia.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-set-up-camp-woodridge-0478840850-brisbane-c00411f860",
+    "name": "Set Up Camp",
+    "region_section": "Brisbane",
+    "suburb": "Woodridge",
+    "phone": "0478840850",
+    "website": "https://setupcamp.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-shady-gear-australia-ascot-0414777364-brisbane-0ea3d3bbd3",
+    "name": "Shady Gear Australia",
+    "region_section": "Brisbane",
+    "suburb": "Ascot",
+    "phone": "0414777364",
+    "website": "https://shadygear.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-signature-camper-trailers-caboolture-1300935400-brisbane-ec29b22b1a",
+    "name": "Signature Camper Trailers",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "1300935400",
+    "website": "https://signaturecampertrailers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-spinifex-caravans-deception-bay-0738882221-brisbane-687579e4ad",
+    "name": "Spinifex Caravans",
+    "region_section": "Brisbane",
+    "suburb": "Deception Bay",
+    "phone": "0738882221",
+    "website": "https://spinifexcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-springers-solar-capalaba-0742434307-brisbane-34dbca6882",
+    "name": "Springers Solar",
+    "region_section": "Brisbane",
+    "suburb": "Capalaba",
+    "phone": "0742434307",
+    "website": "https://springers.com.au",
+    "categories": [
+      "Accessories",
+      "Solar Products"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-stonegate-industries-coopers-plains-0738001283-brisbane-c19430a167",
+    "name": "Stonegate Industries",
+    "region_section": "Brisbane",
+    "suburb": "Coopers Plains",
+    "phone": "0738001283",
+    "website": "https://stonegateindustries.com.au",
+    "categories": [
+      "Camper Trailer Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-stoney-creek-campers-bundamba-0732820411-brisbane-fcaefb3029",
+    "name": "Stoney Creek Campers",
+    "region_section": "Brisbane",
+    "suburb": "Bundamba",
+    "phone": "0732820411",
+    "website": "https://stoneycreekcampers.com.au",
+    "categories": [
+      "Accessories",
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-sunland-rv-caboolture-0754992250-brisbane-766c489c2d",
+    "name": "Sunland RV",
+    "region_section": "Brisbane",
+    "suburb": "Caboolture",
+    "phone": "0754992250",
+    "website": "https://sunlandcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-sunrise-caravans-burpengary-0738884455-brisbane-d2ee5747ba",
+    "name": "Sunrise Caravans",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0738884455",
+    "website": "https://sunrisecaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-swag-camper-trailers-rocklea-1800792422-brisbane-3b4e0bfc66",
+    "name": "Swag Camper Trailers",
+    "region_section": "Brisbane",
+    "suburb": "Rocklea",
+    "phone": "1800792422",
+    "website": "https://swagcampertrailers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-tjm-4x4-megastore-benowa-benowa-0732778255-brisbane-7372f9e247",
+    "name": "TJM 4x4 Megastore Benowa",
+    "region_section": "Brisbane",
+    "suburb": "Benowa",
+    "phone": "0732778255",
+    "website": "https://4x4megastore.com.au",
+    "categories": [
+      "Accessories",
+      "Vehicle Modification"
+    ],
+    "source_page": 97,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-titan-caravans-australia-burpengary-0732164555-brisbane-4b0398243c",
+    "name": "Titan Caravans Australia",
+    "region_section": "Brisbane",
+    "suburb": "Burpengary",
+    "phone": "0732164555",
+    "website": "https://titancaravans.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-titanium-caravans-dealership-group-narangba-0394086999-brisbane-30ef6a5f2f",
+    "name": "Titanium Caravans Dealership Group",
+    "region_section": "Brisbane",
+    "suburb": "Narangba",
+    "phone": "0394086999",
+    "website": "https://titaniumcaravans.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 102,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-bundaberg-rv-centre-searles-rv-centre-kensington-0741513000-bundaberg-and-gladst-8083d09d6d",
+    "name": "Bundaberg RV Centre / Searles RV Centre",
+    "region_section": "Bundaberg & Gladstone",
+    "suburb": "Kensington",
+    "phone": "0741513000",
+    "website": "https://searlesrvcentre.com.au",
+    "categories": [
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-drivers-college-bundaberg-0741811773-bundaberg-and-gladstone-537d8f7933",
+    "name": "Drivers College",
+    "region_section": "Bundaberg & Gladstone",
+    "suburb": "Bundaberg",
+    "phone": "0741811773",
+    "website": "https://driverscollege.org",
+    "categories": [
+      "Driver Instruction or Training"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-jayco-bundaberg-avoca-0741524877-bundaberg-and-gladstone-21d697a813",
+    "name": "Jayco Bundaberg",
+    "region_section": "Bundaberg & Gladstone",
+    "suburb": "Avoca",
+    "phone": "0741524877",
+    "website": "https://jaycobundaberg.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Motorhome / Campervan Sales",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-bundaberg-bundaberg-0741111511-bundaberg-and-glads-d3ac95f544",
+    "name": "Pedders Suspension & Brakes - Bundaberg",
+    "region_section": "Bundaberg & Gladstone",
+    "suburb": "Bundaberg",
+    "phone": "0741111511",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-takalvans-bundaberg-0741511621-bundaberg-and-gladstone-6a074eb7a1",
+    "name": "Takalvans",
+    "region_section": "Bundaberg & Gladstone",
+    "suburb": "Bundaberg",
+    "phone": "0741511621",
+    "website": "https://takalvans.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-cairns-cairns-0740410044-cairns-and-tropical-north-13a15c8c38",
+    "name": "Pedders Suspension & Brakes - Cairns",
+    "region_section": "Cairns & Tropical North",
+    "suburb": "Cairns",
+    "phone": "0740410044",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-capricorn-caravan-centre-north-rockhampton-0749274826-capricorn-da3e63a99a",
+    "name": "Capricorn Caravan Centre",
+    "region_section": "Capricorn",
+    "suburb": "North Rockhampton",
+    "phone": "0749274826",
+    "website": "https://capricorncaravancentre.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-fix-gracemere-1300826349-capricorn-74112fef5a",
+    "name": "Caravan Fix",
+    "region_section": "Capricorn",
+    "suburb": "Gracemere",
+    "phone": "1300826349",
+    "website": "https://caravanfix.com.au",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-guardian-campers-and-rv-centre-north-rockhampton-1300788222-capricorn-94bce8f5a2",
+    "name": "Guardian Campers & RV Centre",
+    "region_section": "Capricorn",
+    "suburb": "North Rockhampton",
+    "phone": "1300788222",
+    "website": "https://guardiancampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-lifestyle-equipment-and-supplies-kensington-grove-0733902800-capricorn-195a57dde4",
+    "name": "Lifestyle Equipment & Supplies",
+    "region_section": "Capricorn",
+    "suburb": "Kensington Grove",
+    "phone": "0733902800",
+    "website": "https://lifestyleequipment.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-toowoomba-toowoomba-0746394525-capricorn-7f3beff0fe",
+    "name": "Pedders Suspension & Brakes - Toowoomba",
+    "region_section": "Capricorn",
+    "suburb": "Toowoomba",
+    "phone": "0746394525",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-rv-service-centre-qld-toowoomba-0746330845-capricorn-eccd6de813",
+    "name": "RV Service Centre Qld",
+    "region_section": "Capricorn",
+    "suburb": "Toowoomba",
+    "phone": "0746330845",
+    "website": "https://rvservicecentre.com.au",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-walsh-engineering-solutions-toowoomba-0746343344-capricorn-54ce9ad2a7",
+    "name": "Walsh Engineering Solutions",
+    "region_section": "Capricorn",
+    "suburb": "Toowoomba",
+    "phone": "0746343344",
+    "website": "https://walshengineeringsolutions.com.au",
+    "categories": [
+      "Engineering"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-werevr-4x4-accessories-south-nanango-0418529266-capricorn-2fcde4d0f8",
+    "name": "Werevr 4x4 Accessories",
+    "region_section": "Capricorn",
+    "suburb": "South Nanango",
+    "phone": "0418529266",
+    "website": "https://werevr4x4.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-western-weigh-western-downs-0438506929-capricorn-14a187f1f0",
+    "name": "Western Weigh",
+    "region_section": "Capricorn",
+    "suburb": "Western Downs",
+    "phone": "0438506929",
+    "website": "https://westernweigh.com.au",
+    "categories": [
+      "Weight"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-transmod-oakhurst-0499333911-fraser-coast-bf5ef55883",
+    "name": "Transmod",
+    "region_section": "Fraser Coast",
+    "suburb": "Oakhurst",
+    "phone": "0499333911",
+    "website": "https://transmod.com.au",
+    "categories": [
+      "Engineering"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-wide-bay-caravans-tinana-0741216377-fraser-coast-e5aedb5f15",
+    "name": "Wide Bay Caravans",
+    "region_section": "Fraser Coast",
+    "suburb": "Tinana",
+    "phone": "0741216377",
+    "website": "https://widebaycaravans.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 105,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-al-ko-international-yatala-0733866300-gold-coast-701af63357",
+    "name": "AL-KO International",
+    "region_section": "Gold Coast",
+    "suburb": "Yatala",
+    "phone": "0733866300",
+    "website": "https://alko.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-adjusta-mattress-australia-molendinar-0755391330-gold-coast-a04242af11",
+    "name": "Adjusta Mattress Australia",
+    "region_section": "Gold Coast",
+    "suburb": "Molendinar",
+    "phone": "0755391330",
+    "website": "https://adjustamattress.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-adventurev-burleigh-heads-0411162542-gold-coast-c9c8a6773b",
+    "name": "AdventurEV",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0411162542",
+    "website": "https://adventurev.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-australian-caravan-centre-burleigh-heads-0393578811-gold-coast-65fa683fc6",
+    "name": "Australian Caravan Centre",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0393578811",
+    "website": "https://supremecaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-barefoot-caravans-supermarine-intl-bbqarm-0432149890-gold-coast-f75c0fdaab",
+    "name": "Barefoot Caravans (Supermarine Intl)",
+    "region_section": "Gold Coast",
+    "suburb": "Bbqarm",
+    "phone": "0432149890",
+    "website": "https://barefoot-caravans.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-better-living-australia-robina-1800253893-gold-coast-b948e666b8",
+    "name": "Better Living Australia",
+    "region_section": "Gold Coast",
+    "suburb": "Robina",
+    "phone": "1800253893",
+    "website": "https://betterlivingaustralia.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-boss-adventure-molendinar-1300788370-gold-coast-580f52e44d",
+    "name": "Boss Adventure",
+    "region_section": "Gold Coast",
+    "suburb": "Molendinar",
+    "phone": "1300788370",
+    "website": "https://bossadventure.com.au",
+    "categories": [
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-bushwakka-4x4-campers-australia-ormeau-0755157912-gold-coast-c7d8c506a5",
+    "name": "Bushwakka 4x4 Campers Australia",
+    "region_section": "Gold Coast",
+    "suburb": "Ormeau",
+    "phone": "0755157912",
+    "website": "https://bushwakka.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Hybrid Sales",
+      "Service & Repair",
+      "Tents"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-carafix-arundel-0755715018-gold-coast-99e6b58521",
+    "name": "Carafix",
+    "region_section": "Gold Coast",
+    "suburb": "Arundel",
+    "phone": "0755715018",
+    "website": "https://carafix.com.au",
+    "categories": [
+      "Accessories",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-fix-yatala-1300826349-gold-coast-ebf90f78e8",
+    "name": "Caravan Fix",
+    "region_section": "Gold Coast",
+    "suburb": "Yatala",
+    "phone": "1300826349",
+    "website": "https://caravanfix.com.au",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-hq-yatala-0450690166-gold-coast-63921ade78",
+    "name": "Caravan HQ",
+    "region_section": "Gold Coast",
+    "suburb": "Yatala",
+    "phone": "0450690166",
+    "website": "https://caravanhq.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-east-coast-rvs-drive-group-claims-southport-0755282900-gold-coast-7d185a63a8",
+    "name": "East Coast RVs - Drive Group Claims",
+    "region_section": "Gold Coast",
+    "suburb": "Southport",
+    "phone": "0755282900",
+    "website": "https://eastcoastrvs.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-elite-rv-burleigh-waters-0755936140-gold-coast-ae6d66ebb5",
+    "name": "Elite RV",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Waters",
+    "phone": "0755936140",
+    "website": "https://eliterv.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-fixtech-molendinar-0755301099-gold-coast-4ac52f708d",
+    "name": "Fixtech",
+    "region_section": "Gold Coast",
+    "suburb": "Molendinar",
+    "phone": "0755301099",
+    "website": "https://fixtech.com",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Towing",
+      "Weight"
+    ],
+    "source_page": 95,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-gold-coast-caravan-sales-burleigh-waters-0418212393-gold-coast-9cdd943502",
+    "name": "Gold Coast Caravan Sales",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Waters",
+    "phone": "0418212393",
+    "website": "https://gccaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-goldy-caravans-burleigh-heads-0756475655-gold-coast-44f3596348",
+    "name": "Goldy Caravans",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0756475655",
+    "website": "https://goldycaravans.com",
+    "categories": [
+      "Caravan Sales",
+      "Conversions"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-hard-korr-campers-stayplton-0738018332-gold-coast-51f2483375",
+    "name": "Hard Korr Campers",
+    "region_section": "Gold Coast",
+    "suburb": "Stayplton",
+    "phone": "0738018332",
+    "website": "https://hardkorrcampers.com.au",
+    "categories": [
+      "Accessories",
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-hinterland-caravans-burleigh-heads-0755836777-gold-coast-1775821b07",
+    "name": "Hinterland Caravans",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0755836777",
+    "website": "https://hinterlandcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-hitch-campers-coomera-0480292400-gold-coast-c24fe6e4c4",
+    "name": "Hitch Campers",
+    "region_section": "Gold Coast",
+    "suburb": "Coomera",
+    "phone": "0480292400",
+    "website": "https://hitchcampers.com.au",
+    "categories": [
+      "Accessories",
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales",
+      "Service & Repair"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-howling-moon-rsi-canopy-cadac-bbq-miami-0755935398-gold-coast-a4d6a40c7d",
+    "name": "Howling Moon /RSI Canopy / Cadac BBQ",
+    "region_section": "Gold Coast",
+    "suburb": "Miami",
+    "phone": "0755935398",
+    "website": "https://rsismartcanopy.com.au",
+    "categories": [
+      "Accessories",
+      "Slide-on Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-jb-caravans-gold-coast-burleigh-heads-0756096835-gold-coast-676f03abe6",
+    "name": "JB Caravans Gold Coast",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0756096835",
+    "website": "https://jbcaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-keoghs-rv-arundel-0755292544-gold-coast-c3bfedf9b0",
+    "name": "Keoghs RV",
+    "region_section": "Gold Coast",
+    "suburb": "Arundel",
+    "phone": "0755292544",
+    "website": "https://keoghs.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-korr-lighting-yatala-0738018332-gold-coast-3bff687c51",
+    "name": "Korr Lighting",
+    "region_section": "Gold Coast",
+    "suburb": "Yatala",
+    "phone": "0738018332",
+    "website": "https://hardkorr.com",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-latitude-motorhomes-burleigh-heads-0756068000-gold-coast-8cc607d9cb",
+    "name": "Latitude Motorhomes",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0756068000",
+    "website": "https://latitudemotorhomes.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-lawrence-rv-gold-coast-helensvale-0756619093-gold-coast-d15dd87f94",
+    "name": "Lawrence RV Gold Coast",
+    "region_section": "Gold Coast",
+    "suburb": "Helensvale",
+    "phone": "0756619093",
+    "website": "https://lawrencerv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-msa-4x4-accessories-arundel-0755946664-gold-coast-ca7b97a12d",
+    "name": "MSA 4x4 Accessories",
+    "region_section": "Gold Coast",
+    "suburb": "Arundel",
+    "phone": "0755946664",
+    "website": "https://msa4x4.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mountain-trail-rv-qld-southport-0755200453-gold-coast-aeaa24a37f",
+    "name": "Mountain Trail RV QLD",
+    "region_section": "Gold Coast",
+    "suburb": "Southport",
+    "phone": "0755200453",
+    "website": "https://mountaintrailrvqld.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-ozcape-campers-west-burleigh-0755207388-gold-coast-4a286fff13",
+    "name": "Ozcape Campers",
+    "region_section": "Gold Coast",
+    "suburb": "West Burleigh",
+    "phone": "0755207388",
+    "website": "https://ozcape.com.au",
+    "categories": [
+      "Slide-on Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-paradise-motorhomes-yatala-0730635168-gold-coast-891f340bbd",
+    "name": "Paradise Motorhomes",
+    "region_section": "Gold Coast",
+    "suburb": "Yatala",
+    "phone": "0730635168",
+    "website": "https://paradisemotorhomes.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-patriot-campers-molendinar-0755970638-gold-coast-ee0e68cb3d",
+    "name": "Patriot Campers",
+    "region_section": "Gold Coast",
+    "suburb": "Molendinar",
+    "phone": "0755970638",
+    "website": "https://patriotcampers.com.au",
+    "categories": [
+      "Camper Trailer Sales"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-burleigh-heads-burleigh-heads-0755766688-gold-coas-29c067ef4a",
+    "name": "Pedders Suspension & Brakes - Burleigh Heads",
+    "region_section": "Gold Coast",
+    "suburb": "Burleigh Heads",
+    "phone": "0755766688",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 96,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-ballina-campervan-and-motorhome-centre-ballina-0266811555-interstate-business-e8c29eca48",
+    "name": "Ballina Campervan & Motorhome Centre",
+    "region_section": "Interstate Business",
+    "suburb": "Ballina",
+    "phone": "0266811555",
+    "website": "https://bcmc.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-cil-insurances-1800112481-interstate-business-f1823be1a9",
+    "name": "CIL Insurances",
+    "region_section": "Interstate Business",
+    "suburb": null,
+    "phone": "1800112481",
+    "website": "https://cilinsurance.com.au",
+    "categories": [
+      "Insurance"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-camping-mat-warehouse-bravic-morisset-1300645008-interstate-business-b3842d9781",
+    "name": "Camping Mat Warehouse (Bravic)",
+    "region_section": "Interstate Business",
+    "suburb": "Morisset",
+    "phone": "1300645008",
+    "website": "https://campingmatwarehouse.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-city-sales-south-lismore-0266216670-interstate-business-43977873d3",
+    "name": "Caravan City Sales",
+    "region_section": "Interstate Business",
+    "suburb": "South Lismore",
+    "phone": "0266216670",
+    "website": "https://caravanclassifieds.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-dometic-australia-clayton-south-1800212121-interstate-business-cf1d7d9673",
+    "name": "Dometic Australia",
+    "region_section": "Interstate Business",
+    "suburb": "Clayton South",
+    "phone": "1800212121",
+    "website": "https://dometic.com",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Refrigeration",
+      "Solar Products",
+      "Tents"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-enviropro-alternatives-emerald-beach-0266561140-interstate-business-b189189f9d",
+    "name": "Enviropro Alternatives",
+    "region_section": "Interstate Business",
+    "suburb": "Emerald Beach",
+    "phone": "0266561140",
+    "website": "https://enviropro.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-go-global-trading-filko-cleaning-products-gumeracha-0417836912-interstate-busine-af03edc4cf",
+    "name": "Go Global Trading / Filko Cleaning Products",
+    "region_section": "Interstate Business",
+    "suburb": "Gumeracha",
+    "phone": "0417836912",
+    "website": "https://filkocleaningproducts.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-rockhampton-rockhampton-0749226844-interstate-busi-519105ed21",
+    "name": "Pedders Suspension & Brakes - Rockhampton",
+    "region_section": "Interstate Business",
+    "suburb": "Rockhampton",
+    "phone": "0749226844",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": true,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-jayco-mackay-bakers-creek-0749421292-mackay-9ce57bbb9e",
+    "name": "Jayco Mackay",
+    "region_section": "Mackay",
+    "suburb": "Bakers Creek",
+    "phone": "0749421292",
+    "website": "https://jaycomackay.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Motorhome / Campervan Sales",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-tullmack-paget-0749523274-mackay-221d0016f6",
+    "name": "Tullmack",
+    "region_section": "Mackay",
+    "suburb": "Paget",
+    "phone": "0749523274",
+    "website": "https://tullmackcaravans.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Towing"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-ezi-weigh-0404863248-mobile-businesses-9a28222dec",
+    "name": "Ezi Weigh",
+    "region_section": "Mobile Businesses",
+    "suburb": null,
+    "phone": "0404863248",
+    "website": "https://eziweigh.com.au",
+    "categories": [
+      "Weight"
+    ],
+    "source_page": 107,
+    "is_mobile": true,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-weightcheck-0477897700-mobile-businesses-463d6def91",
+    "name": "Weightcheck",
+    "region_section": "Mobile Businesses",
+    "suburb": null,
+    "phone": "0477897700",
+    "website": "https://mobilecaravanweighing.com.au",
+    "categories": [
+      "Weight"
+    ],
+    "source_page": 107,
+    "is_mobile": true,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-b-e-s-t-water-filters-1800240822-online-businesses-088fb18e96",
+    "name": "B.E.S.T. Water Filters",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "1800240822",
+    "website": "https://bestwaterfilters.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-harvok-nsw-1300678162-online-businesses-530cfc6d12",
+    "name": "Harvok NSW",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "1300678162",
+    "website": "https://harvok.com.au",
+    "categories": [
+      "Accessories",
+      "Caravan Sales",
+      "Service & Repair"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-leisure-tec-australia-1300072018-online-businesses-200997ea0d",
+    "name": "Leisure-Tec Australia",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "1300072018",
+    "website": "https://leisure-tec.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-mhia-insurance-1800676700-online-businesses-35f976fb15",
+    "name": "MHIA Insurance",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "1800676700",
+    "website": "https://mhia.com.au",
+    "categories": [
+      "Insurance"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-masterpiece-caravans-0393575265-online-businesses-36c6087c52",
+    "name": "Masterpiece Caravans",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0393575265",
+    "website": "https://masterpiececaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-oz-off-road-0247305552-online-businesses-92d770f40e",
+    "name": "Oz Off Road",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0247305552",
+    "website": "https://ozoffroad.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-ozwit-0427929918-online-businesses-39a3be7d6a",
+    "name": "Ozwit",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0427929918",
+    "website": "https://ozwit.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-safety-dave-0395557585-online-businesses-6065fd5d29",
+    "name": "Safety Dave",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0395557585",
+    "website": "https://safetydave.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-so-simple-solutions-0297121532-online-businesses-6c3073ce98",
+    "name": "So Simple Solutions",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0297121532",
+    "website": "https://ecopot.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-thetford-australia-0393580700-online-businesses-76c0f59551",
+    "name": "Thetford Australia",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0393580700",
+    "website": "https://thetford.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-transac-agencies-0299971543-online-businesses-03af7bb5a7",
+    "name": "Transac Agencies",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0299971543",
+    "website": "https://transacagencies.com",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-itechworld-0894727200-online-businesses-9f10758c8b",
+    "name": "iTechworld",
+    "region_section": "Online Businesses",
+    "suburb": null,
+    "phone": "0894727200",
+    "website": "https://itechworld.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 107,
+    "is_mobile": false,
+    "is_online": true,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-dget-tow-ed-qld-glen-esk-0415773811-qld-country-dc48aac4ef",
+    "name": "DGet/Tow-Ed QLD",
+    "region_section": "Qld Country",
+    "suburb": "Glen Esk",
+    "phone": "0415773811",
+    "website": "https://daot.com.au",
+    "categories": [
+      "Driver Instruction or Training"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-gk-s-rv-kingaroy-0408007216-qld-country-e0dc3de9c8",
+    "name": "GK’s RV",
+    "region_section": "Qld Country",
+    "suburb": "Kingaroy",
+    "phone": "0408007216",
+    "website": "https://gksrv.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-jawa-campers-hq-bells-creek-qld-country-8049ad9828",
+    "name": "Jawa Campers HQ",
+    "region_section": "Qld Country",
+    "suburb": "Bells Creek",
+    "phone": null,
+    "website": "https://jawacampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-north-coast-offroad-rvs-caloundra-0754912970-qld-country-9846aa92b1",
+    "name": "North Coast Offroad RVs",
+    "region_section": "Qld Country",
+    "suburb": "Caloundra",
+    "phone": "0754912970",
+    "website": "https://offroadrvs.com.au",
+    "categories": [
+      "Caravan Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-maroochydore-maroochydore-0754436844-qld-country-576a6d37b0",
+    "name": "Pedders Suspension & Brakes - Maroochydore",
+    "region_section": "Qld Country",
+    "suburb": "Maroochydore",
+    "phone": "0754436844",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-maryborough-maryborough-0741215239-qld-country-a75c73d8cf",
+    "name": "Pedders Suspension & Brakes - Maryborough",
+    "region_section": "Qld Country",
+    "suburb": "Maryborough",
+    "phone": "0741215239",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-qld-caravan-clearance-centre-gympie-0753565000-qld-country-23eac633bd",
+    "name": "Qld Caravan Clearance Centre",
+    "region_section": "Qld Country",
+    "suburb": "Gympie",
+    "phone": "0753565000",
+    "website": "https://greenrv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-queensland-rv-warana-0754934699-qld-country-89f30a2f54",
+    "name": "Queensland RV",
+    "region_section": "Qld Country",
+    "suburb": "Warana",
+    "phone": "0754934699",
+    "website": "https://queenslandrv.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-rhinomax-campers-kunda-park-0755387240-qld-country-4f1f9f87a0",
+    "name": "Rhinomax Campers",
+    "region_section": "Qld Country",
+    "suburb": "Kunda Park",
+    "phone": "0755387240",
+    "website": "https://rhinomaxcampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-seq-campers-nambour-0402041873-qld-country-b7c3609142",
+    "name": "SEQ Campers",
+    "region_section": "Qld Country",
+    "suburb": "Nambour",
+    "phone": "0402041873",
+    "website": "https://seqcampers.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-southeast-fibreglass-service-maroochydore-0754431036-qld-country-107ac6426b",
+    "name": "Southeast Fibreglass Service",
+    "region_section": "Qld Country",
+    "suburb": "Maroochydore",
+    "phone": "0754431036",
+    "website": "https://southeastfibreglass.com.au",
+    "categories": [
+      "Service & Repair"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-suncoast-caravan-service-maroochydore-0754431036-qld-country-9c43000623",
+    "name": "Suncoast Caravan Service",
+    "region_section": "Qld Country",
+    "suburb": "Maroochydore",
+    "phone": "0754431036",
+    "website": "https://suncoastcaravanservice.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-sunseeker-caravans-warana-0754911888-qld-country-558b28ab74",
+    "name": "Sunseeker Caravans",
+    "region_section": "Qld Country",
+    "suburb": "Warana",
+    "phone": "0754911888",
+    "website": "https://sunseekercaravans.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-sunshine-state-rv-warana-0738061277-qld-country-9312da6742",
+    "name": "Sunshine State RV",
+    "region_section": "Qld Country",
+    "suburb": "Warana",
+    "phone": "0738061277",
+    "website": "https://sunshinestaterv.com.au",
+    "categories": [
+      "Motorhome / Campervan Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-trayon-campers-kunda-park-0754765355-qld-country-ec7617a0af",
+    "name": "Trayon Campers",
+    "region_section": "Qld Country",
+    "suburb": "Kunda Park",
+    "phone": "0754765355",
+    "website": "https://trayon.com",
+    "categories": [
+      "Slide-on Sales"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-xtend-outdoors-chevallum-1300783776-qld-country-e53b62bbcb",
+    "name": "Xtend Outdoors",
+    "region_section": "Qld Country",
+    "suburb": "Chevallum",
+    "phone": "1300783776",
+    "website": "https://xtendoutdoors.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-your-caravan-man-warana-0413007955-qld-country-9cbbd93c0e",
+    "name": "Your Caravan Man",
+    "region_section": "Qld Country",
+    "suburb": "Warana",
+    "phone": "0413007955",
+    "website": "https://yourcaravanman.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Towing"
+    ],
+    "source_page": 104,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-all-seasons-vinyl-and-canvas-currumbin-waters-0755982622-sunshine-coast-6e8520557c",
+    "name": "All Seasons Vinyl and Canvas",
+    "region_section": "Sunshine Coast",
+    "suburb": "Currumbin Waters",
+    "phone": "0755982622",
+    "website": "https://allseasonsvinyl.com.au",
+    "categories": [
+      "Annexe & Awnings"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-altitude-campers-kunda-park-1300367181-sunshine-coast-59f255461b",
+    "name": "Altitude Campers",
+    "region_section": "Sunshine Coast",
+    "suburb": "Kunda Park",
+    "phone": "1300367181",
+    "website": "https://altitudecampers.com.au",
+    "categories": [
+      "Camper Trailer Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-anrise-imports-oz-shop-in-little-mountain-0754996888-sunshine-coast-20d2354c20",
+    "name": "Anrise Imports / Oz-Shop.in",
+    "region_section": "Sunshine Coast",
+    "suburb": "Little Mountain",
+    "phone": "0754996888",
+    "website": "https://oz-shop.com",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-australian-off-road-caloundra-0753900300-sunshine-coast-8e96390c72",
+    "name": "Australian Off Road",
+    "region_section": "Sunshine Coast",
+    "suburb": "Caloundra",
+    "phone": "0753900300",
+    "website": "https://australianoffroad.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Caravan Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-bushtracker-kunda-park-0754765833-sunshine-coast-7716d6dea7",
+    "name": "Bushtracker",
+    "region_section": "Sunshine Coast",
+    "suburb": "Kunda Park",
+    "phone": "0754765833",
+    "website": "https://bushtracker.com",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-campboss-offroad-caravans-lake-macdonald-0754720813-sunshine-coast-3915a9ca9b",
+    "name": "Campboss Offroad Caravans",
+    "region_section": "Sunshine Coast",
+    "suburb": "Lake Macdonald",
+    "phone": "0754720813",
+    "website": "https://campbosscaravans.com.au",
+    "categories": [
+      "Hybrid Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-fix-kunda-park-1300826349-sunshine-coast-aca9184bc3",
+    "name": "Caravan Fix",
+    "region_section": "Sunshine Coast",
+    "suburb": "Kunda Park",
+    "phone": "1300826349",
+    "website": "https://caravanfix.com.au",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-repair-centre-meridan-plains-0754912560-sunshine-coast-ed7f053f74",
+    "name": "Caravan Repair Centre",
+    "region_section": "Sunshine Coast",
+    "suburb": "Meridan Plains",
+    "phone": "0754912560",
+    "website": "https://caravanrepaircentre.com.au",
+    "categories": [
+      "Accessories",
+      "Gas",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-caravan-world-chevallum-0754452215-sunshine-coast-b5d237cf06",
+    "name": "Caravan World",
+    "region_section": "Sunshine Coast",
+    "suburb": "Chevallum",
+    "phone": "0754452215",
+    "website": "https://caravanworld.biz",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-evakool-caloundra-west-0754927777-sunshine-coast-4baa9d6085",
+    "name": "EvaKool",
+    "region_section": "Sunshine Coast",
+    "suburb": "Caloundra West",
+    "phone": "0754927777",
+    "website": "https://evakool.com",
+    "categories": [
+      "Accessories",
+      "Refrigeration"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-green-rv-forest-glen-0753565000-sunshine-coast-b8cf79ca9b",
+    "name": "Green RV",
+    "region_section": "Sunshine Coast",
+    "suburb": "Forest Glen",
+    "phone": "0753565000",
+    "website": "https://greenrv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-tong-metal-northgate-0732569633-sunshine-coast-16536792bc",
+    "name": "Tong Metal",
+    "region_section": "Sunshine Coast",
+    "suburb": "Northgate",
+    "phone": "0732569633",
+    "website": "https://tongmetal.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-total-towing-setups-strathpine-0427751756-sunshine-coast-c1b61246a6",
+    "name": "Total Towing Setups",
+    "region_section": "Sunshine Coast",
+    "suburb": "Strathpine",
+    "phone": "0427751756",
+    "website": "https://totaltowingsetups.com.au",
+    "categories": [
+      "Towing"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-trackabout-off-road-campers-slacks-creek-0732081133-sunshine-coast-3cecd9cded",
+    "name": "Trackabout Off Road Campers",
+    "region_section": "Sunshine Coast",
+    "suburb": "Slacks Creek",
+    "phone": "0732081133",
+    "website": "https://trackabout.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-trail-rv-caravans-eagleby-0734725699-sunshine-coast-6b992dae69",
+    "name": "Trail RV Caravans",
+    "region_section": "Sunshine Coast",
+    "suburb": "Eagleby",
+    "phone": "0734725699",
+    "website": "https://trailrv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-vango-caravan-services-underwood-0732095044-sunshine-coast-bc55f91a23",
+    "name": "VanGo Caravan Services",
+    "region_section": "Sunshine Coast",
+    "suburb": "Underwood",
+    "phone": "0732095044",
+    "website": "https://vangocaravanservices.com.au",
+    "categories": [
+      "Accessories"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-youngs-caravan-hire-qld-underwood-0733415599-sunshine-coast-9b1152e3e3",
+    "name": "Youngs Caravan Hire - Qld",
+    "region_section": "Sunshine Coast",
+    "suburb": "Underwood",
+    "phone": "0733415599",
+    "website": "https://ych.com.au",
+    "categories": [
+      "Hire"
+    ],
+    "source_page": 103,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-ezytrail-camper-trailers-townsville-0747253806-townsville-978be1e555",
+    "name": "EZYTrail Camper Trailers",
+    "region_section": "Townsville",
+    "suburb": "Townsville",
+    "phone": "0747253806",
+    "website": "https://ezytrail.com.au",
+    "categories": [
+      "Camper Trailer Sales",
+      "Hybrid Sales"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-jayco-townsville-currajong-0747799759-townsville-2215de4540",
+    "name": "Jayco Townsville",
+    "region_section": "Townsville",
+    "suburb": "Currajong",
+    "phone": "0747799759",
+    "website": "https://jaycotownsville.com.au",
+    "categories": [
+      "Accessories",
+      "Annexe & Awnings",
+      "Caravan Sales",
+      "Gas",
+      "Motorhome / Campervan Sales",
+      "Refrigeration",
+      "Safety Certificate",
+      "Service & Repair",
+      "Solar Products",
+      "Towing"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-motoco-rv-townsville-mount-st-john-0747502900-townsville-b9e5cb6574",
+    "name": "Motoco RV - Townsville",
+    "region_section": "Townsville",
+    "suburb": "Mount St John",
+    "phone": "0747502900",
+    "website": "https://motocorv.com.au",
+    "categories": [
+      "Caravan Sales"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  },
+  {
+    "external_id": "cpaq-2026-pedders-suspension-and-brakes-townsville-townsville-0747251317-townsville-cdb27e3614",
+    "name": "Pedders Suspension & Brakes - Townsville",
+    "region_section": "Townsville",
+    "suburb": "Townsville",
+    "phone": "0747251317",
+    "website": "https://pedders.com.au",
+    "categories": [
+      "Engineering",
+      "Vehicle Modification"
+    ],
+    "source_page": 106,
+    "is_mobile": false,
+    "is_online": false,
+    "is_interstate": false,
+    "source_note": null
+  }
+]
