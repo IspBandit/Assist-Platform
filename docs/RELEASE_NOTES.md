@@ -5,6 +5,20 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### VanAssist national traveller-data source archive (DATA-012 / DATA-011A / VAN-001)
+
+- Added Platform-side source vault under `data/sources/vanassist/` with machine
+  registry (`registry/sources.json`), checksums, and human register
+  `docs/data/VANASSIST_DATA_SOURCE_REGISTER.md`.
+- Repeatable sync: `tools/vanassist_sources/sync_archive.py`.
+- GREEN facility import via `GovernmentDatasetService`:
+  `scripts/import-archived-green-facilities.php` and bulk Toilet Map helper
+  `scripts/import-toilet-map-direct.php`.
+- CSV/GeoJSON connectors support up to 50k rows with jurisdiction field
+  fallbacks; bulk approve caches catalogue source keys.
+- AMBER industry/regional PDFs archived without production import; OSM remains
+  YELLOW; National Formal Rest Areas remain UNKNOWN (not imported).
+
 ### CPAQ 2026 authorised directory import (DATA-001 / VAN-001)
 
 - Added idempotent CPAQ 2026 import service and CLI
