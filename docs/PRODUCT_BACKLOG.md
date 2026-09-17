@@ -66,7 +66,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | DATA-001 | Provider and stay provenance, import history and rollback | in progress | Import reports, coordinate/locality conflict correction, public-visibility release gate and quarantine controls |
 | DATA-002 | Duplicate detection and merge with audit preservation | done | Admin API check/dry_run/merge/not-duplicate/defer + merge-history; soft-delete absorbed provider; human-only `duplicates:merge`; HTML list-only (`/admin/providers/duplicates`); workflow unit tests |
 | DATA-003 | Cross-brand recommendation policies | ready | Relevance rules, labelled origin and analytics |
-| DATA-004 | Brand-scoped website, provider-interest and coverage-gap reporting | in progress | Shared first-party event scope, admin website-insights summary and zero-result/provider-interest reporting implemented; production data collection and acceptance remain |
+| DATA-004 | Brand-scoped website, provider-interest and coverage-gap reporting | in progress | Shared first-party event scope, admin website-insights summary, zero-result/provider-interest reporting and daily support email implemented; host cron install now ships with releases; production acceptance remains |
 | DATA-005 | Data Intelligence, opportunity scoring and action queue | in progress | Modular metric sources, population-aware scoring, verification/import quality and direct Data Sources hand-off |
 | DATA-006 | Connector-based discovery, encrypted credentials and review-first imports | done | Migration, connector contract, Google adapter, admin workflow, audit and tests |
 | DATA-007 | Maps/geocoding production limits and fallback | ready | Quota, failure and list-view acceptance |

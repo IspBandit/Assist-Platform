@@ -43,6 +43,23 @@ install -o root -g root -m 0640 "$SOURCE_DIR/php.ini" "$TARGET/runtime/php.ini"
 install -o root -g root -m 0750 "$SOURCE_DIR/firewall.sh" "$TARGET/runtime/firewall.sh"
 install -d -o root -g root -m 0750 "$TARGET/runtime/ops"
 find "$SOURCE_DIR/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$TARGET/runtime/ops/" \;
+install -o root -g root -m 0755 "$SOURCE_DIR/ops/assist-cron.sh" /usr/local/sbin/assist-cron
+# cron.d filenames must not contain a period or cron ignores them.
+install -o root -g root -m 0644 "$SOURCE_DIR/ops/assist-platform.cron" /etc/cron.d/assist-platform
+install -d -o root -g root -m 0755 /var/log/assist-platform
+touch /var/log/assist-platform/cron.log
+chmod 0640 /var/log/assist-platform/cron.log
+if [[ -f "$SOURCE_DIR/ops/assist-healthcheck.sh" ]]; then
+  install -o root -g root -m 0755 "$SOURCE_DIR/ops/assist-healthcheck.sh" /usr/local/sbin/assist-healthcheck
+fi
+if [[ -f "$SOURCE_DIR/ops/assist-platform-health.service" ]]; then
+  install -o root -g root -m 0644 "$SOURCE_DIR/ops/assist-platform-health.service" /etc/systemd/system/assist-platform-health.service
+fi
+if [[ -f "$SOURCE_DIR/ops/assist-platform-health.timer" ]]; then
+  install -o root -g root -m 0644 "$SOURCE_DIR/ops/assist-platform-health.timer" /etc/systemd/system/assist-platform-health.timer
+  systemctl daemon-reload
+  systemctl enable --now assist-platform-health.timer
+fi
 chown -R 82:82 "$TARGET/shared/storage" "$TARGET/shared/uploads-public"
 find "$TARGET/shared/storage" "$TARGET/shared/uploads-public" -type d -exec chmod 0750 {} +
 

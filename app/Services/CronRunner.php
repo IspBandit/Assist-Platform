@@ -21,7 +21,22 @@ final class CronRunner
     public function __construct()
     {
         $this->handlers = [
-            'process_email_queue'   => static fn () => Mailer::processQueue(),
+            'process_email_queue'   => static function (): array {
+                $result = Mailer::processQueue();
+                // Safety net: the dedicated 06:15 host cron line can lag behind
+                // reviewed commits. Queueing here is idempotent per report date.
+                try {
+                    $result['vanassist_daily_performance'] = (new \App\Services\Demand\VanAssistDailyPerformanceReport())->queuePreviousDay();
+                } catch (Throwable $e) {
+                    Logger::error('VanAssist daily performance email queue failed during process_email_queue: ' . $e->getMessage(), [], 'email');
+                    $result['vanassist_daily_performance'] = [
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                    ];
+                }
+
+                return $result;
+            },
             'expire_sessions'       => fn () => $this->expireSessions(),
             'update_run_capacity'   => fn () => $this->updateRunCapacity(),
             'update_town_demand'    => fn () => $this->updateTownDemand(),
