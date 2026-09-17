@@ -52,9 +52,9 @@ jobs:
           scp -q scripts/cpaq-2026-batch-apply.php "$VPS_USER@$VPS_HOST:$remote_tmp"
           ssh "$VPS_USER@$VPS_HOST" "set -euo pipefail
             cd /opt/assist-platform
-            docker compose cp '$remote_tmp' app:/tmp/cpaq-2026-batch-apply.php
+            sudo docker compose cp '$remote_tmp' app:/tmp/cpaq-2026-batch-apply.php
             rm -f '$remote_tmp'
-            docker compose exec -T app php /tmp/cpaq-2026-batch-apply.php --batch-size=$batch_size
+            sudo docker compose exec -T app php /tmp/cpaq-2026-batch-apply.php --batch-size=$batch_size
           " | tee /tmp/cpaq-import-output.txt
           {
             echo '## CPAQ 2026 production import'
