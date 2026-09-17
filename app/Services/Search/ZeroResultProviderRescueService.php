@@ -6,6 +6,7 @@ namespace App\Services\Search;
 
 use App\Core\Database;
 use App\Helpers\Geo;
+use App\Helpers\Env;
 use App\Models\ServiceCategory;
 use App\Platform\AiSearch\Provenance\ResultProvenance;
 use App\Platform\AiSearch\Support\PlacesRescueFeature;
@@ -91,6 +92,9 @@ final class ZeroResultProviderRescueService
             [$connectorId]
         );
         $apiKey = SecretCipher::decrypt((string) ($credential['encrypted_value'] ?? ''));
+        if ($apiKey === '') {
+            $apiKey = trim((string) Env::get('GOOGLE_PLACES_API_KEY', ''));
+        }
         if ($apiKey === '') {
             return $empty;
         }

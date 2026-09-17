@@ -34,7 +34,7 @@ Provider viewing and editing requires `providers.manage`; status approval requir
 
 Search the global provider table before creating a provider. Review business identity, explicit brand listings and provenance, then add services and areas. For an inbound claim, inspect the recorded role/evidence, request more information where needed, and approve only enough authority to issue the secure claim link. After the account claim is completed, provider verification remains a separate evidence-backed decision; setting it updates the canonical identity and its active brand listings together. For imports, confirm the brand mapping, configure or run a connector, review staged candidates, resolve duplicates, and promote only eligible reviewed records.
 
-When `provider_places_rescue` is enabled (ADR 0042), zero/weak traveller searches may call Google Places under the connector budget and auto-create **unclaimed** listings with Place ID evidence. Those rows are not verified. Use claim and verification workflows before treating them as confirmed specialists. Hub bootstrap: `docs/PLACES_RESCUE_BOOTSTRAP.md`.
+When `provider_places_rescue` is enabled (ADR 0042), zero/weak traveller searches may call Google Places under the connector budget and auto-create **unclaimed** listings with Place ID evidence. Those rows are not verified. Use claim and verification workflows before treating them as confirmed specialists. Load `GOOGLE_PLACES_API_KEY` with `php scripts/provision-google-places.php --enable-rescue`, then hub bootstrap via `docs/PLACES_RESCUE_BOOTSTRAP.md` (Charters Towers refrigeration is the focused first run).
 
 ## Examples
 
@@ -75,7 +75,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-08-24.
+2026-09-18.
 
 ## Owner
 

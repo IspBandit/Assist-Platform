@@ -32,6 +32,7 @@ use App\Helpers\Env;
 use App\Models\ServiceCategory;
 use App\Models\Town;
 use App\Platform\AiSearch\Support\PlacesRescueFeature;
+use App\Services\DataSources\GooglePlacesCredentialProvisioner;
 use App\Services\Search\ZeroResultProviderRescueService;
 
 Env::load(BASE_PATH . '/.env');
@@ -107,8 +108,40 @@ if ($brandId < 1) {
 }
 
 if (!$dryRun && !PlacesRescueFeature::enabled()) {
-    fwrite(STDERR, "provider_places_rescue is OFF. Enable the flag before --apply.\n");
+    fwrite(STDERR, "provider_places_rescue is OFF. Enable with:\n");
+    fwrite(STDERR, "  php scripts/provision-google-places.php --enable-rescue\n");
     exit(1);
+}
+
+if (!$dryRun) {
+    $credLen = (int) Database::scalar(
+        "SELECT LENGTH(cr.encrypted_value) FROM data_source_credentials cr "
+        . "JOIN data_source_connectors c ON c.id = cr.connector_id "
+        . "WHERE c.connector_key = 'google_places' AND cr.credential_key = 'api_key'"
+    );
+    $connectorStatus = (string) Database::scalar(
+        "SELECT status FROM data_source_connectors WHERE connector_key = 'google_places' LIMIT 1"
+    );
+    $envKey = trim((string) Env::get('GOOGLE_PLACES_API_KEY', ''));
+    if ($connectorStatus !== 'active' || $credLen < 1) {
+        if ($envKey === '') {
+            fwrite(STDERR, "Places connector is not ready and GOOGLE_PLACES_API_KEY is not set.\n");
+            exit(1);
+        }
+        try {
+            (new GooglePlacesCredentialProvisioner())->provisionFromEnv(true);
+            fwrite(STDOUT, "Provisioned Google Places connector from GOOGLE_PLACES_API_KEY.\n");
+        } catch (\Throwable $e) {
+            Database::query(
+                "UPDATE data_source_connectors SET status = 'active', "
+                . 'daily_request_limit = GREATEST(daily_request_limit, 100), '
+                . 'daily_budget_aud = GREATEST(daily_budget_aud, 50), updated_at = NOW() '
+                . "WHERE connector_key = 'google_places'"
+            );
+            fwrite(STDOUT, 'Vault provision skipped (' . $e->getMessage()
+                . "); using GOOGLE_PLACES_API_KEY from environment.\n");
+        }
+    }
 }
 
 $rescue = new ZeroResultProviderRescueService();

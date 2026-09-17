@@ -38,6 +38,16 @@ may remain as dated files and are linked here rather than copied.
   Google Places rescue on zero/weak provider searches: labelled public-source
   results in the journey, budget-gated via Data Sources, and optional
   auto-create of **unclaimed** listings with Place ID provenance.
+- Migration `138` promotes Charters Towers QLD town-centre coordinates to
+  authoritative and backfills unclaimed providers that had a town link but no
+  measurable point (so Ask radius search can see Dealz on Deane / Rural
+  Mechanical and peers).
+- Migration `139` activates Charters Towers unclaimed listings that were stuck
+  as pending/draft after import (Ask requires `providers.status='active'`).
+- `scripts/provision-google-places.php` loads `GOOGLE_PLACES_API_KEY` into the
+  encrypted connector vault and can enable `provider_places_rescue`. Bootstrap
+  auto-provisions the connector when the vault is empty, and falls back to the
+  process environment key when `APP_KEY` cannot encrypt secrets.
 - National hub bootstrap script:
   `scripts/places-rescue-bootstrap.php` / `docs/PLACES_RESCUE_BOOTSTRAP.md`.
 - Production enablement requires Places API key, connector budget, Quality Gate

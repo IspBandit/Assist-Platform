@@ -429,9 +429,13 @@ final class NationalImportSeeder
             $id = (int) Database::scalar('SELECT id FROM towns WHERE state_id = ? AND slug = ?', [$stateId, $slug]);
             if ($id === 0) {
                 Database::query(
-                    'INSERT IGNORE INTO towns (state_id, region_id, name, slug, primary_postcode, latitude, longitude, is_active, is_launch_town, noindex, created_at, updated_at) '
-                    . 'VALUES (?, ?, ?, ?, ?, ?, ?, 1, 0, 1, NOW(), NOW())',
-                    [$stateId, $regionId ?: null, $name, $slug, $pc, $lat, $lng]
+                    'INSERT IGNORE INTO towns (state_id, region_id, name, slug, primary_postcode, latitude, longitude, '
+                    . 'coordinate_source, coordinate_confidence, is_active, is_launch_town, noindex, created_at, updated_at) '
+                    . "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'statistical', 1, 0, 1, NOW(), NOW())",
+                    [
+                        $stateId, $regionId ?: null, $name, $slug, $pc, $lat, $lng,
+                        $lat !== null && $lng !== null ? 'town_details' : null,
+                    ]
                 );
                 $id = (int) Database::scalar('SELECT id FROM towns WHERE state_id = ? AND slug = ?', [$stateId, $slug]);
                 if ($id > 0) {
@@ -442,7 +446,8 @@ final class NationalImportSeeder
         }
 
         // Backfill postcode/coordinates on existing rows without overwriting any
-        // values that are already present.
+        // values that are already present. Curated town_details centres are
+        // statistical so Ask can fall back to the town point.
         if ($id > 0 && $detail !== null) {
             $affected = Database::query(
                 'UPDATE towns SET '
@@ -450,9 +455,17 @@ final class NationalImportSeeder
                 . 'latitude = COALESCE(latitude, ?), '
                 . 'longitude = COALESCE(longitude, ?), '
                 . 'region_id = COALESCE(region_id, ?), '
+                . "coordinate_source = CASE "
+                . "WHEN coordinate_confidence IN ('authoritative','statistical') THEN coordinate_source "
+                . "WHEN ? IS NOT NULL AND ? IS NOT NULL THEN 'town_details' ELSE coordinate_source END, "
+                . "coordinate_confidence = CASE "
+                . "WHEN coordinate_confidence IN ('authoritative','statistical') THEN coordinate_confidence "
+                . "WHEN ? IS NOT NULL AND ? IS NOT NULL THEN 'statistical' ELSE coordinate_confidence END, "
                 . 'updated_at = NOW() '
-                . "WHERE id = ? AND (primary_postcode IS NULL OR primary_postcode = '' OR latitude IS NULL OR longitude IS NULL OR region_id IS NULL)",
-                [$pc, $lat, $lng, $regionId ?: null, $id]
+                . "WHERE id = ? AND ("
+                . "primary_postcode IS NULL OR primary_postcode = '' OR latitude IS NULL OR longitude IS NULL "
+                . "OR region_id IS NULL OR coordinate_confidence = 'unverified')",
+                [$pc, $lat, $lng, $regionId ?: null, $lat, $lng, $lat, $lng, $id]
             )->rowCount();
             if ($affected > 0) {
                 $counters['towns_enriched']++;
@@ -710,17 +723,18 @@ final class NationalImportSeeder
             }
         }
         $confidence = trim((string) ($b['coverage_confidence'] ?? '')) ?: null;
+        [$latitude, $longitude] = $this->resolveImportCoordinates($b, $townId);
 
         return Database::insert(
             'INSERT INTO providers (business_name, slug, phone, public_phone, show_public_phone, email, website, '
-            . 'base_town_id, region_id, street_address, description, service_model, status, is_verified, is_unclaimed, '
+            . 'base_town_id, region_id, street_address, latitude, longitude, description, service_model, status, is_verified, is_unclaimed, '
             . 'auto_invite_opt_out, is_demo, plan, source_note, source_url, source_type, coverage_confidence, created_at, updated_at) '
-            . "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 0, 1, 1, 0, 'standard_free', ?, ?, ?, ?, NOW(), NOW())",
+            . "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', 0, 1, 1, 0, 'standard_free', ?, ?, ?, ?, NOW(), NOW())",
             [
                 (string) ($b['name'] ?? 'Unnamed business'), $slug,
                 $phone ?: null, $phone ?: null, $phone !== '' ? 1 : 0,
                 $email, $website,
-                $townId ?: null, $regionId ?: null, $address, $desc, $model,
+                $townId ?: null, $regionId ?: null, $address, $latitude, $longitude, $desc, $model,
                 'Imported from public research (unclaimed listing)', $sourceUrl, $sourceType, $confidence,
             ]
         );
@@ -758,6 +772,12 @@ final class NationalImportSeeder
         $address = trim((string) ($b['address'] ?? '')) ?: null;
         $desc = $this->buildDescription($b);
 
+        $townId = (int) Database::scalar(
+            'SELECT base_town_id FROM providers WHERE id = ? AND is_unclaimed = 1',
+            [$providerId]
+        );
+        [$latitude, $longitude] = $this->resolveImportCoordinates($b, $townId);
+
         $affected = Database::query(
             'UPDATE providers SET '
             . "street_address = COALESCE(NULLIF(street_address, ''), ?), "
@@ -767,13 +787,46 @@ final class NationalImportSeeder
             . "email          = COALESCE(NULLIF(email, ''), ?), "
             . "website        = COALESCE(NULLIF(website, ''), ?), "
             . "source_url     = COALESCE(NULLIF(source_url, ''), ?), "
+            . 'latitude = COALESCE(latitude, ?), '
+            . 'longitude = COALESCE(longitude, ?), '
             . 'description     = ?, '
             . 'updated_at = NOW() '
             . 'WHERE id = ? AND is_unclaimed = 1',
-            [$address, $phone ?: null, $phone ?: null, $phone !== '' ? 1 : 0, $email, $website, $sourceUrl, $desc, $providerId]
+            [
+                $address, $phone ?: null, $phone ?: null, $phone !== '' ? 1 : 0, $email, $website, $sourceUrl,
+                $latitude, $longitude, $desc, $providerId,
+            ]
         )->rowCount();
 
         return $affected > 0;
+    }
+
+    /**
+     * Prefer an explicit sourced point; otherwise inherit the base town centre so
+     * Ask radius search can measure the listing until a precise point is confirmed.
+     *
+     * @param array<string,mixed> $b
+     * @return array{0:?float,1:?float}
+     */
+    private function resolveImportCoordinates(array $b, int $townId): array
+    {
+        $lat = isset($b['latitude']) && is_numeric($b['latitude']) ? (float) $b['latitude'] : null;
+        $lng = isset($b['longitude']) && is_numeric($b['longitude']) ? (float) $b['longitude'] : null;
+        if ($lat !== null && $lng !== null) {
+            return [$lat, $lng];
+        }
+        if ($townId < 1) {
+            return [null, null];
+        }
+        $town = Database::selectOne(
+            'SELECT latitude, longitude FROM towns WHERE id = ? AND latitude IS NOT NULL AND longitude IS NOT NULL',
+            [$townId]
+        );
+        if ($town === null) {
+            return [null, null];
+        }
+
+        return [(float) $town['latitude'], (float) $town['longitude']];
     }
 
     /**
