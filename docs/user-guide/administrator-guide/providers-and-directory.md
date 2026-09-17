@@ -34,6 +34,8 @@ Provider viewing and editing requires `providers.manage`; status approval requir
 
 Search the global provider table before creating a provider. Review business identity, explicit brand listings and provenance, then add services and areas. For an inbound claim, inspect the recorded role/evidence, request more information where needed, and approve only enough authority to issue the secure claim link. After the account claim is completed, provider verification remains a separate evidence-backed decision; setting it updates the canonical identity and its active brand listings together. For imports, confirm the brand mapping, configure or run a connector, review staged candidates, resolve duplicates, and promote only eligible reviewed records.
 
+When `provider_places_rescue` is enabled (ADR 0042), zero/weak traveller searches may call Google Places under the connector budget and auto-create **unclaimed** listings with Place ID evidence. Those rows are not verified. Use claim and verification workflows before treating them as confirmed specialists. Hub bootstrap: `docs/PLACES_RESCUE_BOOTSTRAP.md`.
+
 ## Examples
 
 To invite a business to claim its listing, open the global provider record, confirm its explicit brand listings and public email, then use the claim-invite action. The controller records the action and does not grant ownership merely because an email exists.

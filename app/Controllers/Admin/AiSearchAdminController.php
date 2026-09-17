@@ -15,6 +15,7 @@ use App\Platform\AiSearch\Retention\AiRetentionService;
 use App\Platform\AiSearch\Support\AiReleaseGate;
 use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Platform\AiSearch\Support\DatasetSearchFeature;
+use App\Platform\AiSearch\Support\PlacesRescueFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 use App\Services\AuditLog;
 use App\Services\CsvExport;
@@ -50,6 +51,8 @@ final class AiSearchAdminController extends Controller
             'datasetsFlagKey' => DatasetSearchFeature::FLAG,
             'facilitiesFlagEnabled' => TravellerFacilitiesFeature::enabled(),
             'facilitiesFlagKey' => TravellerFacilitiesFeature::FLAG,
+            'placesRescueFlagEnabled' => PlacesRescueFeature::enabled(),
+            'placesRescueFlagKey' => PlacesRescueFeature::FLAG,
             'releaseGate' => $gate,
             'retentionWindows' => AiRetentionService::windows(),
             'costSimulation' => $sim,
@@ -136,6 +139,17 @@ final class AiSearchAdminController extends Controller
                 TravellerFacilitiesFeature::FLAG,
                 null,
                 $request->input('assist_ai_traveller_facilities') === '1' ? '1' : '0'
+            );
+        }
+
+        if ($request->input('provider_places_rescue_present') !== null) {
+            FeatureFlag::set(PlacesRescueFeature::FLAG, $request->input('provider_places_rescue') === '1');
+            AuditLog::record(
+                'ai.places_rescue_flag_updated',
+                'feature_flags',
+                PlacesRescueFeature::FLAG,
+                null,
+                $request->input('provider_places_rescue') === '1' ? '1' : '0'
             );
         }
 

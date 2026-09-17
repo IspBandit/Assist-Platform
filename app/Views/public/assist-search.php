@@ -262,8 +262,8 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
             <?php endif; ?>
 
             <?php if ($result->externals !== []): ?>
-                <h2 class="h3" style="margin-top:1.5rem">Pending dataset candidates</h2>
-                <p class="muted">These come from imported data sources and are <strong>not verified VanAssist listings</strong>. They await review before they can be published.</p>
+                <h2 class="h3" style="margin-top:1.5rem">Public-source and pending candidates</h2>
+                <p class="muted">These come from public data sources or live discovery and are <strong>not verified VanAssist listings</strong>. Confirm services and contact details before travelling.</p>
                 <div class="dataset-results">
                     <?php foreach ($result->externals as $ext): ?>
                         <article class="card" style="margin-bottom:0.75rem;border-left:4px solid #8a6d3b">
@@ -274,6 +274,9 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                                 <?php if (!empty($ext['formatted_address'])): ?> · <?= $this->e((string) $ext['formatted_address']) ?><?php endif; ?>
                                 <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($ext); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
                             </p>
+                            <?php if (!empty($ext['phone'])): ?>
+                                <p style="margin:0.35rem 0 0"><a href="tel:<?= e(preg_replace('/\s+/', '', (string) $ext['phone']) ?? '') ?>"><?= $this->e((string) $ext['phone']) ?></a></p>
+                            <?php endif; ?>
                             <?php if (!empty($ext['website'])): ?>
                                 <p style="margin:0.35rem 0 0"><a href="<?= e((string) $ext['website']) ?>" rel="noopener noreferrer">Source website</a></p>
                             <?php endif; ?>
@@ -285,8 +288,8 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
             <?php if ($result->searched && $result->providers === [] && $result->stays === [] && $result->facilities === [] && $result->externals === []): ?>
                 <div class="card ask-no-results" style="margin-top:1rem">
                     <h2 class="h3">No matching service found nearby</h2>
-                    <p>VanAssist did not find a listed provider for this service. It will not substitute unrelated businesses.</p>
-                    <div class="btn-row"><a class="btn btn-secondary" href="<?= e($structuredFindUrl) ?>">Try a wider search</a><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a></div>
+                    <p>VanAssist did not find a listed provider for this service yet. Register a request so we can grow coverage for this area, or try a wider search.</p>
+                    <div class="btn-row"><a class="btn btn-secondary" href="<?= e($structuredFindUrl) ?>">Try a wider search</a><a class="btn btn-primary" href="<?= e(url('request-assistance')) ?>">Request help</a><a class="btn btn-ghost" href="<?= e(url('for-providers/register')) ?>">List your business</a></div>
                 </div>
             <?php endif; ?>
             </div>

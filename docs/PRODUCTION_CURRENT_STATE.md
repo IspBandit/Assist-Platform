@@ -1,5 +1,12 @@
 # Production current state
 
+## 17 September 2026 — provider discovery rescue (code landed, flag off)
+
+Code on this tree adds the regional radius ladder for category searches and
+demand-driven Google Places rescue behind `provider_places_rescue` (default
+**off**, migration `136`). Production Places spend and the flag remain ops
+decisions after Quality Gate; see ADR 0042 and `docs/PLACES_RESCUE_BOOTSTRAP.md`.
+
 ## Evidence reconciliation: 7 September 2026
 
 GitHub Actions production release run `34077589608` proves that release

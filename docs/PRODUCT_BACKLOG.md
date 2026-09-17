@@ -40,7 +40,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance |
 | VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Inbound claim review, secure acceptance and evidence-backed verification are wired; production end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
-| VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Deterministic Ask is live but not yet the primary homepage form; the candidate adds flagship ordering, national correctness, brand isolation and emergency guidance and awaits exact-candidate Quality Gate |
+| VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Radius ladder + Places rescue (ADR 0042) landed behind `provider_places_rescue`; production Places enablement and flagship QG remain |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
 | TOW-002 | Rich saved combination edit/compare/report workflow | done | Owner/brand isolation, recalculated snapshots, three-way comparison, private printable report and safety-boundary tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |

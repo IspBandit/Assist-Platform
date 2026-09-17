@@ -5,6 +5,20 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Provider discovery rescue (VAN-011 / DATA-013 / ADR 0042)
+
+- Classic `/find` and Ask no longer stop at town-only (~20 km) for category
+  searches: they expand 25 → 75 → 150 → 300 km until enough providers appear
+  (explicit distance choices still win).
+- Feature flag `provider_places_rescue` (default **off**) enables demand-driven
+  Google Places rescue on zero/weak provider searches: labelled public-source
+  results in the journey, budget-gated via Data Sources, and optional
+  auto-create of **unclaimed** listings with Place ID provenance.
+- National hub bootstrap script:
+  `scripts/places-rescue-bootstrap.php` / `docs/PLACES_RESCUE_BOOTSTRAP.md`.
+- Production enablement requires Places API key, connector budget, Quality Gate
+  and turning the flag on — code alone does not authorise live Places spend.
+
 ### Production IndexNow notify hardening (OPS-001)
 
 - Production release IndexNow notify now fetches the key and sitemap with the

@@ -14,6 +14,9 @@ return [
     'max_query_length' => 240,
     'default_radius_km' => 25,
     'specialist_radius_km' => 150,
+    /** Ask uses the same ladder as classic /find when no explicit radius is set. */
+    'provider_search_radius_ladder_km' => [25, 75, 150, 300],
+    'provider_search_min_results' => 3,
     'min_confidence' => 0.55,
     'intent_rules_version' => 'intent_rules_v3',
     'intent_schema_version' => 'intent_schema_v1',

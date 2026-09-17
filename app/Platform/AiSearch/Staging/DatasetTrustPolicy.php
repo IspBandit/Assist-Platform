@@ -16,7 +16,9 @@ final class DatasetTrustPolicy
     public const WEB_RESEARCH_REVIEW = 'web_research_review';
     public const PROHIBITED = 'prohibited';
 
-    /** Connectors that may never be called from Ask VanAssist live search. */
+    /** Connectors that may never be called from Ask dataset browsing.
+     * Demand-driven Places rescue (ADR 0042) uses a separate service and flag.
+     */
     public const ASK_BLOCKED_CONNECTORS = [
         'google_places',
     ];

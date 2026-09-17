@@ -66,6 +66,18 @@ References:
    then handles ownership and verification.
 7. Every configuration, import and review decision is written to the audit log.
 
+### Demand-driven Places rescue (ADR 0042)
+
+When feature flag `provider_places_rescue` is enabled, zero or weak traveller
+provider searches may call the active Google Places connector once (same daily
+quota and AUD budget guards as Gap Finder). Results are shown as labelled
+public-source candidates. Strong non-duplicates may be auto-created as
+**unclaimed** listings with Place ID provenance; claimed providers are never
+overwritten. Verified status still requires claim + verification.
+
+National hub bootstrap: `docs/PLACES_RESCUE_BOOTSTRAP.md` and
+`scripts/places-rescue-bootstrap.php`.
+
 ### National route review
 
 The VanAssist import-review screen accepts the budget-capped national caravan
