@@ -37,7 +37,7 @@ final class GeoJsonDatasetConnector implements ConnectorInterface
             throw new RuntimeException('GeoJSON FeatureCollection missing features.');
         }
 
-        $limit = max(1, min(1000, (int) ($request['limit'] ?? 500)));
+        $limit = max(1, min(50000, (int) ($request['limit'] ?? $settings['limit'] ?? 500)));
         $defaultType = FacilityTypeMapper::normalise((string) ($settings['default_facility_type'] ?? 'other_essential'));
         $nameField = (string) ($settings['name_field'] ?? 'name');
         $typeField = (string) ($settings['type_field'] ?? 'facility_type');
@@ -48,6 +48,9 @@ final class GeoJsonDatasetConnector implements ConnectorInterface
             if (!is_array($feature)) {
                 continue;
             }
+            if (count($rows) >= $limit) {
+                break;
+            }
             $props = (array) ($feature['properties'] ?? []);
             $geom = (array) ($feature['geometry'] ?? []);
             $coords = (array) ($geom['coordinates'] ?? []);
@@ -56,14 +59,43 @@ final class GeoJsonDatasetConnector implements ConnectorInterface
             if (($geom['type'] ?? '') === 'Point' && count($coords) >= 2) {
                 $lng = $coords[0] ?? null;
                 $lat = $coords[1] ?? null;
+            } elseif (in_array(($geom['type'] ?? ''), ['Polygon', 'MultiPolygon', 'LineString', 'MultiLineString'], true)) {
+                $lng = $props['longitude'] ?? $props['LONGITUDE'] ?? $props['lon'] ?? null;
+                $lat = $props['latitude'] ?? $props['LATITUDE'] ?? $props['lat'] ?? null;
             }
-            $name = trim((string) ($props[$nameField] ?? $props['Name'] ?? $props['title'] ?? ''));
-            $externalId = trim((string) ($props[$idField] ?? $feature['id'] ?? ''));
+            $name = trim((string) (
+                $props[$nameField]
+                ?? $props['Name']
+                ?? $props['NAME']
+                ?? $props['title']
+                ?? $props['COMMON_USAGE_NAME']
+                ?? $props['SITE_NAME']
+                ?? $props['ASSET_NAME']
+                ?? $props['rest_area_name']
+                ?? $props['DESCRIPTION']
+                ?? $props['location']
+                ?? $props['LOCATION']
+                ?? $props['recweb_name']
+                ?? $props['site_name']
+                ?? $props['deptasseti']
+                ?? ''
+            ));
+            $externalId = trim((string) (
+                $props[$idField]
+                ?? $feature['id']
+                ?? $props['OBJECTID']
+                ?? $props['objectid']
+                ?? $props['GlobalID']
+                ?? $props['ASSET_ID']
+                ?? $props['BOAT_RAMP_ID']
+                ?? $props['uid']
+                ?? ''
+            ));
             if ($externalId === '') {
                 $externalId = 'geojson-' . md5(json_encode($feature) ?: (string) $index);
             }
             if ($name === '') {
-                continue;
+                $name = 'Unnamed facility ' . $externalId;
             }
             $rows[] = [
                 'external_id' => $externalId,
@@ -79,9 +111,6 @@ final class GeoJsonDatasetConnector implements ConnectorInterface
                 'attribution' => (string) ($settings['attribution'] ?? ''),
                 'raw' => $feature,
             ];
-            if (count($rows) >= $limit) {
-                break;
-            }
         }
         return $rows;
     }

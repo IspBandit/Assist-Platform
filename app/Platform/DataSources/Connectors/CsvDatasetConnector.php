@@ -10,7 +10,7 @@ use RuntimeException;
 
 /**
  * CSV payload / upload connector for government datasets (DATA-012).
- * Request may include `payload` string or `path` to a local staged file.
+ * Prefer `path` for national extracts so PHP does not hold the whole file in RAM.
  */
 final class CsvDatasetConnector implements ConnectorInterface
 {
@@ -22,17 +22,15 @@ final class CsvDatasetConnector implements ConnectorInterface
     public function search(array $request, array $credentials, array $settings = []): array
     {
         unset($credentials);
+        $path = (!empty($request['path']) && is_string($request['path']) && is_file($request['path']))
+            ? $request['path']
+            : null;
         $payload = (string) ($request['payload'] ?? '');
-        if ($payload === '' && !empty($request['path']) && is_string($request['path']) && is_file($request['path'])) {
-            $payload = (string) file_get_contents($request['path']);
-        }
-        if (trim($payload) === '') {
+        if ($path === null && trim($payload) === '') {
             throw new RuntimeException('CSV connector requires payload or path.');
         }
-        // Government extracts can legitimately contain a whole state or nation.
-        // Keep a hard ceiling, but do not silently truncate useful national data
-        // at the former 1,000-row development limit.
-        $limit = max(1, min(25000, (int) ($request['limit'] ?? 500)));
+
+        $limit = max(1, min(50000, (int) ($request['limit'] ?? $settings['limit'] ?? 500)));
         $defaultType = FacilityTypeMapper::normalise((string) ($settings['default_facility_type'] ?? 'other_essential'));
         $nameCol = strtolower((string) ($settings['name_field'] ?? 'name'));
         $typeCol = strtolower((string) ($settings['type_field'] ?? 'facility_type'));
@@ -42,6 +40,7 @@ final class CsvDatasetConnector implements ConnectorInterface
         $addrCol = strtolower((string) ($settings['address_field'] ?? 'address'));
         $filterField = strtolower(trim((string) ($settings['filter_field'] ?? '')));
         $filterValue = strtolower(trim((string) ($settings['filter_value'] ?? '')));
+        $keepRaw = !empty($settings['keep_raw']);
         $filters = [];
         if (isset($settings['filters']) && is_array($settings['filters'])) {
             foreach ($settings['filters'] as $field => $value) {
@@ -52,17 +51,28 @@ final class CsvDatasetConnector implements ConnectorInterface
             }
         }
 
-        $payload = preg_replace('/^\xEF\xBB\xBF/', '', $payload) ?? $payload;
-        $fh = fopen('php://temp', 'r+');
-        if ($fh === false) {
-            throw new RuntimeException('Unable to open CSV buffer.');
+        if ($path !== null) {
+            $fh = fopen($path, 'rb');
+            if ($fh === false) {
+                throw new RuntimeException('Unable to open CSV path.');
+            }
+        } else {
+            $payload = preg_replace('/^\xEF\xBB\xBF/', '', $payload) ?? $payload;
+            $fh = fopen('php://temp', 'r+');
+            if ($fh === false) {
+                throw new RuntimeException('Unable to open CSV buffer.');
+            }
+            fwrite($fh, $payload);
+            rewind($fh);
         }
-        fwrite($fh, $payload);
-        rewind($fh);
+
         $header = fgetcsv($fh, 0, ',', '"', '\\');
         if ($header === false || $header === [null]) {
             fclose($fh);
             return [];
+        }
+        if (isset($header[0]) && is_string($header[0])) {
+            $header[0] = preg_replace('/^\xEF\xBB\xBF/', '', $header[0]) ?? $header[0];
         }
         $header = array_map(static fn ($h) => strtolower(trim((string) $h)), $header);
         $rows = [];
@@ -70,6 +80,9 @@ final class CsvDatasetConnector implements ConnectorInterface
         while (($data = fgetcsv($fh, 0, ',', '"', '\\')) !== false) {
             if ($data === [null]) {
                 continue;
+            }
+            if (count($rows) >= $limit) {
+                break;
             }
             $row = [];
             foreach ($header as $idx => $key) {
@@ -90,13 +103,30 @@ final class CsvDatasetConnector implements ConnectorInterface
                     continue 2;
                 }
             }
-            $name = $row[$nameCol] ?? $row['title'] ?? $row['facility'] ?? '';
-            $externalId = $row[$idCol] ?? $row['facilityid'] ?? $row['external_id'] ?? '';
+            $name = (string) (
+                $row[$nameCol]
+                ?? $row['title']
+                ?? $row['facility']
+                ?? $row['rest_area_name']
+                ?? $row['name']
+                ?? $row['facilityname']
+                ?? $row['toiletname']
+                ?? ''
+            );
+            $externalId = (string) (
+                $row[$idCol]
+                ?? $row['facilityid']
+                ?? $row['external_id']
+                ?? $row['cartodb_id']
+                ?? $row['guid']
+                ?? $row['rest_area_number']
+                ?? ''
+            );
             if ($externalId === '') {
                 $externalId = 'csv-' . md5(json_encode($row) ?: (string) $i);
             }
             if ($name === '') {
-                continue;
+                $name = 'Unnamed facility ' . $externalId;
             }
             $type = FacilityTypeMapper::normalise((string) ($row[$typeCol] ?? ''), $defaultType);
             $address = (string) ($row[$addrCol] ?? $row['address1'] ?? $row['formatted_address'] ?? '');
@@ -112,12 +142,9 @@ final class CsvDatasetConnector implements ConnectorInterface
                 'source_url' => (string) ($settings['source_url'] ?? ''),
                 'licence' => (string) ($settings['licence'] ?? ''),
                 'attribution' => (string) ($settings['attribution'] ?? ''),
-                'raw' => $row,
+                'raw' => $keepRaw ? $row : ['external_id' => $externalId, 'name' => $name],
             ];
             $i++;
-            if (count($rows) >= $limit) {
-                break;
-            }
         }
         fclose($fh);
         return $rows;
