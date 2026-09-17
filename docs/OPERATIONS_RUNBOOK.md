@@ -51,30 +51,30 @@ release workflow must not run Docker Compose directly as the restricted deploy
 user. Review current queue counts in **Admin → Provider data**; use the
 root-owned cron runner for an authorised server-side diagnostic.
 
-VanAssist's daily website performance report runs at 06:15 Australia/Brisbane
-through `vanassist_daily_performance_email`. It reports the preceding calendar
-day to `support@vanassist.com.au`, then the existing two-minute email worker
-delivers it through Microsoft Graph. The same idempotent queue also runs inside
-`process_email_queue`, so a missing host cron line cannot silently strand the
-report after the application code is current. The task checks its date-specific
-queue key before inserting, so a retry reports `already_queued` and does not
-duplicate the email. Confirm both the task's `success` state (or a successful
-`process_email_queue` payload) and the matching email-queue row; an HTTP health
-check alone does not prove delivery. Releases install `/etc/cron.d/assist-platform`
-and `/usr/local/sbin/assist-cron` from the reviewed commit (the cron.d filename
-must not contain a period). To suspend the report, remove or comment only that
-cron entry and the `process_email_queue` safety-net call. To recover a missed day
-after the schedule is present, run once as root before the next calendar day:
+VanAssist's daily website performance report is intended to run at 06:15
+Australia/Brisbane through `vanassist_daily_performance_email`. It reports the
+preceding calendar day to `support@vanassist.com.au`, then the existing
+two-minute email worker delivers it through Microsoft Graph. The same idempotent
+queue also runs inside every `process_email_queue` invocation, so a missing host
+cron line cannot silently strand the report after the application code is
+current. The task checks its date-specific queue key before inserting, so a
+retry reports `already_queued` and does not duplicate the email. Confirm a
+matching email-queue row; an HTTP health check alone does not prove delivery.
+Bootstrap installs `/etc/cron.d/assist-platform` and `/usr/local/sbin/assist-cron`
+(the cron.d filename must not contain a period). On an existing host that never
+received that file, install as root from the current release then recover the
+missed day:
 
 ```sh
+install -o root -g root -m 0755 /opt/assist-platform/current/infrastructure/binarylane/ops/assist-cron.sh /usr/local/sbin/assist-cron
+install -o root -g root -m 0644 /opt/assist-platform/current/infrastructure/binarylane/ops/assist-platform.cron /etc/cron.d/assist-platform
 /usr/local/sbin/assist-cron vanassist_daily_performance_email
 /usr/local/sbin/assist-cron process_email_queue
 ```
 
-Then confirm `scheduled_tasks.last_status=success` for
-`vanassist_daily_performance_email` and an `email_queue` row for
-`vanassist_daily_performance_YYYYMMDD` with status `sent`. Never hand-insert a
-queue copy.
+Then confirm an `email_queue` row for `vanassist_daily_performance_YYYYMMDD` with
+status `sent`. Never hand-insert a queue copy. To suspend the report, remove the
+cron entry and the `process_email_queue` safety-net call in application code.
 
 The workflow cannot run from a pull request or feature branch. A human must type
 `DEPLOY`, approve the protected environment and allow the complete reusable CI
@@ -87,13 +87,14 @@ hash mismatch stops before production changes; install the reviewed command as
 root, verify its hash and retry rather than bypassing this drift check.
 
 The root-owned release command also refreshes bootstrap-managed Compose,
-Dockerfile, PHP, Caddy, operations scripts and the host cron schedule
-(`/etc/cron.d/assist-platform`, `/usr/local/sbin/assist-cron`) from the reviewed
-immutable release before rebuilding containers. It keeps the preceding runtime
-files for the duration of deployment and restores them with the prior application
+Dockerfile, PHP, Caddy and operations scripts from the reviewed immutable
+release before rebuilding containers. It keeps the preceding runtime files for
+the duration of deployment and restores them with the prior application
 symlink if any migration, data audit or health check fails. This prevents a
 merged infrastructure change from remaining stranded in GitHub while the
-application code appears current.
+application code appears current. Host cron (`/etc/cron.d/assist-platform`) is
+installed by bootstrap on new hosts; existing hosts refresh it with the runbook
+commands when the schedule changes.
 
 ### CQDiggings release ownership
 
