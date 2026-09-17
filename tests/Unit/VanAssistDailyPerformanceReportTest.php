@@ -101,10 +101,6 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
         self::assertStringContainsString('EmailQueue::queueRawId', $service);
         self::assertStringNotContainsString('mail(', $service);
 
-        $release = (string) file_get_contents(base_path('scripts/release-remote.sh'));
-        self::assertStringContainsString('/etc/cron.d/assist-platform', $release);
-        self::assertStringContainsString('vanassist_daily_performance_email', $release);
-
         $runner = (string) file_get_contents(base_path('app/Services/CronRunner.php'));
         self::assertStringContainsString('vanassist_daily_performance', $runner);
         self::assertStringContainsString('VanAssistDailyPerformanceReport', $runner);

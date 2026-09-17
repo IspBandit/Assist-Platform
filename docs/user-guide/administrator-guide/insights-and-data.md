@@ -33,19 +33,19 @@ Website insights requires `demand.view`, with CSV export separately requiring `d
 Start with a selected-brand insight, create a task where follow-up is justified, then hand an import opportunity to Data Sources. Treat Trust, rules & growth as global despite the workspace header. Keep connector credentials in the encrypted settings workflow. Review candidate provenance and duplicate signals before promotion.
 
 For VanAssist, the same aggregate Website Insights data is emailed daily to
-`support@vanassist.com.au` for the preceding Brisbane calendar day (06:15 via
-`vanassist_daily_performance_email`, then delivered by `process_email_queue`).
-The email is an operational summary, not a replacement for the date filters and
-exports on this page. If the inbox is empty, check Admin → Platform health for
-`scheduled_tasks.last_status` on that task and the matching `email_queue` row;
-a `never` status means the host crontab never invoked the job. Releases refresh
-`/etc/cron.d/assist-platform` from the reviewed commit. Technical paths
-(including admin, API, health checks and static assets) and explicitly identified
-synthetic monitoring are excluded from public traffic totals. The email includes
-repeated no-result searches as an enrichment queue; it never auto-publishes
-invented providers or facilities. A low/no-traffic warning can indicate genuine
-low use or a tracking problem; check the latest page-view time and scheduled-task
-state before drawing conclusions.
+`support@vanassist.com.au` for the preceding Brisbane calendar day. Delivery is
+driven by the idempotent queue inside `process_email_queue` (and the optional
+06:15 `vanassist_daily_performance_email` host cron line). The email is an
+operational summary, not a replacement for the date filters and exports on this
+page. If the inbox is empty, check the matching `email_queue` row for
+`vanassist_daily_performance_YYYYMMDD`; a missing row means the application
+build in production predates the safety-net queue. Technical paths (including
+admin, API, health checks and static assets) and explicitly identified synthetic
+monitoring are excluded from public traffic totals. The email includes repeated
+no-result searches as an enrichment queue; it never auto-publishes invented
+providers or facilities. A low/no-traffic warning can indicate genuine low use
+or a tracking problem; check the latest page-view time and scheduled-task state
+before drawing conclusions.
 
 Open **Insights → Growth & trust** in the VanAssist workspace to operate the
 coverage improvement loop. The page separates facility candidates from
