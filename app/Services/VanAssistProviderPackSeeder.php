@@ -272,9 +272,9 @@ final class VanAssistProviderPackSeeder
 
     private function quarantineUnclaimedProvider(int $providerId): void
     {
-        // National-import / migration-activated Ask listings can be measurable and
-        // active without provider_source_records. Do not demote those back to
-        // pending when the authoritative provider pack refreshes.
+        // National-import Ask listings can be active and measurable without
+        // provider_source_records. Do not demote those when the pack refreshes.
+        // Pack-sourced rows with needs_review evidence still quarantine as before.
         $row = Database::selectOne(
             'SELECT status, latitude, longitude FROM providers '
             . 'WHERE id = ? AND is_unclaimed = 1 AND deleted_at IS NULL',
@@ -283,7 +283,12 @@ final class VanAssistProviderPackSeeder
         if ($row === null) {
             return;
         }
-        if (($row['status'] ?? '') === 'active'
+        $hasSourceRecords = (int) Database::scalar(
+            'SELECT COUNT(*) FROM provider_source_records WHERE provider_id = ?',
+            [$providerId]
+        ) > 0;
+        if (!$hasSourceRecords
+            && ($row['status'] ?? '') === 'active'
             && is_numeric($row['latitude'] ?? null)
             && is_numeric($row['longitude'] ?? null)) {
             return;
