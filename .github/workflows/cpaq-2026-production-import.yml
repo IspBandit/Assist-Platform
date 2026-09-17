@@ -25,11 +25,6 @@ jobs:
     environment: production
     timeout-minutes: 45
     steps:
-      - name: Checkout batch helper
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
       - name: Configure verified SSH host
         env:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
@@ -40,7 +35,7 @@ jobs:
           printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
 
-      - name: Upload and run batched CPAQ import
+      - name: Run root-scoped CPAQ import helper
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
@@ -48,18 +43,12 @@ jobs:
         run: |
           set -euo pipefail
           batch_size="${BATCH_SIZE:-25}"
-          remote_tmp="/tmp/cpaq-2026-batch-apply.$$.php"
-          scp -q scripts/cpaq-2026-batch-apply.php "$VPS_USER@$VPS_HOST:$remote_tmp"
-          # Prefer docker CLI against the running app container. The host
-          # docker-compose.yml is root:0640 and the deploy user cannot read it,
-          # so `docker compose` is unavailable without a passworded sudo.
-          ssh "$VPS_USER@$VPS_HOST" "set -euo pipefail
-            app_container=\"\$(docker ps --format '{{.Names}}' | grep -E 'assist-platform.*app' | head -n 1)\"
-            test -n \"\$app_container\"
-            docker cp '$remote_tmp' \"\$app_container\":/tmp/cpaq-2026-batch-apply.php
-            rm -f '$remote_tmp'
-            docker exec -i \"\$app_container\" php /tmp/cpaq-2026-batch-apply.php --batch-size=$batch_size
-          " | tee /tmp/cpaq-import-output.txt
+          # Requires one-time host install of
+          # /usr/local/sbin/assist-platform-cpaq-import with NOPASSWD sudo
+          # (see docs/CPAQ_2026_IMPORT.md). Deploy user cannot access docker.sock
+          # or read root-owned docker-compose.yml directly.
+          ssh "$VPS_USER@$VPS_HOST" "sudo -n /usr/local/sbin/assist-platform-cpaq-import --batch-size=$batch_size" \
+            | tee /tmp/cpaq-import-output.txt
           {
             echo '## CPAQ 2026 production import'
             echo

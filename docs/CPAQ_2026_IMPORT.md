@@ -44,10 +44,48 @@ php scripts/cpaq-2026-batch-apply.php
 php scripts/cpaq-2026-batch-apply.php --batch-size=25
 ```
 
-Production apply (after the importer is live on the active release) can be
-triggered with the GitHub Actions workflow `CPAQ 2026 production import`
-(`APPLY-CPAQ-2026`). That workflow uploads the batch helper over SSH and runs
-it inside the production app container against the release seed JSON.
+### Immediate production apply (root, already-live importer release)
+
+If release `f913f3a` (or later containing `scripts/import-cpaq-2026.php` and
+`database/seeds/cpaq-2026/`) is already current, root can apply without waiting
+for a new release:
+
+```bash
+cd /opt/assist-platform
+docker compose exec -T app php scripts/import-cpaq-2026.php --apply
+```
+
+Prefer the batched helper once it is present in `current`:
+
+```bash
+cd /opt/assist-platform
+docker compose exec -T app php scripts/cpaq-2026-batch-apply.php --batch-size=25
+```
+
+### GitHub Actions path (after one-time host install)
+
+Production apply can also be triggered with the GitHub Actions workflow
+`CPAQ 2026 production import` (`APPLY-CPAQ-2026`). That workflow calls the
+root-scoped host helper `/usr/local/sbin/assist-platform-cpaq-import` (deploy
+users cannot access Docker directly).
+
+#### One-time production host install (root)
+
+```bash
+install -o root -g root -m 0755 \
+  /opt/assist-platform/current/infrastructure/binarylane/ops/assist-cpaq-import.sh \
+  /usr/local/sbin/assist-platform-cpaq-import
+# Add a NOPASSWD sudoers drop-in for the deploy user, matching the release helper:
+#   deploy ALL=(root) NOPASSWD: /usr/local/sbin/assist-platform-cpaq-import
+```
+
+Then either run directly:
+
+```bash
+sudo -n /usr/local/sbin/assist-platform-cpaq-import --batch-size=25
+```
+
+or dispatch the GitHub Actions workflow.
 
 Implementation: `App\Services\Cpaq2026ImportService`.
 
