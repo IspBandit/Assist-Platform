@@ -272,6 +272,23 @@ final class VanAssistProviderPackSeeder
 
     private function quarantineUnclaimedProvider(int $providerId): void
     {
+        // National-import / migration-activated Ask listings can be measurable and
+        // active without provider_source_records. Do not demote those back to
+        // pending when the authoritative provider pack refreshes.
+        $row = Database::selectOne(
+            'SELECT status, latitude, longitude FROM providers '
+            . 'WHERE id = ? AND is_unclaimed = 1 AND deleted_at IS NULL',
+            [$providerId]
+        );
+        if ($row === null) {
+            return;
+        }
+        if (($row['status'] ?? '') === 'active'
+            && is_numeric($row['latitude'] ?? null)
+            && is_numeric($row['longitude'] ?? null)) {
+            return;
+        }
+
         Database::query(
             "UPDATE provider_brand_listings SET status='draft',search_visible=0,updated_at=NOW() "
             . 'WHERE provider_id=? AND EXISTS (SELECT 1 FROM providers p WHERE p.id=? AND p.is_unclaimed=1)',
