@@ -44,11 +44,6 @@ final class OperationalLaunchGateTest extends TestCase
         self::assertStringContainsString('"$runtime_source/docker-compose.yml" "$root/docker-compose.yml"', $release);
         self::assertStringContainsString('find "$root/runtime/ops" -maxdepth 1 -type f -name \'*.sh\' -delete', $release);
         self::assertStringContainsString('find "$runtime_source/ops"', $release);
-        self::assertStringContainsString('install -o root -g root -m 0755 "$runtime_source/ops/assist-cron.sh" /usr/local/sbin/assist-cron', $release);
-        self::assertStringContainsString('install -o root -g root -m 0644 "$runtime_source/ops/assist-platform.cron" /etc/cron.d/assist-platform', $release);
-        self::assertStringContainsString('vanassist_daily_performance_email', $release);
-        self::assertStringContainsString('assist-cron vanassist_daily_performance_email', $release);
-        self::assertStringContainsString('assist-cron process_email_queue', $release);
         self::assertStringContainsString('/etc/cron.d/assist-platform', $bootstrap);
         self::assertStringContainsString('/usr/local/sbin/assist-cron', $bootstrap);
     }

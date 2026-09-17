@@ -36,12 +36,6 @@ if [[ ! -d "$runtime_source/ops" ]]; then
   echo "Reviewed runtime operations directory is missing from the release." >&2
   exit 1
 fi
-for required_ops in assist-cron.sh assist-platform.cron; do
-  if [[ ! -f "$runtime_source/ops/$required_ops" ]]; then
-    echo "Reviewed runtime operations file is missing from the release: $required_ops" >&2
-    exit 1
-  fi
-done
 
 previous="$(readlink -f "$root/current" || true)"
 previous_app_release="$(sed -n 's/^APP_RELEASE=//p' "$app_env" | tail -n 1)"
@@ -52,12 +46,6 @@ for file in Dockerfile Caddyfile php.ini firewall.sh; do
   cp -a "$root/runtime/$file" "$runtime_rollback/$file"
 done
 cp -a "$root/runtime/ops/." "$runtime_rollback/ops/"
-if [[ -f /usr/local/sbin/assist-cron ]]; then
-  cp -a /usr/local/sbin/assist-cron "$runtime_rollback/assist-cron"
-fi
-if [[ -f /etc/cron.d/assist-platform ]]; then
-  cp -a /etc/cron.d/assist-platform "$runtime_rollback/assist-platform.cron.d"
-fi
 
 set_app_release() {
   local value="$1"
@@ -87,12 +75,6 @@ rollback() {
   install -o root -g root -m 0750 "$runtime_rollback/firewall.sh" "$root/runtime/firewall.sh"
   find "$root/runtime/ops" -maxdepth 1 -type f -name '*.sh' -delete
   find "$runtime_rollback/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$root/runtime/ops/" \;
-  if [[ -f "$runtime_rollback/assist-cron" ]]; then
-    install -o root -g root -m 0755 "$runtime_rollback/assist-cron" /usr/local/sbin/assist-cron
-  fi
-  if [[ -f "$runtime_rollback/assist-platform.cron.d" ]]; then
-    install -o root -g root -m 0644 "$runtime_rollback/assist-platform.cron.d" /etc/cron.d/assist-platform
-  fi
   if [[ -n "$previous" && -d "$previous" ]]; then
     if [[ -n "$previous_app_release" ]]; then
       set_app_release "$previous_app_release"
@@ -116,17 +98,6 @@ install -o root -g root -m 0640 "$runtime_source/php.ini" "$root/runtime/php.ini
 install -o root -g root -m 0750 "$runtime_source/firewall.sh" "$root/runtime/firewall.sh"
 find "$root/runtime/ops" -maxdepth 1 -type f -name '*.sh' -delete
 find "$runtime_source/ops" -maxdepth 1 -type f -name '*.sh' -exec install -o root -g root -m 0750 {} "$root/runtime/ops/" \;
-# cron.d filenames must not contain a period or cron ignores them.
-install -o root -g root -m 0755 "$runtime_source/ops/assist-cron.sh" /usr/local/sbin/assist-cron
-install -o root -g root -m 0644 "$runtime_source/ops/assist-platform.cron" /etc/cron.d/assist-platform
-if ! grep -q 'vanassist_daily_performance_email' /etc/cron.d/assist-platform; then
-  echo "Installed cron schedule is missing vanassist_daily_performance_email." >&2
-  exit 1
-fi
-if ! grep -q 'process_email_queue' /etc/cron.d/assist-platform; then
-  echo "Installed cron schedule is missing process_email_queue." >&2
-  exit 1
-fi
 
 ln -sfn "$target" "$root/current.next"
 mv -Tf "$root/current.next" "$root/current"
@@ -170,11 +141,6 @@ for url in \
   https://trailerwise.com.au/readyz; do
   curl --fail --silent --show-error --retry 6 --retry-delay 5 "$url" >/dev/null
 done
-
-# Catch up the previous Brisbane day if the schedule was missing; idempotent
-# (already_queued) when the report was already enqueued for that date.
-/usr/local/sbin/assist-cron vanassist_daily_performance_email
-/usr/local/sbin/assist-cron process_email_queue
 
 trap - ERR
 rm -rf -- "$runtime_rollback"
