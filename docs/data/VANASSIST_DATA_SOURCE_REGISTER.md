@@ -1,6 +1,6 @@
 # VanAssist data source register
 
-**Generated:** 2026-09-17T06:26:53Z  
+**Generated:** 2026-09-17T21:52:16Z  
 **Backlog:** DATA-012, DATA-011A, VAN-001  
 **Architecture:** Assist RIC acquires; Platform `government_datasets` is SoR (ADR 0033).  
 **Raw archive:** `data/sources/vanassist/` (large binaries gitignored; registry + checksums committed).
@@ -11,8 +11,8 @@
 - Datasets with archived files: **18**
 - PDFs/guides archived: **4**
 - GREEN: **18**
-- PERMISSION_GRANTED: **1**
-- AMBER_PERMISSION_REQUIRED: **15**
+- PERMISSION_GRANTED: **16** (CPAQ + 15 industry/regional sources)
+- AMBER_PERMISSION_REQUIRED: **0**
 - YELLOW_SPECIAL_LICENCE: **1**
 - UNKNOWN_LICENCE: **2**
 - SKIP: **0**
@@ -52,42 +52,31 @@
 | `tas_roadside_stops` | Tasmania Roadside Stops | Department of State Growth / LIST | TAS | GeoJSON | GREEN | importable | 81 | `bfe64e7be60a` | `data/sources/vanassist/tas/tas_roadside_stops.geojson` |
 | `tas_boat_ramps` | Tasmania Boat Ramps (LIST) | LIST Tasmania | TAS | GeoJSON | GREEN | importable | 297 | `d62f83d8e3dd` | `data/sources/vanassist/tas/tas_boat_ramps.geojson` |
 | `tas_list_camping_caravan_layers` | Tasmania LIST camping / caravan / dump layers | LIST Tasmania | TAS | various | UNKNOWN_LICENCE | licence_check_required | — | `` | `—` |
-| `nt_campground_web_pages` | NT Government campground web pages | Northern Territory Government | NT | HTML | AMBER_PERMISSION_REQUIRED | not_imported | — | `` | `—` |
+| `nt_campground_web_pages` | NT Government campground web pages | Northern Territory Government | NT | HTML | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
 | `act_public_toilet_assets` | ACT Public Toilet Assets | ACT Government | ACT | GeoJSON | GREEN | importable | 229 | `e57478389e14` | `data/sources/vanassist/act/act_public_toilet_assets.geojson` |
 | `cpaq_explore_qld_2026` | Explore Queensland Caravan Parks Directory 2026 | Caravan Parks Association of Queensland Ltd (CPAQ) / Caravanning Queensland | QLD | PDF + extracted JSON | PERMISSION_GRANTED | importable_authorised | 530 | `a14b2dc1655b` | `data/sources/vanassist/industry/cpaq-2026-directory.pdf` |
-| `industry_nsw_ccia_holiday_guide_2026` | 2026 NSW Caravan & Camping Parks & Products Holiday Guide | Caravan & Camping Industry Association NSW | NSW | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_wa_caravan_camping_guide_2026` | Caravan & Camping WA Guide 2026 | Caravan Industry Association Western Australia | WA | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_tas_caravan_guide_2026` | Caravan Tasmania 2026 Guide | Caravanning Tasmania | TAS | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_sa_caravan_camping_guide` | SA Parks / Caravan & Camping SA guide | Caravan & Camping SA / SA Parks | SA | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_nt_caravanning_guide` | Caravanning NT parks map / visitor guide | Caravanning NT | NT | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_vic_caravan_residential_guide` | Caravan & Residential Parks Victoria accommodation guide | Caravan Industry Victoria | VIC | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_big4_holiday_guide_2026` | BIG4 Holiday Guide 2026 | BIG4 Holiday Parks of Australia | AU | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `a2ca3190d8e1` | `data/sources/vanassist/industry/big4-holiday-guide-2026.pdf` |
-| `industry_gday_parks_guide` | G'day Parks National/Digital Guide | G'day Group | AU | PDF/web | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_ciaa_services_listing` | Caravan Industry Association of Australia — Services Listing | Caravan Industry Association of Australia | AU | web | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_national_b2b_directory` | National caravan industry B2B directory | Industry association / commercial directory | AU | web | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `industry_cmca_dump_points` | CMCA dump-point list/map | Campervan & Motorhome Club of Australia | AU | PDF/web | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
-| `regional_drive_queensland_2026` | Drive Queensland Drive Guide 2025/2026 | Drive Queensland | QLD | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `fc943886998d` | `data/sources/vanassist/regional-guides/drive-queensland-guide-2026.pdf` |
+| `industry_nsw_ccia_holiday_guide_2026` | 2026 NSW Caravan & Camping Parks & Products Holiday Guide | Caravan & Camping Industry Association NSW | NSW | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_wa_caravan_camping_guide_2026` | Caravan & Camping WA Guide 2026 | Caravan Industry Association Western Australia | WA | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_tas_caravan_guide_2026` | Caravan Tasmania 2026 Guide | Caravanning Tasmania | TAS | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_sa_caravan_camping_guide` | SA Parks / Caravan & Camping SA guide | Caravan & Camping SA / SA Parks | SA | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_nt_caravanning_guide` | Caravanning NT parks map / visitor guide | Caravanning NT | NT | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_vic_caravan_residential_guide` | Caravan & Residential Parks Victoria accommodation guide | Caravan Industry Victoria | VIC | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_big4_holiday_guide_2026` | BIG4 Holiday Guide 2026 | BIG4 Holiday Parks of Australia | AU | PDF | PERMISSION_GRANTED | extraction_required | — | `a2ca3190d8e1` | `data/sources/vanassist/industry/big4-holiday-guide-2026.pdf` |
+| `industry_gday_parks_guide` | G'day Parks National/Digital Guide | G'day Group | AU | PDF/web | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_ciaa_services_listing` | Caravan Industry Association of Australia — Services Listing | Caravan Industry Association of Australia | AU | web | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_national_b2b_directory` | National caravan industry B2B directory | Industry association / commercial directory | AU | web | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `industry_cmca_dump_points` | CMCA dump-point list/map | Campervan & Motorhome Club of Australia | AU | PDF/web | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
+| `regional_drive_queensland_2026` | Drive Queensland Drive Guide 2026 | Drive Queensland | QLD | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `fc943886998d` | `data/sources/vanassist/regional-guides/drive-queensland-guide-2026.pdf` |
 | `regional_barcoo_visitor_guide` | Visit Barcoo Visitor Guide | Barcoo Shire Council | QLD | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `bfc8f6306fba` | `data/sources/vanassist/regional-guides/barcoo-visitor-guide.pdf` |
 | `vic_coastal_places_of_interest` | Coastal Places of Interest | Victorian Government / DEECA / DataVic | VIC | SHP | GREEN | importable_filtered | — | `` | `—` |
-| `regional_scenic_rim_visitor_guide` | Scenic Rim Visitor Guide | Scenic Rim Regional Council / tourism | QLD | PDF | AMBER_PERMISSION_REQUIRED | archive_only | — | `` | `—` |
+| `regional_scenic_rim_visitor_guide` | Scenic Rim Visitor Guide | Scenic Rim Regional Council / tourism | QLD | PDF | PERMISSION_GRANTED | extraction_required | — | `` | `—` |
 
-## Permission queue (AMBER)
+## Permission Granted (2026-09-17)
 
-- **NT Government campground web pages** (Northern Territory Government) — https://nt.gov.au/
-- **2026 NSW Caravan & Camping Parks & Products Holiday Guide** (Caravan & Camping Industry Association NSW) — https://www.cciansw.asn.au/
-- **Caravan & Camping WA Guide 2026** (Caravan Industry Association Western Australia) — https://www.caravanwa.com.au/
-- **Caravan Tasmania 2026 Guide** (Caravanning Tasmania) — https://www.caravaningtasmania.com.au/
-- **SA Parks / Caravan & Camping SA guide** (Caravan & Camping SA / SA Parks) — https://www.caravanandcampingsa.com.au/
-- **Caravanning NT parks map / visitor guide** (Caravanning NT) — https://www.caravannt.com.au/
-- **Caravan & Residential Parks Victoria accommodation guide** (Caravan Industry Victoria) — https://www.caravanvictoria.com.au/
-- **BIG4 Holiday Guide 2026** (BIG4 Holiday Parks of Australia) — https://www.big4.com.au/
-- **G'day Parks National/Digital Guide** (G'day Group) — https://www.gdayparks.com.au/
-- **Caravan Industry Association of Australia — Services Listing** (Caravan Industry Association of Australia) — https://www.caravanindustry.com.au/
-- **National caravan industry B2B directory** (Industry association / commercial directory) — https://www.caravanindustry.com.au/
-- **CMCA dump-point list/map** (Campervan & Motorhome Club of Australia) — https://www.cmca.net.au/
-- **Drive Queensland Drive Guide 2025/2026** (Drive Queensland) — https://drivequeensland.com/drive-guide/
-- **Visit Barcoo Visitor Guide** (Barcoo Shire Council) — https://www.barcoo.qld.gov.au/council-services/visitor-information-centres
-- **Scenic Rim Visitor Guide** (Scenic Rim Regional Council / tourism) — https://www.visitscenicrim.com.au/
+All 15 industry association directories and regional tourism guides have received
+permission for data extraction and import. See `docs/data/VANASSIST_INDUSTRY_SOURCE_PERMISSIONS.md`.
+
+No sources remain in the AMBER permission queue.
 
 ## Refresh
 

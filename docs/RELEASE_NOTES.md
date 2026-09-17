@@ -16,8 +16,14 @@ may remain as dated files and are linked here rather than copied.
   `scripts/import-toilet-map-direct.php`.
 - CSV/GeoJSON connectors support up to 50k rows with jurisdiction field
   fallbacks; bulk approve caches catalogue source keys.
-- AMBER industry/regional PDFs archived without production import; OSM remains
-  YELLOW; National Formal Rest Areas remain UNKNOWN (not imported).
+- **Permission granted (2026-09-17)** for 15 industry association directories
+  and regional tourism guides (BIG4, state caravan industry associations, CMCA,
+  regional council guides). All sources now marked `PERMISSION_GRANTED` and
+  importable pending PDF/web extraction. See
+  `docs/data/VANASSIST_INDUSTRY_SOURCE_PERMISSIONS.md` and
+  `docs/data/VANASSIST_DEDUPLICATION.md` for import guarantees.
+- OSM remains YELLOW (special ODbL licence); National Formal Rest Areas remain
+  UNKNOWN (not imported without licence clarification).
 
 ### CPAQ 2026 authorised directory import (DATA-001 / VAN-001)
 
