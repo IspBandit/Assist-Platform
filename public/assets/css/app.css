@@ -1521,7 +1521,7 @@ body[data-brand="vanassist"] .site-header .main-nav .btn-primary:hover{border-co
    native details hiding and leaked “Prefer category…” under the header). */
 details.ask-structured-fallback:not([open])>*:not(summary){display:none!important}
 .ask-vanassist-divider{display:flex;align-items:center;gap:.65rem;margin-bottom:.6rem;color:var(--muted);font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.ask-vanassist-divider::before,.ask-vanassist-divider::after{content:'';height:1px;flex:1;background:var(--line)}
-.ask-vanassist-home label{display:block;margin-bottom:.35rem;color:var(--charcoal);font-size:.88rem;font-weight:800}.ask-vanassist-home-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem}.ask-vanassist-home-row input{width:100%;min-width:0;min-height:48px}.ask-vanassist-home-row .btn{min-width:78px;min-height:48px}.ask-vanassist-home-foot{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-top:.45rem;font-size:.75rem;color:var(--muted)}.ask-vanassist-home .use-location{color:var(--teal)}.hp-field{position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
+.ask-vanassist-home label{display:block;margin-bottom:.35rem;color:var(--charcoal);font-size:.88rem;font-weight:800}.ask-vanassist-home-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.55rem}.ask-vanassist-home-row input{width:100%;min-width:0;min-height:54px;font-size:1rem;padding:.75rem .85rem}.ask-vanassist-home-row .btn{min-width:78px;min-height:54px}.ask-vanassist-home-foot{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-top:.45rem;font-size:.75rem;color:var(--muted)}.ask-vanassist-home .use-location{color:var(--teal)}.hp-field{position:absolute!important;left:-10000px!important;top:auto!important;width:1px!important;height:1px!important;overflow:hidden!important}
 @media(max-width:520px){.ask-vanassist-home{padding-top:.75rem}.ask-vanassist-home-row{grid-template-columns:1fr}.ask-vanassist-home-row .btn{width:100%}.ask-vanassist-home-foot{align-items:flex-start;flex-direction:column;gap:.25rem}}
 
 /* Distinct, compact visual headers for VanAssist's main inner journeys. */
@@ -1624,7 +1624,8 @@ body[data-brand="vanassist"] .interior-visual-heading .directory-eyebrow{color:#
   .ask-vanassist-home{margin:0;padding:0 0 .55rem;border:0;border-radius:0;background:transparent;box-shadow:none}
   .ask-vanassist-divider{margin-bottom:.4rem;font-size:.65rem}
   .ask-vanassist-home-row{grid-template-columns:minmax(0,1fr) auto;gap:.35rem}
-  .ask-vanassist-home-row input,.ask-vanassist-home-row .btn{min-height:44px}
+  .ask-vanassist-home-row input{min-height:50px;font-size:.95rem;padding:.7rem .75rem}
+  .ask-vanassist-home-row .btn{min-height:50px}
   .ask-vanassist-home-row .btn{width:auto;min-width:66px;padding:.45rem .55rem}
   .ask-vanassist-home-foot{flex-direction:row;align-items:center;gap:.4rem;font-size:.66rem}
   .ask-structured-fallback{margin-top:.35rem;padding-top:.55rem}
