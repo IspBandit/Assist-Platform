@@ -54,12 +54,27 @@ root-owned cron runner for an authorised server-side diagnostic.
 VanAssist's daily website performance report runs at 06:15 Australia/Brisbane
 through `vanassist_daily_performance_email`. It reports the preceding calendar
 day to `support@vanassist.com.au`, then the existing two-minute email worker
-delivers it through Microsoft Graph. The task checks its date-specific queue key
-before inserting, so a retry reports `already_queued` and does not duplicate the
-email. Confirm both the task's `success` state and the matching email-queue row;
-an HTTP health check alone does not prove delivery. To suspend the report,
-remove or comment only that cron entry. To recover a missed day, run the task
-once before the next calendar day; never hand-insert a queue copy.
+delivers it through Microsoft Graph. The same idempotent queue also runs inside
+`process_email_queue`, so a missing host cron line cannot silently strand the
+report after the application code is current. The task checks its date-specific
+queue key before inserting, so a retry reports `already_queued` and does not
+duplicate the email. Confirm both the task's `success` state (or a successful
+`process_email_queue` payload) and the matching email-queue row; an HTTP health
+check alone does not prove delivery. Releases install `/etc/cron.d/assist-platform`
+and `/usr/local/sbin/assist-cron` from the reviewed commit (the cron.d filename
+must not contain a period). To suspend the report, remove or comment only that
+cron entry and the `process_email_queue` safety-net call. To recover a missed day
+after the schedule is present, run once as root before the next calendar day:
+
+```sh
+/usr/local/sbin/assist-cron vanassist_daily_performance_email
+/usr/local/sbin/assist-cron process_email_queue
+```
+
+Then confirm `scheduled_tasks.last_status=success` for
+`vanassist_daily_performance_email` and an `email_queue` row for
+`vanassist_daily_performance_YYYYMMDD` with status `sent`. Never hand-insert a
+queue copy.
 
 The workflow cannot run from a pull request or feature branch. A human must type
 `DEPLOY`, approve the protected environment and allow the complete reusable CI
@@ -72,9 +87,10 @@ hash mismatch stops before production changes; install the reviewed command as
 root, verify its hash and retry rather than bypassing this drift check.
 
 The root-owned release command also refreshes bootstrap-managed Compose,
-Dockerfile, PHP, Caddy and operations scripts from the reviewed immutable
-release before rebuilding containers. It keeps the preceding runtime files for
-the duration of deployment and restores them with the prior application
+Dockerfile, PHP, Caddy, operations scripts and the host cron schedule
+(`/etc/cron.d/assist-platform`, `/usr/local/sbin/assist-cron`) from the reviewed
+immutable release before rebuilding containers. It keeps the preceding runtime
+files for the duration of deployment and restores them with the prior application
 symlink if any migration, data audit or health check fails. This prevents a
 merged infrastructure change from remaining stranded in GitHub while the
 application code appears current.

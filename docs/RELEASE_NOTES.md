@@ -5,6 +5,29 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CPAQ 2026 authorised directory import (DATA-001 / VAN-001)
+
+- Added idempotent CPAQ 2026 import service and CLI
+  (`App\Services\Cpaq2026ImportService`, `scripts/import-cpaq-2026.php`) for
+  authorised Queensland parks and trade seed JSON under
+  `database/seeds/cpaq-2026/`.
+- Parks land in `caravan_parks` with `stay_facility_claims`; trade businesses in
+  unclaimed providers with VanAssist listings and mapped services. Dry-run by
+  default; `--apply` commits. See `docs/CPAQ_2026_IMPORT.md`.
+
+### Daily performance email schedule install (DATA-004 / OPS-003)
+
+- Production releases now install `/usr/local/sbin/assist-cron` and
+  `/etc/cron.d/assist-platform` from the reviewed commit so
+  `vanassist_daily_performance_email` (06:15 Brisbane → `support@vanassist.com.au`)
+  cannot remain registered in the database while missing from the live crontab.
+- Each successful release also runs that task once (idempotent) then drains
+  `process_email_queue`, so a missed day is recovered without a hand-inserted
+  queue row.
+- The existing two-minute `process_email_queue` worker also attempts the same
+  idempotent queue, so reports resume even before the host crontab is refreshed.
+- Bootstrap installs the same schedule on a fresh host.
+
 ### Provider discovery rescue (VAN-011 / DATA-013 / ADR 0042)
 
 - Classic `/find` and Ask no longer stop at town-only (~20 km) for category

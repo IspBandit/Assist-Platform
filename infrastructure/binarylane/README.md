@@ -63,7 +63,10 @@ sudo rm -f /opt/shared-public-edge/bin/check-shared-public-edge
 4. Upload a checksum-verified immutable release and point `current` at it.
 5. Run `docker compose config -q` before starting containers.
 6. Apply migrations once, seed reference data, and create the administrator locally.
-7. Install monitoring and scheduled jobs from `ops/`.
+7. Scheduled jobs and the health timer are installed by `bootstrap.sh` from
+   `ops/` (`/etc/cron.d/assist-platform` and `/usr/local/sbin/assist-cron`).
+   Immutable releases refresh the same files from the reviewed commit so new
+   tasks such as `vanassist_daily_performance_email` cannot stay stranded in Git.
 8. Verify `/healthz`, `/readyz`, brand pages, and installer denial for every domain.
 
 The public installer is deliberately denied by Caddy. Initial production setup
