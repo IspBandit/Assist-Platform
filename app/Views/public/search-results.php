@@ -24,8 +24,14 @@
 /** @var string|int|null $distanceSelection */
 /** @var bool $hasOrigin */
 /** @var string|null $originLabel */
+/** @var array<int,array<string,mixed>> $rescueExternals */
+/** @var string|null $rescueAttribution */
+/** @var string|null $rescueMessage */
 /** @var bool $hasMore */
 /** @var string|null $showMoreUrl */
+$rescueExternals = $rescueExternals ?? [];
+$rescueAttribution = $rescueAttribution ?? null;
+$rescueMessage = $rescueMessage ?? null;
 $this->extend('layouts.public');
 $featuredMatches = array_values(array_filter($matches, static fn (array $provider): bool => !empty($provider['is_featured'])));
 $organicMatches = array_values(array_filter($matches, static fn (array $provider): bool => empty($provider['is_featured'])));
@@ -238,7 +244,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
             </div>
         <?php endif; ?>
 
-        <?php if (!$locationNotFound && $matches === [] && $possible === []): ?>
+        <?php if (!$locationNotFound && $matches === [] && $possible === [] && $rescueExternals === []): ?>
             <div class="empty-state">
                 <span class="empty-state-icon" aria-hidden="true">⌕</span>
                 <h2>No suitable provider found</h2>
@@ -247,9 +253,9 @@ foreach ($mappedResults as $index => $mappedProvider) {
                 <?php elseif (!empty($maxDistance) && !empty($hasOrigin)): ?>
                     <p>No providers are listed within <?= (int) $maxDistance ?> km<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' near ' . $this->e((string) $town['name']) : '' ?>. Try a larger distance or <a href="<?= e(url('find?' . http_build_query(array_filter(['location' => $location, 'category' => $categorySlug ?: null])))) ?>">clear the distance filter</a>.</p>
                 <?php else: ?>
-                    <p>No providers are listed<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?> yet.</p>
+                    <p>No providers are listed<?= $category !== null ? ' for ' . $this->e((string) $category['name']) : '' ?><?= $town !== null ? ' in ' . $this->e((string) $town['name']) : '' ?> yet. Register a request and we will use this gap to grow coverage.</p>
                 <?php endif; ?>
-                <div class="btn-row"><a class="btn btn-primary" href="<?= e($requestUrl) ?>">Register a request</a><a class="btn btn-secondary" href="<?= e(url('providers')) ?>">Browse full directory</a></div>
+                <div class="btn-row"><a class="btn btn-primary" href="<?= e($requestUrl) ?>">Register a request</a><a class="btn btn-secondary" href="<?= e(url('providers')) ?>">Browse full directory</a><a class="btn btn-ghost" href="<?= e(url('for-providers/register')) ?>">List your business</a></div>
             </div>
 
             <?php if ($town !== null || $category !== null): ?>
@@ -278,6 +284,38 @@ foreach ($mappedResults as $index => $mappedProvider) {
                     <div class="btn-row"><button type="submit" class="btn btn-secondary">Send feedback</button></div>
                 </form>
             <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($rescueExternals !== []): ?>
+            <section class="rescue-results" aria-labelledby="rescue-results-heading" style="margin-top:1.5rem">
+                <h2 id="rescue-results-heading" class="h3">Public-source businesses nearby</h2>
+                <?php if ($rescueMessage): ?>
+                    <p class="muted"><?= $this->e($rescueMessage) ?></p>
+                <?php endif; ?>
+                <p class="muted">These are <strong>not verified VanAssist listings</strong>. Confirm they handle your issue before travelling.<?= $rescueAttribution ? ' ' . $this->e($rescueAttribution) : '' ?></p>
+                <div class="dataset-results">
+                    <?php foreach ($rescueExternals as $ext): ?>
+                        <article class="card" style="margin-bottom:0.75rem;border-left:4px solid #8a6d3b">
+                            <h3 class="h4" style="margin:0 0 0.35rem"><?= $this->e((string) ($ext['business_name'] ?? 'Business')) ?></h3>
+                            <p class="muted" style="margin:0">
+                                <?= $this->e((string) ($ext['assist_provenance_label'] ?? 'External source — not yet verified')) ?>
+                                <?php if (!empty($ext['formatted_address'])): ?> · <?= $this->e((string) $ext['formatted_address']) ?><?php endif; ?>
+                                <?php if (isset($ext['distance_km']) && is_numeric($ext['distance_km'])): ?> · ~<?= (int) $ext['distance_km'] ?> km<?php endif; ?>
+                            </p>
+                            <?php if (!empty($ext['phone'])): ?>
+                                <p style="margin:0.35rem 0 0"><a href="tel:<?= e(preg_replace('/\s+/', '', (string) $ext['phone']) ?? '') ?>"><?= $this->e((string) $ext['phone']) ?></a></p>
+                            <?php endif; ?>
+                            <?php if (!empty($ext['website'])): ?>
+                                <p style="margin:0.35rem 0 0"><a href="<?= e((string) $ext['website']) ?>" rel="noopener noreferrer">Website</a></p>
+                            <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+                <div class="btn-row" style="margin-top:1rem">
+                    <a class="btn btn-primary" href="<?= e($requestUrl) ?>">Still need help? Register a request</a>
+                    <a class="btn btn-secondary" href="<?= e(url('for-providers/register')) ?>">Claim or list a business</a>
+                </div>
+            </section>
         <?php endif; ?>
 
         <?php if ($matches !== [] || $possible !== []): ?>

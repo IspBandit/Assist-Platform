@@ -16,8 +16,10 @@ use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Services\Demand\DemandRecorder;
 use App\Services\RoadDistance\RoadDistanceService;
 use App\Services\Search\ProviderFallbackCategories;
+use App\Services\Search\ProviderSearchRadiusLadder;
 use App\Services\Search\PublicResultWindow;
 use App\Services\Search\StructuredSearchDestination;
+use App\Services\Search\ZeroResultProviderRescueService;
 
 /**
  * Handles the homepage "Find a service" search: a free-text town/postcode plus
@@ -85,12 +87,17 @@ final class SearchController extends Controller
             $town = null;
         }
 
-        $distanceFilter = Geo::resolveDistanceFilter($request->input('max_distance'), $town !== null);
-        $distanceSelection = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : $distanceFilter['scope'];
-        $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
-
         [$originLat, $originLng, $originLabel] = $this->resolveOrigin($town, $hasCoords ? $lat : null, $hasCoords ? $lng : null, $usedLocation);
         $hasOrigin = $originLat !== null && $originLng !== null;
+
+        $distanceRaw = $request->input('max_distance');
+        $userSetDistance = $distanceRaw !== null && trim((string) $distanceRaw) !== '';
+        $useRadiusLadder = $categoryId !== null && $hasOrigin && !$userSetDistance;
+        $distanceFilter = $useRadiusLadder
+            ? ['scope' => 'km', 'km' => ProviderSearchRadiusLadder::stepsKm()[0], 'town_radius_km' => (int) config('geo.default_town_radius_km', 20)]
+            : Geo::resolveDistanceFilter($distanceRaw, $town !== null);
+        $distanceSelection = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : $distanceFilter['scope'];
+        $maxDistance = $distanceFilter['scope'] === 'km' ? $distanceFilter['km'] : null;
 
         // What to show in the search box / heading after a GPS lookup.
         $locationDisplay = $location;
@@ -104,22 +111,45 @@ final class SearchController extends Controller
         $matches = [];
         $possible = [];
         $usedRegionalPool = false;
+        $radiusExpanded = false;
+        $rescueExternals = [];
+        $rescueAttribution = null;
+        $rescueMessage = null;
 
-        if ($town !== null) {
-            $townId = (int) $town['id'];
-            if ($categoryId !== null) {
-                $categoryProviders = $distanceFilter['scope'] === 'km' && $hasOrigin
-                    ? Provider::forCategoryNear($categoryId, (float) $originLat, (float) $originLng, (int) $distanceFilter['km'])
-                    : Provider::forCategory($categoryId, $townId);
-                foreach ($categoryProviders as $row) {
+        if ($town !== null || ($categoryId !== null && $hasOrigin)) {
+            if ($categoryId !== null && $hasOrigin) {
+                $explicitKm = ($distanceFilter['scope'] === 'km' && $userSetDistance) ? (int) $distanceFilter['km'] : null;
+                $ladder = ProviderSearchRadiusLadder::expand(
+                    static fn (int $km): array => Provider::forCategoryNear($categoryId, (float) $originLat, (float) $originLng, $km),
+                    $explicitKm
+                );
+                $distanceFilter = [
+                    'scope' => 'km',
+                    'km' => $ladder['radius_km'],
+                    'town_radius_km' => (int) config('geo.default_town_radius_km', 20),
+                ];
+                $maxDistance = $ladder['radius_km'];
+                $distanceSelection = $ladder['radius_km'];
+                $radiusExpanded = $ladder['expanded'];
+                $usedRegionalPool = $ladder['expanded'];
+                foreach ($ladder['rows'] as $row) {
+                    if ((int) ($row['is_inferred'] ?? 0) === 1) {
+                        $possible[] = $row;
+                    } else {
+                        $matches[] = $row;
+                    }
+                }
+            } elseif ($town !== null && $categoryId !== null) {
+                $townId = (int) $town['id'];
+                foreach (Provider::forCategory($categoryId, $townId) as $row) {
                     if ((int) $row['is_inferred'] === 1) {
                         $possible[] = $row;
                     } else {
                         $matches[] = $row;
                     }
                 }
-            } else {
-                $matches = Provider::inTown($townId, (int) ($town['region_id'] ?? 0));
+            } elseif ($town !== null) {
+                $matches = Provider::inTown((int) $town['id'], (int) ($town['region_id'] ?? 0));
             }
         } elseif ($categoryId !== null && $location === '') {
             // Category only, no location → national results for that service.
@@ -135,18 +165,21 @@ final class SearchController extends Controller
         $exactMatchCount = count($matches) + count($possible);
         $relatedCategorySlugs = ProviderFallbackCategories::related([$categorySlug]);
         if ($categoryId !== null && $exactMatchCount === 0 && $relatedCategorySlugs !== []
-            && ($town !== null || $location === '')) {
+            && ($town !== null || $location === '' || $hasOrigin)) {
             $fallbackRows = [];
             foreach ($relatedCategorySlugs as $relatedSlug) {
                 $relatedCategory = ServiceCategory::findActiveBySlug($relatedSlug);
                 if ($relatedCategory === null) {
                     continue;
                 }
-                $rows = $town !== null
-                    ? ($distanceFilter['scope'] === 'km' && $hasOrigin
-                        ? Provider::forCategoryNear((int) $relatedCategory['id'], (float) $originLat, (float) $originLng, (int) $distanceFilter['km'])
-                        : Provider::forCategory((int) $relatedCategory['id'], (int) $town['id']))
-                    : Provider::forCategory((int) $relatedCategory['id']);
+                $relatedId = (int) $relatedCategory['id'];
+                if ($hasOrigin && $maxDistance !== null) {
+                    $rows = Provider::forCategoryNear($relatedId, (float) $originLat, (float) $originLng, (int) $maxDistance);
+                } elseif ($town !== null) {
+                    $rows = Provider::forCategory($relatedId, (int) $town['id']);
+                } else {
+                    $rows = Provider::forCategory($relatedId);
+                }
                 foreach ($rows as $row) {
                     $providerId = (int) ($row['id'] ?? 0);
                     if ($providerId <= 0 || isset($fallbackRows[$providerId])) {
@@ -158,11 +191,53 @@ final class SearchController extends Controller
                 }
             }
             $possible = array_values($fallbackRows);
+        }
 
+        // Demand-driven Places rescue when the directory is still empty/weak.
+        $shownBeforeRescue = count($matches) + count($possible);
+        $weakAt = max(1, (int) config('places_rescue.weak_result_threshold', 3));
+        if ($categorySlug !== '' && $shownBeforeRescue < $weakAt && ($town !== null || $hasOrigin)) {
+            try {
+                $rescue = (new ZeroResultProviderRescueService())->rescue(
+                    [$categorySlug],
+                    $town,
+                    $originLat,
+                    $originLng,
+                    current_brand()->databaseId(),
+                    $maxDistance
+                );
+                foreach ($rescue['providers'] as $row) {
+                    $id = (int) ($row['id'] ?? 0);
+                    if ($id <= 0) {
+                        continue;
+                    }
+                    $already = false;
+                    foreach (array_merge($matches, $possible) as $existing) {
+                        if ((int) ($existing['id'] ?? 0) === $id) {
+                            $already = true;
+                            break;
+                        }
+                    }
+                    if ($already) {
+                        continue;
+                    }
+                    $matches[] = $row;
+                }
+                $rescueExternals = $rescue['externals'];
+                $rescueAttribution = $rescue['attribution'];
+                $rescueMessage = $rescue['message'];
+                if ($rescue['created'] > 0 || $rescue['merged'] > 0 || $rescueExternals !== []) {
+                    $usedRegionalPool = true;
+                }
+            } catch (\Throwable) {
+                // Rescue must never break the traveller journey.
+            }
         }
 
         if ($hasOrigin) {
-            $townIdForFilter = $town !== null ? (int) $town['id'] : null;
+            $townIdForFilter = (!$useRadiusLadder && $distanceFilter['scope'] === Geo::SCOPE_TOWN && $town !== null)
+                ? (int) $town['id']
+                : null;
             $matches = Geo::applyDistanceFilter($matches, $originLat, $originLng, $distanceFilter, $townIdForFilter);
             $possible = Geo::applyDistanceFilter($possible, $originLat, $originLng, $distanceFilter, $townIdForFilter);
             $resultWindow = (new PublicResultWindow())->apply(['matches' => $matches, 'possible' => $possible], $resultLimit);
@@ -206,9 +281,11 @@ final class SearchController extends Controller
                 'state_id'     => $town['state_id'] ?? null,
                 'postcode'     => preg_match('/^\d{3,4}$/', $location) === 1 ? $location : null,
                 'category_id'  => $categoryId,
-                'result_count' => count($shown),
+                'result_count' => count($shown) + count($rescueExternals),
                 'exact_match_count' => $exactMatchCount,
-                'used_nearby_fallback' => $usedNearbyFallback,
+                'used_nearby_fallback' => $usedNearbyFallback || $radiusExpanded || $rescueExternals !== [],
+                'radius_expanded' => $radiusExpanded ? 1 : 0,
+                'radius_km' => $maxDistance,
             ]);
             DemandRecorder::recordImpressions($searchId, $shown, $categoryId);
         }
@@ -269,6 +346,9 @@ final class SearchController extends Controller
             'locationNotFound' => $locationNotFound,
             'matches'          => $matches,
             'possible'         => $possible,
+            'rescueExternals'  => $rescueExternals,
+            'rescueAttribution'=> $rescueAttribution,
+            'rescueMessage'    => $rescueMessage,
             'usedRegionalPool' => $usedRegionalPool,
             'requestUrl'       => $requestUrl,
             'searchId'         => $searchId,
@@ -343,8 +423,7 @@ final class SearchController extends Controller
             return [$gpsLat, $gpsLng, $label];
         }
 
-        if ($town !== null && $town['latitude'] !== null && $town['longitude'] !== null
-            && in_array(($town['coordinate_confidence'] ?? 'unverified'), ['authoritative', 'statistical'], true)) {
+        if ($town !== null && $town['latitude'] !== null && $town['longitude'] !== null) {
             $label = (string) $town['name'];
             if (!empty($town['state_abbr'])) {
                 $label .= ', ' . $town['state_abbr'];

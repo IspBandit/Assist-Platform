@@ -16,11 +16,19 @@
 5. **Search routing** — `SearchRouter` → providers / stays / traveller_facilities /
    datasets (flags apply).
 6. **Result aggregation** — `ResultAggregator` dedupes, ranks, attaches provenance.
-7. **Knowledge-gap processing** — `KnowledgeGapService::observe` for weak/zero/
+7. **Places rescue (optional)** — when `provider_places_rescue` is on and provider
+   results are zero/weak, `ZeroResultProviderRescueService` may call Google Places
+   (budget-gated), surface labelled `external_live` cards, and auto-create
+   unclaimed listings (ADR 0042). Not general browsing.
+8. **Knowledge-gap processing** — `KnowledgeGapService::observe` for weak/zero/
    unknown; returns `knowledgeGapId` for interaction attribution.
-8. **Draft-candidate processing** — admin/CLI / dataset jobs via
-   `DraftCandidateService` (not live Ask Overpass / Places).
-9. **Analytics + usage** — `AssistSearchLogger`, `AIUsageService`.
+9. **Draft-candidate processing** — admin/CLI / dataset jobs via
+   `DraftCandidateService` (not live Overpass). Places rescue is a separate path.
+10. **Analytics + usage** — `AssistSearchLogger`, `AIUsageService`.
 
 Invalid AI output falls back to deterministic intent or clarification. No
 unrestricted conversational text from the intent layer.
+
+Provider category searches without an explicit radius use the shared
+`ProviderSearchRadiusLadder` (25 → 75 → 150 → 300 km) before related-category
+fallback.

@@ -97,6 +97,8 @@ Use `NNNN-short-kebab-case-title.md`. Numbers are sequential and never reused.
 - 0038: reviewed CQDiggings release files are mounted as a bounded, checksummed production overlay (accepted).
 - 0039: LocalTorque is retired; canonical provider evidence moves to the VanAssist provider pack (accepted).
 - 0040: TowSmart and TrailerWise use deterministic brand-intent routing, while provider claim tokens are enforced within their issuing brand (proposed).
+- 0041: Generic shared public-edge release guard for multi-product Caddy hosts (accepted).
+- 0042: Demand-driven Google Places rescue on zero/weak provider searches may show labelled public-source results and auto-create unclaimed listings (accepted).
 
 Gate: `docs/PHASE_AI0_DESIGN.md` (AI-0 approved). Owner brief:
 `docs/AI0_OWNER_DECISION_BRIEF.md`. AI-1–AI-7 + DATA-012 complete behind flags;

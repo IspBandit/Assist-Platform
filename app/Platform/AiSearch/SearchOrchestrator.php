@@ -34,7 +34,9 @@ use App\Platform\AiSearch\Support\DatasetSearchFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 use App\Services\RoadDistance\RoadDistanceService;
 use App\Services\Search\ProviderFallbackCategories;
+use App\Services\Search\ProviderSearchRadiusLadder;
 use App\Services\Search\PublicResultWindow;
+use App\Services\Search\ZeroResultProviderRescueService;
 
 /**
  * Shared Assist AI Orchestrator — Phase AI-6 (traveller facilities + dataset routing).
@@ -450,29 +452,52 @@ final class SearchOrchestrator
 
         if (!$locationBlocked && in_array('providers', $adapters, true)) {
             try {
-                $providerRows = $providerNameQuery !== null
-                    ? $providerNameRows
-                    : $this->providers->search($intent, $town, $originLat, $originLng);
-                if ($providerRows === [] && $providerNameQuery === null) {
-                    $expandedIntent = $this->expandedExactProviderIntent($intent, $meta, $originLat, $originLng);
-                    if ($expandedIntent !== null) {
-                        $originalRadius = (int) ($intent->radiusKm ?? config('ai_search.default_radius_km', 25));
-                        $providerRows = $this->providers->search($expandedIntent, $town, $originLat, $originLng);
-                        if ($providerRows !== []) {
-                            $intent = $expandedIntent;
-                            $fallback = $fallback !== '' ? $fallback : 'expanded_exact_radius';
-                            $messages[] = 'No matching provider was found within ' . $originalRadius
-                                . ' km. Showing the nearest matching providers in a wider area.';
+                if ($providerNameQuery !== null) {
+                    $providerRows = $providerNameRows;
+                } else {
+                    $userLockedRadius = ($meta['normalised']['radius_km'] ?? null) !== null
+                        || $request->radiusKm !== null;
+                    $providerIntent = $userLockedRadius
+                        ? $intent
+                        : $this->intentWithoutLockedRadius($intent);
+                    $withMeta = $this->providers->searchWithMeta($providerIntent, $town, $originLat, $originLng);
+                    $providerRows = $withMeta['rows'];
+                    if ($withMeta['expanded'] && $withMeta['message'] !== null) {
+                        $fallback = $fallback !== '' ? $fallback : 'expanded_exact_radius';
+                        $messages[] = $withMeta['message'];
+                        if ($withMeta['radius_km'] !== null) {
+                            $intent = new Intent(
+                                intentType: $intent->intentType,
+                                providerCategoryKeys: $intent->providerCategoryKeys,
+                                stayTypeKeys: $intent->stayTypeKeys,
+                                facilityTypeKeys: $intent->facilityTypeKeys,
+                                locationText: $intent->locationText,
+                                useCurrentLocation: $intent->useCurrentLocation,
+                                radiusKm: $withMeta['radius_km'],
+                                urgency: $intent->urgency,
+                                adapterKeys: $intent->adapterKeys,
+                                confidence: $intent->confidence,
+                                clarificationRequired: $intent->clarificationRequired,
+                                clarificationReason: $intent->clarificationReason,
+                                source: 'expanded_exact_radius',
+                            );
                         }
                     }
                 }
                 if ($providerRows === [] && $this->shouldUseProviderFallback($intent)) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {
-                        $providerRows = $this->providers->search($relatedIntent, $town, $originLat, $originLng);
+                        $userLockedRadius = ($meta['normalised']['radius_km'] ?? null) !== null
+                            || $request->radiusKm !== null;
+                        $relatedForSearch = $userLockedRadius
+                            ? $relatedIntent
+                            : $this->intentWithoutLockedRadius($relatedIntent);
+                        $relatedMeta = $this->providers->searchWithMeta($relatedForSearch, $town, $originLat, $originLng);
+                        $providerRows = $relatedMeta['rows'];
                         if ($providerRows !== []) {
                             $fallback = $fallback !== '' ? $fallback : 'related_provider_fallback';
                             $messages[] = 'No exact specialist matched nearby. Showing related providers—confirm they handle your issue before travelling.';
+                            $intent = $relatedIntent;
                         }
                     }
                 }
@@ -523,6 +548,72 @@ final class SearchOrchestrator
                 );
             } catch (\Throwable) {
                 $datasetRows = [];
+            }
+        }
+
+        $weakAt = max(1, (int) config('places_rescue.weak_result_threshold', 3));
+        if (!$locationBlocked
+            && $intent->intentType === Intent::TYPE_PROVIDER
+            && $intent->providerCategoryKeys !== []
+            && $providerNameQuery === null
+            && count($providerRows) < $weakAt
+            && $request->brandDatabaseId !== null
+            && ($town !== null || ($originLat !== null && $originLng !== null))) {
+            try {
+                $rescue = (new ZeroResultProviderRescueService())->rescue(
+                    $intent->providerCategoryKeys,
+                    $town,
+                    $originLat,
+                    $originLng,
+                    (int) $request->brandDatabaseId,
+                    $intent->radiusKm ?? (ProviderSearchRadiusLadder::stepsKm()[count(ProviderSearchRadiusLadder::stepsKm()) - 1] ?? 300)
+                );
+                foreach ($rescue['providers'] as $row) {
+                    $id = (int) ($row['id'] ?? 0);
+                    if ($id <= 0) {
+                        continue;
+                    }
+                    $exists = false;
+                    foreach ($providerRows as $existing) {
+                        if ((int) ($existing['id'] ?? 0) === $id) {
+                            $exists = true;
+                            break;
+                        }
+                    }
+                    if (!$exists) {
+                        $providerRows[] = $row;
+                    }
+                }
+                foreach ($rescue['externals'] as $external) {
+                    $datasetRows[] = $external;
+                }
+                if ($rescue['message'] !== null) {
+                    $fallback = $fallback !== '' ? $fallback : 'places_rescue';
+                    $messages[] = $rescue['message'];
+                }
+                if ($rescue['attribution'] !== null) {
+                    $messages[] = $rescue['attribution'];
+                }
+                if ($rescue['providers'] !== [] || $rescue['externals'] !== []) {
+                    $rescueRadius = ProviderSearchRadiusLadder::stepsKm();
+                    $intent = new Intent(
+                        intentType: $intent->intentType,
+                        providerCategoryKeys: $intent->providerCategoryKeys,
+                        stayTypeKeys: $intent->stayTypeKeys,
+                        facilityTypeKeys: $intent->facilityTypeKeys,
+                        locationText: $intent->locationText,
+                        useCurrentLocation: $intent->useCurrentLocation,
+                        radiusKm: $intent->radiusKm ?? ($rescueRadius[count($rescueRadius) - 1] ?? 300),
+                        urgency: $intent->urgency,
+                        adapterKeys: $intent->adapterKeys,
+                        confidence: $intent->confidence,
+                        clarificationRequired: $intent->clarificationRequired,
+                        clarificationReason: $intent->clarificationReason,
+                        source: $intent->source,
+                    );
+                }
+            } catch (\Throwable) {
+                // Rescue must never break Ask.
             }
         }
 
@@ -657,35 +748,9 @@ final class SearchOrchestrator
         );
     }
 
-    /**
-     * Specialist services are often regional. If the user did not set a
-     * distance, retry the same categories over a wider area before considering
-     * any related category. Explicit distance limits are always respected.
-     *
-     * @param array<string,mixed> $normalisedMeta
-     */
-    private function expandedExactProviderIntent(
-        Intent $intent,
-        array $normalisedMeta,
-        ?float $originLat,
-        ?float $originLng,
-    ): ?Intent {
-        if ($intent->intentType !== Intent::TYPE_PROVIDER
-            || $intent->providerCategoryKeys === []
-            || (!$this->shouldUseProviderFallback($intent)
-                && !in_array('general-caravan-repairs', $intent->providerCategoryKeys, true))
-            || $originLat === null
-            || $originLng === null
-            || ($normalisedMeta['radius_km'] ?? null) !== null) {
-            return null;
-        }
-
-        $currentRadius = (int) ($intent->radiusKm ?? config('ai_search.default_radius_km', 25));
-        $expandedRadius = max($currentRadius, (int) config('ai_search.specialist_radius_km', 150));
-        if ($expandedRadius <= $currentRadius) {
-            return null;
-        }
-
+    /** Clear a default/engine radius so the shared ladder can expand specialists. */
+    private function intentWithoutLockedRadius(Intent $intent): Intent
+    {
         return new Intent(
             intentType: $intent->intentType,
             providerCategoryKeys: $intent->providerCategoryKeys,
@@ -693,13 +758,13 @@ final class SearchOrchestrator
             facilityTypeKeys: $intent->facilityTypeKeys,
             locationText: $intent->locationText,
             useCurrentLocation: $intent->useCurrentLocation,
-            radiusKm: min(500, $expandedRadius),
+            radiusKm: null,
             urgency: $intent->urgency,
             adapterKeys: $intent->adapterKeys,
             confidence: $intent->confidence,
             clarificationRequired: $intent->clarificationRequired,
             clarificationReason: $intent->clarificationReason,
-            source: 'expanded_exact_radius',
+            source: $intent->source,
         );
     }
 
@@ -721,7 +786,7 @@ final class SearchOrchestrator
 
         return in_array('stays', $adapters, true)
             ? \App\Helpers\Geo::DEFAULT_STAY_DISTANCE_KM
-            : max(1, min(500, (int) config('ai_search.default_radius_km', 25)));
+            : max(1, min(500, (int) (ProviderSearchRadiusLadder::stepsKm()[0] ?? config('ai_search.default_radius_km', 25))));
     }
 
     private function recordResolveUsage(

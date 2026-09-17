@@ -7,6 +7,8 @@
 /** @var string $datasetsFlagKey */
 /** @var bool $facilitiesFlagEnabled */
 /** @var string $facilitiesFlagKey */
+/** @var bool $placesRescueFlagEnabled */
+/** @var string $placesRescueFlagKey */
 /** @var array<string,mixed> $releaseGate */
 /** @var array<string,int> $retentionWindows */
 /** @var array<string,mixed>|null $costSimulation */
@@ -23,6 +25,8 @@ $datasetsFlagEnabled = $datasetsFlagEnabled ?? false;
 $datasetsFlagKey = $datasetsFlagKey ?? 'assist_ai_datasets';
 $facilitiesFlagEnabled = $facilitiesFlagEnabled ?? false;
 $facilitiesFlagKey = $facilitiesFlagKey ?? 'assist_ai_traveller_facilities';
+$placesRescueFlagEnabled = $placesRescueFlagEnabled ?? false;
+$placesRescueFlagKey = $placesRescueFlagKey ?? 'provider_places_rescue';
 $releaseGate = $releaseGate ?? ['status' => 'unknown', 'checks' => []];
 $retentionWindows = $retentionWindows ?? [];
 $costSimulation = $costSimulation ?? null;
@@ -88,6 +92,8 @@ $simInputs = $simInputs ?? [];
         <label><input type="checkbox" name="assist_ai_datasets" value="1" <?= $datasetsFlagEnabled ? 'checked' : '' ?>> Enable dataset routing (<code><?= e($datasetsFlagKey) ?></code>) — show staged DATA-006 candidates with provenance; never calls Google Places from Ask</label>
         <input type="hidden" name="assist_ai_traveller_facilities_present" value="1">
         <label><input type="checkbox" name="assist_ai_traveller_facilities" value="1" <?= $facilitiesFlagEnabled ? 'checked' : '' ?>> Enable traveller facilities (<code><?= e($facilitiesFlagKey) ?></code>) — toilets/dump/water etc. from <code>traveller_facilities</code> (never <code>caravan_parks</code>)</label>
+        <input type="hidden" name="provider_places_rescue_present" value="1">
+        <label><input type="checkbox" name="provider_places_rescue" value="1" <?= $placesRescueFlagEnabled ? 'checked' : '' ?>> Enable Places rescue (<code><?= e($placesRescueFlagKey) ?></code>) — on zero/weak provider searches, call Google Places (Data Sources budget), show labelled public-source results, and auto-create unclaimed listings (ADR 0042)</label>
         <label><input type="checkbox" name="ai_enabled" value="1" <?= !empty($settings['ai_enabled']) ? 'checked' : '' ?>> Global AI enabled (paid interpreter — keep off until approved)</label>
         <label><input type="checkbox" name="openai_enabled" value="1" <?= !empty($settings['openai_enabled']) ? 'checked' : '' ?>> OpenAI provider enabled</label>
         <label>Model allowlist (comma-separated snapshots; empty = no paid calls)

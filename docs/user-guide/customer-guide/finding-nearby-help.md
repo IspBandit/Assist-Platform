@@ -37,7 +37,9 @@ measurement configuration.
 
 ## Fields
 
-**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
+**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When you leave Distance unset for a service search, VanAssist expands outward (about 25 km, then 75 km, 150 km and up to 300 km) until enough matching providers appear, then shows an honest “wider area” note. When you set Distance yourself, that limit is never widened. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
+
+When the directory is still empty or thin for that service and place, VanAssist may show a separate **Public-source businesses nearby** block (feature-flagged). Those rows are not verified VanAssist specialists: confirm they can do the work before travelling. Some may also appear later as unclaimed public listings you can open or that a business can claim.
 
 Some choices use a more suitable directory automatically. Caravan parks and
 camp choices open **Places to stay**. Dump points, potable-water refills and rest

@@ -7,6 +7,7 @@ namespace Tests\Unit\AiSearch;
 use App\Platform\AiSearch\Dto\Intent;
 use App\Platform\AiSearch\Adapters\ProviderSearchAdapter;
 use App\Platform\AiSearch\SearchOrchestrator;
+use App\Services\Search\ProviderSearchRadiusLadder;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -38,45 +39,46 @@ final class RelatedProviderFallbackTest extends TestCase
 
     public function testImplicitProviderRadiusCanExpandWithoutChangingCategory(): void
     {
-        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Boyne Island', true, 25,
-            'normal', ['providers'], 0.95, false, null);
-        $method = new ReflectionMethod(SearchOrchestrator::class, 'expandedExactProviderIntent');
-        $expanded = $method->invoke(new SearchOrchestrator(), $intent, ['radius_km' => null], -23.95, 151.35);
+        $calls = [];
+        $result = ProviderSearchRadiusLadder::expand(static function (int $km) use (&$calls): array {
+            $calls[] = $km;
 
-        self::assertInstanceOf(Intent::class, $expanded);
-        self::assertSame(['general-caravan-repairs'], $expanded->providerCategoryKeys);
-        self::assertSame(150, $expanded->radiusKm);
-        self::assertSame('expanded_exact_radius', $expanded->source);
+            return $km >= 150 ? [['id' => 1], ['id' => 2], ['id' => 3]] : [['id' => 1]];
+        });
+
+        self::assertContains(25, $calls);
+        self::assertContains(150, $calls);
+        self::assertTrue($result['expanded']);
+        self::assertSame(150, $result['radius_km']);
+        self::assertNotNull($result['message']);
     }
 
     public function testExplicitProviderRadiusIsNeverExpanded(): void
     {
-        $intent = new Intent(Intent::TYPE_PROVIDER, ['general-caravan-repairs'], [], [], 'Boyne Island', true, 25,
-            'normal', ['providers'], 0.95, false, null);
-        $method = new ReflectionMethod(SearchOrchestrator::class, 'expandedExactProviderIntent');
+        $calls = [];
+        $result = ProviderSearchRadiusLadder::expand(static function (int $km) use (&$calls): array {
+            $calls[] = $km;
 
-        self::assertNull($method->invoke(
-            new SearchOrchestrator(),
-            $intent,
-            ['radius_km' => 25],
-            -23.95,
-            151.35,
-        ));
+            return [['id' => 1]];
+        }, 25);
+
+        self::assertSame([25], $calls);
+        self::assertFalse($result['expanded']);
+        self::assertSame(25, $result['radius_km']);
+        self::assertNull($result['message']);
     }
 
-    public function testEverydayFacilityStyleProviderSearchIsNotExpandedRegionally(): void
+    public function testEverydayFacilityStyleProviderSearchStillUsesSharedLadderWhenRadiusUnlocked(): void
     {
-        $intent = new Intent(Intent::TYPE_PROVIDER, ['fuel-and-travel-stops'], [], [], 'Boyne Island', true, 25,
-            'normal', ['providers'], 0.95, false, null);
-        $method = new ReflectionMethod(SearchOrchestrator::class, 'expandedExactProviderIntent');
+        // Unlocked searches (no explicit "within N km") walk the shared ladder
+        // for every provider category, including everyday ones like fuel.
+        $result = ProviderSearchRadiusLadder::expand(static function (int $km): array {
+            return $km >= 75 ? [['id' => 1], ['id' => 2], ['id' => 3]] : [];
+        });
 
-        self::assertNull($method->invoke(
-            new SearchOrchestrator(),
-            $intent,
-            ['radius_km' => null],
-            -23.95,
-            151.35,
-        ));
+        self::assertTrue($result['expanded']);
+        self::assertSame(75, $result['radius_km']);
+        self::assertSame(ProviderSearchRadiusLadder::stepsKm()[0], $result['started_km']);
     }
 
     public function testServicingMissOnlyWidensToMechanicalHelp(): void
