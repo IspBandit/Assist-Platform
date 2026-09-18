@@ -5,6 +5,38 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Legal PDF pack and published site policies (COM-005)
+
+- Added administrator **Legal documents** workspace at `/admin/legal-documents`
+  (`settings.manage`) with on-demand PDF downloads for Terms of Use, Privacy
+  Policy, Provider Terms, DPA, OpCo/brand licence, and IP ownership assignment.
+- Published multi-brand public CMS bodies (effective **18 September 2026**) via
+  `database/seeds/legal_pages.php`; Maintenance “Populate Pages & Blocks” now
+  merges those legal overrides. Formal solicitor review may refine wording later.
+- Sources remain under `docs/legal/drafts/`; optional offline cache via
+  `php scripts/generate-legal-pdfs.php`. Downloads are audited as
+  `legal_document.download`.
+
+### VanAssist national traveller-data source archive (DATA-012 / DATA-011A / VAN-001)
+
+- Added Platform-side source vault under `data/sources/vanassist/` with machine
+  registry (`registry/sources.json`), checksums, and human register
+  `docs/data/VANASSIST_DATA_SOURCE_REGISTER.md`.
+- Repeatable sync: `tools/vanassist_sources/sync_archive.py`.
+- GREEN facility import via `GovernmentDatasetService`:
+  `scripts/import-archived-green-facilities.php` and bulk Toilet Map helper
+  `scripts/import-toilet-map-direct.php`.
+- CSV/GeoJSON connectors support up to 50k rows with jurisdiction field
+  fallbacks; bulk approve caches catalogue source keys.
+- **Permission granted (2026-09-17)** for 15 industry association directories
+  and regional tourism guides (BIG4, state caravan industry associations, CMCA,
+  regional council guides). All sources now marked `PERMISSION_GRANTED` and
+  importable pending PDF/web extraction. See
+  `docs/data/VANASSIST_INDUSTRY_SOURCE_PERMISSIONS.md` and
+  `docs/data/VANASSIST_DEDUPLICATION.md` for import guarantees.
+- OSM remains YELLOW (special ODbL licence); National Formal Rest Areas remain
+  UNKNOWN (not imported without licence clarification).
+
 ### CPAQ 2026 authorised directory import (DATA-001 / VAN-001)
 
 - Added idempotent CPAQ 2026 import service and CLI

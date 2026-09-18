@@ -60,9 +60,13 @@ See **Ask VanAssist** for the full Ask journey and **Finding nearby help** for d
 
 2026-08-25.
 
+## Recent improvements
+
+**17 September 2026**: The Ask VanAssist input field on the homepage has been enlarged with increased height, larger text and improved padding to make it easier to type longer questions, especially on mobile devices.
+
 ## Last updated
 
-10 September 2026.
+17 September 2026.
 
 ## Owner
 

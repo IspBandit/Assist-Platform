@@ -126,6 +126,7 @@ if ($permitted('audit.view')) {
 }
 if ($permitted('settings.manage')) {
     $administration[] = ['Settings', '/admin/settings'];
+    $administration[] = ['Legal documents', '/admin/legal-documents'];
     $administration[] = ['Assist AI Search', '/admin/ai-search'];
 }
 if (auth()->isSuperAdmin()) {

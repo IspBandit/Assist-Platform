@@ -110,7 +110,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | COM-002 | Consent-aware bulk provider campaign sending | in progress | Brand-scoped audiences, searchable candidate pool, campaign exclusions, documented provider opt-in, bounded queue batches, suppression and signed unsubscribe complete; production throughput acceptance remains |
 | COM-003 | Provider launch and founding-membership conversion programme | ready | Templates, segments, transition notices and conversion analytics |
 | COM-004 | Safe billing provider integration and GST-ready lifecycle | blocked | Owner gateway choice plus legal/tax and webhook acceptance |
-| COM-005 | Sale-readiness product, licence, data and operating package | in progress | Indexed due-diligence pack and transfer rehearsal |
+| COM-005 | Sale-readiness product, licence, data and operating package | in progress | Indexed due-diligence pack and transfer rehearsal; admin Legal documents PDF pack shipped for ToS/Privacy/Provider Terms/DPA/OpCo/IP drafts |
 | COM-006 | Verified provider capability credentials | done | Private evidence, expiry, reviewer audit, public labels and explicit no-endorsement controls |
 | COM-007 | Provider campaign relevance and performance workspace | done | Self-service local/context targeting, transparent sponsorship, daily/total budgets, click/contact attribution and organic separation |
 

@@ -610,6 +610,63 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
     }
 
     /**
+     * Bulk-approve pending candidates for one catalogue dataset (GREEN archive imports).
+     * Caches catalogue source keys and uses name-only town resolution at national scale.
+     */
+    public function approvePendingForDataset(int $datasetId, ?int $reviewerId = null, ?string $notes = null): int
+    {
+        $approved = 0;
+        $jobIds = [];
+        /** @var array<string,array{town_id:?int,state_id:?int}> $locationCache */
+        $locationCache = [];
+        $notes = $notes ?? 'Bulk GREEN archive approve';
+        $dataset = $this->findDataset($datasetId);
+        $sourceKey = $dataset !== null
+            ? self::catalogueSourceKey((string) $dataset['dataset_key'], (string) $dataset['connector_key'])
+            : 'gov:dataset';
+
+        while (true) {
+            $batch = Database::select(
+                "SELECT * FROM traveller_facility_import_candidates
+                 WHERE dataset_id = ? AND review_status = 'pending'
+                 ORDER BY id ASC LIMIT 500",
+                [$datasetId]
+            );
+            if ($batch === []) {
+                break;
+            }
+            foreach ($batch as $candidate) {
+                $locality = isset($candidate['locality']) ? (string) $candidate['locality'] : null;
+                $cacheKey = strtolower(trim((string) $locality));
+                if (!isset($locationCache[$cacheKey])) {
+                    $locationCache[$cacheKey] = $this->resolveFacilityLocationByName($locality);
+                }
+                $facilityId = $this->publishCandidateWithLocation($candidate, $locationCache[$cacheKey], $sourceKey);
+                Database::affecting(
+                    'UPDATE traveller_facility_import_candidates SET review_status = \'approved\', facility_id = ?, reviewed_by = ?, reviewed_at = NOW(), review_notes = ?, updated_at = NOW() WHERE id = ?',
+                    [$facilityId, $reviewerId, $notes, (int) $candidate['id']]
+                );
+                $jobIds[(int) $candidate['job_id']] = true;
+                $approved++;
+            }
+        }
+
+        foreach (array_keys($jobIds) as $jobId) {
+            $this->maybeCompleteJob((int) $jobId);
+        }
+        if ($approved > 0) {
+            AuditLog::record(
+                'gov_dataset.candidates_bulk_approved',
+                'government_dataset',
+                (string) $datasetId,
+                null,
+                $notes . ' count=' . $approved
+            );
+        }
+        return $approved;
+    }
+
+    /**
      * Stable provenance key per catalogue row (not connector class).
      * Prevents Toilet Map toilet vs dump-point rows colliding on FacilityID.
      */
@@ -639,10 +696,6 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
             (string) ($dataset['default_facility_type'] ?? 'other_essential')
         );
         $sourceKey = self::catalogueSourceKey((string) $dataset['dataset_key'], (string) $dataset['connector_key']);
-        // A dataset sync creates a new job each time, so the database's
-        // job-scoped unique key cannot prevent the same source record being
-        // queued repeatedly. Keep one live review candidate per catalogue
-        // record and let a later sync stage it again only after review.
         $pending = Database::selectOne(
             'SELECT id FROM traveller_facility_import_candidates
              WHERE dataset_id = ? AND brand_id <=> ? AND external_id = ?
@@ -657,6 +710,10 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
             'SELECT id FROM traveller_facilities WHERE source_key = ? AND source_record_id = ? AND deleted_at IS NULL LIMIT 1',
             [$sourceKey, $externalId]
         );
+        if ($dup !== null) {
+            // Already published — do not re-queue for review on every sync.
+            return false;
+        }
         $affected = Database::affecting(
             'INSERT IGNORE INTO traveller_facility_import_candidates
                 (job_id, dataset_id, brand_id, external_id, facility_type, name, formatted_address, locality,
@@ -679,7 +736,7 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
                 mb_substr((string) ($row['attribution'] ?? $dataset['attribution'] ?? ''), 0, 255) ?: null,
                 json_encode($row['raw'] ?? $row, JSON_THROW_ON_ERROR),
                 max(0, min(100, (int) ($row['confidence'] ?? 70))),
-                $dup['id'] ?? null,
+                null,
             ]
         );
         return $affected > 0;
@@ -690,22 +747,33 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
      */
     private function publishCandidate(array $candidate): int
     {
-        $sourceKey = 'gov:dataset';
-        if (!empty($candidate['dataset_id'])) {
-            $ds = $this->findDataset((int) $candidate['dataset_id']);
-            if ($ds !== null) {
-                $sourceKey = self::catalogueSourceKey((string) $ds['dataset_key'], (string) $ds['connector_key']);
+        $location = $this->resolveFacilityLocation(
+            isset($candidate['locality']) ? (string) $candidate['locality'] : null,
+            is_numeric($candidate['latitude'] ?? null) ? (float) $candidate['latitude'] : null,
+            is_numeric($candidate['longitude'] ?? null) ? (float) $candidate['longitude'] : null
+        );
+        return $this->publishCandidateWithLocation($candidate, $location, null);
+    }
+
+    /**
+     * @param array<string,mixed> $candidate
+     * @param array{town_id:?int,state_id:?int} $location
+     */
+    private function publishCandidateWithLocation(array $candidate, array $location, ?string $sourceKey = null): int
+    {
+        if ($sourceKey === null || $sourceKey === '') {
+            $sourceKey = 'gov:dataset';
+            if (!empty($candidate['dataset_id'])) {
+                $ds = $this->findDataset((int) $candidate['dataset_id']);
+                if ($ds !== null) {
+                    $sourceKey = self::catalogueSourceKey((string) $ds['dataset_key'], (string) $ds['connector_key']);
+                }
             }
         }
         $slugBase = strtolower(trim((string) $candidate['name']));
         $slugBase = preg_replace('/[^a-z0-9]+/', '-', $slugBase) ?? 'facility';
         $slugBase = trim($slugBase, '-') ?: 'facility';
         $slug = $slugBase . '-' . substr(sha1($sourceKey . '|' . (string) $candidate['external_id']), 0, 8);
-        $location = $this->resolveFacilityLocation(
-            isset($candidate['locality']) ? (string) $candidate['locality'] : null,
-            is_numeric($candidate['latitude'] ?? null) ? (float) $candidate['latitude'] : null,
-            is_numeric($candidate['longitude'] ?? null) ? (float) $candidate['longitude'] : null
-        );
 
         $existing = Database::selectOne(
             'SELECT id FROM traveller_facilities WHERE source_key = ? AND source_record_id = ? LIMIT 1',
@@ -766,18 +834,9 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
     /** @return array{town_id:?int,state_id:?int} */
     private function resolveFacilityLocation(?string $locality, ?float $lat, ?float $lng): array
     {
-        $locality = trim((string) $locality);
-        if ($locality !== '') {
-            $byName = Database::selectOne(
-                'SELECT id, state_id FROM towns WHERE is_active = 1 AND LOWER(name) = LOWER(?) LIMIT 1',
-                [$locality]
-            );
-            if ($byName !== null) {
-                return [
-                    'town_id' => (int) $byName['id'],
-                    'state_id' => isset($byName['state_id']) ? (int) $byName['state_id'] : null,
-                ];
-            }
+        $byName = $this->resolveFacilityLocationByName($locality);
+        if ($byName['town_id'] !== null) {
+            return $byName;
         }
         if ($lat !== null && $lng !== null) {
             $nearest = Town::nearestActive($lat, $lng);
@@ -787,6 +846,26 @@ final class GovernmentDatasetService implements FacilityImportCandidateReviewGat
                     'state_id' => isset($nearest['state_id']) ? (int) $nearest['state_id'] : null,
                 ];
             }
+        }
+        return ['town_id' => null, 'state_id' => null];
+    }
+
+    /** @return array{town_id:?int,state_id:?int} */
+    private function resolveFacilityLocationByName(?string $locality): array
+    {
+        $locality = trim((string) $locality);
+        if ($locality === '') {
+            return ['town_id' => null, 'state_id' => null];
+        }
+        $byName = Database::selectOne(
+            'SELECT id, state_id FROM towns WHERE is_active = 1 AND LOWER(name) = LOWER(?) LIMIT 1',
+            [$locality]
+        );
+        if ($byName !== null) {
+            return [
+                'town_id' => (int) $byName['id'],
+                'state_id' => isset($byName['state_id']) ? (int) $byName['state_id'] : null,
+            ];
         }
         return ['town_id' => null, 'state_id' => null];
     }

@@ -682,6 +682,28 @@ final class MaintenanceController extends Controller
             if (!is_array($content)) {
                 return $this->redirectWith('/admin/maintenance', 'error', 'Content seed did not load as an array (got ' . gettype($content) . ').');
             }
+            $legalPath = base_path('database/seeds/legal_pages.php');
+            if (is_file($legalPath)) {
+                $legalPages = include $legalPath;
+                if (is_array($legalPages) && isset($content['pages']) && is_array($content['pages'])) {
+                    foreach ($content['pages'] as $index => $page) {
+                        $key = (string) ($page['page_key'] ?? '');
+                        if ($key !== '' && isset($legalPages[$key]) && is_array($legalPages[$key])) {
+                            $content['pages'][$index] = $legalPages[$key];
+                        }
+                    }
+                    // Append any legal pages not present in content.php.
+                    $existingKeys = [];
+                    foreach ($content['pages'] as $page) {
+                        $existingKeys[(string) ($page['page_key'] ?? '')] = true;
+                    }
+                    foreach ($legalPages as $key => $page) {
+                        if (!isset($existingKeys[(string) $key]) && is_array($page)) {
+                            $content['pages'][] = $page;
+                        }
+                    }
+                }
+            }
             $seedBlocks = count($content['homepage_blocks'] ?? []);
             $seedPages = count($content['pages'] ?? []);
             $seedFaqs = count($content['faqs'] ?? []);

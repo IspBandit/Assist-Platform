@@ -32,6 +32,13 @@ roles require an assigned permission.
 | `GET /admin/demand/funnel` | `demand.view` | Selected-brand search-to-confirmed-use funnel |
 | `GET /admin/demand/export` | `demand.export` | Selected-brand date-filtered CSV output |
 
+## Legal documents (COM-005)
+
+| Route | Permission | Scope |
+| --- | --- | --- |
+| `GET /admin/legal-documents` | `settings.manage` | Catalogue of Terms, Privacy, Provider Terms, DPA, OpCo and IP PDF drafts |
+| `GET /admin/legal-documents/download?id=` | `settings.manage` | On-demand PDF download; audited as `legal_document.download` |
+
 ## Assist AI Search (CORE-012)
 
 | Route | Permission | Scope |
