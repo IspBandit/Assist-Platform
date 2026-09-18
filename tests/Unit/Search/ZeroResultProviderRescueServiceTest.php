@@ -81,6 +81,33 @@ final class ZeroResultProviderRescueServiceTest extends TestCase
         self::assertNull($card);
     }
 
+    public function testSortByDistancePrefersLocalHits(): void
+    {
+        $service = new ZeroResultProviderRescueService();
+        $method = (new ReflectionClass($service))->getMethod('sortByDistance');
+        $method->setAccessible(true);
+        $sorted = $method->invoke($service, [
+            ['business_name' => 'Far', 'distance_km' => 140.0],
+            ['business_name' => 'Local', 'distance_km' => 0.6],
+            ['business_name' => 'Unknown'],
+        ]);
+
+        self::assertSame('Local', $sorted[0]['business_name']);
+        self::assertSame('Far', $sorted[1]['business_name']);
+        self::assertSame('Unknown', $sorted[2]['business_name']);
+    }
+
+    public function testRefrigerationRescueQueryMentionsFridgeAndCaravan(): void
+    {
+        $path = base_path('config/places_rescue.php');
+        self::assertFileExists($path);
+        /** @var array<string,mixed> $config */
+        $config = require $path;
+        $query = (string) (($config['queries']['refrigeration'] ?? ''));
+        self::assertStringContainsString('fridge', mb_strtolower($query));
+        self::assertMatchesRegularExpression('/refrigerat|caravan|rv/i', $query);
+    }
+
     private function forceFlag(bool $enabled): void
     {
         $ref = new ReflectionClass(FeatureFlag::class);

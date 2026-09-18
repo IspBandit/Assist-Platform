@@ -12,11 +12,11 @@ if (!AiSearchFeature::enabled() || current_brand()->id() !== 'vanassist') {
         Ask VanAssist
     </div>
     <p class="ask-vanassist-intro">Tell us what has happened or what you need, and include a town, postcode or “near me”.</p>
-    <form method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>">
+    <form method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-ask-require-place="1">
         <label for="home-ask-q">What do you need help finding?</label>
         <div class="ask-vanassist-home-row">
             <input type="text" id="home-ask-q" name="q" maxlength="240"
-                placeholder="e.g. brakes grinding near Emerald"
+                placeholder="e.g. brakes grinding near Emerald QLD"
                 autocomplete="off" required>
             <button type="submit" class="btn btn-primary btn-lg">Find the right help</button>
         </div>

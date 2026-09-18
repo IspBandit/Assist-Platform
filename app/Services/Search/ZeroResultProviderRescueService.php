@@ -135,43 +135,53 @@ final class ZeroResultProviderRescueService
             if ($card === null) {
                 continue;
             }
-            $externals[] = $card;
 
-            if (!$autoPublish) {
-                continue;
-            }
-            $result = $publisher->publishOrMerge($place, (int) $category['id'], $brandId);
-            if ($result['action'] === 'created') {
-                ++$created;
-            }
-            if ($result['action'] === 'merged_unclaimed' || $result['action'] === 'existing_place') {
-                ++$merged;
-            }
-            if (is_array($result['row'])) {
-                $row = $result['row'];
-                $row['assist_origin'] = ResultProvenance::ORIGIN_CANONICAL;
-                $row['assist_source'] = 'providers';
-                $row['assist_category_slug'] = $slug;
-                $row['search_fallback'] = 'places_rescue';
-                $row['is_inferred'] = 0;
-                if ($lat !== null && $lng !== null) {
-                    $row['distance_km'] = Geo::distanceKm(
-                        $lat,
-                        $lng,
-                        $row['town_lat'] ?? null,
-                        $row['town_lng'] ?? null
-                    );
+            $publishedAsProvider = false;
+            if ($autoPublish) {
+                $result = $publisher->publishOrMerge($place, (int) $category['id'], $brandId);
+                if ($result['action'] === 'created') {
+                    ++$created;
                 }
-                $providers[(int) $row['id']] = $row;
+                if ($result['action'] === 'merged_unclaimed' || $result['action'] === 'existing_place') {
+                    ++$merged;
+                }
+                if (is_array($result['row'])) {
+                    $row = $result['row'];
+                    $row['assist_origin'] = ResultProvenance::ORIGIN_CANONICAL;
+                    $row['assist_source'] = 'providers';
+                    $row['assist_category_slug'] = $slug;
+                    $row['search_fallback'] = 'places_rescue';
+                    $row['is_inferred'] = 0;
+                    $row['assist_source_record_id'] = (string) ($place['external_id'] ?? '');
+                    if ($lat !== null && $lng !== null) {
+                        $row['distance_km'] = Geo::distanceKm(
+                            $lat,
+                            $lng,
+                            $row['town_lat'] ?? $row['latitude'] ?? null,
+                            $row['town_lng'] ?? $row['longitude'] ?? null
+                        );
+                    }
+                    $providers[(int) $row['id']] = $row;
+                    $publishedAsProvider = true;
+                }
+            }
+
+            // Avoid showing the same Place ID as both a published listing and an
+            // external card (any town — not Charters-specific).
+            if (!$publishedAsProvider) {
+                $externals[] = $card;
             }
         }
+
+        $providers = $this->sortByDistance(array_values($providers));
+        $externals = $this->sortByDistance($externals);
 
         if ($externals === [] && $providers === []) {
             return $empty;
         }
 
         return [
-            'providers' => array_values($providers),
+            'providers' => $providers,
             'externals' => $externals,
             'created' => $created,
             'merged' => $merged,
@@ -293,5 +303,30 @@ final class ZeroResultProviderRescueService
             'Google',
             0.7
         );
+    }
+
+    /**
+     * @param list<array<string,mixed>> $rows
+     * @return list<array<string,mixed>>
+     */
+    private function sortByDistance(array $rows): array
+    {
+        usort($rows, static function (array $a, array $b): int {
+            $da = is_numeric($a['distance_km'] ?? null) ? (float) $a['distance_km'] : null;
+            $db = is_numeric($b['distance_km'] ?? null) ? (float) $b['distance_km'] : null;
+            if ($da === null && $db === null) {
+                return strcmp((string) ($a['business_name'] ?? ''), (string) ($b['business_name'] ?? ''));
+            }
+            if ($da === null) {
+                return 1;
+            }
+            if ($db === null) {
+                return -1;
+            }
+
+            return $da <=> $db;
+        });
+
+        return array_values($rows);
     }
 }

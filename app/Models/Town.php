@@ -257,7 +257,44 @@ final class Town extends Model
             $query = trim(substr($query, 0, -strlen($m[0])));
         }
 
+        $query = self::extractPlaceAfterPreposition($query);
+
         return ['term' => $query, 'state' => $state];
+    }
+
+    /**
+     * From phrases like "fridge repairs near Charters Towers", keep the place
+     * name after near/in/around so structured town lookup still resolves.
+     */
+    private static function extractPlaceAfterPreposition(string $query): string
+    {
+        $query = trim($query);
+        if ($query === '' || preg_match('/\bwithin\b/iu', $query) === 1) {
+            return $query;
+        }
+
+        if (preg_match('/\b(?:near|around)\s+(.+)$/iu', $query, $match) !== 1
+            && preg_match('/\bin\s+(.+)$/iu', $query, $match) !== 1) {
+            return $query;
+        }
+
+        $place = trim((string) ($match[1] ?? ''), " \t\n\r\0\x0B,.-");
+        $place = trim((string) preg_replace('/\s+/u', ' ', $place));
+        if ($place === '' || mb_strlen($place) < 2) {
+            return $query;
+        }
+
+        $blocked = ['me', 'here', 'there', 'my', 'the', 'a', 'an', 'this', 'that'];
+        if (in_array(mb_strtolower($place), $blocked, true)) {
+            return $query;
+        }
+
+        $wordCount = count(preg_split('/\s+/u', $place) ?: []);
+        if ($wordCount > 6) {
+            return $query;
+        }
+
+        return mb_convert_case($place, MB_CASE_TITLE, 'UTF-8');
     }
 
     /**

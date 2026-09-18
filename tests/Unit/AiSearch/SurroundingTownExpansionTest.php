@@ -23,6 +23,16 @@ final class SurroundingTownExpansionTest extends TestCase
         self::assertLessThan($rescueAt, $surroundingAt);
     }
 
+    public function testPlacesRescueUsesOriginalCategoriesNotRelatedFallback(): void
+    {
+        $orchestrator = (string) file_get_contents(base_path('app/Platform/AiSearch/SearchOrchestrator.php'));
+        self::assertStringContainsString('$rescueCategoryKeys = $intent->providerCategoryKeys;', $orchestrator);
+        self::assertMatchesRegularExpression(
+            '/\$rescueCategoryKeys\s*=\s*\$intent->providerCategoryKeys;[\s\S]*?relatedProviderFallbackIntent\([\s\S]*?->rescue\(\s*\$rescueCategoryKeys,/',
+            $orchestrator
+        );
+    }
+
     public function testSurroundingTownExpansionStaysCategoryScoped(): void
     {
         $adapter = (string) file_get_contents(base_path('app/Platform/AiSearch/Adapters/ProviderSearchAdapter.php'));

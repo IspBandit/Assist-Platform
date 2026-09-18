@@ -92,6 +92,47 @@ final class SearchController extends Controller
         [$originLat, $originLng, $originLabel] = $this->resolveOrigin($town, $hasCoords ? $lat : null, $hasCoords ? $lng : null, $usedLocation);
         $hasOrigin = $originLat !== null && $originLng !== null;
 
+        // Provider searches without a town or GPS cannot ladder/rescue and inflate
+        // "Location not supplied" empty metrics. Prompt for a place instead.
+        $needsLocation = $categoryId !== null && $town === null && !$hasOrigin && $location === '';
+        if ($needsLocation) {
+            return $this->view('public.search-results', [
+                'title' => 'Find a service — VanAssist',
+                'metaDescription' => 'Find caravan and RV services near a town or your current location.',
+                'metaRobots' => 'noindex,follow',
+                'heading' => $category !== null ? (string) $category['name'] : 'Find a service',
+                'location' => '',
+                'usedLocation' => false,
+                'categorySlug' => $categorySlug,
+                'category' => $category,
+                'timeframe' => $timeframe,
+                'maxDistance' => null,
+                'distanceScope' => 'any',
+                'distanceSelection' => 'any',
+                'hasOrigin' => false,
+                'originLabel' => null,
+                'town' => null,
+                'alternatives' => [],
+                'locationNotFound' => false,
+                'needsLocation' => true,
+                'matches' => [],
+                'possible' => [],
+                'rescueExternals' => [],
+                'rescueAttribution' => null,
+                'rescueMessage' => null,
+                'usedRegionalPool' => false,
+                'requestUrl' => url('request-assistance'),
+                'searchId' => null,
+                'categories' => ServiceCategory::activeAll(),
+                'categoryGroups' => ServiceCategory::groupedForVanAssist(ServiceCategory::activeAll()),
+                'lat' => null,
+                'lng' => null,
+                'nearbyRuns' => [],
+                'hasMore' => false,
+                'showMoreUrl' => null,
+            ]);
+        }
+
         $distanceRaw = $request->input('max_distance');
         $userSetDistance = $distanceRaw !== null && trim((string) $distanceRaw) !== '';
         $useRadiusLadder = $categoryId !== null && $hasOrigin && !$userSetDistance;
@@ -395,6 +436,7 @@ final class SearchController extends Controller
             'town'             => $town,
             'alternatives'     => $alternatives,
             'locationNotFound' => $locationNotFound,
+            'needsLocation' => false,
             'matches'          => $matches,
             'possible'         => $possible,
             'rescueExternals'  => $rescueExternals,

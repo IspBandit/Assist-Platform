@@ -7,6 +7,7 @@
 /** @var array<string,mixed>|null $town */
 /** @var array<int,array<string,mixed>> $alternatives */
 /** @var bool $locationNotFound */
+/** @var bool $needsLocation */
 /** @var array<int,array<string,mixed>> $matches */
 /** @var array<int,array<string,mixed>> $possible */
 /** @var bool $usedRegionalPool */
@@ -32,6 +33,7 @@
 $rescueExternals = $rescueExternals ?? [];
 $rescueAttribution = $rescueAttribution ?? null;
 $rescueMessage = $rescueMessage ?? null;
+$needsLocation = !empty($needsLocation);
 $this->extend('layouts.public');
 $featuredMatches = array_values(array_filter($matches, static fn (array $provider): bool => !empty($provider['is_featured'])));
 $organicMatches = array_values(array_filter($matches, static fn (array $provider): bool => empty($provider['is_featured'])));
@@ -97,7 +99,7 @@ foreach ($mappedResults as $index => $mappedProvider) {
             <p class="muted" style="margin:0 0 1rem">Prefer plain language? <a href="<?= e(url('ask')) ?>">Try Ask VanAssist</a> for providers, stays and traveller facilities.</p>
         <?php endif; ?>
 
-        <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location style="margin:1rem 0 1.5rem">
+        <form class="search-card" method="get" action="<?= e(url('find')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>" data-auto-location data-require-location="1" style="margin:1rem 0 1.5rem">
             <div class="grid grid-2 home-search-primary">
                 <div class="form-group mb-0">
                     <label for="category">Service category</label>
@@ -141,6 +143,13 @@ foreach ($mappedResults as $index => $mappedProvider) {
             <div class="card" style="border-left:4px solid #c9a227">
                 <p style="margin:0"><strong>We couldn't find “<?= $this->e($location) ?>”.</strong> Try a nearby larger town or a 4-digit postcode, or browse by <a href="<?= e(url('regions')) ?>">region</a>.</p>
                 <p class="muted" style="margin:.5rem 0 0">You can also <a href="<?= e($requestUrl) ?>">register a request</a> and we'll notify relevant providers for your area.</p>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($needsLocation): ?>
+            <div class="card" style="border-left:4px solid #0d62dc;margin-bottom:1rem" role="status">
+                <p style="margin:0"><strong>Add a town or use your current location.</strong> VanAssist needs a place to search nearby help — without it, results cannot be ranked or rescued for your area.</p>
+                <p class="muted" style="margin:.5rem 0 0">Enter a town, suburb or postcode above, or tap <strong>Use my current location</strong>, then update results.</p>
             </div>
         <?php endif; ?>
 

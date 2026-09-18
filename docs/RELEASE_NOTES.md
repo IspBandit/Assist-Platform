@@ -5,6 +5,28 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask sale-readiness: location, disambiguation, rescue UX (VAN-011)
+
+- Ambiguous towns (Emerald, Longreach, …) show clickable “Town, ST” choices
+  instead of an empty dead-end.
+- Structured `/find` requires a town or GPS for category searches (stops
+  “Location not supplied” empty searches).
+- Ask always attaches a tracking session so daily Ask search counts are visible;
+  homepage Ask captures GPS when the question has no place.
+- Local Places rescue hits sort ahead of distant radius-ladder matches; nearer
+  public-source cards render before far providers; externals pin on the Ask map.
+- Sentence-like Find location text routes to Ask; rescue keeps original
+  categories; refrigeration Places query improved.
+
+### Ask / Find sentence routing and Places rescue clarity (VAN-011)
+
+- Structured `/find` treats traveller sentences in the location field (any town)
+  as Ask queries when AI search is enabled, instead of failing town lookup.
+- Town parsing extracts the place after `near` / `in` / `around`.
+- Ask maps pin Places rescue externals; rescue keeps the original category
+  (e.g. refrigeration) and prefers nearer hits without duplicating a published
+  listing as an external card.
+
 ### CMS legal pages seed on production release
 
 - `scripts/seed.php --ask-library` (already run by production release) now also seeds CMS pages/blocks so `legal_pages.php` overrides publish without a separate deploy-user docker path.
@@ -46,6 +68,12 @@ may remain as dated files and are linked here rather than copied.
   importable pending PDF/web extraction. See
   `docs/data/VANASSIST_INDUSTRY_SOURCE_PERMISSIONS.md` and
   `docs/data/VANASSIST_DEDUPLICATION.md` for import guarantees.
+- **2026-09-19 alternative-source wave (DATA-012):** Unblocked WA Guide PDF
+  (568), TAS Guide PDF (149), CMCA public dump-list PDF (532), NT Gov
+  campgrounds (151), NT Caravanning map (62), WAITOC brochure (42), and SA
+  Parks ATDW API (7). Ingested locally and pushed live. VIC association hosts
+  still return 522/525; national B2B directory remains JS-only. See
+  `docs/data/EXTRACTION_PROGRESS.md`.
 - OSM remains YELLOW (special ODbL licence); National Formal Rest Areas remain
   UNKNOWN (not imported without licence clarification).
 

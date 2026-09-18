@@ -33,6 +33,7 @@ use App\Platform\AiSearch\Routing\SearchRouter;
 use App\Platform\AiSearch\Support\DatasetSearchFeature;
 use App\Platform\AiSearch\Support\TravellerFacilitiesFeature;
 use App\Services\RoadDistance\RoadDistanceService;
+use App\Services\Search\LocationDisambiguation;
 use App\Services\Search\ProviderFallbackCategories;
 use App\Services\Search\ProviderSearchRadiusLadder;
 use App\Services\Search\PublicResultWindow;
@@ -378,8 +379,60 @@ final class SearchOrchestrator
             : $this->resolveLocation($request, $intent);
         [$town, $originLat, $originLng, $precision] = $resolved;
         $locationMessage = $resolved[4] ?? null;
-        if ($locationMessage !== null) {
+        $locationCandidates = LocationDisambiguation::choices(
+            is_array($resolved[5] ?? null) ? $resolved[5] : []
+        );
+        if ($locationMessage !== null && $precision !== 'ambiguous') {
             $messages[] = $locationMessage;
+        }
+
+        // Ambiguous place names (Emerald, Longreach, …) need a chooser — never
+        // a dead-end empty page that asks travellers to invent a state.
+        if ($precision === 'ambiguous' && $locationCandidates !== []) {
+            if ($locationMessage !== null) {
+                $messages[] = $locationMessage;
+            }
+            $fallback = 'location_ambiguous';
+            $id = $this->logger->log(
+                $request,
+                $meta['normalised'],
+                $intent,
+                0,
+                0,
+                $fallback,
+                null,
+                'ambiguous',
+                ['messages' => array_values(array_unique($messages)), 'results' => []]
+            );
+            $this->recordResolveUsage($request, $intent, $fromCache, $budgetEval['state'], $fallback, $id, $started);
+            $gapId = $this->gaps->observe(
+                $request,
+                $meta['normalised'],
+                $intent,
+                0,
+                0,
+                null,
+                'ambiguous',
+                $id,
+                $aiUsed
+            );
+
+            return new SearchResponse(
+                intent: $intent,
+                providers: [],
+                stays: [],
+                town: null,
+                originLat: null,
+                originLng: null,
+                fallbackReason: $fallback,
+                messages: array_values(array_unique($messages)),
+                assistSearchId: $id,
+                searched: true,
+                externals: [],
+                facilities: [],
+                knowledgeGapId: $gapId,
+                locationCandidates: $locationCandidates,
+            );
         }
 
         $directProviderNameWithoutLocation = $providerNameRows !== []
@@ -449,6 +502,9 @@ final class SearchOrchestrator
         $adapters = $this->router->adaptersFor($intent);
         $providerRows = [];
         $stayRows = [];
+        // Places rescue must keep the traveller's original categories (e.g.
+        // refrigeration), not related-fallback widening such as general repairs.
+        $rescueCategoryKeys = $intent->providerCategoryKeys;
 
         if (!$locationBlocked && in_array('providers', $adapters, true)) {
             try {
@@ -574,14 +630,14 @@ final class SearchOrchestrator
         $weakAt = max(1, (int) config('places_rescue.weak_result_threshold', 3));
         if (!$locationBlocked
             && $intent->intentType === Intent::TYPE_PROVIDER
-            && $intent->providerCategoryKeys !== []
+            && $rescueCategoryKeys !== []
             && $providerNameQuery === null
             && count($providerRows) < $weakAt
             && $request->brandDatabaseId !== null
             && ($town !== null || ($originLat !== null && $originLng !== null))) {
             try {
                 $rescue = (new ZeroResultProviderRescueService())->rescue(
-                    $intent->providerCategoryKeys,
+                    $rescueCategoryKeys,
                     $town,
                     $originLat,
                     $originLng,
@@ -604,7 +660,19 @@ final class SearchOrchestrator
                         $providerRows[] = $row;
                     }
                 }
+                $providerRows = $this->sortProviderRowsByDistance($providerRows);
+                $providerNames = [];
+                foreach ($providerRows as $existing) {
+                    $name = mb_strtolower(trim((string) ($existing['business_name'] ?? '')));
+                    if ($name !== '') {
+                        $providerNames[$name] = true;
+                    }
+                }
                 foreach ($rescue['externals'] as $external) {
+                    $extName = mb_strtolower(trim((string) ($external['business_name'] ?? '')));
+                    if ($extName !== '' && isset($providerNames[$extName])) {
+                        continue;
+                    }
                     $datasetRows[] = $external;
                 }
                 if ($rescue['message'] !== null) {
@@ -797,6 +865,34 @@ final class SearchOrchestrator
             && ProviderFallbackCategories::related($intent->providerCategoryKeys) !== [];
     }
 
+    /**
+     * Prefer nearer rescue/directory hits so a local public-source listing is
+     * not buried under a 140 km radius-ladder match.
+     *
+     * @param list<array<string,mixed>> $rows
+     * @return list<array<string,mixed>>
+     */
+    private function sortProviderRowsByDistance(array $rows): array
+    {
+        usort($rows, static function (array $a, array $b): int {
+            $da = is_numeric($a['distance_km'] ?? null) ? (float) $a['distance_km'] : null;
+            $db = is_numeric($b['distance_km'] ?? null) ? (float) $b['distance_km'] : null;
+            if ($da === null && $db === null) {
+                return strcmp((string) ($a['business_name'] ?? ''), (string) ($b['business_name'] ?? ''));
+            }
+            if ($da === null) {
+                return 1;
+            }
+            if ($db === null) {
+                return -1;
+            }
+
+            return $da <=> $db;
+        });
+
+        return array_values($rows);
+    }
+
     /** @param list<string> $adapters */
     private function effectiveRadiusKm(Intent $intent, array $adapters): int
     {
@@ -870,14 +966,19 @@ final class SearchOrchestrator
                             static fn (array $match): string => (string) ($match['state_abbr'] ?? ''),
                             $exactNameMatches
                         )));
+                        $examples = array_values(array_filter($states));
+                        $exampleText = $examples === []
+                            ? $parsed['term']
+                            : $parsed['term'] . ' ' . implode(' or ' . $parsed['term'] . ' ', $examples);
+
                         return [
                             null,
                             null,
                             null,
                             'ambiguous',
                             'More than one Australian place is named ' . $parsed['term']
-                                . '. Add the state, for example ' . $parsed['term'] . ' '
-                                . implode(' or ' . $parsed['term'] . ' ', array_filter($states)) . '.',
+                                . '. Choose the one you mean, for example ' . $exampleText . '.',
+                            $exactNameMatches,
                         ];
                     }
                 }

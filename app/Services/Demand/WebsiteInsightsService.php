@@ -21,7 +21,7 @@ final class WebsiteInsightsService
         $eligible = TrafficQuality::eligibleSessionSql('ts');
         $cleanPageFrom = " FROM page_views pv JOIN tracking_sessions ts ON ts.id=pv.session_id WHERE pv.brand_id=? AND pv.device_type NOT IN ('bot','unknown') AND {$eligible} AND {$publicPages}";
         $cleanSearchFrom = " FROM provider_searches ps JOIN tracking_sessions ts ON ts.id=ps.session_id WHERE ps.brand_id=? AND ps.is_excluded=0 AND {$eligible}";
-        $cleanAskFrom = " FROM assist_searches a JOIN tracking_sessions ts ON ts.id=a.session_id WHERE a.brand_id=? AND a.is_excluded=0 AND {$eligible}";
+        $cleanAskFrom = " FROM assist_searches a LEFT JOIN tracking_sessions ts ON ts.id=a.session_id WHERE a.brand_id=? AND a.is_excluded=0 AND (ts.id IS NULL OR ({$eligible}))";
         $cleanEventFrom = " FROM analytics_events ae JOIN tracking_sessions ts ON ts.id=ae.session_id WHERE ae.brand_id=? AND ae.is_excluded=0 AND {$eligible}";
         $cleanContactFrom = " FROM provider_contact_actions pca JOIN tracking_sessions ts ON ts.id=pca.session_id WHERE pca.brand_id=? AND pca.is_excluded=0 AND {$eligible}";
 

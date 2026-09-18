@@ -416,6 +416,78 @@
         });
     }
 
+    var queryHasPlace = function (text) {
+        var value = String(text || '').trim();
+        if (value === '') { return false; }
+        if (/\bnear me\b/i.test(value)) { return true; }
+        if (/\b(near|around|in)\s+[A-Za-z]/i.test(value)) { return true; }
+        if (/\b\d{3,4}\b/.test(value)) { return true; }
+        return false;
+    };
+
+    // Structured Find must not run without a town or GPS — that produced the
+    // daily "Location not supplied" empty-search spike.
+    document.querySelectorAll('form[data-require-location]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            var loc = form.querySelector('input[name="location"]');
+            var lat = form.querySelector('input[name="lat"]');
+            var category = form.querySelector('select[name="category"], input[name="category"]');
+            var hasCategory = category && String(category.value || '').trim() !== '';
+            var hasPlace = (loc && loc.value.trim() !== '') || (lat && lat.value !== '');
+            if (!hasCategory || hasPlace) { return; }
+            event.preventDefault();
+            setLocationStatus(form, 'Add a town or use your current location before searching.', true);
+            var trigger = form.querySelector('[data-use-location]');
+            if (trigger && 'geolocation' in navigator) {
+                trigger.click();
+            } else if (loc) {
+                loc.focus();
+            }
+        });
+    });
+
+    // Homepage / Ask: if the question has no place, capture GPS before submit.
+    document.querySelectorAll('form[data-ask-require-place]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            var q = form.querySelector('input[name="q"], textarea[name="q"]');
+            var lat = form.querySelector('input[name="lat"]');
+            var lng = form.querySelector('input[name="lng"]');
+            if (!q) { return; }
+            if (queryHasPlace(q.value) || (lat && lat.value && lng && lng.value)) { return; }
+            if (!('geolocation' in navigator)) {
+                setLocationStatus(form, 'Add a town or “near me” to your question so VanAssist can search nearby.', true);
+                event.preventDefault();
+                q.focus();
+                return;
+            }
+            if (form.getAttribute('data-ask-geo-pending') === '1') { return; }
+            event.preventDefault();
+            form.setAttribute('data-ask-geo-pending', '1');
+            setLocationStatus(form, 'Getting your location…', false);
+            var trigger = form.querySelector('[data-use-location]');
+            if (trigger) {
+                trigger.setAttribute('data-auto-submit', 'true');
+                trigger.click();
+                window.setTimeout(function () {
+                    form.removeAttribute('data-ask-geo-pending');
+                    if (!(lat && lat.value)) {
+                        setLocationStatus(form, 'Add a town (for example Emerald QLD) or allow location access.', true);
+                    }
+                }, 16000);
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(function (pos) {
+                setFormField(form, 'lat', String(pos.coords.latitude));
+                setFormField(form, 'lng', String(pos.coords.longitude));
+                form.removeAttribute('data-ask-geo-pending');
+                form.submit();
+            }, function () {
+                form.removeAttribute('data-ask-geo-pending');
+                setLocationStatus(form, 'Add a town (for example Emerald QLD) or allow location access.', true);
+            }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
+        });
+    });
+
     // Nearby discovery links (Fuel, EV charging, services and stays) inherit
     // the traveller's location. A typed place always wins over GPS.
     var locationForLink = function () {
