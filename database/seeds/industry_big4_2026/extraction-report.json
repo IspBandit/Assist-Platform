@@ -1,19 +1,20 @@
 {
   "source_key": "industry_big4_holiday_guide_2026",
-  "source_url": "https://www.big4.com.au/search",
-  "extraction_method": "web_scraping_selenium",
+  "source_url": "https://www.big4.com.au/caravan-parks",
+  "extraction_method": "web_scraping_selenium_state_by_state",
   "scraped_at": "2026-09-17",
-  "total_parks": 21,
+  "total_parks": 312,
   "parks_with_coordinates": 0,
-  "parks_with_phone": 21,
-  "parks_with_email": 0,
+  "parks_with_phone": 312,
+  "parks_with_email": 7,
+  "parks_with_address": 312,
   "parks_by_state": {
-    "QLD": 4,
-    "NSW": 5,
-    "SA": 2,
-    "VIC": 6,
-    "TAS": 1,
-    "WA": 2,
-    "NT": 1
+    "NSW": 110,
+    "VIC": 76,
+    "QLD": 59,
+    "SA": 22,
+    "WA": 31,
+    "TAS": 11,
+    "NT": 3
   }
 }
