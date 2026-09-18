@@ -109,13 +109,9 @@ final class TownNeighbourGraphBuilder
         }
 
         $list = array_values($edges);
-        usort(
-            $list,
-            static fn (array $a, array $b): int => $a['town_id'] <=> $b['town_id']
-                ?: $a['distance_km'] <=> $b['distance_km']
-                ?: $a['neighbour_town_id'] <=> $b['neighbour_town_id']
-        );
-
+        // Intentionally unsorted: callers insert in chunks and do not require
+        // global edge order. Sorting the full national edge list peaked over
+        // PHP's default 128M memory_limit during production migrate.
         return $list;
     }
 
