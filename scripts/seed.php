@@ -57,6 +57,11 @@ try {
     if (in_array('--ask-library', $arguments, true)) {
         $count = (new AskQuestionLibrarySeeder())->seed();
         echo "Ask question library: {$count} active catalogue entries applied.\n";
+        // Production releases already invoke --ask-library after migrate. Re-seed
+        // system CMS pages/blocks here so legal_pages overrides go live without a
+        // separate docker/sudo path for the deploy user.
+        (new Seeder())->seedContent();
+        echo "CMS pages and homepage blocks seeded from content/legal seeds.\n";
         exit($count >= AskQuestionLibrarySeeder::MINIMUM_QUESTIONS ? 0 : 1);
     }
 
