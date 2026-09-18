@@ -636,13 +636,17 @@ final class SearchOrchestrator
             && $request->brandDatabaseId !== null
             && ($town !== null || ($originLat !== null && $originLng !== null))) {
             try {
+                // Always search Places at the widest ladder step when the directory
+                // is weak — a leftover 25 km intent radius must not starve inland towns.
+                $ladder = ProviderSearchRadiusLadder::stepsKm();
+                $rescueRadiusKm = (int) ($ladder[count($ladder) - 1] ?? 300);
                 $rescue = (new ZeroResultProviderRescueService())->rescue(
                     $rescueCategoryKeys,
                     $town,
                     $originLat,
                     $originLng,
                     (int) $request->brandDatabaseId,
-                    $intent->radiusKm ?? (ProviderSearchRadiusLadder::stepsKm()[count(ProviderSearchRadiusLadder::stepsKm()) - 1] ?? 300)
+                    $rescueRadiusKm
                 );
                 foreach ($rescue['providers'] as $row) {
                     $id = (int) ($row['id'] ?? 0);

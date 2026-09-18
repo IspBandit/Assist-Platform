@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask inland corridor trust: honest rescue copy + local seeds (VAN-011)
+
+- Places rescue messaging only says businesses were found “for this area” when a
+  hit is within about 50 km; otherwise it states that nothing is close and how
+  far the nearest public-source option is.
+- Places rescue always searches at the widest radius ladder step and may try up
+  to three query phrases per service (fridge searches also try ordinary
+  appliance/refrigeration wording).
+- Idempotent sale-corridor seeds for Charters Towers, Longreach and Emerald load
+  with `php scripts/seed.php --ask-library` so inland demos are not empty while
+  Places coverage is thin.
+
 ### Stay contact attribution for monetisation (DATA-004)
 
 - Public place-to-stay phone, email, website, booking and directions links now

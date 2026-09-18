@@ -1,0 +1,72 @@
+[
+  {
+    "key": "airtec-charters-towers",
+    "business_name": "Airtec Electrical Air Conditioning & Refrigeration",
+    "town": "Charters Towers",
+    "state": "QLD",
+    "phone": "0747877733",
+    "website": "https://www.airtec-qld.com.au/",
+    "street_address": "Charters Towers QLD 4820",
+    "latitude": -20.0765,
+    "longitude": 146.2614,
+    "categories": ["refrigeration", "air-conditioning", "appliance-repairs"],
+    "source_url": "https://www.airtec-qld.com.au/",
+    "source_note": "Sale-corridor seed (VAN-011): public business website"
+  },
+  {
+    "key": "sbr-electrical-refrigeration-charters-towers",
+    "business_name": "SBR Electrical & Refrigeration",
+    "town": "Charters Towers",
+    "state": "QLD",
+    "phone": "0429467330",
+    "website": "",
+    "street_address": "23 Mexican Street, Queenton QLD 4820",
+    "latitude": -20.0845,
+    "longitude": 146.2735,
+    "categories": ["refrigeration", "appliance-repairs", "12-volt-electrical"],
+    "source_url": "https://queenton-qld.australian-local.com/sbr-electrical-refrigeration.html",
+    "source_note": "Sale-corridor seed (VAN-011): public directory listing"
+  },
+  {
+    "key": "outback-caravan-repairs-longreach",
+    "business_name": "Outback Caravan Repairs",
+    "town": "Longreach",
+    "state": "QLD",
+    "phone": "0499973800",
+    "website": "",
+    "street_address": "Longreach QLD 4730",
+    "latitude": -23.4422,
+    "longitude": 144.2490,
+    "categories": ["mobile-mechanics", "general-caravan-repairs", "refrigeration"],
+    "source_url": "https://www.autos1000.com/AU/Longreach/271871536019428/Outback-Caravan-Repairs",
+    "source_note": "Sale-corridor seed (VAN-011): public business listing"
+  },
+  {
+    "key": "traccs-repairs-longreach",
+    "business_name": "TRACCS Repairs & Parts Longreach",
+    "town": "Longreach",
+    "state": "QLD",
+    "phone": "0408718752",
+    "website": "https://www.traccsrp.com/",
+    "street_address": "164 Crane Street, Longreach QLD 4730",
+    "latitude": -23.4405,
+    "longitude": 144.2512,
+    "categories": ["mobile-mechanics", "general-caravan-repairs"],
+    "source_url": "https://www.traccsrp.com/",
+    "source_note": "Sale-corridor seed (VAN-011): public business website"
+  },
+  {
+    "key": "cold-snap-emerald",
+    "business_name": "Cold Snap Refrigeration and Air Conditioning",
+    "town": "Emerald",
+    "state": "QLD",
+    "phone": "0429729554",
+    "website": "https://www.coldsnap.net.au/refrigeration",
+    "street_address": "Emerald QLD 4720",
+    "latitude": -23.5251,
+    "longitude": 148.1616,
+    "categories": ["refrigeration", "air-conditioning", "appliance-repairs"],
+    "source_url": "https://www.coldsnap.net.au/refrigeration",
+    "source_note": "Sale-corridor seed (VAN-011): public business website"
+  }
+]
