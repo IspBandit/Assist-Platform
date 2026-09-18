@@ -30,6 +30,8 @@ final class PublicPageViewPolicyTest extends TestCase
         yield 'admin api' => ['/api/v1/admin/health', false];
         yield 'readiness' => ['/readyz', false];
         yield 'stray image' => ['/wordmark.png', false];
+        yield 'provider contact redirect' => ['/go/phone/example-repairs', false];
+        yield 'stay contact redirect' => ['/go/stay/website/batehaven-beachside', false];
     }
 
     public function testSyntheticReleaseMarkerIsExcludedWithoutBlockingItsRequest(): void
@@ -52,6 +54,7 @@ final class PublicPageViewPolicyTest extends TestCase
     {
         $predicate = PublicPageViewPolicy::sqlPredicate('page_views.route');
         self::assertStringContainsString("page_views.route NOT LIKE '/runtime-assets/%'", $predicate);
+        self::assertStringContainsString("page_views.route NOT LIKE '/go/%'", $predicate);
         self::assertStringContainsString('NOT REGEXP', $predicate);
 
         $this->expectException(\InvalidArgumentException::class);

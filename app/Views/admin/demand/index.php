@@ -21,7 +21,7 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
     <div>
         <p class="eyebrow"><?= $this->e($brand->name()) ?> website</p>
         <h1>Website insights</h1>
-        <p class="muted">See what visitors looked for, which providers attracted attention and where people tried to make contact. Anonymous visitors remain anonymous.</p>
+        <p class="muted">See what visitors looked for, which providers and stays people actually contacted or used, and where coverage gaps remain. Anonymous visitors remain anonymous.</p>
     </div>
     <a class="btn btn-ghost" href="<?= e(url('admin/demand/export?type=overview&' . $qs)) ?>">Export summary</a>
 </div>
@@ -112,6 +112,55 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
 </div>
 
 <details class="card insight-panel insight-panel--scroll" open data-mobile-collapse>
+    <summary><h2>Monetisation shortlist</h2><span>Named use evidence</span></summary>
+    <div class="insight-panel-body">
+        <p class="muted">Use this ladder for commercial conversation: confirmed use first, then contact intent, then stay engagement. Result appearances alone are not monetisation evidence.</p>
+        <div class="insight-grid insight-grid--three">
+            <div>
+                <h3>Providers people actually used</h3>
+                <p class="muted">Customer or stronger confirmation in <code>service_outcomes</code>.</p>
+                <div class="table-wrap"><table class="data data--compact">
+                    <thead><tr><th>Provider</th><th>Confirmed uses</th><th>Customers</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($insights['providers_used'] as $row): ?>
+                        <tr><td><a href="<?= e(url('admin/providers/show?id=' . (int) $row['provider_id'])) ?>"><?= $this->e((string) $row['label']) ?></a></td><td><strong><?= number_format((int) $row['confirmed_uses']) ?></strong></td><td><?= number_format((int) $row['distinct_customers']) ?></td></tr>
+                    <?php endforeach; ?>
+                    <?php if ($insights['providers_used'] === []): ?><tr><td colspan="3" class="muted">No confirmed provider uses in this period.</td></tr><?php endif; ?>
+                    </tbody>
+                </table></div>
+            </div>
+            <div>
+                <h3>Providers people contacted</h3>
+                <p class="muted">Phone, email, website, directions or request clicks.</p>
+                <div class="table-wrap"><table class="data data--compact">
+                    <thead><tr><th>Provider</th><th>Contacts</th><th>Phone</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($insights['providers_contacted'] as $row): ?>
+                        <tr><td><a href="<?= e(url('admin/providers/show?id=' . (int) $row['provider_id'])) ?>"><?= $this->e((string) $row['label']) ?></a></td><td><strong><?= number_format((int) $row['contacts']) ?></strong></td><td><?= number_format((int) $row['phone']) ?></td></tr>
+                    <?php endforeach; ?>
+                    <?php if ($insights['providers_contacted'] === []): ?><tr><td colspan="3" class="muted">No provider contact actions in this period.</td></tr><?php endif; ?>
+                    </tbody>
+                </table></div>
+            </div>
+            <div>
+                <h3>Places to stay people engaged with</h3>
+                <p class="muted">Phone, website, booking and directions clicks, plus assistance requests started from that stay.</p>
+                <div class="table-wrap"><table class="data data--compact">
+                    <thead><tr><th>Place to stay</th><th>Contacts</th><th>Assistance</th><th>Page views</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($insights['stays_engaged'] as $row): ?>
+                        <tr><td><?= $this->e((string) $row['label']) ?></td><td><strong><?= number_format((int) ($row['contacts'] ?? 0)) ?></strong></td><td><?= number_format((int) $row['assistance_requests']) ?></td><td><?= number_format((int) $row['page_views']) ?></td></tr>
+                    <?php endforeach; ?>
+                    <?php if ($insights['stays_engaged'] === []): ?><tr><td colspan="4" class="muted">No stay engagement recorded in this period.</td></tr><?php endif; ?>
+                    </tbody>
+                </table></div>
+            </div>
+        </div>
+        <p class="admin-section-heading" style="margin-top:1rem"><a class="btn btn-ghost btn-sm" href="<?= e(url('admin/demand/export?type=monetisation&' . $qs)) ?>">Export monetisation shortlist</a></p>
+    </div>
+</details>
+
+<details class="card insight-panel insight-panel--scroll" open data-mobile-collapse>
     <summary><h2>Providers attracting interest</h2><span>Report details</span></summary>
     <div class="insight-panel-body">
     <div class="admin-section-heading">
@@ -119,12 +168,12 @@ $sourceHumanise = static function (string $value) use ($humanise): string {
         <a class="btn btn-ghost btn-sm" href="<?= e(url('admin/demand/providers?' . $qs)) ?>">Detailed provider report</a>
     </div>
     <div class="table-wrap"><table class="data">
-        <thead><tr><th>Provider</th><th>Result appearances</th><th>Profile views</th><th>Contact actions</th></tr></thead>
+        <thead><tr><th>Provider</th><th>Result appearances</th><th>Profile views</th><th>Contact actions</th><th>Confirmed uses</th></tr></thead>
         <tbody>
         <?php foreach ($insights['providers'] as $row): ?>
-            <tr><td><a href="<?= e(url('admin/providers/show?id=' . (int) $row['provider_id'])) ?>"><?= $this->e((string) $row['label']) ?></a></td><td><?= number_format((int) $row['impressions']) ?></td><td><?= number_format((int) $row['profile_views']) ?></td><td><strong><?= number_format((int) $row['contacts']) ?></strong></td></tr>
+            <tr><td><a href="<?= e(url('admin/providers/show?id=' . (int) $row['provider_id'])) ?>"><?= $this->e((string) $row['label']) ?></a></td><td><?= number_format((int) $row['impressions']) ?></td><td><?= number_format((int) $row['profile_views']) ?></td><td><strong><?= number_format((int) $row['contacts']) ?></strong></td><td><?= number_format((int) ($row['confirmed_uses'] ?? 0)) ?></td></tr>
         <?php endforeach; ?>
-        <?php if ($insights['providers'] === []): ?><tr><td colspan="4" class="muted">No provider interest recorded for this period.</td></tr><?php endif; ?>
+        <?php if ($insights['providers'] === []): ?><tr><td colspan="5" class="muted">No provider interest recorded for this period.</td></tr><?php endif; ?>
         </tbody>
     </table></div></div>
 </details>

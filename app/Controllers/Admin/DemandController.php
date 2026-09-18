@@ -102,11 +102,29 @@ final class DemandController extends Controller
             case 'providers':
                 $rows = array_map(static fn ($r) => [
                     $r['provider_id'], $r['label'], $r['impressions'], $r['profile_views'], $r['contacts'],
-                    $r['impression_to_profile_rate'], $r['profile_to_contact_rate'],
+                    $r['confirmed_uses'] ?? 0, $r['impression_to_profile_rate'], $r['profile_to_contact_rate'],
                 ], WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to)['providers']);
                 return CsvExport::download(
                     "provider-interest_{$from}_{$to}.csv",
-                    ['Provider ID', 'Business', 'Result appearances', 'Profile views', 'Contact actions', 'Appearance to profile %', 'Profile to contact %'],
+                    ['Provider ID', 'Business', 'Result appearances', 'Profile views', 'Contact actions', 'Confirmed uses', 'Appearance to profile %', 'Profile to contact %'],
+                    $rows
+                );
+
+            case 'monetisation':
+                $report = WebsiteInsightsService::report(current_brand()->databaseId(), $from, $to);
+                $rows = [];
+                foreach ($report['providers_used'] as $r) {
+                    $rows[] = ['provider_used', $r['provider_id'], $r['label'], $r['confirmed_uses'], $r['distinct_customers'], ''];
+                }
+                foreach ($report['providers_contacted'] as $r) {
+                    $rows[] = ['provider_contacted', $r['provider_id'], $r['label'], $r['contacts'], $r['phone'], $r['requests'] ?? 0];
+                }
+                foreach ($report['stays_engaged'] as $r) {
+                    $rows[] = ['stay_engaged', $r['park_id'], $r['label'], $r['contacts'] ?? 0, $r['assistance_requests'], $r['page_views']];
+                }
+                return CsvExport::download(
+                    "monetisation-shortlist_{$from}_{$to}.csv",
+                    ['Signal', 'Entity ID', 'Name', 'Primary count', 'Secondary count', 'Tertiary count'],
                     $rows
                 );
 

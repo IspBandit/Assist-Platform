@@ -5,6 +5,15 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Stay contact attribution for monetisation (DATA-004)
+
+- Public place-to-stay phone, email, website, booking and directions links now
+  route through `/go/stay/{action}/{slug}` and write to `stay_contact_actions`
+  (migration `142`) when `demand_analytics` is on.
+- Website insights monetisation shortlist, daily/monthly support emails and the
+  monetisation CSV export include named stays by contact clicks, assistance
+  requests and page views. `/go` paths are excluded from public page-view totals.
+
 ### Provider-pack specialist service scrub before release audit
 
 - Run shared-service specialist cleanup **after** VanAssist compatibility

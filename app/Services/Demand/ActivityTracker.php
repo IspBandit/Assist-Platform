@@ -51,6 +51,8 @@ final class ActivityTracker
         'provider_search_completed', 'provider_impression', 'provider_profile_viewed',
         'no_provider_found', 'search_radius_expanded', 'nearby_provider_selected',
         'stay_search_completed', 'no_stay_found',
+        'stay_phone_clicked', 'stay_email_clicked', 'stay_website_clicked',
+        'stay_directions_clicked', 'stay_booking_clicked',
         // Contact actions
         'provider_phone_clicked', 'provider_email_clicked', 'provider_website_clicked',
         'provider_directions_clicked', 'provider_message_started', 'provider_request_sent',

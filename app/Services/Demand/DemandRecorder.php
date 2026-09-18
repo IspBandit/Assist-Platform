@@ -18,7 +18,7 @@ use Throwable;
  * path is wrapped so an analytics failure can never break the customer journey
  * (requirement sections 7 & 25). ActivityTracker handles the granular event
  * stream; this service owns the relational records (searches, impressions,
- * contact actions, outcomes, confirmations, demand-gap feedback).
+ * contact actions, stay contact actions, outcomes, confirmations, demand-gap feedback).
  */
 final class DemandRecorder
 {
@@ -230,6 +230,65 @@ final class DemandRecorder
                 'provider_id' => $providerId,
                 'session_id' => $sessionId,
                 'search_id' => $searchId,
+            ]);
+        } catch (Throwable) {
+        }
+    }
+
+    /**
+     * Record an attributable place-to-stay contact action (phone/email/website/
+     * directions/booking), deduped per session.
+     *
+     * @param array<string,mixed> $ctx
+     */
+    public static function recordStayContactAction(int $parkId, string $actionType, array $ctx = []): void
+    {
+        $valid = ['phone', 'email', 'website', 'directions', 'booking'];
+        if ($parkId === 0 || !in_array($actionType, $valid, true) || !self::enabled() || ActivityTracker::excluded()) {
+            return;
+        }
+        try {
+            if (!Database::tableExists('stay_contact_actions')) {
+                return;
+            }
+            $sessionId = TrackingSession::id();
+
+            if ($sessionId !== null) {
+                $recent = (int) Database::scalar(
+                    'SELECT COUNT(*) FROM stay_contact_actions '
+                    . 'WHERE brand_id = ? AND park_id = ? AND action_type = ? AND session_id = ? '
+                    . 'AND created_at >= DATE_SUB(NOW(), INTERVAL ? SECOND)',
+                    [current_brand()->databaseId(), $parkId, $actionType, $sessionId, self::DEDUPE_SECONDS]
+                );
+                if ($recent > 0) {
+                    return;
+                }
+            }
+
+            Database::query(
+                'INSERT INTO stay_contact_actions '
+                . '(brand_id, park_id, session_id, user_id, action_type, source_route, is_excluded, created_at) '
+                . 'VALUES (?, ?, ?, ?, ?, ?, 0, NOW())',
+                [
+                    current_brand()->databaseId(),
+                    $parkId,
+                    $sessionId,
+                    self::nullableInt($ctx['user_id'] ?? null),
+                    $actionType,
+                    isset($ctx['route']) ? substr((string) $ctx['route'], 0, 190) : null,
+                ]
+            );
+
+            $eventMap = [
+                'phone' => 'stay_phone_clicked',
+                'email' => 'stay_email_clicked',
+                'website' => 'stay_website_clicked',
+                'directions' => 'stay_directions_clicked',
+                'booking' => 'stay_booking_clicked',
+            ];
+            ActivityTracker::record($eventMap[$actionType], [
+                'metadata' => ['park_id' => $parkId, 'action' => $actionType],
+                'route' => isset($ctx['route']) ? (string) $ctx['route'] : null,
             ]);
         } catch (Throwable) {
         }

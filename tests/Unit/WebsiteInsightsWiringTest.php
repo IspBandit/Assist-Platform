@@ -101,6 +101,11 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString('assist_searches', $report);
         self::assertStringContainsString("'ask_searches'", $report);
         self::assertStringContainsString("'stay_searches'", $report);
+        self::assertStringContainsString("'providers_used'", $report);
+        self::assertStringContainsString("'providers_contacted'", $report);
+        self::assertStringContainsString("'stays_engaged'", $report);
+        self::assertStringContainsString('stay_contact_actions', $report);
+        self::assertStringContainsString('confirmed_uses', $report);
         self::assertStringContainsString("'returning_visitors'", $report);
         self::assertStringContainsString("'multi_day_visitors'", $report);
     }
@@ -142,6 +147,9 @@ final class WebsiteInsightsWiringTest extends TestCase
         self::assertStringContainsString('does not store visitor IP addresses', $view);
         self::assertStringContainsString('Services people wanted', $view);
         self::assertStringContainsString('Providers attracting interest', $view);
+        self::assertStringContainsString('Monetisation shortlist', $view);
+        self::assertStringContainsString('Providers people actually used', $view);
+        self::assertStringContainsString('Places to stay people engaged with', $view);
         self::assertStringContainsString('What visitors clicked', $view);
         self::assertStringContainsString('Coverage gaps needing attention', $view);
         self::assertStringContainsString('underneath is the website address used by the system', $view);

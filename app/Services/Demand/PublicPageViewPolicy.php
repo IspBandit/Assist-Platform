@@ -10,7 +10,7 @@ final class PublicPageViewPolicy
     /** @var list<string> */
     private const PRIVATE_OR_TECHNICAL_PREFIXES = [
         '/admin', '/api', '/install', '/account', '/provider', '/park', '/billing',
-        '/assets', '/runtime-assets', '/uploads', '/ops', '/.well-known',
+        '/assets', '/runtime-assets', '/uploads', '/ops', '/.well-known', '/go',
     ];
 
     /** @var list<string> */
