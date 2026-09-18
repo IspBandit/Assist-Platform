@@ -26,7 +26,8 @@ final class LegalDocumentsTest extends TestCase
     {
         $markdown = (new LegalDocumentCatalog())->markdownFor('terms-of-use');
         self::assertStringNotContainsString('Draft honesty notes', $markdown);
-        self::assertStringContainsString('Platform role', $markdown);
+        self::assertStringContainsString('Who we are and what the Platform is', $markdown);
+        self::assertStringContainsString('Effective 18 September 2026', $markdown);
     }
 
     public function testSimplePdfBuilderProducesValidPdfHeaderAndEof(): void
