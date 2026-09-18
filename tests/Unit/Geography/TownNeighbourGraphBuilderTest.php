@@ -4,24 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Geography;
 
-use App\Core\Config;
 use App\Services\Geography\TownNeighbourGraphBuilder;
 use PHPUnit\Framework\TestCase;
 
 final class TownNeighbourGraphBuilderTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-        if (!is_file(dirname(__DIR__, 3) . '/bootstrap/autoload.php')) {
-            self::markTestSkipped('autoload unavailable');
-        }
-        require_once dirname(__DIR__, 3) . '/bootstrap/autoload.php';
-        Config::load(dirname(__DIR__, 3) . '/config');
-        Config::set('geo.neighbour_max_km', 50);
-        Config::set('geo.neighbour_limit', 8);
-    }
-
     public function testPicksNearestSameStateTownsWithinMaxKm(): void
     {
         $edges = TownNeighbourGraphBuilder::edgesFromTowns([
