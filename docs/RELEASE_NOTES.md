@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Provider-pack specialist service scrub before release audit
+
+- Run shared-service specialist cleanup **after** VanAssist compatibility
+  linking, and finish each pack import with a global unsupported-service sweep,
+  so Bridgestone/Goodyear-class names cannot leave wrong workshop services that
+  fail `data-quality-audit --strict` and roll back production releases.
+
 ### Ask sale-readiness: location, disambiguation, rescue UX (VAN-011)
 
 - Ambiguous towns (Emerald, Longreach, …) show clickable “Town, ST” choices

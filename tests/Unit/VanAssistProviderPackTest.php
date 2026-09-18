@@ -102,6 +102,20 @@ final class VanAssistProviderPackTest extends TestCase
             )
         );
         self::assertSame(
+            ['tyres-and-wheels'],
+            VanAssistProviderPackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Bridgestone Select Emerald'],
+                ['tyre-shop', 'general-mechanic', 'auto-electrician']
+            )
+        );
+        self::assertSame(
+            ['windscreen-and-auto-glass'],
+            VanAssistProviderPackSeeder::vanAssistServiceSlugs(
+                ['name' => 'Emerald Auto Glass'],
+                ['windscreen', 'general-mechanic']
+            )
+        );
+        self::assertSame(
             ['general-caravan-repairs'],
             VanAssistProviderPackSeeder::vanAssistServiceSlugs(
                 ['name' => 'Capricorn Caravan Centre'],
