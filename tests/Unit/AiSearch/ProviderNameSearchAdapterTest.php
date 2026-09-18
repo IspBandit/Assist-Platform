@@ -46,6 +46,16 @@ final class ProviderNameSearchAdapterTest extends TestCase
             'Startamotive - Mechanic Sunbury | Roadworthy Certificate RWC | Tyre Shop & Repair | Gisborne, Woodend, Kyneton, Diggers Rest',
         ];
         yield 'empty' => ['?', null, null];
+        yield 'service phrase with place strips to service only' => [
+            'mobile mechanic near Longreach QLD',
+            'Longreach Qld',
+            'mobile mechanic',
+        ];
+        yield 'service phrase without near keeps town in candidate' => [
+            'mobile mechanic Longreach QLD',
+            'Longreach Qld',
+            'mobile mechanic Longreach QLD',
+        ];
     }
 
     public function testOnlyRankZeroRowsAreExactBusinessNames(): void

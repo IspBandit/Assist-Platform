@@ -37,4 +37,22 @@ final class AskSaleReadinessSurfaceTest extends TestCase
         self::assertStringContainsString('needsLocation', $src);
         self::assertStringContainsString("\$categoryId !== null && \$town === null && !\$hasOrigin", $src);
     }
+
+    public function testLocationBoundServiceIntentDoesNotYieldToExactBusinessName(): void
+    {
+        $src = (string) file_get_contents(base_path('app/Platform/AiSearch/SearchOrchestrator.php'));
+        self::assertStringContainsString('locationBoundServiceQuery', $src);
+        self::assertStringContainsString('explicitLocationText($raw, $intent->locationText)', $src);
+        self::assertStringContainsString(
+            'if ($exactProviderRows !== [] && !$locationBoundServiceQuery)',
+            $src
+        );
+    }
+
+    public function testUserLockedRadiusReadsNormaliserRadiusField(): void
+    {
+        $src = (string) file_get_contents(base_path('app/Platform/AiSearch/SearchOrchestrator.php'));
+        self::assertStringContainsString("(\$meta['radius_km'] ?? null) !== null", $src);
+        self::assertStringNotContainsString("\$meta['normalised']['radius_km']", $src);
+    }
 }

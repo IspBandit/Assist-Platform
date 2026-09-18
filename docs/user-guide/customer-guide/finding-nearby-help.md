@@ -106,7 +106,10 @@ You can also enter a provider's business name directly, with an optional place
 such as “Marshall Batteries near Brisbane”. An exact public name can be shown
 without forcing a location; add a place or allow device location when you also
 need radius filtering and road distance. Name searches with an explicit place
-remain subject to that location and radius.
+remain subject to that location and radius. When your question already names a
+service and a town (for example “mobile mechanic near Longreach”), Ask keeps the
+service search for that place instead of treating the service words as a
+business-name lookup.
 
 Ask results reuse the same List and Map controls as category search. Providers,
 places to stay and traveller facilities inside the resolved radius receive a

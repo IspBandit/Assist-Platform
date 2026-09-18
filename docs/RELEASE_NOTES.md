@@ -5,6 +5,16 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask service+place not hijacked by exact business-name match (VAN-011)
+
+- Queries such as “mobile mechanic near Longreach QLD” keep the service-category
+  search when Ask already resolved a place. An exact directory name equal to the
+  stripped service phrase (for example a listing named “Mobile Mechanic”) no
+  longer clears categories and returns an empty 25 km result.
+- Direct business-name lookups without a place still work. User-locked radius
+  now reads the normaliser `radius_km` field correctly so only explicit
+  “within N km” wording freezes the ladder.
+
 ### Ask inland corridor trust: honest rescue copy + local seeds (VAN-011)
 
 - Places rescue messaging only says businesses were found “for this area” when a
