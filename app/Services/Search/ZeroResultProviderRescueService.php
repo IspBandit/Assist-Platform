@@ -66,8 +66,8 @@ final class ZeroResultProviderRescueService
         if ($category === null) {
             return $empty;
         }
-        $query = $this->queryForSlug($slug);
-        if ($query === '') {
+        $queries = $this->queriesForSlug($slug);
+        if ($queries === []) {
             return $empty;
         }
 
@@ -105,21 +105,46 @@ final class ZeroResultProviderRescueService
         }
 
         $limit = max(1, min(20, (int) config('places_rescue.max_results', 8)));
+        $ladder = ProviderSearchRadiusLadder::stepsKm();
+        $maxKm = max(
+            1,
+            $radiusKm ?? (int) ($ladder[count($ladder) - 1] ?? 300)
+        );
+
         try {
             $connector = $this->connector
                 ?? ($this->registry ?? new ConnectorRegistry())
                     ->resolve('google_places', GooglePlacesConnector::class);
-            $places = $connector->search(
-                ['query' => $query, 'location' => $location, 'limit' => $limit],
-                ['api_key' => $apiKey],
-                $settings
-            );
-            $this->recordUsage($connectorId, (float) ($connectorRow['estimated_request_cost_aud'] ?? 0));
+            $placesById = [];
+            foreach ($queries as $query) {
+                if (!$this->withinBudget($connectorRow, $connectorId)) {
+                    break;
+                }
+                $batch = $connector->search(
+                    ['query' => $query, 'location' => $location, 'limit' => $limit],
+                    ['api_key' => $apiKey],
+                    $settings
+                );
+                $this->recordUsage($connectorId, (float) ($connectorRow['estimated_request_cost_aud'] ?? 0));
+                foreach ($batch as $place) {
+                    if (!is_array($place)) {
+                        continue;
+                    }
+                    $externalId = trim((string) ($place['external_id'] ?? ''));
+                    if ($externalId === '' || isset($placesById[$externalId])) {
+                        continue;
+                    }
+                    $placesById[$externalId] = $place;
+                }
+                if (count($placesById) >= $limit) {
+                    break;
+                }
+            }
+            $places = array_slice(array_values($placesById), 0, $limit);
         } catch (Throwable) {
             return $empty;
         }
 
-        $maxKm = $radiusKm ?? (int) (ProviderSearchRadiusLadder::stepsKm()[count(ProviderSearchRadiusLadder::stepsKm()) - 1] ?? 300);
         $autoPublish = (bool) config('places_rescue.auto_publish_unclaimed', true);
         $publisher = $this->publisher ?? new PlacesUnclaimedPublisher();
         $providers = [];
@@ -157,8 +182,8 @@ final class ZeroResultProviderRescueService
                         $row['distance_km'] = Geo::distanceKm(
                             $lat,
                             $lng,
-                            $row['town_lat'] ?? $row['latitude'] ?? null,
-                            $row['town_lng'] ?? $row['longitude'] ?? null
+                            $row['latitude'] ?? $row['town_lat'] ?? null,
+                            $row['longitude'] ?? $row['town_lng'] ?? null
                         );
                     }
                     $providers[(int) $row['id']] = $row;
@@ -180,31 +205,89 @@ final class ZeroResultProviderRescueService
             return $empty;
         }
 
+        $copy = $this->buildMessages($location, $providers, $externals);
+
         return [
             'providers' => $providers,
             'externals' => $externals,
             'created' => $created,
             'merged' => $merged,
-            'message' => 'No listed VanAssist specialist matched nearby. Showing public-source businesses found for this area—confirm they handle your issue before travelling.',
-            'attribution' => (string) config(
-                'places_rescue.attribution',
-                'Results include public business details from Google. Confirm details before travelling.'
-            ),
+            'message' => $copy['message'],
+            'attribution' => $copy['attribution'],
         ];
     }
 
-    private function queryForSlug(string $slug): string
+    /**
+     * @return list<string>
+     */
+    public function queriesForSlug(string $slug): array
     {
         $map = config('places_rescue.queries', []);
         if (!is_array($map)) {
-            return '';
+            return [];
         }
-        $query = trim((string) ($map[$slug] ?? ''));
-        if ($query !== '') {
-            return $query;
+        $raw = $map[$slug] ?? str_replace('-', ' ', $slug);
+        if (is_string($raw)) {
+            $raw = [$raw];
+        }
+        if (!is_array($raw)) {
+            return [];
+        }
+        $queries = [];
+        foreach ($raw as $phrase) {
+            $phrase = trim((string) $phrase);
+            if ($phrase === '' || in_array($phrase, $queries, true)) {
+                continue;
+            }
+            $queries[] = $phrase;
+            if (count($queries) >= 3) {
+                break;
+            }
         }
 
-        return str_replace('-', ' ', $slug);
+        return $queries;
+    }
+
+    /**
+     * Honest copy: only say “for this area” when something is actually nearby.
+     *
+     * @param list<array<string,mixed>> $providers
+     * @param list<array<string,mixed>> $externals
+     * @return array{message:?string,attribution:?string}
+     */
+    public function buildMessages(string $placeLabel, array $providers, array $externals): array
+    {
+        $localKm = max(1, (int) config('places_rescue.local_radius_km', 50));
+        $nearest = null;
+        foreach (array_merge($providers, $externals) as $row) {
+            if (!is_numeric($row['distance_km'] ?? null)) {
+                continue;
+            }
+            $distance = (float) $row['distance_km'];
+            $nearest = $nearest === null ? $distance : min($nearest, $distance);
+        }
+        if ($nearest === null) {
+            return ['message' => null, 'attribution' => null];
+        }
+
+        $attribution = (string) config(
+            'places_rescue.attribution',
+            'Results include public business details from Google. Confirm details before travelling.'
+        );
+        $place = trim($placeLabel) !== '' ? trim($placeLabel) : 'this area';
+        if ($nearest <= $localKm) {
+            return [
+                'message' => 'No listed VanAssist specialist matched nearby. Showing public-source businesses found for this area—confirm they handle your issue before travelling.',
+                'attribution' => $attribution,
+            ];
+        }
+
+        $km = (int) max(1, round($nearest));
+
+        return [
+            'message' => "Nothing close in {$place}. Nearest public-source option is about {$km} km away—confirm before travelling.",
+            'attribution' => $attribution,
+        ];
     }
 
     /** @param array<string,mixed>|null $town */

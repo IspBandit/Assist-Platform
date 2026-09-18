@@ -40,7 +40,7 @@ implementation detail belongs in linked issues and pull requests. Status values:
 | VAN-001 | Accurate national stays directory belongs only to VanAssist | in progress | Data-quality reports and public search acceptance; CPAQ 2026 park import path (`docs/CPAQ_2026_IMPORT.md`) |
 | VAN-002 | Provider claims, assistance and nearby-help launch readiness | in progress | Inbound claim review, secure acceptance and evidence-backed verification are wired; production end-to-end acceptance remains |
 | VAN-010 | Claim-first provider onboarding before new listing creation | done | Search-before-create on `/for-providers/register`, duplicate hold, `CLAIM_FIRST_ONBOARDING` flag |
-| VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Ask disambiguation + location-required Find + local Places rescue UX in tree; production deploy + flagship QG remain |
+| VAN-011 | Flagship natural-language search (intent → location/category → reviewed results) | in progress | Disambiguation, location-required Find, honest Places rescue copy, multi-query rescue, inland corridor seeds; flagship QG remain |
 | TOW-001 | TowSmart catalogue provenance and calculation review | in progress | Domain review, formula tests and honest limitation copy |
 | TOW-002 | Rich saved combination edit/compare/report workflow | done | Owner/brand isolation, recalculated snapshots, three-way comparison, private printable report and safety-boundary tests |
 | TRL-001 | Service-first trailer business discovery | in progress | Manufacturer/dealer/repair/parts/certifier journey tests |

@@ -29,6 +29,7 @@ use App\Services\AskQuestionLibrarySeeder;
 use App\Services\MajorCityCoverageService;
 use App\Services\NationalImportSeeder;
 use App\Services\ProviderImportRunner;
+use App\Services\SaleCorridorProviderSeeder;
 use App\Services\Seeder;
 
 Env::load(BASE_PATH . '/.env');
@@ -62,6 +63,8 @@ try {
         // separate docker/sudo path for the deploy user.
         (new Seeder())->seedContent();
         echo "CMS pages and homepage blocks seeded from content/legal seeds.\n";
+        $corridor = (new SaleCorridorProviderSeeder())->seed();
+        echo 'Sale-corridor providers: ' . json_encode($corridor) . "\n";
         exit($count >= AskQuestionLibrarySeeder::MINIMUM_QUESTIONS ? 0 : 1);
     }
 

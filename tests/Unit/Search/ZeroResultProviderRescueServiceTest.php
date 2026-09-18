@@ -97,15 +97,44 @@ final class ZeroResultProviderRescueServiceTest extends TestCase
         self::assertSame('Unknown', $sorted[2]['business_name']);
     }
 
-    public function testRefrigerationRescueQueryMentionsFridgeAndCaravan(): void
+    public function testRefrigerationRescueQueriesIncludeFridgeAndApplianceFallback(): void
     {
-        $path = base_path('config/places_rescue.php');
-        self::assertFileExists($path);
-        /** @var array<string,mixed> $config */
-        $config = require $path;
-        $query = (string) (($config['queries']['refrigeration'] ?? ''));
-        self::assertStringContainsString('fridge', mb_strtolower($query));
-        self::assertMatchesRegularExpression('/refrigerat|caravan|rv/i', $query);
+        \App\Core\Config::set('places_rescue', require base_path('config/places_rescue.php'));
+        $service = new ZeroResultProviderRescueService();
+        $queries = $service->queriesForSlug('refrigeration');
+        self::assertNotSame([], $queries);
+        $joined = mb_strtolower(implode(' ', $queries));
+        self::assertStringContainsString('fridge', $joined);
+        self::assertMatchesRegularExpression('/appliance|refrigerat|caravan|rv/i', $joined);
+        self::assertGreaterThanOrEqual(2, count($queries));
+    }
+
+    public function testBuildMessagesSaysLocalOnlyWhenNearby(): void
+    {
+        \App\Core\Config::set('places_rescue', require base_path('config/places_rescue.php'));
+        $service = new ZeroResultProviderRescueService();
+        $local = $service->buildMessages('Charters Towers, QLD', [
+            ['distance_km' => 3.2, 'business_name' => 'Local Fridge'],
+        ], []);
+        self::assertNotNull($local['message']);
+        self::assertStringContainsString('for this area', (string) $local['message']);
+        self::assertNotNull($local['attribution']);
+
+        $far = $service->buildMessages('Charters Towers, QLD', [
+            ['distance_km' => 140.0, 'business_name' => 'Distant'],
+        ], []);
+        self::assertNotNull($far['message']);
+        self::assertStringContainsString('Nothing close in Charters Towers, QLD', (string) $far['message']);
+        self::assertStringContainsString('140 km', (string) $far['message']);
+        self::assertStringNotContainsString('for this area', (string) $far['message']);
+    }
+
+    public function testBuildMessagesOmitsCopyWhenNoDistances(): void
+    {
+        $service = new ZeroResultProviderRescueService();
+        $none = $service->buildMessages('Longreach, QLD', [['business_name' => 'Unknown']], []);
+        self::assertNull($none['message']);
+        self::assertNull($none['attribution']);
     }
 
     private function forceFlag(bool $enabled): void
