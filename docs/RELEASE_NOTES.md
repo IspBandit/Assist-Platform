@@ -5,6 +5,11 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### CMS legal pages seed on production release
+
+- `scripts/seed.php --ask-library` (already run by production release) now also seeds CMS pages/blocks so `legal_pages.php` overrides publish without a separate deploy-user docker path.
+
+
 ### Production migrate neighbour-graph memory (VAN-011)
 
 - Avoid sorting the full national `town_neighbours` edge list during migrate (OOM at 128M on production).
