@@ -1,15 +1,15 @@
 # VanAssist Industry Source Extraction Progress
 
-**Last Updated:** 2026-09-17 22:12 UTC  
-**Status:** 🟢 Active - Browser agent scraping BIG4 parks
+**Last Updated:** 2026-09-18 01:06 UTC  
+**Status:** 🟢 BIG4 extraction complete - 312 parks ready for import
 
 ## Real-Time Status
 
 | Source | Method | Status | Progress | Next Action |
 | --- | --- | --- | --- | --- |
-| **BIG4 Parks** | Web | 🤖 **Scraping now** | 21/312 parks (6.7%) - Full scrape in progress | Await completion → geocode → validate → import |
-| **CMCA Dump Points** | Web | 🟡 Queued | Awaiting BIG4 completion | Test if publicly accessible |
-| **NT Gov Campgrounds** | Web | 🟡 Queued | Awaiting testing | Run scraper |
+| **BIG4 Parks** | Web | 🟢 **Complete** | 312/312 parks (100%) - Geocoded 267 (85.6%) | Ready for import |
+| **CMCA Dump Points** | Web | ❌ Failed | 404 error - not publicly accessible | Use National Toilet Map instead (already imported) |
+| **NT Gov Campgrounds** | Web | ❌ Failed | 403 error - access blocked | Manual extraction required |
 | **Drive QLD** | PDF | ⚪ Ready | Template complete | Obtain PDF archive |
 | **Barcoo** | PDF | ⚪ Ready | Template complete | Obtain PDF archive |
 | NSW CCIA | PDF | ⚪ Planned | High priority | Obtain PDF → create extractor |
@@ -32,11 +32,11 @@
 - **GREEN Sources:** ~33,468 government facilities
 - **Total:** ~34,000 facilities
 
-### Expected After Current Wave
-- **+BIG4:** ~200 parks (scraping now)
-- **+CMCA:** ~50-100 dump points (if accessible)
-- **+NT Gov:** ~20-50 campgrounds
-- **Projected Total:** ~34,300-34,400 facilities
+### Completed This Wave
+- **✅ BIG4:** 312 parks (100% extracted, 85.6% geocoded)
+- **❌ CMCA:** Not accessible (use existing National Toilet Map)
+- **❌ NT Gov:** Access blocked
+- **Ready to Import:** +312 facilities
 
 ### Future Wave (PDF Archive Required)
 - **NSW CCIA:** ~100-200 NSW parks
@@ -129,10 +129,10 @@
 ### BIG4 Current Status
 - [x] Permission: ✅ Granted 2026-09-17
 - [x] Scraper: ✅ `scrape_big4_web.py`
-- [~] Extraction: 🤖 In progress (browser agent)
-- [ ] Geocoding: Pending completion
-- [ ] Validation: Pending completion
-- [ ] Import: Pending validation
+- [x] Extraction: ✅ Complete (312/312 parks)
+- [x] Geocoding: ✅ Complete (267/312 = 85.6%)
+- [x] Validation: ✅ Passed (100% valid records)
+- [ ] Import: ⏳ Pending production environment
 
 ## Timeline
 
@@ -143,17 +143,17 @@
 - ✅ 20:05 - Web scrapers implemented (BIG4, CMCA, NT)
 - ✅ 21:00 - PDF extractors implemented (Drive QLD, Barcoo)
 - ✅ 21:30 - Helper tools added (geocode, validate)
-- 🤖 22:08 - **BIG4 scraper launched (browser agent)**
-- ⏳ 22:30 - BIG4 extraction expected complete
-- ⏳ 22:45 - BIG4 geocoding + validation
-- ⏳ 23:00 - CMCA scraper test
-- ⏳ 23:15 - NT Gov scraper test
+- ✅ 22:08 - BIG4 scraper launched (browser agent)
+- ✅ 23:48 - BIG4 scraper completed (312 parks)
 
-**2026-09-18 (Expected):**
-- Import BIG4 to staging
-- Import CMCA (if accessible)
-- Import NT Gov
-- Request NSW CCIA PDF (high priority)
+**2026-09-18:**
+- ✅ 00:57 - BIG4 geocoding started
+- ✅ 01:05 - BIG4 geocoding complete (267/312 = 85.6%)
+- ✅ 01:06 - BIG4 validation passed (100% valid)
+- ✅ 01:06 - CMCA scraper test (404 - not accessible)
+- ✅ 01:06 - NT Gov scraper test (403 - access blocked)
+- ⏳ Next - Import BIG4 to production (312 parks ready)
+- ⏳ Next - Request NSW CCIA PDF (high priority)
 
 ## Links
 
