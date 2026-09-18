@@ -20,6 +20,7 @@ require BASE_PATH . '/bootstrap/autoload.php';
 
 use App\Core\Config;
 use App\Helpers\Env;
+use App\Services\Geography\TownNeighbourGraphBuilder;
 use App\Services\Migrator;
 use App\Services\OrganisationOutreachImporter;
 use App\Services\ProviderPackActivation;
@@ -45,6 +46,11 @@ try {
     $townCoordinates = TownCoordinateActivation::afterMigrations();
     if (empty($townCoordinates['skipped'])) {
         echo 'Activated verified town coordinates: ' . (int) ($townCoordinates['updated'] ?? 0) . " rows.\n";
+    }
+    $townNeighbours = TownNeighbourGraphBuilder::afterMigrations();
+    if (empty($townNeighbours['skipped'])) {
+        echo 'Rebuilt town neighbour graph: ' . (int) ($townNeighbours['inserted'] ?? $townNeighbours['edges'] ?? 0)
+            . " edges.\n";
     }
     $providerPack = ProviderPackActivation::afterMigrations();
     if (empty($providerPack['skipped'])) {

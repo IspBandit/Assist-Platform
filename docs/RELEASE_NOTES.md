@@ -37,6 +37,12 @@ may remain as dated files and are linked here rather than copied.
 - When fewer than 3 category matches remain for a resolved town, Ask and `/find`
   fill from immediate neighbouring towns (`town_neighbours`) for the **same**
   categories, with an honest nearby-towns note — not an unfiltered regional pool.
+- `town_neighbours` is rebuilt from measurable town coordinates (same state,
+  within `geo.neighbour_max_km`, capped by `geo.neighbour_limit`) via
+  `TownNeighbourGraphBuilder` on migrate and
+  `php scripts/rebuild-town-neighbours.php` (`--dry-run` / `--force`). Migration
+  `140` clears a stale graph fingerprint so the next release rebuilds the
+  empty production graph (including Charters Towers local localities).
 - Feature flag `provider_places_rescue` (default **off**) enables demand-driven
   Google Places rescue on zero/weak provider searches: labelled public-source
   results in the journey, budget-gated via Data Sources, and optional

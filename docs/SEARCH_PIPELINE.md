@@ -38,3 +38,16 @@ fallback. When fewer than `geo.provider_search_min_results` (default 3)
 category matches remain for a resolved town, Ask and `/find` then fill from
 immediate `town_neighbours` using the **same categories** (never an unfiltered
 regional pool). Places rescue remains last when the flag is on.
+
+## Town neighbour graph
+
+`town_neighbours` is rebuilt from active towns with measurable coordinates
+(same state, within `geo.neighbour_max_km` default 50 km, up to
+`geo.neighbour_limit` default 8 nearest). Edges are bidirectional.
+`Town::neighbours()` reads that table (ordered by distance, limit 8).
+
+- Automatic: `TownNeighbourGraphBuilder::afterMigrations()` runs from
+  `php scripts/migrate.php` after town coordinate activation.
+- Manual / after coordinate corrections:
+  `php scripts/rebuild-town-neighbours.php` (`--dry-run`, `--force`).
+- Migration `140` clears a stale graph fingerprint so the next migrate rebuilds.

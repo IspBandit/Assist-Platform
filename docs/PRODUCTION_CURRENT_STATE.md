@@ -1,21 +1,21 @@
 # Production current state
 
-## 18 September 2026 — Charters Towers Ask fridge coverage (local applied; production pending deploy)
+## 18 September 2026 — town neighbour graph rebuild (VAN-011)
 
-Local repair for the documented Charters Towers fridge-repair zero-result failure:
+Production `town_neighbours` was empty for every town after earlier QLD
+coordinate corrections, so surrounding-town Ask fill and town-page Nearby
+links could not fire. Migration `140` plus
+`TownNeighbourGraphBuilder::afterMigrations()` rebuild the graph from
+measurable same-state towns (50 km / 8 nearest by default). Ops can force a
+rebuild after coordinate fixes with
+`php scripts/rebuild-town-neighbours.php --force`.
 
-- Migrations `138`–`139` authorise Charters Towers town-centre coordinates, backfill
-  unclaimed provider points, and activate pending Charters unclaimed listings.
-- Google Places connector activated; `provider_places_rescue` enabled locally.
-  Focused Charters Towers refrigeration bootstrap merged Dealz on Deane under
-  refrigeration. Ask now returns Dealz (+ regional refrigeration) for
-  “fridge repair near charter towers”.
-- `GOOGLE_PLACES_API_KEY` is present in local `.env`; vault encryption requires a
-  valid `APP_KEY` (empty on this machine), so rescue uses the env-key fallback.
+## 18 September 2026 — Charters Towers Ask fridge coverage (deployed)
 
-Production still requires an authorised release of this branch plus host
-migration, Places vault provision (production has `APP_KEY`), flag enablement and
-Charters bootstrap — code merge alone does not change live Ask results.
+Charters Towers fridge-repair Ask coverage is live on release
+`755de1b18ff013541f69777aaad11cd45fb5a51c` (PR #277): radius ladder, Places
+rescue enabled, measurable Charters unclaimed listings re-activated after pack.
+Surrounding-town labels for Charters still needed the neighbour graph above.
 
 ## 17 September 2026 — provider discovery rescue (code landed, flag off)
 

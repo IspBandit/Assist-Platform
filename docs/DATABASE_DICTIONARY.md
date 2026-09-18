@@ -30,7 +30,7 @@ place-specific slug or ID rule.
 | Domain | Principal tables | Ownership/scope |
 |---|---|---|
 | Identity | `users`, `roles`, `permissions`, `user_roles`, sessions, reset/verification/consent/history tables | User/global with explicit role and brand participation extensions |
-| Geography | `countries`, `states`, `regions`, `towns`, `postcodes`, `town_neighbours` | Shared reference data |
+| Geography | `countries`, `states`, `regions`, `towns`, `postcodes`, `town_neighbours` | Shared reference data. `town_neighbours` is rebuilt from measurable town coordinates (`TownNeighbourGraphBuilder`, `geo.neighbour_max_km` / `geo.neighbour_limit`). |
 | Providers | `providers`, prospects, contacts, services, areas, documents, licences, availability, verification, notes | Canonical provider plus explicit owner/membership and brand-listing records |
 | Brands | `brands`, `brand_domains`, `provider_brand_listings`, `user_brand_profiles`, role/membership extensions | Every brand-private query must include appropriate brand context |
 | Customers | `customers`, saved locations, alerts, saved providers/reviews | User-owned; some records receive brand context in later migrations |

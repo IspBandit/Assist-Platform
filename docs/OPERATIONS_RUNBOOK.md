@@ -26,6 +26,12 @@
    sitemap, robots and authentication checks.
 10. Monitor; retain the preceding release for rollback.
 
+After coordinate corrections (or an empty `town_neighbours` table), the migrate
+runner rebuilds the surrounding-town graph via
+`TownNeighbourGraphBuilder::afterMigrations()`. Force manually with
+`docker compose exec -T app php scripts/rebuild-town-neighbours.php --force`
+from `/opt/assist-platform` when a release did not clear the fingerprint.
+
 ### Isolated staging release
 
 The manually dispatched `Staging release` workflow builds and validates a
