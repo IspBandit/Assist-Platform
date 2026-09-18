@@ -36,9 +36,21 @@ jobs:
           VPS_USER: ${{ secrets.VPS_USER }}
         run: |
           set -euo pipefail
-          # Deploy user cannot read compose files directly; use the same
-          # root-scoped docker path as /usr/local/sbin/assist-cron.
-          output="$(ssh "$VPS_USER@$VPS_HOST" "sudo -n bash -lc 'cd /opt/assist-platform && docker compose exec -T app php scripts/seed-cms-content.php'")"
+          # Deploy user cannot read /opt/assist-platform/docker-compose.yml.
+          # Use docker exec against the running app container instead.
+          output="$(ssh "$VPS_USER@$VPS_HOST" 'set -euo pipefail
+            cid="$(docker ps --format "{{.Names}}" | grep -E "(^|-)app(-|$)" | head -n 1 || true)"
+            if [[ -z "$cid" ]]; then
+              cid="$(docker ps --format "{{.Names}}" | grep -i assist | grep -i app | head -n 1 || true)"
+            fi
+            if [[ -z "$cid" ]]; then
+              echo "Unable to locate Assist app container" >&2
+              docker ps --format "{{.Names}}" >&2 || true
+              exit 1
+            fi
+            echo "Using container: $cid" >&2
+            docker exec -i "$cid" php scripts/seed-cms-content.php
+          ')"
           printf '%s\n' "$output" | tee -a "$GITHUB_STEP_SUMMARY"
           printf '%s\n' "$output" | grep -E -q 'legal-2026-09-18|pages_verified='
           printf '%s\n' "$output" | grep -q 'pages_written='
