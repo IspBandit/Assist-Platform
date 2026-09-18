@@ -29,6 +29,9 @@ use App\Services\TownCoordinateActivation;
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
 
+// National town-neighbour rebuild needs headroom beyond the default 128M CLI cap.
+@ini_set('memory_limit', '512M');
+
 try {
     $migrator = new Migrator();
     if ($migrator->repairInterruptedDuplicateStayMigration()) {

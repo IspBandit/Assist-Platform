@@ -5,6 +5,13 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Production migrate neighbour-graph memory (VAN-011)
+
+- Avoid sorting the full national `town_neighbours` edge list during migrate (OOM at 128M on production).
+- Raise CLI `memory_limit` to 512M in `scripts/migrate.php` and `scripts/rebuild-town-neighbours.php`.
+- Add `scripts/seed-cms-content.php` CLI equivalent of Admin Populate Pages for post-release legal CMS publish.
+
+
 ### Legal PDF pack and published site policies (COM-005)
 
 - Added administrator **Legal documents** workspace at `/admin/legal-documents`

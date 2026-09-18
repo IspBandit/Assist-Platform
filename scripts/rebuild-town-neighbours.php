@@ -25,6 +25,7 @@ use App\Services\Geography\TownNeighbourGraphBuilder;
 
 Env::load(BASE_PATH . '/.env');
 Config::load(BASE_PATH . '/config');
+@ini_set('memory_limit', '512M');
 
 $args = isset($_SERVER['argv']) && is_array($_SERVER['argv'])
     ? array_values(array_filter($_SERVER['argv'], 'is_string'))
