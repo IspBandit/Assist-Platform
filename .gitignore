@@ -41,9 +41,36 @@
 **/__pycache__/
 *.py[cod]
 
+# VanAssist traveller-data source archive: commit registry only; ignore large raw binaries
+/data/sources/vanassist/**/*.csv
+/data/sources/vanassist/**/*.geojson
+/data/sources/vanassist/**/*.json
+/data/sources/vanassist/**/*.zip
+/data/sources/vanassist/**/*.shp
+/data/sources/vanassist/**/*.dbf
+/data/sources/vanassist/**/*.shx
+/data/sources/vanassist/**/*.prj
+/data/sources/vanassist/**/*.cpg
+/data/sources/vanassist/**/*.pdf
+/data/sources/vanassist/**/*.pbf
+/data/sources/vanassist/**/*.xml
+/data/sources/vanassist/**/*.html
+/data/sources/vanassist/**/*.txt
+/data/sources/vanassist/raw/
+/data/sources/vanassist/normalized/
+/data/sources/vanassist/reports/
+!/data/sources/vanassist/registry/
+!/data/sources/vanassist/registry/**
+!/data/sources/vanassist/**/.gitkeep
+!/data/sources/vanassist/README.md
+
 # OS / editor
 .DS_Store
 Thumbs.db
 *.log
 .idea/
 .vscode/
+
+/data/sources/vanassist/sa/checksum.sha256
+/data/sources/vanassist/**/checksum.sha256
+/data/sources/vanassist/**/metadata.json
