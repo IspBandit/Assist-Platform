@@ -23,7 +23,7 @@ Administrators responsible for access or configuration, and super administrators
 
 ## Permissions
 
-User management requires `users.manage`; export additionally requires `users.export`. Audit requires `audit.view`; settings require `settings.manage`. Backups and maintenance require a super administrator in the controller, regardless of whether a link is visible.
+User management requires `users.manage`; export additionally requires `users.export`. Audit requires `audit.view`; settings and legal-document downloads require `settings.manage`. Backups and maintenance require a super administrator in the controller, regardless of whether a link is visible.
 
 ## Fields
 
@@ -31,6 +31,7 @@ User management requires `users.manage`; export additionally requires `users.exp
 - **User form:** Name, Email, Phone, Status, Marketing opt-in, the visible role checkboxes, Internal notes and, for a new user, the option to send a password reset. User detail shows phone, marketing opt-in, email verification, last login, created date, roles, linked accounts, internal notes, consent history (Type, Granted, Document version, When) and recent login activity (When, Result, IP, Device).
 - **Audit log:** Action and Search (object/value) filters; rows show When, User, Action, Object and IP.
 - **Settings:** General fields are Site name, Tagline and Free launch message. Contact/business fields are Public contact email, Public contact phone, Legal name, Business structure, ABN, Facebook URL and Business address. Email delivery fields are SMTP host, Username, Port, Encryption, Password, From address and From name. Launch/availability fields are Launch mode, Maintenance mode and Maintenance message. Analytics has the first-party page-view toggle. Production readiness is displayed separately from the Demo data section.
+- **Legal documents:** rows show Document, Category, Audience and Status for Terms of Use, Privacy Policy, Provider Terms, DPA, OpCo/brand licence and IP ownership assignment PDFs.
 - **Backups:** rows show File, Size and Created.
 - **Maintenance:** Town coverage shows State, Towns, Local 0, Local 1–2, Local 3+, Serving and No serving. The page also shows database, town, major-city, website-page, email-template, claim-invite-template and provider-refresh status; provider refresh exposes a **Scan OpenStreetMap** checkbox.
 
@@ -39,6 +40,7 @@ User management requires `users.manage`; export additionally requires `users.exp
 - **Users:** **Filter**, **Export CSV**, **New user**, **Manage**, pagination, **Edit**, **Save changes** or **Create user**, **Suspend**, **Reactivate**, **Send password reset** and **Delete user** where the controller permits them.
 - **Audit log:** **Filter**, **Export CSV**, **Previous** and **Next**.
 - **Settings:** **Save settings** and the separate destructive **Remove all demo data** action.
+- **Legal documents:** **Download PDF** for each catalogue entry. Files are generated on demand from `docs/legal/drafts/` and remain solicitor-review drafts until an effective date is set for public CMS pages.
 - **Backups:** **Generate backup now**, **Download** and **Delete**. A successful
   local backup includes a SHA-256 manifest. Launch evidence requires a verified
   archive no more than 36 hours old; local storage alone is not an independent
@@ -77,7 +79,7 @@ Current repository baseline.
 
 ## Last updated
 
-2026-07-30.
+2026-09-18.
 
 ## Owner
 

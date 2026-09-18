@@ -5,6 +5,18 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Legal PDF pack and published site policies (COM-005)
+
+- Added administrator **Legal documents** workspace at `/admin/legal-documents`
+  (`settings.manage`) with on-demand PDF downloads for Terms of Use, Privacy
+  Policy, Provider Terms, DPA, OpCo/brand licence, and IP ownership assignment.
+- Published multi-brand public CMS bodies (effective **18 September 2026**) via
+  `database/seeds/legal_pages.php`; Maintenance “Populate Pages & Blocks” now
+  merges those legal overrides. Formal solicitor review may refine wording later.
+- Sources remain under `docs/legal/drafts/`; optional offline cache via
+  `php scripts/generate-legal-pdfs.php`. Downloads are audited as
+  `legal_document.download`.
+
 ### VanAssist national traveller-data source archive (DATA-012 / DATA-011A / VAN-001)
 
 - Added Platform-side source vault under `data/sources/vanassist/` with machine

@@ -26,6 +26,7 @@
 /storage/private/exports/*
 /storage/backups/*
 /storage/imports/*
+/storage/legal/*
 !**/.gitkeep
 
 # Public uploads

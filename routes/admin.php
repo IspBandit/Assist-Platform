@@ -272,6 +272,10 @@ return static function (Router $router): void {
         $router->post('/settings', 'Admin\SettingsController@save');
         $router->post('/settings/remove-demo', 'Admin\SettingsController@removeDemo');
 
+        // COM-005 — legal / sale-readiness PDF pack (admin download only).
+        $router->get('/legal-documents', 'Admin\LegalDocumentsController@index', 'admin.legal-documents');
+        $router->get('/legal-documents/download', 'Admin\LegalDocumentsController@download', 'admin.legal-documents.download');
+
         // Feature flags (Phase 10).
         $router->get('/feature-flags', 'Admin\FeatureFlagsController@index', 'admin.feature-flags');
         $router->post('/feature-flags', 'Admin\FeatureFlagsController@save');
