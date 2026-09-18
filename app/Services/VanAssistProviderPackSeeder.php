@@ -74,6 +74,7 @@ final class VanAssistProviderPackSeeder
         if ($counts['complete']) {
             $counts['location_sources_quarantined'] = $this->quarantineContradictorySourceLocations();
             $counts['retired_superseded_qld_fuel'] = $this->retireSupersededQueenslandFuelSeeds();
+            $counts['unsupported_specialist_services_removed'] = $this->removeAllUnsupportedSpecialistServices();
         }
         return $counts;
     }
@@ -151,7 +152,6 @@ final class VanAssistProviderPackSeeder
         ) > 0;
         $this->removeKnownBadFuelGasAssignments($providerId, $record);
         $this->removeUnsupportedBrandCategoryAssignments($providerId, $record, $validCategories);
-        $this->removeUnsupportedSharedServices($providerId, $name, $hasPublicEvidence);
         if (!$hasPublicEvidence) {
             $this->quarantineUnclaimedProvider($providerId);
         }
@@ -190,6 +190,8 @@ final class VanAssistProviderPackSeeder
         if (!$reviewOnly) {
             $this->linkVanAssistCompatibility($providerId, $validCategories, $record);
         }
+        // Compatibility linking can re-insert shared services; scrub specialists after it.
+        $this->removeUnsupportedSharedServices($providerId, $name, $hasPublicEvidence);
         if ($location['town_id'] > 0) {
             if ($location['location_corrected']) {
                 Database::query(
@@ -653,6 +655,37 @@ final class VanAssistProviderPackSeeder
         }
     }
 
+    /** Final sweep so release audit cannot fail on services re-linked mid-batch. */
+    private function removeAllUnsupportedSpecialistServices(): int
+    {
+        $removed = 0;
+        foreach (Database::select(
+            "SELECT p.id, p.business_name FROM providers p WHERE p.is_unclaimed=1 AND p.deleted_at IS NULL "
+            . "AND LOWER(p.business_name) REGEXP 'windscreen|auto glass|automotive glass|supercheap|autopro|auto parts|"
+            . "parts store|parts centre|tyre|tire|tyrepower|bob jane|bridgestone|goodyear|petroleum|service station|"
+            . "fuel stop|ampol|caltex|7-eleven|elgas|lpg refill|gas bottle|bottle exchange' "
+            . 'AND NOT EXISTS (SELECT 1 FROM provider_source_records psr WHERE psr.provider_id=p.id '
+            . 'AND psr.publishable=1 AND psr.needs_review=0)'
+        ) as $provider) {
+            $before = (int) Database::scalar(
+                'SELECT COUNT(*) FROM provider_services WHERE provider_id=?',
+                [(int) $provider['id']]
+            );
+            $this->removeUnsupportedSharedServices(
+                (int) $provider['id'],
+                (string) ($provider['business_name'] ?? ''),
+                false
+            );
+            $after = (int) Database::scalar(
+                'SELECT COUNT(*) FROM provider_services WHERE provider_id=?',
+                [(int) $provider['id']]
+            );
+            $removed += max(0, $before - $after);
+        }
+
+        return $removed;
+    }
+
     /** @param array<string,mixed> $record */
     private function removeKnownBadFuelGasAssignments(int $providerId, array $record): void
     {
@@ -720,15 +753,22 @@ final class VanAssistProviderPackSeeder
         if (preg_match('/\bbattery world\b|\bbatter(?:y|ies)\b/', $name) === 1) {
             return ['auto-electrical-and-batteries'];
         }
-        if (preg_match('/\btyrepower\b|\bbob jane\b|\btyre\b|\btire\b/', $name) === 1) {
-            return ['tyres-and-wheels'];
+        if (preg_match('/\bwindscreen\b|\bauto glass\b|\bautomotive glass\b/', $name) === 1) {
+            return ['windscreen-and-auto-glass'];
         }
-        if (preg_match('/\bsupercheap\b|\bauto parts\b|\bparts (?:store|centre)\b/', $name) === 1) {
+        if (preg_match('/\bsupercheap\b|\bautopro\b|\bauto parts\b|\bparts (?:store|centre)\b/', $name) === 1) {
             return ['vehicle-parts-and-accessories'];
         }
-        if (in_array('fuel-station', $categories, true)
-            && preg_match('/\b(?:ampol|bp|caltex|shell|mobil|united|7-eleven)\b/', $name) === 1) {
+        if (preg_match('/\btyrepower\b|\bbob jane\b|\bbridgestone\b|\bgoodyear\b|\btyre\b|\btire\b/', $name) === 1) {
+            return ['tyres-and-wheels'];
+        }
+        if (preg_match('/\bpetroleum\b|\bservice station\b|\bfuel stop\b|\bampol\b|\bcaltex\b|\b7-eleven\b/', $name) === 1
+            || (in_array('fuel-station', $categories, true)
+                && preg_match('/\b(?:ampol|bp|caltex|shell|mobil|united|7-eleven)\b/', $name) === 1)) {
             return ['fuel-and-travel-stops'];
+        }
+        if (preg_match('/\belgas\b|\blpg refill\b|\bgas bottle\b|\bbottle exchange\b/', $name) === 1) {
+            return ['lpg-refills-and-bottle-exchange'];
         }
 
         return array_values(array_unique($slugs));
