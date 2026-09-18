@@ -16,19 +16,25 @@
 5. **Search routing** — `SearchRouter` → providers / stays / traveller_facilities /
    datasets (flags apply).
 6. **Result aggregation** — `ResultAggregator` dedupes, ranks, attaches provenance.
-7. **Places rescue (optional)** — when `provider_places_rescue` is on and provider
+7. **Surrounding-town fill** — when fewer than 3 category matches remain for a
+   resolved town, merge providers that serve immediate neighbouring towns
+   (`town_neighbours`), still category-scoped and labelled.
+8. **Places rescue (optional)** — when `provider_places_rescue` is on and provider
    results are zero/weak, `ZeroResultProviderRescueService` may call Google Places
    (budget-gated), surface labelled `external_live` cards, and auto-create
    unclaimed listings (ADR 0042). Not general browsing.
-8. **Knowledge-gap processing** — `KnowledgeGapService::observe` for weak/zero/
+9. **Knowledge-gap processing** — `KnowledgeGapService::observe` for weak/zero/
    unknown; returns `knowledgeGapId` for interaction attribution.
-9. **Draft-candidate processing** — admin/CLI / dataset jobs via
+10. **Draft-candidate processing** — admin/CLI / dataset jobs via
    `DraftCandidateService` (not live Overpass). Places rescue is a separate path.
-10. **Analytics + usage** — `AssistSearchLogger`, `AIUsageService`.
+11. **Analytics + usage** — `AssistSearchLogger`, `AIUsageService`.
 
 Invalid AI output falls back to deterministic intent or clarification. No
 unrestricted conversational text from the intent layer.
 
 Provider category searches without an explicit radius use the shared
 `ProviderSearchRadiusLadder` (25 → 75 → 150 → 300 km) before related-category
-fallback.
+fallback. When fewer than `geo.provider_search_min_results` (default 3)
+category matches remain for a resolved town, Ask and `/find` then fill from
+immediate `town_neighbours` using the **same categories** (never an unfiltered
+regional pool). Places rescue remains last when the flag is on.

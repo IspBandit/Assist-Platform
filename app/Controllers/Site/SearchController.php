@@ -12,6 +12,8 @@ use App\Helpers\Geo;
 use App\Models\Provider;
 use App\Models\ServiceCategory;
 use App\Models\Town;
+use App\Platform\AiSearch\Adapters\ProviderSearchAdapter;
+use App\Platform\AiSearch\Dto\Intent;
 use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Services\Demand\DemandRecorder;
 use App\Services\RoadDistance\RoadDistanceService;
@@ -112,6 +114,7 @@ final class SearchController extends Controller
         $possible = [];
         $usedRegionalPool = false;
         $radiusExpanded = false;
+        $surroundingTownFallback = false;
         $rescueExternals = [];
         $rescueAttribution = null;
         $rescueMessage = null;
@@ -193,6 +196,54 @@ final class SearchController extends Controller
             $possible = array_values($fallbackRows);
         }
 
+        // Immediate neighbouring towns when the named place still has fewer than 3 matches.
+        $shownBeforeSurrounding = count($matches) + count($possible);
+        $minResults = max(1, (int) config('geo.provider_search_min_results', 3));
+        if ($categoryId !== null
+            && $categorySlug !== ''
+            && $shownBeforeSurrounding < $minResults
+            && $town !== null) {
+            $already = array_merge($matches, $possible);
+            $surrounding = (new ProviderSearchAdapter())->searchSurroundingTowns(
+                new Intent(
+                    Intent::TYPE_PROVIDER,
+                    [$categorySlug],
+                    [],
+                    [],
+                    (string) ($town['name'] ?? ''),
+                    false,
+                    $maxDistance,
+                    'normal',
+                    ['providers'],
+                    0.9,
+                    false,
+                    null
+                ),
+                $town,
+                $originLat,
+                $originLng,
+                $already,
+                $minResults
+            );
+            if ($surrounding['added'] > 0) {
+                $usedRegionalPool = true;
+                $surroundingTownFallback = true;
+                $existingIds = [];
+                foreach ($already as $row) {
+                    $existingIds[(int) ($row['id'] ?? 0)] = true;
+                }
+                foreach ($surrounding['rows'] as $row) {
+                    $id = (int) ($row['id'] ?? 0);
+                    if ($id <= 0 || isset($existingIds[$id])) {
+                        continue;
+                    }
+                    $row['is_inferred'] = 1;
+                    $possible[] = $row;
+                    $existingIds[$id] = true;
+                }
+            }
+        }
+
         // Demand-driven Places rescue when the directory is still empty/weak.
         $shownBeforeRescue = count($matches) + count($possible);
         $weakAt = max(1, (int) config('places_rescue.weak_result_threshold', 3));
@@ -257,10 +308,10 @@ final class SearchController extends Controller
             $possible = $resultWindow['groups']['possible'];
         }
 
-        $usedNearbyFallback = $exactMatchCount === 0 && array_filter(
+        $usedNearbyFallback = $surroundingTownFallback || ($exactMatchCount === 0 && array_filter(
             $possible,
             static fn (array $row): bool => isset($row['search_fallback'])
-        ) !== [];
+        ) !== []);
 
         // Paid visibility is kept in an explicitly labelled block. Organic
         // direct results rank verified listings first, then nearest distance;

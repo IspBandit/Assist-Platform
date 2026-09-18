@@ -501,6 +501,26 @@ final class SearchOrchestrator
                         }
                     }
                 }
+                $weakAt = max(1, (int) config('geo.provider_search_min_results', 3));
+                if ($providerNameQuery === null
+                    && count($providerRows) < $weakAt
+                    && $intent->providerCategoryKeys !== []) {
+                    $surrounding = $this->providers->searchSurroundingTowns(
+                        $intent,
+                        $town,
+                        $originLat,
+                        $originLng,
+                        $providerRows,
+                        $weakAt
+                    );
+                    if ($surrounding['added'] > 0) {
+                        $providerRows = $surrounding['rows'];
+                        $fallback = $fallback !== '' ? $fallback : 'surrounding_town';
+                        if ($surrounding['message'] !== null) {
+                            $messages[] = $surrounding['message'];
+                        }
+                    }
+                }
             } catch (\Throwable) {
                 $providerRows = [];
             }
