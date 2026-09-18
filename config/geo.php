@@ -16,4 +16,11 @@ return [
 
     /** Stop expanding once at least this many providers are found. */
     'provider_search_min_results' => 3,
+
+    /**
+     * Immediate town_neighbours graph (VAN-011 surrounding-town fill).
+     * Same-state, measurable towns only; read path also caps at neighbour_limit.
+     */
+    'neighbour_max_km' => (int) env('GEO_NEIGHBOUR_MAX_KM', 50),
+    'neighbour_limit' => (int) env('GEO_NEIGHBOUR_LIMIT', 8),
 ];
