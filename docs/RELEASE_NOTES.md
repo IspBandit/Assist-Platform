@@ -34,6 +34,9 @@ may remain as dated files and are linked here rather than copied.
 - Classic `/find` and Ask no longer stop at town-only (~20 km) for category
   searches: they expand 25 → 75 → 150 → 300 km until enough providers appear
   (explicit distance choices still win).
+- When fewer than 3 category matches remain for a resolved town, Ask and `/find`
+  fill from immediate neighbouring towns (`town_neighbours`) for the **same**
+  categories, with an honest nearby-towns note — not an unfiltered regional pool.
 - Feature flag `provider_places_rescue` (default **off**) enables demand-driven
   Google Places rescue on zero/weak provider searches: labelled public-source
   results in the journey, budget-gated via Data Sources, and optional

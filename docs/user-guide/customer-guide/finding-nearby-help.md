@@ -37,7 +37,7 @@ measurement configuration.
 
 ## Fields
 
-**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When you leave Distance unset for a service search, VanAssist expands outward (about 25 km, then 75 km, 150 km and up to 300 km) until enough matching providers appear, then shows an honest “wider area” note. When you set Distance yourself, that limit is never widened. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
+**Service category** limits the results to the selected service. **Town, suburb or postcode** establishes the search location. **Preferred timeframe** carries context into an assistance request. **Distance** chooses the locality scope or a travel radius. When you leave Distance unset for a service search, VanAssist expands outward (about 25 km, then 75 km, 150 km and up to 300 km) until enough matching providers appear, then shows an honest “wider area” note. If fewer than three matches remain for the town, it may also include the same service from immediate neighbouring towns. When you set Distance yourself, that limit is never widened. When Google routing is available, the final boundary and order use road distance and show an estimated drive time. A clearly labelled straight-line estimate is used only during a routing outage or protected routing-credential failure. Production releases test a real routed search before being accepted. Results without a measurable location cannot appear in a numeric-radius search.
 
 When the directory is still empty or thin for that service and place, VanAssist may show a separate **Public-source businesses nearby** block (feature-flagged). Those rows are not verified VanAssist specialists: confirm they can do the work before travelling. Some may also appear later as unclaimed public listings you can open or that a business can claim.
 
@@ -139,8 +139,11 @@ caravan repair and unsure-service options instead of returning an empty answer.
 When the requested specialist category has no nearby listing, Ask may show a
 wider set of related repair, mechanical or roadside providers. Servicing and
 mobile-mechanic misses widen once to general caravan repairs, auto electrical
-and diesel mechanics at 50 km. If those categories still have no result for a
-resolved town, Ask may show clearly labelled providers serving the wider area.
+and diesel mechanics at 50 km. When fewer than three matching providers remain
+for the resolved town, Ask may also show clearly labelled providers from
+immediate surrounding towns that serve the same category. If those categories
+still have no result for a resolved town, Ask may show clearly labelled
+providers serving the wider area.
 These alternatives are not claimed as exact matches; confirm suitability before
 travelling. Facility, stay, fuel, LPG and other travel-retail searches never
 widen to unrelated repair businesses.
@@ -188,7 +191,7 @@ can have identical names. Missing location details are not guessed.
 
 ## Last updated
 
-2026-09-07 (directory trust-copy contrast surface documented).
+2026-09-18 (surrounding-town expansion when fewer than three Ask/find matches).
 
 ## Owner
 
