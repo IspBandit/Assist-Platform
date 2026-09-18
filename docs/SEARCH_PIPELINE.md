@@ -59,6 +59,10 @@ Ambiguous place names return clickable town/state choices (no empty dead-end).
 Category `/find` without a town or GPS prompts for location instead of recording
 national “Location not supplied” misses. Ask logging always attaches a tracking
 session so daily Ask search counts are attributable.
+When Ask already has service categories and a place, an exact business-name match
+on the stripped service phrase (for example candidate `mobile mechanic` from
+“mobile mechanic near Longreach”) does not clear categories; category search for
+that town runs instead. Direct name lookups without a place are unchanged.
 
 ## Town neighbour graph
 

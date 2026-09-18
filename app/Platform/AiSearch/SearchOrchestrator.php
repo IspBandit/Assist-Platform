@@ -204,9 +204,16 @@ final class SearchOrchestrator
                 : [];
             $exactProviderRows = $this->providerNames->exactMatches($candidateProviderRows);
             // Exact public business names outrank service keywords contained in
-            // that name. Partial names are accepted only for an otherwise
-            // unknown query, so “battery near me” remains a category search.
-            if ($exactProviderRows !== []) {
+            // that name — but not when Ask already has a service category and a
+            // place. “mobile mechanic near Longreach” strips to the candidate
+            // “mobile mechanic”; an exact directory name match must not clear
+            // categories and leave the town search empty after radius filter.
+            // Partial names are accepted only for an otherwise unknown query,
+            // so “battery near me” remains a category search.
+            $locationBoundServiceQuery = $intent->providerCategoryKeys !== []
+                && $intent->locationText !== null
+                && trim($intent->locationText) !== '';
+            if ($exactProviderRows !== [] && !$locationBoundServiceQuery) {
                 $providerNameQuery = $candidateProviderName;
                 $providerNameRows = $exactProviderRows;
             } elseif ($intent->intentType === Intent::TYPE_UNKNOWN && $candidateProviderRows !== []) {
@@ -511,7 +518,7 @@ final class SearchOrchestrator
                 if ($providerNameQuery !== null) {
                     $providerRows = $providerNameRows;
                 } else {
-                    $userLockedRadius = ($meta['normalised']['radius_km'] ?? null) !== null
+                    $userLockedRadius = ($meta['radius_km'] ?? null) !== null
                         || $request->radiusKm !== null;
                     $providerIntent = $userLockedRadius
                         ? $intent
@@ -543,7 +550,7 @@ final class SearchOrchestrator
                 if ($providerRows === [] && $this->shouldUseProviderFallback($intent)) {
                     $relatedIntent = $this->relatedProviderFallbackIntent($intent);
                     if ($relatedIntent !== null) {
-                        $userLockedRadius = ($meta['normalised']['radius_km'] ?? null) !== null
+                        $userLockedRadius = ($meta['radius_km'] ?? null) !== null
                             || $request->radiusKm !== null;
                         $relatedForSearch = $userLockedRadius
                             ? $relatedIntent
