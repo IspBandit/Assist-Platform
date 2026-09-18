@@ -42,6 +42,7 @@ final class AskSaleReadinessSurfaceTest extends TestCase
     {
         $src = (string) file_get_contents(base_path('app/Platform/AiSearch/SearchOrchestrator.php'));
         self::assertStringContainsString('locationBoundServiceQuery', $src);
+        self::assertStringContainsString('explicitLocationText($raw, $intent->locationText)', $src);
         self::assertStringContainsString(
             'if ($exactProviderRows !== [] && !$locationBoundServiceQuery)',
             $src

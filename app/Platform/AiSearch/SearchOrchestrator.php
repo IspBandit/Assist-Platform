@@ -204,15 +204,18 @@ final class SearchOrchestrator
                 : [];
             $exactProviderRows = $this->providerNames->exactMatches($candidateProviderRows);
             // Exact public business names outrank service keywords contained in
-            // that name — but not when Ask already has a service category and a
-            // place. “mobile mechanic near Longreach” strips to the candidate
-            // “mobile mechanic”; an exact directory name match must not clear
-            // categories and leave the town search empty after radius filter.
+            // that name — but not when the traveller already named a service and
+            // an explicit place (“mobile mechanic near Longreach”). Stripping the
+            // place leaves a candidate like “mobile mechanic”; an exact directory
+            // name must not clear categories and empty the town search.
+            // Bare business-name lookups (no near/in/around/at) still take the
+            // name path even when the name also matches a service rule.
             // Partial names are accepted only for an otherwise unknown query,
             // so “battery near me” remains a category search.
+            $explicitPlace = $this->providerNames->explicitLocationText($raw, $intent->locationText);
             $locationBoundServiceQuery = $intent->providerCategoryKeys !== []
-                && $intent->locationText !== null
-                && trim($intent->locationText) !== '';
+                && $explicitPlace !== null
+                && trim($explicitPlace) !== '';
             if ($exactProviderRows !== [] && !$locationBoundServiceQuery) {
                 $providerNameQuery = $candidateProviderName;
                 $providerNameRows = $exactProviderRows;
