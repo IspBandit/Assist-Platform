@@ -85,6 +85,16 @@ facilities such as public toilets or dump points. Ask never invents caravan-park
 rows for toilets. Guidance remains non-authoritative; confirm details before you
 travel.
 
+If you type a full request into the structured Find **town** field (for example
+“need fridge repairs near Charters Towers”), VanAssist opens Ask with that
+wording instead of reporting that the town was not found. Use a town name or
+postcode alone when you want the category-and-town Find results page.
+
+Category Find needs a town, suburb, postcode or **Use my current location** —
+searching a service with no place is blocked so results can be ranked nearby.
+When several Australian towns share a name (Emerald, Longreach), Ask offers
+clickable choices such as **Emerald, QLD** instead of an empty page.
+
 If the question does not name a place, Ask automatically requests the device's
 current GPS location and runs the search after permission is granted. A town,
 suburb, postcode, campground or supported landmark written in the question
@@ -191,7 +201,7 @@ can have identical names. Missing location details are not guessed.
 
 ## Last updated
 
-2026-09-18 (surrounding-town expansion when fewer than three Ask/find matches).
+2026-09-19 (Ask disambiguation, location-required Find, local Places rescue UX).
 
 ## Owner
 

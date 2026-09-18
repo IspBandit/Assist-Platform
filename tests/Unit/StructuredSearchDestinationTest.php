@@ -42,4 +42,33 @@ final class StructuredSearchDestinationTest extends TestCase
         self::assertNull(StructuredSearchDestination::path('toilets', 'Batehaven NSW', null, null, true));
         self::assertNull(StructuredSearchDestination::path('mobile-mechanics', 'Karratha WA', null, null, true));
     }
+
+    public function testTravellerSentenceInLocationRoutesToAsk(): void
+    {
+        self::assertTrue(StructuredSearchDestination::looksLikeTravellerSentence(
+            'need fridge repairs near charters towers'
+        ));
+        self::assertFalse(StructuredSearchDestination::looksLikeTravellerSentence('Charters Towers'));
+        self::assertFalse(StructuredSearchDestination::looksLikeTravellerSentence('4820'));
+        self::assertFalse(StructuredSearchDestination::looksLikeTravellerSentence('Batemans Bay NSW'));
+
+        $path = StructuredSearchDestination::path(
+            'refrigeration',
+            'need fridge repairs near charters towers',
+            null,
+            null,
+            true
+        );
+        self::assertSame(
+            'ask?q=need+fridge+repairs+near+charters+towers',
+            $path
+        );
+        self::assertNull(StructuredSearchDestination::path(
+            'refrigeration',
+            'need fridge repairs near emerald',
+            null,
+            null,
+            false
+        ));
+    }
 }

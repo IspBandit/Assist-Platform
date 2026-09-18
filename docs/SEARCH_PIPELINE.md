@@ -37,7 +37,22 @@ Provider category searches without an explicit radius use the shared
 fallback. When fewer than `geo.provider_search_min_results` (default 3)
 category matches remain for a resolved town, Ask and `/find` then fill from
 immediate `town_neighbours` using the **same categories** (never an unfiltered
-regional pool). Places rescue remains last when the flag is on.
+regional pool). Places rescue remains last when the flag is on, and always
+queries/publishes against the **original** provider categories (related-category
+fallback must not rewrite the Places phrase to general repairs).
+
+Sentence-like text in the structured `/find` location field (for example
+“need fridge repairs near Charters Towers”) redirects to Ask on VanAssist when
+AI search is enabled, so every region gets the same NL path instead of a failed
+town lookup. `Town::parseSearchQuery` also extracts the place after
+`near` / `in` / `around` for callers that still resolve towns from mixed text.
+Ask maps include labelled Places `external_live` pins (synthetic keys) so mobile
+Map view shows local public-source hits, not only published provider rows.
+
+Ambiguous place names return clickable town/state choices (no empty dead-end).
+Category `/find` without a town or GPS prompts for location instead of recording
+national “Location not supplied” misses. Ask logging always attaches a tracking
+session so daily Ask search counts are attributable.
 
 ## Town neighbour graph
 

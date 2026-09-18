@@ -130,6 +130,18 @@ final class HelpersTest extends TestCase
             ['term' => 'Victoria Point', 'state' => null],
             Town::parseSearchQuery('Victoria Point')
         );
+        $this->assertSame(
+            ['term' => 'Charters Towers', 'state' => null],
+            Town::parseSearchQuery('need fridge repairs near charters towers')
+        );
+        $this->assertSame(
+            ['term' => 'Emerald', 'state' => 'QLD'],
+            Town::parseSearchQuery('fridge repair in Emerald QLD')
+        );
+        $this->assertSame(
+            ['term' => 'near me', 'state' => null],
+            Town::parseSearchQuery('near me')
+        );
     }
 
     public function testAdminWorkspaceKeepsNavigationOnTrustedLiveHost(): void

@@ -12,7 +12,7 @@ return [
     'auto_publish_unclaimed' => true,
     'attribution' => 'Results include public business details from Google. Confirm details before travelling.',
     'queries' => [
-        'refrigeration' => 'caravan fridge refrigeration repair',
+        'refrigeration' => 'fridge refrigeration repair caravan RV',
         'air-conditioning' => 'caravan air conditioning repair',
         'gas-appliance-servicing' => 'caravan gas appliance refrigeration',
         'appliance-repairs' => 'caravan appliance repair',

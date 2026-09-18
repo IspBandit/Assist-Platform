@@ -16,7 +16,6 @@ use App\Platform\AiSearch\Support\AiSearchFeature;
 use App\Platform\AiSearch\Support\OutcomeFeature;
 use App\Platform\Brand\BrandContext;
 use App\Services\Demand\TrackingSession;
-use App\Services\Demand\TrafficQuality;
 use App\Services\RateLimiter;
 use App\Services\Search\PublicResultWindow;
 use App\Services\ProductBrandAsk;
@@ -69,9 +68,11 @@ final class AssistSearchController extends Controller
         if ($q !== '') {
             $brand = current_brand();
             $orchestrator = new SearchOrchestrator();
+            // Always attach a tracking session so Ask rows join daily insights.
+            // Exclusion is recorded on the row; null session_id made Ask look unused.
             $sessionId = null;
             try {
-                $sessionId = TrafficQuality::excludesCurrentRequest() ? null : TrackingSession::id();
+                $sessionId = TrackingSession::id();
             } catch (\Throwable) {
                 $sessionId = null;
             }

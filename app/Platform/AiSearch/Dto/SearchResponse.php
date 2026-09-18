@@ -15,6 +15,7 @@ final class SearchResponse
      * @param list<array<string,mixed>> $externals
      * @param list<array<string,mixed>> $facilities
      * @param list<string> $messages
+     * @param list<array{name:string,state_abbr:string,label:string,slug:string}> $locationCandidates
      */
     public function __construct(
         public readonly Intent $intent,
@@ -33,6 +34,7 @@ final class SearchResponse
         public readonly bool $hasMore = false,
         public readonly int $resultLimit = 20,
         public readonly int $totalCandidates = 0,
+        public readonly array $locationCandidates = [],
     ) {
     }
 

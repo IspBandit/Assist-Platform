@@ -13,7 +13,7 @@ $hasResults = $result !== null && ($result->providers !== [] || $result->stays !
 $mappedResults = [];
 $mapNumbers = [];
 if ($result !== null) {
-    $appendMappedResult = static function (array $item, string $type, string $name, string $location, ?string $profile = null) use (&$mappedResults, &$mapNumbers): void {
+    $appendMappedResult = static function (array $item, string $type, string $name, string $location, ?string $profile = null, ?string $forceKey = null) use (&$mappedResults, &$mapNumbers): void {
         $itemLat = $item['latitude'] ?? $item['town_lat'] ?? null;
         $itemLng = $item['longitude'] ?? $item['town_lng'] ?? null;
         if (!is_numeric($itemLat) || !is_numeric($itemLng)) {
@@ -24,11 +24,18 @@ if ($result !== null) {
         if ($itemLat < -90 || $itemLat > 90 || $itemLng < -180 || $itemLng > 180) {
             return;
         }
-        $sourceId = (int) ($item['id'] ?? 0);
-        if ($sourceId <= 0) {
+        if ($forceKey !== null && $forceKey !== '') {
+            $key = $forceKey;
+        } else {
+            $sourceId = (int) ($item['id'] ?? 0);
+            if ($sourceId <= 0) {
+                return;
+            }
+            $key = $type . '-' . $sourceId;
+        }
+        if (isset($mapNumbers[$key])) {
             return;
         }
-        $key = $type . '-' . $sourceId;
         $number = count($mappedResults) + 1;
         $mapNumbers[$key] = $number;
         $mappedResults[] = [
@@ -71,6 +78,21 @@ if ($result !== null) {
             (string) ($item['formatted_address'] ?? $item['town_name'] ?? '')
         );
     }
+    foreach ($result->externals as $index => $item) {
+        $recordId = trim((string) ($item['assist_source_record_id'] ?? ''));
+        if ($recordId === '') {
+            $recordId = substr(hash('sha256', (string) ($item['business_name'] ?? '') . '|' . (string) ($item['formatted_address'] ?? '') . '|' . (string) $index), 0, 12);
+        }
+        $safeId = preg_replace('/[^a-zA-Z0-9_-]/', '', $recordId) ?: ('e' . $index);
+        $appendMappedResult(
+            $item,
+            'external',
+            (string) ($item['business_name'] ?? 'Public-source business'),
+            (string) ($item['formatted_address'] ?? ''),
+            !empty($item['website']) ? (string) $item['website'] : null,
+            'external-' . $safeId
+        );
+    }
 }
 $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceService::groupsUseRoadDistance([
     'providers' => $result->providers,
@@ -92,7 +114,7 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
         </header>
 
         <?php if ($result !== null): ?><details class="ask-refine"><summary>Change this search</summary><?php endif; ?>
-        <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>"<?= $query === '' || !empty($needsDeviceLocation) ? ' data-auto-location' : '' ?> data-ask-location-priority="typed-over-gps" style="margin:1.25rem 0 1.5rem">
+        <form class="search-card" method="get" action="<?= e(url('ask')) ?>" data-nearest-url="<?= e_attr(url('locations/nearest')) ?>"<?= $query === '' || !empty($needsDeviceLocation) ? ' data-auto-location' : '' ?> data-ask-location-priority="typed-over-gps" data-ask-require-place="1" style="margin:1.25rem 0 1.5rem">
             <div class="form-group mb-0 location-field">
                 <label for="ask-q">Your request</label>
                 <input type="text" id="ask-q" name="q" value="<?= e_attr($query) ?>" maxlength="240" placeholder="e.g. Dump point near Batehaven" autocomplete="off" required>
@@ -117,7 +139,7 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
             <p class="muted" role="status">This request has no place in the question, so VanAssist is using your device location. Allow location access when your browser asks.</p>
         <?php endif; ?>
 
-        <?php if ($result === null): ?><p class="muted" style="margin:0 0 1.5rem">Try: public toilets near me · LPG refill near Batemans Bay · mobile caravan repairer near Emerald</p><?php endif; ?>
+        <?php if ($result === null): ?><p class="muted" style="margin:0 0 1.5rem">Try: public toilets near me · LPG refill near Batemans Bay · mobile caravan repairer near Emerald QLD</p><?php endif; ?>
 
         <?php if ($result !== null): ?>
             <?php if ($result->messages !== []): ?>
@@ -132,6 +154,30 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                         <p style="margin:0.35rem 0"><?= $this->e($message) ?></p>
                     <?php endforeach; ?>
                 </div>
+            <?php endif; ?>
+
+            <?php if ($result->locationCandidates !== []): ?>
+                <section class="ask-location-choices card" style="margin-bottom:1.25rem;border-left:4px solid #0d62dc" aria-label="Choose a place">
+                    <h2 class="h3" style="margin:0 0 0.5rem">Which place did you mean?</h2>
+                    <p class="muted" style="margin:0 0 0.75rem">Pick the town so VanAssist can search nearby help. This avoids empty results when several Australian places share the same name.</p>
+                    <div class="btn-row" style="flex-wrap:wrap;gap:0.5rem">
+                        <?php foreach ($result->locationCandidates as $candidate): ?>
+                            <?php
+                            $choiceQuery = \App\Services\Search\LocationDisambiguation::rewriteQuery(
+                                $query,
+                                (string) ($candidate['name'] ?? ''),
+                                (string) ($candidate['state_abbr'] ?? '')
+                            );
+                            $choiceUrl = url('ask?' . http_build_query(array_filter([
+                                'q' => $choiceQuery,
+                                'lat' => $lat,
+                                'lng' => $lng,
+                            ], static fn (mixed $value): bool => $value !== null && $value !== '')));
+                            ?>
+                            <a class="btn btn-primary" href="<?= e($choiceUrl) ?>"><?= $this->e((string) ($candidate['label'] ?? $candidate['name'] ?? 'Place')) ?></a>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
             <?php endif; ?>
 
             <?php if ($outcome !== null): ?>
@@ -183,6 +229,68 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
             <?php endif; ?>
 
             <div data-results-list>
+            <?php
+            $minProviderKm = null;
+            foreach ($result->providers as $pRow) {
+                if (!is_numeric($pRow['distance_km'] ?? null)) {
+                    continue;
+                }
+                $km = (float) $pRow['distance_km'];
+                $minProviderKm = $minProviderKm === null ? $km : min($minProviderKm, $km);
+            }
+            $minExternalKm = null;
+            foreach ($result->externals as $eRow) {
+                if (!is_numeric($eRow['distance_km'] ?? null)) {
+                    continue;
+                }
+                $km = (float) $eRow['distance_km'];
+                $minExternalKm = $minExternalKm === null ? $km : min($minExternalKm, $km);
+            }
+            $showExternalsFirst = $result->externals !== []
+                && (
+                    $result->providers === []
+                    || ($minExternalKm !== null && ($minProviderKm === null || $minExternalKm < $minProviderKm))
+                );
+            $renderAskExternals = static function () use ($result, $mapNumbers): void {
+                if ($result->externals === []) {
+                    return;
+                }
+                ?>
+                <h2 class="h3" style="margin-top:1.5rem">Public-source and pending candidates</h2>
+                <p class="muted">These come from public data sources or live discovery and are <strong>not verified VanAssist listings</strong>. Confirm services and contact details before travelling.</p>
+                <div class="dataset-results">
+                    <?php foreach ($result->externals as $extIndex => $ext): ?>
+                        <?php
+                        $extRecordId = trim((string) ($ext['assist_source_record_id'] ?? ''));
+                        if ($extRecordId === '') {
+                            $extRecordId = substr(hash('sha256', (string) ($ext['business_name'] ?? '') . '|' . (string) ($ext['formatted_address'] ?? '') . '|' . (string) $extIndex), 0, 12);
+                        }
+                        $extSafeId = preg_replace('/[^a-zA-Z0-9_-]/', '', $extRecordId) ?: ('e' . $extIndex);
+                        $extKey = 'external-' . $extSafeId;
+                        $extMapNumber = $mapNumbers[$extKey] ?? 0;
+                        ?>
+                        <article id="assist-result-<?= e_attr($extKey) ?>" class="card" style="margin-bottom:0.75rem;border-left:4px solid #8a6d3b" tabindex="-1">
+                            <h3 class="h4" style="margin:0 0 0.35rem"><?php if ($extMapNumber > 0): ?><span class="provider-map-reference" data-number="<?= $extMapNumber ?>" aria-label="Map pin <?= $extMapNumber ?>"></span><?php endif; ?><?= e((string) ($ext['business_name'] ?? 'Candidate')) ?></h3>
+                            <p class="muted" style="margin:0">
+                                <?= e((string) ($ext['assist_provenance_label'] ?? 'Pending review')) ?>
+                                <?php if (!empty($ext['connector_name'])): ?> · <?= e((string) $ext['connector_name']) ?><?php endif; ?>
+                                <?php if (!empty($ext['formatted_address'])): ?> · <?= e((string) $ext['formatted_address']) ?><?php endif; ?>
+                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($ext); ?><?php if ($distanceLabel !== ''): ?> · <?= e($distanceLabel) ?><?php endif; ?>
+                            </p>
+                            <?php if (!empty($ext['phone'])): ?>
+                                <p style="margin:0.35rem 0 0"><a href="tel:<?= e(preg_replace('/\s+/', '', (string) $ext['phone']) ?? '') ?>"><?= e((string) $ext['phone']) ?></a></p>
+                            <?php endif; ?>
+                            <?php if (!empty($ext['website'])): ?>
+                                <p style="margin:0.35rem 0 0"><a href="<?= e((string) $ext['website']) ?>" rel="noopener noreferrer">Source website</a></p>
+                            <?php endif; ?>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+                <?php
+            };
+            ?>
+
+            <?php if ($showExternalsFirst): ?><?php $renderAskExternals(); ?><?php endif; ?>
 
             <?php if ($result->providers !== []): ?>
                 <h2 class="h3" style="margin-top:1.5rem">Providers</h2>
@@ -261,31 +369,9 @@ $usesRoadDistance = $result !== null && \App\Services\RoadDistance\RoadDistanceS
                 </div>
             <?php endif; ?>
 
-            <?php if ($result->externals !== []): ?>
-                <h2 class="h3" style="margin-top:1.5rem">Public-source and pending candidates</h2>
-                <p class="muted">These come from public data sources or live discovery and are <strong>not verified VanAssist listings</strong>. Confirm services and contact details before travelling.</p>
-                <div class="dataset-results">
-                    <?php foreach ($result->externals as $ext): ?>
-                        <article class="card" style="margin-bottom:0.75rem;border-left:4px solid #8a6d3b">
-                            <h3 class="h4" style="margin:0 0 0.35rem"><?= $this->e((string) ($ext['business_name'] ?? 'Candidate')) ?></h3>
-                            <p class="muted" style="margin:0">
-                                <?= $this->e((string) ($ext['assist_provenance_label'] ?? 'Pending review')) ?>
-                                <?php if (!empty($ext['connector_name'])): ?> · <?= $this->e((string) $ext['connector_name']) ?><?php endif; ?>
-                                <?php if (!empty($ext['formatted_address'])): ?> · <?= $this->e((string) $ext['formatted_address']) ?><?php endif; ?>
-                                <?php $distanceLabel = \App\Services\RoadDistance\RoadDistanceService::displayLabel($ext); ?><?php if ($distanceLabel !== ''): ?> · <?= $this->e($distanceLabel) ?><?php endif; ?>
-                            </p>
-                            <?php if (!empty($ext['phone'])): ?>
-                                <p style="margin:0.35rem 0 0"><a href="tel:<?= e(preg_replace('/\s+/', '', (string) $ext['phone']) ?? '') ?>"><?= $this->e((string) $ext['phone']) ?></a></p>
-                            <?php endif; ?>
-                            <?php if (!empty($ext['website'])): ?>
-                                <p style="margin:0.35rem 0 0"><a href="<?= e((string) $ext['website']) ?>" rel="noopener noreferrer">Source website</a></p>
-                            <?php endif; ?>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <?php if (!$showExternalsFirst): ?><?php $renderAskExternals(); ?><?php endif; ?>
 
-            <?php if ($result->searched && $result->providers === [] && $result->stays === [] && $result->facilities === [] && $result->externals === []): ?>
+            <?php if ($result->searched && $result->providers === [] && $result->stays === [] && $result->facilities === [] && $result->externals === [] && $result->locationCandidates === []): ?>
                 <div class="card ask-no-results" style="margin-top:1rem">
                     <h2 class="h3">No matching service found nearby</h2>
                     <p>VanAssist did not find a listed provider for this service yet. Register a request so we can grow coverage for this area, or try a wider search.</p>
