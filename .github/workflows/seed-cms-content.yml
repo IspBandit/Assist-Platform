@@ -1,0 +1,42 @@
+name: Seed CMS content
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type SEED to populate production CMS pages and blocks from seeds (including legal_pages)
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-seed-cms
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    if: github.event.inputs.confirm == 'SEED' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Configure verified SSH host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 0700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 0600 ~/.ssh/id_ed25519 ~/.ssh/known_hosts
+      - name: Populate CMS pages from seeds
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          set -euo pipefail
+          output="$(ssh "$VPS_USER@$VPS_HOST" "cd /opt/assist-platform && docker compose exec -T app php scripts/seed-cms-content.php")"
+          printf '%s\n' "$output" | tee -a "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' "$output" | grep -q 'Effective 18 September 2026\|legal-2026-09-18\|pages_verified='
+          printf '%s\n' "$output" | grep -q 'pages_written='
