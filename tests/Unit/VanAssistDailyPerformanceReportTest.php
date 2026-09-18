@@ -43,6 +43,9 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
             ]],
             'actions' => [['label' => 'directions', 'total' => 3, 'secondary' => 3]],
             'providers' => [['label' => 'Example Caravan Repairs', 'contacts' => 2, 'profile_views' => 4]],
+            'providers_used' => [['label' => 'Trusted Mobile Mechanic', 'confirmed_uses' => 2, 'distinct_customers' => 2]],
+            'providers_contacted' => [['label' => 'Example Caravan Repairs', 'contacts' => 4, 'phone' => 3]],
+            'stays_engaged' => [['label' => 'Batehaven Beachside', 'contacts' => 4, 'assistance_requests' => 1, 'page_views' => 9]],
             'comparison_summary' => [
                 'visitors' => 20, 'page_views' => 50, 'searches' => 10, 'contact_actions' => 2,
             ],
@@ -50,6 +53,11 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
 
         self::assertSame('VanAssist daily website performance — 15 Aug 2026', $message['subject']);
         self::assertStringContainsString('In plain English', $message['html']);
+        self::assertStringContainsString('Providers people actually used', $message['html']);
+        self::assertStringContainsString('Trusted Mobile Mechanic', $message['html']);
+        self::assertStringContainsString('Providers people contacted', $message['html']);
+        self::assertStringContainsString('Places to stay people engaged with', $message['html']);
+        self::assertStringContainsString('Batehaven Beachside', $message['html']);
         self::assertStringContainsString('Most popular pages', $message['html']);
         self::assertStringContainsString('Places to stay', $message['html']);
         self::assertStringContainsString('Dump points', $message['html']);
@@ -61,6 +69,7 @@ final class VanAssistDailyPerformanceReportTest extends TestCase
         self::assertStringContainsString('Returning visitors', $message['html']);
         self::assertStringContainsString('Visitors active on multiple days', $message['html']);
         self::assertStringContainsString('Stay searches with no result', $message['html']);
+        self::assertStringContainsString('monetisation shortlist', $message['text']);
         self::assertStringContainsString('Compared with the prior day', $message['text']);
         self::assertStringContainsString('visits: +20.0%', $message['text']);
         self::assertStringContainsString('aggregate, first-party VanAssist figures', $message['text']);

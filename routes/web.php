@@ -75,6 +75,10 @@ return static function (Router $router): void {
         $router->get('/sponsor/{campaign}/click', 'Site\SponsoredCampaignController@click', 'sponsor.click');
         $router->get('/business/{slug}', 'Site\ProviderController@show', 'business.show');
 
+        // Attributable place-to-stay contact actions (DATA-004): record then
+        // redirect. Literal /go/stay/... must precede /go/{action}/{slug}.
+        $router->get('/go/stay/{action}/{slug}', 'Site\StayContactActionController@go', 'stay.contact');
+
         // Attributable provider contact actions (Phase 11): record then redirect
         // to phone/email/website/directions. GET-only; recording is best-effort.
         $router->get('/go/{action}/{slug}', 'Site\ContactActionController@go', 'provider.contact');

@@ -30,10 +30,12 @@ Caravan, motorhome and RV travellers planning before departure or searching whil
 No account is required. On the main VanAssist search, the browser may ask for optional device-location permission automatically so the nearest town can be prepared. Denying permission leaves the full manual search available.
 
 VanAssist may measure broad journey steps such as opening search results, a
-provider or a place to stay, and choosing phone, website, directions or claim
-actions. This measurement does not send names, contact details, search wording
-or precise device coordinates. Each Assist Platform brand uses its own
-measurement configuration.
+provider or a place to stay, and choosing phone, website, directions, booking or
+claim actions. On place-to-stay pages, phone, email, website, booking and
+directions links open through a short VanAssist redirect so the platform can
+count interest without storing what you typed or who you are. This measurement
+does not send names, contact details, search wording or precise device
+coordinates. Each Assist Platform brand uses its own measurement configuration.
 
 ## Fields
 
@@ -62,7 +64,7 @@ Choose a service and location, update the results, then compare the compact list
 The short directory information labels use white text on a stable dark surface,
 so their legibility does not depend on which part of the hero photo is visible.
 
-A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider road routes use an exact provider point. A provider with only a base locality says **Exact provider distance unavailable (town-centre estimate)** and does not present that locality route as the distance to the business. Stay routes use the stay's own point. Google Maps is attributed when its road distance and estimated time are displayed. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public.
+A compact accuracy notice appears on the main search journey, results and Places to stay. It links to the full disclaimer and a contact path for reporting incorrect information. Provider road routes use an exact provider point. A provider with only a base locality says **Exact provider distance unavailable (town-centre estimate)** and does not present that locality route as the distance to the business. Stay routes use the stay's own point. Google Maps is attributed when its road distance and estimated time are displayed. Only contact details explicitly designated public by the listing record are displayed; an unclaimed status never makes private contact fields public. On a stay page, choose phone, email, website, booking or directions when those details are published; VanAssist briefly records that you used the link before opening the external destination.
 
 ## Examples
 
@@ -201,7 +203,7 @@ can have identical names. Missing location details are not guessed.
 
 ## Last updated
 
-2026-09-19 (Ask disambiguation, location-required Find, local Places rescue UX).
+2026-09-19 (stay contact redirects for phone, email, website, booking and directions).
 
 ## Owner
 

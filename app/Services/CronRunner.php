@@ -23,13 +23,22 @@ final class CronRunner
         $this->handlers = [
             'process_email_queue'   => static function (): array {
                 $result = Mailer::processQueue();
-                // Safety net: the dedicated 06:15 host cron line can lag behind
-                // reviewed commits. Queueing here is idempotent per report date.
+                // Safety net: dedicated host cron lines can lag behind reviewed
+                // commits. Queueing here is idempotent per report period.
                 try {
                     $result['vanassist_daily_performance'] = (new \App\Services\Demand\VanAssistDailyPerformanceReport())->queuePreviousDay();
                 } catch (Throwable $e) {
                     Logger::error('VanAssist daily performance email queue failed during process_email_queue: ' . $e->getMessage(), [], 'email');
                     $result['vanassist_daily_performance'] = [
+                        'status' => 'error',
+                        'message' => $e->getMessage(),
+                    ];
+                }
+                try {
+                    $result['vanassist_monthly_performance'] = (new \App\Services\Demand\VanAssistMonthlyPerformanceReport())->queuePreviousMonth();
+                } catch (Throwable $e) {
+                    Logger::error('VanAssist monthly performance email queue failed during process_email_queue: ' . $e->getMessage(), [], 'email');
+                    $result['vanassist_monthly_performance'] = [
                         'status' => 'error',
                         'message' => $e->getMessage(),
                     ];
@@ -53,6 +62,7 @@ final class CronRunner
             // Demand analytics (Phase 11). No-op unless the demand_analytics flag is on.
             'aggregate_daily_metrics'  => fn () => $this->aggregateDailyMetrics(),
             'vanassist_daily_performance_email' => static fn () => (new \App\Services\Demand\VanAssistDailyPerformanceReport())->queuePreviousDay(),
+            'vanassist_monthly_performance_email' => static fn () => (new \App\Services\Demand\VanAssistMonthlyPerformanceReport())->queuePreviousMonth(),
             'customer_followups'       => fn () => $this->customerFollowups(),
             'analytics_retention'      => fn () => $this->analyticsRetention(),
             'ai_retention'             => static fn () => (new \App\Platform\AiSearch\Retention\AiRetentionService())->purge(),
