@@ -37,5 +37,9 @@ final class SaleCorridorProviderPackTest extends TestCase
         self::assertArrayHasKey('charters towers', $towns);
         self::assertArrayHasKey('longreach', $towns);
         self::assertArrayHasKey('emerald', $towns);
+        self::assertArrayHasKey('mount isa', $towns);
+        self::assertArrayHasKey('roma', $towns);
+        self::assertArrayHasKey('charleville', $towns);
+        self::assertArrayHasKey('birdsville', $towns);
     }
 }

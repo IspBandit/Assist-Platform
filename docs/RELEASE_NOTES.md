@@ -5,6 +5,14 @@ may remain as dated files and are linked here rather than copied.
 
 ## Unreleased
 
+### Ask inland corridor seeds: Mount Isa → Birdsville spine (VAN-011)
+
+- Sale-corridor pack now also seeds Mount Isa, Roma, Charleville and Birdsville
+  with curated public-source unclaimed listings (mechanic, refrigeration,
+  caravan/electrical and roadhouse workshop coverage).
+- Still loads idempotently with `php scripts/seed.php --ask-library`. Listings
+  remain unclaimed and unverified; travellers must confirm suitability.
+
 ### Ask service+place not hijacked by exact business-name match (VAN-011)
 
 - Queries such as “mobile mechanic near Longreach QLD” keep the service-category
@@ -23,7 +31,8 @@ may remain as dated files and are linked here rather than copied.
 - Places rescue always searches at the widest radius ladder step and may try up
   to three query phrases per service (fridge searches also try ordinary
   appliance/refrigeration wording).
-- Idempotent sale-corridor seeds for Charters Towers, Longreach and Emerald load
+- Idempotent sale-corridor seeds for Charters Towers, Longreach, Emerald, Mount
+  Isa, Roma, Charleville and Birdsville load
   with `php scripts/seed.php --ask-library` so inland demos are not empty while
   Places coverage is thin.
 
