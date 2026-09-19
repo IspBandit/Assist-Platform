@@ -28,7 +28,8 @@
    travellers are told the nearest public-source option is farther away. Not
    general browsing. Inland sale-corridor seeds
    (`database/seeds/vanassist-sale-corridor/`) load on `--ask-library` so Charters
-   Towers / Longreach / Emerald demos are not empty while Places is thin.
+   Towers, Longreach, Emerald, Mount Isa, Roma, Charleville and Birdsville demos
+   are not empty while Places is thin.
 9. **Knowledge-gap processing** — `KnowledgeGapService::observe` for weak/zero/
    unknown; returns `knowledgeGapId` for interaction attribution.
 10. **Draft-candidate processing** — admin/CLI / dataset jobs via

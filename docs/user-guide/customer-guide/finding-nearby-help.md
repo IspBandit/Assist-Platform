@@ -89,8 +89,11 @@ travel.
 
 If you type a full request into the structured Find **town** field (for example
 “need fridge repairs near Charters Towers”), VanAssist opens Ask with that
-wording instead of reporting that the town was not found. Use a town name or
-postcode alone when you want the category-and-town Find results page.
+wording instead of reporting that the town was not found. Inland sale-corridor
+towns (Mount Isa, Roma, Charleville and Birdsville as well as Charters Towers,
+Longreach and Emerald) may already show curated public-source locals; confirm
+suitability before travelling. Use a town name or postcode alone when you want
+the category-and-town Find results page.
 
 Category Find needs a town, suburb, postcode or **Use my current location** —
 searching a service with no place is blocked so results can be ranked nearby.
